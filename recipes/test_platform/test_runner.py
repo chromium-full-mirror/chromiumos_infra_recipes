@@ -210,10 +210,11 @@ def summarize_results_from_phosphorus_results(api, result):
         s_link(step=step, name='Logs in Stainless',
                link=result.get_stainless_log_url())
     s_log(step=step, name='JSON output', log=result.to_json())
-    for prejob in result.get_prejob_steps():
+    for pre_job in result.get_prejob_steps():
       _set_step_status(
-          api=api, step_name=prejob.name, summary=prejob.human_readable_summary,
-          failure_condition=prejob.verdict != Result.Prejob.Step.VERDICT_PASS)
+          api=api, step_name=pre_job.name,
+          summary=pre_job.human_readable_summary,
+          failure_condition=pre_job.verdict != Result.Prejob.Step.VERDICT_PASS)
     for test_id, autotest_result in result.get_test_results():
       with api.step.nest(test_id):
         for test_case in autotest_result.test_cases:
@@ -1573,7 +1574,8 @@ def execution_steps_with_ctr(api, properties):
     publish_to_result_flow(api, properties.config,
                            properties.cft_test_request.parent_request_uid)
     test_metadata = interface.build_test_metadata(
-        'original_test', '', properties.cft_test_request.autotest_keyvals)
+        'original_test', '', properties.cft_test_request.autotest_keyvals,
+        properties.cft_test_request)
 
     repair_requests = ['REPAIR_REQUEST_PROVISION']
     interface.save_skylab_local_state(_DUT_STATE_NEEDS_REPAIR, test_metadata,
@@ -1907,9 +1909,9 @@ def summarize_results_from_ctr_results(api, result):
       if result.get_stainless_log_url():
         s_link(step=step, name='Logs in Stainless',
                link=result.get_stainless_log_url())
-    for prejob in result.get_prejob_steps():
-      _set_step_status(api=api, step_name='provision of ' + prejob.test_id,
-                       summary='', failure_condition=prejob.is_failure())
+    for pre_job in result.get_prejob_steps():
+      _set_step_status(api=api, step_name='provision of ' + pre_job.test_id,
+                       summary='', failure_condition=pre_job.is_failure())
     for test_result in result.get_test_results():
       if test_result.is_skipped():
         continue
@@ -2778,10 +2780,10 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     return {
         'parent_build_id': 12345,
         'primary_dut': {
-            'container_metadata_key': 'kevin',
+            'container_metadata_key': 'fake_board',
             'dut_model': {
-                'build_target': 'kevin',
-                'model_name': 'kevin'
+                'build_target': 'fake_board',
+                'model_name': 'fake_model'
             },
             'provision_state': {
                 'system_image': {
@@ -2789,7 +2791,62 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                         'host_type':
                             'GS',
                         'path':
-                            'gs://chromeos-image-archive/kevin-postsubmit/R123-12345.0.0-123456-80000000000',
+                            'gs://chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000',
+                    },
+                },
+            },
+        },
+        'test_suites': [{
+            'name': 'suite1',
+            'test_case_ids': {
+                'test_case_ids': [{
+                    'value': 'tauto.stub_Pass'
+                }, {
+                    'value': 'tast.example.Fail'
+                }, {
+                    'value': 'tast.example.Pass'
+                }]
+            }
+        }],
+        'container_metadata': mock_metadata(),
+        'autotest_keyvals': {
+            'branch':
+                'main',
+            'build':
+                'bob-release/R102-14637.0.0',
+            'build_config':
+                'bob-release',
+            'cidb_build_id':
+                '5141110',
+            'datastore_parent_key':
+                "('Build', 5141110)",
+            'label':
+                'bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess',
+            'master_build_config':
+                'master-release',
+            'parent_job_id':
+                '59dfe8555444e811',
+            'suite':
+                'bvt-tast-informational'
+        }
+    }
+
+  def _canned_test_runner_request_for_ctr_gce():
+    return {
+        'parent_build_id': 12345,
+        'primary_dut': {
+            'container_metadata_key': 'betty',
+            'dut_model': {
+                'build_target': 'betty',
+                'model_name': 'betty'
+            },
+            'provision_state': {
+                'system_image': {
+                    'system_image_path': {
+                        'host_type':
+                            'GS',
+                        'path':
+                            'gs://chromeos-image-archive/betty-postsubmit/R123-12345.0.0-123456-80000000000',
                     },
                 },
             },
@@ -2830,7 +2887,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
     }
 
   def _canned_test_runner_request_for_ctr_for_vm():
-    req = _canned_test_runner_request_for_ctr()
+    req = _canned_test_runner_request_for_ctr_gce()
     req['autotest_keyvals']['build'] = 'betty-arc-r-release/R102-14637.0.0'
     req['test_suites'][0]['name'] = 'arc-cts-vm'
     req['test_suites'][0]['test_case_ids']['test_case_ids'][0][

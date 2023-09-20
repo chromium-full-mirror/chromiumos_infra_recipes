@@ -44,8 +44,9 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
   Passable to DutInterface that requires info from this class to provision, run tests etc.
   """
 
-  def __init__(self, interface, test_id, test, autotest_keyvals=None,
-               artifact_dir='', image_storage_server='', invocation_id=''):
+  def __init__(self, interface, test_id, test, cft_test_request,
+               autotest_keyvals=None, artifact_dir='', image_storage_server='',
+               invocation_id=''):
     """Specific constructor for CrosToolRunner subclass of DUTTestMetadata
 
     Args:
@@ -63,24 +64,61 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     self.autotest_keyvals = autotest_keyvals
     self.load_response = interface.load_skylab_local_state(
         test=test, test_id=test_id)
-    # Each topology can have multiple duts info for multi-dut testing scenario.
-    # But there should be always one lab_dut_topology as we load one dut info at a time.
-    # TODO(b/220801220): When multi-dut testing is enabled for CFT, make sure first dut is always primary dut.
-    self.primary_dut = self.load_response.lab_dut_topology[0].duts[0]
-    # TODO(b/220801220): Match peer_duts appropriately when multi-dut testing feature is enabled for CFT.
-    # Check if the companion dut is chromeos. There is always 1:1 with chromeos companion duts.
-    if len(self.load_response.lab_dut_topology
-          ) == 2 and self.load_response.lab_dut_topology[1].duts[0].WhichOneof(
-              'dut_type') == 'chromeos':
-      self.peer_duts = [self.load_response.lab_dut_topology[1].duts[0]]
-    else:
-      self.peer_duts = []
+
+    undesignated_duts = [
+        dut for topology in self.load_response.lab_dut_topology
+        for dut in topology.duts
+    ]
+    # Match requested cft_test_request devices to duts from topology.
+    # Start with requested primary device.
+    self.primary_dut = self.match_dut(undesignated_duts,
+                                      cft_test_request.primary_dut)
+    self.peer_duts = []
+    self.peer_provision_states = []
+    for dut in cft_test_request.companion_duts:
+      match = self.match_dut(undesignated_duts, dut)
+      if match is None:
+        continue
+      self.peer_duts.append(match)
+      self.peer_provision_states.append(dut.provision_state)
+
     # Unix time of when test execution finished. Used to be passed via keyvals for autotests.
     self.job_finished = 0
     # Info used in rdb upload.
     self.rdb_base_tags = None
     self.rdb_base_variant = None
     self.rdb_sources_file = None
+
+  def match_dut(self, dut_pool, requested_device):
+    """Find a match to the requested build_target/model pair inside the dut_pool.
+
+    Args:
+    * dut_pool ([]lab.Dut): List of available duts for matching.
+    * request_device (skylab_test_runner.CrosTest_Device): Device to be matched.
+
+    Returns: lab.Dut that matches to the build_target/model pair of requested_device.
+    """
+    request_key = requested_device.dut_model.build_target + '_' + requested_device.dut_model.model_name
+    found_index = -1
+    for i, dut in enumerate(dut_pool):
+      dut_typed = None
+      if dut.WhichOneof('dut_type') == 'chromeos':
+        dut_typed = dut.chromeos
+      elif dut.WhichOneof('dut_type') == 'android':
+        dut_typed = dut.android
+      if dut_typed is None:
+        continue
+      dut_key = dut_typed.dut_model.build_target + '_' + dut_typed.dut_model.model_name
+      if request_key in dut_key:
+        found_index = i
+        break
+    # No match
+    if found_index == -1:
+      return None
+
+    match = dut_pool[found_index]
+    del dut_pool[found_index]
+    return match
 
 
 class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
@@ -286,43 +324,19 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns:
       devices: [ctr.CrosToolRunnerProvisionRequest.Device]
     """
-    # Aggregate duts to assist with matching the request's boards to a dut.
-    available_duts = [metadata.primary_dut]
-    available_duts.extend(metadata.peer_duts)
-
-    devices = []
-    primary_dut_index = 0
-    # Find the dut associated with the request's primary board.
-    for i, dut in enumerate(available_duts):
-      build_target = dut.chromeos.dut_model.build_target
-      model_name = dut.chromeos.dut_model.model_name
-      if self.cft_test_request.primary_dut.dut_model.build_target == build_target:
-        if not self.cft_test_request.primary_dut.dut_model.model_name or self.cft_test_request.primary_dut.dut_model.model_name == model_name:
-          devices.append(
-              ctr.CrosToolRunnerProvisionRequest.Device(
-                  dut=dut, provision_state=self.cft_test_request.primary_dut
-                  .provision_state, container_metadata_key=self.cft_test_request
-                  .primary_dut.container_metadata_key))
-          primary_dut_index = i
-          break
-
-    # Find the dut associated with the request's companion board.
-    for i, dut in enumerate(available_duts):
-      if i == primary_dut_index:
-        continue
-      # Expect chromeos dut_type.
-      build_target = dut.chromeos.dut_model.build_target
-      model = dut.chromeos.dut_model.model_name
-      for companion in self.cft_test_request.companion_duts:
-        if companion.dut_model.build_target == build_target and companion.dut_model.model_name == model:
-          if not companion.dut_model.model_name or companion.dut_model.model_name == model:
-            devices.append(
-                ctr.CrosToolRunnerProvisionRequest.Device(
-                    dut=dut, provision_state=companion.provision_state,
-                    container_metadata_key=self.cft_test_request.primary_dut
-                    .container_metadata_key))
-      # Current expectation is a single dut if there is one.
-      break
+    devices = [
+        ctr.CrosToolRunnerProvisionRequest.Device(
+            dut=metadata.primary_dut,
+            provision_state=self.cft_test_request.primary_dut.provision_state,
+            container_metadata_key=self.cft_test_request.primary_dut
+            .container_metadata_key)
+    ]
+    devices.extend([
+        ctr.CrosToolRunnerProvisionRequest.Device(
+            dut=dut, provision_state=metadata.peer_provision_states[i],
+            container_metadata_key=self.cft_test_request.primary_dut
+            .container_metadata_key) for i, dut in enumerate(metadata.peer_duts)
+    ])
 
     return devices
 
@@ -541,7 +555,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   def upload_to_rdb(
       self, metadata, run_test_response, skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
-      custom_realm=""):
+      custom_realm=''):
     """Uploads test results to resultDB.
 
     Args:
@@ -676,7 +690,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       self, tast_results_dir, test_metadata_file_content,
       test_metadata_file_path, metadata, skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
-      custom_realm=""):
+      custom_realm=''):
     """Build rdb config for tast test results.
 
     Args:
@@ -727,7 +741,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       test_metadata_file_content, test_metadata_file_path, metadata,
       skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
-      custom_realm=""):
+      custom_realm=''):
     """Build rdb config for tauto test results.
 
     Args:
@@ -828,7 +842,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return '%s/%s/%s' % (gs_root, now.date().isoformat(),
                          self._api.uuid.random())
 
-  def build_test_metadata(self, test_id, test, autotest_keyvals):
+  def build_test_metadata(self, test_id, test, autotest_keyvals,
+                          cft_test_request):
     """Get the test metadata for the designated single set of test(s) for this interface.
 
     Args:
@@ -844,8 +859,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     artifact_dir = str(self._api.path.mkdtemp(self.ARTIFACT_DIR_PREFIX))
     return CrosToolRunnerTestMetadata(
         interface=self, test_id=test_id, test=test,
-        autotest_keyvals=autotest_keyvals, artifact_dir=artifact_dir,
-        image_storage_server=None,
+        cft_test_request=cft_test_request, autotest_keyvals=autotest_keyvals,
+        artifact_dir=artifact_dir, image_storage_server=None,
         invocation_id=self._api.cros_resultdb.current_invocation_id)
 
   def get_results_directory(self, metadata):

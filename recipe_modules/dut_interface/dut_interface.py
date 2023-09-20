@@ -245,7 +245,8 @@ class DUTInterface():  # pragma: no cover
     """
 
   @abstractmethod
-  def build_test_metadata(self, test_id, test, autotest_keyvals):
+  def build_test_metadata(self, test_id, test, autotest_keyvals,
+                          cft_test_request):
     """Get the test metadata for the designated single test for this interface.
 
     Args:
@@ -253,6 +254,8 @@ class DUTInterface():  # pragma: no cover
     * test (skylab_test_runner.Request.Test): The actual test request for the
     current test.
     * autotest_keyvals (dict): Autotest keyvals map.
+    * cft_test_request (skylab_test_runner.test_platform.CftTestRequest): cft test request.
+    Only called in the cft workflow for cros-tool-runner, not phosphorus.
 
     Returns:
       DUTTestMetadata: Compact metadata representing the single test for this
