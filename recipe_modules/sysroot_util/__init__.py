@@ -7,6 +7,7 @@ from PB.recipe_modules.chromeos.sysroot_util.sysroot_util import SysrootUtilProp
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',

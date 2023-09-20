@@ -284,13 +284,18 @@ def GenTests(api):
       api.properties(FullTestProperties(image_types=[common.IMAGE_TYPE_TEST])))
 
   yield api.test(
-      'with-factory-image', test_build(),
+      'with-factory-image',
+      test_build(),
       api.properties(
           FullTestProperties(image_types=[
               common.IMAGE_TYPE_BASE,
               common.IMAGE_TYPE_TEST,
               common.IMAGE_TYPE_FACTORY,
-          ])))
+          ])),
+      api.post_process(
+          post_process.DoesNotRun,
+          'build images.Running `make_netboot.sh` for legacy factory branch'),
+  )
 
   yield api.test('base-is-recovery', test_build(),
                  api.properties(base_is_recovery=True))
@@ -384,3 +389,17 @@ def GenTests(api):
       api.properties(**{
           '$chromeos/remoteexec': RemoteexecProperties(enable_logs_upload=True)
       }))
+
+  yield api.test(
+      'factory-image-without-create-netboot-endpoint',
+      test_build(),
+      api.properties(
+          FullTestProperties(image_types=[
+              common.IMAGE_TYPE_FACTORY,
+          ])),
+      api.cros_build_api.remove_endpoints(['ImageService/CreateNetboot']),
+      api.post_process(
+          post_process.MustRun,
+          'build images.Running `make_netboot.sh` for legacy factory branch'),
+      api.post_process(post_process.DropExpectation),
+  )

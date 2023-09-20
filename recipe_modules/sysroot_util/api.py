@@ -314,6 +314,31 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.cros_sdk.set_chrome_root(None)
       self.m.failures.set_compile_failed_packages(presentation, pkgs)
 
+  def create_netboot_image(self) -> None:
+    """Create a netboot image for the factory build."""
+
+    if self.m.cros_build_api.has_endpoint(self.m.cros_build_api.ImageService,
+                                          'CreateNetboot'):
+      request = CreateNetbootRequest(chroot=self.m.cros_sdk.chroot,
+                                     build_target=self.sysroot.build_target,
+                                     factory_shim_path='')
+      _ = self.m.cros_build_api.ImageService.CreateNetboot(request)
+    else:
+      # Old factory branches do not have the CreateNetboot endpoint, so we
+      # have replicated the underlying functionality here. This will no longer
+      # be needed once all branches are past 15196.B.
+
+      board = self.sysroot.build_target.name
+
+      # These path parts were created by manually evaluating the code in
+      # CreateNetboot and hard-coding the current values.
+      image_dir = f'/mnt/host/source/src/build/images/{board}/factory_shim'
+
+      with self.m.context(cwd=self.m.cros_sdk.chroot_path):
+        self.m.step('Running `make_netboot.sh` for legacy factory branch', [
+            './make_netboot.sh', f'--board={board}', f'--image_dir={image_dir}'
+        ])
+
   def build_images(self, image_types: List['common_pb2.ImageType'],
                    builder_path: str, disable_rootfs_verification: bool,
                    disk_layout: str, base_is_recovery: bool = False,
@@ -382,11 +407,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       # packages are attempting downloads when we're adding the netbook kernel.
       # In the future this should be rolled into the Create() call above.
       if common_pb2.IMAGE_TYPE_FACTORY in image_types:
-        request = CreateNetbootRequest(chroot=self.m.cros_sdk.chroot,
-                                       build_target=self.sysroot.build_target,
-                                       factory_shim_path='')
-        _ = self.m.cros_build_api.ImageService.CreateNetboot(request)
-
+        self.create_netboot_image()
 
       # Hack warning. Add the rootfs size to the output properties to make
       # image size regressions easy to calculate until we have the proper
