@@ -11845,7 +11845,8 @@
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",@@@",
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"signing:latest:\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -11860,7 +11861,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\",\n        \"signingConfigs\": [\n          {\n            \"keyset\": \"kukui-foo-bar\",\n            \"imageType\": 1,\n            \"ensureNoPassword\": true,\n            \"firmwareUpdate\": true,\n            \"archivePath\": \"[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz\"\n          }\n        ]\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\",\n        \"signingConfigs\": [\n          {\n            \"keyset\": \"kukui-foo-bar\",\n            \"imageType\": 1,\n            \"ensureNoPassword\": true,\n            \"firmwareUpdate\": true,\n            \"archivePath\": \"[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz\"\n          }\n        ]\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"signing:latest:\"\n}",
       "[CLEANUP]/build_api_messages_tmp_27/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

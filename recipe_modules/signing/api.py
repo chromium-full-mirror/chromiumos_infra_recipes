@@ -63,6 +63,17 @@ class SigningApi(recipe_api.RecipeApi):
     # Props for the new local signing flow.
     self._local_signing = properties.local_signing or False
     self._signing_config = None
+    self._signing_image = None
+
+  def initialize(self) -> None:
+    """Initialize method for setup that needs the modules instantiated."""
+    if self._test_data.enabled:
+      self._signing_image = 'signing:latest:'
+    else:  # pragma: no cover
+      self._signing_image = self.m.file.read_text(
+          'read signing image version',
+          self.repo_resource('infra', 'config',
+                             'signing-docker-image.version')).strip()
 
   # Methods to support the new local signing flow.
 
@@ -135,7 +146,7 @@ class SigningApi(recipe_api.RecipeApi):
               path=common_pb2.Path(
                   path=self.m.path.abspath(output_dir),
                   location=common_pb2.Path.Location.OUTSIDE,
-              )))
+              )), docker_image=self._signing_image)
       self.m.cros_build_api.ImageService.SignImage(request)
 
       # TODO(b/296086340): rsync output_dir to the appropriate GS dir (for now,
