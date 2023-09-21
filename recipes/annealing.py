@@ -24,7 +24,6 @@ import zlib
 
 from google.protobuf import json_format
 
-from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.chromite.api.packages import RevBumpChromeRequest
@@ -456,33 +455,12 @@ def _get_gerrit_changes(api, manifest_diffs):
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
 
-    # The GerritChanges parsed from the footers above don't have patchset
-    # numbers set. Downstream consumers need these patchset numbers, so
-    # find them with gerrit.fetch_patch_sets.
-    with api.step.nest('find most recent revisions'):
-      # If a repo is checked out to multiple locations in the manifest (e.g.
-      # infra/proto), changes to the repo will appear multiple times in
-      # gerrit_changes. This will cause issues for fetch_patch_sets, so de-dupe
-      # the changes first.
-      unique_gerrit_changes = {(gc.host, gc.change): gc for gc in gerrit_changes
-                              }.values()
-      if unique_gerrit_changes:
-        patch_sets = api.gerrit.fetch_patch_sets(unique_gerrit_changes)
-        # Host and change number uniquely identify a change. Use the patchset
-        # numbers returned from fetch_patch_sets to set the patchset on the
-        # GerritChanges.
-        host_number_to_patchset = {
-            (ps.host, ps.change_id): ps.patch_set for ps in patch_sets
-        }
-        for gc in unique_gerrit_changes:
-          gc.patchset = host_number_to_patchset[(gc.host, gc.change)]
-
-      # Store the found gerrit changes as an output prop, so other builds can use
-      # them (e.g. the snapshot orchestrator needs the relevant gerrit changes for
-      # test planning).
-      pres.properties['found_gerrit_changes'] = [
-          json_format.MessageToJson(gc) for gc in unique_gerrit_changes
-      ]
+    # Store the found gerrit changes as an output prop, so other builds can use
+    # them (e.g. the snapshot orchestrator needs the relevant gerrit changes for
+    # test planning).
+    pres.properties['found_gerrit_changes'] = [
+        json_format.MessageToJson(gc) for gc in gerrit_changes
+    ]
 
     # TODO(evanhernandez): Storing/returning these commits is a stain.
     # Stop this once the Milo blame list accepts Gerrit changes as input.
@@ -605,21 +583,7 @@ def GenTests(api):
       api.git_footers.step_data(
           'record new gerrit changes.NAME.read git footers',
           api.gerrit.test_gerrit_change_url()),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'record new gerrit changes.find most recent revisions',
-          changes=[
-              GerritChange(host='chromium-review.googlesource.com',
-                           project='chromiumos/chromite', change=1)
-          ],
-          values_dict={1: {
-              'revision_info': {
-                  '_number': 5,
-              },
-          }},
-      ),
-      api.post_process(post_process.PropertyEquals, 'found_gerrit_changes', [
-          '{\n  "host": "chromium-review.googlesource.com",\n  "project": "chromiumos/chromite",\n  "change": "1",\n  "patchset": "5"\n}'
-      ]))
+  )
 
   yield api.test(
       'sync-manifests-has-manifest-change',
