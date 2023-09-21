@@ -41,6 +41,8 @@ def _get_values_dict(api):
               '',
           'submittable':
               False,
+          'unresolved_comment_count':
+              0,
           'change_id':
               'Ideadbeef',
           'current_revision':
@@ -98,6 +100,8 @@ def _get_values_dict(api):
               '2020-08-02 12:12:22.000000000',
           'submittable':
               False,
+          'unresolved_comment_count':
+              2,
           'change_id':
               'Ib767aac2',
           'current_revision':
@@ -159,6 +163,8 @@ def _get_values_dict(api):
               '',
           'submittable':
               False,
+          'unresolved_comment_count':
+              0,
           'change_id':
               'Ib767aac3',
           'current_revision':
@@ -234,6 +240,8 @@ def RunSteps(api):
     api.assertions.assertEqual(patch.updated, values['updated'])
     api.assertions.assertEqual(patch.submitted, values['submitted'])
     api.assertions.assertEqual(patch.submittable, values['submittable'])
+    api.assertions.assertEqual(patch.unresolved_comment_count,
+                               values['unresolved_comment_count'])
     api.assertions.assertEqual(patch.status, values['status'])
     api.assertions.assertEqual(patch.work_in_progress,
                                values['work_in_progress'])

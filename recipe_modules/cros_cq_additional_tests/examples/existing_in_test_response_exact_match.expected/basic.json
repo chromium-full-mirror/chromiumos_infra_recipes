@@ -1149,6 +1149,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
       "@@@STEP_LOG_LINE@json.output@      },@@@",

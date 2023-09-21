@@ -527,6 +527,7 @@ def GenTests(api):
               'non_submittable': 0,
               'opt_out': 0,
               'total_with_retryable_statuses': 1,
+              'unresolved_comments': 0,
               'unsupported_failure_mode': 0,
               'wip': 0,
           }),
@@ -658,6 +659,14 @@ def GenTests(api):
       }
   }
 
+  unresolved_comments_value_dict = {
+      123456: {
+          'change_number': 123456,
+          'submittable': True,
+          'unresolved_comment_count': 2,
+      }
+  }
+
   builds_basic = [
       api.test_util.test_orchestrator(
           build_id=10 + i,
@@ -671,7 +680,7 @@ def GenTests(api):
           output_properties={
               'has_child_failures': True
           },
-      ).message for i in range(1, 7)
+      ).message for i in range(1, 8)
   ]
 
   yield api.test(
@@ -717,8 +726,14 @@ def GenTests(api):
           'find candidates.filter out by basic eligibility', gerrit_changes,
           non_latest_value_dict, 5),
       api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility',
+          gerrit_changes,
+          unresolved_comments_value_dict,
+          6,
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
-          eligible_value_dict, 6),
+          eligible_value_dict, 7),
       api.post_process(
           post_process.StepTextEquals,
           'find candidates.filter out merge conflicts',
@@ -726,24 +741,27 @@ def GenTests(api):
       ),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out merge conflicts',
-                     'non_mergeable', ['16']),
+                     'non_mergeable', ['17']),
       api.post_process(
           post_process.StepTextEquals,
           'find candidates.filter out by basic eligibility',
-          'filtered out 4 run(s)',
+          'filtered out 5 run(s)',
       ),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out by basic eligibility',
-                     'non_new', ['15']),
+                     'non_new', ['16']),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out by basic eligibility',
-                     'non_submittable', ['14']),
+                     'non_submittable', ['15']),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out by basic eligibility', 'wip',
-                     ['13']),
+                     ['14']),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out by basic eligibility',
-                     'non_latest_patch_set', ['12']),
+                     'non_latest_patch_set', ['13']),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility',
+                     'unresolved_comments', ['12']),
       api.properties(expected_build_ids=[11]),
       api.post_process(post_process.DropExpectation),
   )

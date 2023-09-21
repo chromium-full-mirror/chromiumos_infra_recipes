@@ -46,6 +46,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'updated': values.get('updated', '2017-02-01 13:11:20.000000000'),
         'submitted': values.get('submitted', '2017-02-02 13:11:20.000000000'),
         'submittable': values.get('submittable', False),
+        'unresolved_comment_count': values.get('unresolved_comment_count', 0),
         'change_id': values.get('change_id', 'Ideadbeef'),
         'project': values.get('project', 'chromium/src'),
         'has_review_started': values.get('has_review_started', False),

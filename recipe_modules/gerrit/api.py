@@ -242,6 +242,16 @@ class PatchSet:
     """
     return self.current_revision == self.patch_set_revision if self.patch_set_revision else False
 
+  @property
+  def unresolved_comment_count(self) -> int:
+    """Return the number of unresolved comments on the PatchSet.
+
+    This is an optional field on ChangeInfo, returns 0 if it is not set.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
+    """
+    return self._change_info.get('unresolved_comment_count', 0)
+
   def to_gerrit_change_proto(self) -> GerritChange:
     """Return a GerritChange proto constructed from this patchset."""
     return GerritChange(host=self.host, change=self.change_id,

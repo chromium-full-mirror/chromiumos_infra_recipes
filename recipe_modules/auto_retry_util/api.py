@@ -455,8 +455,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
 
       with self.m.step.nest('filter out by basic eligibility') as pres:
-        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids = set(
-        ), set(), set(), set()
+        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids = set(
+        ), set(), set(), set(), set()
 
         failed_to_fetch_ids = set()
         for c in cq_orchs:
@@ -473,10 +473,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
           non_latest_patch_set_ids.update(
               {c.id for p in patch_sets if not p.is_latest_patch_set()})
+          unresolved_comment_ids.update(
+              {c.id for p in patch_sets if p.unresolved_comment_count})
 
         ineligible_ids = (
             non_new_ids | non_submittable_ids | wip_ids
-            | non_latest_patch_set_ids | failed_to_fetch_ids)
+            | non_latest_patch_set_ids | failed_to_fetch_ids
+            | unresolved_comment_ids)
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if failed_to_fetch_ids:
@@ -503,6 +506,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(non_latest_patch_set_ids)
           ]
+        if unresolved_comment_ids:
+          pres.logs['unresolved_comments'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(unresolved_comment_ids)
+          ]
 
         filter_properties.update({
             'failed_gerrit_fetch': len(failed_to_fetch_ids),
@@ -510,6 +518,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             'non_submittable': len(non_submittable_ids),
             'wip': len(wip_ids),
             'non_latest_patch_set': len(non_latest_patch_set_ids),
+            'unresolved_comments': len(unresolved_comment_ids),
         })
 
       with self.m.step.nest('filter out merge conflicts') as pres:
