@@ -100,22 +100,24 @@ class DebugSymbols(recipe_api.RecipeApi):
       pres.logs['upload logs'] = step_data.stdout
 
     with self.m.failures.ignore_exceptions():
-      with self.m.step.nest('uploading vmlinux') as pres:
-        # CLI invocation of upload_debug_symbols golang binary.
-        cmd = list(
-            filter(None, [
-                upload_debug_symbols_path,
-                'upload',
-                '-gs-path',
-                gs_vmlinux_image_location,
-                '-data-type=vmlinux',
-                worker_count_param,
-                retry_quota_param,
-                staging_param,
-                dryrun_param,
-            ]))
-        step_data = self.m.step(
-            'call upload go binary', cmd,
-            stdout=self.m.raw_io.output_text(name='stdout',
-                                             add_output_log=True))
-        pres.logs['upload logs'] = step_data.stdout
+      if not staging:
+        with self.m.step.nest('uploading vmlinux') as pres:
+          # CLI invocation of upload_debug_symbols golang binary.
+          cmd = list(
+              filter(None, [
+                  upload_debug_symbols_path,
+                  'upload',
+                  '-gs-path',
+                  gs_vmlinux_image_location,
+                  '-data-type=vmlinux',
+                  worker_count_param,
+                  retry_quota_param,
+                  staging_param,
+                  dryrun_param,
+              ]))
+          if not staging:
+            step_data = self.m.step(
+                'call upload go binary', cmd,
+                stdout=self.m.raw_io.output_text(name='stdout',
+                                                 add_output_log=True))
+            pres.logs['upload logs'] = step_data.stdout

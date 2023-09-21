@@ -30,6 +30,19 @@ def GenTests(api):
               }
           }))
   yield api.test(
+      'prod',
+      api.properties(
+          **{
+              '$chromeos/debug_symbols': {
+                  'cipd_ref': 'prod',
+                  'gs_path': 'gs-test',
+                  'worker_count': 90,
+                  'retry_quota': 90,
+                  'staging': False,
+                  'dryrun': False,
+              }
+          }))
+  yield api.test(
       'needs-gs-path',
       status='FAILURE',
   )

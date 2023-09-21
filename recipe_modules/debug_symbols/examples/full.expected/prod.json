@@ -21,7 +21,7 @@
       "-root",
       "[START_DIR]/cipd",
       "-ensure-file",
-      "chromiumos/infra/upload_debug_symbols/${platform} staging",
+      "chromiumos/infra/upload_debug_symbols/${platform} prod",
       "-max-threads",
       "0",
       "-json-output",
@@ -35,7 +35,7 @@
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-staging---------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/upload_debug_symbols/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -60,10 +60,34 @@
       "gs-test/debug_breakpad.tar.xz",
       "-worker-count 90",
       "-retry-quota 90",
-      "-staging",
       "-dry-run=false"
     ],
     "name": "uploading breakpad.call upload go binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uploading vmlinux",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@upload logs@@@@",
+      "@@@STEP_LOG_END@upload logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/upload_debug_symbols",
+      "upload",
+      "-gs-path",
+      "gs-test/vmlinuz.tar.xz",
+      "-data-type=vmlinux",
+      "-worker-count 90",
+      "-retry-quota 90",
+      "-dry-run=false"
+    ],
+    "name": "uploading vmlinux.call upload go binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
