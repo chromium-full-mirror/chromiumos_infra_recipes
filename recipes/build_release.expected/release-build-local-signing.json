@@ -11781,7 +11781,9 @@
     "cmd": [],
     "name": "sign artifacts.download release artifacts",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@configured@Downloading artifacts based on signing config: chromiumos_base_image.tar.xz@@@",
+      "@@@STEP_LOG_END@configured@@@"
     ]
   },
   {
@@ -11814,6 +11816,40 @@
       }
     },
     "name": "sign artifacts.download release artifacts.gsutil download chromiumos_base_image.tar.xz from chromeos-releases-test/kukui-release/R99-1234.56.0-101",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/recovery_image.tar.xz",
+      "[CLEANUP]/unsigned-artifacts_tmp_1/recovery_image.tar.xz"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from chromeos-releases-test/kukui-release/R99-1234.56.0-101",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

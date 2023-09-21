@@ -365,6 +365,48 @@ class SigningApi(recipe_api.RecipeApi):
 
     return False
 
+  def always_download(self) -> List[str]:
+    """Build artifacts which, if present, are always downloaded
+
+    Regardless of requested signing types.
+    """
+    files_to_download = [
+        'recovery_image.tar.xz',
+    ]
+    return files_to_download
+
+  def artifact_name_by_image_type(self,
+                                  image_type: common_pb2.ImageType) -> str:
+    """Mapping of image type to artifact name."""
+    # TODO(b/299160925): Dedupe artifact names with cros_artifacts.
+    artifact_by_image_type = {
+        common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: 'firmware_from_source.tar.bz2',
+        common_pb2.IMAGE_TYPE_ACCESSORY_USBPD: 'firmware_from_source.tar.bz2',
+        common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
+        common_pb2.IMAGE_TYPE_FACTORY: 'factory_image.zip',
+        common_pb2.IMAGE_TYPE_FIRMWARE: 'firmware_from_source.tar.bz2',
+        common_pb2.IMAGE_TYPE_GSC_FIRMWARE: 'firmware_from_source.tar.bz2',
+        common_pb2.IMAGE_TYPE_HPS_FIRMWARE: 'firmware_from_source.tar.bz2',
+        common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',
+    }
+    return artifact_by_image_type.get(image_type, None)
+
+  def gs_download_if_present(self, gs_dir: str, local_dir: str,
+                             artifact_names: List[str]) -> List[str]:
+    """Download from Google Storage if present.
+
+    Returns a list of skipped artifacts.
+    """
+    skipped_artifacts = []
+    for artifact_name in sorted(artifact_names):
+      try:
+        self.m.gsutil.download(
+            gs_dir, artifact_name, self.m.path.join(local_dir, artifact_name),
+            name='download {} from {}'.format(artifact_name, gs_dir))
+      except StepFailure:
+        skipped_artifacts.append(artifact_name)
+    return skipped_artifacts
+
   def download_release_artifacts(
       self,
       relevant_signing_configs: List[SigningConfig]) -> List[SigningConfig]:
@@ -373,28 +415,37 @@ class SigningApi(recipe_api.RecipeApi):
     As opposed to in situ builds with local artifacts already present.
 
     Args:
+      build_target: Name of build target.
       relevant_signing_configs: Build target configs with supported sign types.
 
     Returns:
       relevant_signing_configs with local artifact paths populated.
     """
-    # TODO(b/299160925): Include all necessary artifacts.
-    # TODO(b/299160925): Dedupe artifact names with cros_artifacts.
-    artifacts_by_image_type = {
-        common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
-        common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz'
-    }
+    local_dir = self.m.path.mkdtemp('unsigned-artifacts')
+    gs_dir = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
 
-    gs_path = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
-    with self.m.step.nest('download release artifacts'):
+    # Otherwise, only the image types specified in |sign_types| are marked for
+    # signing.
+    with self.m.step.nest('download release artifacts') as pres:
+      to_download = set(self.always_download())
+      signing_configured_artifacts = []
       for signing_config in relevant_signing_configs:
-        download_file_name = artifacts_by_image_type.get(
-            signing_config.image_type, None)
-        if download_file_name:
+        artifact_name = self.artifact_name_by_image_type(
+            signing_config.image_type)
+        if artifact_name:
           signing_config.archive_path = self.m.path.join(
-              self.m.path.mkdtemp('unsigned-artifacts'), download_file_name)
+              local_dir, artifact_name)
+          to_download.add(artifact_name)
+          signing_configured_artifacts.append(artifact_name)
+      skipped_artifacts = self.gs_download_if_present(gs_dir, local_dir,
+                                                      to_download)
+      if skipped_artifacts:
+        pres.logs['skipped'] = 'Skipped artifacts not found in GS: {}'.format(
+            ','.join(skipped_artifacts))
 
-          self.m.gsutil.download(
-              gs_path, download_file_name, signing_config.archive_path,
-              name='download {} from {}'.format(download_file_name, gs_path))
+      if signing_configured_artifacts:
+        pres.logs[
+            'configured'] = 'Downloading artifacts based on signing config: {}'.format(
+                ','.join(signing_configured_artifacts))
+
       return relevant_signing_configs

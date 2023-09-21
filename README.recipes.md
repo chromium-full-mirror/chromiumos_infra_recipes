@@ -664,6 +664,7 @@
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full)
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
+  * [signing:tests/download_release_artifacts](#recipes-signing_tests_download_release_artifacts) &mdash; Tests for download_release_artifacts.
   * [signing:tests/full](#recipes-signing_tests_full) &mdash; Success workflow tests for the signing recipe module.
   * [signing:tests/get_failure](#recipes-signing_tests_get_failure) &mdash; Verify that method get_failure has error handling.
   * [signing:tests/invalid_file_format](#recipes-signing_tests_invalid_file_format) &mdash; Verify that instructions files are in the appropriate format.
@@ -9795,13 +9796,24 @@ Validate the caller's service version if they sent one.
 
 A module to encapsulate signing operations.
 
-&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#368)(self, relevant_signing_configs: List[SigningConfig]):**
+&mdash; **def [always\_download](/recipe_modules/signing/api.py#368)(self):**
+
+Build artifacts which, if present, are always downloaded
+
+Regardless of requested signing types.
+
+&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#378)(self, image_type: common_pb2.ImageType):**
+
+Mapping of image type to artifact name.
+
+&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#410)(self, relevant_signing_configs: List[SigningConfig]):**
 
 Download artifacts so we can support retries with conductor.
 
 As opposed to in situ builds with local artifacts already present.
 
 Args:
+  build_target: Name of build target.
   relevant_signing_configs: Build target configs with supported sign types.
 
 Returns:
@@ -9843,6 +9855,12 @@ Args:
 
 Returns:
   The status of the signing, or None if not available.
+
+&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#394)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
+
+Download from Google Storage if present.
+
+Returns a list of skipped artifacts.
 
 &mdash; **def [initialize](/recipe_modules/signing/api.py#68)(self):**
 
@@ -14940,6 +14958,14 @@ Recipe for signing ChromeOS images.
 &mdash; **def [RunSteps](/recipes/sign_image.py#154)(api: RecipeApi, properties: SignImageProperties):**
 
 Run steps.
+### *recipes* / [signing:tests/download\_release\_artifacts](/recipe_modules/signing/tests/download_release_artifacts.py)
+
+[DEPS](/recipe_modules/signing/tests/download_release_artifacts.py#17): [build\_menu](#recipe_modules-build_menu), [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for download_release_artifacts.
+
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/download_release_artifacts.py#27)(api: RecipeApi):**
 ### *recipes* / [signing:tests/full](/recipe_modules/signing/tests/full.py)
 
 [DEPS](/recipe_modules/signing/tests/full.py#20): [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
