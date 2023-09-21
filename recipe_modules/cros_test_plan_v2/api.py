@@ -26,22 +26,34 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # SourceTestPlan pointing to the legacy_default Starlark files, will be used
 # when MigrationConfigs set fallback_to_default and no relevant plans are found.
+LEGACY_DEFAULT_AUTOTEST_HW_PLAN = source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+    host='chrome-internal.googlesource.com',
+    project='chromeos/config-internal',
+    path='test/plans/v2/ctpv1_compatible/legacy_default_autotest_hw.star',
+)
+LEGACY_DEFAULT_TAST_HW_PLAN = source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+    host='chrome-internal.googlesource.com',
+    project='chromeos/config-internal',
+    path='test/plans/v2/ctpv1_compatible/legacy_default_tast_hw.star',
+)
+LEGACY_DEFAULT_VM_TEST_PLAN = source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
+    host='chrome-internal.googlesource.com',
+    project='chromeos/config-internal',
+    path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
+)
 FALLBACK_DEFAULT_SOURCE_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
+    test_plan_starlark_files=[
+        LEGACY_DEFAULT_TAST_HW_PLAN,
+        LEGACY_DEFAULT_AUTOTEST_HW_PLAN,
+        LEGACY_DEFAULT_VM_TEST_PLAN,
+    ])
+
+VM_LAB_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
     test_plan_starlark_files=[
         source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
             host='chrome-internal.googlesource.com',
             project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/legacy_default_tast_hw.star',
-        ),
-        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/legacy_default_autotest_hw.star',
-        ),
-        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
+            path='test/plans/v2/ctpv1_compatible/vmlab_hw.star',
         )
     ])
 
@@ -288,7 +300,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                 .format(host, project))
             if FALLBACK_DEFAULT_SOURCE_TEST_PLAN not in relevant_plans:
               relevant_plans.append(FALLBACK_DEFAULT_SOURCE_TEST_PLAN)
-
+      # TODO(b/286278022): Remove before rolling out to prod.
+      if 'chromeos.build_cq.vmlab_cq' in self.m.cros_infra_config.experiments:
+        add_vm_lab_test_plan = False
+        for p in relevant_plans:
+          for f in p.test_plan_starlark_files:
+            if f == LEGACY_DEFAULT_VM_TEST_PLAN:
+              add_vm_lab_test_plan = True
+              break
+        if add_vm_lab_test_plan:
+          relevant_plans.append(VM_LAB_TEST_PLAN)
       pres.logs['relevant_plans'] = '\n\n,'.join(
           text_format.MessageToString(p) for p in relevant_plans)
       return relevant_plans
