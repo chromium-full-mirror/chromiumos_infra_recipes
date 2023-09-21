@@ -11569,15 +11569,15 @@ Recipe that builds a ChromiumOS SDK and cross-compilers.
 &mdash; **def [RunSteps](/recipes/build_sdk.py#74)(api: recipe_api.RecipeApi, properties: build_sdk_pb2.BuildSDKProperties):**
 ### *recipes* / [build\_sdk\_subtools](/recipes/build_sdk_subtools.py)
 
-[DEPS](/recipes/build_sdk_subtools.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_sdk_subtools.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe that runs the Subtools Builder.
 
 The Subtools builder starts with an SDK, builds some additional _host_ packages,
-then exports build artifacts to external locations, such as CIPD.
+then uploads build artifacts to external locations, such as CIPD.
 
-&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#31)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#32)(api: recipe_api.RecipeApi):**
 ### *recipes* / [build\_signing\_docker\_image](/recipes/build_signing_docker_image.py)
 
 [DEPS](/recipes/build_signing_docker_image.py#18): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

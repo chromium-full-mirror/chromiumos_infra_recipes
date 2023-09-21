@@ -5,13 +5,14 @@
 """Recipe that runs the Subtools Builder.
 
 The Subtools builder starts with an SDK, builds some additional _host_ packages,
-then exports build artifacts to external locations, such as CIPD.
+then uploads build artifacts to external locations, such as CIPD.
 """
 
 import contextlib
 from typing import Generator
 
-from PB.chromite.api.sdk_subtools import BuildSdkSubtoolsRequest
+from PB.chromite.api.sdk_subtools import BuildSdkSubtoolsRequest, UploadSdkSubtoolsRequest
+from PB.chromiumos import common as chromiumos_common
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 from recipe_engine import post_process
@@ -38,16 +39,30 @@ class BuildSdkSubtoolsRun:
   def __init__(self, api: recipe_api.RecipeApi) -> None:
     """Initialize the builder run."""
     self.m = api
+    self.sdk_subtools_service = api.cros_build_api.SdkSubtoolsService
 
   def run(self) -> None:
     """Run the main logic for this builder."""
-    with self._setup(), self.m.step.nest('Build SDK Subtools') as step:
-      request = BuildSdkSubtoolsRequest(chroot=self.m.cros_sdk.chroot)
-      response = self.m.cros_build_api.SdkSubtoolsService.BuildSdkSubtools(
-          request, response_lambda=self.m.cros_build_api.failed_pkg_data_names,
-          pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
-      pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
-      self.m.failures.set_test_failed_packages(step, pkgs)
+    with self._setup():
+      with self.m.step.nest('Build SDK Subtools') as step:
+        request = BuildSdkSubtoolsRequest(chroot=self.m.cros_sdk.chroot)
+        build_response = self.sdk_subtools_service.BuildSdkSubtools(
+            request,
+            response_lambda=self.m.cros_build_api.failed_pkg_data_names,
+            pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
+        pkgs = self.m.cros_build_api.failed_pkg_logs(request, build_response)
+        self.m.failures.set_test_failed_packages(step, pkgs)
+
+      # Build API router only remaps paths when a ResultPath is provided (which
+      # will also copy files, which we don't want). So remap them here to be
+      # outside-chroot paths for the uploader.
+      for path in build_response.bundle_paths:
+        path.path = str(self.m.cros_sdk.chroot_path.join(path.path.lstrip('/')))
+        path.location = chromiumos_common.Path.OUTSIDE
+
+      with self.m.step.nest('Upload SDK Subtools') as step:
+        self.sdk_subtools_service.UploadSdkSubtools(
+            UploadSdkSubtoolsRequest(bundle_paths=build_response.bundle_paths))
 
   @contextlib.contextmanager
   def _setup(self) -> Generator:
@@ -68,6 +83,11 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
   BUILD_SDK_SUBTOOLS_CALL_STEP = (
       'Build SDK Subtools.call'
       ' chromite.api.SdkSubtoolsService/BuildSdkSubtools.call build API script')
+  UPLOAD_SDK_SUBTOOLS_PARENT_STEP = (
+      'Upload SDK Subtools.call'
+      ' chromite.api.SdkSubtoolsService/UploadSdkSubtools')
+  UPLOAD_SDK_SUBTOOLS_CALL_STEP = (f'{UPLOAD_SDK_SUBTOOLS_PARENT_STEP}'
+                                   '.call build API script')
   INIT_SDK_CALL_STEP = ('init sdk.call chromite.api.SdkService/Create.call'
                         ' build API script')
 
@@ -75,6 +95,27 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
       'basic',
       api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.MustRun, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+
+      # Ensure the build step response paths provided by
+      # sdk_subtools_service_responses in test_api have been correctly re-mapped
+      # to "OUTSIDE" chroot paths to be consumed by the uploader.
+      api.post_check(
+          post_process.LogEquals, UPLOAD_SDK_SUBTOOLS_PARENT_STEP, 'request',
+          '''\
+{
+  "bundlePaths": [
+    {
+      "path": "[CACHE]/cros_chroot/chroot/var/tmp/cros-subtools/rustfmt",
+      "location": 2
+    },
+    {
+      "path": "[CACHE]/cros_chroot/chroot/var/tmp/cros-subtools/shellcheck",
+      "location": 2
+    }
+  ]
+}'''),
       status='SUCCESS',
   )
 

@@ -622,7 +622,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   def sdk_subtools_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for SdkSubtoolsService."""
     responses = {}
-    responses['BuildSdkSubtools'] = '{}'
+    responses['BuildSdkSubtools'] = jsonify(bundle_paths=[
+        {
+            'path': '/var/tmp/cros-subtools/rustfmt',
+            'location': 1,  # chromiumos.Path.Location.INSIDE
+        },
+        {
+            'path': '/var/tmp/cros-subtools/shellcheck',
+            'location': 1,  # chromiumos.Path.Location.INSIDE
+        },
+    ])
+    responses['UploadSdkSubtools'] = '{}'
     return responses
 
   @property

@@ -183,6 +183,7 @@ def RunSteps(api):
       },
       'SdkSubtoolsService': {
           'BuildSdkSubtools': sdk_subtools.BuildSdkSubtoolsResponse,
+          'UploadSdkSubtools': sdk_subtools.UploadSdkSubtoolsResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
