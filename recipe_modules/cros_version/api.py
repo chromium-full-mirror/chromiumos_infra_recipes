@@ -209,20 +209,28 @@ class CrosVersionApi(RecipeApi):
           # Have to manually set the upstream here or `git cl` will fail.
           # See crbug/1288910 for context.
           self.m.git.set_upstream('cros', push_branch)
-          change = self.m.gerrit.create_change(
-              'chromiumos/overlays/chromiumos-overlay',
-              ref=self.m.git.get_branch_ref(push_branch),
-              project_path=overlay_path, use_local_diff=use_local_diff)
-          if dry_run:
-            pres.step_text = 'dry-run only'
-            self.m.gerrit.abandon_change(change, message='dry-run only')
-          else:
-            labels = {
-                Label.BOT_COMMIT: 1,
-                Label.VERIFIED: 1,
-            }
-            self.m.gerrit.set_change_labels_remote(change, labels)
-            self.m.gerrit.submit_change(change, project_path=overlay_path)
+          change = None
+          try:
+            change = self.m.gerrit.create_change(
+                'chromiumos/overlays/chromiumos-overlay',
+                ref=self.m.git.get_branch_ref(push_branch),
+                project_path=overlay_path, use_local_diff=use_local_diff)
+          except StepFailure as e:
+            if dry_run:
+              pres.step_text = 'Could not `git push`. Ignoring as this is a dry-run.'
+            else:
+              raise e
+          if change:
+            if dry_run:
+              pres.step_text = 'dry-run only'
+              self.m.gerrit.abandon_change(change, message='dry-run only')
+            else:
+              labels = {
+                  Label.BOT_COMMIT: 1,
+                  Label.VERIFIED: 1,
+              }
+              self.m.gerrit.set_change_labels_remote(change, labels)
+              self.m.gerrit.submit_change(change, project_path=overlay_path)
 
           if not dry_run:
             self._check_version(push_branch, new_version)

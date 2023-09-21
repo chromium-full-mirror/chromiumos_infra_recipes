@@ -420,6 +420,7 @@
   * [cros_version:examples/full](#recipes-cros_version_examples_full)
   * [cros_version:examples/version](#recipes-cros_version_examples_version) &mdash; Tests for api.
   * [cros_version:tests/bad_version](#recipes-cros_version_tests_bad_version)
+  * [cros_version:tests/git_cl_upload](#recipes-cros_version_tests_git_cl_upload)
   * [ctpv2:examples/full](#recipes-ctpv2_examples_full)
   * [cts_results_archive:examples/full](#recipes-cts_results_archive_examples_full)
   * [debug_symbols:examples/full](#recipes-debug_symbols_examples_full)
@@ -13201,6 +13202,12 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_version/tests/bad_version.py#19)(api):**
+### *recipes* / [cros\_version:tests/git\_cl\_upload](/recipe_modules/cros_version/tests/git_cl_upload.py)
+
+[DEPS](/recipe_modules/cros_version/tests/git_cl_upload.py#9): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_version/tests/git_cl_upload.py#23)(api, properties):**
 ### *recipes* / [ctpv2:examples/full](/recipe_modules/ctpv2/examples/full.py)
 
 [DEPS](/recipe_modules/ctpv2/examples/full.py#8): [ctpv2](#recipe_modules-ctpv2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
