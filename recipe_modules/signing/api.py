@@ -384,6 +384,8 @@ class SigningApi(recipe_api.RecipeApi):
         common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
         common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz'
     }
+
+    gs_path = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
     with self.m.step.nest('download release artifacts'):
       for signing_config in relevant_signing_configs:
         download_file_name = artifacts_by_image_type.get(
@@ -393,7 +395,6 @@ class SigningApi(recipe_api.RecipeApi):
               self.m.path.mkdtemp('unsigned-artifacts'), download_file_name)
 
           self.m.gsutil.download(
-              self.m.build_menu.artifacts_gs_path(), download_file_name,
-              signing_config.archive_path, name='download {} from {}'.format(
-                  download_file_name, self.m.build_menu.artifacts_gs_path()))
+              gs_path, download_file_name, signing_config.archive_path,
+              name='download {} from {}'.format(download_file_name, gs_path))
       return relevant_signing_configs

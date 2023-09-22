@@ -11793,7 +11793,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_base_image.tar.xz",
+      "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_base_image.tar.xz",
       "[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11813,7 +11813,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sign artifacts.download release artifacts.gsutil download chromiumos_base_image.tar.xz from gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101",
+    "name": "sign artifacts.download release artifacts.gsutil download chromiumos_base_image.tar.xz from chromeos-releases-test/kukui-release/R99-1234.56.0-101",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
