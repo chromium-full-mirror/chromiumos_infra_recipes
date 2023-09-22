@@ -563,7 +563,7 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
     autotest_invocations = []
     for test_suite in test_suites:
       test_buckets = _bucket_by_dependencies(
-          list(test_suite.test_cases.test_cases))
+          list(test_suite.test_cases.test_cases), suite_name)
       shards = _shard_test_buckets(api, test_buckets, total_shards,
                                    max_in_shard)
       step.presentation.tags['shard_count'] = str(len(shards))
@@ -628,15 +628,27 @@ def _build_autotest_invocations(test_suites, suite_name):
   return autotest_invocations
 
 
-def _bucket_by_dependencies(test_cases):
+def _bucket_by_dependencies(test_cases, suite_name):
   """Creates a list of buckets grouping test_cases by their dependencies.
 
   Args:
     * test_cases: List[test_case].
+    * suite_name: string.
 
   Returns: List[List[test_case]].
   """
   bucket = {}
+
+  skipDeps = False
+  # Currently due to the size of these suites, sharding them into buckets on
+  # deps could result in dozens to hundreds of devices, including those
+  # with exceptionally high pending time. For now, they will be ignored,
+  # like they have been for the past decade.
+  if suite_name in {
+      'bvt-tast-cq', 'bvt-tast-cq-hw', 'bvt-tast-cq-hw-agnostic',
+      'bvt-tast-informational', 'cq-medium', 'bvt-tast-criticalstaging'
+  }:  # pragma: no cover
+    skipDeps = True
   for test_case in test_cases:
     # TODO (b/277945083): Hard code to group tast.security tests together.
     # Remove once long term solution is implemented.
@@ -647,7 +659,9 @@ def _bucket_by_dependencies(test_cases):
       bucket[security_bucket].append(test_case)
       continue
 
-    deps = frozenset(list(dep.value for dep in test_case.dependencies))
+    deps = frozenset()
+    if not skipDeps:
+      deps = frozenset(list(dep.value for dep in test_case.dependencies))
     if deps in bucket:
       bucket[deps].append(test_case)
     else:
