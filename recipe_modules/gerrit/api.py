@@ -176,6 +176,17 @@ class PatchSet:
     return self._change_info['hashtags']
 
   @property
+  def labels(self) -> Optional[List[JSONObject]]:
+    """Return the labels applied to this PatchSet.
+
+    Will return None if detailed labels weren't requested. See
+    `include_detailed_labels` on `gerrit.fetch_patch_sets`.
+
+    See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#label-info
+    """
+    return self._change_info.get('labels')
+
+  @property
   def messages(self) -> Optional[List[JSONObject]]:
     """Return the messages associated with this PatchSet."""
     return self._change_info['messages']
@@ -386,7 +397,7 @@ class GerritApi(RecipeApi):
   def fetch_patch_sets(
       self, gerrit_changes: List[GerritChange], include_files: bool = False,
       include_commit_info: bool = False, include_messages: bool = False,
-      include_submittable: bool = False,
+      include_submittable: bool = False, include_detailed_labels: bool = False,
       test_output_data: Optional[Callable] = None) -> List[PatchSet]:
     """Fetch and return PatchSets from Gerrit.
 
@@ -396,7 +407,9 @@ class GerritApi(RecipeApi):
       include_commit_info: If True, include information about the commit.
       include_messages: If True, include messages attached to the commit.
       include_submittable: If True, include information about possible
-       submission.
+        submission.
+      include_detailed_labels: If True, include information about the labels
+        applied to the change.
       test_output_data: Test output for gerrit-fetch-changes.
 
     Returns:
@@ -419,6 +432,7 @@ class GerritApi(RecipeApi):
         'include_commit_info': include_commit_info,
         'include_messages': include_messages,
         'include_submittable': include_submittable,
+        'include_detailed_labels': include_detailed_labels,
     }
 
     try:

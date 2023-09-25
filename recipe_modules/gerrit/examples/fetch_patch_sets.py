@@ -136,6 +136,7 @@ def _get_values_dict(api):
               },
           },
           'hashtags': ['foo', 'bar'],
+          'labels': {},
           'messages': [{
               'id': '1',
               'message': 'hello!'
@@ -199,6 +200,29 @@ def _get_values_dict(api):
               },
           },
           'hashtags': ['foo', 'bar'],
+          'labels': {
+              'Code-Review': {
+                  'optional':
+                      True,
+                  'all': [
+                      {
+                          '_account_id': 1234567,
+                          'value': 0
+                      },
+                      {
+                          '_account_id': 2345678,
+                          'value': 2
+                      },
+                  ],
+              },
+              'values': {
+                  ' 0': 'No score',
+                  '+1': 'Looks good to me, but someone else must approve',
+                  '+2': 'Looks good to me, approved',
+                  '-1': 'I would prefer that you did not submit this',
+                  '-2': 'Do not submit'
+              }
+          },
           'messages': [{
               'id': '1',
               'message': 'hello!'
@@ -247,6 +271,7 @@ def RunSteps(api):
                                values['work_in_progress'])
     api.assertions.assertEqual(patch.hashtags, values['hashtags'])
     api.assertions.assertEqual(patch.messages, values['messages'])
+    api.assertions.assertEqual(patch.labels, values.get('labels'))
     api.assertions.assertEqual(patch.current_revision,
                                values['current_revision'])
     for fname in values['files']:

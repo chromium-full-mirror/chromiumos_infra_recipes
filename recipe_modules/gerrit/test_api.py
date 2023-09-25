@@ -54,6 +54,7 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         'subject': values.get('subject', 'Change title'),
         'topic': values.get('topic', 'Change topic'),
         'hashtags': values.get('hashtags', []),
+        'labels': values.get('labels'),
         'messages': values.get('messages', []),
         'current_revision': values.get('current_revision', 'f000' * 10),
         'work_in_progress': values.get('work_in_progress', False)
