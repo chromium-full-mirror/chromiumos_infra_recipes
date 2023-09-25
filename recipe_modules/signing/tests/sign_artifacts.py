@@ -7,7 +7,8 @@
 
 from google.protobuf.json_format import MessageToDict
 
-from PB.chromiumos.common import (IMAGE_TYPE_BASE, IMAGE_TYPE_FACTORY)
+from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
+                                  IMAGE_TYPE_FACTORY)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -47,12 +48,25 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(config, expected_config)
 
   sign_types = [IMAGE_TYPE_BASE]
-  processed_config = api.signing.setup_signing(sign_types)
+  channels = [CHANNEL_CANARY, CHANNEL_DEV]
+
+  processed_config = api.signing.setup_signing(sign_types, channels)
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
+              channel=CHANNEL_CANARY,
+              version='1234.56.0',
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz',
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_BASE,
+              channel=CHANNEL_DEV,
+              version='1234.56.0',
               keyset='kukui-foo-bar',
               ensure_no_password=True,
               firmware_update=True,
@@ -63,7 +77,7 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(processed_config, expected_processed_config)
 
   # Call signing.
-  api.signing.sign_artifacts(sign_types)
+  api.signing.sign_artifacts(sign_types, channels)
 
 
 def GenTests(api: RecipeTestApi):

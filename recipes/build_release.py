@@ -250,7 +250,8 @@ def DoRunSteps(api, config, properties):
   # coupled with `COLLECT_SIGNING` below it as far as checkpoints is concerned.
   if api.signing.local_signing:
     release_sign_types = api.cros_release.sign_types
-    api.signing.sign_artifacts(sign_types=release_sign_types)
+    channels = api.cros_release.channels
+    api.signing.sign_artifacts(sign_types=release_sign_types, channels=channels)
     # TODO Publish any signed build metadata we have on the pubsub.
     # api.build_reporting.publish_signed_build_metadata()
 

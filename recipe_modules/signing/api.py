@@ -2,6 +2,7 @@
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+import copy
 import json
 import re
 from json import JSONDecodeError
@@ -105,10 +106,18 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           f'could not find signing config for build target "{build_target}"')
 
+  def _set_fields_for_config(self, config: SigningConfig,
+                             channel: common_pb2.Channel,
+                             version: str) -> SigningConfig:
+    config = copy.deepcopy(config)
+    config.channel = channel
+    config.version = version
+    return config
+
   # Public method so we can test it.
   def setup_signing(
-      self,
-      sign_types: List['common_pb2.ImageType']) -> BuildTargetSigningConfig:
+      self, sign_types: List['common_pb2.ImageType'],
+      channels: List['common_pb2.Channel']) -> BuildTargetSigningConfig:
     """Set up the working dir for signing.
 
     Copies all necessary artifacts (based on signing config) from GS into a new
@@ -126,20 +135,31 @@ class SigningApi(recipe_api.RecipeApi):
 
     relevant_configs = self.download_release_artifacts(relevant_configs)
 
+    # Create a copy of config for each configured channel.
+    channel_configs = []
+    version = self.m.cros_version.version.platform_version
+    for channel in channels:
+      channel_configs.extend([
+          self._set_fields_for_config(config, channel, version)
+          for config in relevant_configs
+      ])
+
     build_target_config = BuildTargetSigningConfig(
         build_target=build_target_config.build_target,
-        signing_configs=relevant_configs,
+        signing_configs=channel_configs,
     )
     return build_target_config
 
-  def sign_artifacts(self, sign_types: List['common_pb2.ImageType']) -> None:
+  def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
+                     channels: List['common_pb2.Channel']) -> None:
     """Stub implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
     with self.m.step.nest('sign artifacts'):
-      config = BuildTargetSigningConfigs(
-          build_target_signing_configs=[self.setup_signing(sign_types)])
+      config = BuildTargetSigningConfigs(build_target_signing_configs=[
+          self.setup_signing(sign_types, channels)
+      ])
       output_dir = self.m.path.mkdtemp('signed-artifacts')
       request = SignImageRequest(
           signing_configs=config, result_path=common_pb2.ResultPath(
@@ -429,6 +449,7 @@ class SigningApi(recipe_api.RecipeApi):
     with self.m.step.nest('download release artifacts') as pres:
       to_download = set(self.always_download())
       signing_configured_artifacts = []
+
       for signing_config in relevant_signing_configs:
         artifact_name = self.artifact_name_by_image_type(
             signing_config.image_type)
@@ -437,6 +458,7 @@ class SigningApi(recipe_api.RecipeApi):
               local_dir, artifact_name)
           to_download.add(artifact_name)
           signing_configured_artifacts.append(artifact_name)
+
       skipped_artifacts = self.gs_download_if_present(gs_dir, local_dir,
                                                       to_download)
       if skipped_artifacts:

@@ -132,6 +132,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     """Return the sign types as passed into input properties."""
     return self._sign_types
 
+  @property
+  def channels(self) -> List['common_pb2.Channel']:
+    """Return the channels as passed into input properties."""
+    return self._channels
+
   def check_buildspec(self, fatal: bool = False):
     """Checks that the build was given a buildspec and that there doesn't
       already exist a build for this buildspec (and this build is not a retry).

@@ -17,6 +17,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_infra_config',
+    'cros_version',
     'easy',
 ]
 

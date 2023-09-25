@@ -5,6 +5,7 @@
 
 from recipe_engine import post_process
 
+from PB.chromiumos.common import CHANNEL_BETA, CHANNEL_STABLE
 from PB.chromiumos.common import IMAGE_TYPE_BASE
 from PB.chromiumos.common import IMAGE_TYPE_TEST_GUEST_VM
 from PB.chromiumos.common import IMAGE_TYPE_FIRMWARE
@@ -22,6 +23,9 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   api.cros_release.validate_sign_types()
 
+  api.assertions.assertEqual(api.cros_release.channels,
+                             [CHANNEL_BETA, CHANNEL_STABLE])
+
 
 def GenTests(api):
   yield api.test(
@@ -29,6 +33,7 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_release': {
+                  'channels': [CHANNEL_BETA, CHANNEL_STABLE],
                   'sign_types': [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE],
               }
           }),
@@ -36,9 +41,11 @@ def GenTests(api):
   )
 
   yield api.test(
-      'unsupported',
-      api.properties(**{
-          '$chromeos/cros_release': {
-              'sign_types': [IMAGE_TYPE_TEST_GUEST_VM],
-          }
-      }), api.post_process(post_process.DropExpectation), status='FAILURE')
+      'unsupported-sign-type',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [CHANNEL_BETA, CHANNEL_STABLE],
+                  'sign_types': [IMAGE_TYPE_TEST_GUEST_VM],
+              }
+          }), api.post_process(post_process.DropExpectation), status='FAILURE')
