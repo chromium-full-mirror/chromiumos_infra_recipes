@@ -42,6 +42,7 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder2'
   orch.orchestrator.child_specs.add().name = 'builder4'
   orch.orchestrator.child_specs.add().name = 'builder5'
+  orch.orchestrator.child_specs.add().name = 'builder6-cq'
 
   child_build_info = [
       {
@@ -79,6 +80,13 @@ def GenTests(api):
           'status': 'INFRA_FAILURE',
           'relevant': True
       },
+      {
+          'builder': {
+              'builder': 'builder6-slim-cq'
+          },
+          'status': 'FAILURE',
+          'relevant': True
+      },
   ]
   yield api.test(
       'removed-verifier',
@@ -86,9 +94,9 @@ def GenTests(api):
           'child_build_info': child_build_info
       }).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(expected_success=['builder1'],
-                     expected_retryable=['builder3'],
-                     expected_outstanding=['builder2', 'builder5']),
+      api.properties(
+          expected_success=['builder1'], expected_retryable=['builder3'],
+          expected_outstanding=['builder2', 'builder5', 'builder6-slim-cq']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -108,6 +116,6 @@ def GenTests(api):
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(expected_success=['builder1'],
                      expected_retryable=['builder3', 'builder5'],
-                     expected_outstanding=['builder2']),
+                     expected_outstanding=['builder2', 'builder6-slim-cq']),
       api.post_process(post_process.DropExpectation),
   )

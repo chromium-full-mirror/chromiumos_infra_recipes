@@ -199,7 +199,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       # Builders which failed but are not longer CQ blockers are now retryable.
       active_cq_verifiers = self._submission_blocking_builders(cq_run)
       removed_verifier_failure_builders = [
-          b for b in unsuccessful_builders if b not in active_cq_verifiers
+          b for b in unsuccessful_builders
+          if b.replace('-slim-cq', '-cq') not in active_cq_verifiers
       ]
       retryable_failure_builders.extend(removed_verifier_failure_builders)
       outstanding_failure_builders = [
