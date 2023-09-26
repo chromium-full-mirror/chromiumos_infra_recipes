@@ -155,6 +155,11 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
               len(full_gen_reqs)] = [MessageToJson(x) for x in full_gen_reqs]
     gen_reqs.extend(full_gen_reqs)
 
+    if properties.local_signing:
+      for gen_req in gen_reqs:
+        gen_req.use_local_signing = properties.local_signing
+        gen_req.docker_image = properties.docker_image
+
     if not gen_reqs:
       pres.step_text = 'No payload pairs (src->tgt) found.'
       return None
@@ -241,6 +246,8 @@ def GenTests(api: RecipeTestApi):
       pubsub: bool = False,
       bbid: int = None,
       override_qs_account: str = None,
+      local_signing: bool = False,
+      docker_image: str = None,
   ) -> Callable[[PaygenOrchestratorProperties], TestData]:
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
@@ -248,7 +255,9 @@ def GenTests(api: RecipeTestApi):
                           target_chromeos_version=target_chromeos_version,
                           channels=channels, publish_to_pubsub=pubsub,
                           rerun_buildbucket_id=bbid,
-                          override_qs_account=override_qs_account)
+                          override_qs_account=override_qs_account,
+                          local_signing=local_signing,
+                          docker_image=docker_image)
 
   good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
@@ -491,6 +500,29 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'basic',
       get_props(),
+      good_paygen_cfg,
+      api.buildbucket.build(build_message),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.post_check(post_process.MustRun, 'pairing artifacts'),
+      api.post_check(post_process.MustRun, 'results'),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(23)],
+          'running children.collect'),
+  )
+
+  yield api.test(
+      'use-local-signing',
+      get_props(
+          local_signing=True,
+          docker_image='signing:latest',
+      ),
       good_paygen_cfg,
       api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'

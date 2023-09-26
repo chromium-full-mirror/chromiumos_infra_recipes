@@ -441,6 +441,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       }
       if override_qs_account:
         paygen_properties['override_qs_account'] = override_qs_account
+      if self.m.signing.local_signing:
+        paygen_properties['local_signing'] = True
+        paygen_properties['docker_image'] = self.m.signing.signing_docker_image
       request = self.m.buildbucket.schedule_request(
           builder=pg_orch_builder,
           bucket=bucket,

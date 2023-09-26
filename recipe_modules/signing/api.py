@@ -55,7 +55,6 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
     firmware_update: true
   }
 }'''
-DOCKER_HOST = 'us-docker.pkg.dev/chromeos-bot/signing'
 
 
 # How long to wait on gsutil ops.
@@ -65,6 +64,8 @@ GSUTIL_MAX_RETRY_COUNT = 2
 
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
+
+  DOCKER_HOST = 'us-docker.pkg.dev/chromeos-bot/signing'
 
   def __init__(self, properties: SigningProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -93,6 +94,10 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def local_signing(self) -> BuildTargetSigningConfigs:
     return self._local_signing
+
+  @property
+  def signing_docker_image(self) -> str:
+    return self._signing_image
 
   @property
   def gs_upload_bucket(self) -> str:
@@ -189,7 +194,7 @@ class SigningApi(recipe_api.RecipeApi):
 
         # BAPI is hermetic so need to pull down the specified docker image
         # ahead of time.
-        image_name = f'{DOCKER_HOST}/{self._signing_image}'
+        image_name = f'{self.DOCKER_HOST}/{self._signing_image}'
         self.m.step('docker pull', [
             'docker',
             'pull',
@@ -200,9 +205,9 @@ class SigningApi(recipe_api.RecipeApi):
             signing_configs=config, archive_dir=str(archive_dir),
             result_path=common_pb2.ResultPath(
                 path=common_pb2.Path(
-                    path=str(archive_dir),
+                    path=self.m.path.abspath(archive_dir),
                     location=common_pb2.Path.Location.OUTSIDE,
-                )), docker_image=image_name)
+                )), docker_image=self.signing_docker_image)
         self.m.cros_build_api.ImageService.SignImage(request)
 
         # TODO(b/302132827): Remove ignore_exceptions when stable.

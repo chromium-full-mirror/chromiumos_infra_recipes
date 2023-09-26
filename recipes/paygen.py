@@ -18,7 +18,7 @@ from google.protobuf.json_format import MessageToJson
 
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.chromite.api.payload import GenerationResponse
+from PB.chromite.api.payload import GenerationResponse, GenerationRequest
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
@@ -55,6 +55,7 @@ DEPS = [
     'naming',
     'paygen_orchestration',
     'test_util',
+    'signing',
     'src_state',
     'workspace_util',
 ]
@@ -124,6 +125,17 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           """
           # Number of retries doesn't include the first try.
           suffix = '' if tries == 1 else ' retry ({})'.format(tries - 1)
+
+          # If a docker image is specified, need to pull it down before calling
+          # the BAPI since the BAPI is hermetic.
+          if req.generation_request.docker_image:
+            image_name = f'{api.signing.DOCKER_HOST}/{req.generation_request.docker_image}'
+            api.step('docker pull', [
+                'docker',
+                'pull',
+                image_name,
+            ])
+
           # Execute build api endpoint for paygen.
           return api.cros_build_api.PayloadService.GeneratePayload(
               req.generation_request,
@@ -585,6 +597,44 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'local-signing',
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.properties(
+          PaygenProperties(requests=[{
+              'generation_request':
+                  GenerationRequest(
+                      full_update=True,
+                      tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+                      bucket='b',
+                      verify=True,
+                      dryrun=True,
+                      result_path=api.paygen_orchestration.ARTIFACT_RESULT_PATH,
+                      use_local_signing=True,
+                      docker_image='foo',
+                  ),
+              'autoupdate_test_configs': [
+                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                       applicable_models=['woomax']),
+              ],
+          }]),
+      ),
+      generate_payload_response(
+          api, versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin',
+              'file_path': {
+                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+                  'location': 2
+              }
+          }]),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'doing paygen.running paygen operations in parallel.docker pull',
+          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(

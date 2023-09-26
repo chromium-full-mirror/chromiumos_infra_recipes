@@ -33,6 +33,7 @@ DEPS = [
     'manifest_doctor',
     'paygen_orchestration',
     'repo',
+    'signing',
     'skylab',
     'src_state',
 ]

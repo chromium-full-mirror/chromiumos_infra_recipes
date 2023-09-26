@@ -71,4 +71,12 @@ message PaygenOrchestratorProperties {
   // QS Account to use instead of whatever is configured. Passed to individual
   // paygen builds.
   string override_qs_account = 15;
+
+  // If set, will use the local signing flow (currently a prototype).
+  bool local_signing = 16;
+
+  // Docker image to use for local signing. Should already be pulled down on the
+  // host. This consists of the name of the docker image, followed by the tag,
+  // i.e. "signing:1234".
+  string docker_image = 17;
 }

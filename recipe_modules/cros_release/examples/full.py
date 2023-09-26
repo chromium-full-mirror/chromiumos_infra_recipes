@@ -125,6 +125,9 @@ def GenTests(api):
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
               },
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
       api.post_check(
           post_process.LogContains,
