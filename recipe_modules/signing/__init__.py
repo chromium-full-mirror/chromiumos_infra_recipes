@@ -19,6 +19,7 @@ DEPS = [
     'cros_infra_config',
     'cros_version',
     'easy',
+    'failures',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

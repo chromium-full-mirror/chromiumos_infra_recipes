@@ -22,4 +22,7 @@ message SigningProperties {
   // Whether to use the local signing flow instead of sending out instructions
   // files to the legacy signing fleet. Defaults to false.
   bool local_signing = 4;
+
+  // GS upload bucket, not including gs:// prefix. E.g. 'chromeos-releases'.
+  string gs_upload_bucket = 5;
 }

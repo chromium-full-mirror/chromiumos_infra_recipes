@@ -3,9 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 import copy
+import datetime
 import json
 import re
 from json import JSONDecodeError
+from pathlib import Path
 from typing import Any, Dict, List, NewType, Optional
 
 from google.protobuf.text_format import Parse
@@ -18,6 +20,8 @@ from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import StepFailure
+
+from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 BuildConfig = BuildReport.BuildConfig
 
@@ -52,6 +56,11 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
   }
 }'''
 
+# How long to wait on gsutil ops.
+GSUTIL_TIMEOUT_SECONDS = 30 * 60
+GSUTIL_MAX_RETRY_COUNT = 2
+
+
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
 
@@ -65,6 +74,7 @@ class SigningApi(recipe_api.RecipeApi):
     self._local_signing = properties.local_signing or False
     self._signing_config = None
     self._signing_image = None
+    self._gs_upload_bucket = properties.gs_upload_bucket or 'chromeos-throw-away-bucket'
 
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
@@ -81,6 +91,10 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def local_signing(self) -> BuildTargetSigningConfigs:
     return self._local_signing
+
+  @property
+  def gs_upload_bucket(self) -> str:
+    return self._gs_upload_bucket
 
   def get_config(self) -> BuildTargetSigningConfig:
     """Fetch signing config from the appropriate branch of config-internal."""
@@ -169,9 +183,9 @@ class SigningApi(recipe_api.RecipeApi):
               )), docker_image=self._signing_image)
       self.m.cros_build_api.ImageService.SignImage(request)
 
-      # TODO(b/296086340): rsync output_dir to the appropriate GS dir (for now,
-      # be sure to use the throwaway bucket -- eventually we'll want to do
-      # chromeos-releases).
+      # TODO(b/302132827): Remove ignore_exceptions when stable.
+      with self.m.failures.ignore_exceptions():
+        self.upload_signed_artifacts(output_dir)
 
   # Methods to support the legacy signing fleet flow.
 
@@ -411,6 +425,8 @@ class SigningApi(recipe_api.RecipeApi):
     }
     return artifact_by_image_type.get(image_type, None)
 
+  @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
+                     delay=datetime.timedelta(seconds=1))
   def gs_download_if_present(self, gs_dir: str, local_dir: str,
                              artifact_names: List[str]) -> List[str]:
     """Download from Google Storage if present.
@@ -422,7 +438,8 @@ class SigningApi(recipe_api.RecipeApi):
       try:
         self.m.gsutil.download(
             gs_dir, artifact_name, self.m.path.join(local_dir, artifact_name),
-            name='download {} from {}'.format(artifact_name, gs_dir))
+            name='download {} from {}'.format(artifact_name, gs_dir),
+            timeout=GSUTIL_TIMEOUT_SECONDS)
       except StepFailure:
         skipped_artifacts.append(artifact_name)
     return skipped_artifacts
@@ -471,3 +488,15 @@ class SigningApi(recipe_api.RecipeApi):
                 ','.join(signing_configured_artifacts))
 
       return relevant_signing_configs
+
+  @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
+                     delay=datetime.timedelta(seconds=1))
+  def upload_signed_artifacts(self, output_dir: Path) -> None:
+    """Uploads all files in output_dir to GS using gsutil rsync."""
+    with self.m.step.nest(
+        f'upload signed artifacts to {self.gs_upload_bucket} bucket'):
+      gs_dir = f'gs://{self.gs_upload_bucket}/{self.m.build_menu.artifacts_build_path()}'
+      # -i so we don't clobber existing destination artifacts.
+      self.m.gsutil(['rsync', '-r', '-i', output_dir, gs_dir],
+                    parallel_upload=True, multithreaded=True,
+                    timeout=GSUTIL_TIMEOUT_SECONDS)

@@ -11816,6 +11816,7 @@
       }
     },
     "name": "sign artifacts.download release artifacts.gsutil download chromiumos_base_image.tar.xz from chromeos-releases-test/kukui-release/R99-1234.56.0-101",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -11850,6 +11851,7 @@
       }
     },
     "name": "sign artifacts.download release artifacts.gsutil download recovery_image.tar.xz from chromeos-releases-test/kukui-release/R99-1234.56.0-101",
+    "timeout": 1800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -11995,6 +11997,53 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-o",
+      "GSUtil:parallel_composite_upload_threshold=50M",
+      "-m",
+      "----",
+      "rsync",
+      "-r",
+      "-i",
+      "[CLEANUP]/signed-artifacts_tmp_1",
+      "gs://chromeos-throw-away-bucket/kukui-release/R99-1234.56.0-101"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.gsutil rsync",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

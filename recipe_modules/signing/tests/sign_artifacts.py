@@ -83,13 +83,19 @@ def RunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'basic',
-      api.properties(**{
-          '$chromeos/signing':
-              MessageToDict(SigningProperties(local_signing=True))
-      }),
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='chromeos-releases'))
+          }),
       api.post_check(post_process.MustRun,
                      'sign artifacts.call chromite.api.ImageService/SignImage'),
-      api.post_process(post_process.DropExpectation), build_target='kukui',
+      api.post_check(
+          post_process.MustRun,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.gsutil rsync'
+      ), api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main')
 
   yield api.build_menu.test(
