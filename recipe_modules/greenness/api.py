@@ -128,8 +128,9 @@ class GreennessApi(recipe_api.RecipeApi):
         with self.m.failures.ignore_exceptions():
           # For irrelevant targets, carry forward greenness from last run.
           last_greenness = self.get_last_greenness(bt)
-          score = int(last_greenness.get('metric', -1))
-          build_score = int(last_greenness.get('buildMetric', -1))
+          # If greenness dict is empty, it means the metric was 0 in the last run.
+          score = int(last_greenness.get('metric', 0))
+          build_score = int(last_greenness.get('buildMetric', 0))
         self._greenness_dict[bt] = GreennessTuple(score=score,
                                                   build_score=build_score,
                                                   critical=critical,
