@@ -5,11 +5,12 @@
 
 import datetime
 import typing
-from typing import Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import Parse
 from google.protobuf.json_format import ParseDict
+from google.protobuf import message
 from google.protobuf.text_format import Parse as TextFormatParse
 
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
@@ -27,20 +28,33 @@ from PB.go.chromium.org.luci.common.proto.realms.realms_config import RealmsCfg
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 from PB.testplans.test_retry import SuiteRetryCfg
 from PB.chromiumos.test.api import pre_test_service as pre_request
-
 from recipe_engine import recipe_api
+from recipe_engine import recipe_test_api
+from RECIPE_MODULES.chromeos.src_state import common as src_state
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 CHROME_OS_INFRA_CONFIG_REPO_URL = (
     'https://chrome-internal.googlesource.com/chromeos/infra/config')
 INFRADATA_CONFIG_REPO_URL = 'https://chrome-internal.googlesource.com/infradata/config'
 
+# Number of seconds to wait on gitiles file download.
+_GITILES_TIMEOUT_SECONDS = 3 * 60
 
-def ConvertPB(inpb, typ):
-  """Convert |inpb| to |typ|."""
-  outpb = typ()
-  outpb.ParseFromString(inpb.SerializeToString())
-  return outpb
+
+def _ConvertPB(input_message: message.Message,
+               output_type: type) -> message.Message:
+  """Convert a proto message to a different proto type.
+
+  Args:
+    input_message: The proto message to convert.
+    output_type: The protobuf type to convert to.
+
+  Returns:
+    An instance of output_type containing data from input_message.
+  """
+  output_message = output_type()
+  output_message.ParseFromString(input_message.SerializeToString())
+  return output_message
 
 
 class CrosInfraConfigApi(recipe_api.RecipeApi):
@@ -101,33 +115,33 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         self.experiments)
 
   @property
-  def is_configured(self):
+  def is_configured(self) -> bool:
     return self._is_configured
 
   @property
-  def package_git_revision(self):
+  def package_git_revision(self) -> Optional[str]:
     return self._package_git_revision or self._get_package_git_revision()
 
   @property
-  def gitiles_commit(self):
+  def gitiles_commit(self) -> GitilesCommit:
     return self.m.src_state.gitiles_commit
 
   @property
-  def gerrit_changes(self):
+  def gerrit_changes(self) -> List[GerritChange]:
     return self.m.src_state.gerrit_changes
 
   @property
-  def experiments(self):
+  def experiments(self) -> List[str]:
     """Return the list of experiments active for this build."""
     return list(self.m.buildbucket.build.input.experiments)
 
   @property
-  def experiments_for_child_build(self):
+  def experiments_for_child_build(self) -> Dict[str, bool]:
     """Return value for bb schedule_request experiments arg."""
     return {k: True for k in self.experiments}
 
   @property
-  def config(self):
+  def config(self) -> BuilderConfig:
     """Return the config for this builder.
 
     This convenience property wraps cros_infra_config.get_builder_config,
@@ -140,7 +154,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                                    missing_ok=True)
 
   @property
-  def config_or_default(self):
+  def config_or_default(self) -> BuilderConfig:
     """Config or default config.
 
     The default config is empty, except for:
@@ -157,11 +171,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             use_flags=[UseFlag(flag='chrome_internal')]))
 
   @property
-  def is_staging(self):
+  def is_staging(self) -> bool:
     return self._is_staging
 
   @property
-  def fresh_config(self):
+  def fresh_config(self) -> BuilderConfig:
     """Return a freshly loaded config for this builder.
 
     Returns:
@@ -173,7 +187,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return self.config
 
   @property
-  def props_for_child_build(self):
+  def props_for_child_build(self) -> Dict[str, Any]:
     """Return properties dict meant to be passed to child builds.
 
     Preserve $chromeos/cros_infra_config when launching a child build.
@@ -197,38 +211,42 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def download_binproto(self, filename, step_test_data, timeout=None,
-                        repo=CHROME_OS_INFRA_CONFIG_REPO_URL,
-                        message=None) -> bytes:
+  def download_binproto(self, filename: str,
+                        step_test_data: recipe_test_api.StepTestData,
+                        timeout: Optional[int] = None,
+                        repo: str = CHROME_OS_INFRA_CONFIG_REPO_URL,
+                        msg: Optional[message.Message] = None) -> bytes:
     """Helper method to fetch a file from gitiles."""
-    if self._config_ref.startswith('refs/changes/') and message:
+    if not timeout:
+      timeout = _GITILES_TIMEOUT_SECONDS
+    if self._config_ref.startswith('refs/changes/') and msg:
       # If we are running with a CL for the config_ref, convert the jsonpb proto
       # to binaryproto and return that.
-      data = self.m.depot_gitiles.download_file(
-          repo, filename + '.cfg', branch=self._config_ref,
-          step_test_data=step_test_data, timeout=timeout or
-          self.test_api.gitiles_timeout_seconds).encode('utf-8')
-      return _ensure_binary(Parse(data, message).SerializeToString())
+      data = self.m.depot_gitiles.download_file(repo, filename + '.cfg',
+                                                branch=self._config_ref,
+                                                step_test_data=step_test_data,
+                                                timeout=timeout).encode('utf-8')
+      return _ensure_binary(Parse(data, msg).SerializeToString())
 
     return _ensure_binary(
-        self.m.depot_gitiles.download_file(
-            repo, filename + '.binaryproto', branch=self._config_ref,
-            step_test_data=step_test_data, timeout=timeout or
-            self.test_api.gitiles_timeout_seconds))
+        self.m.depot_gitiles.download_file(repo, filename + '.binaryproto',
+                                           branch=self._config_ref,
+                                           step_test_data=step_test_data,
+                                           timeout=timeout))
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
-  def get_realms_list(self):
+  def get_realms_list(self) -> List[str]:
     """Helper method to fetch the list of chromeos realms from gitiles."""
     data = self.m.depot_gitiles.download_file(
         CHROME_OS_INFRA_CONFIG_REPO_URL, 'generated/realms.cfg',
         branch=self._config_ref,
         step_test_data=self.test_api.realms_cfg_step_test_data,
-        timeout=self.test_api.gitiles_timeout_seconds)
+        timeout=_GITILES_TIMEOUT_SECONDS)
     cfg = TextFormatParse(data, RealmsCfg())
     return [r.name for r in cfg.realms]
 
-  def _fetch_builder_configs(self):
+  def _fetch_builder_configs(self) -> bytes:
     """Helper method to fetch the builder configs file.
 
     Downloads the builder configs file and returns its contents. This helper
@@ -238,10 +256,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # once for each builder.
     return self.download_binproto('generated/builder_configs',
                                   self.test_api.builder_configs_step_test_data,
-                                  message=BuilderConfigs())
+                                  msg=BuilderConfigs())
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
-  def _get_name_to_builder_config(self, force_reload=False):
+  def _get_name_to_builder_config(
+      self, force_reload: bool = False
+  ) -> Dict[Union[str, Tuple[str, str]], BuilderConfig]:
     """Helper method that returns the name to BuilderConfig map.
 
     Loads the proto and builds the map if it hasn't already been done.
@@ -295,12 +315,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     up all child configs.
 
     Args:
-      * builder_name: The Buildbucket builder to look for, matched against
+      builder_name: The Buildbucket builder to look for, matched against
         BuilderConfig's id.name.
-      * bucket_name: The Buildbucket bucket to look in, matched against
+      bucket_name: The Buildbucket bucket to look in, matched against
         BuilderConfig's id.bucket. If not set, only builder_name is used in the
         lookup. Will eventually be required.
-      * missing_ok: Whether to allow a missing config.
+      missing_ok: Whether to allow a missing config.
 
     Returns:
       A BuilderConfigs proto.
@@ -326,8 +346,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     not be found in config.
 
     Args:
-      * builder_names (list[str]): Buildbucket builders to look for, matched
-        against BuilderConfig id.name.
+      builder_names: Buildbucket builders to look for, matched against
+        BuilderConfig id.name.
 
     Returns:
       Dict mapping builder names to found BuilderConfigs.
@@ -341,17 +361,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         pass
     return builder_configs
 
-  def force_reload(self):
+  def force_reload(self) -> None:
     """Force a reload of the config map from ToT."""
     self._get_name_to_builder_config(force_reload=True)
 
-  def should_run(self, run_spec):
+  def should_run(self, run_spec: 'BuilderConfig.RunSpec') -> bool:
     return run_spec in [BuilderConfig.RUN, BuilderConfig.RUN_EXIT]
 
-  def should_exit(self, run_spec):
+  def should_exit(self, run_spec: 'BuilderConfig.RunSpec') -> bool:
     return run_spec == BuilderConfig.RUN_EXIT
 
-  def get_bot_policy_config(self, application='ChromeOS'):
+  def get_bot_policy_config(self,
+                            application: str = 'ChromeOS') -> BotPolicyCfg:
     """Get BotPolicies as defined in infra/config.
     If application is Chrome, BotPolicies will be fetched from infradata/config.
 
@@ -364,9 +385,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return BotPolicyCfg.FromString(
         self.download_binproto(
             'configs/bot-scaling/generated/bot_policy_%s' % application.lower(),
-            test_data, repo=INFRADATA_CONFIG_REPO_URL, message=BotPolicyCfg()))
+            test_data, repo=INFRADATA_CONFIG_REPO_URL, msg=BotPolicyCfg()))
 
-  def get_vm_retry_config(self):
+  def get_vm_retry_config(self) -> SuiteRetryCfg:
     """Get SuiteRetryCfg as defined in infra/config for tast vm.
 
     Returns:
@@ -375,24 +396,21 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return SuiteRetryCfg.FromString(
         self.download_binproto('testingconfig/generated/vm_retry',
                                self.test_api.vm_retry_test_data,
-                               message=SuiteRetryCfg()))
+                               msg=SuiteRetryCfg()))
 
-  def get_test_filter_config(self):
+  def get_test_filter_config(self) -> pre_request.FilterCfgs:
     """Download config files and return the extracted config protos.
 
-    Args:
-      mock_data: step_test_data for the exoneration config download step.
-      mock_excludes_data: step_test_data for the excludes config download step.
-
-    Returns: TestDisablementCfg object of the config.
+    Returns:
+      TestDisablementCfg object of the config.
     """
     return pre_request.FilterCfgs.FromString(  # pragma: no cover
         self.download_binproto(
             'testingconfig/generated/test_filters',
             step_test_data=self.test_api.test_filter_test_data,
-            message=pre_request.FilterCfgs()))
+            msg=pre_request.FilterCfgs()))
 
-  def get_dut_tracking_config(self):
+  def get_dut_tracking_config(self) -> TrackingPolicyCfg:
     """Get TrackingPolicyCfg as defined in infra/config.
 
     Returns:
@@ -401,21 +419,22 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return TrackingPolicyCfg.FromString(
         self.download_binproto('testingconfig/generated/dut_tracking',
                                self.test_api.dut_tracking_test_data,
-                               message=TrackingPolicyCfg()))
+                               msg=TrackingPolicyCfg()))
 
-  def _has_valid_commit(self, config, commit, manifest):
+  def _has_valid_commit(self, config: BuilderConfig, commit: GitilesCommit,
+                        manifest: src_state.ManifestProject) -> bool:
     """Determine if the builder has a valid commit.
 
     Public builders should sync to a commit for the public manifest and private
     builders should sync to a commit for the internal manifest.
 
     Args:
-      config (BuilderConfig): The builder config, or None.
-      commit (GitilesCommit): The gitiles commit to use, or None.
-      manifest (ManifestProject): The manifest expected.
+      config: The builder config, or None.
+      commit: The gitiles commit to use, or None.
+      manifest: The manifest expected.
 
     Returns:
-      Bool whether the builder has a valid commit.
+      Whether the builder has a valid commit.
     """
     # We only accept commits on refs/heads/.
     if not commit.ref.startswith('refs/heads/'):
@@ -430,19 +449,21 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return (commit in self.m.src_state.internal_manifest or
             commit in self.m.src_state.external_manifest)
 
-  def _determine_repo_state(self, config, commit, changes, choose_branch):
+  def _determine_repo_state(self, config: BuilderConfig, commit: GitilesCommit,
+                            changes: List[GerritChange],
+                            choose_branch: bool) -> None:
     """Set _gitiles_commit and _gerrit_changes.
 
     If the commit and/or changes are other than what was given, that is added as
     an output property in a nested step.
 
     Args:
-      config (BuilderConfig): The builder config, or None.
-      commit (GitilesCommit): The gitiles commit to use.  Default: value from
-        buildbucket, or GitilesCommit(..., ref='refs/heads/snapshot').
-      changes: (list[GerritChange]): The gerrit changes to apply.  Default: The
-          currently stored list (initially the list from buildbucket.)
-      choose_branch (bool): Whether to choose a branch when none is provided.
+      config: The builder config, or None.
+      commit: The gitiles commit to use.  Default: value from buildbucket, or
+        GitilesCommit(..., ref='refs/heads/snapshot').
+      changes: The gerrit changes to apply.  Default: The currently stored list
+        (initially the list from buildbucket.)
+      choose_branch: Whether to choose a branch when none is provided.
     """
     commit = commit or self.m.src_state.gitiles_commit
     changes = self.m.src_state.gerrit_changes if changes is None else changes
@@ -475,7 +496,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     # If we have a config, and the given commit is invalid, try the one from the
     # builder config.
     if config and not self._has_valid_commit(config, commit, manifest):
-      commit = ConvertPB(config.orchestrator.gitiles_commit, GitilesCommit)
+      commit = _ConvertPB(config.orchestrator.gitiles_commit, GitilesCommit)
 
     # If we still do not have a valid commit, then we need to figure one out.
     # Use the appropriate snapshot from the appropriate manifest.
@@ -507,7 +528,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     extra_changes = []
     if config and not self._properties.ignore_config_changelist:
       extra_changes = [
-          ConvertPB(x, GerritChange) for x in config.orchestrator.gerrit_changes
+          _ConvertPB(x, GerritChange)
+          for x in config.orchestrator.gerrit_changes
       ]
     if extra_changes:
       changes = extra_changes + [x for x in changes if x not in extra_changes]
@@ -527,7 +549,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       self.m.src_state.build_manifest = manifest
     self.m.src_state.gerrit_changes = changes or []
 
-  def _get_package_git_revision(self):
+  def _get_package_git_revision(self) -> Optional[str]:
     """Return the git_revision from our cipd package."""
     ret = None
     package = self.m.buildbucket.build.exe.cipd_package
@@ -640,15 +662,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._is_configured = True
     return config
 
-  def get_build_target(self, build=None):
+  def get_build_target(self,
+                       build: Optional[Build] = None) -> Optional[BuildTarget]:
     """Return the build target from input properties.
 
     Args:
-      build (Build): A buildbucket build, which is expected to have a
-          'build_target' input property, or None for the current build.
+      build: A buildbucket build, which is expected to have a 'build_target'
+        input property, or None for the current build.
 
     Returns:
-      (BuildTarget) The build target, or None.
+      The build target, or None.
     """
     build = build or self.m.buildbucket.build
     target = None
@@ -664,15 +687,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         if 'buildTarget' in build.input.properties else None)
     return target
 
-  def get_build_target_name(self, build=None):
+  def get_build_target_name(self,
+                            build: Optional[Build] = None) -> Optional[str]:
     """Return the build target name from input properties.
 
     Args:
-      build (Build): A buildbucket build, which is expected to have a
-          'build_target' input property, or None for the current build.
+      build: A buildbucket build, which is expected to have a 'build_target'
+        input property, or None for the current build.
 
     Returns:
-      (str) The name of the build target, or None.
+      The name of the build target, or None.
     """
     build = build or self.m.buildbucket.build
     target = self.get_build_target(build=build)
@@ -693,14 +717,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     build_targets.pop(None, None)
     return build_targets
 
-  def set_build_criticality(self, critical=None, override=False):
+  def set_build_criticality(self, critical: Optional['Trinary'] = None,
+                            override: bool = False) -> None:
     """Set the buildbucket.build.critical value.
 
     Args:
-      critical (Trinary): The value to set for the build criticality.
-        If None, will read the value from the builder config.
-      override (bool): Whether to override the existing criticality value.
-        Defaults to False.
+      critical: The value to set for the build criticality. If None, will read
+        the value from the builder config.
+      override: Whether to override the existing criticality value.
     """
     # Exit early if criticality is set and override is False.
     if not override and self.m.buildbucket.build.critical != Trinary.UNSET:
