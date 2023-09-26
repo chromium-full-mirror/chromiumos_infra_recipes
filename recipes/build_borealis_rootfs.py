@@ -77,8 +77,10 @@ def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
 
 def DoRunSteps(api: RecipeApi,
                properties: BuildBorealisRootfsProperties) -> None:
-  chroot_path = api.cros_source.workspace_path
-  borealis_path = chroot_path.join('src/platform/borealis')
+  checkout_path = api.cros_source.workspace_path
+  chroot_path = api.cros_sdk.chroot_path
+  out_dir = api.cros_sdk.out_path
+  borealis_path = checkout_path.join('src/platform/borealis')
   with api.context(cwd=borealis_path), api.depot_tools.on_path():
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.
@@ -88,15 +90,13 @@ def DoRunSteps(api: RecipeApi,
     # src/platform/borealis/docs/build-and-deploy.md
     # TODO(davidriley): Perform the build steps in parallel.
     api.step('borealis_kernel', [
-        './tools/borealis_kernel.py',
-        '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-        '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+        './tools/borealis_kernel.py', f'--chroot={chroot_path}',
+        f'--out-dir={out_dir}'
     ])
 
     borealis_build_cmd = [
-        './tools/build_full.py', '--no-cache',
-        '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-        '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+        './tools/build_full.py', '--no-cache', f'--chroot={chroot_path}',
+        f'--out-dir={out_dir}'
     ]
     if properties.disable_arch_sig_validation:
       borealis_build_cmd.append('--disable-arch-sig-validation')
@@ -125,9 +125,8 @@ def DoRunSteps(api: RecipeApi,
                             properties.destination_gs_path)
       api.step('uprev_dlc', [
           './tools/uprev_dlc.py', '--archive', archive_name, '--bucket_url',
-          bucket_url, '--nouprev',
-          '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-          '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+          bucket_url, '--nouprev', f'--chroot={chroot_path}',
+          f'--out-dir={out_dir}'
       ])
       presentation.links['VM image'] = api.path.join(
           _PANTHEON_PREFIX, properties.destination_gs_bucket,
@@ -138,8 +137,7 @@ def DoRunSteps(api: RecipeApi,
       api.step('borealis tast taball', [
           './tools/build_tast_binaries.py', '--no-output-append-date',
           '--output=public-borealis-tast-binaries-' + version,
-          '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-          '--out-dir=/b/s/w/ir/cache/cros_chroot/out'
+          f'--chroot={chroot_path}', f'--out-dir={out_dir}'
       ])
       tast_archive_name = 'public-borealis-tast-binaries-' + version + '.tar.zst'
       with api.step.nest('upload tast tarball') as presentation:
@@ -232,8 +230,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(
           post_process.StepCommandContains, 'borealis build_full.py', [
               './tools/build_full.py', '--no-cache',
-              '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-              '--out-dir=/b/s/w/ir/cache/cros_chroot/out', '--variant', 'chroot'
+              '--chroot=[CACHE]/cros_chroot/chroot',
+              '--out-dir=[CACHE]/cros_chroot/out', '--variant', 'chroot'
           ]),
   )
 
@@ -245,8 +243,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.StepCommandContains,
                        'borealis build_full.py', [
                            './tools/build_full.py', '--no-cache',
-                           '--chroot=/b/s/w/ir/cache/cros_chroot/chroot',
-                           '--out-dir=/b/s/w/ir/cache/cros_chroot/out',
+                           '--chroot=[CACHE]/cros_chroot/chroot',
+                           '--out-dir=[CACHE]/cros_chroot/out',
                            '--disable-arch-sig-validation'
                        ]),
   )

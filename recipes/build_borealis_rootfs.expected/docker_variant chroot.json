@@ -1947,8 +1947,8 @@
   {
     "cmd": [
       "./tools/borealis_kernel.py",
-      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
-      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
+      "--chroot=[CACHE]/cros_chroot/chroot",
+      "--out-dir=[CACHE]/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
@@ -1965,8 +1965,8 @@
     "cmd": [
       "./tools/build_full.py",
       "--no-cache",
-      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
-      "--out-dir=/b/s/w/ir/cache/cros_chroot/out",
+      "--chroot=[CACHE]/cros_chroot/chroot",
+      "--out-dir=[CACHE]/cros_chroot/out",
       "--variant",
       "chroot"
     ],
@@ -2011,8 +2011,8 @@
       "--bucket_url",
       "gs://chromeos-localmirror-private/borealis",
       "--nouprev",
-      "--chroot=/b/s/w/ir/cache/cros_chroot/chroot",
-      "--out-dir=/b/s/w/ir/cache/cros_chroot/out"
+      "--chroot=[CACHE]/cros_chroot/chroot",
+      "--out-dir=[CACHE]/cros_chroot/out"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
     "env_suffixes": {
