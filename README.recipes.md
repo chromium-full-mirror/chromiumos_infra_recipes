@@ -6898,7 +6898,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1032)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1033)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -6919,7 +6919,7 @@ Args:
 Returns:
   The change description.
 
-&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#965)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#965)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 

@@ -962,6 +962,7 @@ class GerritApi(RecipeApi):
 
       return changes
 
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
   def get_change_mergeable(self, change_num: int, gerrit_host: str,
                            revision: str = 'current') -> bool:
     """Get the mergeable status of the given Gerrit change.
