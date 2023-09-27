@@ -5,6 +5,41 @@
   },
   {
     "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "search the last merged uprev CL",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@Found http://crrev.com/c/4567890@@@",
@@ -203,11 +238,12 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:00Z\", \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:01Z\", \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-betty-pi-arc-cq\"}, \"createTime\": \"2020-08-25T07:00:02Z\", \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"betty-pi-arc\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": true, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"betty-pi-arc-cq\"}, \"createTime\": \"2020-08-25T07:00:03Z\", \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"betty-pi-arc\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": true, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-atlas-cq\"}, \"createTime\": \"2020-08-25T07:00:02Z\", \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": true, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"atlas-cq\"}, \"createTime\": \"2020-08-25T07:00:03Z\", \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": true, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:07Z\", \"id\": \"8922054662172514007\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"arm64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:08Z\", \"id\": \"8922054662172514008\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": true, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"FAILURE\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"amd64-generic-cq\"}, \"createTime\": \"2020-08-25T07:00:09Z\", \"id\": \"8922054662172514009\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"informational\", \"builder\": \"amd64-generic-asan\"}, \"createTime\": \"2020-08-25T07:00:00Z\", \"id\": \"8922054662175514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"output\": {\"properties\": {\"prebuilts_private\": false, \"prebuilts_uri\": \"xxx\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@8922054662172514001@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
@@ -215,7 +251,8 @@
       "@@@STEP_LINK@8922054662172514003@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
       "@@@STEP_LINK@8922054662172514007@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
       "@@@STEP_LINK@8922054662172514008@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
-      "@@@STEP_LINK@8922054662172514009@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@"
+      "@@@STEP_LINK@8922054662172514009@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@",
+      "@@@STEP_LINK@8922054662175514000@https://cr-buildbucket.appspot.com/build/8922054662175514000@@@"
     ]
   },
   {
@@ -279,44 +316,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "configure builder.cros_infra_config.read builder configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
-      "--format",
-      "text"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -2179,28 +2178,33 @@
     "cmd": [],
     "name": "search the prebuilts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Total 5 builds:<br/>- 0 previously-updated builds<br/>- 2 succeeded builds with uploaded prebuilts<br/>- 0 running builds<br/>@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: None (None): => Skipped (The builder did not upload prebuilts.)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514008: arm64-generic-cq: arm64-generic: xxx (True): => Skipped (The builder has failed.)@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: xxx (False): => Uploading prebuilts@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: betty-pi-arc-cq: betty-pi-arc: xxx (True): => Uploading prebuilts@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
+      "@@@STEP_TEXT@Total 6 builds:<br/>- 0 previously-updated builds<br/>- 2 succeeded builds with uploaded prebuilts<br/>- 0 running builds<br/>@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662175514000: amd64-generic-asan: amd64-generic: asan: xxx (False): => Skipped (Non-default profile is allowed only on staging.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: : None (None): => Skipped (The builder did not upload prebuilts.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514008: arm64-generic-cq: arm64-generic: : xxx (True): => Skipped (The builder has failed.)@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: : xxx (False): => Uploading prebuilts@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514003: atlas-cq: atlas: : xxx (True): => Uploading prebuilts@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514001: amd64-generic-cq: amd64-generic: : xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_END@debug_prebuilts_log@@@",
-      "@@@STEP_LOG_LINE@private_prebuilt_entries@[{'build_target': name: \"betty-pi-arc\"@@@",
-      "@@@STEP_LOG_LINE@private_prebuilt_entries@, 'build_end_time': , 'prebuilts_private': True, 'prebuilts_uri': 'xxx'}]@@@",
+      "@@@STEP_LOG_LINE@private_prebuilt_entries@[{'build_target': name: \"atlas\"@@@",
+      "@@@STEP_LOG_LINE@private_prebuilt_entries@, 'prebuilts_private': True, 'prebuilts_uri': 'xxx', 'build_profile': '', 'builder_name': 'atlas-cq'}]@@@",
       "@@@STEP_LOG_END@private_prebuilt_entries@@@",
       "@@@STEP_LOG_LINE@public_prebuilt_entries@[{'build_target': name: \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@public_prebuilt_entries@, 'build_end_time': , 'prebuilts_private': False, 'prebuilts_uri': 'xxx'}]@@@",
+      "@@@STEP_LOG_LINE@public_prebuilt_entries@, 'prebuilts_private': False, 'prebuilts_uri': 'xxx', 'build_profile': '', 'builder_name': 'amd64-generic-cq'}]@@@",
       "@@@STEP_LOG_END@public_prebuilt_entries@@@",
-      "@@@STEP_LOG_LINE@build_targets@['amd64-generic', 'betty-pi-arc']@@@",
-      "@@@STEP_LOG_END@build_targets@@@",
       "@@@STEP_LOG_LINE@running_builds@[]@@@",
-      "@@@STEP_LOG_END@running_builds@@@"
+      "@@@STEP_LOG_END@running_builds@@@",
+      "@@@STEP_LOG_LINE@build_targets@{'amd64-generic': ['amd64-generic-cq'], 'atlas': ['atlas-cq']}@@@",
+      "@@@STEP_LOG_END@build_targets@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs"
+    "name": "set BINHOSTs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@cumulative_binhost_counter@{'amd64-generic': 1, 'atlas': 1}@@@",
+      "@@@STEP_LOG_END@cumulative_binhost_counter@@@"
+    ]
   },
   {
     "cmd": [],
@@ -3135,7 +3139,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"betty-pi-arc\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"private\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"key\": 5@@@",
@@ -3153,7 +3157,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"betty-pi-arc\"\n  },\n  \"private\": true,\n  \"key\": 5\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"private\": true,\n  \"key\": 5\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3398,7 +3402,7 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc",
+    "name": "set BINHOSTs.Private binhosts.update atlas",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@binhost_path@[START_DIR]/BINHOST.conf@@@",
@@ -3407,12 +3411,12 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/GetBinhostConfPath",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/GetBinhostConfPath",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"betty-pi-arc\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"private\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"key\": 5@@@",
@@ -3430,7 +3434,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"betty-pi-arc\"\n  },\n  \"private\": true,\n  \"key\": 5\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"private\": true,\n  \"key\": 5\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
@@ -3447,7 +3451,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/GetBinhostConfPath.write input file",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/GetBinhostConfPath.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3482,7 +3486,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/GetBinhostConfPath.call build API script",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/GetBinhostConfPath.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3517,14 +3521,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/GetBinhostConfPath.read output file",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/GetBinhostConfPath.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/GetBinhostConfPath.call response",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/GetBinhostConfPath.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -3562,7 +3566,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.repo forall",
+    "name": "set BINHOSTs.Private binhosts.update atlas.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]|src/[START_DIR]|cros|refs/heads/main|refs/heads/main@@@",
@@ -3571,12 +3575,12 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"betty-pi-arc\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"private\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"key\": 5,@@@",
@@ -3596,7 +3600,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"betty-pi-arc\"\n  },\n  \"private\": true,\n  \"key\": 5,\n  \"uri\": \"xxx\",\n  \"maxUris\": 1\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"private\": true,\n  \"key\": 5,\n  \"uri\": \"xxx\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
@@ -3613,7 +3617,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.write input file",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3648,7 +3652,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.call build API script",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -3683,14 +3687,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.read output file",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.call response",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -3699,7 +3703,7 @@
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.publish event",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
@@ -3707,7 +3711,7 @@
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:41Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"betty-pi-arc\"@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas\"@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
       "@@@STEP_LOG_LINE@published event@    \"private\": true,@@@",
       "@@@STEP_LOG_LINE@published event@    \"key\": \"CQ_BINHOST\",@@@",
@@ -3718,17 +3722,17 @@
       "@@@STEP_LOG_LINE@published event@    \"outputFile\": \"[START_DIR]/BINHOST.conf\"@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"set BINHOSTs|Private binhosts|update betty-pi-arc|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"set BINHOSTs|Private binhosts|update atlas|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI04DE/QQQgMq17gEiBgjVgMT9BHIbCg4KDGJldHR5LXBpLWFyYxABGAUiA3h4eCgBehoKGFtTVEFSVF9ESVJdL0JJTkhPU1QuY29uZtAC0OyA2a7xtZJ82gJzc2V0IEJJTkhPU1RzfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGJldHR5LXBpLWFyY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI04DE/QQQgMq17gEiBgjVgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAmxzZXQgQklOSE9TVHN8UHJpdmF0ZSBiaW5ob3N0c3x1cGRhdGUgYXRsYXN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvU2V0QmluaG9zdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -3759,8 +3763,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BHIbCg4KDGJldHR5LXBpLWFyYxABGAUiA3h4eCgBehoKGFtTVEFSVF9ESVJdL0JJTkhPU1QuY29uZtAC0OyA2a7xtZJ82gJzc2V0IEJJTkhPU1RzfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGJldHR5LXBpLWFyY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "set BINHOSTs.Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAmxzZXQgQklOSE9TVHN8UHJpdmF0ZSBiaW5ob3N0c3x1cGRhdGUgYXRsYXN8Y2FsbCBjaHJvbWl0ZS5hcGkuQmluaG9zdFNlcnZpY2UvU2V0QmluaG9zdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3794,7 +3798,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set BINHOSTs.Private binhosts.update betty-pi-arc.read binhost conf",
+    "name": "set BINHOSTs.Private binhosts.update atlas.read binhost conf",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@BINHOST.conf@@@"

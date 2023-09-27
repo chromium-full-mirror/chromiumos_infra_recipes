@@ -427,8 +427,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       upload_paths = [target.path for target in response.upload_targets]
       return upload_root, upload_paths
 
-  def set_binhosts(self, binhosts: List[Tuple[BuildTarget, str]], private: bool,
-                   key: binhost_pb.BinhostKey) -> None:
+  def set_binhosts(
+      self, binhosts: List[Tuple[BuildTarget, str]], private: bool,
+      key: binhost_pb.BinhostKey,
+      overriding_max_uris: Optional[Dict[str, int]] = None) -> None:
     """Set the target's Portage binhosts to point to the given URIs.
 
     This function updates a conf file within the target's overlay, commits the
@@ -438,6 +440,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       binhosts: List of tuples of build targets and their new URIs.
       private: Whether the target's binhost is private.
       key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+      overriding_max_uris: Dict to override `max_uris` for board. Key is the
+          name of build target, Value is the number of `max_uris` used for the
+          build target. None for using the default value.
     """
 
     if len(binhosts) == 0:
@@ -466,7 +471,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           branch_parts[-1] = 'staging'
           branch = '/'.join(branch_parts)
 
-        self.set_binhosts_retry(binhosts, private, key, project, branch)
+        self.set_binhosts_retry(binhosts, private, key, project, branch,
+                                overriding_max_uris)
         self.m.git.checkout(current_commit)
 
   # There are instances when, in between fetching from remote and
@@ -475,9 +481,10 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   # We can retry few times to avoid it.
   @exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
-  def set_binhosts_retry(self, binhosts: List[Tuple[BuildTarget, str]],
-                         private: bool, key: binhost_pb.BinhostKey,
-                         target_project: ProjectInfo, branch: str) -> None:
+  def set_binhosts_retry(
+      self, binhosts: List[Tuple[BuildTarget, str]], private: bool,
+      key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str,
+      overriding_max_uris: Optional[Dict[str, int]] = None) -> None:
     """Utility method to update the target's Portage binhosts.
 
     This function is intended to be called from set_binhosts.
@@ -488,6 +495,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       key: The binhost key, e.g. POSTSUBMIT_BINHOST.
       target_project: Project of the binhosts.
       branch: branch name to update
+      overriding_max_uris: Dict to override `max_uris` for board. Key is the
+          name of build target, Value is the number of `max_uris` used for the
+          build target. None for using the default value.
     """
     if len(binhosts) == 0:
       return
@@ -495,12 +505,16 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     self.m.git.fetch_ref(target_project.remote, branch)
     self.m.git.checkout('FETCH_HEAD', force=True)
 
+    overriding_max_uris = overriding_max_uris or {}
+
     commit_message = []
     binhost_changes = []
     for (target, uri) in binhosts:
       with self.m.step.nest(f'update {target.name}') as presentation:
         binhost_path = self._get_binhost_path(target, private, key)
         presentation.logs['binhost_path'] = str(binhost_path)
+
+        max_uris = overriding_max_uris.get(target.name, self._max_binhost_uris)
 
         # All binhosts must be in the same project.
         current_project = self.m.repo.project_info(
@@ -514,8 +528,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
         request = binhost_pb.SetBinhostRequest(build_target=target,
                                                private=private, key=key,
-                                               uri=uri,
-                                               max_uris=self._max_binhost_uris)
+                                               uri=uri, max_uris=max_uris)
         self.m.cros_build_api.BinhostService.SetBinhost(request,
                                                         infra_step=True)
         binhost_content = self.m.file.read_text('read binhost conf',

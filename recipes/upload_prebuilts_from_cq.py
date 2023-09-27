@@ -13,7 +13,8 @@ See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
 import time
 
-from typing import List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Set, Tuple
+from collections import defaultdict
 
 from google.protobuf import timestamp_pb2
 
@@ -184,7 +185,7 @@ def get_buildbucket_builds(api: RecipeApi, gerrit_change: GerritChange,
 def search_prebuilts(
     api: RecipeApi, step_name: str,
     fetched_builds: Optional[List[build_pb2.Build]],
-    gerrit_change: GerritChange, finished_build_targets: Set[str],
+    gerrit_change: GerritChange, finished_builds: Dict[str, Set[str]],
     is_staging: bool) -> Tuple[List[dict], List[dict], List[str]]:
   """Utility function to get the prebuilts corresponding to the gerrit change.
 
@@ -194,8 +195,8 @@ def search_prebuilts(
     fetched_builds: Builds corresponding to |gerrit_change|. If None, the
         method fetches the latest result.
     gerrit_change: The gerrit changes to get the corresponding prebuilts to.
-    finished_build_targets: Set of the finished build names. Builders in the
-        set are processed. The processed builders are added to this set.
+    finished_builds: Dict to store the build_target and profiles of the
+        finished builds. See the comment in `update_prebuilts()` for details.
     is_staging: True if wants the results from the staging environment.
 
   Returns:
@@ -205,7 +206,7 @@ def search_prebuilts(
     - List of names of running builders
   """
 
-  build_targets = set()
+  build_targets = defaultdict(set)
   debug_prebuilts_log = ''
   public_prebuilt_entries = []
   private_prebuilt_entries = []
@@ -220,6 +221,7 @@ def search_prebuilts(
     for build in reversed(sorted_builds):
       build_target = api.cros_infra_config.get_build_target(build)
       build_target_name = build_target.name if build_target else 'None'
+      builder_name = build.builder.builder
       prebuilts_uri = (
           build.output.properties['prebuilts_uri']
           if 'prebuilts_uri' in build.output.properties else None)
@@ -235,7 +237,7 @@ def search_prebuilts(
 
       # Ignore running builders.
       if (build.status & common_pb2.ENDED_MASK) == 0:
-        running_builds.append(build.builder.builder)
+        running_builds.append(builder_name)
         continue_reason.append('The builder is not finished yet.')
 
       # Ignore failed builds.
@@ -246,33 +248,55 @@ def search_prebuilts(
       if prebuilts_uri is None:
         continue_reason.append('The builder did not upload prebuilts.')
 
-      # Skip if the newer (= former in the loop) entry of the same build
-      # target exists.
-      if build_target_name != 'None' and build_target_name in finished_build_targets:
-        continue_reason.append('The prebuilts are already uploaded.')
+      # The builder config retrieved here might have been updated since the
+      # original build ran. It should be rare that the profile is changed, so
+      # that we use the retrieved configuration here.
+      # TODO(b/291943391): make the builders pass the used profile.
+      builder_config = api.cros_infra_config.get_builder_config(
+          builder_name, missing_ok=True)
+
+      if not builder_config:
+        profile_name = '(no builder configuration)'
+        # Carry on if the builder doesn't exist anymore.
+        continue_reason.append(
+            f'The builder configration for {builder_name} does not exist.')
+      else:
+        profile_name = builder_config.build.portage_profile.profile
+        if profile_name != '' and not is_staging:
+          continue_reason.append(
+              'Non-default profile is allowed only on staging.')
+
+        # Skip if the newer (= former in the loop) entry of the same build
+        # target exists.
+        if build_target_name != 'None' and builder_name in finished_builds.get(
+            build_target_name, {}):
+          continue_reason.append('The prebuilts are already uploaded.')
 
       # LF ('\n') is not added here, but added later with the result.
-      debug_prebuilts_log += (f'{build.id}: {build.builder.builder}: ' +
-                              f'{build_target_name}: ' +
+      debug_prebuilts_log += (f'{build.id}: {builder_name}: ' +
+                              f'{build_target_name}: ' + f'{profile_name}: ' +
                               f'{prebuilts_uri} ({prebuilts_private}): ')
 
-      if len(continue_reason) > 0:
-        reasons = ', '.join(continue_reason)
+      if continue_reason:
+        reasons = ' / '.join(continue_reason)
         debug_prebuilts_log += f'=> Skipped ({reasons})\n'
         continue
 
       debug_prebuilts_log += '=> Uploading prebuilts\n'
 
-      build_targets.add(build_target.name)
-      finished_build_targets.add(build_target.name)
+      build_targets[build_target_name].add(builder_name)
+      finished_builds[build_target_name].add(builder_name)
 
       is_private = prebuilts_private if prebuilts_private is not None else True
 
       entry = {
           'build_target': build_target,
-          'build_end_time': build.end_time,
           'prebuilts_private': is_private,
           'prebuilts_uri': prebuilts_uri,
+          # not used but for debugging.
+          'build_profile': profile_name,
+          # not used but for debugging.
+          'builder_name': builder_name,
       }
 
       if entry['prebuilts_private']:
@@ -284,28 +308,32 @@ def search_prebuilts(
     presentation.logs['private_prebuilt_entries'] = str(
         private_prebuilt_entries)
     presentation.logs['public_prebuilt_entries'] = str(public_prebuilt_entries)
-    # Sorting to make the result stable among different Python versions.
-    presentation.logs['build_targets'] = str(sorted(build_targets))
     presentation.logs['running_builds'] = str(running_builds)
+    # Sorting to make the result fixed because the order of set is not stable
+    # among different Python versions.
+    presentation.logs['build_targets'] = str(
+        {k: sorted(v) for k, v in dict(build_targets).items()})
 
     sorted_builds_len = len(sorted_builds)
-    prebiously_updated_builds_len = (
-        len(finished_build_targets) - len(build_targets))
+    previously_updated_builds_len = (
+        sum([len(v) for v in finished_builds.values()]) -
+        sum([len(v) for v in build_targets.values()]))
     prebuilt_entries_len = (
         len(public_prebuilt_entries) + len(private_prebuilt_entries))
     running_builds_len = len(running_builds)
     presentation.step_text = (
         f'Total {sorted_builds_len} builds:\n'
-        f'- {prebiously_updated_builds_len} previously-updated builds\n'
+        f'- {previously_updated_builds_len} previously-updated builds\n'
         f'- {prebuilt_entries_len} succeeded builds with uploaded prebuilts\n'
         f'- {running_builds_len} running builds\n')
 
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhosts(api: RecipeApi, step_name: str,
+def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
                  public_prebuilt_entries: List[dict],
-                 private_prebuilt_entries: List[dict]) -> None:
+                 private_prebuilt_entries: List[dict],
+                 finished_builds: Dict[str, Set[str]]) -> None:
   """Utility function to set the binhosts repeatedly.
 
   Args:
@@ -313,14 +341,26 @@ def set_binhosts(api: RecipeApi, step_name: str,
     step_name: Name of the step of this process to be shown in the Luci UI.
     public_prebuilt_entries: Public prebuilts to be set the binhosts of.
     private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
+    finished_builds: Dict to store the build_target and profiles of the
+        finished builds. See the comment in `update_prebuilts()` for detail.
   """
-  with api.step.nest(step_name):
+  with api.step.nest(step_name) as presentation_set_binhost:
+    # Count the number of builders that have generated prebuilts, and use it
+    # as the maximum number of binhosts.
+    # TODO(b/291943391): Support separated BINHOST.conf files for each
+    # profiles and remove this hack.
+    cumulative_binhost_counter = ({
+        k: len(v) for k, v in finished_builds.items()
+    })
+    presentation_set_binhost.logs['cumulative_binhost_counter'] = (
+        str(cumulative_binhost_counter))
+
     # Processes public builders
     with api.step.nest('Public binhosts') as presentation:
       public_prebuilt_entries_len = len(public_prebuilt_entries)
       presentation.step_summary_text = (
           f'Set {public_prebuilt_entries_len} binhosts.')
-      if public_prebuilt_entries_len > 0:
+      if public_prebuilt_entries_len:
         with api.cros_build_api.parallel_operations():
           api.cros_prebuilts.set_binhosts(
               binhosts=list(
@@ -328,13 +368,16 @@ def set_binhosts(api: RecipeApi, step_name: str,
                       public_prebuilt_entries)),
               private=False,
               key=binhost_pb.CQ_BINHOST,
+              overriding_max_uris=(cumulative_binhost_counter
+                                   if is_staging else None),
           )
-    # Processes private builders
+
+    # Processes private builders.
     with api.step.nest('Private binhosts') as presentation:
       private_prebuilt_entries_len = len(private_prebuilt_entries)
       presentation.step_summary_text = (
           f'Set {private_prebuilt_entries_len} binhosts.')
-      if private_prebuilt_entries_len > 0:
+      if private_prebuilt_entries_len:
         with api.cros_build_api.parallel_operations():
           api.cros_prebuilts.set_binhosts(
               binhosts=list(
@@ -342,6 +385,8 @@ def set_binhosts(api: RecipeApi, step_name: str,
                       private_prebuilt_entries)),
               private=True,
               key=binhost_pb.CQ_BINHOST,
+              overriding_max_uris=(cumulative_binhost_counter
+                                   if is_staging else None),
           )
 
 
@@ -366,21 +411,28 @@ def update_prebuilts(api, builds, gerrit_change, is_staging,
   MULTIPLIER_ON_NOT_FOUND = 2
   start_time = time.time()
 
-  finished_build_targets = set()
+  # A dict storing the finished builds, like:
+  #   finished_builds = {
+  #     'build_target1': set('builder_name1'),
+  #     'build_target2': set('builder_name2A', 'builder_name2B', ...),
+  #     ...
+  #   }
+  finished_builds = defaultdict(set)
   timeout = INITIAL_TIMEOUT_SEC
   count = 1
   while True:
     name_suffix = '' if count == 1 else f' ({count})'
     public_prebuilt_entries, private_prebuilt_entries, running_builds = \
         search_prebuilts(api, 'search the prebuilts' + name_suffix, builds,
-                         gerrit_change, finished_build_targets, is_staging)
+                         gerrit_change, finished_builds, is_staging)
     # Set None for 2nd runs and later to retrieve the latest builds.
     builds = None
 
     if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhosts(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
-                   private_prebuilt_entries)
+      set_binhosts(api, 'set BINHOSTs' + name_suffix, is_staging,
+                   public_prebuilt_entries, private_prebuilt_entries,
+                   finished_builds)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
@@ -390,13 +442,13 @@ def update_prebuilts(api, builds, gerrit_change, is_staging,
       # There are no running builders to wait for. Finishes the task.
       break
 
-    finished_build_targets_len = len(finished_build_targets)
-    all_builds_len = len(finished_build_targets) + running_builds_len
+    finished_builds_len = sum([len(v) for v in finished_builds.values()])
+    all_builds_len = finished_builds_len + running_builds_len
 
     # Adding one sec is a hack for test.
     if (time.time() - start_time + 1) >= entire_timeout_sec:
       return '\n'.join([
-          f'Updated {finished_build_targets_len} of {all_builds_len} ' +
+          f'Updated {finished_builds_len} of {all_builds_len} ' +
           f'builders after {count} trials.',
           f'Interrupted: maximum running time ({entire_timeout_sec} sec) ' +
           'exceeded.',
@@ -409,8 +461,8 @@ def update_prebuilts(api, builds, gerrit_change, is_staging,
 
     count += 1
 
-  finished_build_targets_len = len(finished_build_targets)
-  return (f'Updated all of {finished_build_targets_len} builders after ' +
+  finished_builds_len = sum([len(v) for v in finished_builds.values()])
+  return (f'Updated all of {finished_builds_len} builders after ' +
           f'{count} trials.')
 
 
@@ -423,6 +475,9 @@ def RunSteps(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):
 
 def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   is_staging = api.build_menu.is_staging
+
+  # Load of builder configurations first to make the result clear.
+  api.cros_infra_config.force_reload()
 
   with api.step.nest('search the last merged uprev CL') as pres_search_cls:
     change = get_last_merged_change(api)
@@ -591,27 +646,27 @@ def GenTests(api: RecipeTestApi):
               'bucket': 'cq'
           },
       ),
-      # Completed successfully on betty (staging).
+      # Completed successfully on atlas (staging).
       build_pb2.Build(
           id=8922054662172514002,
           status=common_pb2.SUCCESS,
-          input=api.build_plan.input_proto(None, 'betty-pi-arc'),
+          input=api.build_plan.input_proto(None, 'atlas'),
           output=gen_output_props(prebuilts_uri='xxx', prebuilts_private=True),
           create_time=timestamp_pb2.Timestamp(seconds=1598338802),
           builder={
-              'builder': 'staging-betty-pi-arc-cq',
+              'builder': 'staging-atlas-cq',
               'bucket': 'staging'
           },
       ),
-      # Completed successfully on betty (prod).
+      # Completed successfully on atlas (prod).
       build_pb2.Build(
           id=8922054662172514003,
           status=common_pb2.SUCCESS,
-          input=api.build_plan.input_proto(None, 'betty-pi-arc'),
+          input=api.build_plan.input_proto(None, 'atlas'),
           output=gen_output_props(prebuilts_uri='xxx', prebuilts_private=True),
           create_time=timestamp_pb2.Timestamp(seconds=1598338803),
           builder={
-              'builder': 'betty-pi-arc-cq',
+              'builder': 'atlas-cq',
               'bucket': 'cq'
           },
       ),
@@ -650,6 +705,18 @@ def GenTests(api: RecipeTestApi):
               'bucket': 'cq'
           },
       ),
+      # Completed successfully on amd64-generic-asan (non-default profile).
+      build_pb2.Build(
+          id=8922054662175514000,
+          status=common_pb2.SUCCESS,
+          input=api.build_plan.input_proto(None, 'amd64-generic'),
+          output=gen_output_props(prebuilts_uri='xxx', prebuilts_private=False),
+          create_time=timestamp_pb2.Timestamp(seconds=1598338800),
+          builder={
+              'builder': 'amd64-generic-asan',
+              'bucket': 'informational',
+          },
+      ),
   ]
 
   # Intermediate state of builder list: containing running and finished builds.
@@ -666,15 +733,15 @@ def GenTests(api: RecipeTestApi):
               'bucket': 'cq'
           },
       ),
-      # Completed successfully on betty (prod).
+      # Completed successfully on atlas (prod).
       build_pb2.Build(
           id=8922054662172514003,
           status=common_pb2.STARTED,
-          input=api.build_plan.input_proto(None, 'betty-pi-arc'),
+          input=api.build_plan.input_proto(None, 'atlas'),
           output=gen_output_props(prebuilts_uri='xxx', prebuilts_private=True),
           create_time=timestamp_pb2.Timestamp(seconds=1598338803),
           builder={
-              'builder': 'betty-pi-arc-cq',
+              'builder': 'atlas-cq',
               'bucket': 'cq'
           },
       ),
@@ -822,7 +889,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs.Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
@@ -843,11 +910,23 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs.Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
+      # Should update 3 amd64-generic and 2 atlas.
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic (2)'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic (3)'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update atlas'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update atlas (2)'),
+      # Should update 5 builders in total.
       api.post_check(post_process.SummaryMarkdown,
-                     'Updated all of 2 builders after 1 trials.'),
+                     'Updated all of 5 builders after 1 trials.'),
       bucket='staging',
   )
 
@@ -869,14 +948,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs.Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 120 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs (2).Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs (2).Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
@@ -905,21 +984,21 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'set BINHOSTs.Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs.Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs.Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 120 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Public binhosts.update amd64-generic'),
       api.post_check(post_process.DoesNotRun,
-                     'set BINHOSTs (2).Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs (2).Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 240 sec for next retry'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (3).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
-                     'set BINHOSTs (3).Private binhosts.update betty-pi-arc'),
+                     'set BINHOSTs (3).Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (3).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
@@ -974,8 +1053,20 @@ def GenTests(api: RecipeTestApi):
       api.scheduler(triggers=[GITILES_TRIGGER_UPREV_COMMIT]),
       api.post_check(post_process.MustRun, 'search the prebuilts'),
       api.post_check(post_process.MustRun, 'set BINHOSTs'),
+      # Should update 3 amd64-generic and 2 atlas.
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic (2)'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Public binhosts.update amd64-generic (3)'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update atlas'),
+      api.post_check(post_process.MustRun,
+                     'set BINHOSTs.Private binhosts.update atlas (2)'),
+      # Should update 5 builders in total.
       api.post_check(post_process.SummaryMarkdown,
-                     'Updated all of 2 builders after 1 trials.'),
+                     'Updated all of 5 builders after 1 trials.'),
       bucket='staging',
   )
 

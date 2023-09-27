@@ -3522,7 +3522,7 @@ Args:
 Returns:
   The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#430)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
+&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#430)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
 
 Set the target's Portage binhosts to point to the given URIs.
 
@@ -3533,8 +3533,11 @@ Args:
   binhosts: List of tuples of build targets and their new URIs.
   private: Whether the target's binhost is private.
   key: The binhost key, e.g. POSTSUBMIT_BINHOST.
+  overriding_max_uris: Dict to override `max_uris` for board. Key is the
+      name of build target, Value is the number of `max_uris` used for the
+      build target. None for using the default value.
 
-&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#476)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
+&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#482)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
 
 Utility method to update the target's Portage binhosts.
 
@@ -3546,8 +3549,11 @@ Args:
   key: The binhost key, e.g. POSTSUBMIT_BINHOST.
   target_project: Project of the binhosts.
   branch: branch name to update
+  overriding_max_uris: Dict to override `max_uris` for board. Key is the
+      name of build target, Value is the number of `max_uris` used for the
+      build target. None for using the default value.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#719)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#732)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3563,7 +3569,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#690)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#703)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3573,7 +3579,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#626)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#639)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -15712,7 +15718,7 @@ Recipe for running tricium on CLs.
 &mdash; **def [RunSteps](/recipes/tricium.py#41)(api: RecipeApi):**
 ### *recipes* / [upload\_prebuilts\_from\_cq](/recipes/upload_prebuilts_from_cq.py)
 
-[DEPS](/recipes/upload_prebuilts_from_cq.py#40): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/upload_prebuilts_from_cq.py#41): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe that retrieves locations from google storage that the binpkgs are
@@ -15721,11 +15727,11 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#424)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#476)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#417)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#469)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
-&mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#147)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
+&mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#148)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
 Utility function to get the builds corresponding to the gerrit change.
 
@@ -15737,7 +15743,7 @@ Args:
 Returns:
   Builds of the gerrit change.
 
-&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#75)(api: RecipeApi):**
+&mdash; **def [get\_last\_merged\_change](/recipes/upload_prebuilts_from_cq.py#76)(api: RecipeApi):**
 
 Utility function to get the last merged change from Gerrit.
 
@@ -15750,7 +15756,7 @@ Args:
 Returns:
   GerritChange of the last marged uprev. Or None if not found.
 
-&mdash; **def [search\_prebuilts](/recipes/upload_prebuilts_from_cq.py#184)(api: RecipeApi, step_name: str, fetched_builds: Optional[List[build_pb2.Build]], gerrit_change: GerritChange, finished_build_targets: Set[str], is_staging: bool):**
+&mdash; **def [search\_prebuilts](/recipes/upload_prebuilts_from_cq.py#185)(api: RecipeApi, step_name: str, fetched_builds: Optional[List[build_pb2.Build]], gerrit_change: GerritChange, finished_builds: Dict[(str, Set[str])], is_staging: bool):**
 
 Utility function to get the prebuilts corresponding to the gerrit change.
 
@@ -15760,8 +15766,8 @@ Args:
   fetched_builds: Builds corresponding to |gerrit_change|. If None, the
       method fetches the latest result.
   gerrit_change: The gerrit changes to get the corresponding prebuilts to.
-  finished_build_targets: Set of the finished build names. Builders in the
-      set are processed. The processed builders are added to this set.
+  finished_builds: Dict to store the build_target and profiles of the
+      finished builds. See the comment in `update_prebuilts()` for details.
   is_staging: True if wants the results from the staging environment.
 
 Returns:
@@ -15770,7 +15776,7 @@ Returns:
   - List of private prebuilt entries added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhosts](/recipes/upload_prebuilts_from_cq.py#306)(api: RecipeApi, step_name: str, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhosts](/recipes/upload_prebuilts_from_cq.py#333)(api: RecipeApi, step_name: str, is_staging: bool, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict], finished_builds: Dict[(str, Set[str])]):**
 
 Utility function to set the binhosts repeatedly.
 
@@ -15779,8 +15785,10 @@ Args:
   step_name: Name of the step of this process to be shown in the Luci UI.
   public_prebuilt_entries: Public prebuilts to be set the binhosts of.
   private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
+  finished_builds: Dict to store the build_target and profiles of the
+      finished builds. See the comment in `update_prebuilts()` for detail.
 
-&mdash; **def [update\_prebuilts](/recipes/upload_prebuilts_from_cq.py#348)(api, builds, gerrit_change, is_staging, entire_timeout_sec):**
+&mdash; **def [update\_prebuilts](/recipes/upload_prebuilts_from_cq.py#393)(api, builds, gerrit_change, is_staging, entire_timeout_sec):**
 
 Utility function to try updating the prebuilts.
 
