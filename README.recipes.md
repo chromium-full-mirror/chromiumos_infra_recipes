@@ -14811,7 +14811,7 @@ is unaffected.
 
 Release recipes by running the release.sh script in infra/recipes.
 
-&mdash; **def [RunSteps](/recipes/recipes_autoreleaser.py#88)(api: recipe_api.RecipeApi, properties: RecipesAutoreleaserProperties):**
+&mdash; **def [RunSteps](/recipes/recipes_autoreleaser.py#91)(api: recipe_api.RecipeApi, properties: RecipesAutoreleaserProperties):**
 ### *recipes* / [regen\_build\_cache](/recipes/regen_build_cache.py)
 
 [DEPS](/recipes/regen_build_cache.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [deferrals](#recipe_modules-deferrals), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

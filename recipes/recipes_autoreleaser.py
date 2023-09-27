@@ -63,7 +63,10 @@ _ERROR_HANDLERS: Dict[int, result_pb2.RawResult] = {
         ),
     21:
         result_pb2.RawResult(
-            summary_markdown='No releasable changes found',
+            # TODO(b/302345208): Make the return codes from the release script
+            # differentiate not covered vs. blocked by staging failures more
+            # clearly.
+            summary_markdown='No releasable changes found. This likely is because staging failures are making changes non-releasable.',
             status=common_pb2.FAILURE,
         )
 }
@@ -213,8 +216,10 @@ def GenTests(api):
       ),
       api.step_data("release bundle 'infra'.run release.sh", retcode=21),
       api.expect_status('FAILURE'),
-      api.post_process(post_process.SummaryMarkdown,
-                       'No releasable changes found'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          'No releasable changes found. This likely is because staging failures are making changes non-releasable.'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
