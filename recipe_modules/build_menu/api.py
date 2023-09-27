@@ -437,7 +437,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # If update is not specified in kwargs, defer to the builder config.
       # If the builder config does not specify, default to True.
       if update is None:
-        run_spec = config.update_chroot.run_spec
+        run_spec = config.build.sdk_update.sdk_update_run_spec
         update = run_spec != BuilderConfig.RunSpec.NO_RUN
 
       self.m.cros_sdk.create_chroot(

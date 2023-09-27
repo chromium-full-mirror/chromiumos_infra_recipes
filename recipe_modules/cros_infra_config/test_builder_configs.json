@@ -237,6 +237,9 @@
 					"profile": "asan"
 				},
 				"applyGerritChanges": true,
+				"sdkUpdate": {
+					"sdkUpdateRunSpec": "RUN"
+				},
 				"installPackages": {
 					"runSpec": "RUN",
 					"dependencies": "ALL_DEPENDENCIES"
@@ -255,9 +258,6 @@
 			"unitTests": {
 				"ebuildsRunSpec": "RUN",
 				"dependencies": "CL_AFFECTED_DEPENDENCIES"
-			},
-			"updateChroot": {
-				"runSpec": "RUN"
 			}
 		},
     {
@@ -1459,6 +1459,9 @@
 						"flag": "chrome_internal"
 					}
 				],
+				"sdkUpdate": {
+					"sdkUpdateRunSpec": "RUN"
+				},
 				"installPackages": {
 					"runSpec": "RUN",
 					"dependencies": "ALL_DEPENDENCIES"
@@ -1472,9 +1475,6 @@
 			"unitTests": {
 				"ebuildsRunSpec": "NO_RUN",
 				"dependencies": "ALL_DEPENDENCIES"
-			},
-			"updateChroot": {
-				"runSpec": "RUN"
 			}
 		},
     {
