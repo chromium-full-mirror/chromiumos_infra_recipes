@@ -55,6 +55,8 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
     firmware_update: true
   }
 }'''
+DOCKER_HOST = 'us-docker.pkg.dev/chromeos-bot/signing'
+
 
 # How long to wait on gsutil ops.
 GSUTIL_TIMEOUT_SECONDS = 30 * 60
@@ -175,12 +177,18 @@ class SigningApi(recipe_api.RecipeApi):
           self.setup_signing(sign_types, channels)
       ])
       output_dir = self.m.path.mkdtemp('signed-artifacts')
+      image_name = f'{DOCKER_HOST}/{self._signing_image}'
+      self.m.step('docker pull', [
+          'docker',
+          'pull',
+          image_name,
+      ])
       request = SignImageRequest(
           signing_configs=config, result_path=common_pb2.ResultPath(
               path=common_pb2.Path(
                   path=self.m.path.abspath(output_dir),
                   location=common_pb2.Path.Location.OUTSIDE,
-              )), docker_image=self._signing_image)
+              )), docker_image=image_name)
       self.m.cros_build_api.ImageService.SignImage(request)
 
       # TODO(b/302132827): Remove ignore_exceptions when stable.

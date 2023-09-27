@@ -11857,6 +11857,33 @@
     ]
   },
   {
+    "cmd": [
+      "docker",
+      "pull",
+      "us-docker.pkg.dev/chromeos-bot/signing/signing:latest:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.docker pull",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "sign artifacts.call chromite.api.ImageService/SignImage",
     "~followup_annotations": [
@@ -11875,7 +11902,7 @@
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"signing:latest:\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -11890,7 +11917,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"signing:latest:\"\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\"\n}",
       "[CLEANUP]/build_api_messages_tmp_27/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
