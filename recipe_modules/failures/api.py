@@ -543,7 +543,7 @@ class FailuresApi(RecipeApi):
     # component of the string is the model if the component size is larger than
     # 3
     model = target_identifier_parts[1] if len(target_identifier_parts) > 3 else ''
-    index = (build_target, model, test_id)
+    index = (test_id, build_target, model)
     fault_attribute = self._test_variant_to_fault_attribute[index]
     if not fault_attribute:
       return ''

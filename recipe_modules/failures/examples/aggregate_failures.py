@@ -102,12 +102,12 @@ def RunSteps(api):
   hw_test_fault_attribute2.comparison_snapshot.CopyFrom(
       comparison_snapshot_properties)
 
-  test_properties_to_fault_attribute[(
-      'vm-test-1', '', 'some-vm-test-from-shard-1')] = vm_test_fault_attribute
-  test_properties_to_fault_attribute[('test-1', '',
-                                      'test-1')] = hw_test_fault_attribute
-  test_properties_to_fault_attribute[('test-2', '',
-                                      'test-2')] = hw_test_fault_attribute2
+  test_properties_to_fault_attribute[('some-vm-test-from-shard-1', 'vm-test-1',
+                                      '')] = vm_test_fault_attribute
+  test_properties_to_fault_attribute[('test-1', 'test-1', '')] \
+    = hw_test_fault_attribute
+  test_properties_to_fault_attribute[('test-2', 'test-2', '')] \
+    = hw_test_fault_attribute2
   api.failures.set_test_variant_to_fault_attribute(
       test_properties_to_fault_attribute)
 
