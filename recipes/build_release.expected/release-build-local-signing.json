@@ -11902,7 +11902,8 @@
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/unsigned-artifacts_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -11917,7 +11918,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\"\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\",\n  \"archiveDir\": \"[CLEANUP]/unsigned-artifacts_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_27/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

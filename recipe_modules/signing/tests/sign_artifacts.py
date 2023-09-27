@@ -50,7 +50,7 @@ def RunSteps(api: RecipeApi):
   sign_types = [IMAGE_TYPE_BASE]
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
-  processed_config = api.signing.setup_signing(sign_types, channels)
+  processed_config, _ = api.signing.setup_signing(sign_types, channels)
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[

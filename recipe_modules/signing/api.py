@@ -8,7 +8,7 @@ import json
 import re
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, List, NewType, Optional
+from typing import Any, Dict, List, NewType, Optional, Tuple, Union
 
 from google.protobuf.text_format import Parse
 
@@ -133,7 +133,8 @@ class SigningApi(recipe_api.RecipeApi):
   # Public method so we can test it.
   def setup_signing(
       self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel']) -> BuildTargetSigningConfig:
+      channels: List['common_pb2.Channel']
+  ) -> Tuple[BuildTargetSigningConfig, Union[str, Path]]:
     """Set up the working dir for signing.
 
     Copies all necessary artifacts (based on signing config) from GS into a new
@@ -141,6 +142,10 @@ class SigningApi(recipe_api.RecipeApi):
     config.
 
     Also drops configs for irrelevant sign types.
+
+    Returns:
+      - signing configs
+      - dir containing input artifacts
     """
     build_target_config = self.get_config()
 
@@ -149,7 +154,8 @@ class SigningApi(recipe_api.RecipeApi):
       if signing_config.image_type in sign_types:
         relevant_configs.append(signing_config)
 
-    relevant_configs = self.download_release_artifacts(relevant_configs)
+    relevant_configs, archive_dir = self.download_release_artifacts(
+        relevant_configs)
 
     # Create a copy of config for each configured channel.
     channel_configs = []
@@ -164,7 +170,7 @@ class SigningApi(recipe_api.RecipeApi):
         build_target=build_target_config.build_target,
         signing_configs=channel_configs,
     )
-    return build_target_config
+    return build_target_config, archive_dir
 
   def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
                      channels: List['common_pb2.Channel']) -> None:
@@ -173,9 +179,10 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
     with self.m.step.nest('sign artifacts'):
-      config = BuildTargetSigningConfigs(build_target_signing_configs=[
-          self.setup_signing(sign_types, channels)
-      ])
+      build_target_config, archive_dir = self.setup_signing(
+          sign_types, channels)
+      config = BuildTargetSigningConfigs(
+          build_target_signing_configs=[build_target_config])
       output_dir = self.m.path.mkdtemp('signed-artifacts')
       image_name = f'{DOCKER_HOST}/{self._signing_image}'
       self.m.step('docker pull', [
@@ -184,7 +191,8 @@ class SigningApi(recipe_api.RecipeApi):
           image_name,
       ])
       request = SignImageRequest(
-          signing_configs=config, result_path=common_pb2.ResultPath(
+          signing_configs=config, archive_dir=str(archive_dir),
+          result_path=common_pb2.ResultPath(
               path=common_pb2.Path(
                   path=self.m.path.abspath(output_dir),
                   location=common_pb2.Path.Location.OUTSIDE,
@@ -453,8 +461,8 @@ class SigningApi(recipe_api.RecipeApi):
     return skipped_artifacts
 
   def download_release_artifacts(
-      self,
-      relevant_signing_configs: List[SigningConfig]) -> List[SigningConfig]:
+      self, relevant_signing_configs: List[SigningConfig]
+  ) -> Tuple[List[SigningConfig], Union[str, Path]]:
     """Download artifacts so we can support retries with conductor.
 
     As opposed to in situ builds with local artifacts already present.
@@ -464,7 +472,8 @@ class SigningApi(recipe_api.RecipeApi):
       relevant_signing_configs: Build target configs with supported sign types.
 
     Returns:
-      relevant_signing_configs with local artifact paths populated.
+      - relevant_signing_configs with local artifact paths populated.
+      - dir containing input artifacts
     """
     local_dir = self.m.path.mkdtemp('unsigned-artifacts')
     gs_dir = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
@@ -495,7 +504,7 @@ class SigningApi(recipe_api.RecipeApi):
             'configured'] = 'Downloading artifacts based on signing config: {}'.format(
                 ','.join(signing_configured_artifacts))
 
-      return relevant_signing_configs
+      return relevant_signing_configs, local_dir
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
