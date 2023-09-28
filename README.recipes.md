@@ -15758,7 +15758,7 @@ Args:
 
 Recipe for upreving Borealis build dependencies.
 
-&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#130)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
+&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#135)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
 
 Create Git commit from changes and upload Gerrit CL.
 
@@ -15768,7 +15768,7 @@ Args:
   commit_message: Git commit message to use.
   presentation: the API step to show the Gerrit CL URL
 
-&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#51)(api: RecipeApi, use_cache: bool=True, skip_termina: bool=False, stage: Optional[str]=None):**
+&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#51)(api: RecipeApi, use_cache: bool=True, chroot_path: str=None, out_dir: str=None, skip_termina: bool=False, stage: Optional[str]=None):**
 
 Perform a Borealis build_full.
 
@@ -15779,7 +15779,7 @@ Args:
   stage: The name of the step from the Dockerfile to build. Does not
     perform a full build, will stop after the specified stage is built.
 
-&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#153)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#158)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
 &mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#42)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 ### *recipes* / [uprev\_chromite\_head](/recipes/uprev_chromite_head.py)
