@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module with utility function for testing auto_retry_util."""
+
 from recipe_engine import recipe_test_api
 from recipe_engine.recipe_test_api import TestData
 

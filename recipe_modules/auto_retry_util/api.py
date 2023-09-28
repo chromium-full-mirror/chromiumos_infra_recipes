@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Utility function for CQ auto retry."""
+
 from typing import Dict, FrozenSet, List, NamedTuple, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
@@ -23,9 +25,13 @@ from PB.testplans.generate_test_plan import TestUnitCommon
 
 from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
+
+# The Chromeos LUCI service account.
+CHROMEOS_LUCI_SERVICE_ACCOUNT = 'chromeos-scoped@luci-project-accounts.iam.gserviceaccount.com'
 
 # Start looking back at 1 days worth of data while we are still developing.
 DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
@@ -95,6 +101,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._experimental_features = {
         x.name: x.experiment_flag for x in props.experimental_features
     }
+    self._chromeos_luci_service_account = (
+        props.chromeos_luci_service_account or CHROMEOS_LUCI_SERVICE_ACCOUNT)
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -454,16 +462,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           pres.step_text = 'no experiment allowlist filtering'
           filter_properties['allowlist_filtered'] = 0
 
-
       with self.m.step.nest('filter out by basic eligibility') as pres:
-        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids = set(
-        ), set(), set(), set(), set()
+        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids = set(
+        ), set(), set(), set(), set(), set()
 
         failed_to_fetch_ids = set()
         for c in cq_orchs:
           try:
             patch_sets = self.m.gerrit.fetch_patch_sets(
-                c.input.gerrit_changes, include_submittable=True)
+                c.input.gerrit_changes, include_submittable=True,
+                include_messages=True)
           except recipe_api.StepFailure:
             failed_to_fetch_ids.add(c.id)
             continue
@@ -476,11 +484,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               {c.id for p in patch_sets if not p.is_latest_patch_set()})
           unresolved_comment_ids.update(
               {c.id for p in patch_sets if p.unresolved_comment_count})
+          if not self._was_cv_active(c.id, patch_sets):
+            removed_label_ids.add(c.id)
 
         ineligible_ids = (
             non_new_ids | non_submittable_ids | wip_ids
             | non_latest_patch_set_ids | failed_to_fetch_ids
-            | unresolved_comment_ids)
+            | unresolved_comment_ids | removed_label_ids)
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if failed_to_fetch_ids:
@@ -512,6 +522,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(unresolved_comment_ids)
           ]
+        if removed_label_ids:
+          pres.logs['removed_label'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(removed_label_ids)
+          ]
 
         filter_properties.update({
             'failed_gerrit_fetch': len(failed_to_fetch_ids),
@@ -520,6 +535,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             'wip': len(wip_ids),
             'non_latest_patch_set': len(non_latest_patch_set_ids),
             'unresolved_comments': len(unresolved_comment_ids),
+            'removed_label': len(removed_label_ids),
         })
 
       with self.m.step.nest('filter out merge conflicts') as pres:
@@ -746,7 +762,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return sorted(exonerated_suites.difference(previously_passed_suites))
 
-
   def _create_comment(self, build: build_pb2.Build,
                       retryable_builders: List[str],
                       retryable_test_suites: List[str]) -> str:
@@ -836,3 +851,34 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       for gc in build.input.gerrit_changes:
         self.m.gerrit.set_change_labels_remote(gc, labels)
         self.m.gerrit.add_change_comment_remote(gc, comment)
+
+  def _was_cv_active(self, build_id: int, patch_sets: List[PatchSet]) -> bool:
+    """Check if the CV was active when the given build failed.
+
+    Checks if CV was active when a build failed by checking for a message from
+    CV which states that a build with the given build id failed.
+
+    When CQ labels are removed from a CL, the CQ builds are not automatically
+    canceled. Therefore these builds will show up in our queries but should not
+    be retried.
+
+    Args:
+      build_id: The CQ builder of interest.
+      patch_sets: The list with PatchSet for which to check if CV noted the
+        given build failure.
+
+    Returns:
+      Whether CV was active on all the patchsets when the build failed.
+    """
+    for p in patch_sets:
+      cv_account_id = self.m.gerrit.get_account_id(
+          self._chromeos_luci_service_account, p.host)
+      # If CV is still active when a CQ build fails it will post a message which
+      # links the build failure.
+      if not any(
+          str(build_id) in m['message'] and
+          m.get('author', {}).get('_account_id') == cv_account_id
+          for m in p.messages):
+        return False
+
+    return True

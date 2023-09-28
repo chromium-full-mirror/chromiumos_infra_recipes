@@ -68,4 +68,8 @@ message AutoRetryUtilProperties {
 
   // A list of experimental auto retry experimental features to enable.
   repeated ExperimentalFeature experimental_features = 9;
+
+  // The Chromeos LUCI service account. Used to filter out builds where CV was
+  // no longer active.
+  string chromeos_luci_service_account = 10;
 }
