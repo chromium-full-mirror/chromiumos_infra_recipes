@@ -303,7 +303,7 @@ def search_prebuilts(
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
+def set_binhosts(api: RecipeApi, step_name: str,
                  public_prebuilt_entries: List[dict],
                  private_prebuilt_entries: List[dict]) -> None:
   """Utility function to set the binhosts repeatedly.
@@ -315,67 +315,34 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
     private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
   """
   with api.step.nest(step_name):
-    if not is_staging:
-      # Obsolete logic for prod env. Will be replaced with the new logic below.
-      with api.cros_source.checkout_overlays_context(
-      ), api.build_menu.setup_workspace(cherry_pick_changes=True):
-        # Processes public builders
-        with api.step.nest('Public binhosts') as presentation:
-          public_prebuilt_entries_len = len(public_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {public_prebuilt_entries_len} binhosts.')
-          if public_prebuilt_entries_len > 0:
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        public_prebuilt_entries)),
-                private=False,
-                key=binhost_pb.CQ_BINHOST,
-            )
-
-        # Processes private builders
-        with api.step.nest('Private binhosts') as presentation:
-          private_prebuilt_entries_len = len(private_prebuilt_entries)
-          presentation.step_summary_text = (
-              f'Set {private_prebuilt_entries_len} binhosts.')
-          if private_prebuilt_entries_len > 0:
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        private_prebuilt_entries)),
-                private=True,
-                key=binhost_pb.CQ_BINHOST,
-            )
-    else:
-      # Experimental new logic for testing on staging.
-      # Processes public builders
-      with api.step.nest('Public binhosts') as presentation:
-        public_prebuilt_entries_len = len(public_prebuilt_entries)
-        presentation.step_summary_text = (
-            f'Set {public_prebuilt_entries_len} binhosts.')
-        if public_prebuilt_entries_len > 0:
-          with api.cros_build_api.parallel_operations():
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        public_prebuilt_entries)),
-                private=False,
-                key=binhost_pb.CQ_BINHOST,
-            )
-      # Processes private builders
-      with api.step.nest('Private binhosts') as presentation:
-        private_prebuilt_entries_len = len(private_prebuilt_entries)
-        presentation.step_summary_text = (
-            f'Set {private_prebuilt_entries_len} binhosts.')
-        if private_prebuilt_entries_len > 0:
-          with api.cros_build_api.parallel_operations():
-            api.cros_prebuilts.set_binhosts(
-                binhosts=list(
-                    map(lambda e: (e['build_target'], e['prebuilts_uri']),
-                        private_prebuilt_entries)),
-                private=True,
-                key=binhost_pb.CQ_BINHOST,
-            )
+    # Processes public builders
+    with api.step.nest('Public binhosts') as presentation:
+      public_prebuilt_entries_len = len(public_prebuilt_entries)
+      presentation.step_summary_text = (
+          f'Set {public_prebuilt_entries_len} binhosts.')
+      if public_prebuilt_entries_len > 0:
+        with api.cros_build_api.parallel_operations():
+          api.cros_prebuilts.set_binhosts(
+              binhosts=list(
+                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                      public_prebuilt_entries)),
+              private=False,
+              key=binhost_pb.CQ_BINHOST,
+          )
+    # Processes private builders
+    with api.step.nest('Private binhosts') as presentation:
+      private_prebuilt_entries_len = len(private_prebuilt_entries)
+      presentation.step_summary_text = (
+          f'Set {private_prebuilt_entries_len} binhosts.')
+      if private_prebuilt_entries_len > 0:
+        with api.cros_build_api.parallel_operations():
+          api.cros_prebuilts.set_binhosts(
+              binhosts=list(
+                  map(lambda e: (e['build_target'], e['prebuilts_uri']),
+                      private_prebuilt_entries)),
+              private=True,
+              key=binhost_pb.CQ_BINHOST,
+          )
 
 
 def update_prebuilts(api, builds, gerrit_change, is_staging,
@@ -412,8 +379,8 @@ def update_prebuilts(api, builds, gerrit_change, is_staging,
 
     if len(public_prebuilt_entries) > 0 or len(private_prebuilt_entries) > 0:
       # If any builder finishes, set their binhosts.
-      set_binhosts(api, 'set BINHOSTs' + name_suffix, is_staging,
-                   public_prebuilt_entries, private_prebuilt_entries)
+      set_binhosts(api, 'set BINHOSTs' + name_suffix, public_prebuilt_entries,
+                   private_prebuilt_entries)
     else:
       # Waiting with an exponential backoff algorithm if no builder finishes.
       timeout = min(timeout * MULTIPLIER_ON_NOT_FOUND, MAXIMUM_TIMEOUT_SEC)
@@ -474,8 +441,7 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     # Interrupt the job, if the job is triggered by gitiles but the trigger is
     # not the uprev commit.
-    # This logic is under testing so that works only on staging as for now.
-    if is_staging and len(gitiles_triggers) > 0:
+    if len(gitiles_triggers) > 0:
       triggered_from_correct_cl = any(
           t.gitiles.revision == current_revision for t in gitiles_triggers)
       if not triggered_from_correct_cl:
@@ -518,13 +484,9 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
   # Require to manipulate the reposity (setting BINHOSTS).
   api.cros_source.configure_builder(default_main=True)
 
-  if is_staging:
-    with api.cros_source.checkout_overlays_context(
-    ), api.workspace_util.sync_to_commit(staging=is_staging,
-                                         projects=BINHOST_PROJECTS):
-      return update_prebuilts(api, builds, gerrit_change, is_staging,
-                              entire_timeout_sec)
-  else:
+  with api.cros_source.checkout_overlays_context(
+  ), api.workspace_util.sync_to_commit(staging=is_staging,
+                                       projects=BINHOST_PROJECTS):
     return update_prebuilts(api, builds, gerrit_change, is_staging,
                             entire_timeout_sec)
 

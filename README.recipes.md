@@ -15679,9 +15679,9 @@ the locations.
 
 See go/cros-faster-cq-by-ealier-binpkg for the detail.
 
-&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#457)(api: RecipeApi, entire_timeout_sec: int):**
+&mdash; **def [DoRunSteps](/recipes/upload_prebuilts_from_cq.py#424)(api: RecipeApi, entire_timeout_sec: int):**
 
-&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#450)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
+&mdash; **def [RunSteps](/recipes/upload_prebuilts_from_cq.py#417)(api: RecipeApi, properties: UploadPrebuiltsFromCqProperties):**
 
 &mdash; **def [get\_buildbucket\_builds](/recipes/upload_prebuilts_from_cq.py#147)(api: RecipeApi, gerrit_change: GerritChange, is_staging: bool):**
 
@@ -15728,7 +15728,7 @@ Returns:
   - List of private prebuilt entries added in this method
   - List of names of running builders
 
-&mdash; **def [set\_binhosts](/recipes/upload_prebuilts_from_cq.py#306)(api: RecipeApi, step_name: str, is_staging: bool, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
+&mdash; **def [set\_binhosts](/recipes/upload_prebuilts_from_cq.py#306)(api: RecipeApi, step_name: str, public_prebuilt_entries: List[dict], private_prebuilt_entries: List[dict]):**
 
 Utility function to set the binhosts repeatedly.
 
@@ -15738,7 +15738,7 @@ Args:
   public_prebuilt_entries: Public prebuilts to be set the binhosts of.
   private_prebuilt_entries: Prebuilts prebuilts to be set the binhosts of.
 
-&mdash; **def [update\_prebuilts](/recipes/upload_prebuilts_from_cq.py#381)(api, builds, gerrit_change, is_staging, entire_timeout_sec):**
+&mdash; **def [update\_prebuilts](/recipes/upload_prebuilts_from_cq.py#348)(api, builds, gerrit_change, is_staging, entire_timeout_sec):**
 
 Utility function to try updating the prebuilts.
 
