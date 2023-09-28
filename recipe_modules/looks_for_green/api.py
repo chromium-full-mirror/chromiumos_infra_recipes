@@ -326,9 +326,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     approx_snap_age_hours = days * 24 + seconds / 3600
     return round(approx_snap_age_hours)
 
-  def _get_latest_green_snapshot(self, parsed_results: List[Snapshot]
-                                ) -> Optional[Snapshot]:
-    """Get the latest green snapshot from a list of buildbucket snapshots.
+  def _get_latest_greenest_snapshot(
+      self, parsed_results: List[Snapshot]) -> Optional[Snapshot]:
+    """Get the latest greenest snapshot from a list of buildbucket snapshots.
 
     Return None if no green snapshot exists.
     """
@@ -337,7 +337,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                parsed_results))
     if not green_results:
       return None
-    latest_snap = max(green_results, key=lambda k: k.start_time)
+    max_greenness = max([r.agg_green for r in parsed_results])
+    greenest_results = list(
+        filter(lambda d: d.agg_green == max_greenness, green_results))
+    latest_snap = max(greenest_results, key=lambda k: k.start_time)
     return latest_snap
 
   def find_green_snapshot(
@@ -352,7 +355,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       parsed_results = []
       for result in results:
         parsed_results.append(self._parse_snapshot_result(result))
-      green = self._get_latest_green_snapshot(parsed_results)
+      green = self._get_latest_greenest_snapshot(parsed_results)
       if green:
         presentation.logs['latest green'] = (
             f'Found green snapshot: {green.commit_sha} with '

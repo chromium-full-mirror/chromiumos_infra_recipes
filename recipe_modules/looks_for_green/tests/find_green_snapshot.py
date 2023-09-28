@@ -55,6 +55,14 @@ green_build2 = build_pb2.Build(id=234, output=output, input=build_input,
                                start_time=TEST_START_TIMESTAMP2,
                                end_time=TEST_END_TIMESTAMP)
 
+output.properties['greenness'] = {
+    'aggregateMetric': 100,
+    'targetGreenness': [brya_greenness]
+}
+greenest_build = build_pb2.Build(id=489, output=output, input=build_input,
+                                 start_time=TEST_START_TIMESTAMP,
+                                 end_time=TEST_END_TIMESTAMP)
+
 output.properties['greenness'] = {'aggregateMetric': 60}
 red_build = build_pb2.Build(id=123, output=output, input=build_input,
                             start_time=TEST_START_TIMESTAMP,
@@ -141,6 +149,19 @@ def GenTests(api):
       api.time.seed(TEST_SEED_TIME_SECONDS),
       api.buildbucket.simulated_search_results(
           builds=[green_build, green_build2],
+          step_name='find green snapshot.buildbucket.search'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'greenest',
+      api.properties(expect_result=True, expected_bbid=489,
+                     expected_greenness=100, expected_commit_sha='sample',
+                     expected_target_greenness='brya'),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.buildbucket.simulated_search_results(
+          builds=[green_build, green_build2, greenest_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(post_process.DropExpectation),
