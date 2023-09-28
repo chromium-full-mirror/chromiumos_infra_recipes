@@ -178,30 +178,33 @@ class SigningApi(recipe_api.RecipeApi):
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
-    with self.m.step.nest('sign artifacts'):
-      build_target_config, archive_dir = self.setup_signing(
-          sign_types, channels)
-      config = BuildTargetSigningConfigs(
-          build_target_signing_configs=[build_target_config])
-      output_dir = self.m.path.mkdtemp('signed-artifacts')
-      image_name = f'{DOCKER_HOST}/{self._signing_image}'
-      self.m.step('docker pull', [
-          'docker',
-          'pull',
-          image_name,
-      ])
-      request = SignImageRequest(
-          signing_configs=config, archive_dir=str(archive_dir),
-          result_path=common_pb2.ResultPath(
-              path=common_pb2.Path(
-                  path=self.m.path.abspath(output_dir),
-                  location=common_pb2.Path.Location.OUTSIDE,
-              )), docker_image=image_name)
-      self.m.cros_build_api.ImageService.SignImage(request)
 
-      # TODO(b/302132827): Remove ignore_exceptions when stable.
-      with self.m.failures.ignore_exceptions():
-        self.upload_signed_artifacts(output_dir)
+    # TODO(b/296086340): Remove once stable and in use.
+    with self.m.failures.ignore_exceptions():
+      with self.m.step.nest('sign artifacts'):
+        build_target_config, archive_dir = self.setup_signing(
+            sign_types, channels)
+        config = BuildTargetSigningConfigs(
+            build_target_signing_configs=[build_target_config])
+        output_dir = self.m.path.mkdtemp('signed-artifacts')
+        image_name = f'{DOCKER_HOST}/{self._signing_image}'
+        self.m.step('docker pull', [
+            'docker',
+            'pull',
+            image_name,
+        ])
+        request = SignImageRequest(
+            signing_configs=config, archive_dir=str(archive_dir),
+            result_path=common_pb2.ResultPath(
+                path=common_pb2.Path(
+                    path=self.m.path.abspath(output_dir),
+                    location=common_pb2.Path.Location.OUTSIDE,
+                )), docker_image=image_name)
+        self.m.cros_build_api.ImageService.SignImage(request)
+
+        # TODO(b/302132827): Remove ignore_exceptions when stable.
+        with self.m.failures.ignore_exceptions():
+          self.upload_signed_artifacts(output_dir)
 
   # Methods to support the legacy signing fleet flow.
 
