@@ -580,6 +580,10 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         self.m.file.write_raw(
             'write generatetestplanreq binaryproto', req_path,
             generate_test_plan_request.SerializeToString(deterministic=True))
+        pres.logs[
+            'generatetestplanreq.binaryproto'] = generate_test_plan_request.SerializeToString(
+                deterministic=True)
+
         args.append('-ctpv1')
         arg_to_host_path['-generatetestplanreq'] = req_path
 

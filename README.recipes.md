@@ -4996,7 +4996,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#635)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#639)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the testplan Docker image to get a list of testable builders.
 
