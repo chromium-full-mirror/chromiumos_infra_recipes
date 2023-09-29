@@ -973,6 +973,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                   container_metadata)
 
           if failed:
+            presentation.properties['container_building_failed'] = True
             raise recipe_api.StepFailure(
                 'One or more test service containers failed to build.')
 
