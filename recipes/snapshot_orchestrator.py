@@ -8,6 +8,7 @@
 from google.protobuf.json_format import MessageToDict
 
 from PB.recipe_engine import result as result_pb2
+from recipe_engine import post_process
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -70,3 +71,52 @@ def GenTests(api: RecipeTestApi):
                            with_manifest_refs=True,
                            collect_builds=data.non_crit_fail,
                            builder='snapshot-orchestrator')
+
+  yield api.orch_menu.test(
+      'updates-refs',
+      data.ctp_normal,
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest ref refs/heads/green'),
+      with_manifest_refs=True,
+      collect_builds=data.builds,
+      local_green_builds=data.local_green_success,
+  )
+
+  yield api.orch_menu.test(
+      'does-not-update-refs',
+      data.ctp_normal,
+      api.post_check(
+          post_process.DoesNotRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      api.post_check(
+          post_process.DoesNotRun,
+          'update local greenness.update manifest ref refs/heads/green'),
+      with_manifest_refs=True,
+      collect_builds=data.crit_fail,
+      local_green_builds=data.local_green_fail,
+      status='FAILURE',
+  )
+
+  yield api.orch_menu.test(
+      'missing-gitiles-commit',
+      data.ctp_normal,
+      api.post_check(post_process.MustRun,
+                     'update manifest-internal ref refs/heads/postsubmit'),
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest ref refs/heads/green'),
+      api.post_check(
+          post_process.MustRun,
+          'update local greenness.update manifest-internal ref refs/heads/green'
+      ),
+      collect_builds=data.builds,
+      revision=None,
+      with_manifest_refs=True,
+      local_green_builds=data.local_green_success,
+  )
