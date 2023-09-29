@@ -44,7 +44,11 @@ def orchestrator_exemption(build: Dict[str, Any]) -> bool:
   ignorable_summary_markdown_re = [
       re.compile(r'\d+ out of \d+ builds? failed'),
       re.compile(r'\d+ hw tests? failed'),
-      re.compile(r'\d+ vm tests? failed')
+      re.compile(r'\d+ vm tests? failed'),
+      # TODO(b/286278022): Remove thie exemption once issues w/ vmlab in staging are fixed.
+      re.compile(
+          r'1 hw test suite failed with incomplete results\n\n.*staging-betty-arc-r-cq.hw.tast_vmlab_default'
+      ),
   ]
   for regex in ignorable_summary_markdown_re:
     if regex.search(build.get('summaryMarkdown', '')):
