@@ -61,7 +61,7 @@ def RunSteps(api: RecipeApi):
               keyset='kukui-foo-bar',
               ensure_no_password=True,
               firmware_update=True,
-              archive_path='[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz',
+              archive_path='chromiumos_base_image.tar.xz',
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
@@ -70,7 +70,7 @@ def RunSteps(api: RecipeApi):
               keyset='kukui-foo-bar',
               ensure_no_password=True,
               firmware_update=True,
-              archive_path='[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz',
+              archive_path='chromiumos_base_image.tar.xz',
           ),
       ],
   )

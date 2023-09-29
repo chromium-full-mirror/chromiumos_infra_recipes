@@ -491,8 +491,7 @@ class SigningApi(recipe_api.RecipeApi):
         artifact_name = self.artifact_name_by_image_type(
             signing_config.image_type)
         if artifact_name:
-          signing_config.archive_path = self.m.path.join(
-              local_dir, artifact_name)
+          signing_config.archive_path = artifact_name
           to_download.add(artifact_name)
           signing_configured_artifacts.append(artifact_name)
 

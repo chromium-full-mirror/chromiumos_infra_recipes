@@ -9913,7 +9913,7 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#512)(self, output_dir: Path):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#511)(self, output_dir: Path):**
 
 Uploads all files in output_dir to GS using gsutil rsync.
 
