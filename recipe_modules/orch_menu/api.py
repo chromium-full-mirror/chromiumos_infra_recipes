@@ -822,14 +822,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
           if should_update:
             self._push_manifest_refs(
                 self._properties.update_manifest_refs.build)
+            # TODO: b/304592527 - Remove line below once green is set to
+            # automatically track stable
+            self._push_manifest_refs('refs/heads/green')
           self.output_local_greenness(should_update)
-    # TODO(b/299096704): Remove logic to update stable once llfg launches.
-    failure_ratio = (
-        len(self._builds_status.fatal_failures) /
-        max(1, len(self._builds_status.completed_builds)))
-    if failure_ratio <= self._properties.update_manifest_refs.max_build_failure_ratio:
-      # If we've made it this far, update the stable manifest ref.
-      self._push_manifest_refs('refs/heads/stable')
 
     return self._builds_status
 
