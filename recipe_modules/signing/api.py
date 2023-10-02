@@ -186,25 +186,28 @@ class SigningApi(recipe_api.RecipeApi):
             sign_types, channels)
         config = BuildTargetSigningConfigs(
             build_target_signing_configs=[build_target_config])
-        output_dir = self.m.path.mkdtemp('signed-artifacts')
+
+        # BAPI is hermetic so need to pull down the specified docker image
+        # ahead of time.
         image_name = f'{DOCKER_HOST}/{self._signing_image}'
         self.m.step('docker pull', [
             'docker',
             'pull',
             image_name,
         ])
+
         request = SignImageRequest(
             signing_configs=config, archive_dir=str(archive_dir),
             result_path=common_pb2.ResultPath(
                 path=common_pb2.Path(
-                    path=self.m.path.abspath(output_dir),
+                    path=str(archive_dir),
                     location=common_pb2.Path.Location.OUTSIDE,
                 )), docker_image=image_name)
         self.m.cros_build_api.ImageService.SignImage(request)
 
         # TODO(b/302132827): Remove ignore_exceptions when stable.
         with self.m.failures.ignore_exceptions():
-          self.upload_signed_artifacts(output_dir)
+          self.upload_signed_artifacts(archive_dir)
 
   # Methods to support the legacy signing fleet flow.
 
@@ -478,7 +481,7 @@ class SigningApi(recipe_api.RecipeApi):
       - relevant_signing_configs with local artifact paths populated.
       - dir containing input artifacts
     """
-    local_dir = self.m.path.mkdtemp('unsigned-artifacts')
+    local_dir = self.m.path.mkdtemp('signing-dir')
     gs_dir = self.m.build_menu.artifacts_gs_path()[len('gs://'):]
 
     # Otherwise, only the image types specified in |sign_types| are marked for
@@ -513,8 +516,14 @@ class SigningApi(recipe_api.RecipeApi):
   def upload_signed_artifacts(self, output_dir: Path) -> None:
     """Uploads all files in output_dir to GS using gsutil rsync."""
     with self.m.step.nest(
-        f'upload signed artifacts to {self.gs_upload_bucket} bucket'):
+        f'upload signed artifacts to {self.gs_upload_bucket} bucket'
+    ) as presentation:
       gs_dir = f'gs://{self.gs_upload_bucket}/{self.m.build_menu.artifacts_build_path()}'
+
+      presentation.links['gs upload dir'] = (
+          'https://console.cloud.google.com/storage/browser/%s' %
+          gs_dir[len('gs://'):])
+
       # -i so we don't clobber existing destination artifacts.
       self.m.gsutil(['rsync', '-r', '-i', output_dir, gs_dir],
                     parallel_upload=True, multithreaded=True,

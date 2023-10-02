@@ -9800,17 +9800,17 @@ Validate the caller's service version if they sent one.
 
 A module to encapsulate signing operations.
 
-&mdash; **def [always\_download](/recipe_modules/signing/api.py#421)(self):**
+&mdash; **def [always\_download](/recipe_modules/signing/api.py#424)(self):**
 
 Build artifacts which, if present, are always downloaded
 
 Regardless of requested signing types.
 
-&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#431)(self, image_type: common_pb2.ImageType):**
+&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#434)(self, image_type: common_pb2.ImageType):**
 
 Mapping of image type to artifact name.
 
-&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#466)(self, relevant_signing_configs: List[SigningConfig]):**
+&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#469)(self, relevant_signing_configs: List[SigningConfig]):**
 
 Download artifacts so we can support retries with conductor.
 
@@ -9828,7 +9828,7 @@ Returns:
 
 Fetch signing config from the appropriate branch of config-internal.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#390)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing/api.py#393)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the failure of signing.
 
@@ -9838,7 +9838,7 @@ Args:
 Returns:
   The failure of the signing, or None if not available.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#291)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#294)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
 
 Get the metadata of the signed build.
 
@@ -9851,7 +9851,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#374)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing/api.py#377)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -9861,7 +9861,7 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#447)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#450)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
 
 Download from Google Storage if present.
 
@@ -9893,7 +9893,7 @@ Returns:
 
 Stub implementation for local signing flow.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#362)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing/api.py#365)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a failed signing operation.
 
@@ -9903,7 +9903,7 @@ Args:
 Returns:
   True/False whether the signing failed.
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#350)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing/api.py#353)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a successful signing operation.
 
@@ -9913,15 +9913,15 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#511)(self, output_dir: Path):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#514)(self, output_dir: Path):**
 
 Uploads all files in output_dir to GS using gsutil rsync.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#315)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#318)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#211)(self, instructions_list: List[str]):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#214)(self, instructions_list: List[str]):**
 
 Wait for signing to complete for a set of instructions files.
 

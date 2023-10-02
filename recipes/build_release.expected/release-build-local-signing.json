@@ -11796,7 +11796,7 @@
       "----",
       "cp",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_base_image.tar.xz",
-      "[CLEANUP]/unsigned-artifacts_tmp_1/chromiumos_base_image.tar.xz"
+      "[CLEANUP]/signing-dir_tmp_1/chromiumos_base_image.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -11831,7 +11831,7 @@
       "----",
       "cp",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/recovery_image.tar.xz",
-      "[CLEANUP]/unsigned-artifacts_tmp_1/recovery_image.tar.xz"
+      "[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -11898,12 +11898,12 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/signing-dir_tmp_1\",@@@",
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/unsigned-artifacts_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
@@ -11918,7 +11918,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signed-artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\",\n  \"archiveDir\": \"[CLEANUP]/unsigned-artifacts_tmp_1\"\n}",
+      "{\n  \"signingConfigs\": {\n    \"buildTargetSigningConfigs\": [\n      {\n        \"buildTarget\": \"kukui\"\n      }\n    ]\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/signing-dir_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"dockerImage\": \"us-docker.pkg.dev/chromeos-bot/signing/signing:latest:\",\n  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\"\n}",
       "[CLEANUP]/build_api_messages_tmp_27/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -12031,7 +12031,8 @@
     "cmd": [],
     "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/kukui-release/R99-1234.56.0-101@@@"
     ]
   },
   {
@@ -12048,7 +12049,7 @@
       "rsync",
       "-r",
       "-i",
-      "[CLEANUP]/signed-artifacts_tmp_1",
+      "[CLEANUP]/signing-dir_tmp_1",
       "gs://chromeos-throw-away-bucket/kukui-release/R99-1234.56.0-101"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

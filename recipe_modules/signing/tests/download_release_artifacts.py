@@ -36,8 +36,7 @@ def RunSteps(api: RecipeApi):
   relevant_signing_configs, archive_dir = api.signing.download_release_artifacts(
       signing_configs)
   api.assertions.assertEqual(signing_configs, relevant_signing_configs)
-  api.assertions.assertEqual(
-      str(archive_dir), '[CLEANUP]/unsigned-artifacts_tmp_1')
+  api.assertions.assertEqual(str(archive_dir), '[CLEANUP]/signing-dir_tmp_1')
 
 
 def GenTests(api: RecipeTestApi):
