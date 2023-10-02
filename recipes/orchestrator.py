@@ -21,7 +21,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
-from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
@@ -91,10 +90,6 @@ def DoRunSteps(api: RecipeApi):
     if api.orch_menu.skip_paygen:
       extra_child_props['skip_paygen'] = True
 
-  if api.orch_menu.is_postsubmit_orchestrator:
-    extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
-        CrosRelevanceProperties(force_postsubmit_relevance=True))
-
   if api.orch_menu.chromium_src_ref_cl_tag:
     # Added for debugging b/288286812. Remove after.
     api.easy.set_properties_step(
@@ -117,9 +112,7 @@ def DoRunSteps(api: RecipeApi):
     api.cros_release.set_release_qs_account()
     extra_child_props['override_qs_account'] = api.skylab.qs_account
 
-  if (api.orch_menu.is_postsubmit_orchestrator or
-      api.orch_menu.is_snapshot_orchestrator or
-      api.orch_menu.is_cq_orchestrator):
+  if api.orch_menu.is_cq_orchestrator:
     extra_child_props['$chromeos/metadata'] = {
         'sources_gitiles_commit_override':
             MessageToDict(api.build_menu.resultdb_gitiles_commit)
@@ -320,8 +313,7 @@ def GenTests(api: RecipeTestApi):
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,
       api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator',
+          project='chromeos', bucket='cq', builder='cq-orchestrator',
           tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
       collect_builds=data.builds)
 
@@ -339,55 +331,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      wait_inflight_name), git_footers=[],
       collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
-
-  yield api.orch_menu.test(
-      'updates-refs',
-      data.ctp_normal,
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      with_manifest_refs=True,
-      collect_builds=data.builds,
-      local_green_builds=data.local_green_success,
-  )
-
-  yield api.orch_menu.test(
-      'does-not-update-refs',
-      data.ctp_normal,
-      api.post_check(
-          post_process.DoesNotRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      with_manifest_refs=True,
-      collect_builds=data.crit_fail,
-      local_green_builds=data.local_green_fail,
-      status='FAILURE',
-  )
-
-  yield api.orch_menu.test(
-      'missing-gitiles-commit',
-      data.ctp_normal,
-      api.post_check(post_process.MustRun,
-                     'update manifest-internal ref refs/heads/postsubmit'),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
-      collect_builds=data.builds,
-      revision=None,
-      with_manifest_refs=True,
-      local_green_builds=data.local_green_success,
-  )
 
   yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
                            collect_builds=data.builds,
