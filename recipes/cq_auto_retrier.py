@@ -90,15 +90,17 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
                       outstanding_exonerations_tests=outstanding_exonerations,
                       exonerated_test_suites=exonerated_test_suites)
 
+        retryable_test_suite_failures.extend(exonerated_test_suites)
         outstanding_test_suite_failures = list(
             set(outstanding_test_suite_failures) - set(exonerated_test_suites))
 
         # Final determination.
         if len(outstanding_build_failures) == 0 and len(
-            outstanding_test_suite_failures) == 0:
+            outstanding_test_suite_failures) == 0 and (
+                retryable_build_failures or retryable_test_suite_failures):
           retry_reason.retryable_builders.extend(retryable_build_failures)
           retry_reason.retryable_test_suites.extend(
-              retryable_test_suite_failures + exonerated_test_suites)
+              retryable_test_suite_failures)
           retryable_runs.append((b, retry_reason))
           _set_len_prop(
               actionable_retryable_builders=retryable_build_failures,
@@ -289,6 +291,39 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.auto_retry_util.enable_retries(),
       api.buildbucket.simulated_search_results(
           [retryable_orch_build],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.post_process(
+          post_process.DoesNotRun,
+          'performing retries.retry build 1113',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  orch_build = api.test_util.test_orchestrator(
+      cq=True, status='FAILURE', build_id=1113, create_time=1113,
+      input_properties={
+          '$recipe_engine/cq': {
+              'runMode': 'FULL_RUN'
+          }
+      }, output_properties={
+          'has_child_failures': True,
+      }, experiments=['chromeos.auto_retry_util.retry_infra_failures']).message
+
+  yield api.test(
+      'no-outstanding-no-retryable',
+      api.auto_retry_util.enable_retries(),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
+      api.gerrit.set_get_change_mergeable(
+          'find candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.buildbucket.simulated_search_results(
+          [orch_build],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(
           post_process.DoesNotRun,
