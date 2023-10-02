@@ -7,7 +7,7 @@
 
 import os
 import datetime
-from typing import List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -19,6 +19,7 @@ from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import PackageIndexInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import Profile
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine import recipe_api
 
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
@@ -169,23 +170,26 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
     return ret
 
-  def get_package_index_info(self, gs_bucket, snapshot=None, build_target=None,
-                             profile=None, count=None, test_data_dict=None,
-                             name=None):
+  def get_package_index_info(
+      self, gs_bucket: str, snapshot: Optional[GitilesCommit] = None,
+      build_target: Optional[BuildTarget] = None,
+      profile: Optional[Profile] = None, count: Optional[int] = None,
+      test_data_dict: Dict[Any, Any] = None,
+      name: Optional[str] = None) -> List[PackageIndexInfo]:
     """Return the PackageIndexInfo for this build.
 
     Args:
-      gs_bucket (str): Google storage bucket where the prebuilts live.
-      snapshot (GitilesCommit): The snapshot for this build, or None.
-      build_target (BuildTarget): BuildTarget for the build, or None.
-      profile (chromiumos.Profile): Profile for the build, or None.
-      count (int): Number of snapshots to check, or None.
-      test_data_dict (dict): Dictionary of test data:
-        test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
-      name (str): Name for the step, or None.
+      gs_bucket: Google storage bucket where the prebuilts live.
+      snapshot: The snapshot for this build, or None.
+      build_target: BuildTarget for the build, or None.
+      profile: Profile for the build, or None.
+      count: Number of snapshots to check, or None.
+      test_data_dict: Dictionary of test data, or None:
+        test_data_dict[snapshot_sha][target_name][profile_name] = PackageIndexInfo
+      name: Name for the step, or None.
 
     Returns:
-      (list[PackageIndexInfo]) The metadata for CreateSysrootService.
+      The metadata for CreateSysrootService.
     """
     if not self._send_snapshot_prebuilts:
       return []
@@ -195,12 +199,11 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     # snapshots that have any prebuilts.  (To account for the possibility of
     # multiple builders with the same profile and different use flags.
     count = count or 7 * 24 * 2
-    snapshot = snapshot or self.m.cros_infra_config.gitiles_commit
     build_target = build_target or self.m.cros_infra_config.get_build_target()
     profile = self._profile_or_default(profile)
 
     with self.m.step.nest(name or 'find prebuilts'):
-      shas = self.m.cros_source.fetch_snapshot_shas(count=count)
+      shas = self.m.cros_source.fetch_snapshot_shas(count, snapshot)
       test_data_dict = (
           test_data_dict or self.test_api.generate_snapshot_test_data_dict(
               shas, build_target, profile, gs_bucket))

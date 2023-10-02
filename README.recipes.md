@@ -3511,28 +3511,28 @@ Args:
 
 API for uploading CrOS prebuilts to Google Storage.
 
-#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosPrebuiltsApi](/recipe_modules/cros_prebuilts/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for uploading package prebuilts.
 
-&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#172)(self, gs_bucket, snapshot=None, build_target=None, profile=None, count=None, test_data_dict=None, name=None):**
+&mdash; **def [get\_package\_index\_info](/recipe_modules/cros_prebuilts/api.py#173)(self, gs_bucket: str, snapshot: Optional[GitilesCommit]=None, build_target: Optional[BuildTarget]=None, profile: Optional[Profile]=None, count: Optional[int]=None, test_data_dict: Dict[(Any, Any)]=None, name: Optional[str]=None):**
 
 Return the PackageIndexInfo for this build.
 
 Args:
-  gs_bucket (str): Google storage bucket where the prebuilts live.
-  snapshot (GitilesCommit): The snapshot for this build, or None.
-  build_target (BuildTarget): BuildTarget for the build, or None.
-  profile (chromiumos.Profile): Profile for the build, or None.
-  count (int): Number of snapshots to check, or None.
-  test_data_dict (dict): Dictionary of test data:
-    test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
-  name (str): Name for the step, or None.
+  gs_bucket: Google storage bucket where the prebuilts live.
+  snapshot: The snapshot for this build, or None.
+  build_target: BuildTarget for the build, or None.
+  profile: Profile for the build, or None.
+  count: Number of snapshots to check, or None.
+  test_data_dict: Dictionary of test data, or None:
+    test_data_dict[snapshot_sha][target_name][profile_name] = PackageIndexInfo
+  name: Name for the step, or None.
 
 Returns:
-  (list[PackageIndexInfo]) The metadata for CreateSysrootService.
+  The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#427)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
+&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#430)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey):**
 
 Set the target's Portage binhosts to point to the given URIs.
 
@@ -3544,7 +3544,7 @@ Args:
   private: Whether the target's binhost is private.
   key: The binhost key, e.g. POSTSUBMIT_BINHOST.
 
-&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#473)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
+&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#476)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str):**
 
 Utility method to update the target's Portage binhosts.
 
@@ -3557,7 +3557,7 @@ Args:
   target_project: Project of the binhosts.
   branch: branch name to update
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#716)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#719)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3573,7 +3573,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#687)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#690)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3583,7 +3583,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#623)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#626)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -4407,7 +4407,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#877)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#880)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -4423,7 +4423,7 @@ Args:
 Returns:
   List[PatchSet]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1291)(self, patch, project_path, is_abs_path=False):**
+&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1294)(self, patch, project_path, is_abs_path=False):**
 
 Apply a PatchSet to the git repo in ${CWD}.
 
@@ -4470,7 +4470,7 @@ Args:
   commit_id: The commit of the external manifest to checkout.
   force: If true, throw away any local changes.
 
-&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#908)(self, change):**
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#911)(self, change):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -4509,7 +4509,7 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#822)(self, mount_cache=True, disk_type='pd-ssd'):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#825)(self, mount_cache=True, disk_type='pd-ssd'):**
 
 Returns a context where overlays can be mounted.
 
@@ -4564,7 +4564,7 @@ Args:
     in init_opts. Otherwise, use the value returned from
     configure_builder().
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#764)(self, count=((7 \* 24) \* 2)):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#764)(self, count: int=((7 \* 24) \* 2), snapshot: Optional[bb_common_pb2.GitilesCommit]=None):**
 
 Return snapshot SHAs for the manifest.
 
@@ -4573,12 +4573,13 @@ default is to fetch 7 days worth of snapshots, based on (an assumed) 2
 snapshots per hour.
 
 Args:
-  * count (int): How many SHAs to return.
+  count: How many SHAs to return.
+  snapshot: The latest snapshot to fetch, or None.
 
 Returns:
-  (list[str]) The list of snapshot SHAs.
+  The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#849)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#852)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -4656,7 +4657,7 @@ Returns:
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1559)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1562)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4670,7 +4671,7 @@ Return:
   all_uprevs_passed (bool): True if all uprevs succeeded,
                             False if ANY failed.
 
-&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1755)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
+&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1758)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
 
 Based on what is already included, figure out which related changes are implicitly depended on by gerrit_changes.
 
@@ -4691,7 +4692,7 @@ Returns:
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1332)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1335)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -4703,7 +4704,7 @@ Args:
     saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1434)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1437)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -4722,7 +4723,7 @@ Uses the `sync_to_manifest` property.
 
 Returns: ManifestLocation, or None.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1354)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1357)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -4739,7 +4740,7 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1538)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1541)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 

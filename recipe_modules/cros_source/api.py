@@ -761,7 +761,9 @@ class CrosSourceApi(RecipeApi):
     }
     self.ensure_synced_cache(manifest_branch_override='main')
 
-  def fetch_snapshot_shas(self, count=7 * 24 * 2):
+  def fetch_snapshot_shas(
+      self, count: int = 7 * 24 * 2,
+      snapshot: Optional[bb_common_pb2.GitilesCommit] = None) -> List[str]:
     """Return snapshot SHAs for the manifest.
 
     Return SHAs for the most recent |count| commits in the manifest.  The
@@ -769,12 +771,13 @@ class CrosSourceApi(RecipeApi):
     snapshots per hour.
 
     Args:
-      * count (int): How many SHAs to return.
+      count: How many SHAs to return.
+      snapshot: The latest snapshot to fetch, or None.
 
     Returns:
-      (list[str]) The list of snapshot SHAs.
+      The list of snapshot SHAs.
     """
-    snapshot = self.m.src_state.gitiles_commit
+    snapshot = snapshot or self.m.src_state.gitiles_commit
     manifest_dir = self.m.path.basename(snapshot.project)
 
     with self.m.context(cwd=self.workspace_path.join(manifest_dir)):
