@@ -44,5 +44,8 @@ def GenTests(api):
       api.test_util.test_child_build('eve',
                                      builder_name='generic-staging-builder',
                                      bucket='staging.shadow').build,
+      api.properties(**{'$recipe_engine/led': {
+          'shadowed_bucket': 'staging',
+      }}),
       api.post_process(post_process.DropExpectation),
   )

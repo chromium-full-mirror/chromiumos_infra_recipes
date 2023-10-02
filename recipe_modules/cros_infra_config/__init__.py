@@ -9,6 +9,7 @@ DEPS = {
     'buildbucket': 'recipe_engine/buildbucket',
     'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
+    'led': 'recipe_engine/led',
     'properties': 'recipe_engine/properties',
     'step': 'recipe_engine/step',
     'time': 'recipe_engine/time',

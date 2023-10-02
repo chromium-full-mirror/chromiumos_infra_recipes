@@ -5,6 +5,7 @@
 
 import datetime
 import typing
+import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from google.protobuf.json_format import MessageToDict
@@ -329,7 +330,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       A LookupError if a BuilderConfig is not found for the specified builder.
     """
     if bucket_name:
-      key = (bucket_name.rstrip('.shadow'), builder_name)
+      if self.m.led.led_build:
+        bucket_name = self.m.led.shadowed_bucket
+      key = (bucket_name, builder_name)
     else:
       key = builder_name
 
