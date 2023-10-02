@@ -40,7 +40,8 @@ from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.skylab_test_runner.request import Request
 from PB.test_platform.skylab_test_runner.result import Result
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from recipe_engine.recipe_api import StepFailure, RecipeScriptApi
+from recipe_engine.recipe_utils import check_type
 
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
 
@@ -106,6 +107,8 @@ def s_log(step, name, log):
   * name (str): Log name.
   * log (Any): Object to add to log.
   """
+  check_type('name', name, str)
+  check_type('log', log, (str, type(None)))
   if log:
     step.presentation.logs[name] = log
 
@@ -118,6 +121,8 @@ def s_link(step, name, link):
   * name (str): Link name.
   * link (str): Like URI to add.
   """
+  check_type('name', name, str)
+  check_type('link', link, (str, type(None)))
   if link:
     step.links[name] = link
 
@@ -133,6 +138,11 @@ def _set_step_status(api, step_name, summary, failure_condition=True,
   * failure_condition (bool): What constitutes a failure in this step.
   * fail_build (bool): If true then will fail build if failure_condition is true.
   """
+  check_type('api', api, RecipeScriptApi)
+  check_type('step_name', step_name, str)
+  check_type('summary', summary, str)
+  check_type('failure_condition', failure_condition, bool)
+  check_type('fail_build', fail_build, bool)
   with api.step.nest(step_name) as step:
     log = None
     if failure_condition:
