@@ -623,7 +623,7 @@ class DeltaDLCPayload(DLCPayload):
 
 
 class CrosStorageApi(recipe_api.RecipeApi):
-  """Apis for dealing with stored images, payloads, and artifacts."""
+  """Apis for working with stored images, payloads, and artifacts."""
 
   UnsupportedImageTypeException = UnsupportedImageTypeException
 

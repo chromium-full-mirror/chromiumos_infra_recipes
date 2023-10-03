@@ -75,7 +75,7 @@
   * [git_cl](#recipe_modules-git_cl) &mdash; API for working with git cl.
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
-  * [gitiles](#recipe_modules-gitiles) &mdash; APIs for dealing with Gitiles.
+  * [gitiles](#recipe_modules-gitiles) &mdash; APIs for working with Gitiles.
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) &mdash; APIs for logging step output to Google Storage.
@@ -4778,7 +4778,7 @@ to one of these needs to be reflected in the other.
 
 #### **class [CrosStorageApi](/recipe_modules/cros_storage/api.py#625)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-Apis for dealing with stored images, payloads, and artifacts.
+Apis for working with stored images, payloads, and artifacts.
 
 &mdash; **def [discover\_gs\_artifacts](/recipe_modules/cros_storage/api.py#655)(self, prefix_uri, parse_types=None):**
 
@@ -7712,7 +7712,7 @@ Raises:
 [DEPS](/recipe_modules/gitiles/__init__.py#6): [easy](#recipe_modules-easy), [support](#recipe_modules-support), [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-APIs for dealing with Gitiles.
+APIs for working with Gitiles.
 
 #### **class [GitilesApi](/recipe_modules/gitiles/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 

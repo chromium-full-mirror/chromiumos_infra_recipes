@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""APIs for dealing with Gitiles."""
+"""APIs for working with Gitiles."""
 
 import base64
 import binascii

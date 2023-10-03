@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Code for dealing with commits / git."""
+"""Code for working with commits / git."""
 
 from datetime import datetime
 from functools import lru_cache
