@@ -4,8 +4,6 @@
 
 import git_cl
 
-USE_PYTHON3 = True
-
 
 def FormatCheck(input_api, output_api):
   bad_format = False
@@ -53,7 +51,6 @@ def DocCheck(input_api, output_api):
           cmd=[input_api.python3_executable, 'recipes.py', 'doc', '--check'],
           kwargs={},
           message=output_api.PresubmitError,
-          python3=True,
       ),
   ])
 
@@ -82,7 +79,6 @@ def CommitChecks(input_api, output_api):
           cmd=[input_api.python3_executable, 'recipes.py', 'test', 'run'],
           kwargs={},
           message=output_api.PresubmitError,
-          python3=True,
       )
   ])
   # Python formatting issues are errors, but we need to ignore recipes.py, which
