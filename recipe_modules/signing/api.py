@@ -201,14 +201,16 @@ class SigningApi(recipe_api.RecipeApi):
             image_name,
         ])
 
-        request = SignImageRequest(
-            signing_configs=config, archive_dir=str(archive_dir),
-            result_path=common_pb2.ResultPath(
-                path=common_pb2.Path(
-                    path=self.m.path.abspath(archive_dir),
-                    location=common_pb2.Path.Location.OUTSIDE,
-                )), docker_image=self.signing_docker_image)
-        self.m.cros_build_api.ImageService.SignImage(request)
+        # TODO(b/296086340): Remove once stable and in use.
+        with self.m.failures.ignore_exceptions():
+          request = SignImageRequest(
+              signing_configs=config, archive_dir=str(archive_dir),
+              result_path=common_pb2.ResultPath(
+                  path=common_pb2.Path(
+                      path=self.m.path.abspath(archive_dir),
+                      location=common_pb2.Path.Location.OUTSIDE,
+                  )), docker_image=self.signing_docker_image)
+          self.m.cros_build_api.ImageService.SignImage(request)
 
         # TODO(b/302132827): Remove ignore_exceptions when stable.
         with self.m.failures.ignore_exceptions():
