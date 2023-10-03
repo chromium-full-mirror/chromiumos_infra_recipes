@@ -239,6 +239,7 @@ class TastExecApi(RecipeApi):
       pres.logs['tests'] = tests
       return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
                                              tests,
+                                             tast_inputs.build_artifacts_url(),
                                              new_invocation=new_invocation)
 
   def _amend_tast_inputs(self, tast_inputs: TastInputs) -> TastInputs:

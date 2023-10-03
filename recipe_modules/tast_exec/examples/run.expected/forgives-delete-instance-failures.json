@@ -882,6 +882,36 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://artifacts-bucket/artifacts-path/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration.process tast output.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "first tast iteration.process tast output.upload test results to rdb",
     "~followup_annotations": [
@@ -921,7 +951,8 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
       "@@@STEP_LOG_LINE@config@    \"include\": false,@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -995,6 +1026,8 @@
       "task_id:fake-task-i0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",
@@ -1828,6 +1861,36 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://artifacts-bucket/artifacts-path/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_2/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration.process tast output.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "second tast iteration.process tast output.upload test results to rdb",
     "~followup_annotations": [
@@ -1867,7 +1930,8 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
       "@@@STEP_LOG_LINE@config@    \"include\": true,@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_2/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_2/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1896,6 +1960,8 @@
       "project:ci",
       "-include",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_2/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",
@@ -4061,6 +4127,36 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://artifacts-bucket/artifacts-path/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_3/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "first tast iteration (2).process tast output.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "first tast iteration (2).process tast output.upload test results to rdb",
     "~followup_annotations": [
@@ -4100,7 +4196,8 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
       "@@@STEP_LOG_LINE@config@    \"include\": false,@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_3/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_3/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -4125,6 +4222,8 @@
       "task_id:fake-task-i0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_3/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",
@@ -4915,6 +5014,36 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "gs://artifacts-bucket/artifacts-path/metadata/sources.jsonpb",
+      "[CLEANUP]/source_metadata_tmp_4/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "second tast iteration (2).process tast output.gsutil download metadata/sources.jsonpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "second tast iteration (2).process tast output.upload test results to rdb",
     "~followup_annotations": [
@@ -4954,7 +5083,8 @@
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
       "@@@STEP_LOG_LINE@config@    \"include\": true,@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_4/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_4/sources.jsonpb\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -4983,6 +5113,8 @@
       "project:ci",
       "-include",
       "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_4/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",

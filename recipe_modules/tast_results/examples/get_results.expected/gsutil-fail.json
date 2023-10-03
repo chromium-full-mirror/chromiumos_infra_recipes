@@ -8,7 +8,10 @@
   },
   {
     "cmd": [],
-    "name": "process tast output (2)"
+    "name": "process tast output (2)",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [
@@ -24,11 +27,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -58,11 +61,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -70,7 +73,8 @@
     },
     "name": "process tast output (2).gsutil download metadata/sources.jsonpb",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -95,7 +99,7 @@
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"logs_url\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"task_id\",@@@",
@@ -103,43 +107,19 @@
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"job_name\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"buildbucket_builder\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"queued_time\",@@@",
       "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"ancestor_buildbucket_ids\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"123,456\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"builder_name\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"novato-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"suite_task_id\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"image\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"novato-postsubmit/R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"build\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"pool\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"kernel_version\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"5.4.151-16902-g93699f4e73de\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"reven-vmtest-cq\"@@@",
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ],@@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
@@ -147,8 +127,7 @@
       "@@@STEP_LOG_LINE@config@    },@@@",
       "@@@STEP_LOG_LINE@config@    \"include\": false,@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"[CLEANUP]/test-results_tmp_1/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -176,11 +155,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -209,33 +188,21 @@
       "-var",
       "build_target:amd64-generic",
       "-tag",
-      "ancestor_buildbucket_ids:123,456",
-      "-tag",
       "board:amd64-generic",
       "-tag",
-      "build:R111-15302.0.0",
+      "buildbucket_builder:builder",
       "-tag",
-      "buildbucket_builder:reven-vmtest-direct-tast-vm",
-      "-tag",
-      "builder_name:novato-postsubmit",
+      "builder_name:reven-vmtest-cq",
       "-tag",
       "hostname:vm",
       "-tag",
-      "image:novato-postsubmit/R111-15302.0.0",
+      "job_name:bb-8945511751514863184-project/ci/builder",
       "-tag",
-      "job_name:bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm",
-      "-tag",
-      "kernel_version:5.4.151-16902-g93699f4e73de",
-      "-tag",
-      "logs_url:gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results",
       "-tag",
       "model:amd64-generic",
       "-tag",
-      "pool:ChromeOSSkylab",
-      "-tag",
       "queued_time:2018-05-25 23:50:17.000000 UTC",
-      "-tag",
-      "suite_task_id:parent-task-id0",
       "-tag",
       "task_id:fake-task-i0",
       "-coerce-negative-duration",
@@ -244,8 +211,6 @@
       "chromeos:partner-vmtest",
       "-include",
       "-exonerate-unexpected-pass",
-      "-sources-file",
-      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",
@@ -254,17 +219,17 @@
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
       "-testhaus-base-url",
-      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/1_results",
       "--",
       "echo"
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -280,7 +245,7 @@
     "name": "process tast output (2).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/1_results@@@"
     ]
   },
   {
@@ -297,16 +262,16 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -331,7 +296,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Lost SSH connection to VM@@@",
-      "@@@STEP_LINK@logs@https://ci.chromium.org/b/42/test-results?q=ID%3Aarc.Boot@@@",
+      "@@@STEP_LINK@logs@https://ci.chromium.org/b/8945511751514863184/test-results?q=ID%3Aarc.Boot@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -390,11 +355,11 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -446,11 +411,11 @@
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -480,11 +445,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -514,11 +479,11 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -551,7 +516,7 @@
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"logs_url\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"task_id\",@@@",
@@ -559,43 +524,19 @@
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"job_name\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-8945511751514863184-project/ci/builder\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"buildbucket_builder\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"queued_time\",@@@",
       "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
       "@@@STEP_LOG_LINE@config@        ],@@@",
       "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"ancestor_buildbucket_ids\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"123,456\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
       "@@@STEP_LOG_LINE@config@            \"builder_name\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"novato-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"suite_task_id\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"image\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"novato-postsubmit/R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"build\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"pool\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"ChromeOSSkylab\"@@@",
-      "@@@STEP_LOG_LINE@config@        ],@@@",
-      "@@@STEP_LOG_LINE@config@        [@@@",
-      "@@@STEP_LOG_LINE@config@            \"kernel_version\",@@@",
-      "@@@STEP_LOG_LINE@config@            \"5.4.151-16902-g93699f4e73de\"@@@",
+      "@@@STEP_LOG_LINE@config@            \"reven-vmtest-cq\"@@@",
       "@@@STEP_LOG_LINE@config@        ]@@@",
       "@@@STEP_LOG_LINE@config@    ],@@@",
       "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
@@ -616,33 +557,21 @@
       "-var",
       "build_target:amd64-generic",
       "-tag",
-      "ancestor_buildbucket_ids:123,456",
-      "-tag",
       "board:amd64-generic",
       "-tag",
-      "build:R111-15302.0.0",
+      "buildbucket_builder:builder",
       "-tag",
-      "buildbucket_builder:reven-vmtest-direct-tast-vm",
-      "-tag",
-      "builder_name:novato-postsubmit",
+      "builder_name:reven-vmtest-cq",
       "-tag",
       "hostname:vm",
       "-tag",
-      "image:novato-postsubmit/R111-15302.0.0",
+      "job_name:bb-8945511751514863184-project/ci/builder",
       "-tag",
-      "job_name:bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm",
-      "-tag",
-      "kernel_version:5.4.151-16902-g93699f4e73de",
-      "-tag",
-      "logs_url:gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "logs_url:gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results",
       "-tag",
       "model:amd64-generic",
       "-tag",
-      "pool:ChromeOSSkylab",
-      "-tag",
       "queued_time:2018-05-25 23:50:17.000000 UTC",
-      "-tag",
-      "suite_task_id:parent-task-id0",
       "-tag",
       "task_id:fake-task-i0",
       "-coerce-negative-duration",
@@ -661,17 +590,17 @@
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
       "-testhaus-base-url",
-      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/builder/8945511751514863184/1_results",
       "--",
       "echo"
     ],
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -693,40 +622,40 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "process tast output (3).upload missing test cases (count: 3)",
-    "stdin": "{\"invocation\": \"invocations/build:42\", \"requests\": [{\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"}, {\"key\": \"buildbucket_builder\", \"value\": \"reven-vmtest-direct-tast-vm\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"ancestor_buildbucket_ids\", \"value\": \"123,456\"}, {\"key\": \"builder_name\", \"value\": \"novato-postsubmit\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"image\", \"value\": \"novato-postsubmit/R111-15302.0.0\"}, {\"key\": \"build\", \"value\": \"R111-15302.0.0\"}, {\"key\": \"pool\", \"value\": \"ChromeOSSkylab\"}, {\"key\": \"kernel_version\", \"value\": \"5.4.151-16902-g93699f4e73de\"}], \"testId\": \"arc.StartStop\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"}, {\"key\": \"buildbucket_builder\", \"value\": \"reven-vmtest-direct-tast-vm\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"ancestor_buildbucket_ids\", \"value\": \"123,456\"}, {\"key\": \"builder_name\", \"value\": \"novato-postsubmit\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"image\", \"value\": \"novato-postsubmit/R111-15302.0.0\"}, {\"key\": \"build\", \"value\": \"R111-15302.0.0\"}, {\"key\": \"pool\", \"value\": \"ChromeOSSkylab\"}, {\"key\": \"kernel_version\", \"value\": \"5.4.151-16902-g93699f4e73de\"}], \"testId\": \"some.Test\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}, {\"invocation\": \"invocations/build:42\", \"testResult\": {\"resultId\": \"42\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"}, {\"key\": \"buildbucket_builder\", \"value\": \"reven-vmtest-direct-tast-vm\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"ancestor_buildbucket_ids\", \"value\": \"123,456\"}, {\"key\": \"builder_name\", \"value\": \"novato-postsubmit\"}, {\"key\": \"suite_task_id\", \"value\": \"parent-task-id0\"}, {\"key\": \"image\", \"value\": \"novato-postsubmit/R111-15302.0.0\"}, {\"key\": \"build\", \"value\": \"R111-15302.0.0\"}, {\"key\": \"pool\", \"value\": \"ChromeOSSkylab\"}, {\"key\": \"kernel_version\", \"value\": \"5.4.151-16902-g93699f4e73de\"}], \"testId\": \"some.OtherTest\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}]}",
+    "stdin": "{\"invocation\": \"invocations/build:8945511751514863184\", \"requests\": [{\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"buildbucket_builder\", \"value\": \"builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"reven-vmtest-cq\"}], \"testId\": \"arc.StartStop\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"buildbucket_builder\", \"value\": \"builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"reven-vmtest-cq\"}], \"testId\": \"some.Test\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}, {\"invocation\": \"invocations/build:8945511751514863184\", \"testResult\": {\"resultId\": \"8945511751514863184\", \"status\": \"SKIP\", \"tags\": [{\"key\": \"hostname\", \"value\": \"vm\"}, {\"key\": \"board\", \"value\": \"amd64-generic\"}, {\"key\": \"model\", \"value\": \"amd64-generic\"}, {\"key\": \"logs_url\", \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"}, {\"key\": \"task_id\", \"value\": \"fake-task-i0\"}, {\"key\": \"job_name\", \"value\": \"bb-8945511751514863184-project/ci/builder\"}, {\"key\": \"buildbucket_builder\", \"value\": \"builder\"}, {\"key\": \"queued_time\", \"value\": \"2018-05-25 23:50:17.000000 UTC\"}, {\"key\": \"builder_name\", \"value\": \"reven-vmtest-cq\"}], \"testId\": \"some.OtherTest\", \"variant\": {\"def\": {\"build_target\": \"amd64-generic\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"testResults\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"expected\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/arc.StartStop/results/42\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/arc.StartStop/results/8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"testId\": \"arc.StartStop\"@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"expected\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/some.Test/results/42\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.Test/results/8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.Test\"@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"expected\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:42/test/some.OtherTest/results/42\",@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"invocations/build:8945511751514863184/test/some.OtherTest/results/8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"testId\": \"some.OtherTest\"@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -734,12 +663,12 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@json.input@{@@@",
-      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": \"invocations/build:8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@json.input@    {@@@",
-      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
@@ -756,7 +685,7 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\",@@@",
@@ -764,43 +693,19 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"buildbucket_builder\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\",@@@",
       "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"ancestor_buildbucket_ids\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"123,456\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"suite_task_id\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"image\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit/R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"build\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"pool\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"ChromeOSSkylab\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"kernel_version\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"5.4.151-16902-g93699f4e73de\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-cq\"@@@",
       "@@@STEP_LOG_LINE@json.input@          }@@@",
       "@@@STEP_LOG_LINE@json.input@        ],@@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"arc.StartStop\",@@@",
@@ -812,9 +717,9 @@
       "@@@STEP_LOG_LINE@json.input@      }@@@",
       "@@@STEP_LOG_LINE@json.input@    },@@@",
       "@@@STEP_LOG_LINE@json.input@    {@@@",
-      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
@@ -831,7 +736,7 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\",@@@",
@@ -839,43 +744,19 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"buildbucket_builder\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\",@@@",
       "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"ancestor_buildbucket_ids\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"123,456\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"suite_task_id\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"image\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit/R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"build\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"pool\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"ChromeOSSkylab\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"kernel_version\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"5.4.151-16902-g93699f4e73de\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-cq\"@@@",
       "@@@STEP_LOG_LINE@json.input@          }@@@",
       "@@@STEP_LOG_LINE@json.input@        ],@@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.Test\",@@@",
@@ -887,9 +768,9 @@
       "@@@STEP_LOG_LINE@json.input@      }@@@",
       "@@@STEP_LOG_LINE@json.input@    },@@@",
       "@@@STEP_LOG_LINE@json.input@    {@@@",
-      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"invocation\": \"invocations/build:8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@      \"testResult\": {@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"42\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"resultId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"status\": \"SKIP\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"tags\": [@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
@@ -906,7 +787,7 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"logs_url\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"task_id\",@@@",
@@ -914,43 +795,19 @@
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"job_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-42-chromeos/vmtest/reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"bb-8945511751514863184-project/ci/builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"buildbucket_builder\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-direct-tast-vm\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"builder\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"queued_time\",@@@",
       "@@@STEP_LOG_LINE@json.input@            \"value\": \"2018-05-25 23:50:17.000000 UTC\"@@@",
       "@@@STEP_LOG_LINE@json.input@          },@@@",
       "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"ancestor_buildbucket_ids\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"123,456\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
       "@@@STEP_LOG_LINE@json.input@            \"key\": \"builder_name\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"suite_task_id\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"parent-task-id0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"image\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"novato-postsubmit/R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"build\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"R111-15302.0.0\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"pool\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"ChromeOSSkylab\"@@@",
-      "@@@STEP_LOG_LINE@json.input@          },@@@",
-      "@@@STEP_LOG_LINE@json.input@          {@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"key\": \"kernel_version\",@@@",
-      "@@@STEP_LOG_LINE@json.input@            \"value\": \"5.4.151-16902-g93699f4e73de\"@@@",
+      "@@@STEP_LOG_LINE@json.input@            \"value\": \"reven-vmtest-cq\"@@@",
       "@@@STEP_LOG_LINE@json.input@          }@@@",
       "@@@STEP_LOG_LINE@json.input@        ],@@@",
       "@@@STEP_LOG_LINE@json.input@        \"testId\": \"some.OtherTest\",@@@",
@@ -971,7 +828,7 @@
     "name": "process tast output (3).GS upload 1_results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results@@@"
+      "@@@STEP_LINK@archive_link@https://pantheon.corp.google.com/storage/browser/chromeos-vmtest-archive/builder/8945511751514863184/1_results@@@"
     ]
   },
   {
@@ -988,16 +845,16 @@
       "rsync",
       "-r",
       "[CLEANUP]/test-results_tmp_1",
-      "gs://chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results"
+      "gs://chromeos-vmtest-archive/builder/8945511751514863184/1_results"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:vmtest"
+        "name": "project:ci"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:42",
+          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"

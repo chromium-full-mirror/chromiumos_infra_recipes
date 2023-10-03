@@ -10388,7 +10388,7 @@ Registers an SSH key for use during test execution.
 Args:
   path (Path): Path to the SSH key.
 
-&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#571)(self, image, project, machine, zone, network, subnet):**
+&mdash; **def [create\_gce\_vm\_context](/recipe_modules/tast_exec/api.py#572)(self, image, project, machine, zone, network, subnet):**
 
 Creates a context manager which performs setup/teardown of a GCE VM.
 
@@ -10406,7 +10406,7 @@ Returns:
       VmInfo object for connecting to it.
     - when exited, terminates the VM and performs cleanup.
 
-&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#450)(self, qcow_image_path, second_image_path=None):**
+&mdash; **def [create\_qemu\_vm\_context](/recipe_modules/tast_exec/api.py#451)(self, qcow_image_path, second_image_path=None):**
 
 Creates a context manager which performs setup/teardown of a QEMU VM.
 
@@ -10450,7 +10450,7 @@ Returns:
 
 Fetch partner key from private ChromeOS Tree
 
-&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#543)(self, kvm_pid_file):**
+&mdash; **def [is\_vm\_running](/recipe_modules/tast_exec/api.py#544)(self, kvm_pid_file):**
 
 Check if the specified PID is still running.
 
@@ -10460,7 +10460,7 @@ Args:
 Returns:
   bool: Whether the VM process is still running.
 
-&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#307)(self, dut_name, tast_inputs, test_results_dir):**
+&mdash; **def [run\_direct](/recipe_modules/tast_exec/api.py#308)(self, dut_name, tast_inputs, test_results_dir):**
 
 Run tast tests without retries or results processing.
 
@@ -10473,7 +10473,7 @@ Args:
 Returns:
   list[str]: The list of tests that met the specified expression(s).
 
-&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#277)(self, vm_context, test_results_dir, tast_inputs):**
+&mdash; **def [run\_direct\_vm](/recipe_modules/tast_exec/api.py#278)(self, vm_context, test_results_dir, tast_inputs):**
 
 Run tast tests in a VM without retries or results processing.
 
@@ -10506,15 +10506,15 @@ Returns:
 [DEPS](/recipe_modules/tast_results/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [rdb\_util](#recipe_modules-rdb_util), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#30)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#31)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#49)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#50)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -10525,7 +10525,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#192)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#196)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -10538,7 +10538,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#167)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#171)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -10548,7 +10548,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#151)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#155)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -10558,11 +10558,11 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#516)(self, vm_test_build: Build):**
+&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#543)(self, vm_test_build: Build):**
 
 Returns the failed test names from the output properties of the build.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#74)(self, test_results_path, suite_name, tag, tests, new_invocation=False):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#75)(self, test_results_path, suite_name, tag, tests, build_artifacts_url=None, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -10571,6 +10571,8 @@ Args:
   suite_name (str): Name of the whole test suite.
   tag (str): Tag for this execution. Used to distinguish archive folders.
   tests list(str): List of tests that should have been executed.
+  build_artifacts_url (str): GS Link to the artifacts of the build.
+      Ex: 'gs://chromeos-image-archive/betty-cq/R111-2349872/'
   new_invocation (bool): Whether the test results should be uploaded in a
       new invocation.
 
@@ -10579,7 +10581,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#282)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#286)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -10590,7 +10592,7 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#231)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#235)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -10598,14 +10600,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#256)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#260)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#479)(self, test_results_path, suite_name, missing_test_names, tag, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#499)(self, test_results_path, suite_name, missing_test_names, tag, build_artifacts_url=None, new_invocation=False):**
 
 Upload the test results to ResultDB.
 
@@ -10614,6 +10616,8 @@ Args:
   suite_name (str): Name of the whole test suite.
   missing_test_names: Test results for the missing tests cases.
   tag (str): Tag for this execution. Used to distinguish archive folders.
+  build_artifacts_url (str): GS Link to the artifacts of the build.
+      Ex: 'gs://chromeos-image-archive/betty-cq/R111-2349872/'
 ### *recipe_modules* / [test\_util](/recipe_modules/test_util)
 
 [DEPS](/recipe_modules/test_util/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15319,14 +15323,14 @@ In short, this recipe will:
 &mdash; **def [RunSteps](/recipe_modules/tast_results/tests/extract_failed_test_names.py#18)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
-[DEPS](/recipes/tast_vm.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/tast_vm.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 An experimental recipe for running Tast VM tests without Chroot and
 ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
-&mdash; **def [RunSteps](/recipes/tast_vm.py#31)(api: RecipeApi, properties: TastVmProperties):**
+&mdash; **def [RunSteps](/recipes/tast_vm.py#30)(api: RecipeApi, properties: TastVmProperties):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)

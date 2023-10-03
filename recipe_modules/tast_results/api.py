@@ -22,6 +22,7 @@ STAINLESS_LOG_PREFIX = 'https://stainless.corp.google.com/browse/'
 TESTHAUS_LOG_PREFIX = 'https://tests.chromeos.goog/p/chromeos/logs/browse/'
 MILO_PREFIX = 'https://ci.chromium.org/b/'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
+SOURCES_FILE_NAME = 'sources.jsonpb'
 
 
 class TastResultsApi(recipe_api.RecipeApi):
@@ -72,7 +73,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       return pantheon_url
 
   def get_results(self, test_results_path, suite_name, tag, tests,
-                  new_invocation=False):
+                  build_artifacts_url=None, new_invocation=False):
     """Return the test results decoded from the streamed_results.jsonl.
 
     Args:
@@ -80,6 +81,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       suite_name (str): Name of the whole test suite.
       tag (str): Tag for this execution. Used to distinguish archive folders.
       tests list(str): List of tests that should have been executed.
+      build_artifacts_url (str): GS Link to the artifacts of the build.
+          Ex: 'gs://chromeos-image-archive/betty-cq/R111-2349872/'
       new_invocation (bool): Whether the test results should be uploaded in a
           new invocation.
 
@@ -105,7 +108,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       ]
 
       self.upload_to_resultdb(test_results_path, suite_name, missing_test_names,
-                              tag, new_invocation=new_invocation)
+                              tag, build_artifacts_url,
+                              new_invocation=new_invocation)
 
       # If even one test failed, the suite should report failure.
       all_verdicts = [t.verdict for t in test_cases]
@@ -476,8 +480,25 @@ class TastResultsApi(recipe_api.RecipeApi):
       base_variant['build_target'] = build_target
     return base_variant
 
+  def _generate_resultdb_sources_file(self, build_artifacts_url):
+    """Download the source metadata file and return the path to it."""
+    # Source information is stored with the build, at
+    # /metadata/sources.jsonpb.
+    sources_url = self.m.path.join(build_artifacts_url, 'metadata',
+                                   SOURCES_FILE_NAME)
+    sources_local_path = self.m.path.mkdtemp(
+        prefix='source_metadata').join(SOURCES_FILE_NAME)
+    try:
+      # Download the file from Google Stroage.
+      self.m.gsutil.download_url(sources_url, sources_local_path,
+                                 name='download metadata/sources.jsonpb')
+    except self.m.step.StepFailure:
+      return ''
+    return str(sources_local_path)
+
   def upload_to_resultdb(self, test_results_path, suite_name,
-                         missing_test_names, tag, new_invocation=False):
+                         missing_test_names, tag, build_artifacts_url=None,
+                         new_invocation=False):
     """Upload the test results to ResultDB.
 
     Args:
@@ -485,6 +506,8 @@ class TastResultsApi(recipe_api.RecipeApi):
       suite_name (str): Name of the whole test suite.
       missing_test_names: Test results for the missing tests cases.
       tag (str): Tag for this execution. Used to distinguish archive folders.
+      build_artifacts_url (str): GS Link to the artifacts of the build.
+          Ex: 'gs://chromeos-image-archive/betty-cq/R111-2349872/'
     """
     if not self.m.resultdb.enabled:
       return
@@ -497,6 +520,10 @@ class TastResultsApi(recipe_api.RecipeApi):
         'base_tags': self._generate_resultdb_base_tags(tag, suite_name),
         'include': new_invocation,
     }
+    if build_artifacts_url:
+      sources_file = self._generate_resultdb_sources_file(build_artifacts_url)
+      if sources_file:
+        config['sources_file'] = sources_file
 
     gs_bucket_path = self._get_upload_uri(tag +
                                           '_results').split(GS_URI_PREFIX)[-1]

@@ -20,7 +20,6 @@ DEPS = [
     'cros_infra_config',
     'failures',
     'tast_exec',
-    'tast_results',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

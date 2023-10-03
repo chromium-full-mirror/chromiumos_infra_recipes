@@ -23,13 +23,13 @@ def RunSteps(api):
 
   # Test not having any tests to run (like in an empty shard).
   task_result = api.tast_results.get_results(
-      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', [])
+      temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1', [], 'gs://url')
   api.assertions.assertEqual(task_result.state.verdict,
                              TaskState.VERDICT_PASSED)
 
   task_result = api.tast_results.get_results(
       temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default_shard_5_of_5', '1',
-      ['arc.Boot'])
+      ['arc.Boot'], 'gs://url')
   results, test_cases = api.tast_results.convert_results(task_result)
   api.tast_results.print_results(results.failures, False)
   api.assertions.assertEqual(test_cases[0]['name'], 'arc.Boot')
@@ -49,7 +49,7 @@ def RunSteps(api):
   api.assertions.assertEqual(results.failures[0].title, 'arc.Boot')
   task_result = api.tast_results.get_results(
       temp_dir, 'reven-vmtest-cq.tast_vm.tast_vm_default', '1',
-      ['arc.Boot', 'arc.StartStop', 'some.Test', 'some.OtherTest'])
+      ['arc.Boot', 'arc.StartStop', 'some.Test', 'some.OtherTest'], 'gs://url')
   results, test_cases = api.tast_results.convert_results(task_result)
   api.assertions.assertEqual(len(results.failures), 4)
   api.assertions.assertEqual(results.failures[0].kind, 'vm test')
@@ -104,6 +104,15 @@ def GenTests(api):
       'basic',
       api.buildbucket.build(build),
       # TODO (b/275363240): audit this test.
+      status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'gsutil-fail',
+      api.buildbucket.build(build),
+      api.step_data(
+          'process tast output (2).gsutil download metadata/sources.jsonpb',
+          retcode=1),
       status='INFRA_FAILURE',
   )
 
