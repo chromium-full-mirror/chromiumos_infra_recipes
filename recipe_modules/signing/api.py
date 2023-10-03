@@ -65,8 +65,6 @@ GSUTIL_MAX_RETRY_COUNT = 2
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
 
-  DOCKER_HOST = 'us-docker.pkg.dev/chromeos-bot/signing'
-
   def __init__(self, properties: SigningProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     # Props for the legacy signing fleet.
@@ -88,6 +86,7 @@ class SigningApi(recipe_api.RecipeApi):
           'read signing image version',
           self.repo_resource('infra', 'config',
                              'signing-docker-image.version')).strip()
+    self._signing_image = f'us-docker.pkg.dev/chromeos-bot/signing/{self._signing_image}'
 
   # Methods to support the new local signing flow.
 
@@ -194,11 +193,10 @@ class SigningApi(recipe_api.RecipeApi):
 
         # BAPI is hermetic so need to pull down the specified docker image
         # ahead of time.
-        image_name = f'{self.DOCKER_HOST}/{self._signing_image}'
         self.m.step('docker pull', [
             'docker',
             'pull',
-            image_name,
+            self.signing_docker_image,
         ])
 
         # TODO(b/296086340): Remove once stable and in use.

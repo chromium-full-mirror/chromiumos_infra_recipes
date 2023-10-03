@@ -129,11 +129,10 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           # If a docker image is specified, need to pull it down before calling
           # the BAPI since the BAPI is hermetic.
           if req.generation_request.docker_image:
-            image_name = f'{api.signing.DOCKER_HOST}/{req.generation_request.docker_image}'
             api.step('docker pull', [
                 'docker',
                 'pull',
-                image_name,
+                req.generation_request.docker_image,
             ])
 
           # Execute build api endpoint for paygen.
@@ -613,7 +612,7 @@ def GenTests(api: RecipeTestApi):
                       dryrun=True,
                       result_path=api.paygen_orchestration.ARTIFACT_RESULT_PATH,
                       use_local_signing=True,
-                      docker_image='foo',
+                      docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
                   ),
               'autoupdate_test_configs': [
                   AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
