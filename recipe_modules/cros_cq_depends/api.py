@@ -144,7 +144,7 @@ class CrosCqDependsApi(RecipeApi):
         rev = change.current_revision
         display_id = change.display_id
         if project not in project_names:
-          dep_local_log.append('change %s in non-Chrome OS repo %s' %
+          dep_local_log.append('change %s in non-CrOS repo %s' %
                                (display_id, project))
           continue
 

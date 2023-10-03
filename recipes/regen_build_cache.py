@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for the Chrome OS Build Metadata Cache Regnerator.
+"""Recipe for the CrOS Build Metadata Cache Regnerator.
 
 If we fail to generate metadata for one repo project, don't fail immediately.
 Instead, try to process the other projects, and THEN fail.

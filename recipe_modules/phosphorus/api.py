@@ -258,7 +258,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
 
   def build_parallels_image_provision(self, image_gs_path,
                                       max_duration_sec=2 * 60 * 60):
-    """Provisions a DUT with the given Chrome OS image and Parallels DLC.
+    """Provisions a DUT with the given CrOS image and Parallels DLC.
 
     Args:
       image_gs_path (str): The Google Storage path (prefix) where images are

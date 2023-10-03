@@ -3,9 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API to simplify testing Chrome OS recipes.
+"""API to simplify testing CrOS recipes.
 
-This module provides helpers to make testing Chrome OS recipes simpler and more
+This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
 
@@ -21,7 +21,7 @@ from recipe_engine import recipe_test_api
 
 
 class TestUtilApi(recipe_test_api.RecipeTestApi):
-  """Helpers for testing Chrome OS Recipes."""
+  """Helpers for testing CrOS Recipes."""
 
   def test_child_build(self, build_target_name, builder_name=None,
                        input_properties=None, **kwargs):
@@ -102,7 +102,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       cq (bool): whether this is a CQ triggered job, vs scheduled.  This also
           adds a default gerrit_change, and sets CQ properties.
       dry_run (bool): Whether this is a dry_run (used only when |cq|=True).
-      bot_size (str): Chrome OS bot_size dimension for the builder.
+      bot_size (str): CrOS bot_size dimension for the builder.
       extra_changes (list[GerritChange]): additional changes to add.
       exe (common_pb2.Executable): Executable for the build.  (passed to
           buildbucket.build)

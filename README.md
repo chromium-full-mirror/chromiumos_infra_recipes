@@ -1,6 +1,6 @@
-# Chrome OS Recipes
+# ChromeOS Recipes
 
-This is a quick-start guide for Chrome OS Recipes. For more in-depth information
+This is a quick-start guide for ChromeOS Recipes. For more in-depth information
 about the Recipes framework, see the
 [Recipes User Guide](https://chromium.googlesource.com/infra/luci/recipes-py/+/main/doc/user_guide.md).
 
@@ -152,7 +152,7 @@ Change-Id: 1234
 and thus the builders will not be skipped. Also note that each builder to skip must have its own
 line; `Test-Recipes-Skip-Builder: Builder1, Builder2` will not work.
 
-## Chrome OS Recipes Code Style
+## ChromeOS Recipes Code Style
 
 * The Python code in this repo should largely conform to Chromium Python style
 except that Recipes code has a convention of 2 space indents. Practically, we

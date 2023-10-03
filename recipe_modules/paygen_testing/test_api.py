@@ -3,9 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API to simplify testing Chrome OS recipes.
+"""API to simplify testing CrOS recipes.
 
-This module provides helpers to make testing Chrome OS recipes simpler and more
+This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
 from typing import List
@@ -76,7 +76,7 @@ TEST_TARGET_TEST_REQUIREMENTS_DATA = b'''{
 
 
 class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
-  """Helper class for testing Chrome OS Paygen Recipes."""
+  """Helper class for testing CrOS Paygen Recipes."""
 
   TEST_TARGET_TEST_REQUIREMENTS_DATA = TEST_TARGET_TEST_REQUIREMENTS_DATA
 

@@ -94,9 +94,8 @@ def RunSteps(api: RecipeApi, properties: UprevParallelsPinProperties):
 
   upstream_version = get_upstream_version(api, properties)
 
-  # Build a version of Chrome OS with the new Parallels version. If build
-  # is not required (because upstream_version is the current version), returns
-  # None.
+  # Build a version of CrOS with the new Parallels version. If build is not
+  # required (because upstream_version is the current version), returns None.
   build_path = build_os_with_uprev(api, properties, package, upstream_version)
   if build_path:
     # Build a new VM image.
@@ -109,7 +108,7 @@ def RunSteps(api: RecipeApi, properties: UprevParallelsPinProperties):
 def build_os_with_uprev(api: RecipeApi, properties: UprevParallelsPinProperties,
                         package: PackageInfo,
                         upstream_version: str) -> Optional[BuildPath]:
-  """Builds a version of Chrome OS with given version of the Parallels package.
+  """Builds a version of CrOS with given version of the Parallels package.
 
   The build will still contain an old VM image for testing.
 
@@ -568,7 +567,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
       status='FAILURE')
 
-  # Upstream version is the same as in Chrome OS (nothing to do).
+  # Upstream version is the same as in CrOS (nothing to do).
   yield api.build_menu.test(
       'uprev-not-required', api.properties(**good_props), good_snapshot_search,
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),

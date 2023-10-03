@@ -838,11 +838,11 @@ def _generate_resultdb_variant_def(api, autotest_keyval_file):
 def _prepare_resultdb_sources_file(api, properties):
   """Fetches information about code sources tested by this execution.
 
-  The code sources typically comprise a git commit (i.e. the Chrome OS
-  snapshot), as well as an optional list of gerrit changes. An is_dirty
-  flag identifies if there were other modifications made to the sources
-  (such as if an uncommited package uprev being built into the system
-  image or if a custom firmware build was used).
+  The code sources typically comprise a git commit (i.e. the CrOS snapshot), as
+  well as an optional list of gerrit changes. An is_dirty flag identifies if
+  there were other modifications made to the sources (such as if an uncommited
+  package uprev being built into the system image or if a custom firmware build
+  was used).
 
   See the luci.resultdb.v1.Sources message for more.
 
@@ -901,9 +901,8 @@ def _prepare_resultdb_sources_file(api, properties):
             is_dirty_provision = True
 
       if chromeos_build is None:  # pragma: nocover
-        step.step_text = 'Chrome OS build not found in request'
-        raise SourcesNotAvailableException(
-            'Chrome OS build not found in request')
+        step.step_text = 'CrOS build not found in request'
+        raise SourcesNotAvailableException('CrOS build not found in request')
       build_url = 'gs://{}/{}'.format(chromeos_build_gcs_bucket, chromeos_build)
 
     sources_local_path = api.path.mkdtemp(

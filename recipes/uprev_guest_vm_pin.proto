@@ -32,7 +32,7 @@ message UprevGuestVmPinProperties {
 }
 
 message VmBoardImage {
-  // Name of the Chrome OS board that is used to generate the guest VM image.
+  // Name of the CrOS board that is used to generate the guest VM image.
   // Required
   string board = 1;
 

@@ -3,9 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API to simplify testing Chrome OS recipes.
+"""API to simplify testing CrOS recipes.
 
-This module provides helpers to make testing Chrome OS recipes simpler and more
+This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
 
@@ -18,7 +18,7 @@ from recipe_engine import recipe_test_api
 
 
 class BuildMenuTestApi(recipe_test_api.RecipeTestApi):
-  """Helpers for testing Chrome OS Recipes."""
+  """Helpers for testing CrOS Recipes."""
 
   def depgraph_relevance_return(self, step, pointless):
     resp = PointlessBuildCheckResponse()

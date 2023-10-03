@@ -3,9 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API to simplify testing Chrome OS recipes.
+"""API to simplify testing CrOS recipes.
 
-This module provides helpers to make testing Chrome OS recipes simpler and more
+This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
 
@@ -36,7 +36,7 @@ def _example_big_config() -> str:
 
 
 class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
-  """Helper class for testing Chrome OS Paygen Recipes."""
+  """Helper class for testing CrOS Paygen Recipes."""
 
   EXAMPLE_PAYGEN_JSON = read_test_file('test_paygen.json', __file__)
   NO_DELTA_PAYGEN_JSON = read_test_file('test_no_deltas.json', __file__)

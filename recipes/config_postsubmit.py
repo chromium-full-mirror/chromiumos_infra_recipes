@@ -265,7 +265,7 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
     for repo_project_info in repo_project_infos:
       # repo_project_info is a ProjectInfo object (defined in repo/api.py),
       # which describes a Gerrit project. allowed_projects and allowed_programs
-      # contain the names of Gerrit repos associated with Chrome OS projects or
+      # contain the names of Gerrit repos associated with CrOS projects or
       # programs which contain ConfigBundles that should be merged, for example
       # 'chromeos/program/galaxy' or 'chromeos/project/galaxy/milkyway'. For
       # each ProjectInfo, check if its name is in the lists of allowed project

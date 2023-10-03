@@ -83,7 +83,7 @@ class TastResultsTestApi(recipe_test_api.RecipeTestApi):
     "name": "arc.MiniContainerState",
     "pkg": "chromiumos/tast/local/bundles/cros/arc",
     "additionalTime": 30000000000,
-    "desc": "Verifies ARC mini container starts right after Chrome OS shows the login screen",
+    "desc": "Verifies ARC mini container starts right after CrOS shows the login screen",
     "contacts": [
       "yusukes@chromium.org",
       "arc-core@google.com",

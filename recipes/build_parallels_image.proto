@@ -7,11 +7,11 @@ syntax = "proto3";
 package recipes.chromeos.build_parallels_image;
 
 message BuildParallelsImageProperties {
-  // The bucket containing the Chrome OS build with Parallels.
+  // The bucket containing the CrOS build with Parallels.
   // Required
   string build_gs_bucket = 1;
 
-  // The bucket path containing the Chrome OS build with Parallels.
+  // The bucket path containing the CrOS build with Parallels.
   // Required
   string build_gs_path = 2;
 

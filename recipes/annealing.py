@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for the Chrome OS annealing builders.
+"""Recipe for the CrOS annealing builders.
 
 The annealing builders run in serial and do the following:
 

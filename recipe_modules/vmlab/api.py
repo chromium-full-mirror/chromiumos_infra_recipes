@@ -11,7 +11,7 @@ DEFAULT_IMAGE_PROJECT = 'betty-cloud-prototype'
 
 
 class VmlabApi(recipe_api.RecipeApi):
-  """A module to interact with Chrome OS VMLab."""
+  """A module to interact with CrOS VMLab."""
 
   def __init__(self, properties, *args, **kwargs):
     """Initialize GcloudApi."""

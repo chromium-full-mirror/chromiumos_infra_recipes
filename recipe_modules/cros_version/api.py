@@ -33,7 +33,7 @@ CHROMIUMOS_OVERLAY_RUBIK_BRANCH = 'rubik-staging'
 
 
 class CrosVersionApi(RecipeApi):
-  """A module for steps that manipulate Chrome OS versions."""
+  """A module for steps that manipulate CrOS versions."""
 
   Version = Version
 
@@ -62,7 +62,7 @@ class CrosVersionApi(RecipeApi):
         self._properties.version_bumper_cipd_ref or default_ref)
 
   def read_workspace_version(self, name='read chromeos version'):
-    """Read the Chrome OS version from the workspace.
+    """Read the CrOS version from the workspace.
 
     Returns: a Version read from the workspace.
 

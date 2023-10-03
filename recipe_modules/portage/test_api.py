@@ -5,7 +5,7 @@
 
 """API to simplify testing the portage module.
 
-This module provides helpers to make testing Chrome OS recipes simpler and more
+This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
 
@@ -15,7 +15,7 @@ from RECIPE_MODULES.chromeos.util.util import read_test_file
 
 
 class PortageTestApi(recipe_test_api.RecipeTestApi):
-  """Helper class for testing Chrome OS Paygen Recipes."""
+  """Helper class for testing CrOS Paygen Recipes."""
   EXAMPLE_SUCCESS_INSTALL_PACKAGES = read_test_file(
       'example_success_install_packages.txt', __file__)
   EXAMPLE_SUCCESS_INSTALL_PACKAGES_EXPECTED = read_test_file(

@@ -119,8 +119,7 @@ class BinhostLookupServiceApi(recipe_api.RecipeApi):
     `cloud_pubsub` recipe module.
 
     Args:
-      build_target: The system Chrome OS is being built for, also known
-          as board.
+      build_target: The system CrOS is being built for, also known as board.
       profile: Name of the profile to use with the build_target.
       snapshot_sha: Unique sha of the snapshot.
       gs_uri: Location of the binhost object in google storage.

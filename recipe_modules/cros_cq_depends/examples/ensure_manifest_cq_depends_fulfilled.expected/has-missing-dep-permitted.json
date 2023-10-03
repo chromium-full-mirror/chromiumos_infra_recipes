@@ -1158,7 +1158,7 @@
       "@@@STEP_LOG_LINE@gather cq-depend@chrome-internal:67890@@@",
       "@@@STEP_LOG_END@gather cq-depend@@@",
       "@@@STEP_LOG_LINE@dep local@Unsatisfied dep: deadbeef does not exist at src/project-c on branch main (chromium:1)@@@",
-      "@@@STEP_LOG_LINE@dep local@change chromium:2 in non-Chrome OS repo not-a-project@@@",
+      "@@@STEP_LOG_LINE@dep local@change chromium:2 in non-CrOS repo not-a-project@@@",
       "@@@STEP_LOG_END@dep local@@@",
       "@@@STEP_WARNINGS@@@"
     ]

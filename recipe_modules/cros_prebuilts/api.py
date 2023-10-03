@@ -274,8 +274,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     """Publish binhost metadata using the binhost_lookup_service module.
 
     Args:
-      build_target: The system Chrome OS is being built for, also known
-        as board.
+      build_target: The system CrOS is being built for, also known as board.
       profile: Profile to use with the build_target.
       gs_uri: Location of the binhost object in google storage.
       gs_bucket_name: Name of the google storage bucket which contains the

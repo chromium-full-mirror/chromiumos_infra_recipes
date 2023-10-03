@@ -112,16 +112,16 @@ message BranchPolicy {
   // re.sub(pattern, repl) must be the name of a branch in the
   // internal manifest repo. This conversion is necessary to allow
   // generators to take triggers from repos that are not owned by
-  // Chrome OS, and from new tags.
+  // CrOS, and from new tags.
   //
-  // However, even if you are triggering from a Chrome OS repo and
+  // However, even if you are triggering from a CrOS repo and
   // attempting an uprev on the same manifest branch, these can have
   // different names. For example, the Linux kernel repo is checked
   // out multiple times, so each manifest branch actually has multiple
   // kernel repo branches associated with it. You should check the
   // policy for reference names for your specific repo carefully.
   //
-  // To generically specify a mapping for Chrome version to Chrome OS release
+  // To generically specify a mapping for Chrome version to CrOS release
   // branch, such that 'refs/tags/86.0.4240.33' maps to 'release-R86-13421.B',
   // use pattern='refs/tags/([0-9]*).*' and repl='release-R\1-*.B'.
   //

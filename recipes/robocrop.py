@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for scaling bots in Chrome and Chrome OS pools."""
+"""Recipe for scaling bots in Chrome and CrOS pools."""
 import json
 
 from google.protobuf import json_format as jsonpb

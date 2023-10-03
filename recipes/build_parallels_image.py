@@ -108,7 +108,7 @@ def build_vm_image(
                                artifacts_gs_path=properties.build_gs_path)
   api.tast_exec.download_tast(build_payload, test_artifacts_dir)
 
-  # Provision the DUT with the requested version of Chrome OS and pita DLC.
+  # Provision the DUT with the requested version of CrOS and pita DLC.
   with api.step.nest('provision DUT') as presentation:
     presentation.links['build artifacts'] = '{}/{}/{}'.format(
         _GS_BROWSER_PREFIX, properties.build_gs_bucket,

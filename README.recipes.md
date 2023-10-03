@@ -114,7 +114,7 @@
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results)
-  * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing Chrome OS recipes.
+  * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing CrOS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) &mdash; Module providing importable utilities.
   * [vmlab](#recipe_modules-vmlab)
@@ -128,7 +128,7 @@
   * [android:examples/misc](#recipes-android_examples_misc)
   * [android:examples/uprev](#recipes-android_examples_uprev)
   * [android_uprev_orchestrator](#recipes-android_uprev_orchestrator) &mdash; Orchestrator for Android uprev builders.
-  * [annealing](#recipes-annealing) &mdash; Recipe for the Chrome OS annealing builders.
+  * [annealing](#recipes-annealing) &mdash; Recipe for the CrOS annealing builders.
   * [auto_retry_util:tests/analyze_build_failures](#recipes-auto_retry_util_tests_analyze_build_failures)
   * [auto_retry_util:tests/analyze_test_results](#recipes-auto_retry_util_tests_analyze_test_results)
   * [auto_retry_util:tests/cq_retry_candidates](#recipes-auto_retry_util_tests_cq_retry_candidates) &mdash; Tests for the cq_retry_candidates function.
@@ -198,7 +198,7 @@
   * [build_signing_docker_image](#recipes-build_signing_docker_image) &mdash; Recipe for building the signing docker image.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_snapshot](#recipes-build_snapshot) &mdash; Recipe for building a BuildTarget image for Snapshot.
-  * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the Chromium OS toolchain.
+  * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the CrOS toolchain.
   * [buildbucket_stats:examples/get_bot_demand](#recipes-buildbucket_stats_examples_get_bot_demand)
   * [buildbucket_stats:examples/get_bucket_status](#recipes-buildbucket_stats_examples_get_bucket_status)
   * [buildbucket_stats:examples/get_build_count](#recipes-buildbucket_stats_examples_get_build_count)
@@ -645,7 +645,7 @@
   * [rdb_util:examples/get_suite](#recipes-rdb_util_examples_get_suite)
   * [recipe_analyze:tests/is_recipe_affected](#recipes-recipe_analyze_tests_is_recipe_affected)
   * [recipes_autoreleaser](#recipes-recipes_autoreleaser) &mdash; Release recipes by running the release.
-  * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the Chrome OS Build Metadata Cache Regnerator.
+  * [regen_build_cache](#recipes-regen_build_cache) &mdash; Recipe for the CrOS Build Metadata Cache Regnerator.
   * [remoteexec:tests/full](#recipes-remoteexec_tests_full)
   * [remoteexec:tests/process_artifacts](#recipes-remoteexec_tests_process_artifacts)
   * [repo:examples/annealing](#recipes-repo_examples_annealing)
@@ -665,7 +665,7 @@
   * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
-  * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and Chrome OS pools.
+  * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and CrOS pools.
   * [service_version:examples/full](#recipes-service_version_examples_full)
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [signing:tests/download_release_artifacts](#recipes-signing_tests_download_release_artifacts) &mdash; Tests for download_release_artifacts.
@@ -995,8 +995,7 @@ Publish a Pub/Sub message to the binhost lookup service using the
 `cloud_pubsub` recipe module.
 
 Args:
-  build_target: The system Chrome OS is being built for, also known
-      as board.
+  build_target: The system CrOS is being built for, also known as board.
   profile: Name of the profile to use with the build_target.
   snapshot_sha: Unique sha of the snapshot.
   gs_uri: Location of the binhost object in google storage.
@@ -3599,7 +3598,7 @@ Args:
 Returns:
   The metadata for CreateSysrootService.
 
-&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#430)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
+&mdash; **def [set\_binhosts](/recipe_modules/cros_prebuilts/api.py#429)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
 
 Set the target's Portage binhosts to point to the given URIs.
 
@@ -3614,7 +3613,7 @@ Args:
       name of build target, Value is the number of `max_uris` used for the
       build target. None for using the default value.
 
-&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#482)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
+&emsp; **@exponential_retry(retries=GIT_PUSH_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [set\_binhosts\_retry](/recipe_modules/cros_prebuilts/api.py#481)(self, binhosts: List[Tuple[(BuildTarget, str)]], private: bool, key: binhost_pb.BinhostKey, target_project: ProjectInfo, branch: str, overriding_max_uris: Optional[Dict[(str, int)]]=None):**
 
 Utility method to update the target's Portage binhosts.
 
@@ -3630,7 +3629,7 @@ Args:
       name of build target, Value is the number of `max_uris` used for the
       build target. None for using the default value.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#732)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#731)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3646,7 +3645,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#703)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#702)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3656,7 +3655,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#639)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
+&mdash; **def [upload\_target\_prebuilts](/recipe_modules/cros_prebuilts/api.py#638)(self, target, sysroot, chroot, profile, kind, gs_bucket, private=True):**
 
 Upload binary prebuilts for the build target to Google Storage.
 
@@ -4026,7 +4025,7 @@ Determines which builders must be run (and which can be skipped).
 
 This filters on preconfigured RunWhen rules, as well as on rules allowing
 skipping of image builders. Image builders are those that run the
-build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
+build_target recipe, producing an IMAGE_ZIP CrOS artifact.
 
 Args:
   builder_configs (list[chromiumos.BuilderConfig]): builder configs to
@@ -5229,7 +5228,7 @@ Returns:
 
 Runs the test platform for a given bunch of builds.
 
-This is the entry point into the Chrome OS infra test platform via recipes.
+This is the entry point into the CrOS infra test platform via recipes.
 
 Args:
   need_tests_builds (list[build]): builds that are eligible for testing,
@@ -5410,7 +5409,7 @@ API for working with CrOS version numbers.
 
 #### **class [CrosVersionApi](/recipe_modules/cros_version/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module for steps that manipulate Chrome OS versions.
+A module for steps that manipulate CrOS versions.
 
 &mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#154)(self, dry_run=True, use_local_diff=False):**
 
@@ -5431,7 +5430,7 @@ Initializes the module.
 
 &mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#64)(self, name='read chromeos version'):**
 
-Read the Chrome OS version from the workspace.
+Read the CrOS version from the workspace.
 
 Returns: a Version read from the workspace.
 
@@ -9119,7 +9118,7 @@ Module for issuing Phosphorus commands
 
 &mdash; **def [build\_parallels\_image\_provision](/recipe_modules/phosphorus/api.py#259)(self, image_gs_path, max_duration_sec=((2 \* 60) \* 60)):**
 
-Provisions a DUT with the given Chrome OS image and Parallels DLC.
+Provisions a DUT with the given CrOS image and Parallels DLC.
 
 Args:
   image_gs_path (str): The Google Storage path (prefix) where images are
@@ -10232,7 +10231,7 @@ There are two classes of properties in this module.
 
 #### **class [SrcStateApi](/recipe_modules/src_state/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-Source State related attributes for Chrome OS recipes.
+Source State related attributes for CrOS recipes.
 
 &emsp; **@build_manifest.setter**<br>&mdash; **def [build\_manifest](/recipe_modules/src_state/api.py#113)(self, build_manifest):**
 
@@ -10245,17 +10244,17 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [default\_branch](/recipe_modules/src_state/api.py#52)(self):**
 
-The default branch for Chrome OS repos
+The default branch for CrOS repos
 
 &emsp; **@property**<br>&mdash; **def [default\_ref](/recipe_modules/src_state/api.py#47)(self):**
 
-The default ref for Chrome OS repos
+The default ref for CrOS repos
 
 &emsp; **@property**<br>&mdash; **def [external\_manifest](/recipe_modules/src_state/api.py#89)(self):**
 
 Information about external manifest.
 
-Provides immutable information about the Chrome OS external manifest.
+Provides immutable information about the CrOS external manifest.
 
 Returns:
   (ManifestProject): information about the external manifest.
@@ -10290,7 +10289,7 @@ Returns:
 
 Information about internal manifest.
 
-Provides immutable information about the Chrome OS internal manifest.
+Provides immutable information about the CrOS internal manifest.
 
 Returns:
   (ManifestProject): information about the internal manifest.
@@ -10307,7 +10306,7 @@ Return the manifest project names.
 
 The "workspace" checkout path.
 
-The cros_source module checks out the Chrome OS source in this directory.
+The cros_source module checks out the CrOS source in this directory.
 It will contain the base checkout and any modifications made by the build,
 and is discarded after the build.
 ### *recipe_modules* / [support](/recipe_modules/support)
@@ -10757,11 +10756,11 @@ Args:
 [DEPS](/recipe_modules/test_util/__init__.py#6): [cros\_tags](#recipe_modules-cros_tags), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-API to simpify testing Chrome OS recipes.
+API to simpify testing CrOS recipes.
 
 #### **class [TestUtilApi](/recipe_modules/test_util/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module providing test methods to simplify testing Chrome OS recipes.
+A module providing test methods to simplify testing CrOS recipes.
 ### *recipe_modules* / [urls](/recipe_modules/urls)
 
 [DEPS](/recipe_modules/urls/__init__.py#6): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -10912,7 +10911,7 @@ Raises:
 
 #### **class [VmlabApi](/recipe_modules/vmlab/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-A module to interact with Chrome OS VMLab.
+A module to interact with CrOS VMLab.
 
 &mdash; **def [\_\_init\_\_](/recipe_modules/vmlab/api.py#16)(self, properties, \*args, \*\*kwargs):**
 
@@ -11176,7 +11175,7 @@ Android uprev.
 [DEPS](/recipes/annealing.py#35): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_cq\_depends](#recipe_modules-cros_cq_depends), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [git\_txn](#recipe_modules-git_txn), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-Recipe for the Chrome OS annealing builders.
+Recipe for the CrOS annealing builders.
 
 The annealing builders run in serial and do the following:
 
@@ -11781,7 +11780,7 @@ Recipe for building a BuildTarget image for Snapshot.
 [DEPS](/recipes/build_toolchain.py#29): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-Builds and uploads the Chromium OS toolchain.
+Builds and uploads the CrOS toolchain.
 
 &mdash; **def [RunSteps](/recipes/build_toolchain.py#85)(api: RecipeApi, properties: BuildToolchainProperties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
@@ -15027,7 +15026,7 @@ Release recipes by running the release.sh script in infra/recipes.
 [DEPS](/recipes/regen_build_cache.py#24): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [deferrals](#recipe_modules-deferrals), [git](#recipe_modules-git), [git\_txn](#recipe_modules-git_txn), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-Recipe for the Chrome OS Build Metadata Cache Regnerator.
+Recipe for the CrOS Build Metadata Cache Regnerator.
 
 If we fail to generate metadata for one repo project, don't fail immediately.
 Instead, try to process the other projects, and THEN fail.
@@ -15164,7 +15163,7 @@ Instead, try to process the other projects, and THEN fail.
 [DEPS](/recipes/robocrop.py#16): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-Recipe for scaling bots in Chrome and Chrome OS pools.
+Recipe for scaling bots in Chrome and CrOS pools.
 
 &mdash; **def [RunSteps](/recipes/robocrop.py#30)(api: RecipeApi, properties: RoboCropProperties):**
 ### *recipes* / [service\_version:examples/full](/recipe_modules/service_version/examples/full.py)
@@ -15669,7 +15668,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2083)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2082)(api, properties):**
 
 Entrypoint to the script
 
@@ -15694,7 +15693,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1846)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1845)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -15706,7 +15705,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1559)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1558)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -15722,7 +15721,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1472)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1471)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -15738,7 +15737,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1443)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1442)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -15749,7 +15748,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2037)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2036)(api, properties):**
 
 Run test and upload results.
 
@@ -15786,7 +15785,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1916)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1915)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -16017,9 +16016,9 @@ where the necessary license(s) have been obtained.
 
 &mdash; **def [RunSteps](/recipes/uprev_parallels_pin.py#76)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
-&mdash; **def [build\_os\_with\_uprev](/recipes/uprev_parallels_pin.py#109)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, upstream_version: str):**
+&mdash; **def [build\_os\_with\_uprev](/recipes/uprev_parallels_pin.py#108)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, upstream_version: str):**
 
-Builds a version of Chrome OS with given version of the Parallels package.
+Builds a version of CrOS with given version of the Parallels package.
 
 The build will still contain an old VM image for testing.
 
@@ -16030,7 +16029,7 @@ Args:
 Returns:
   Where the build artifacts were uploaded.
 
-&emsp; **@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#216)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
+&emsp; **@exponential_retry(retries=1, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [build\_vm\_image](/recipes/uprev_parallels_pin.py#215)(api: RecipeApi, properties: UprevParallelsPinProperties, artifacts_path: BuildPath, parallels_version: str):**
 
 Builds a new VM image for testing.
 
@@ -16041,7 +16040,7 @@ Args:
 Returns:
   The details of the new test image.
 
-&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#286)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, new_version_pin: VersionPin):**
+&mdash; **def [commit\_pin\_uprev](/recipes/uprev_parallels_pin.py#285)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, new_version_pin: VersionPin):**
 
 Commits and uploads the uprev of the version-pin file.
 
@@ -16049,7 +16048,7 @@ Args:
   package: the package to include in the commit message.
   new_version_pin: the new version pin data.
 
-&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#432)(api: RecipeApi, build_target: str):**
+&mdash; **def [get\_latest\_green\_snapshot\_commit](/recipes/uprev_parallels_pin.py#431)(api: RecipeApi, build_target: str):**
 
 Finds the latest green snapshot build for the given build target
 and returns the corresponding manifest gitiles (input) commit.
@@ -16057,18 +16056,18 @@ and returns the corresponding manifest gitiles (input) commit.
 Args:
   build_target: The name of the build target.
 
-&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#328)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_upstream\_version](/recipes/uprev_parallels_pin.py#327)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Gets the latest version of Parallels from the upstream bucket.
 
 Returns:
   The latest upstream version of Parallels.
 
-&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#412)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_version\_path](/recipes/uprev_parallels_pin.py#411)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Gets the path of the VERSION-PIN file.
 
-&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#369)(api: RecipeApi, properties: UprevParallelsPinProperties):**
+&mdash; **def [get\_version\_pin](/recipes/uprev_parallels_pin.py#368)(api: RecipeApi, properties: UprevParallelsPinProperties):**
 
 Reads and returns the content of the VERSION-PIN file.
 
@@ -16078,7 +16077,7 @@ have been checked out.
 Returns:
   The pinned version data.
 
-&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#417)(version: str, previous_version: str):**
+&mdash; **def [is\_version\_after](/recipes/uprev_parallels_pin.py#416)(version: str, previous_version: str):**
 
 Returns if version occurs logically after pervious_version.
 
@@ -16088,7 +16087,7 @@ Args:
   version: The version to compare.
   previous_version: The previous version to compare with.
 
-&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#393)(api: RecipeApi, properties: UprevParallelsPinProperties, new_version: VersionPin):**
+&mdash; **def [set\_version\_pin](/recipes/uprev_parallels_pin.py#392)(api: RecipeApi, properties: UprevParallelsPinProperties, new_version: VersionPin):**
 
 Sets the content of the VERSION-PIN file.
 
@@ -16098,7 +16097,7 @@ have been checked out.
 Args:
   new_version: the new version pin data.
 
-&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#179)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, to_version: str):**
+&mdash; **def [uprev\_package](/recipes/uprev_parallels_pin.py#178)(api: RecipeApi, properties: UprevParallelsPinProperties, package: PackageInfo, to_version: str):**
 
 Uprevs the Parallels package to the given version.
 

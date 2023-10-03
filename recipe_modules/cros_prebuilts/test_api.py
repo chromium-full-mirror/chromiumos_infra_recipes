@@ -5,7 +5,7 @@
 
 """Test api for cros_prebuilts
 
-This module provides helpers to make testing cros_prebuilts in Chrome OS recipes
+This module provides helpers to make testing cros_prebuilts in CrOS recipes
 simpler and more consistent.
 """
 
@@ -15,7 +15,7 @@ from PB.chromiumos.common import PackageIndexInfo, Profile
 
 
 class CrosPrebuiltsApi(recipe_test_api.RecipeTestApi):
-  """Helpers for testing cros_prebuilts in Chrome OS Recipes."""
+  """Helpers for testing cros_prebuilts in CrOS Recipes."""
 
   def profile_or_default(self, profile):
     """Return a default profile if there is no profile."""

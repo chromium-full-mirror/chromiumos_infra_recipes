@@ -82,7 +82,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
 
     This filters on preconfigured RunWhen rules, as well as on rules allowing
     skipping of image builders. Image builders are those that run the
-    build_target recipe, producing an IMAGE_ZIP Chrome OS artifact.
+    build_target recipe, producing an IMAGE_ZIP CrOS artifact.
 
     Args:
       builder_configs (list[chromiumos.BuilderConfig]): builder configs to

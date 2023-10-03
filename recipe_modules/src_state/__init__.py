@@ -19,6 +19,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 # modules that we have declared as dependencies in infra/config/recipes.cfg.
 # All of those have a '/' in the name.
 assert [x for x in DEPS if '/' not in x] == [], \
-    'src_state depends on Chrome OS modules'
+    'src_state depends on CrOS modules'
 
 PROPERTIES = SrcStateProperties

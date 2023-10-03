@@ -30,7 +30,7 @@ from RECIPE_MODULES.chromeos.src_state import common
 
 
 class SrcStateApi(recipe_api.RecipeApi):
-  """Source State related attributes for Chrome OS recipes."""
+  """Source State related attributes for CrOS recipes."""
 
   ManifestProject = common.ManifestProject
 
@@ -46,19 +46,19 @@ class SrcStateApi(recipe_api.RecipeApi):
 
   @property
   def default_ref(self):
-    """The default ref for Chrome OS repos"""
+    """The default ref for CrOS repos"""
     return common.default_ref
 
   @property
   def default_branch(self):
-    """The default branch for Chrome OS repos"""
+    """The default branch for CrOS repos"""
     return common.default_branch
 
   @property
   def workspace_path(self):
     """The "workspace" checkout path.
 
-    The cros_source module checks out the Chrome OS source in this directory.
+    The cros_source module checks out the CrOS source in this directory.
     It will contain the base checkout and any modifications made by the build,
     and is discarded after the build.
     """
@@ -79,7 +79,7 @@ class SrcStateApi(recipe_api.RecipeApi):
   def internal_manifest(self):
     """Information about internal manifest.
 
-    Provides immutable information about the Chrome OS internal manifest.
+    Provides immutable information about the CrOS internal manifest.
 
     Returns:
       (ManifestProject): information about the internal manifest.
@@ -90,7 +90,7 @@ class SrcStateApi(recipe_api.RecipeApi):
   def external_manifest(self):
     """Information about external manifest.
 
-    Provides immutable information about the Chrome OS external manifest.
+    Provides immutable information about the CrOS external manifest.
 
     Returns:
       (ManifestProject): information about the external manifest.

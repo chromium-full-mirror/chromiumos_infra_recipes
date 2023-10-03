@@ -382,7 +382,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         for change in self.m.src_state.gerrit_changes:
           self.m.workspace_util.checkout_change(change=change)
 
-      # The Chrome OS verison can be reported once the workspace is synced.
+      # The CrOS verison can be reported once the workspace is synced.
       version = self.m.cros_version.version
       self.m.easy.set_properties_step(chromeos_version=str(version))
 

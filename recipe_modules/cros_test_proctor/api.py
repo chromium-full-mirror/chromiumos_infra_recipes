@@ -197,7 +197,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                   build_target_critical_allowlist=None):
     """Runs the test platform for a given bunch of builds.
 
-    This is the entry point into the Chrome OS infra test platform via recipes.
+    This is the entry point into the CrOS infra test platform via recipes.
 
     Args:
       need_tests_builds (list[build]): builds that are eligible for testing,

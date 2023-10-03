@@ -1,8 +1,8 @@
-# Chrome OS CI team
+# CrOS CI team.
 # Most of your recipes CLs should go to this group.
 include chromiumos/chromite:/OWNERS.ci
 
-# Chrome OS SYD EngProd Team.
+# CrOS SYD EngProd Team.
 include OWNERS.ci_apac
 
 # Additional members of Infra.
