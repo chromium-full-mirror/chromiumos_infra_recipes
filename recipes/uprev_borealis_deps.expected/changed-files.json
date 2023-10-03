@@ -1986,6 +1986,28 @@
   },
   {
     "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "Arch mirror uprev.git diff",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
       "./tools/build_full.py",
       "--skip-license-report",
       "--chroot=[CACHE]/cros_chroot/chroot",
@@ -2482,6 +2504,28 @@
       ]
     },
     "name": "PKGBUILDs uprev.PKGBUILD uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "diff",
+      "--name-only",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "PKGBUILDs uprev.git diff",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
