@@ -258,8 +258,21 @@ class Builds:
 
 def check_staging_builders(all_builds: Builds, changes: List[git.Commit],
                            checks: Tuple[staging_checks.StagingReCheck],
+                           ok_fewer: List[str],
                            log_messages: bool = False) -> List[str]:
-  """Check for failures in staging builders. Returns a list of bad builders."""
+  """Check for failures in staging builders.
+
+  Args:
+    all_builds: All relevant build results as calculated at startup.
+    changes: Changes under question.
+    checks: Staging checks to use to validate a release.
+    ok_fewer: List of builders for which it's OK to have fewer than N builds
+      (as configured in `checks`).
+    log_messages: Whether to log to stdout.
+
+  Returns:
+    List of builders with issues.
+  """
 
   def print_if(*args, **kwargs):
     if log_messages:
@@ -294,10 +307,9 @@ def check_staging_builders(all_builds: Builds, changes: List[git.Commit],
     builders = return_builders_for_regex(re_check.project, re_check.bucket,
                                          re_check.regex)
     for builder in filter(lambda b: b in relevant_builders, builders):
-      not_ok, status_str = check_recent_build_statuses(all_builds, builder,
-                                                       re_check.exemptions,
-                                                       changes,
-                                                       re_check.num_builds)
+      not_ok, status_str = check_recent_build_statuses(
+          all_builds, builder, re_check.exemptions, changes,
+          re_check.num_builds, ok_fewer=builder in ok_fewer)
       if not_ok:
         print_if(status_str)
         baddies.append(builder)
@@ -310,8 +322,18 @@ def check_recent_build_statuses(
     exemptions: List[Callable[[Dict[str, Any]], bool]],
     pending_changes: List[git.Commit],
     num_builds_needed: int,
+    ok_fewer: bool = False,
 ) -> Tuple[bool, str]:
   """Check whether a single builder has had any recent non-successes.
+
+  Args:
+    all_builds: All relevant build results as calculated at startup.
+    builder: The builder to check.
+    exemptions: Exemptions for known (acceptable) build failures.
+    pending_changes: Changes under question.
+    num_builds_needed: The number of builds required to validate the changes.
+    ok_fewer: Whether it's OK to have fewer than `num_builds_newer` (e.g. if
+      the builder is newly defined).
 
   Returns:
     (bool) Whether there is an issue with the builder.
@@ -346,15 +368,19 @@ def check_recent_build_statuses(
     else:
       bad_build_ids.append(f'go/bbid/{build["id"]}')
 
-  success = good_builds == num_builds_needed
-  success_str = f'{common.BOLDGREEN}Success{common.RESET}' if success else f'{common.BOLDRED}Non-success{common.RESET}'
+  success = True
+  problem_str = ''
 
   # Everything was a success, we just didn't have enough builds.
-  if set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'
-                                  }) and good_builds < num_builds_needed:
-    problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} (good) builds available.'
+  if set(found_statuses).issubset({'SUCCESS', 'OK_FAILURE'}):
+    if not (good_builds >= num_builds_needed or ok_fewer):
+      success = False
+      problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} (good) builds available.'
   else:
+    success = False
     problem_str = f'Needed {num_builds_needed} consecutive good builds, found failures. Statuses: {", ".join(sorted(list(found_statuses)))} ({", ".join(bad_build_ids)})'
+
+  success_str = f'{common.BOLDGREEN}Success{common.RESET}' if success else f'{common.BOLDRED}Non-success{common.RESET}'
   status_str = f'{success_str}: {get_builder_link(builder)} --> {problem_str}'
 
   return not success, status_str
@@ -363,7 +389,7 @@ def check_recent_build_statuses(
 def determine_maximum_covered_instance(
     all_builds: Builds, changes: List[git.Commit],
     checks: Tuple[staging_checks.StagingReCheck], enforce_success: bool = False,
-    verbose: bool = False) -> common.CipdInstance:
+    verbose: bool = False) -> Tuple[common.CipdInstance, List[str]]:
   """Determine the maximum covered recipes instance.
 
   The maximum covered recipes instance is the most recent instance / change
@@ -385,7 +411,8 @@ def determine_maximum_covered_instance(
       than just enforcing coverage.
     verbose: If set, more information is logged.
   Returns:
-    The most recent CIPD instance that had adequate coverage in staging.
+    - The most recent CIPD instance that had adequate coverage in staging.
+    - A list of any (new) builders that have insufficient results.
   """
   builders = set()
   num_builds_by_builder = {}
@@ -418,20 +445,22 @@ def determine_maximum_covered_instance(
 
     Returns:
       List corresponding to `changes` where the ith element is the number
-      of builds covering changes[i].
+      of builds covering changes[i], or None if the builder should be
+      disregarded (e.g. if it's a new builder with not enough runs yet).
     """
     # Get all build results since the oldest pending change.
     builds = all_builds.get_builds_after(builder, earliest_change)
     num_builds = num_builds_by_builder[builder]
 
-    # If there are no builds for the builder at all, don't let that be a blocker.
+    # If there are not enough builds for the builder, don't let that be a
+    # blocker.
     if len(builds) < num_builds:
       if len(_bb_ls('-fields', 'id', builder, '-n',
                     str(num_builds))) < num_builds:
         print_if_verbose(
-            f'<{num_builds} build results for {builder}, it must be new. Skipping.'
+            f'<{num_builds} build results for {builder}, it must be new. Not enforcing coverage.'
         )
-        return [num_builds] * len(changes)
+        return None
 
     print_if_verbose(
         f'Found {len(builds)} builds for {builder} since {earliest_change.hash}.'
@@ -492,9 +521,15 @@ def determine_maximum_covered_instance(
           get_change_coverage, builder)
 
   # Collect results. Re-order so the oldest change is first.
+  new_builders = []
   for builder in change_coverage_per_build:
     change_coverage_per_build[builder] = change_coverage_per_build[
-        builder].result()[::-1]
+        builder].result()
+    if change_coverage_per_build[builder]:
+      change_coverage_per_build[builder] = change_coverage_per_build[
+          builder][::-1]
+    else:
+      new_builders.append(builder)
   changes = changes[::-1]
 
   last_covered_change = None
@@ -525,6 +560,9 @@ def determine_maximum_covered_instance(
       # Make sure we have sufficient coverage for all relevant builders.
       if recipe_by_builder[builder] not in affected_recipes:
         continue
+      # Don't block on builders with insufficient builds.
+      if not change_coverage_per_build[builder]:
+        continue
       if change_coverage_per_build[builder][i] < num_builds_by_builder[builder]:
         print_if_verbose(
             f'{change.hash} lacking coverage in {builder} ({change_coverage_per_build[builder][i]}/{num_builds_by_builder[builder]} builds).'
@@ -536,11 +574,11 @@ def determine_maximum_covered_instance(
     print_if_verbose(f'Commit {change.hash} is covered.')
     if enforce_success:
       if check_staging_builders(all_builds, changes[:i + 1], checks,
-                                log_messages=verbose):
+                                ok_fewer=new_builders, log_messages=verbose):
         continue
       print_if_verbose('Everything looks good!')
     last_covered_change = change
 
   if last_covered_change:
-    return last_covered_change.get_cipd_instance()
-  return None
+    return last_covered_change.get_cipd_instance(), new_builders
+  return None, new_builders

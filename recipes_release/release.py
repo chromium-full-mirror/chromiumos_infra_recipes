@@ -106,10 +106,11 @@ class RecipeRelease:
     all_builds.initialize(self.staging_checks, pending_changes,
                           verbose=options.verbose)
 
+    new_builders = []
     if options.max_covered or options.max_releasable:
       option = 'releasable' if options.max_releasable else 'covered'
       print(f'=== Determining maximum {option} version ===')
-      selected_instance = bb.determine_maximum_covered_instance(
+      selected_instance, new_builders = bb.determine_maximum_covered_instance(
           all_builds, pending_changes, self.staging_checks,
           verbose=options.verbose, enforce_success=options.max_releasable)
       if not selected_instance:
@@ -137,7 +138,7 @@ class RecipeRelease:
       pending_changes = git.trim_trivial_suffix(pending_changes)
     print('=== Check staging status ===')
     bad_builders = bb.check_staging_builders(all_builds, pending_changes,
-                                             self.staging_checks,
+                                             self.staging_checks, new_builders,
                                              log_messages=True)
     if bad_builders:
       if options.ignore_staging_failures:

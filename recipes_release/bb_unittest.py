@@ -320,7 +320,7 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
   @mock.patch('bb.cipd.cipd_version_to_githash')
   @mock.patch('bb.subprocess.run')
   def do_test(self, build_data: List[Dict[str, Any]], expected_ret: bool,
-              mock_subprocess_run: mock.MagicMock,
+              ok_fewer: bool, mock_subprocess_run: mock.MagicMock,
               mock_cipd_version_to_githash: mock.MagicMock):
     mock_subprocess_run.return_value = test_util.subprocess_stdout('\n'.join(
         [json.dumps(build) for build in build_data]))
@@ -359,7 +359,9 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
             # Basic exemption exempting any build with bbid 1003.
             [lambda build: build['id'] == 1003],
             changes,
-            5)[0],
+            5,
+            ok_fewer=ok_fewer,
+        )[0],
         expected_ret)
 
   def test_all_success(self):
@@ -380,7 +382,7 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
         _build_data('XXX', bbid=1006, status='INFRA_FAILURE',
                     create_time='2020-01-03T19:00:00.000000000Z'),
     ]
-    self.do_test(build_data, False)  # pylint: disable=no-value-for-parameter
+    self.do_test(build_data, False, False)  # pylint: disable=no-value-for-parameter
 
   def test_insufficient(self):
     # We don't have enough builds, so we fail even though they're all success.
@@ -398,7 +400,25 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
         _build_data('XXX', bbid=1004, status='SUCCESS',
                     create_time='2020-01-03T17:00:00.000000000Z'),
     ]
-    self.do_test(build_data, True)  # pylint: disable=no-value-for-parameter
+    self.do_test(build_data, True, False)  # pylint: disable=no-value-for-parameter
+
+  def test_ok_fewer(self):
+    # We don't have enough builds, but ok_fewer is True, so we pass.
+    build_data = [
+        # YYY predates the most recent change, so even though we have
+        # 5 builds only 4 are applicable.
+        _build_data('YYY', bbid=1000, status='SUCCESS',
+                    create_time='2020-01-03T13:00:00.000000000Z'),
+        _build_data('XXX', bbid=1001, status='SUCCESS',
+                    create_time='2020-01-03T14:00:00.000000000Z'),
+        _build_data('XXX', bbid=1002, status='SUCCESS',
+                    create_time='2020-01-03T15:00:00.000000000Z'),
+        _build_data('XXX', bbid=1003, status='SUCCESS',
+                    create_time='2020-01-03T16:00:00.000000000Z'),
+        _build_data('XXX', bbid=1004, status='SUCCESS',
+                    create_time='2020-01-03T17:00:00.000000000Z'),
+    ]
+    self.do_test(build_data, False, True)  # pylint: disable=no-value-for-parameter
 
   def test_failure(self):
     # We don't have enough consecutive successes.
@@ -416,7 +436,7 @@ class CheckRecentBuildStatusesTest(unittest.TestCase):
         _build_data('XXX', bbid=1005, status='SUCCESS',
                     create_time='2020-01-03T18:00:00.000000000Z'),
     ]
-    self.do_test(build_data, True)  # pylint: disable=no-value-for-parameter
+    self.do_test(build_data, True, False)  # pylint: disable=no-value-for-parameter
 
 
 class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
@@ -507,8 +527,9 @@ class DetermineMaximumCoveredInstanceTest(unittest.TestCase):
 
     all_builds = bb.Builds()
     all_builds.initialize_with_test_data(build_data)
-    return bb.determine_maximum_covered_instance(
+    cipd_instance, _ = bb.determine_maximum_covered_instance(
         all_builds, changes, checks, enforce_success=enforce_success)
+    return cipd_instance
 
   def test_success(self):
     """Test determine_maximum_covered_instance with a releasable instance."""
