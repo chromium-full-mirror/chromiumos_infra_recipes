@@ -74,6 +74,94 @@
     "name": "get list of files in gentoo that are not in gs"
   },
   {
+    "cmd": [],
+    "name": "backfill gs distfiles topdir"
+  },
+  {
+    "cmd": [
+      "grep",
+      "-v",
+      "/",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt"
+    ],
+    "name": "backfill gs distfiles topdir.get list of files in topdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "grep",
+      "-E",
+      "^[0-9a-f]{2}/[^/]+$",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_relative_sorted.txt"
+    ],
+    "name": "backfill gs distfiles topdir.get list of files in hashed subdirs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_topfiles.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "backfill gs distfiles topdir.read list of topfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gs_topfiles.txt@1.tar@@@",
+      "@@@STEP_LOG_END@gs_topfiles.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/distfile_lists_tmp_1/gs_subfiles.txt",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "backfill gs distfiles topdir.read list of subfiles",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@gs_subfiles.txt@12/2.tar@@@",
+      "@@@STEP_LOG_LINE@gs_subfiles.txt@aa/1.tar@@@",
+      "@@@STEP_LOG_END@gs_subfiles.txt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "-n",
+      "-a",
+      "public-read",
+      "gs://stark-trek/the-ultimate-computer/distfiles/12/2.tar",
+      "gs://stark-trek/the-ultimate-computer/distfiles/"
+    ],
+    "infra_step": true,
+    "name": "backfill gs distfiles topdir.gsutil syncing subfiles to topdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "rsync",
       "--recursive",

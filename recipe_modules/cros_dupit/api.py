@@ -175,6 +175,83 @@ class DupItApi(recipe_api.RecipeApi):
 
     return gentoo_distfile_relative_sorted_list_path
 
+  def _backfill_gs_topdir(self, distfiles):
+    """Populate the topdir of the gs bucket.
+
+    Gentoo has migrated to GLEP-0075 which only creates subdirs now of files
+    rather than duplicating them in the topdir.  Since our builders still look
+    for files in the topdir, we need to backfill.  http://b/302226413
+
+    Args:
+      * distfiles: List of files in the bucket.
+    """
+    # The distfiles text file will contain a relative list of files in the GS
+    # bucket like:
+    #   foo.tar.gz
+    #   ad/1.tar.gz
+
+    with self.m.step.nest('backfill gs distfiles topdir'):
+      # Extract the set of files that exist in the distfiles/ topdir now.  e.g.
+      #   foo.tar.gz
+      topfiles_txt = self._tmp_distfile_lists_path.join('gs_topfiles.txt')
+      topfiles_cmd = [
+          'grep',
+          '-v',
+          '/',
+          distfiles,
+      ]
+      topfiles_name = 'get list of files in topdir'
+      topfiles_stdout = self.m.raw_io.output(
+          leak_to=topfiles_txt, name=self.m.path.basename(topfiles_txt),
+          add_output_log=True)
+      self.m.step(cmd=topfiles_cmd, name=topfiles_name, stdout=topfiles_stdout)
+
+      # Extract the set of files that exist in GLEP-0075 subdirs.  Ignore the
+      # rest as we only care about the Gentoo mirror behavior.  e.g.
+      #   ad/1.tar.gz
+      subfiles_txt = self._tmp_distfile_lists_path.join('gs_subfiles.txt')
+      subfiles_cmd = [
+          'grep',
+          '-E',
+          '^[0-9a-f]{2}/[^/]+$',
+          distfiles,
+      ]
+      subfiles_name = 'get list of files in hashed subdirs'
+      subfiles_stdout = self.m.raw_io.output(
+          leak_to=subfiles_txt, name=self.m.path.basename(subfiles_txt),
+          add_output_log=True)
+      self.m.step(cmd=subfiles_cmd, name=subfiles_name, stdout=subfiles_stdout)
+
+      # Read the text files into memory so we can do some fast set operations.
+      topfiles = self.m.file.read_text('read list of topfiles', topfiles_txt,
+                                       test_data='1.tar\n')
+      subfiles = self.m.file.read_text('read list of subfiles', subfiles_txt,
+                                       test_data='12/2.tar\naa/1.tar\n')
+
+      # Find all the files that exist only in the GLEP-0075 subdirs.  i.e.,
+      # all the files that are missing from the distfiles/ topdir.
+      topfiles = set(topfiles.splitlines())
+      subfiles = subfiles.splitlines()
+
+      missing_subfiles = [
+          x for x in subfiles if x.split('/')[-1] not in topfiles
+      ]
+      srcuris = [
+          f'{self.gs_distfiles_uri.rstrip("/")}/{x}' for x in missing_subfiles
+      ]
+      if srcuris:
+        # If we found files that only exist in subdirs, copy them to the topdir.
+        # e.g. gsutil cp gs://.../distfiles/ad/1.tar.gz gs://.../distfiles/
+        self.m.gsutil(
+            cmd=[
+                'cp',
+                '-n',
+                # All distfiles are public-read.
+                '-a',
+                'public-read'
+            ] + srcuris + [self.gs_distfiles_uri],
+            name='syncing subfiles to topdir')
+
   def _populate_list_of_additional_regex_matches(self, distfiles):
     """Populate relative list of all files matching the additional regex.
 
@@ -283,6 +360,8 @@ class DupItApi(recipe_api.RecipeApi):
                                        name=self.m.path.basename(new_distfiles),
                                        add_output_log=True)
     self.m.step(cmd=comm_cmd, name=comm_name, stdout=comm_stdout)
+
+    self._backfill_gs_topdir(gs_distfiles)
 
     if self._regex_for_archival_sync:
       # Populate our list of regex matches
