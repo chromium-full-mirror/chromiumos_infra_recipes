@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions for end-to-end test planning."""
+
 import base64
 import datetime
 import re
@@ -311,7 +313,10 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         if add_vm_lab_test_plan:
           relevant_plans.append(VM_LAB_TEST_PLAN)
       pres.logs['relevant_plans'] = '\n\n,'.join(
-          text_format.MessageToString(p) for p in relevant_plans)
+          json_format.MessageToJson(p) for p in relevant_plans)
+      # De-dupe relevant plans before writing them to a property.
+      pres.properties['relevant_plans'] = list(
+          set(json_format.MessageToJson(p) for p in relevant_plans))
       return relevant_plans
 
   def dirmd_update(self, table: str):
