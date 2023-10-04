@@ -14,8 +14,8 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/properties',
     'build_menu',
-    'cros_lkgm',
     'cros_infra_config',
+    'cros_lkgm',
     'cros_release',
     'test_util',
 ]
@@ -258,3 +258,18 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       public_orch_status=common_pb2.FAILURE, release_builds=create_builds(6, 4),
       public_builds=None)
+
+  yield lgkm_test(
+      'absence-of-chromium-branch',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='release-main-orchestrator').build,
+      api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
+                     'LKGM candidate'),
+      api.post_check(post_process.MustRun,
+                     "skipping uprev: chromium branch doesn't exist"),
+      api.step_data(
+          'fetch chrome branch from chromiumdash.curl fetch_milestones',
+          api.raw_io.stream_output('[{}]\n')),
+      release_builds=create_builds(1, 0),
+      public_builds=create_builds(1, 0, start_id=PUBLIC_BUILDER_START_ID),
+      use_branch=True, simulate_absence_of_chromium_branch=True, full_run=True)

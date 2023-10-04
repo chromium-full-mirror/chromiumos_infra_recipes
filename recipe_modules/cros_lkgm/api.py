@@ -141,10 +141,19 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         presentation.step_text = 'not an LKGM candidate'
         return
       presentation.step_text = 'LKGM candidate'
+
     branch = None
     if use_branch:
-      branch = self.m.cros_schedule.get_chrome_branch(
-          self.m.cros_version.version.milestone)
+      milestone = self.m.cros_version.version.milestone
+      branch = self.m.cros_schedule.get_chrome_branch(milestone)
+      if branch is None:
+        step_text = (
+            f"A branch corresponding to M{milestone} doesn't exist on the " +
+            'chromium repo yet. This usually happens when the OS-side ' +
+            'branching is done earlier than the browser-side branching.')
+        self.m.step.empty("skipping uprev: chromium branch doesn't exist",
+                          step_text=step_text)
+        return
 
     script_path = self.m.cros_source.workspace_path.join(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')

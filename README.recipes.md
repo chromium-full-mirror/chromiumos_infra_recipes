@@ -3445,7 +3445,7 @@ Args:
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [cleanup\_cls](/recipe_modules/cros_lkgm/api.py#164)(self):**
+&mdash; **def [cleanup\_cls](/recipe_modules/cros_lkgm/api.py#173)(self):**
 
 Performs the LGKM cleaning-up process.
 
