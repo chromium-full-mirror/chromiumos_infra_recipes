@@ -20,7 +20,7 @@ instructions.
 import dataclasses
 import functools
 import re
-from typing import List, Optional
+from typing import Generator, List, Optional
 import urllib
 
 from google.protobuf import json_format
@@ -95,7 +95,7 @@ class GeneratorRun:
       self,
       api: recipe_api.RecipeApi,
       properties: generator_pb2.GeneratorProperties,
-  ):
+  ) -> None:
     """Initialize the builder."""
     self.m = api
     self.properties = properties
@@ -172,7 +172,7 @@ class GeneratorRun:
     assert self._policy is not None
     return self._policy
 
-  def set_policy(self, policy: generator_pb2.BranchPolicy):
+  def set_policy(self, policy: generator_pb2.BranchPolicy) -> None:
     """Set the policy for this build, and report it as a step."""
     self.m.easy.set_properties_step(policy=json_format.MessageToDict(policy))
     self._policy = policy
@@ -247,7 +247,8 @@ class GeneratorRun:
       self.checkout_branch(policy_info)
 
       if self.m.cq.active or self.m.src_state.gerrit_changes:
-        self.apply_gerrit_changes()
+        self.cherry_pick_gerrit_changes()
+        self.prevent_production_changes()
 
       if self.properties.init_sdk:
         with self.m.context(cwd=self.workspace_path):
@@ -306,7 +307,7 @@ class GeneratorRun:
       return self.m.pupr_local_uprev.uprev_sdk(self.topic)
     raise recipe_api.InfraFailure('Not sure how to uprev.')  # pragma: nocover
 
-  def _validate_properties(self):
+  def _validate_properties(self) -> None:
     """Ensure the input properties look OK.
 
     Raises:
@@ -337,7 +338,7 @@ class GeneratorRun:
 
       presentation.step_text = 'all properties good'
 
-  def _validate_triggers(self):
+  def _validate_triggers(self) -> None:
     """Check whether the build's triggers are OK.
 
     Raises:
@@ -488,7 +489,7 @@ class GeneratorRun:
       raise recipe_api.StepFailure(
           'No matching policy found for tag {}'.format(tag))
 
-  def checkout_branch(self, policy_info: PolicyInfo):
+  def checkout_branch(self, policy_info: PolicyInfo) -> None:
     """Check out the appropriate branch based on the selected policy."""
     with self.m.step.nest('checkout branch') as pres:
       if policy_info.branch:
@@ -500,42 +501,63 @@ class GeneratorRun:
       else:
         pres.step_text = 'using default branch'
 
-  def apply_gerrit_changes(self):
-    """Cherry-pick changes for CQ runs, and prevent production changes.
+  def cherry_pick_gerrit_changes(self) -> None:
+    """Cherry-pick changes from Gerrit, if needed.
 
-    If there are gerrit_changes to apply, log the chosen policy, and then
-    override the policy so that we do not submit, abandon, or comment on
-    anything.
+    This is usually applicable when PUpr runs during CQ, or when called via `bb
+    add -cl ${GERRIT_CHANGE}`. The latter might also occur as a result of `cros
+    try`.
 
     Use case: Developer is working on the versioned uprev code for a package,
     such as Chrome, and wants to test the changes prior to landing them in
-    chromite.  While launching a build with the correct policies and triggers is
+    chromite. While launching a build with the correct policies and triggers is
     difficult in CQ, it is rather straightforward for the dev to manually launch
-    the build with "correct" inputs.  On the other hand, we should not produce
-    production effects with uncommitted changes.
+    the build with "correct" inputs.
+
+    On the other hand, we should not produce production effects with uncommitted
+    changes. To prevent that, anytime this function is called,
+    self.prevent_production_changes() should also be called.
     """
-    with self.m.step.nest('apply gerrit changes'):
-      if self.m.src_state.gerrit_changes:
+    if self.m.src_state.gerrit_changes:
+      with self.m.step.nest('cherry-pick gerrit changes'):
         self.m.cros_source.apply_gerrit_changes(self.m.src_state.gerrit_changes)
-      with self.m.step.nest('update policy'):
-        user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
-        self.m.easy.set_properties_step(
-            original_policy=json_format.MessageToDict(self.policy))
-        del self.policy.reviewers[:]
-        self.policy.reviewers.add().email = user
+
+  def prevent_production_changes(self) -> None:
+    """Update the selected policy to avoid changing production.
+
+    In particular, we don't want to submit or CQ+2 any CLs, abandon any
+    pre-existing CLs, or comment on anything.
+
+    This function should be called if the PUpr build cherry-picks Gerrit
+    changes, such as if it runs during CQ.
+    """
+    with self.m.step.nest('prevent production changes'):
+      self.m.easy.set_properties_step(
+          original_policy=json_format.MessageToDict(self.policy))
+
+      user = self.m.buildbucket.build.created_by.replace('user:', '', 1)
+      self.policy.reviewers.add().email = user
+
+      dangerous_cq_policies = (generator_pb2.FULL_RUN, generator_pb2.SUBMIT)
+      if self.policy.existing_cls_policy in dangerous_cq_policies:
         self.policy.existing_cls_policy = generator_pb2.ABANDON
+      if self.policy.no_existing_cls_policy in dangerous_cq_policies:
         self.policy.no_existing_cls_policy = generator_pb2.ABANDON
-        self.policy.outdated_cls_policy = (generator_pb2.OUTDATED_DO_NOTHING)
-        self.policy.retry_cl_policy = generator_pb2.NO_RETRY
-        self.policy.topic = f'testing-{self.topic}'
-        self.m.easy.set_properties_step(
-            policy=json_format.MessageToDict(self.policy))
+
+      self.policy.outdated_cls_policy = generator_pb2.OUTDATED_DO_NOTHING
+      self.policy.retry_cl_policy = generator_pb2.NO_RETRY
+      self.policy.topic = f'testing-{self.topic}'
+
+      self.m.easy.set_properties_step(
+          updated_policy=json_format.MessageToDict(self.policy))
 
 
-def GenTests(api: recipe_test_api.RecipeTestApi):
+def GenTests(
+    api: recipe_test_api.RecipeTestApi
+) -> Generator[recipe_test_api.TestData, None, None]:
   """Create test cases for this recipe."""
 
-  def _policy(**kwargs):
+  def _policy(**kwargs) -> generator_pb2.BranchPolicy:
     """Create a BranchPolicy, with defaults."""
     kwargs.setdefault('pattern', '.*')
     kwargs.setdefault('ignore', False)
@@ -553,7 +575,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
     kwargs.setdefault('retry_cl_policy', generator_pb2.NO_RETRY)
     return generator_pb2.BranchPolicy(**kwargs)
 
-  def _props(**kwargs):
+  def _props(**kwargs) -> generator_pb2.GeneratorProperties:
     """Create GeneratorProperties, with defaults."""
     kwargs.setdefault('packages', [
         common_pb2.PackageInfo(
@@ -578,7 +600,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ),
   )
 
-  def _with_infos(name: str, *args, **kwargs):
+  def _with_infos(name: str, *args, **kwargs) -> recipe_test_api.TestData:
     return api.test(
         name,
         api.repo.project_infos_step_data(
@@ -603,6 +625,21 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
         *args,
         **kwargs,
     )
+
+  def _PropertyContains(check, step_odict, key, substr):
+    """Post-process check to assert that an output property contains `substr`.
+
+    Args:
+      key: The name of the property to check.
+      substr: The substring that should be in the property value.
+
+    Usage:
+      yield (
+          TEST
+          + api.post_process(_PropertyContains, 'base_status', 'belong to'))
+    """
+    build_properties = post_process.GetBuildProperties(step_odict)
+    check(substr in str(build_properties[key]))
 
   yield api.test(
       'ignore-policy',
@@ -780,11 +817,17 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
 
   yield _with_infos(
       'with-gerrit-changes',
-      _props(),
+      _props(
+          branch_policies=[
+              _policy(
+                  pattern=r'.*\s*',
+                  existing_cls_policy=generator_pb2.SUBMIT,
+                  no_existing_cls_policy=generator_pb2.FULL_RUN,
+              )
+          ],
+      ),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
-      api.post_check(post_process.MustRun,
-                     'apply gerrit changes.update policy'),
       api.test_util.test_build(
           revision=None,
           extra_changes=[
@@ -793,10 +836,15 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           ],
           created_by='user:lamontjones@chromium.org',
       ).build,
+      api.post_check(post_process.MustRun, 'prevent production changes'),
+      api.post_check(_PropertyContains, 'updated_policy',
+                     "'existingClsPolicy': 'ABANDON'"),
+      api.post_check(_PropertyContains, 'updated_policy',
+                     "'noExistingClsPolicy': 'ABANDON'"),
   )
 
   yield _with_infos(
-      'with-gerrit-changes_with_revision_override',
+      'with-gerrit-changes-with-revision-override',
       _props(
           branch_policies=[_policy(pattern=r'.*\s*')],
           gitiles_info=generator_pb2.GitilesFetchInfo(
@@ -807,8 +855,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       ),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
-      api.post_check(post_process.MustRun,
-                     'apply gerrit changes.update policy'),
+      api.post_check(post_process.MustRun, 'prevent production changes'),
       api.post_check(
           post_process.MustRun,
           'select policy.fetch gitiles file.'
@@ -826,13 +873,40 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   )
 
   yield _with_infos(
+      'with-gerrit-changes-and-dry-run-policy',
+      _props(
+          branch_policies=[
+              _policy(
+                  pattern=r'.*\s*',
+                  existing_cls_policy=generator_pb2.DRY_RUN,
+                  no_existing_cls_policy=generator_pb2.DRY_RUN,
+              )
+          ],
+      ),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+      api.test_util.test_build(
+          revision=None,
+          extra_changes=[
+              bb_common_pb2.GerritChange(
+                  host='chromium-review.googlesource.com', change=1234)
+          ],
+          created_by='user:lamontjones@chromium.org',
+      ).build,
+      api.post_check(post_process.MustRun, 'prevent production changes'),
+      api.post_check(_PropertyContains, 'updated_policy',
+                     "'existingClsPolicy': 'DRY_RUN'"),
+      api.post_check(_PropertyContains, 'updated_policy',
+                     "'noExistingClsPolicy': 'DRY_RUN'"),
+  )
+
+  yield _with_infos(
       'cq-active',
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.post_check(post_process.MustRun,
-                     'apply gerrit changes.update policy'),
+      api.post_check(post_process.MustRun, 'prevent production changes'),
       api.test_util.test_build(revision=None, extra_changes=[],
                                created_by='project:chromiumos').build,
   )
