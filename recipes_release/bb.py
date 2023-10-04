@@ -554,6 +554,16 @@ def determine_maximum_covered_instance(
     if change.get_cipd_instance() == git.MISSING_INSTANCE:
       print_if_verbose('Change has no associated CIPD instance, skipping...')
       continue
+    # If there are multiple changes associated with a CIPD instance, we only
+    # want to consider the last one to ensure that we properly compute
+    # the list of relevant builders (relevancy is additive, and we still
+    # compute relevancy for the changes we skip here -- see above).
+    if i < len(changes) - 1 and change.get_cipd_instance() == changes[
+        i + 1].get_cipd_instance():
+      print_if_verbose(
+          'Subsequent changes have the same associated CIPD instance'
+          ", won't consider this change for release...")
+      continue
 
     missing_coverage = False
     for builder in builders:
