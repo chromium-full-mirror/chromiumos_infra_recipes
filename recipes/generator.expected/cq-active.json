@@ -1707,6 +1707,14 @@
   },
   {
     "cmd": [],
+    "name": "select policy.set chosen_policy_info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DO_NOTHING\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": null}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DO_NOTHING\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"

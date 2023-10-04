@@ -13735,7 +13735,7 @@ An experimental recipe for running GCE tests.
 &mdash; **def [RunSteps](/recipe_modules/gcloud/tests/transactionally_update_recovery_image.py#26)(api: RecipeApi, properties: TransactionallyUpdateRecoveryImageProperties):**
 ### *recipes* / [generator](/recipes/generator.py)
 
-[DEPS](/recipes/generator.py#46): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/generator.py#47): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [pupr\_local\_uprev](#recipe_modules-pupr_local_uprev), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for the PUpr generator.
@@ -13751,7 +13751,7 @@ package releases. It can also be scheduled to run on a cron.
 See go/pupr and go/pupr-generator for rationale, design decisions, and usage
 instructions.
 
-&mdash; **def [RunSteps](/recipes/generator.py#75)(api: recipe_api.RecipeApi, properties: generator_pb2.GeneratorProperties):**
+&mdash; **def [RunSteps](/recipes/generator.py#76)(api: recipe_api.RecipeApi, properties: generator_pb2.GeneratorProperties):**
 ### *recipes* / [gerrit:examples/abandon\_change](/recipe_modules/gerrit/examples/abandon_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/abandon_change.py#8): [gerrit](#recipe_modules-gerrit)

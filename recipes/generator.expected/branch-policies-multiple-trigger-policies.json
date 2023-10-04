@@ -1367,7 +1367,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "too many triggers"
+      "humanReason": "expected to find 1 applicable policy, got 2: [PolicyInfo(policy=pattern: \"refs/tags/([0-9]*).*\"\nrepl: \"release-R\\\\1-*.B\"\nreviewers {\n  email: \"dburger@chromium.org\"\n}\nno_existing_cls_policy: DRY_RUN\nexisting_cls_policy: DRY_RUN\noutdated_cls_policy: OUTDATED_ABANDON\n, branch='release-R79-*.B', reference=Reference(hash='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef', ref='release-R79-*.B')), PolicyInfo(policy=pattern: \".*\"\nreviewers {\n  email: \"evanhernandez@chromium.org\"\n}\nreviewers {\n  email: \"chromeos-continuous-integration-team@google.com\"\n}\nno_existing_cls_policy: DO_NOTHING\nexisting_cls_policy: DO_NOTHING\noutdated_cls_policy: OUTDATED_DO_NOTHING\n, branch='', reference=None)]"
     },
     "name": "$result"
   }

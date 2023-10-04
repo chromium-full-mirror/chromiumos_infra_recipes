@@ -17,9 +17,10 @@ See go/pupr and go/pupr-generator for rationale, design decisions, and usage
 instructions.
 """
 
+import dataclasses
 import functools
 import re
-from typing import List, NamedTuple, Optional
+from typing import List, Optional
 import urllib
 
 from google.protobuf import json_format
@@ -80,7 +81,8 @@ def RunSteps(
                               summary_markdown=summary)
 
 
-class PolicyInfo(NamedTuple):
+@dataclasses.dataclass
+class PolicyInfo:
   policy: generator_pb2.BranchPolicy
   branch: str = ''
   reference: Optional[git_api.Reference] = None
@@ -376,34 +378,76 @@ class GeneratorRun:
     returned by the Gitiles API. Otherwise, use the gitiles.ref seen in the
     trigger.
 
+    As a side-effect, this function will set the instance-level attribute
+    self.target_version_from_gitiles to the last version read from Gitiles, if
+    any were.
+
     Raises:
       StepFailure: If more than one applicable trigger is selected.
     """
     with self.m.step.nest('select policy'):
-      trigger_policies: List[PolicyInfo] = []
+      policy_infos: List[PolicyInfo] = []
       for trigger in self.triggers:
-        # Retrieve version information from Gitiles API.
-        if self.properties.HasField('gitiles_info'):
-          gitiles_response = self.m.gitiles.get_file(
-              str(self.properties.gitiles_info.host),
-              str(self.properties.gitiles_info.project),
-              str(self.properties.gitiles_info.path),
-              ref=str(trigger.gitiles.ref),
-              test_output_data='MTIzLjQ1Ni43ODkuMAo=',
-          ).decode()
-          if gitiles_response:
-            self.target_version_from_gitiles = (gitiles_response.strip())
-
-        tag = self.target_version_from_gitiles or trigger.gitiles.ref
+        tag = self._get_target_version_for_trigger(trigger)
         policy_info = self._get_policy_info_for_tag(tag)
-        if policy_info not in trigger_policies:
-          trigger_policies.append(policy_info)
+        if policy_info not in policy_infos:
+          policy_infos.append(policy_info)
+
       # If we match more than one policy with the triggers, that is an error.
       # For Chrome, we are launched with properties.triggers, for exactly one
-      # version.  See http://shortn/_qWgYUlVY6X in trigger_official_builds().
-      if len(trigger_policies) > 1:
-        raise recipe_api.StepFailure('too many triggers')
-      return trigger_policies.pop()
+      # version. See http://shortn/_qWgYUlVY6X in trigger_official_builds().
+      if len(policy_infos) != 1:
+        raise recipe_api.StepFailure(
+            'expected to find 1 applicable policy, got %d: %s' %
+            (len(policy_infos), policy_infos))
+
+      chosen_policy = policy_infos[0]
+      self.m.easy.set_properties_step(
+          chosen_policy_info={
+              'policy': json_format.MessageToDict(chosen_policy.policy),
+              'branch': chosen_policy.branch,
+              'reference': chosen_policy.reference,
+          })
+      return chosen_policy
+
+  def _get_target_version_for_trigger(self,
+                                      trigger: triggers_pb2.Trigger) -> str:
+    """Determine the target uprev version relevant to a given trigger.
+
+    Args:
+      trigger: The trigger for this build for which to return a target version.
+
+    Returns:
+      A target version to try and uprev to, if this trigger is relevant.
+    """
+    if self.properties.HasField('gitiles_info'):
+      gitiles_response = self._read_gitiles(trigger.gitiles.ref)
+      if gitiles_response:
+        self.target_version_from_gitiles = gitiles_response
+        return gitiles_response
+    return trigger.gitiles.ref
+
+  def _read_gitiles(self, ref: str) -> Optional[str]:
+    """Read a file via the Gitiles API, as specified by properties.gitiles_info.
+
+    Args:
+      ref: The ref on which to read the file from gitiles.
+
+    Returns:
+      The stripped contents of the file specified by properties.gitiles_info, on
+      the ref specified by the `ref` arg.
+
+    Raises:
+      AssertionError: If properties.gitiles_info was not set.
+    """
+    assert self.properties.HasField('gitiles_info')
+    return self.m.gitiles.get_file(
+        self.properties.gitiles_info.host,
+        self.properties.gitiles_info.project,
+        self.properties.gitiles_info.path,
+        ref=ref,
+        test_output_data='MTIzLjQ1Ni43ODkuMAo=',
+    ).decode().strip()
 
   def _get_policy_info_for_tag(self, tag: str) -> PolicyInfo:
     """Find the applicable policy for the given Git tag.
