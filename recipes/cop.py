@@ -187,6 +187,10 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     patch_set = api.gerrit.fetch_patch_set_from_change(change,
                                                        include_commit_info=True,
                                                        include_files=True)
+  with api.step.nest('check branch') as presentation:
+    if patch_set.branch.startswith(('release-R', 'stabilize')):
+      presentation.step_text = 'Branch not reviewed'
+      return
 
   with api.step.nest('check committer') as presentation:
     committer = patch_set.commit_info['committer']['email']
@@ -288,12 +292,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     kwargs.setdefault('git_repo', api.src_state.internal_manifest.url)
     return api.test_util.test_build(**kwargs).build
 
-  def gen_patch_sets(committer: str = 'noreply@google.com') -> Dict[int, Dict]:
+  def gen_patch_sets(committer: str = 'noreply@google.com',
+                     branch: str = 'main') -> Dict[int, Dict]:
     message = 'UPSTREAM: kcam a new camera kernel platform\nProbably the best framework ever'
     return {
         1: {
             'subject': message.splitlines()[0],
-            'branch': 'chromeos-2.4',
+            'branch': branch,
             'revision_info': {
                 'commit': {
                     'message': message,
@@ -355,6 +360,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                    host='chromium-review.googlesource.com', patchset=1),
   ]
 
+  yield api.test('unchecked-branch', test_builder(gerrit_changes=change),
+                 api.gerrit.set_gerrit_fetch_changes_response(
+                    'get change', change, gen_patch_sets(branch='release-R117-15572.B')),
+                 api.post_check(post_process.StepSuccess, 'check branch'),
+                 api.post_check(post_process.DoesNotRun, 'check committer'),
+                 api.post_process(post_process.DropExpectation)) + \
+                 api.properties(CopProperties(project_name='name'))
   yield api.test('unknown-committer', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
                     'get change', change, gen_patch_sets(committer='joe@hotmail.com')),
