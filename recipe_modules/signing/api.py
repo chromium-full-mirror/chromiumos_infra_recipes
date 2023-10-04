@@ -102,120 +102,7 @@ class SigningApi(recipe_api.RecipeApi):
   def gs_upload_bucket(self) -> str:
     return self._gs_upload_bucket
 
-  def get_config(self) -> BuildTargetSigningConfig:
-    """Fetch signing config from the appropriate branch of config-internal."""
-    if self._signing_config:
-      return self._signing_config
-    with self.m.step.nest('fetch signing config'):
-      try:
-        branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
-      except AttributeError as e:
-        raise StepFailure('could not get branch from builder config') from e
-      signing_config_textproto = self.m.gitiles.download_file(
-          CONFIG_INTERNAL_REPO_URL, SIGNING_CONFIG_FILEPATH, branch=branch,
-          step_test_data=lambda: self.m.gitiles.test_api.make_encoded_file(
-              SIGNING_CONFIG_TEST_DATA))
-      signing_config = Parse(signing_config_textproto,
-                             BuildTargetSigningConfigs())
-
-      build_target = self.m.build_menu.build_target.name
-      for config in signing_config.build_target_signing_configs:
-        if config.build_target == build_target:
-          self._signing_config = config
-          return self._signing_config
-      raise StepFailure(
-          f'could not find signing config for build target "{build_target}"')
-
-  def _set_fields_for_config(self, config: SigningConfig,
-                             channel: common_pb2.Channel,
-                             version: str) -> SigningConfig:
-    config = copy.deepcopy(config)
-    config.channel = channel
-    config.version = version
-    return config
-
-  # Public method so we can test it.
-  def setup_signing(
-      self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel']
-  ) -> Tuple[BuildTargetSigningConfig, Union[str, Path]]:
-    """Set up the working dir for signing.
-
-    Copies all necessary artifacts (based on signing config) from GS into a new
-    temp dir and populates the artifact path field in each individual signing
-    config.
-
-    Also drops configs for irrelevant sign types.
-
-    Returns:
-      - signing configs
-      - dir containing input artifacts
-    """
-    build_target_config = self.get_config()
-
-    relevant_configs = []
-    for signing_config in build_target_config.signing_configs:
-      if signing_config.image_type in sign_types:
-        relevant_configs.append(signing_config)
-
-    relevant_configs, archive_dir = self.download_release_artifacts(
-        relevant_configs)
-
-    # Create a copy of config for each configured channel.
-    channel_configs = []
-    version = self.m.cros_version.version.platform_version
-    for channel in channels:
-      channel_configs.extend([
-          self._set_fields_for_config(config, channel, version)
-          for config in relevant_configs
-      ])
-
-    build_target_config = BuildTargetSigningConfig(
-        build_target=build_target_config.build_target,
-        signing_configs=channel_configs,
-    )
-    return build_target_config, archive_dir
-
-  def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
-                     channels: List['common_pb2.Channel']) -> None:
-    """Stub implementation for local signing flow."""
-    if not self.local_signing:
-      raise StepFailure(
-          'Cannot sign artifacts when local signing is not configured')
-
-    # TODO(b/296086340): Remove once stable and in use.
-    with self.m.failures.ignore_exceptions():
-      with self.m.step.nest('sign artifacts'):
-        build_target_config, archive_dir = self.setup_signing(
-            sign_types, channels)
-        config = BuildTargetSigningConfigs(
-            build_target_signing_configs=[build_target_config])
-
-        # BAPI is hermetic so need to pull down the specified docker image
-        # ahead of time.
-        self.m.step('docker pull', [
-            'docker',
-            'pull',
-            self.signing_docker_image,
-        ])
-
-        # TODO(b/296086340): Remove once stable and in use.
-        with self.m.failures.ignore_exceptions():
-          request = SignImageRequest(
-              signing_configs=config, archive_dir=str(archive_dir),
-              result_path=common_pb2.ResultPath(
-                  path=common_pb2.Path(
-                      path=self.m.path.abspath(archive_dir),
-                      location=common_pb2.Path.Location.OUTSIDE,
-                  )), docker_image=self.signing_docker_image)
-          self.m.cros_build_api.ImageService.SignImage(request)
-
-        # TODO(b/302132827): Remove ignore_exceptions when stable.
-        with self.m.failures.ignore_exceptions():
-          self.upload_signed_artifacts(archive_dir)
-
   # Methods to support the legacy signing fleet flow.
-
   def wait_for_signing(self, instructions_list: List[str]
                       ) -> Dict[str, InstructionsMetadata]:
     """Wait for signing to complete for a set of instructions files.
@@ -426,6 +313,80 @@ class SigningApi(recipe_api.RecipeApi):
 
     return False
 
+  def get_config(self) -> BuildTargetSigningConfig:
+    """Fetch signing config from the appropriate branch of config-internal."""
+    if self._signing_config:
+      return self._signing_config
+    with self.m.step.nest('fetch signing config'):
+      try:
+        branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
+      except AttributeError as e:
+        raise StepFailure('could not get branch from builder config') from e
+      signing_config_textproto = self.m.gitiles.download_file(
+          CONFIG_INTERNAL_REPO_URL, SIGNING_CONFIG_FILEPATH, branch=branch,
+          step_test_data=lambda: self.m.gitiles.test_api.make_encoded_file(
+              SIGNING_CONFIG_TEST_DATA))
+      signing_config = Parse(signing_config_textproto,
+                             BuildTargetSigningConfigs())
+
+      build_target = self.m.build_menu.build_target.name
+      for config in signing_config.build_target_signing_configs:
+        if config.build_target == build_target:
+          self._signing_config = config
+          return self._signing_config
+      raise StepFailure(
+          f'could not find signing config for build target "{build_target}"')
+
+  def _set_fields_for_config(self, config: SigningConfig,
+                             channel: common_pb2.Channel,
+                             version: str) -> SigningConfig:
+    config = copy.deepcopy(config)
+    config.channel = channel
+    config.version = version
+    return config
+
+  # Public method so we can test it.
+  def setup_signing(
+      self, sign_types: List['common_pb2.ImageType'],
+      channels: List['common_pb2.Channel']
+  ) -> Tuple[BuildTargetSigningConfig, Union[str, Path]]:
+    """Set up the working dir for signing.
+
+    Copies all necessary artifacts (based on signing config) from GS into a new
+    temp dir and populates the artifact path field in each individual signing
+    config.
+
+    Also drops configs for irrelevant sign types.
+
+    Returns:
+      - signing configs
+      - dir containing input artifacts
+    """
+    build_target_config = self.get_config()
+
+    relevant_configs = []
+    for signing_config in build_target_config.signing_configs:
+      if signing_config.image_type in sign_types:
+        relevant_configs.append(signing_config)
+
+    relevant_configs, archive_dir = self.download_release_artifacts(
+        relevant_configs)
+
+    # Create a copy of config for each configured channel.
+    channel_configs = []
+    version = self.m.cros_version.version.platform_version
+    for channel in channels:
+      channel_configs.extend([
+          self._set_fields_for_config(config, channel, version)
+          for config in relevant_configs
+      ])
+
+    build_target_config = BuildTargetSigningConfig(
+        build_target=build_target_config.build_target,
+        signing_configs=channel_configs,
+    )
+    return build_target_config, archive_dir
+
   def always_download(self) -> List[str]:
     """Build artifacts which, if present, are always downloaded
 
@@ -515,6 +476,44 @@ class SigningApi(recipe_api.RecipeApi):
                 ','.join(signing_configured_artifacts))
 
       return relevant_signing_configs, local_dir
+
+  def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
+                     channels: List['common_pb2.Channel']) -> None:
+    """Stub implementation for local signing flow."""
+    if not self.local_signing:
+      raise StepFailure(
+          'Cannot sign artifacts when local signing is not configured')
+
+    # TODO(b/296086340): Remove once stable and in use.
+    with self.m.failures.ignore_exceptions():
+      with self.m.step.nest('sign artifacts'):
+        build_target_config, archive_dir = self.setup_signing(
+            sign_types, channels)
+        config = BuildTargetSigningConfigs(
+            build_target_signing_configs=[build_target_config])
+
+        # BAPI is hermetic so need to pull down the specified docker image
+        # ahead of time.
+        self.m.step('docker pull', [
+            'docker',
+            'pull',
+            self.signing_docker_image,
+        ])
+
+        # TODO(b/296086340): Remove once stable and in use.
+        with self.m.failures.ignore_exceptions():
+          request = SignImageRequest(
+              signing_configs=config, archive_dir=str(archive_dir),
+              result_path=common_pb2.ResultPath(
+                  path=common_pb2.Path(
+                      path=self.m.path.abspath(archive_dir),
+                      location=common_pb2.Path.Location.OUTSIDE,
+                  )), docker_image=self.signing_docker_image)
+          self.m.cros_build_api.ImageService.SignImage(request)
+
+        # TODO(b/302132827): Remove ignore_exceptions when stable.
+        with self.m.failures.ignore_exceptions():
+          self.upload_signed_artifacts(archive_dir)
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
