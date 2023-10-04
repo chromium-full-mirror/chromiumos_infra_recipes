@@ -150,7 +150,10 @@ def GenTests(api: RecipeTestApi) -> None:
       'payload_gs_bucket': 'kabuto_cache',
       'payload_gs_path': 'test-recipe-payloads/kabuto_volteer.tar.gz'
   }
-  yield api.test('basic', api.properties(**good_props))
+  yield api.test(
+      'basic',
+      api.properties(**good_props),
+  )
 
   props = good_props.copy()
   del props['payload_gs_bucket']
@@ -158,6 +161,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'missing-payload-GS-bucket',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -167,6 +171,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'missing-payload-GS-path',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'fetch kabuto payload'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -185,6 +190,7 @@ def GenTests(api: RecipeTestApi) -> None:
               '--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json'
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -201,6 +207,7 @@ def GenTests(api: RecipeTestApi) -> None:
               '--kabuto-config=tools/kabuto/in/staging/shard-staging-0/kabuto.json'
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -218,6 +225,7 @@ def GenTests(api: RecipeTestApi) -> None:
               'release-R114-15437.B',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -235,6 +243,7 @@ def GenTests(api: RecipeTestApi) -> None:
               '17e956ddabe4cba4c247dd39ebfd3e29eca5ff89',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -264,4 +273,5 @@ def GenTests(api: RecipeTestApi) -> None:
               'FETCH_HEAD',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )

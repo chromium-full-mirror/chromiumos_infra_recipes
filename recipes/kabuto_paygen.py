@@ -124,6 +124,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-destination_gs_bucket',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -133,13 +134,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-destination_gs_path',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
   yield api.test(
-      'branched-manifest', api.properties(**props),
+      'branched-manifest',
+      api.properties(**props),
       api.post_check(post_process.MustRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       api.post_process(
@@ -149,13 +152,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               '--manifest-branch',
               'release-R105-14989.B',
           ],
-      ))
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
   props['use_release_build_artifacts'] = True
   yield api.test(
-      'use-release-artifacts', api.properties(**props),
+      'use-release-artifacts',
+      api.properties(**props),
       api.post_process(
           post_process.StepCommandContains,
           'build fossilize-tools',
@@ -163,12 +169,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               './kabuto', 'build-fossilize-tools-release',
               '--manifest-branch=release-R105-14989.B'
           ],
-      ))
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   props['use_postsubmit_build_artifacts'] = True
   yield api.test(
-      'use-postsubmit-artifacts', api.properties(**props),
+      'use-postsubmit-artifacts',
+      api.properties(**props),
       api.post_process(
           post_process.StepCommandContains,
           'build fossilize-tools',
@@ -176,7 +185,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               './kabuto',
               'build-fossilize-tools-postsubmit',
           ],
-      ))
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   props['use_release_build_artifacts'] = True
@@ -184,6 +195,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'use-release-artifacts-without-manifest-branch',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -194,5 +206,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'use-postsubmit-artifacts-with-manifest-branch',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

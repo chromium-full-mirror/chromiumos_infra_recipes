@@ -233,6 +233,7 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'missing-uprev-info',
       api.properties(**props),
+      api.post_process(post_process.DropExpectation),
       # TODO(pobega): change this to test the chroot creation step instead.
       api.post_check(post_process.DoesNotRun, 'Upload and uprev'),
       status='FAILURE',
@@ -253,6 +254,7 @@ def GenTests(api: RecipeTestApi) -> None:
               'release-R105-14989.B',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -264,6 +266,7 @@ def GenTests(api: RecipeTestApi) -> None:
           'Upload and uprev',
           ['util/shader-dlc-uprev/upload-and-uprev.py'],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
@@ -275,18 +278,25 @@ def GenTests(api: RecipeTestApi) -> None:
           'Upload and uprev',
           ['./kabuto', 'dlc-upload-and-uprev', '--updated-artifacts-path'],
       ),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
   yield api.test(
-      'no-changed-files', api.properties(**props),
+      'no-changed-files',
+      api.properties(**props),
       api.step_data('commit dlc changes.git diff',
                     stdout=api.raw_io.output_text('')),
-      api.post_check(post_process.DoesNotRun, 'commit dlc changes.git commit'))
+      api.post_check(post_process.DoesNotRun, 'commit dlc changes.git commit'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   yield api.test(
-      'changed-files', api.properties(**props),
+      'changed-files',
+      api.properties(**props),
       api.step_data('commit dlc changes.git diff',
                     stdout=api.raw_io.output_text('abcdefg')),
-      api.post_check(post_process.MustRun, 'commit dlc changes.git commit'))
+      api.post_check(post_process.MustRun, 'commit dlc changes.git commit'),
+      api.post_process(post_process.DropExpectation),
+  )

@@ -266,11 +266,15 @@ def GenTests(api: RecipeTestApi) -> None:
       'child-builder-failure',
       api.buildbucket.simulated_collect_output(
           [child_builder_failure()], 'paygen build.buildbucket.run.collect'),
-      api.post_process(post_process.DropExpectation), status='FAILURE')
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
 
   yield api.test(
       'child-builder-infra-failure',
       api.buildbucket.simulated_collect_output(
           [child_builder_infra_failure()],
           'paygen build.buildbucket.run.collect'),
-      api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )

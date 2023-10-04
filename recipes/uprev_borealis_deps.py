@@ -226,7 +226,8 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'borealis build_full.py args', api.properties(**good_props),
+      'borealis build_full.py args',
+      api.properties(**good_props),
       api.post_process(
           post_process.StepCommandContains,
           'Borealis build_full.py',
@@ -259,54 +260,72 @@ def GenTests(api: RecipeTestApi):
               '--out-dir=[CACHE]/cros_chroot/out',
               '--skip-termina',
           ],
-      ), api.post_process(post_process.DropExpectation))
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   del props['uprev_arch_mirror']
-  yield api.test('no uprev arch', api.properties(**props),
-                 api.post_check(post_process.MustRun, 'Borealis build_full.py'),
-                 api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
-                 api.post_check(post_process.MustRun, 'PKGBUILDs uprev'),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'no uprev arch',
+      api.properties(**props),
+      api.post_check(post_process.MustRun, 'Borealis build_full.py'),
+      api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
+      api.post_check(post_process.MustRun, 'PKGBUILDs uprev'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   del props['uprev_pkgbuilds']
-  yield api.test('no uprev pkgbuilds', api.properties(**props),
-                 api.post_check(post_process.MustRun, 'Borealis build_full.py'),
-                 api.post_check(post_process.MustRun, 'Arch mirror uprev'),
-                 api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'no uprev pkgbuilds',
+      api.properties(**props),
+      api.post_check(post_process.MustRun, 'Borealis build_full.py'),
+      api.post_check(post_process.MustRun, 'Arch mirror uprev'),
+      api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   del props['uprev_arch_mirror']
   del props['uprev_pkgbuilds']
-  yield api.test('no uprevs', api.properties(**props),
-                 api.post_check(post_process.MustRun, 'Borealis build_full.py'),
-                 api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
-                 api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
-                 api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'no uprevs',
+      api.properties(**props),
+      api.post_check(post_process.MustRun, 'Borealis build_full.py'),
+      api.post_check(post_process.DoesNotRun, 'Arch mirror uprev'),
+      api.post_check(post_process.DoesNotRun, 'PKGBUILDs uprev'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   yield api.test(
-      'no-changed-files', api.properties(**props),
+      'no-changed-files',
+      api.properties(**props),
       api.step_data('Arch mirror uprev.create Arch mirror CL.git diff',
                     stdout=api.raw_io.output_text('')),
       api.post_check(
           post_process.DoesNotRun,
-          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'))
+          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   yield api.test(
-      'changed-files', api.properties(**props),
+      'changed-files',
+      api.properties(**props),
       api.step_data('Arch mirror uprev.create Arch mirror CL.git diff',
                     stdout=api.raw_io.output_text('abcdefg')),
       api.post_check(
           post_process.MustRun,
-          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'))
+          'Arch mirror uprev.create Arch mirror CL.commit changes.git commit'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   yield api.test(
-      'no-uprev-changes', api.properties(**props),
+      'no-uprev-changes',
+      api.properties(**props),
       api.step_data('Arch mirror uprev.git diff',
                     stdout=api.raw_io.output_text('')),
       api.step_data('PKGBUILDs uprev.git diff',
@@ -314,11 +333,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'Arch mirror uprev.Borealis build_full.py'),
       api.post_check(post_process.DoesNotRun,
-                     'PKGBUILDs uprev.Borealis build_full.py'))
+                     'PKGBUILDs uprev.Borealis build_full.py'),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   yield api.test(
-      'uprev-changes', api.properties(**props),
+      'uprev-changes',
+      api.properties(**props),
       api.step_data('Arch mirror uprev.git diff',
                     stdout=api.raw_io.output_text('abcdefg')),
       api.step_data('PKGBUILDs uprev.git diff',
@@ -326,4 +348,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'Arch mirror uprev.Borealis build_full.py'),
       api.post_check(post_process.MustRun,
-                     'PKGBUILDs uprev.Borealis build_full.py'))
+                     'PKGBUILDs uprev.Borealis build_full.py'),
+      api.post_process(post_process.DropExpectation),
+  )

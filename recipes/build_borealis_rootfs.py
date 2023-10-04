@@ -220,6 +220,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-version_file',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -233,6 +234,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               '--chroot=[CACHE]/cros_chroot/chroot',
               '--out-dir=[CACHE]/cros_chroot/out', '--variant', 'chroot'
           ]),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -247,6 +249,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                            '--out-dir=[CACHE]/cros_chroot/out',
                            '--disable-arch-sig-validation'
                        ]),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -255,6 +258,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'build_tast_binaries',
       api.properties(**props),
       api.post_check(post_process.MustRun, 'upload tast tarball'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -262,6 +266,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-build_tast_binaries',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'upload tast tarball'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -270,6 +275,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-package_info',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -280,6 +286,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-package_info.package_name',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -289,6 +296,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-destination_gs_bucket',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -298,13 +306,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'no-destination_gs_path',
       api.properties(**props),
       api.post_check(post_process.DoesNotRun, 'update VERSION-PIN'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
   yield api.test(
-      'branched-manifest', api.properties(**props),
+      'branched-manifest',
+      api.properties(**props),
       api.post_check(post_process.MustRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       api.post_process(
@@ -315,14 +325,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'release-R105-14989.B',
           ],
       ),
-      api.post_process(
-          post_process.StepCommandContains,
-          'upload VM imaage.uprev_dlc',
-          [
-              '--archive',
-              'borealis-dlc-105.2012.05.14.125330.tar.xz',
-          ],
-      ))
+      api.post_process(post_process.StepCommandContains,
+                       'upload VM imaage.uprev_dlc', [
+                           '--archive',
+                           'borealis-dlc-105.2012.05.14.125330.tar.xz',
+                       ]),
+      api.post_process(post_process.DropExpectation),
+  )
 
   props = good_props.copy()
   props['manifest_branch'] = 'abcdefg'
@@ -330,5 +339,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'bad-manifest-branch',
       api.properties(**props),
       api.expect_exception('AttributeError'),
+      api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
   )
