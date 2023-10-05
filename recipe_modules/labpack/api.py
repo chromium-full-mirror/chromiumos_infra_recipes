@@ -3,13 +3,13 @@
 # found in the LICENSE file.
 
 from google.protobuf import json_format
+from google.protobuf import struct_pb2
 from recipe_engine import recipe_api
 from recipe_engine.step_data import StepData
-from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path, jsonify_labpack_input
+from RECIPE_MODULES.chromeos.labpack.utils import extract_executable_name_from_cipd_path
 from RECIPE_MODULES.chromeos.labpack.result_map import new_result_map
 from PB.lab.labpack import LabpackInput
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from google.protobuf import struct_pb2
 
 DEFAULT_CIPD_LABEL = 'prod'
 DEFAULT_CIPD_PACKAGE = 'chromiumos/infra/labpack/${platform}'
@@ -33,7 +33,6 @@ class LabpackCommand(recipe_api.RecipeApi):
   - cipd_package
 
   - downloaded_executable_path: config_types.Path
-
   """
 
   def __init__(self, properties, **kwargs):
@@ -44,7 +43,7 @@ class LabpackCommand(recipe_api.RecipeApi):
 
   @staticmethod
   def get_ufs_host() -> str:  # pragma: nocover
-    return "ufs.api.cr.dev"
+    return 'ufs.api.cr.dev'
 
   @staticmethod
   def convert_step_data_to_status(step_data, dut_state):
@@ -70,8 +69,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     return extract_executable_name_from_cipd_path(self.cipd_package)
 
   def get_cipd_path(self):  # pragma: nocover
-    """Get the path of the cipd package.
-    """
+    """Get the path of the cipd package."""
     return self.downloaded_executable_path
 
   def ensure_labpack(self):
@@ -112,6 +110,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     Returns:
       see step.__call__
     """
+    del labpack_input
 
     assert 'cmd' not in kwargs, r'keyword argument "cmd" cannot be specified'
     assert 'stdin_data' not in kwargs, r'keyword argument "stdin_data" cannot be specified'
@@ -119,7 +118,7 @@ class LabpackCommand(recipe_api.RecipeApi):
     if not self.has_downloaded_package():
       self.ensure_labpack()
 
-    build = self._get_augmented_build()
+    build = self.get_augmented_build()
 
     out = self.m.step.sub_build(
         name=kwargs.get('name', 'labpack invocation'),
@@ -202,28 +201,28 @@ class LabpackCommand(recipe_api.RecipeApi):
 
     return self.convert_step_data_to_status(step_data, dut_state)
 
-  def _get_build(self) -> build_pb2.Build:
-    """_get_build gets a copy of the input build"""
+  def get_build(self) -> build_pb2.Build:
+    """get_build gets a copy of the input build"""
     b = build_pb2.Build()
     b.CopyFrom(self.m.buildbucket.build)
     return b
 
-  def _get_dut_name(self) -> str:
+  def get_dut_name(self) -> str:
     """get the dut name from the swarming bot dimensions"""
     d = self.m.buildbucket.build.infra.swarming.bot_dimensions
     vals = self.m.cros_tags.get_values('dut_name', d)
     if vals:  # pragma: nocover
       return vals[0]
-    return ""
+    return ''
 
-  def _get_augmented_build(self) -> build_pb2.Build:
+  def get_augmented_build(self) -> build_pb2.Build:
     """return a build augmented with fields"""
-    b = self._get_build()
+    b = self.get_build()
     props_dict = _struct_to_dict(b.input.properties)
-    props_dict["unit_name"] = self._get_dut_name()
-    props_dict["task_name"] = "post_test"
-    props_dict["caller"] = "test_runner.py"
-    props_dict["inventory_service"] = self.get_ufs_host()
+    props_dict['unit_name'] = self.get_dut_name()
+    props_dict['task_name'] = 'post_test'
+    props_dict['caller'] = 'test_runner.py'
+    props_dict['inventory_service'] = self.get_ufs_host()
     props = _dict_to_struct(props_dict)
     b.input.properties.CopyFrom(props)
     return b
