@@ -6,6 +6,9 @@
 # This test is the preferred way to write the code in
 # defer_exceptions_block_incorrect.py.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from recipe_engine import post_process
 
 DEPS = [

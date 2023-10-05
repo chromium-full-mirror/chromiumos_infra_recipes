@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.recipes.chromeos.test_platform.cros_test_postprocess import TestResult
 from PB.test_platform.common.task import TaskLogData
 

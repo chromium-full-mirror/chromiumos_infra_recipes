@@ -3,6 +3,9 @@
 # found in the LICENSE file.
 
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 DEPS = [
     'recipe_engine/properties',
     'cloud_pubsub',

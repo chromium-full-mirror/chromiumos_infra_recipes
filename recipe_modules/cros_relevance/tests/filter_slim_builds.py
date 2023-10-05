@@ -5,6 +5,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.go.chromium.org.luci.buildbucket.proto import common as bbcommon_pb2
 
 DEPS = [

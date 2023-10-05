@@ -10,6 +10,9 @@
 # The preferred way to write the code in RunSteps would be in
 # defer_exceptions_block.py.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from recipe_engine import post_process
 
 DEPS = [

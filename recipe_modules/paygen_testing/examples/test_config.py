@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.chromiumos.common import DeltaType
 from PB.chromiumos.common import ImageType
 from PB.recipe_modules.chromeos.paygen_testing.examples.test import TestPaygenProperties

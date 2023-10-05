@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.chromiumos.test.api.test_suite import TestSuite
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2

@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.chromite.api.payload import GenerationRequest
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi

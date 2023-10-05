@@ -2,6 +2,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage

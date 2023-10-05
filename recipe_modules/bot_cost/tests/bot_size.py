@@ -5,6 +5,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi

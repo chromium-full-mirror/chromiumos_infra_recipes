@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from google.protobuf.json_format import MessageToDict
 from PB.recipe_modules.chromeos.repo.examples import common
 from PB.recipe_modules.chromeos.repo.examples.image_builder import ImageBuilderProperties

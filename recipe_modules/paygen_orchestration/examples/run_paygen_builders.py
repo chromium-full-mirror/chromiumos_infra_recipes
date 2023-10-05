@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.recipes.chromeos.paygen import PaygenProperties
 
 from recipe_engine import post_process

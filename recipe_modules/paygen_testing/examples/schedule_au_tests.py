@@ -4,6 +4,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from google.protobuf import duration_pb2
 
 from PB.chromiumos.common import DeltaType

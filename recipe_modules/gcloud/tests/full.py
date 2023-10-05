@@ -5,6 +5,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.gcloud.gcloud import SourceCacheAction

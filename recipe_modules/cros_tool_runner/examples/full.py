@@ -3,6 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from PB.chromiumos.build.api import container_metadata
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 

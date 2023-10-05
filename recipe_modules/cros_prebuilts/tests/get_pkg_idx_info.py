@@ -5,6 +5,9 @@
 
 # pylint: disable=protected-access
 
+# pylint: disable=missing-module-docstring
+# TODO(b/303696694): Add a simple docstring here.
+
 from collections import namedtuple
 
 from PB.chromiumos.common import BuildTarget, PackageIndexInfo, Profile
