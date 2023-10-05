@@ -9215,7 +9215,7 @@ A module to interface between PUpr builders and Gerrit.
 
 Initialize the module's attributes.
 
-&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#367)(self, open_changes: List[GerritChange], most_recent_uprev: Optional[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
+&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#366)(self, open_changes: List[GerritChange], most_recent_uprev: Optional[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
 
 Retry any open uprev CLs based on the retry policy.
 
@@ -9273,7 +9273,7 @@ Args:
 Returns:
   A bool stating whether any open CLs remain after abandoning.
 
-&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#351)(self, patch_set: PatchSet, cq_label: int):**
+&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#350)(self, patch_set: PatchSet, cq_label: int):**
 
 Retry sending the CL through CQ by setting its Gerrit labels.
 
@@ -9292,7 +9292,7 @@ TODO(b/259445191): All of these attributes should be moved from
 
 Return a dict which sorts the given projects by their remote.
 
-&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#340)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
+&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#339)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
 
 Upload a new revision onto an existing Gerrit PatchSet.
 
