@@ -1285,7 +1285,7 @@
       "ensure-directory",
       "--mode",
       "0777",
-      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/prod"
+      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/6754af9632a2745e85c293e5aac0863370d9bd3330b9938c00cadfd215227d77"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1310,7 +1310,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/prod",
+      "[START_DIR]/cipd_tool/chromiumos/infra/labpack/6754af9632a2745e85c293e5aac0863370d9bd3330b9938c00cadfd215227d77",
       "-ensure-file",
       "chromiumos/infra/labpack/${platform} prod",
       "-max-threads",
