@@ -162,7 +162,7 @@ class PuprApi(recipe_api.RecipeApi):
     Args:
       retry_policy (RetryClPolicy): The retry policy to follow. Can be NO_RETRY,
         LATEST_OR_LATEST_PINNED, or LATEST_PINNED.
-      no_existing_cls_policy (RetryClPolicy): The policy this PUpr builder
+      no_existing_cls_policy (SendToCqPolicy): The policy this PUpr builder
         follows when no CL exists. If FULL_RUN, we will look for any successful
         dry runs, allowing us to retry the latest one as a full run. If no
         successful dry run is found or if DRY_RUN, we will look for a failed CL.

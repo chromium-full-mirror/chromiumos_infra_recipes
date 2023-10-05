@@ -318,6 +318,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
                 Label.BOT_COMMIT: 1,
             },
         }.get(send_to_cq_policy)
+        if self.m.cros_infra_config.is_staging:
+          labels.pop(Label.BOT_COMMIT, None)
 
         if labels is not None:
           self.m.gerrit.set_change_labels(change, labels)
@@ -353,6 +355,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
           Label.BOT_COMMIT: 1,
           Label.COMMIT_QUEUE: cq_label,
       }
+      if self.m.cros_infra_config.is_staging:
+        labels.pop(Label.BOT_COMMIT, None)
       gerrit_change = patch_set.to_gerrit_change_proto()
       with self.m.context(cwd=self.workspace_path):
         project = self.m.repo.project_info(gerrit_change.project)

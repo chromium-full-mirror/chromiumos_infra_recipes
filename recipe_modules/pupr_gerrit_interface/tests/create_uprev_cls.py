@@ -23,7 +23,7 @@ from recipe_engine import recipe_test_api
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
-    'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/path',
     'recipe_engine/properties',
     'gerrit',
@@ -84,6 +84,25 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
       api.post_check(post_process.LogContains,
+                     'update CL labels.set labels on CL 123', 'labels',
+                     ['Bot-Commit+1']),
+      api.post_check(post_process.LogContains,
+                     'update CL labels.set labels on CL 123', 'labels',
+                     ['Commit-Queue+1']),
+      api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'dry-run-staging', api.properties(policy=DRY_RUN, projects=1),
+      api.buildbucket.generic_build(project='chromeos', bucket='staging',
+                                    builder='staging-my-cool-pupr-generator'),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      api.post_check(post_process.StepSuccess,
+                     'update CL labels.set labels on CL 123'),
+      api.post_check(post_process.LogDoesNotContain,
                      'update CL labels.set labels on CL 123', 'labels',
                      ['Bot-Commit+1']),
       api.post_check(post_process.LogContains,
