@@ -11336,7 +11336,33 @@ Create directories and files of artifacts needed by Ti50 Tast tests.
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#57)(api: RecipeApi, config: BuilderConfig, extra_properties: IncrementalProperties):**
+&mdash; **def [DoOldBuild](/recipes/build_incremental.py#54)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+
+Rewind the checkout, install packages, and then forward the checkout.
+
+Args:
+  api: The recipe API.
+  config: The BuilderConfig for this incremental builder.
+  properties: Input properties for this build.
+
+Returns:
+  A list of relevant packages built.
+
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#141)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+
+Tests reliability of incremental build by performing two builds.
+
+First, revert the checkout back in time, build_packages for that old state,
+generating local artifacts, and move the checkout back to ToT.
+Then, attempt to build from the current state with old state intact.
+
+Args:
+  api: The recipe API.
+  config: The BuilderConfig for this incremental builder.
+  properties: Input properties for this build.
+
+Returns:
+  A list of relevant packages built.
 
 &mdash; **def [RunSteps](/recipes/build_incremental.py#40)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)

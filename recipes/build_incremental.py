@@ -5,10 +5,10 @@
 
 """Recipe for building a BuildTarget incrementally."""
 
-from typing import Generator
-from typing import Optional
+from typing import Generator, List, Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.common import PackageInfo
 from PB.recipes.chromeos.build_incremental import IncrementalProperties, ErrorType
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
@@ -32,7 +32,7 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-REPO_SYNC_JOBS = 16
+REPO_SYNC_JOBS = 64
 
 PROPERTIES = IncrementalProperties
 
@@ -50,66 +50,119 @@ def RunSteps(api: RecipeApi,
     else:
       return DoRunSteps(api, config, properties)
 
-# Tests reliability of incremental build by performing two builds:
-#   1. Revert the checkout back in time, build_packages for that old state,
-#      generating local artifacts.
-#   2. Move the checkout back to ToT. Build from that.
-def DoRunSteps(api: RecipeApi, config: BuilderConfig,
-               extra_properties: IncrementalProperties) -> Optional[RawResult]:
+
+def DoOldBuild(api: RecipeApi, config: BuilderConfig,
+               properties: IncrementalProperties) -> List[PackageInfo]:
+  """Rewind the checkout, install packages, and then forward the checkout.
+
+  Args:
+    api: The recipe API.
+    config: The BuilderConfig for this incremental builder.
+    properties: Input properties for this build.
+
+  Returns:
+    A list of relevant packages built.
+  """
   snapshot_branch_name = 'origin/snapshot'
-  failing_build_exception = None
-  error_type = ErrorType.UNKNOWN
-  use_llfg = extra_properties.use_llfg
-
-  build_time_delta = extra_properties.build_time_delta
-  if not build_time_delta:
-    raise StepFailure('build_time_delta input property is empty')
-
+  build_time_delta = properties.build_time_delta
   manifest_internal_tempdir = api.path.mkdtemp()
   manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
   repo_path = str(api.repo.repo_path)
 
   # Checkout and attempt to build the old snapshot.
-  try:
-    api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
+  api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
 
-    # Get old snapshot hash.
-    delta_hash_result = api.step(f'Get {build_time_delta} manifest snapshot', [
-        'git', '-C', manifest_internal_tempdir, 'rev-list', '-1', '--before',
-        build_time_delta, snapshot_branch_name
-    ], stdout=api.raw_io.output_text())
-    delta_hash = delta_hash_result.stdout.strip()
+  # Get old snapshot hash.
+  delta_hash_result = api.step(f'Get {build_time_delta} manifest snapshot', [
+      'git', '-C', manifest_internal_tempdir, 'rev-list', '-1', '--before',
+      build_time_delta, snapshot_branch_name
+  ], stdout=api.raw_io.output_text())
+  delta_hash = delta_hash_result.stdout.strip()
 
-    # Rewind the source to old snapshot.
-    api.step(f'Revert manifest to {build_time_delta} snapshot',
-             ['git', '-C', manifest_internal_tempdir, 'checkout', delta_hash])
+  # Rewind the source to old snapshot.
+  api.step(f'Revert manifest to {build_time_delta} snapshot',
+           ['git', '-C', manifest_internal_tempdir, 'checkout', delta_hash])
+  with api.repo.m.depot_tools.on_path():
+    api.step(
+        f'Apply {build_time_delta} manifest snapshot',
+        [
+            repo_path, 'init', '--standalone-manifest',
+            f'file://{manifest_internal_tempdir}/snapshot.xml'
+        ],
+    )
+  api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
+                retry_fetches=3, force_remove_dirty=True)
+  api.build_menu.setup_chroot(no_chroot_timeout=False, bootstrap=False,
+                              replace=False, update=False, uprev_packages=False,
+                              setup_toolchains_if_no_update=False)
+
+  api.cros_sdk.update_chroot(
+      toolchain_targets=[api.build_menu.build_target],
+      build_source=config.build.sdk_update.compile_source)
+  env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+  packages = env_info.packages
+  api.build_menu.bootstrap_sysroot(config)
+  if api.build_menu.install_packages(config, packages):
+    # Fast forward the source to latest snapshot.
+    api.step('Revert manifest to the latest snapshot', [
+        'git', '-C', manifest_internal_tempdir, 'checkout', snapshot_branch_name
+    ])
+
+  # Attempt to checkout the current snapshot.
+  if properties.use_llfg:
     with api.repo.m.depot_tools.on_path():
       api.step(
-          f'Apply {build_time_delta} manifest snapshot',
+          'Apply LLFG manifest snapshot',
+          [
+              repo_path, 'init', '--u',
+              'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
+              '-b', 'green'
+          ],
+      )
+  else:
+    with api.repo.m.depot_tools.on_path():
+      api.step(
+          'Apply latest manifest snapshot',
           [
               repo_path, 'init', '--standalone-manifest',
               f'file://{manifest_internal_tempdir}/snapshot.xml'
           ],
       )
-    api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
-                  retry_fetches=3, force_remove_dirty=True)
-    api.build_menu.setup_chroot(no_chroot_timeout=False, bootstrap=False,
-                                replace=False, update=False,
-                                uprev_packages=False,
-                                setup_toolchains_if_no_update=False)
+  api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
+                retry_fetches=3, force_remove_dirty=True)
+  api.cros_sdk('regenerate configs', [
+      'setup_board', '--regen-configs', '--board',
+      api.build_menu.build_target.name
+  ])
 
-    api.cros_sdk.update_chroot(
-        toolchain_targets=[api.build_menu.build_target],
-        build_source=config.build.sdk_update.compile_source)
-    env_info = api.build_menu.setup_sysroot_and_determine_relevance()
-    packages = env_info.packages
-    api.build_menu.bootstrap_sysroot(config)
-    if api.build_menu.install_packages(config, packages):
-      # Fast forward the source to latest snapshot.
-      api.step('Revert manifest to the latest snapshot', [
-          'git', '-C', manifest_internal_tempdir, 'checkout',
-          snapshot_branch_name
-      ])
+  return packages
+
+
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               properties: IncrementalProperties) -> Optional[RawResult]:
+  """Tests reliability of incremental build by performing two builds.
+
+  First, revert the checkout back in time, build_packages for that old state,
+  generating local artifacts, and move the checkout back to ToT.
+  Then, attempt to build from the current state with old state intact.
+
+  Args:
+    api: The recipe API.
+    config: The BuilderConfig for this incremental builder.
+    properties: Input properties for this build.
+
+  Returns:
+    A list of relevant packages built.
+  """
+  failing_build_exception = None
+  error_type = ErrorType.UNKNOWN
+
+  build_time_delta = properties.build_time_delta
+  if not build_time_delta:
+    raise StepFailure('build_time_delta input property is empty')
+
+  try:
+    relevant_pkgs = DoOldBuild(api, config, properties)
     old_build_successful = True
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
@@ -119,53 +172,21 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     old_build_successful = False
     error_type = ErrorType.NON_INCREMENTAL
 
-  # Checkout and attempt to build the current snapshot.
+  # Attempt to build the current snapshot.
   if not failing_build_exception:
     try:
-      if use_llfg:
-        with api.repo.m.depot_tools.on_path():
-          api.step(
-              'Apply LLFG manifest snapshot',
-              [
-                  repo_path, 'init', '--u',
-                  'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
-                  '-b', 'green'
-              ],
-          )
-      else:
-        with api.repo.m.depot_tools.on_path():
-          api.step(
-              'Apply latest manifest snapshot',
-              [
-                  repo_path, 'init', '--standalone-manifest',
-                  f'file://{manifest_internal_tempdir}/snapshot.xml'
-              ],
-          )
-      api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
-                    retry_fetches=3, force_remove_dirty=True)
-      api.cros_sdk('regenerate configs', [
-          'setup_board', '--regen-configs', '--board',
-          api.build_menu.build_target.name
-      ])
-
       api.cros_sdk.update_chroot(
           toolchain_targets=[api.build_menu.build_target],
           build_source=config.build.sdk_update.compile_source)
-      if api.build_menu.install_packages(config, packages):
+
+      if api.build_menu.install_packages(config, relevant_pkgs):
         # Only want to build and test the image once (after the ff/rebuild).
         api.build_menu.build_and_test_images(config)
     except StepFailure as sf:
       failing_build_exception = sf
 
   if failing_build_exception and old_build_successful:
-    # Clean state and attempt to build the current snapshot to verify whether
-    # the error was incremental.
-
-    # TODO(sfrolov): delete SDK and sysroot, then re-build new snapshot to
-    # verify whether the build should be marked as incremental failure.
-    # For now, simply mark all builds where the first build succeeded but second
-    # failed as incremental failures to filter out at least some errors and test
-    # the changes we made thus far.
+    # If first build succeeded, and second one failed, the error is incremental.
     error_type = ErrorType.INCREMENTAL
 
   api.easy.set_properties_step(step_name='set incremental failure',
