@@ -3151,20 +3151,6 @@
     },
     {
       "id": {
-        "name": "rules-cros-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "applyGerritChanges": true
-      }
-    },
-    {
-      "id": {
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"
