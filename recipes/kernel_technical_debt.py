@@ -28,6 +28,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it and add cros-kernel-upstream-debt-review@google.com as reviewer. A member of the review committee will review the CL. Thank you.'
 TAG_MISSING_MSG = 'The subject of this patch does not include a valid tag. Please check: https://chromium.googlesource.com/chromiumos/docs/+/HEAD/kernel_development.md. If you\'d like to silence this warning for a work-in-progress change, prefix your subject with "WIP:" or "DO-NOT-SUBMIT:"'
 BAD_TAG_MSG = 'Bad subject tag for patch touching ChromeOS specific files. Please check: https://chromium.googlesource.com/chromiumos/docs/+/HEAD/kernel_development.md'
+TECH_DEBT_DUP_BUG_MSG = 'UPSTREAM-TASK bugs cannot be the same as those present in the BUG tag.'
 
 TECH_DEBT_PROJECTS = {'chromiumos/third_party/kernel'}
 
@@ -127,8 +128,35 @@ def RunSteps(api: RecipeApi):
                               '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
       api.tricium.write_comments()
-    else:
-      presentation.step_text = 'Tag already added.'
+      return
+    presentation.step_text = 'Tag already added.'
+
+  with api.step.nest('check duplicated bugid') as presentation:
+    commit_message = patch_set.commit_info.get('message')
+    bug_id = r'b:[0-9]{7,}'
+    bugs_ids = rf'({bug_id}(?:[, ]+{bug_id})*)'
+
+    bug_tag = rf'\nBUG={bugs_ids}+'
+    upstream_task_tag = rf'\nUPSTREAM-TASK={bugs_ids}+'
+
+    bug_line = re.findall(bug_tag, commit_message)
+    upstream_task_line = re.findall(upstream_task_tag, commit_message)
+
+    bugs = set()
+    for b in bug_line:
+      bugs |= set(re.findall(bug_id, b))
+
+    upstream_tasks = set()
+    for b in upstream_task_line:
+      upstream_tasks |= set(re.findall(bug_id, b))
+
+    if set(bugs) & set(upstream_tasks):
+      presentation.status = api.step.FAILURE
+      api.tricium.add_comment('Technical debt', TECH_DEBT_DUP_BUG_MSG,
+                              '/COMMIT_MSG')
+      presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
+      api.tricium.write_comments()
+      return
 
 
 def GenTests(api: RecipeTestApi):
@@ -269,4 +297,24 @@ def GenTests(api: RecipeTestApi):
               'Makefile')), api.post_check(post_process.StepSuccess,
                                            'check tag'),
       api.post_check(post_process.DoesNotRun, 'write comments'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'different_bug_id', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets(
+              'CHROMIUM: IPU6 non Kcam\n\nDescription\nBUG=b:1234567\nUPSTREAM-TASK=b:1234568\n',
+              'Makefile')),
+      api.post_check(post_process.StepSuccess, 'check duplicated bugid'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'duplicated_bug_id', test_builder(gerrit_changes=changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'fetch patch set', changes,
+          gen_patch_sets(
+              'CHROMIUM: IPU6 non Kcam\n\nDescription\nBUG=b:1234567\nUPSTREAM-TASK=b:1234567\n',
+              'Makefile')),
+      api.post_check(post_process.StepFailure, 'check duplicated bugid'),
       api.post_process(post_process.DropExpectation))
