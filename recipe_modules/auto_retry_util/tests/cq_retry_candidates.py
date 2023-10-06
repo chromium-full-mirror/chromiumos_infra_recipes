@@ -40,7 +40,7 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def _elegible_gerrit_fetch_changes_response(
+  def _eligible_gerrit_fetch_changes_response(
       changes: typing.List[common_pb2.GerritChange]) -> typing.Dict:
     return {
         c.change: {
@@ -57,7 +57,7 @@ def GenTests(api):
                               patchset=7)
   ]
 
-  eligible_value_dict = _elegible_gerrit_fetch_changes_response(gerrit_changes)
+  eligible_value_dict = _eligible_gerrit_fetch_changes_response(gerrit_changes)
 
   host_1_cl_ps_1 = common_pb2.GerritChange(host='host1', project='project',
                                            change=1, patchset=1)
@@ -84,10 +84,10 @@ def GenTests(api):
       },
   ).message
   failure_1_changes = gerrit_changes + [host_1_cl_ps_1]
-  failure_1_fetch_changes_response = _elegible_gerrit_fetch_changes_response(
+  failure_1_fetch_changes_response = _eligible_gerrit_fetch_changes_response(
       failure_1_changes)
   failure_2_changes = gerrit_changes + [host_2_cl_ps_1]
-  failure_2_fetch_changes_response = _elegible_gerrit_fetch_changes_response(
+  failure_2_fetch_changes_response = _eligible_gerrit_fetch_changes_response(
       failure_2_changes)
   builds = [failure_1, failure_2]
   yield api.test(
@@ -156,7 +156,7 @@ def GenTests(api):
   ).message
   builds = [failure_1, failure_2]
   changes = gerrit_changes + [host_1_cl_ps_1, host_2_cl_ps_1]
-  fetch_changes_response = _elegible_gerrit_fetch_changes_response(changes)
+  fetch_changes_response = _eligible_gerrit_fetch_changes_response(changes)
   yield api.test(
       'get-latest-from-cq-group-correctly-groups-same-cls-in-different-order',
       api.buildbucket.simulated_search_results(
@@ -215,7 +215,7 @@ def GenTests(api):
       },
   ).message
   changes = gerrit_changes + [host_2_cl_ps_2, host_1_cl_ps_2]
-  fetch_changes_response = _elegible_gerrit_fetch_changes_response(changes)
+  fetch_changes_response = _eligible_gerrit_fetch_changes_response(changes)
   builds = [failure_1, failure_2]
 
   yield api.test(
@@ -670,30 +670,100 @@ def GenTests(api):
       }
   }
 
-  builds_basic = [
+  builds = [
       api.test_util.test_orchestrator(
-          build_id=10 + i,
+          build_id=11,
           cq=True,
-          extra_changes=[
-              common_pb2.GerritChange(host='host', project='project', change=i,
-                                      patchset=1)
-          ],
           status='FAILURE',
-          create_time=10 + i,
+          create_time=11,
           output_properties={
               'has_child_failures': True
           },
-      ).message for i in range(1, 8)
+      ).message
   ]
-
   yield api.test(
-      'filter-out-by-basic-eligibility',
+      'filter-out-non-new',
       api.buildbucket.simulated_search_results(
-          builds_basic,
+          builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out by basic eligibility', gerrit_changes,
-          eligible_value_dict, 1),
+          non_new_value_dict),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility',
+                     'non_new', ['11']),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'filter-out-wip',
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          wip_value_dict),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility', 'wip',
+                     ['11']),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'filter-out-non-latest',
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          non_latest_value_dict),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility',
+                     'non_latest_patch_set', ['11']),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'filter-out-non-submittable',
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          non_submittable_value_dict),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility',
+                     'non_submittable', ['11']),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'filter-out-unresolved-comments',
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          unresolved_comments_value_dict),
+      api.post_check(post_process.LogContains,
+                     'find candidates.filter out by basic eligibility',
+                     'unresolved_comments', ['11']),
+      api.properties(expected_build_ids=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'filter-out-non-mergeable',
+      api.buildbucket.simulated_search_results(
+          builds,
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'find candidates.filter out by basic eligibility', gerrit_changes,
+          eligible_value_dict),
       api.gerrit.set_get_change_mergeable(
           'find candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
@@ -701,73 +771,13 @@ def GenTests(api):
           revision=7,
           value=False,
       ),
-      api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
-          gerrit_host='chromium-review.googlesource.com',
-          change_num=123456,
-          revision=7,
-          value=True,
-          iteration=2,
-      ),
-      api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
-          gerrit_host='host',
-          change_num=1,
-          revision=1,
-          value=True,
-      ),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          non_new_value_dict, 2),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          non_submittable_value_dict, 3),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          wip_value_dict, 4),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          non_latest_value_dict, 5),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility',
-          gerrit_changes,
-          unresolved_comments_value_dict,
-          6,
-      ),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          eligible_value_dict, 7),
-      api.post_process(
-          post_process.StepTextEquals,
-          'find candidates.filter out merge conflicts',
-          'filtered out 1 run(s)',
-      ),
       api.post_check(post_process.LogContains,
                      'find candidates.filter out merge conflicts',
-                     'non_mergeable', ['17']),
-      api.post_process(
-          post_process.StepTextEquals,
-          'find candidates.filter out by basic eligibility',
-          'filtered out 5 run(s)',
-      ),
-      api.post_check(post_process.LogContains,
-                     'find candidates.filter out by basic eligibility',
-                     'non_new', ['16']),
-      api.post_check(post_process.LogContains,
-                     'find candidates.filter out by basic eligibility',
-                     'non_submittable', ['15']),
-      api.post_check(post_process.LogContains,
-                     'find candidates.filter out by basic eligibility', 'wip',
-                     ['14']),
-      api.post_check(post_process.LogContains,
-                     'find candidates.filter out by basic eligibility',
-                     'non_latest_patch_set', ['13']),
-      api.post_check(post_process.LogContains,
-                     'find candidates.filter out by basic eligibility',
-                     'unresolved_comments', ['12']),
-      api.properties(expected_build_ids=[11]),
+                     'non_mergeable', ['11']),
+      api.properties(expected_build_ids=[]),
       api.post_process(post_process.DropExpectation),
   )
+
 
   # Test cq-orchestrator that had an infra failure.
   builds = [
