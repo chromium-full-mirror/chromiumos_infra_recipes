@@ -44,7 +44,9 @@ def orchestrator_exemption(build: Dict[str, Any]) -> bool:
   ignorable_summary_markdown_re = [
       re.compile(r'\d+ out of \d+ builds? failed'),
       re.compile(r'\d+ hw tests? failed'),
-      re.compile(r'\d+ vm tests? failed')
+      re.compile(r'\d+ hw test suites? failed'),
+      re.compile(r'\d+ vm tests? failed'),
+      re.compile(r'\d+ vm test suites? failed'),
   ]
   for regex in ignorable_summary_markdown_re:
     if regex.search(build.get('summaryMarkdown', '')):
