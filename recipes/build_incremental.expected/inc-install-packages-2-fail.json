@@ -5670,6 +5670,29 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests",
+      "refs/remotes/origin/snapshot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "git ls-remote"
+  },
+  {
     "cmd": [],
     "name": "install packages (2)",
     "~followup_annotations": [

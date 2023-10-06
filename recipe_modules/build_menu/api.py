@@ -485,12 +485,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
       request = SetupToolchainsRequest(chroot=self.chroot, boards=build_targets)
       self.m.cros_build_api.ToolchainService.SetupToolchains(request)
 
-  def setup_sysroot_and_determine_relevance(self, with_sysroot=True):
+  def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
+                                            snapshot_commit=None):
     """Setup the sysroot for the builder and determine build relevance.
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
         (Some builders do not require a sysroot.)
+      snapshot_commit (GitilesCommit): The snapshot commit to use for getting
+        prebuilts metadata, or None to use the commit the builder is
+        configured with.
 
     Returns:
       An object containing:
@@ -508,8 +512,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = common_pb2.Profile(name=config.build.portage_profile.profile)
       self._package_indexes = self.m.cros_prebuilts.get_package_index_info(
-          config.artifacts.prebuilts_gs_bucket, snapshot=self.gitiles_commit,
-          build_target=self.build_target, profile=profile)
+          config.artifacts.prebuilts_gs_bucket, snapshot=snapshot_commit or
+          self.gitiles_commit, build_target=self.build_target, profile=profile)
       self.m.sysroot_util.create_sysroot(
           self.build_target, profile, package_indexes=self._package_indexes,
           use_cq_prebuilts=artifacts.use_cq_prebuilts)
@@ -620,7 +624,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def install_packages(self, config=None, packages=None, timeout_sec='DEFAULT',
                        name=None, force_all_deps=False, include_rev_deps=False,
-                       dryrun=False):
+                       dryrun=False, package_indexes=None):
     """Install packages as appropriate.
 
     The config determines whether to call install packages. If installing
@@ -636,6 +640,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       include_rev_deps (bool): Whether to also install reverse dependencies.
         Ignored if config specifies ALL_DEPENDENCIES or force_all_deps is True.
       dryrun (bool): Dryrun the install packages step.
+      package_indexes (list[PackageIndexInfo]): List of prebuilts metadata to be
+        used when installing packages.
 
     Returns:
       (bool): Whether to continue with the build.
@@ -657,8 +663,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.sysroot_util.install_packages(
             config, self.dep_graph, relevant_packages,
             artifact_build=self.artifact_build,
-            package_indexes=self._package_indexes, timeout_sec=timeout_sec,
-            name=name, dryrun=dryrun)
+            package_indexes=package_indexes or self._package_indexes,
+            timeout_sec=timeout_sec, name=name, dryrun=dryrun)
     self.packages_installed = not self.m.cros_infra_config.should_exit(
         install_packages.run_spec)
     return self.packages_installed

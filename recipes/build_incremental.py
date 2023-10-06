@@ -9,6 +9,7 @@ from typing import Generator, List, Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import PackageInfo
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.build_incremental import IncrementalProperties, ErrorType
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
@@ -25,10 +26,12 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
+    'cros_prebuilts',
     'cros_sdk',
     'easy',
     'git',
     'repo',
+    'src_state',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -99,7 +102,12 @@ def DoOldBuild(api: RecipeApi, config: BuilderConfig,
   api.cros_sdk.update_chroot(
       toolchain_targets=[api.build_menu.build_target],
       build_source=config.build.sdk_update.compile_source)
-  env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+  # Use the prebuilts metadata for the old manifest.
+  snapshot_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
+                                  project=api.src_state.gitiles_commit.project,
+                                  id=delta_hash)
+  env_info = api.build_menu.setup_sysroot_and_determine_relevance(
+      snapshot_commit=snapshot_commit)
   packages = env_info.packages
   api.build_menu.bootstrap_sysroot(config)
   if api.build_menu.install_packages(config, packages):
@@ -179,7 +187,21 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           toolchain_targets=[api.build_menu.build_target],
           build_source=config.build.sdk_update.compile_source)
 
-      if api.build_menu.install_packages(config, relevant_pkgs):
+      # Get the prebuilts metadata to use with the current snapshot.
+      branch = 'green' if properties.use_llfg else 'snapshot'
+      manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
+      remotes = api.git.ls_remote([f'refs/remotes/origin/{branch}'],
+                                  repo_url=manifest_dir)
+      current_commit_hash = remotes[0].hash if remotes else None
+      current_commit = GitilesCommit(
+          host=api.src_state.gitiles_commit.host,
+          project=api.src_state.gitiles_commit.project, id=current_commit_hash)
+      package_indexes = api.cros_prebuilts.get_package_index_info(
+          config.artifacts.prebuilts_gs_bucket,
+          snapshot=current_commit if current_commit_hash else None)
+
+      if api.build_menu.install_packages(config=config, packages=relevant_pkgs,
+                                         package_indexes=package_indexes):
         # Only want to build and test the image once (after the ff/rebuild).
         api.build_menu.build_and_test_images(config)
     except StepFailure as sf:
