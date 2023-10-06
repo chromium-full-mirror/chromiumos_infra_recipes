@@ -7,17 +7,17 @@ syntax = "proto3";
 package recipes.chromeos.project_buildspec;
 
 message ProjectBuildspecProperties {
-    reserved 1, 2;
+  reserved 1, 2;
 
-    // Path to manifest within manifest-versions repo, relative to
-    // https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/HEAD/buildspecs/
-    // e.g. buildspecs/85/13277.0.0.xml or full/buildspecs/94/14137.0.0-rc1.xml.
-    string buildspec = 3;
+  // Path to manifest within manifest-versions repo, relative to
+  // https://chrome-internal.googlesource.com/chromeos/manifest-versions/+/HEAD/buildspecs/
+  // e.g. buildspecs/85/13277.0.0.xml or full/buildspecs/94/14137.0.0-rc1.xml.
+  string buildspec = 3;
 
-    // Projects to create the project-specific buildspec for, e.g. galaxy/milkyway.
-    // Supports wildcards, e.g. galaxy/milk* or galaxy/*.
-    repeated string projects = 4;
+  // Projects to create the project-specific buildspec for, e.g.
+  // galaxy/milkyway. Supports wildcards, e.g. galaxy/milk* or galaxy/*.
+  repeated string projects = 4;
 
-    // Whether this is a dry run.
-    bool dry_run = 5;
+  // Whether this is a dry run.
+  bool dry_run = 5;
 }

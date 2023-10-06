@@ -11,6 +11,4 @@ message TestInputProperties {
   int32 expected_change_count = 1;
 }
 
-message DetermineIfStagingProperties {
-  bool expected_is_staging = 1;
-}
+message DetermineIfStagingProperties { bool expected_is_staging = 1; }

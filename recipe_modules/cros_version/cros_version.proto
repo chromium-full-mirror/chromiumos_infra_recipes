@@ -7,15 +7,15 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_version;
 
 message CrosVersionProperties {
-    // If true, will drop the "-{snapshot}" suffix from version.
-    // TODO(crbug/1122854): Delete this once release builders can name
-    // artifacts in a standard way.
-    bool remove_snapshot_from_version = 1;
+  // If true, will drop the "-{snapshot}" suffix from version.
+  // TODO(crbug/1122854): Delete this once release builders can name
+  // artifacts in a standard way.
+  bool remove_snapshot_from_version = 1;
 
-    // Cipd package to use for verson_bumper.
-    // Defaults to "chromiumos/infra/version_bumper/${platform}".
-    string version_bumper_cipd_package = 2;
+  // Cipd package to use for verson_bumper.
+  // Defaults to "chromiumos/infra/version_bumper/${platform}".
+  string version_bumper_cipd_package = 2;
 
-    // Cipd ref to use for verson_bumper. Defaults to "staging" or "prod".
-    string version_bumper_cipd_ref = 3;
+  // Cipd ref to use for verson_bumper. Defaults to "staging" or "prod".
+  string version_bumper_cipd_ref = 3;
 }

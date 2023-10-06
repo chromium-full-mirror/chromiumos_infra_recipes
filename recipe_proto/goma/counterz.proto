@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Copied from https://chromium.googlesource.com/infra/goma/client/+/HEAD/client/counterz.proto
+// Copied from
+// https://chromium.googlesource.com/infra/goma/client/+/HEAD/client/counterz.proto
 
 syntax = "proto2";
 
@@ -25,6 +26,4 @@ message CounterzStat {
   optional int64 total_time_ns = 5;
 }
 
-message CounterzStats {
-  repeated CounterzStat counterz_stats = 1;
-}
+message CounterzStats { repeated CounterzStat counterz_stats = 1; }

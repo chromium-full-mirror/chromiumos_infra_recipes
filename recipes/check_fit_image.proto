@@ -5,10 +5,8 @@ package recipes.chromeos.check_fit_image;
 // To configure a project for FIT image checks, we just need to know the
 // project name and where to find the reference file for it.
 message FitImageConfig {
-    string repo = 1;
-    string ref_path = 2;
+  string repo = 1;
+  string ref_path = 2;
 }
 
-message CheckFitImageProperties {
-    repeated FitImageConfig configs = 1;
-}
+message CheckFitImageProperties { repeated FitImageConfig configs = 1; }

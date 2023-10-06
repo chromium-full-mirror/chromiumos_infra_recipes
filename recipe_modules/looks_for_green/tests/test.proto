@@ -43,6 +43,4 @@ message ShouldLfgProperties {
   string related_to_apply = 4;
 }
 
-message IsGreenForLocalProperties {
-  bool expected_result = 1;
-}
+message IsGreenForLocalProperties { bool expected_result = 1; }

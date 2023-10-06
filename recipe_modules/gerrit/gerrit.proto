@@ -6,16 +6,14 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.gerrit;
 
-message GerritProperties {
-  RelatedChanges related_changes = 1;
+message GerritProperties { RelatedChanges related_changes = 1; }
+
+message RelatedChanges {
+  // Cipd ref to use for gerrit_related_changes.
+  // Defaults to "chromiumos/infra/gerrit_related_changes/{$platform}".
+  string related_changes_cipd_package = 1;
+
+  // Cipd ref to use for gerrit_related_changes.
+  // Defaults to "staging" or "prod".
+  string related_changes_cipd_ref = 2;
 }
-
-message RelatedChanges{
-    // Cipd ref to use for gerrit_related_changes.
-    // Defaults to "chromiumos/infra/gerrit_related_changes/{$platform}".
-    string related_changes_cipd_package = 1;
-
-    // Cipd ref to use for gerrit_related_changes.
-    // Defaults to "staging" or "prod".
-    string related_changes_cipd_ref = 2;
-    }

@@ -7,13 +7,14 @@ syntax = "proto3";
 package recipes.chromeos.build_mass_deploy;
 
 message BuildMassDeployProperties {
-    // Removed: "production", controlled which bucket to push to.
-    reserved 1;
+  // Removed: "production", controlled which bucket to push to.
+  reserved 1;
 
-    // GS path of the image to be used in construction. Should be relative to gs://chromeos-releases/, e.g.
-    // "canary-channel/reven/15458.0.0/chromeos_15458.0.0_reven_recovery_canary-channel_mp-v2.bin.zip"
-    string input_image = 2;
+  // GS path of the image to be used in construction. Should be relative to
+  // gs://chromeos-releases/, e.g.
+  // "canary-channel/reven/15458.0.0/chromeos_15458.0.0_reven_recovery_canary-channel_mp-v2.bin.zip"
+  string input_image = 2;
 
-    // Size of the output mass deployable image in GiB. Default is 29.
-    optional int32 image_size_gib = 3;
+  // Size of the output mass deployable image in GiB. Default is 29.
+  optional int32 image_size_gib = 3;
 }

@@ -20,9 +20,10 @@ message LooksForGreenProperties {
 
   // Whether to use a snapshot that has finished running with
   // snapshot-orchestrator rather than the latest created snapshot. If this
-  // flag is not set, CQ will run with the latest minted or scored snapshot (unless the
-  // greenness of the latest snapshot-orchestrator run is below the greenness
-  // threshold, suggesting that the latest minted snapshot may be broken).
+  // flag is not set, CQ will run with the latest minted or scored snapshot
+  // (unless the greenness of the latest snapshot-orchestrator run is below the
+  // greenness threshold, suggesting that the latest minted snapshot may be
+  // broken).
   bool use_complete_snapshot = 5;
 
   // Upper limit on expected concurrent snapshot runs. Used to find the latest
@@ -58,7 +59,8 @@ enum LooksForGreenStatus {
 
 message LooksForGreenStats {
   message SnapshotStats {
-    // Whether the snapshot-orchestrator is green compared to greenness_threshold.
+    // Whether the snapshot-orchestrator is green compared to
+    // greenness_threshold.
     bool is_snap_orch_green = 1;
 
     // Aggregate greenness (set in output props by greennness module) of

@@ -1,6 +1,7 @@
 // Copyright 2020 The Chromium Authors
 
-// Copied from https://source.chromium.org/chromium/chromium/tools/build/+/HEAD:recipes/goma/compile_events.proto
+// Copied from
+// https://source.chromium.org/chromium/chromium/tools/build/+/HEAD:recipes/goma/compile_events.proto
 
 syntax = "proto3";
 

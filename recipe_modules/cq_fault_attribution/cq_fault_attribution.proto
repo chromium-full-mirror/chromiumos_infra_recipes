@@ -70,7 +70,8 @@ message FaultAttributionProperties {
   bool diff_model_used = 7;
 
   // The snapshots used for determining the likely_flaky property.
-  repeated SnapshotProperties flakiness_criteria_snapshots = 6 [deprecated = true];
+  repeated SnapshotProperties flakiness_criteria_snapshots = 6
+      [ deprecated = true ];
 }
 
 message SnapshotProperties {

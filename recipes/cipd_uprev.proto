@@ -49,4 +49,3 @@ message PackageInstance {
   // CIPD instance_id.
   string id = 2;
 }
-

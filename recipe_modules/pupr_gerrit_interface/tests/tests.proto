@@ -15,7 +15,7 @@ message ApplyRetryPolicyProperties {
   recipes.chromeos.generator.RetryClPolicy retry_cl_policy = 3;
   recipes.chromeos.generator.OutdatedClsPolicy outdated_cls_policy = 4;
   bool retry_only = 5;
-  bool rebase_before_retry= 6;
+  bool rebase_before_retry = 6;
   int32 changes = 7;
 }
 

@@ -7,27 +7,27 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_relevance;
 
 message CrosRelevanceProperties {
-    reserved 1;
+  reserved 1;
 
-    // Cipd ref to use for build plan generator.
-    // Defaults to "chromiumos/infra/build_plan_generator/{$platform}".
-    string build_plan_generator_cipd_package = 2;
+  // Cipd ref to use for build plan generator.
+  // Defaults to "chromiumos/infra/build_plan_generator/{$platform}".
+  string build_plan_generator_cipd_package = 2;
 
-    // Cipd ref to use for build plan generator.
-    // Defaults to "staging" or "prod".
-    string build_plan_generator_cipd_ref = 3;
+  // Cipd ref to use for build plan generator.
+  // Defaults to "staging" or "prod".
+  string build_plan_generator_cipd_ref = 3;
 
-    // Cipd ref to use for pointless build checker.
-    // Defaults to "chromiumos/infra/pointless_build_checker/{$platform}".
-    string pointless_build_checker_cipd_package = 4;
+  // Cipd ref to use for pointless build checker.
+  // Defaults to "chromiumos/infra/pointless_build_checker/{$platform}".
+  string pointless_build_checker_cipd_package = 4;
 
-    // Cipd ref to use for pointless build checker.
-    // Defaults to "staging" or "prod".
-    string pointless_build_checker_cipd_ref = 5;
+  // Cipd ref to use for pointless build checker.
+  // Defaults to "staging" or "prod".
+  string pointless_build_checker_cipd_ref = 5;
 
-    // Whether to allow slim builds to be scheduled.
-    bool enable_slim_builds = 6;
+  // Whether to allow slim builds to be scheduled.
+  bool enable_slim_builds = 6;
 
-    // Force relevance on a postsubmit build.
-    bool force_postsubmit_relevance = 7;
+  // Force relevance on a postsubmit build.
+  bool force_postsubmit_relevance = 7;
 }

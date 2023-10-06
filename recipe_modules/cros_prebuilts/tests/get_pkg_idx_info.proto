@@ -11,22 +11,14 @@ import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 // The files for a (snapshot, build_target, profile), mapping filename to
 // contents.
-message ProfileTestMap {
-  map<string, chromiumos.PackageIndexInfo> files = 1;
-}
+message ProfileTestMap { map<string, chromiumos.PackageIndexInfo> files = 1; }
 // The profiles for a (snapshot, build_target).
-message TargetTestMap {
-  map<string, ProfileTestMap> profiles = 1;
-}
+message TargetTestMap { map<string, ProfileTestMap> profiles = 1; }
 
 // The entries for a snapshot.
-message SnapshotTestMap {
-  map<string, TargetTestMap> targets = 1;
-}
+message SnapshotTestMap { map<string, TargetTestMap> targets = 1; }
 
-message TestDataMap {
-  map<string, SnapshotTestMap> snapshots = 1;
-}
+message TestDataMap { map<string, SnapshotTestMap> snapshots = 1; }
 
 message GetPkgIdxInfoProperties {
   // Snapshots
@@ -46,5 +38,4 @@ message GetPkgIdxInfoProperties {
 
   // Expected get_package_index_info() return.
   repeated chromiumos.PackageIndexInfo expected_package_index_info = 6;
-
 }

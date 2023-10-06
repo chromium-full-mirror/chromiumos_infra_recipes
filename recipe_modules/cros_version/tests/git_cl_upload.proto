@@ -6,6 +6,4 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_version.tests;
 
-message GitClUploadInputProperties {
-  bool dry_run = 1;
-}
+message GitClUploadInputProperties { bool dry_run = 1; }

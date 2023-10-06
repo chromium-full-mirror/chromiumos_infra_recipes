@@ -9,22 +9,22 @@ package recipes.chromeos.config_postsubmit;
 // NEXT ID: 5
 message ConfigPostsubmitProperties {
 
-    enum ActionTypes {
-        // The regenerate suite scheduler action type.
-        REGENERATE_SUITE_SCHEDULER = 0;
+  enum ActionTypes {
+    // The regenerate suite scheduler action type.
+    REGENERATE_SUITE_SCHEDULER = 0;
 
-        // The flatten configs action type.
-        FLATTEN_CONFIGS = 1;
+    // The flatten configs action type.
+    FLATTEN_CONFIGS = 1;
 
-        // The copy internal action type.
-        COPY_TO_INTERNAL = 2;
+    // The copy internal action type.
+    COPY_TO_INTERNAL = 2;
 
-        // The replicate public config action type.
-        REPLICATE_PUBLIC_CONFIG = 3;
+    // The replicate public config action type.
+    REPLICATE_PUBLIC_CONFIG = 3;
 
-        // Regenerate the test plan.
-        REGENERATE_TEST_PLAN = 4;
-    }
+    // Regenerate the test plan.
+    REGENERATE_TEST_PLAN = 4;
+  }
 
   message ActionCLConfig {
     // Reviewers to add to the created CLs.
@@ -44,7 +44,7 @@ message ConfigPostsubmitProperties {
   }
 
   message AllowedRepo {
-      string repo_name = 1; // all_projects_configs.json repo name
+    string repo_name = 1; // all_projects_configs.json repo name
   }
 
   // Map from ActionType string representation to ActionCLConfig.

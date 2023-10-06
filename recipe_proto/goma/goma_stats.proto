@@ -2,7 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Copied from https://chromium.googlesource.com/infra/goma/client/+/HEAD/lib/goma_stats.proto
+// Copied from
+// https://chromium.googlesource.com/infra/goma/client/+/HEAD/lib/goma_stats.proto
 
 syntax = "proto2";
 
@@ -334,7 +335,7 @@ message GomaErrorStats {
   // The number of errors that were reported to the user.
   optional int64 user_error = 1;
   // NOTE: Deprecated 7/2016.
-  optional int64 DEPRECATED_user_warning = 2 [deprecated=true];
+  optional int64 DEPRECATED_user_warning = 2 [ deprecated = true ];
   // The number of errors that were written to the log file.
   optional int64 log_error = 3;
   // The number of warnings that were written to the log file.
@@ -397,7 +398,7 @@ message MachineInfo {
   // Memory size of the machine in bytes.
   optional int64 memory_size = 4;
   // NOTE: Deprecated 7/2016.
-  repeated uint32 DEPRECATED_cpu_capability = 5 [deprecated=true];
+  repeated uint32 DEPRECATED_cpu_capability = 5 [ deprecated = true ];
 }
 
 // Stats for subprocess (local compiles).
@@ -421,7 +422,7 @@ message GomaStats {
   optional IncludeProcessorStats include_processor_stats = 6;
   optional DepsCacheStats depscache_stats = 7;
   // Deprecated 04/2017. IncludeDirCache has been removed from goma.
-  optional IncludeDirCacheStats incdircache_stats = 8 [deprecated=true];
+  optional IncludeDirCacheStats incdircache_stats = 8 [ deprecated = true ];
   optional HttpRPCStats http_rpc_stats = 9;
   optional GomaErrorStats error_stats = 12;
   optional GomaMismatchStats mismatch_stats = 13;

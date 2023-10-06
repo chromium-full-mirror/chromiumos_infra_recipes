@@ -7,42 +7,42 @@ syntax = "proto3";
 package recipes.chromeos.manifest_doctor;
 
 message ManifestDoctorProperties {
-    reserved 1, 2;
+  reserved 1, 2;
 
-    // Whether or not to push changes to remotes, i.e. whether or not the run
-    // is a dry run.
-    bool push = 3;
+  // Whether or not to push changes to remotes, i.e. whether or not the run
+  // is a dry run.
+  bool push = 3;
 
-    // Minimum milestone to consider for local manifest branching.
-    int32 local_manifest_branching_min_milestone = 4;
+  // Minimum milestone to consider for local manifest branching.
+  int32 local_manifest_branching_min_milestone = 4;
 
-    // Paths within the internal buildspec GS bucket to mirror to external
-    // buildspec bucket.
-    repeated string buildspec_watch_paths = 5;
+  // Paths within the internal buildspec GS bucket to mirror to external
+  // buildspec bucket.
+  repeated string buildspec_watch_paths = 5;
 
-    // Paths within the internal manifest-versions repo to mirror to external
-    // buildspec bucket.
-    repeated string buildspec_watch_paths_legacy = 9;
+  // Paths within the internal manifest-versions repo to mirror to external
+  // buildspec bucket.
+  repeated string buildspec_watch_paths_legacy = 9;
 
-    // Programs/projects to consider for project buildspec creation, e.g.
-    // galaxy/milkyway. Supports wildcards, e.g. galaxy/*.
-    repeated string project_buildspecs = 6;
+  // Programs/projects to consider for project buildspec creation, e.g.
+  // galaxy/milkyway. Supports wildcards, e.g. galaxy/*.
+  repeated string project_buildspecs = 6;
 
-    // Paths within manifest-versions to watch for project buildspec creation.
-    repeated string project_buildspec_watch_paths = 7;
+  // Paths within manifest-versions to watch for project buildspec creation.
+  repeated string project_buildspec_watch_paths = 7;
 
-    // Milestones to consider within project_buildspec_watch_paths.
-    int32 project_buildspec_min_milestone = 8;
+  // Milestones to consider within project_buildspec_watch_paths.
+  int32 project_buildspec_min_milestone = 8;
 
-    // Paths within manifest-versions to watch for buildspec creation for misc.
-    // (non project) repositories.
-    repeated string project_buildspec_watch_paths_other_repos = 10;
+  // Paths within manifest-versions to watch for buildspec creation for misc.
+  // (non project) repositories.
+  repeated string project_buildspec_watch_paths_other_repos = 10;
 
-    // Bucket to use for reading and writing internal buildspecs.
-    // If not set, the default set in the manifest_doctor CLI will be used.
-    string internal_buildspecs_bucket = 11;
+  // Bucket to use for reading and writing internal buildspecs.
+  // If not set, the default set in the manifest_doctor CLI will be used.
+  string internal_buildspecs_bucket = 11;
 
-    // Bucket to use for reading and writing external buildspecs.
-    // If not set, the default set in the manifest_doctor CLI will be used.
-    string external_buildspecs_bucket = 12;
+  // Bucket to use for reading and writing external buildspecs.
+  // If not set, the default set in the manifest_doctor CLI will be used.
+  string external_buildspecs_bucket = 12;
 }

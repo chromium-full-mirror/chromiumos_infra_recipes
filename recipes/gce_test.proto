@@ -55,4 +55,3 @@ message GceTestProperties {
   // Which sharding method should we pass to tast.
   string shard_method = 8;
 }
-

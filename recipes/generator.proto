@@ -22,9 +22,7 @@ enum UprevTargetKind {
 
 // A reviewer must be some user known by Gerrit. Could be an email
 // alias that is processed by GWS.
-message Reviewer {
-  string email = 1;
-}
+message Reviewer { string email = 1; }
 
 // Describes how to send a CL to CQ (i.e., dry run, .
 enum SendToCqPolicy {
@@ -156,7 +154,7 @@ message BranchPolicy {
   SendToCqPolicy existing_cls_policy = 6;
 
   // Policy to follow when for CLs that are still open but behind a merge.
-  OutdatedClsPolicy outdated_cls_policy =  7;
+  OutdatedClsPolicy outdated_cls_policy = 7;
 
   // Policy to follow for retrying open failed CLs.
   RetryClPolicy retry_cl_policy = 8;

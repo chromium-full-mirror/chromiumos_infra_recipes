@@ -34,6 +34,4 @@ message TestRunnerConfig {
 }
 
 // Response describes the outcome of the result_flow.
-message Response {
-  .test_platform.result_flow.State state = 1;
-}
+message Response { .test_platform.result_flow.State state = 1; }

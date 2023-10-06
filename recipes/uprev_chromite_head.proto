@@ -6,6 +6,4 @@ syntax = "proto3";
 
 package recipes.chromeos.uprev_chromite_head;
 
-message UprevChromiteHeadProperties {
-  bool dry_run = 1;
-}
+message UprevChromiteHeadProperties { bool dry_run = 1; }

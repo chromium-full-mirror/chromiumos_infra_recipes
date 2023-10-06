@@ -15,7 +15,8 @@ message ExonerateProperties {
   // executed but results won't be changed.
   bool dry_run = 2;
 
-  // Number of consistent failure(s) in the 10 last results to merit exoneration.
+  // Number of consistent failure(s) in the 10 last results to merit
+  // exoneration.
   int32 consistent_failure_threshold = 3;
 
   // Percent of flaky results in the last 24 hour period to merit exoneration.
@@ -82,18 +83,19 @@ message FailedTestStats {
   int32 flaky_verdict_percent = 6;
 }
 
-message OverallTestStats{
+message OverallTestStats {
   enum OverrideReason {
     UNSPECIFIED = 0;
     TOO_MANY_TESTS_EXONERATED_TOTAL = 1;
     TOO_MANY_TESTS_EXONERATED_PER_TARGET = 2;
   }
 
-  message OverrideInfo{
+  message OverrideInfo {
     // Record why we skipped auto exoneration.
     OverrideReason override_reason = 1;
 
-    // Record which target exceeded the limit. Empty if target limits were not exceeded.
+    // Record which target exceeded the limit. Empty if target limits were not
+    // exceeded.
     string build_target = 2;
   }
   // All failed test stats.

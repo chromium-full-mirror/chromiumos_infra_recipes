@@ -26,10 +26,10 @@ message BuildSDKProperties {
   // Which branch this build should checkout and build an SDK for.
   // This also affects which branch the launched PUpr build will uprev on.
   // Default: Check out the latest snapshot, and build an SDK for main.
-   string manifest_branch = 5;
+  string manifest_branch = 5;
 
   // If given, override the PUpr builder's BranchPolicies with just this one.
   // This enables us, for example, to launch a PUpr job on `main` with a
   // different SendToCqPolicy or with additional reviewers.
-   generator.BranchPolicy pupr_branch_policy = 6;
+  generator.BranchPolicy pupr_branch_policy = 6;
 }

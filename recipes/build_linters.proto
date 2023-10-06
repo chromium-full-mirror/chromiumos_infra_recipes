@@ -9,5 +9,4 @@ package recipes.chromeos.build_linters;
 message BuildLintersProperties {
   // List of projects which are relevant.
   repeated string relevant_projects = 1;
-
 }

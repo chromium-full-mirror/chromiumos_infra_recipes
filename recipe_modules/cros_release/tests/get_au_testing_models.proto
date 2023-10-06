@@ -12,5 +12,4 @@ message GetAuTestingModelsProperties {
   // List of models that should be returned by get_au_testing_models (not
   // necessarily in the same order).
   repeated string expected_models = 2;
-
 }

@@ -11,7 +11,8 @@ import "chromiumos/common.proto";
 
 message CollectProperties {
   // The expected answer from should_collect.
-  chromiumos.BuilderConfig.Orchestrator.ChildSpec.CollectHandling expected_collect = 1;
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec.CollectHandling
+      expected_collect = 1;
 
   // The value in child_specs.
   chromiumos.BuilderConfig.Orchestrator.ChildSpec child_spec = 2;

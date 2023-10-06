@@ -8,26 +8,27 @@ package recipe_modules.chromeos.checkpoint;
 
 import "chromiumos/checkpoint.proto";
 
-message RetrySteps {
-    repeated chromiumos.RetryStep steps = 1;
-}
+message RetrySteps { repeated chromiumos.RetryStep steps = 1; }
 
 message CheckpointProperties {
-    // Whether to run a build in retry mode.
-    // If False, all other fields will be ignored and a standard release build will run.
-    bool retry = 1;
+  // Whether to run a build in retry mode.
+  // If False, all other fields will be ignored and a standard release build
+  // will run.
+  bool retry = 1;
 
-    // BBID of the original build, or the previous retry.
-    string original_build_bbid = 2;
+  // BBID of the original build, or the previous retry.
+  string original_build_bbid = 2;
 
-    // Definitely execute these steps, whether for the first time or as a retry.
-    // May cause cascading retries, i.e. you can't generate new payloads without testing them.
-    RetrySteps exec_steps = 3;
+  // Definitely execute these steps, whether for the first time or as a retry.
+  // May cause cascading retries, i.e. you can't generate new payloads without
+  // testing them.
+  RetrySteps exec_steps = 3;
 
-    // Builder specific retry steps. Only relevant if the build being retried is the orchestrator.
-    map<string, RetrySteps> builder_exec_steps = 4;
+  // Builder specific retry steps. Only relevant if the build being retried is
+  // the orchestrator.
+  map<string, RetrySteps> builder_exec_steps = 4;
 
-    // Whether to populate retry_summary. Irrespective of whether or not the
-    // build is a retry.
-    bool force_retry_summary = 5;
+  // Whether to populate retry_summary. Irrespective of whether or not the
+  // build is a retry.
+  bool force_retry_summary = 5;
 }

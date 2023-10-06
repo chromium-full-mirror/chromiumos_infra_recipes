@@ -16,4 +16,3 @@ message TestProperties {
   // Whether we expect non-zero cost.
   bool expect_cost = 3;
 }
-

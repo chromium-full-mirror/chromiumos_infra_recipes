@@ -22,5 +22,6 @@ message AfdoProcessProperties {
   // addition to those found in the builder config, and provide the location of
   // build artifacts (IMAGE_ZIP) from the child build that created the image
   // used to create the perf file.
-  repeated chromiumos.ArtifactsByService.Toolchain.ArtifactInfo input_artifacts = 4;
+  repeated chromiumos.ArtifactsByService.Toolchain.ArtifactInfo
+      input_artifacts = 4;
 }

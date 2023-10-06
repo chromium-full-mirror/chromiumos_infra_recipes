@@ -53,8 +53,8 @@ message BuildMenuProperties {
   // Check b/246409134 for details.
   bool test_with_rust_code_coverage = 7;
 
-  // Whether to force an prebuilt target on uploading the prebuilts. If the value
-  // is not PREBUILTS_UNSPECIFIED, it overrides the original value.
-  // This field is for testing.
+  // Whether to force an prebuilt target on uploading the prebuilts. If the
+  // value is not PREBUILTS_UNSPECIFIED, it overrides the original value. This
+  // field is for testing.
   chromiumos.BuilderConfig.Artifacts.Prebuilts override_prebuilts_config = 8;
 }

@@ -15,7 +15,6 @@ import "test_platform/skylab_test_runner/common_config.proto";
 import "google/protobuf/timestamp.proto";
 import "chromiumos/test/api/android_provision_metadata.proto";
 
-
 message TestRunnerProperties {
   // request describes the input into the test_runner recipe; is set by the
   // caller.

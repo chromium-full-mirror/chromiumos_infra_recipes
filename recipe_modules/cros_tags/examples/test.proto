@@ -13,4 +13,3 @@ message TestInputProperties {
   // What cq_cl_group should this be in.
   string cq_cl_group_key = 2;
 }
-

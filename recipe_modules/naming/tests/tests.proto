@@ -10,7 +10,8 @@ import "recipes/chromeos/paygen.proto";
 
 message BuildUrlTitleProperties {
   // PaygenRequests in the fake Paygen build.
-  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest paygen_requests = 1;
+  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest
+      paygen_requests = 1;
   // The URL title that should be generated for the build.
   string expected_url_title = 2;
 }

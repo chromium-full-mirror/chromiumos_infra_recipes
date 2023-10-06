@@ -15,11 +15,10 @@ message TestProperties {
 
   // Manifest branch the builder is tracking.
   string manifest_branch = 2;
-
 }
 
 message SetupChrootProperties {
-  enum Update{
+  enum Update {
     NONE = 0;
     TRUE = 1;
     FALSE = 2;

@@ -15,4 +15,3 @@ message BotDropProperties {
 
   float test_rand = 3;
 }
-

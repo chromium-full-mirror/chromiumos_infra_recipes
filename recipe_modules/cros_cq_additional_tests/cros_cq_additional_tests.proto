@@ -7,12 +7,12 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_cq_additional_tests;
 
 message CrosCQAdditionalTestsProperties {
-    
-    // Flag to control additional test run for CQ.
-    // Defaults to False.
-    bool enable_running_additional_tests = 1;
 
-    // Flag to mark criticality of additional test runs for CQ.
-    // Defaults to False.
-    bool run_additional_tests_as_critical = 2; 
+  // Flag to control additional test run for CQ.
+  // Defaults to False.
+  bool enable_running_additional_tests = 1;
+
+  // Flag to mark criticality of additional test runs for CQ.
+  // Defaults to False.
+  bool run_additional_tests_as_critical = 2;
 }

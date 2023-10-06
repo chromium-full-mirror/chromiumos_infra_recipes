@@ -12,11 +12,11 @@ message BatchPaygenRequestDictsBatchingProperties {
   // Max batch size value.
   int32 max_batch_size = 1;
   // Tuple of serialized paygen requests for batching.
-  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest paygen_requests = 2;
+  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest
+      paygen_requests = 2;
   // Tuple of serialized paygen requests expected for the batches.
-  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest expected_batches = 3;
+  repeated recipes.chromeos.paygen.PaygenProperties.PaygenRequest
+      expected_batches = 3;
 }
 
-message CreateAuTestConfigsProperties {
-
-}
+message CreateAuTestConfigsProperties {}

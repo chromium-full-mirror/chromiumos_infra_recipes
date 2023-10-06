@@ -24,7 +24,7 @@ message ManifestLocation {
   string manifest_gs_path = 4;
 }
 
-enum GitStrategy{
+enum GitStrategy {
   UNSPECIFIED = 0;
   MERGE = 1;
   CHERRY_PICK = 2;
@@ -32,9 +32,7 @@ enum GitStrategy{
 
 message CrosSourceProperties {
 
-  message SnapshotCas {
-    string digest = 1;
-  }
+  message SnapshotCas { string digest = 1; }
 
   // Used to specify a custom manifest snapshot to sync to as a
   // snapshot.xml file residing in the isolate.

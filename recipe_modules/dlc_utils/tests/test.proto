@@ -18,5 +18,5 @@ message DlcUtilsTestProperties {
   bool use_local_path = 3;
 
   // Expected artifacts returned for test case.
-  map<string,string> expected_artifacts = 4;
+  map<string, string> expected_artifacts = 4;
 }

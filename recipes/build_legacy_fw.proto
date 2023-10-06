@@ -11,7 +11,7 @@ import "chromiumos/common.proto";
 message BuildLegacyFwProperties {
   // The build target being built.  Replaced with build_targets below.
   // This will be used if build_targets is empty.
-  chromiumos.BuildTarget build_target = 1 [deprecated=true];
+  chromiumos.BuildTarget build_target = 1 [ deprecated = true ];
 
   // Firmware location.  See chromite.api.firmware.
   chromiumos.FwLocation firmware_location = 2;

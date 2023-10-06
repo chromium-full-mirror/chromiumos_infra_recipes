@@ -13,7 +13,8 @@ message CrosReleaseProperties {
   // The bucket where should push images to (e.g. 'chromeos-releases').
   string release_bucket = 1;
 
-  // The bucket where we should source paygen images from, defaults to release_bucket.
+  // The bucket where we should source paygen images from, defaults to
+  // release_bucket.
   string src_paygen_bucket = 2;
 
   // The channels to consider when pushing and signing the image.

@@ -54,4 +54,3 @@ message BuildParallelsImageProperties {
   // and populates dummy values for image_name, image_sha256 and image_size.
   bool test_mode = 11;
 }
-

@@ -8,9 +8,7 @@ package recipe_modules.chromeos.chrome;
 
 message ChromeProperties {
 
-  message DepsCas {
-    string digest = 1;
-  }
+  message DepsCas { string digest = 1; }
 
   // Used to specify a custom DEPS file to gclient sync to as a
   // DEPS file residing in the isolate.

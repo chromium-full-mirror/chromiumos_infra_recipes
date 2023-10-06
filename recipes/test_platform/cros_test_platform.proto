@@ -38,12 +38,13 @@ message CrosTestPlatformProperties {
   // response is only set for builds with a single request.
   //
   // This property is set by the recipe execution, not by the caller.
-  .test_platform.steps.ExecuteResponse response = 4 [deprecated = true];
+  .test_platform.steps.ExecuteResponse response = 4 [ deprecated = true ];
 
   // responses describes the responses from a cros_test_platform recipe.
   //
   // This property is set by the recipe execution, not by the caller.
-  map<string, .test_platform.steps.ExecuteResponse> responses = 6 [deprecated = true];
+  map<string, .test_platform.steps.ExecuteResponse> responses = 6
+      [ deprecated = true ];
 
   // This consists of an ExecuteResponses proto, compressed and converted to
   // base64 encoding for safe transmission as a string.
@@ -53,7 +54,7 @@ message CrosTestPlatformProperties {
   // converted to base64 encoding for safe transmission as a string. It is an
   // interim measure for switching off the responses field, which has become
   // an urgent problem for message size. See crbug.com/1073551
-  string compressed_json_responses = 9 [deprecated = true];
+  string compressed_json_responses = 9 [ deprecated = true ];
 
   // This recipe exports to ResultDB by default only if the build is a top-level
   // build (i.e. it has no parent build). The following prop forces the recipe

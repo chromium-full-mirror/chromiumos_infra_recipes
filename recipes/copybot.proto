@@ -8,6 +8,4 @@ package recipes.chromeos.copybot;
 
 import "chromite/api/copybot.proto";
 
-message CopybotProperties {
-  chromite.api.RunCopybotRequest request = 1;
-};
+message CopybotProperties { chromite.api.RunCopybotRequest request = 1; };

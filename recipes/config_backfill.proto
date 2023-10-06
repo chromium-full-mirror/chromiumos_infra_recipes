@@ -3,19 +3,20 @@ syntax = "proto3";
 package recipes.chromeos.config_backfill;
 
 message ConfigBackfillProperties {
-    // Tuple of repo url and path inside a repo
-    message RepoPath {
-        string repo = 1; // URL to git repo
-        string path = 2; // path inside repo
-    }
+  // Tuple of repo url and path inside a repo
+  message RepoPath {
+    string repo = 1; // URL to git repo
+    string path = 2; // path inside repo
+  }
 
-    message ProjectConfig {
-        string   public_yaml_path = 1; // path to public model.yaml relative to src/overlays
-        RepoPath private_yaml = 2;     // private model.yaml
-        string   hwid_key     = 3;     // key for HWID database
-        string   project_name = 4;     // project name
-        string   program_name = 5;     // program name
-    }
+  message ProjectConfig {
+    string public_yaml_path =
+        1; // path to public model.yaml relative to src/overlays
+    RepoPath private_yaml = 2; // private model.yaml
+    string hwid_key = 3;       // key for HWID database
+    string project_name = 4;   // project name
+    string program_name = 5;   // program name
+  }
 
-    repeated ProjectConfig configs = 7;
+  repeated ProjectConfig configs = 7;
 }

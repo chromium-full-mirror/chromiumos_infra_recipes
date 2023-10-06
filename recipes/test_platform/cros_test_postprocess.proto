@@ -9,14 +9,14 @@ package recipes.chromeos.test_platform.cros_test_postprocess;
 import "test_platform/common/task.proto";
 
 message TestResult {
-  string path = 1 [deprecated=true];
+  string path = 1 [ deprecated = true ];
 
   // LogData specifies the location of the logs of a test.
   .test_platform.common.TaskLogData log_data = 2;
 }
 
 message CrosTestPostprocessRequest {
-  string image_archive_path = 1 [deprecated=true];
+  string image_archive_path = 1 [ deprecated = true ];
 
   // TestResults to process.
   repeated TestResult test_results = 2;

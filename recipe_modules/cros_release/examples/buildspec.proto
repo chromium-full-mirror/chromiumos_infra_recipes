@@ -7,6 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_release.examples;
 
 message BuildspecProperties {
-    // Manifest Branch to use.
-    string manifest_branch = 1;
+  // Manifest Branch to use.
+  string manifest_branch = 1;
 }

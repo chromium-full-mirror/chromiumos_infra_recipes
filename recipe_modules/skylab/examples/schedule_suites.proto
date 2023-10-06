@@ -7,9 +7,9 @@ syntax = "proto3";
 package recipe_modules.chromeos.skylab.examples;
 
 message ScheduleSuitesProperties {
-    // Whether to pass build_target_critical_allowlist or None.
-    bool pass_build_target_critical_allowlist = 1;
+  // Whether to pass build_target_critical_allowlist or None.
+  bool pass_build_target_critical_allowlist = 1;
 
-    // List of build targets to pass to `schedule_suites`.
-    repeated string build_target_critical_allowlist = 2;
+  // List of build targets to pass to `schedule_suites`.
+  repeated string build_target_critical_allowlist = 2;
 }

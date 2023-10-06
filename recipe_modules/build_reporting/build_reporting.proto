@@ -7,6 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.build_reporting;
 
 message BuildReportingProperties {
-    string pubsub_project = 1; // Cloud project containing the pub/sub topic
-    string pubsub_topic   = 2; // Topic name to send build reports to
+  string pubsub_project = 1; // Cloud project containing the pub/sub topic
+  string pubsub_topic = 2;   // Topic name to send build reports to
 }

@@ -7,6 +7,6 @@ syntax = "proto3";
 package recipe_modules.chromeos.cts_results_archive;
 
 message CTSResultsArchiveProperties {
-    string cts_results_gsurl = 1;
-    string cts_apfe_gsurl = 2;
+  string cts_results_gsurl = 1;
+  string cts_apfe_gsurl = 2;
 }

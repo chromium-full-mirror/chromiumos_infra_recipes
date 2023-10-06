@@ -21,4 +21,3 @@ message TestInputProperties {
   // Whether to pass ignore_missing_projects to apply_changes.
   bool ignore_missing_projects = 4;
 }
-

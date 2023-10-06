@@ -9,26 +9,26 @@ package recipe_modules.chromeos.conductor;
 import "chromiumos/conductor.proto";
 
 message ConductorProperties {
-    // Cipd ref to use for conductor.
-    // Defaults to "chromiumos/infra/conductor/{$platform}".
-    string conductor_cipd_package = 1;
+  // Cipd ref to use for conductor.
+  // Defaults to "chromiumos/infra/conductor/{$platform}".
+  string conductor_cipd_package = 1;
 
-    // Cipd ref to use for conductor.
-    // Defaults to "staging" or "prod".
-    string conductor_cipd_ref = 2;
+  // Cipd ref to use for conductor.
+  // Defaults to "staging" or "prod".
+  string conductor_cipd_ref = 2;
 
-    // If set, will use the conductor for child builds scheduling
-    // instead of the native buildbucket collect function.
-    bool enable_conductor = 3;
+  // If set, will use the conductor for child builds scheduling
+  // instead of the native buildbucket collect function.
+  bool enable_conductor = 3;
 
-    // Whether to pass --dryrun to the conductor.
-    bool conductor_dryrun = 6;
+  // Whether to pass --dryrun to the conductor.
+  bool conductor_dryrun = 6;
 
-    // Seconds to wait between polling builders.
-    int32 polling_interval_seconds = 4;
+  // Seconds to wait between polling builders.
+  int32 polling_interval_seconds = 4;
 
-    // Maps collect names to CollectConfigs.
-    // Collect names are strings used to identify different collects throughout
-    // the lifetime of the build.
-    map<string, chromiumos.CollectConfig> collect_configs = 5;
+  // Maps collect names to CollectConfigs.
+  // Collect names are strings used to identify different collects throughout
+  // the lifetime of the build.
+  map<string, chromiumos.CollectConfig> collect_configs = 5;
 }

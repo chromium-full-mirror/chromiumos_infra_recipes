@@ -7,13 +7,13 @@ syntax = "proto3";
 package recipes.chromeos.test_platform.ctp_traffic_generator;
 
 message Properties {
-    // Maximum runtime (in seconds) for a CTP build to be replayed.
-    // Defaults to 20 minutes (1200s).
-    int32 ctp_replay_max_runtime = 1;
+  // Maximum runtime (in seconds) for a CTP build to be replayed.
+  // Defaults to 20 minutes (1200s).
+  int32 ctp_replay_max_runtime = 1;
 
-    // Number of CTP builds to replay. Defaults to 5.
-    int32 ctp_num_replay_builds = 2;
+  // Number of CTP builds to replay. Defaults to 5.
+  int32 ctp_num_replay_builds = 2;
 
-    // CTP builder (e.g. "cros_test_platform-staging") to replay prod runs in.
-    string ctp_builder = 3;
+  // CTP builder (e.g. "cros_test_platform-staging") to replay prod runs in.
+  string ctp_builder = 3;
 }

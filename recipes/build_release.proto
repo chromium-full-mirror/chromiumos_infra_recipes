@@ -6,7 +6,7 @@ syntax = "proto3";
 
 package recipes.chromeos.build_release;
 
-message DebugSymbolUploadProperties{
+message DebugSymbolUploadProperties {
   // Maximum number of concurrent workers to be ran in the builder.
   int32 worker_count = 1;
 

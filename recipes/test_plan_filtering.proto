@@ -7,6 +7,6 @@ syntax = "proto3";
 package recipes.chromeos.test_plan_filtering;
 
 message TestPlanFilteringProperties {
-// Placeholder proto - as of now no properties are used, but if later they are
-// required, they may be added here.
+  // Placeholder proto - as of now no properties are used, but if later they are
+  // required, they may be added here.
 }

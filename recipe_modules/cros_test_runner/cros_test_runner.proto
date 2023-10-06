@@ -7,16 +7,16 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_test_runner;
 
 message CrosTestRunnerModuleProperties {
-    // Version describes which cros_test_runner binary version to use.
-    message Version {
-        // Use the CIPD version with this label.
-        // e.g. prod
-        string cipd_label = 1;
-        // The CIPD package to use, including '${platform}' literal.
-        // This is only needed if you want to override the default package,
-        // which is chromiumos/infra/cros_test_runner/${platform}
-        string cipd_package = 2;
-    }
+  // Version describes which cros_test_runner binary version to use.
+  message Version {
+    // Use the CIPD version with this label.
+    // e.g. prod
+    string cipd_label = 1;
+    // The CIPD package to use, including '${platform}' literal.
+    // This is only needed if you want to override the default package,
+    // which is chromiumos/infra/cros_test_runner/${platform}
+    string cipd_package = 2;
+  }
 
-    Version version = 1;
+  Version version = 1;
 }

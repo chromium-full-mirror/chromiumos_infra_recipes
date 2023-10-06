@@ -9,9 +9,9 @@ package recipe_modules.chromeos.checkpoint.tests;
 import "chromiumos/checkpoint.proto";
 
 message TestProperties {
-    // Steps to pass in.
-    repeated chromiumos.RetryStep steps = 1;
+  // Steps to pass in.
+  repeated chromiumos.RetryStep steps = 1;
 
-   // Expected steps.
-    repeated chromiumos.RetryStep expected_steps = 2;
+  // Expected steps.
+  repeated chromiumos.RetryStep expected_steps = 2;
 }

@@ -12,5 +12,4 @@ message TestProperties {
 
   // The expected SourceSpec value in metadata.json.
   luci.resultdb.v1.SourceSpec expected_source_spec = 1;
-
 }
