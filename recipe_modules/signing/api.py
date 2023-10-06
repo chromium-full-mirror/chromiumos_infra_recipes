@@ -2,9 +2,14 @@
 # Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""Module providing signing functionality."""
+
+import collections
 import copy
 import datetime
 import json
+import os
 import re
 from json import JSONDecodeError
 from pathlib import Path
@@ -12,8 +17,9 @@ from typing import Any, Dict, List, NewType, Optional, Tuple, Union
 
 from google.protobuf.text_format import Parse
 
-from PB.chromite.api.image import SignImageRequest
+from PB.chromite.api.image import SignImageRequest, SignImageResponse
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
+from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
@@ -500,6 +506,8 @@ class SigningApi(recipe_api.RecipeApi):
             self.signing_docker_image,
         ])
 
+        self.upload_unsigned_artifacts(archive_dir, channels)
+
         # TODO(b/296086340): Remove once stable and in use.
         with self.m.failures.ignore_exceptions():
           request = SignImageRequest(
@@ -509,26 +517,82 @@ class SigningApi(recipe_api.RecipeApi):
                       path=self.m.path.abspath(archive_dir),
                       location=common_pb2.Path.Location.OUTSIDE,
                   )), docker_image=self.signing_docker_image)
-          self.m.cros_build_api.ImageService.SignImage(request)
+          response = self.m.cros_build_api.ImageService.SignImage(request)
+        self.upload_signed_artifacts(response)
 
-        # TODO(b/302132827): Remove ignore_exceptions when stable.
-        with self.m.failures.ignore_exceptions():
-          self.upload_signed_artifacts(archive_dir)
+  def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
+    """Get the gs path for the given channel.
+
+    Example:
+      gs://{bucket}/dev-channel/atlas-signingnext/123.0.0/
+    """
+    channel = self.m.cros_release_util.channel_to_long_string(channel)
+    bucket = self.gs_upload_bucket
+    build_target = self.m.build_menu.build_target.name
+    version = self.m.cros_version.version.platform_version
+    return f'gs://{bucket}/{channel}/{build_target}/{version}/'
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
-  def upload_signed_artifacts(self, output_dir: Path) -> None:
+  def upload_unsigned_artifacts(self, archive_dir: Path,
+                                channels: List['common_pb2.Channel']) -> None:
+    """Uploads all files in archive_dir to GS using gsutil rsync."""
+
+    with self.m.step.nest(
+        f'upload unsigned artifacts to {self.gs_upload_bucket} bucket'):
+      for channel in channels:
+        gs_dir = self._get_gs_path_for_channel(channel)
+
+        with self.m.step.nest(
+            f'upload unsigned artifacts for {common_pb2.Channel.Name(channel)}'
+        ) as presentation:
+          presentation.links['gs upload dir'] = (
+              'https://console.cloud.google.com/storage/browser/%s' %
+              gs_dir[len('gs://'):])
+
+          # -i so we don't clobber existing destination artifacts.
+          self.m.gsutil(['rsync', '-r', '-i', archive_dir, gs_dir],
+                        parallel_upload=True, multithreaded=True,
+                        timeout=GSUTIL_TIMEOUT_SECONDS)
+
+  @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
+                     delay=datetime.timedelta(seconds=1))
+  def upload_signed_artifacts(self, response: SignImageResponse) -> None:
     """Uploads all files in output_dir to GS using gsutil rsync."""
     with self.m.step.nest(
         f'upload signed artifacts to {self.gs_upload_bucket} bucket'
     ) as presentation:
-      gs_dir = f'gs://{self.gs_upload_bucket}/{self.m.build_menu.artifacts_build_path()}'
+      to_upload_by_channel = collections.defaultdict(lambda: [])
 
-      presentation.links['gs upload dir'] = (
-          'https://console.cloud.google.com/storage/browser/%s' %
-          gs_dir[len('gs://'):])
+      # Group artifacts by channel so that we can organize steps better.
+      for archive_artifacts in response.signed_artifacts.archive_artifacts:
+        channel = archive_artifacts.channel
+        if not channel:
+          presentation.step_text = 'skipping artifacts with no channel'
+          continue
+        for signed_artifact in archive_artifacts.signed_artifacts:
+          # TODO(b/302148521): Surface failures.
+          if signed_artifact.status == signing_pb2.STATUS_SUCCESS:
+            to_upload_by_channel[channel].append(
+                signed_artifact.signed_artifact_name)
 
-      # -i so we don't clobber existing destination artifacts.
-      self.m.gsutil(['rsync', '-r', '-i', output_dir, gs_dir],
-                    parallel_upload=True, multithreaded=True,
-                    timeout=GSUTIL_TIMEOUT_SECONDS)
+      if not to_upload_by_channel:
+        presentation.step_text = 'no signed artifacts'
+        return
+
+      # Upload the artifacts for each channel.
+      for channel, artifacts in to_upload_by_channel.items():
+        gs_dir = self._get_gs_path_for_channel(channel)
+        with self.m.step.nest(
+            f'upload signed artifacts for {common_pb2.Channel.Name(channel)}'
+        ) as pres:
+          pres.links['gs upload dir'] = (
+              'https://console.cloud.google.com/storage/browser/%s' %
+              gs_dir[len('gs://'):])
+
+          for artifact in artifacts:
+            # -n so we don't clobber existing destination artifacts.
+            self.m.gsutil([
+                'cp', '-n',
+                os.path.join(response.output_archive_dir, artifact), gs_dir
+            ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)

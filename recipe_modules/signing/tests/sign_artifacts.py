@@ -5,8 +5,10 @@
 
 """Tests for sign_artifacts."""
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
+from PB.chromite.api.image import SignImageResponse
+from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_FACTORY)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
@@ -19,6 +21,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'build_menu',
+    'cros_build_api',
     'signing',
 ]
 
@@ -81,6 +84,39 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
+  sample_response = SignImageResponse(
+      output_archive_dir='/archive_dir/',
+      signed_artifacts=signing_pb2
+      .BuildTargetSignedArtifacts(archive_artifacts=[
+          signing_pb2.ArchiveArtifacts(
+              build_target='kukui', channel=CHANNEL_DEV, signed_artifacts=[
+                  signing_pb2.SignedArtifact(
+                      status=signing_pb2.STATUS_SUCCESS,
+                      signed_artifact_name='foo.bin',
+                  ),
+                  signing_pb2.SignedArtifact(
+                      status=signing_pb2.STATUS_FAILURE,
+                      signed_artifact_name='bad-artifact',
+                  )
+              ]),
+          signing_pb2.ArchiveArtifacts(
+              build_target='kukui', channel=CHANNEL_CANARY, signed_artifacts=[
+                  signing_pb2.SignedArtifact(
+                      status=signing_pb2.STATUS_SUCCESS,
+                      signed_artifact_name='bar.bin',
+                  ),
+              ]),
+          signing_pb2.ArchiveArtifacts(
+              build_target='kukui',
+              # no channel, gets skipped.
+              signed_artifacts=[
+                  signing_pb2.SignedArtifact(
+                      status=signing_pb2.STATUS_SUCCESS,
+                      signed_artifact_name='no-channel.bin',
+                  ),
+              ])
+      ]))
+
   yield api.build_menu.test(
       'basic',
       api.properties(
@@ -90,12 +126,57 @@ def GenTests(api: RecipeTestApi):
                       SigningProperties(local_signing=True,
                                         gs_upload_bucket='chromeos-releases'))
           }),
+      api.cros_build_api.set_api_return('sign artifacts',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sample_response)),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil rsync',
+          ['gs://chromeos-releases/dev-channel/kukui/1234.56.0/']),
       api.post_check(post_process.MustRun,
                      'sign artifacts.call chromite.api.ImageService/SignImage'),
       api.post_check(
-          post_process.MustRun,
-          'sign artifacts.upload signed artifacts to chromeos-releases bucket.gsutil rsync'
-      ), api.post_process(post_process.DropExpectation), build_target='kukui',
+          post_process.DoesNotRun,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_UNSPECIFIED'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_DEV.gsutil cp',
+          [
+              '/archive_dir/foo.bin',
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/'
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp',
+          [
+              '/archive_dir/bar.bin',
+              'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
+          ]), api.post_process(post_process.DropExpectation),
+      build_target='kukui', builder='kukui-release-main')
+
+  yield api.build_menu.test(
+      'no-signed-artifacts',
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='chromeos-releases'))
+          }),
+      api.cros_build_api.set_api_return('sign artifacts',
+                                        'ImageService/SignImage', '{}'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil rsync',
+          ['gs://chromeos-releases/dev-channel/kukui/1234.56.0/']),
+      api.post_check(post_process.MustRun,
+                     'sign artifacts.call chromite.api.ImageService/SignImage'),
+      api.post_check(
+          post_process.StepTextEquals,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket',
+          'no signed artifacts'),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
       builder='kukui-release-main')
 
   yield api.build_menu.test(

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module providing signing functionality."""
+
 from PB.recipe_modules.chromeos.signing.signing import (SigningProperties)
 
 DEPS = [
@@ -17,6 +19,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_infra_config',
+    'cros_release_util',
     'cros_version',
     'easy',
     'failures',
