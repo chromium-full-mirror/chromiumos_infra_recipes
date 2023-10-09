@@ -6,6 +6,8 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
+
 from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import Channel
@@ -58,6 +60,16 @@ def RunSteps(api):
   step_info.runtime.end.FromDatetime(api.time.utcnow())
   step_info.status = StepDetails.STATUS_SUCCESS
   step_info.publish()
+
+  api.build_reporting.publish_build_artifacts(
+      UploadedArtifacts(
+          'chromeos-image-archive',
+          'build_target-release/R12-12345.0.0',
+          {
+              'DEBUG_SYMBOLS': ['/path/to/debug.tgz',],
+              # Unsupported, should not be included in pubsub.
+              'SDK_TARBALL': ['/path/to/tarball.tgz',]
+          }))
 
   # Publish the branch.
   api.build_reporting.publish_branch('main')

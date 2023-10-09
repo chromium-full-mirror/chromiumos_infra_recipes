@@ -25,13 +25,16 @@ import contextlib
 from typing import Dict
 
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
+from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 from google.protobuf.json_format import MessageToJson
 
 # infra/proto/src/chromiumos/builder_report.proto
-from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.build_report import BuildReport, URI
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
+
 
 # TODO(b/200713946): Lookup the builder region and use that endpoint
 PUBSUB_ENDPOINT = 'us-central1-pubsub.googleapis.com:443'
@@ -502,3 +505,41 @@ class BuildReportingApi(recipe_api.RecipeApi):
         dlc_artifact_details.id = metadata['id']
 
     self.publish(build_report)
+
+  def publish_build_artifacts(self, uploaded_artifacts: UploadedArtifacts):
+    """Publish metadata about the specified artifacts(s).
+
+    Args:
+      uploaded_artifacts: Information about uploaded artifacts as returned
+        by cros_artifacts.upload_artifacts.
+    """
+    with self.m.step.nest('publish artifacts to pubsub') as presentation:
+      presentation.logs['uploaded artifacts'] = str(uploaded_artifacts)
+
+      build_report = BuildReport()
+      build_report_supported_artifacts = {
+          BuilderConfig.Artifacts.DEBUG_SYMBOLS:
+              (BuildReport.BuildArtifact.DEBUG_ARCHIVE, 'debug.tgz'),
+      }
+      files_by_artifact = uploaded_artifacts.files_by_artifact
+
+      for artifact_type, files in files_by_artifact.items():
+        enum_val = BuilderConfig.Artifacts.ArtifactTypes.Value(artifact_type)
+        build_report_artifact_type, desired_file = build_report_supported_artifacts.get(
+            enum_val, (None, None))
+        # Supported artifact.
+        if build_report_artifact_type:
+          # TODO(b/303704765): Throw error if file is missing?
+          if desired_file in [self.m.path.basename(f) for f in files]:
+            uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
+                                             uploaded_artifacts.gs_path,
+                                             desired_file)
+            build_report.artifacts.append(
+                BuildReport.BuildArtifact(
+                    type=build_report_artifact_type,
+                    uri=URI(
+                        gcs=uri,
+                    ),
+                ))
+
+      self.publish(build_report)

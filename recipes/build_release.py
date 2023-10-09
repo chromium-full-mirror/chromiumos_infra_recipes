@@ -195,6 +195,7 @@ def DoRunSteps(api, config, properties):
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,
               path=uploaded_artifacts.gs_path)
+          api.build_reporting.publish_build_artifacts(uploaded_artifacts)
           # Copy over the prebuilt DLCs to the upload bucket.
           prebuilt_dlcs = api.dlc_utils.copy_prebuilt_dlcs(
               uploaded_artifacts.gs_bucket,
