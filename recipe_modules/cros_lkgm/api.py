@@ -105,8 +105,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         raise StepFailure(
             'collect_public_build called but no public build exists')
 
+      #TODO: Bring down the collect timeout after investigation. b/304094706
       self._public_build_results = self.m.buildbucket.collect_build(
-          self._public_build.id, step_name='collect', timeout=60 * 60 * 8)
+          self._public_build.id, step_name='collect', timeout=60 * 60 * 13)
 
   def _success_build_count(self, builds):
     return sum([b.status == common_pb2.SUCCESS for b in builds])

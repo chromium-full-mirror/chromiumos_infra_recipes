@@ -3435,7 +3435,7 @@ Args:
 A module to handle the LGKM process and other interactions between the
 Release & Public builders.
 
-&mdash; **def [cleanup\_cls](/recipe_modules/cros_lkgm/api.py#173)(self):**
+&mdash; **def [cleanup\_cls](/recipe_modules/cros_lkgm/api.py#174)(self):**
 
 Performs the LGKM cleaning-up process.
 
@@ -3448,7 +3448,7 @@ Collects results from the public build.
 
 Returns: (common_pb2.Build) The scheduled build.
 
-&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#126)(self, release_build_results, use_branch=False):**
+&mdash; **def [do\_lkgm](/recipe_modules/cros_lkgm/api.py#127)(self, release_build_results, use_branch=False):**
 
 Performs the LGKM process if the build is an LKGM candidate.
 
