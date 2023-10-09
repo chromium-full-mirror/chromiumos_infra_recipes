@@ -112,7 +112,7 @@
       "",
       "--paygen",
       "--branch",
-      "main"
+      "staging-snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {

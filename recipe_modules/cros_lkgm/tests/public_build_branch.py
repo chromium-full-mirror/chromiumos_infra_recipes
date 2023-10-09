@@ -45,9 +45,7 @@ def GenTests(api):
   yield api.test(
       'main-branch',
       api.test_util.test_orchestrator(
-          experiments=[
-              'chromeos.cros_infra_config.release_tot_builds_snapshot'
-          ], bucket='release', builder='release-main-orchestrator').build,
+          bucket='release', builder='release-main-orchestrator').build,
       api.properties(expected_ref='refs/heads/snapshot'),
       api.properties(expected_builder='public-main-orchestrator'),
       api.post_process(post_process.DropExpectation),
@@ -56,10 +54,7 @@ def GenTests(api):
   yield api.test(
       'staging-main-branch',
       api.test_util.test_orchestrator(
-          experiments=[
-              'chromeos.cros_infra_config.release_tot_builds_snapshot'
-          ], bucket='staging',
-          builder='staging-release-main-orchestrator').build,
+          bucket='staging', builder='staging-release-main-orchestrator').build,
       api.properties(expected_ref='refs/heads/staging-snapshot'),
       api.properties(expected_builder='staging-public-main-orchestrator'),
       api.post_process(post_process.DropExpectation),

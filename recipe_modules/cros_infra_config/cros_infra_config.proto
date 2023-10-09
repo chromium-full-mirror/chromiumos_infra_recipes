@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_infra_config;
 
 message CrosInfraConfigProperties {
+  reserved 5;
   // For testing, this is a reference to what refspec to use when fetching.
   // {CONFIG}.binaryproto.  Example values:
   // - '': tip-of-tree (default)
@@ -31,9 +32,6 @@ message CrosInfraConfigProperties {
   // Feature flag: whether to honor gitiles_commit.ref when forcing host
   // and project to the manifest.
   bool honor_gitiles_commit_ref = 4;
-
-  // Feature flag: build ToT release builds from the snapshot manifest.
-  bool release_tot_builds_snapshot = 5;
 
   // Whether builders should override release channels from channel changer.
   bool should_override_release_channels = 6;

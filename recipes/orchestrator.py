@@ -228,7 +228,7 @@ def GenTests(api: RecipeTestApi):
       bot_size='medium')
 
   yield api.orch_menu.test(
-      'release-orchestrator-snapshot-experiment',
+      'release-orchestrator-snapshot',
       data.ctp_normal,
       api.properties(
           **{
@@ -257,8 +257,7 @@ def GenTests(api: RecipeTestApi):
       with_history=True,
       collect_builds=data.builds,
       with_manifest_refs=True,
-      bot_size='medium',
-      experiments=['chromeos.cros_infra_config.release_tot_builds_snapshot'])
+      bot_size='medium')
 
   yield api.orch_menu.test('release-orchestrator-cq',
                            api.post_check(post_process.DoesNotRun, 'run_tests'),

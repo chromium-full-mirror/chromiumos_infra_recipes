@@ -19,7 +19,6 @@ from google.protobuf.json_format import MessageToJson
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromite.api.payload import GenerationResponse, GenerationRequest
-from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import CrosInfraConfigProperties
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 from recipe_engine import post_process
@@ -428,10 +427,7 @@ def GenTests(api: RecipeTestApi):
                   AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                        applicable_models=['woomax']),
               ],
-          }]), **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
-          }),
+          }])),
       generate_payload_response(
           api, versioned_artifacts=[{
               'local_path': '/tmp/aohiwdadoi/delta.bin',
@@ -475,10 +471,7 @@ def GenTests(api: RecipeTestApi):
                                            applicable_models=['woomax'])
                   ]
               },
-          ]), **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
-          }),
+          ])),
       generate_payload_response(
           api, versioned_artifacts=[{
               'local_path': '/tmp/aohiwdadoi/delta.bin',
@@ -511,10 +504,7 @@ def GenTests(api: RecipeTestApi):
                                            applicable_models=['woomax'])
                   ]
               },
-          ]), **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
-          }),
+          ])),
       generate_legacy_payload_response(api,
                                        local_path='/tmp/aohiwdadoi/delta.bin'),
       api.post_check(post_process.MustRun, 'doing paygen'),
@@ -925,10 +915,7 @@ def GenTests(api: RecipeTestApi):
                   AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
                                        applicable_models=['woomax']),
               ],
-          }]), **{
-              '$chromeos/cros_infra_config':
-                  CrosInfraConfigProperties(release_tot_builds_snapshot=True)
-          }),
+          }])),
       generate_payload_response(
           api, versioned_artifacts=[{
               'local_path': '/tmp/aohiwdadoi/delta.bin',

@@ -31,7 +31,7 @@
   * [cros_debug](#recipe_modules-cros_debug)
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
-  * [cros_infra_config](#recipe_modules-cros_infra_config)
+  * [cros_infra_config](#recipe_modules-cros_infra_config) &mdash; Module providing builder config.
   * [cros_lkgm](#recipe_modules-cros_lkgm)
   * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) &mdash; API for LvfsMirror script.
   * [cros_prebuilts](#recipe_modules-cros_prebuilts) &mdash; API for uploading CrOS prebuilts to Google Storage.
@@ -323,7 +323,6 @@
   * [cros_infra_config:tests/get_realms_list](#recipes-cros_infra_config_tests_get_realms_list)
   * [cros_infra_config:tests/lookup_with_bucket](#recipes-cros_infra_config_tests_lookup_with_bucket)
   * [cros_infra_config:tests/override_channels](#recipes-cros_infra_config_tests_override_channels)
-  * [cros_infra_config:tests/release_tot_builds_snapshot](#recipes-cros_infra_config_tests_release_tot_builds_snapshot)
   * [cros_infra_config:tests/set_build_criticality](#recipes-cros_infra_config_tests_set_build_criticality)
   * [cros_infra_config:tests/utils](#recipes-cros_infra_config_tests_utils)
   * [cros_lkgm:examples/cleanup_cls](#recipes-cros_lkgm_examples_cleanup_cls)
@@ -3182,14 +3181,16 @@ Generate start time in seconds.
 [DEPS](/recipe_modules/cros_infra_config/__init__.py#8): [easy](#recipe_modules-easy), [gitiles](#recipe_modules-gitiles), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 
-#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#61)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Module providing builder config.
+
+#### **class [CrosInfraConfigApi](/recipe_modules/cros_infra_config/api.py#62)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for accessing data in the chromeos/infra/config repo
 
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#708)(self, builds: List[Build]):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#704)(self, builds: List[Build]):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -3201,7 +3202,7 @@ Args:
 Returns:
   A dict mapping build target names to builds.
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#144)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/cros_infra_config/api.py#141)(self):**
 
 Return the config for this builder.
 
@@ -3211,7 +3212,7 @@ which caches the data.
 Returns:
   BuilderConfig for this builder.
 
-&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#157)(self):**
+&emsp; **@property**<br>&mdash; **def [config\_or\_default](/recipe_modules/cros_infra_config/api.py#154)(self):**
 
 Config or default config.
 
@@ -3221,7 +3222,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#585)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#581)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
 
 Configure the builder.
 
@@ -3247,39 +3248,39 @@ Args:
 Returns:
   The BuilderConfig for this builder, if one was found.
 
-&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#568)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#564)(self, config: Optional[BuilderConfig]=None):**
 
 Configure the builder's knowledge of whether it's running in staging.
 
 Args:
   config: This build's BuilderConfig.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#213)(self, filename: str, step_test_data: recipe_test_api.StepTestData, timeout: Optional[int]=None, repo: str=CHROME_OS_INFRA_CONFIG_REPO_URL, msg: Optional[message.Message]=None):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_binproto](/recipe_modules/cros_infra_config/api.py#210)(self, filename: str, step_test_data: recipe_test_api.StepTestData, timeout: Optional[int]=None, repo: str=CHROME_OS_INFRA_CONFIG_REPO_URL, msg: Optional[message.Message]=None):**
 
 Helper method to fetch a file from gitiles.
 
-&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#134)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#131)(self):**
 
 Return the list of experiments active for this build.
 
-&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#139)(self):**
+&emsp; **@property**<br>&mdash; **def [experiments\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#136)(self):**
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#367)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#363)(self):**
 
 Force a reload of the config map from ToT.
 
-&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#178)(self):**
+&emsp; **@property**<br>&mdash; **def [fresh\_config](/recipe_modules/cros_infra_config/api.py#175)(self):**
 
 Return a freshly loaded config for this builder.
 
 Returns:
   BuilderConfig for this builder, freshly reloaded.
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#130)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#127)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#377)(self, application: str='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#373)(self, application: str='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -3287,7 +3288,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#668)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#664)(self, build: Optional[Build]=None):**
 
 Return the build target from input properties.
 
@@ -3298,7 +3299,7 @@ Args:
 Returns:
   The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#693)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#689)(self, build: Optional[Build]=None):**
 
 Return the build target name from input properties.
 
@@ -3309,7 +3310,7 @@ Args:
 Returns:
   The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#297)(self, builder_name: str, \*, bucket_name: Optional[str]=None, missing_ok: bool=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#293)(self, builder_name: str, \*, bucket_name: Optional[str]=None, missing_ok: bool=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -3339,34 +3340,34 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#416)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#412)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#238)(self):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#235)(self):**
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
-&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#404)(self):**
+&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#400)(self):**
 
 Download config files and return the extracted config protos.
 
 Returns:
   TestDisablementCfg object of the config.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#393)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#389)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
 Returns:
   SuiteRetryCfg as defined in the config repo.
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#126)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/cros_infra_config/api.py#123)(self):**
 
-&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#95)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_infra_config/api.py#96)(self):**
 
 Perform one-time initialization.
 
@@ -3376,21 +3377,21 @@ Set whether the builder is staging, and align properties with experiments.
 Hold off on other fields until they are used, to avoid unnecessary clutter
 in the expectation files.
 
-&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#118)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_configured](/recipe_modules/cros_infra_config/api.py#115)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#174)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/cros_infra_config/api.py#171)(self):**
 
-&emsp; **@property**<br>&mdash; **def [override\_release\_channels](/recipe_modules/cros_infra_config/api.py#209)(self):**
+&emsp; **@property**<br>&mdash; **def [override\_release\_channels](/recipe_modules/cros_infra_config/api.py#206)(self):**
 
-&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_git\_revision](/recipe_modules/cros_infra_config/api.py#119)(self):**
 
-&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#190)(self):**
+&emsp; **@property**<br>&mdash; **def [props\_for\_child\_build](/recipe_modules/cros_infra_config/api.py#187)(self):**
 
 Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#344)(self, builder_names: List[str]):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#340)(self, builder_names: List[str]):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -3404,7 +3405,7 @@ Args:
 Returns:
   Dict mapping builder names to found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#723)(self, critical: Optional['Trinary']=None, override: bool=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#719)(self, critical: Optional['Trinary']=None, override: bool=False):**
 
 Set the buildbucket.build.critical value.
 
@@ -3413,11 +3414,11 @@ Args:
     the value from the builder config.
   override: Whether to override the existing criticality value.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#374)(self, run_spec: 'BuilderConfig.RunSpec'):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#370)(self, run_spec: 'BuilderConfig.RunSpec'):**
 
-&emsp; **@property**<br>&mdash; **def [should\_override\_release\_channels](/recipe_modules/cros_infra_config/api.py#205)(self):**
+&emsp; **@property**<br>&mdash; **def [should\_override\_release\_channels](/recipe_modules/cros_infra_config/api.py#202)(self):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#371)(self, run_spec: 'BuilderConfig.RunSpec'):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#367)(self, run_spec: 'BuilderConfig.RunSpec'):**
 ### *recipe_modules* / [cros\_lkgm](/recipe_modules/cros_lkgm)
 
 [DEPS](/recipe_modules/cros_lkgm/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_schedule](#recipe_modules-cros_schedule), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12653,12 +12654,6 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/override_channels.py#22)(api):**
-### *recipes* / [cros\_infra\_config:tests/release\_tot\_builds\_snapshot](/recipe_modules/cros_infra_config/tests/release_tot_builds_snapshot.py)
-
-[DEPS](/recipe_modules/cros_infra_config/tests/release_tot_builds_snapshot.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/release_tot_builds_snapshot.py#21)(api):**
 ### *recipes* / [cros\_infra\_config:tests/set\_build\_criticality](/recipe_modules/cros_infra_config/tests/set_build_criticality.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/set_build_criticality.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14550,18 +14545,18 @@ installer, shrink the ROOT-B partition down to a single block.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#19)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#34): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/paygen.py#33): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [DoRunSteps](/recipes/paygen.py#84)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#83)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [RunSteps](/recipes/paygen.py#69)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [RunSteps](/recipes/paygen.py#68)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#290)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#289)(resp: GenerationResponse):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#229)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#228)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
@@ -14569,7 +14564,7 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#304)(api: RecipeApi, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#303)(api: RecipeApi, resp: GenerationResponse):**
 ### *recipes* / [paygen\_orchestration:examples/full](/recipe_modules/paygen_orchestration/examples/full.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/examples/full.py#14): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

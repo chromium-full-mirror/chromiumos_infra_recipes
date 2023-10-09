@@ -3,9 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module providing builder config."""
+
 import datetime
 import typing
-import re
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from google.protobuf.json_format import MessageToDict
@@ -109,10 +110,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
     self._properties.honor_gitiles_commit_ref |= (
         'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
-        self.experiments)
-
-    self._properties.release_tot_builds_snapshot |= (
-        'chromeos.cros_infra_config.release_tot_builds_snapshot' in
         self.experiments)
 
   @property
@@ -279,12 +276,11 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
         # Override the ref from generated builder_config for (staging-)
-        # release-main-orchestrator if experiment is enabled.
-        if self._properties.release_tot_builds_snapshot:
-          if self._is_staging and config.id.name == 'staging-release-main-orchestrator':
-            config.orchestrator.gitiles_commit.ref = 'refs/heads/staging-snapshot'
-          elif not self._is_staging and config.id.name == 'release-main-orchestrator':
-            config.orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
+        # release-main-orchestrator.
+        if self._is_staging and config.id.name == 'staging-release-main-orchestrator':
+          config.orchestrator.gitiles_commit.ref = 'refs/heads/staging-snapshot'
+        elif not self._is_staging and config.id.name == 'release-main-orchestrator':
+          config.orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
 
         # Store the BuilderConfig with both name and (bucket, name) as a key,
         # to allow lookup by either name or (bucket, name).
