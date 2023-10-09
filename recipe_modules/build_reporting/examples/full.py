@@ -59,12 +59,6 @@ def RunSteps(api):
   step_info.status = StepDetails.STATUS_SUCCESS
   step_info.publish()
 
-  api.build_reporting.publish_build_artifact(
-      BuildReport.BuildArtifact.RELEASE_IMAGE,
-      'gs://chromeos-image-archive/garble.tgz',
-      '3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60',
-  )
-
   # Publish the branch.
   api.build_reporting.publish_branch('main')
 
@@ -99,7 +93,6 @@ def RunSteps(api):
       api.buildbucket.build.id,
   )
   api.assertions.assertEqual(build_report.status.value, BuildStatus.SUCCESS)
-  api.assertions.assertEqual(len(build_report.artifacts), 1)
   api.assertions.assertTrue(build_report.HasField('config'))
   api.assertions.assertTrue(build_report.HasField('steps'))
   api.assertions.assertEqual(len(build_report.steps.info), 1)

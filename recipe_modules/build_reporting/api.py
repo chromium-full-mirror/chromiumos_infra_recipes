@@ -280,42 +280,6 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self.publish(build_report)
 
-  def publish_build_artifact(
-      self,
-      artifact_type,
-      gs_uri,
-      sha256,
-      created=None,
-  ):
-    """Publish and merge information about a created artifact.
-
-    Args:
-      artifact_type (BuildArtifact.Type): Type of the artifact.
-      gs_uri (str): GS bucket URI for artifact (eg: gs://foo/bar/baz.tgz).
-      sha256 (str): SHA256 hash for artifact.
-      created (Datetime): Optional creation time (default: now).
-
-    Raises:
-      ValueError if gs_uri isn't properly formatted with gs:// prefix.
-
-    Return:
-      None
-    """
-    created = created or self.m.time.utcnow()
-
-    if not gs_uri.startswith('gs://'):
-      raise ValueError('GS bucket URI should start with gs:// prefix')
-
-    build_report = BuildReport()
-    artifact = build_report.artifacts.add()
-
-    artifact.type = artifact_type
-    artifact.uri.gcs = gs_uri
-    artifact.sha256 = sha256
-    artifact.created.FromDatetime(created)
-
-    self.publish(build_report)
-
   def create_step_info(
       self,
       step_name,

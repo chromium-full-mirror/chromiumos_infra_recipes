@@ -118,21 +118,6 @@ def RunSteps(api):
   )
   step_info.publish()
 
-  api.assertions.assertRaisesRegexp(
-      ValueError,
-      'should start with gs://',
-      api.build_reporting.publish_build_artifact,
-      None,
-      'some_uri',
-      'some_hash',
-  )
-
-  api.build_reporting.publish_build_artifact(
-      BuildReport.BuildArtifact.RELEASE_IMAGE,
-      'gs://chromeos-image-archive/garble.tgz',
-      '3457ed415f59b37aab2a2fd80382f782c70391c2b25396abd833892f5b5eef60',
-  )
-
   # Signed build metadata verifying.
   api.build_reporting.publish_signed_build_metadata(
       [json.loads(_read_test_file('test_signed_build.json')), {}])
@@ -155,7 +140,6 @@ def RunSteps(api):
   )
   api.assertions.assertEqual(build_report.config.target.name, 'build_target')
   api.assertions.assertEqual(build_report.status.value, BuildStatus.SUCCESS)
-  api.assertions.assertEqual(len(build_report.artifacts), 1)
   api.assertions.assertTrue(build_report.HasField('config'))
   api.assertions.assertTrue(build_report.HasField('steps'))
   api.assertions.assertEqual(len(build_report.steps.info), 1)
