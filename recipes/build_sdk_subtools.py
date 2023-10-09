@@ -18,6 +18,7 @@ from recipe_engine import recipe_test_api
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
@@ -61,8 +62,10 @@ class BuildSdkSubtoolsRun:
         path.location = chromiumos_common.Path.OUTSIDE
 
       with self.m.step.nest('Upload SDK Subtools') as step:
-        self.sdk_subtools_service.UploadSdkSubtools(
-            UploadSdkSubtoolsRequest(bundle_paths=build_response.bundle_paths))
+        request = UploadSdkSubtoolsRequest(
+            bundle_paths=build_response.bundle_paths,
+            use_production=not self.m.build_menu.is_staging)
+        self.sdk_subtools_service.UploadSdkSubtools(request)
 
   @contextlib.contextmanager
   def _setup(self) -> Generator:
@@ -105,6 +108,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
           post_process.LogEquals, UPLOAD_SDK_SUBTOOLS_PARENT_STEP, 'request',
           '''\
 {
+  "useProduction": true,
   "bundlePaths": [
     {
       "path": "[CACHE]/cros_chroot/chroot/var/tmp/cros-subtools/rustfmt",
@@ -116,6 +120,25 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
     }
   ]
 }'''),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'build-sdk-subtools-propagates-production',
+      api.buildbucket.build(api.buildbucket.ci_build_message(bucket='infra')),
+      api.post_check(post_process.LogContains, UPLOAD_SDK_SUBTOOLS_PARENT_STEP,
+                     'request', ['"useProduction": true']),
+      api.post_process(post_process.DropExpectation),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'build-sdk-subtools-propagates-staging',
+      api.buildbucket.build(api.buildbucket.ci_build_message(bucket='staging')),
+      api.post_check(post_process.LogDoesNotContain,
+                     UPLOAD_SDK_SUBTOOLS_PARENT_STEP, 'request',
+                     ['"useProduction": true']),
+      api.post_process(post_process.DropExpectation),
       status='SUCCESS',
   )
 
