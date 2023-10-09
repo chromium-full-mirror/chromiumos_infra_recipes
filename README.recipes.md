@@ -516,6 +516,7 @@
   * [gerrit:examples/set_change_description](#recipes-gerrit_examples_set_change_description)
   * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels)
   * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change)
+  * [gerrit:tests/get_account_id](#recipes-gerrit_tests_get_account_id) &mdash; Tests for the get_account_id function.
   * [gerrit:tests/test_related_changes](#recipes-gerrit_tests_test_related_changes)
   * [git:examples/bad_ref](#recipes-git_examples_bad_ref)
   * [git:examples/branch_exists](#recipes-git_examples_branch_exists)
@@ -6887,7 +6888,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1033)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1061)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -6895,6 +6896,10 @@ Uses the gerrit_related_changes CIPD package.
 
 Returns:
   The JSON for 'related' outputted by gerrit_related_changes.
+
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#965)(self, email: str, gerrit_host: str):**
+
+Get the Gerrit account id for the given email on the given host.
 
 &mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#820)(self, gerrit_change: GerritChange, memoize: bool=False):**
 
@@ -6908,7 +6913,7 @@ Args:
 Returns:
   The change description.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#965)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#993)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -13878,6 +13883,14 @@ additional logic to process the step output.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/submit_change.py#34)(api):**
+### *recipes* / [gerrit:tests/get\_account\_id](/recipe_modules/gerrit/tests/get_account_id.py)
+
+[DEPS](/recipe_modules/gerrit/tests/get_account_id.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Tests for the get_account_id function.
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/tests/get_account_id.py#18)(api):**
 ### *recipes* / [gerrit:tests/test\_related\_changes](/recipe_modules/gerrit/tests/test_related_changes.py)
 
 [DEPS](/recipe_modules/gerrit/tests/test_related_changes.py#15): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -157,6 +157,33 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
     step_name = f'{prefix}query {host_url}{iteration_str}.gerrit changes'
     return self.override_step_data(step_name, self.m.json.output(changes))
 
+  def set_get_account_id(self, gerrit_host: str, email: str, value: int,
+                         parent_step_name: Optional[str] = None,
+                         iteration: int = 1) -> recipe_test_api.StepTestData:
+    """Set the response from the Gerrit's Get Account API.
+
+    Args:
+      email: The email of the account to retrieve.
+      gerrit_host: URL for the Gerrit host.
+      value: The test response. If None, the "_account_id" field in the JSON
+      response is omitted.
+      parent_step_name: The parent step calling gerrit.get_account_id.
+      iteration: Which call this applies to for this step/endpoint.
+
+    Returns:
+      Test data instance for the tests.
+    """
+    iteration = '' if iteration == 1 else f' ({iteration})'
+    prefix = f'{parent_step_name}.' if parent_step_name else ''
+    url = f'https://{gerrit_host}/accounts/{email}'
+    step_name = f'{prefix}curl {url}{iteration}'
+    values = {}
+    if value is not None:
+      values['_account_id'] = value
+    return self.override_step_data(
+        step_name,
+        stdout=self.m.raw_io.output(")]}'\n" + self.m.json.dumps(values)))
+
   def set_get_change_mergeable(self, step_name: str, gerrit_host: str,
                                change_num: int, revision: str,
                                value: Union[bool, None, str], iteration: int = 1

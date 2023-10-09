@@ -963,6 +963,34 @@ class GerritApi(RecipeApi):
       return changes
 
   @exponential_retry(retries=4, delay=timedelta(seconds=5))
+  @functools.lru_cache
+  def get_account_id(
+      self,
+      email: str,
+      gerrit_host: str,
+  ) -> int:
+    """Get the Gerrit account id for the given email on the given host."""
+    auth_token_path = self._get_auth_token()
+
+    # "Get Account" endpoint:
+    # https://gerrit-review.googlesource.com/Documentation/rest-api-accounts.html#get-account
+    get_url = f'https://{gerrit_host}/accounts/{email}'
+    curl_params = ['-f', '-H', f'@{auth_token_path}']
+
+    data = self.m.easy.stdout_step(f'curl {get_url}',
+                                   ['curl'] + curl_params + [get_url]).decode()
+    data = strip_xssi_prefix(data)
+
+    try:
+      result = self.m.json.loads(data)['_account_id']
+    except (KeyError, json.JSONDecodeError) as e:
+      raise StepFailure(
+          f'The response does not contain valid JSON with a "_account_id" key: {data}'
+      ) from e
+
+    return result
+
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
   def get_change_mergeable(self, change_num: int, gerrit_host: str,
                            revision: str = 'current') -> bool:
     """Get the mergeable status of the given Gerrit change.
