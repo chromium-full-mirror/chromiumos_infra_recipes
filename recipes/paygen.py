@@ -33,6 +33,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -128,6 +129,13 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           # If a docker image is specified, need to pull it down before calling
           # the BAPI since the BAPI is hermetic.
           if req.generation_request.docker_image:
+            # TODO(b/304336865): Remove once LUCI auth context is fixed.
+            api.step('docker auth', [
+                'gcloud',
+                'auth',
+                'configure-docker',
+                'us-docker.pkg.dev',
+            ])
             api.step('docker pull', [
                 'docker',
                 'pull',
