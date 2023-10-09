@@ -854,7 +854,6 @@
       "@@@STEP_LOG_LINE@keyval@parent_job_id=58067d9ab42aca11@@@",
       "@@@STEP_LOG_LINE@keyval@build=board-cq/R00-0.0.0@@@",
       "@@@STEP_LOG_LINE@keyval@suite=sweet-cq@@@",
-      "@@@STEP_LOG_LINE@keyval@synchronous_log_data_stainless_url=https://path/to/stainless@@@",
       "@@@STEP_LOG_LINE@keyval@synchronous_log_data_testhaus_url=https://path/to/testhaus@@@",
       "@@@STEP_LOG_LINE@keyval@synchronous_log_data_url=gs://path/to/test/logs@@@",
       "@@@STEP_LOG_LINE@keyval@branch=main@@@",

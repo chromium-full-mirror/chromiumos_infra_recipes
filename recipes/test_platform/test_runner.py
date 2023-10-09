@@ -1878,8 +1878,6 @@ def create_skylab_result(api, ctr_result, properties, dut_state):
       # Parse log data
       if ctr_result.gs_url:
         log_data.gs_url = ctr_result.gs_url
-      if ctr_result.stainless_url:
-        log_data.stainless_url = ctr_result.stainless_url
       if ctr_result.testhaus_url:
         log_data.testhaus_url = ctr_result.testhaus_url
 
@@ -2151,7 +2149,6 @@ def GenTests(api):
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
-synchronous_log_data_stainless_url=https://path/to/stainless
 synchronous_log_data_testhaus_url=https://path/to/testhaus
 synchronous_log_data_url=gs://path/to/test/logs
 branch=main
@@ -2181,7 +2178,6 @@ tast_missing_test.3=bar.YetAnotherTest
 parent_job_id=58067d9ab42aca11
 build=board-cq/R00-0.0.0
 suite=sweet-cq
-synchronous_log_data_stainless_url=https://path/to/stainless
 synchronous_log_data_testhaus_url=https://path/to/testhaus
 synchronous_log_data_url=gs://path/to/test/logs
 branch=main
@@ -2305,7 +2301,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
     "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {

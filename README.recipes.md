@@ -15645,7 +15645,7 @@ Recipe that triggers cros_test_platform runs.
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2075)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2073)(api, properties):**
 
 Entrypoint to the script
 
@@ -15725,7 +15725,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2029)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2027)(api, properties):**
 
 Run test and upload results.
 
@@ -15762,7 +15762,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1908)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1906)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 

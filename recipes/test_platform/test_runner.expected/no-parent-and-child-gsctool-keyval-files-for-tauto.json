@@ -1224,7 +1224,6 @@
       "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    \"gs_url\": \"gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\",@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    \"testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\"@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"prejob\": {@@@",
