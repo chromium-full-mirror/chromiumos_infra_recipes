@@ -10,7 +10,8 @@ from google.protobuf.json_format import MessageToDict, MessageToJson
 from PB.chromite.api.image import SignImageResponse
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
-                                  IMAGE_TYPE_FACTORY)
+                                  IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
+                                  IMAGE_TYPE_FIRMWARE)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -46,11 +47,23 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
           ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_FIRMWARE,
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_RECOVERY,
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+          ),
       ],
   )
   api.assertions.assertEqual(config, expected_config)
 
-  sign_types = [IMAGE_TYPE_BASE]
+  sign_types = [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY]
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
   processed_config, _ = api.signing.setup_signing(sign_types, channels)
@@ -67,6 +80,24 @@ def RunSteps(api: RecipeApi):
               archive_path='chromiumos_base_image.tar.xz',
           ),
           SigningConfig(
+              image_type=IMAGE_TYPE_FIRMWARE,
+              channel=CHANNEL_CANARY,
+              version='1234.56.0',
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='firmware_from_source.tar.bz2',
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_RECOVERY,
+              channel=CHANNEL_CANARY,
+              version='1234.56.0',
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='recovery_image.tar.xz',
+          ),
+          SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_DEV,
               version='1234.56.0',
@@ -74,6 +105,24 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='chromiumos_base_image.tar.xz',
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_FIRMWARE,
+              channel=CHANNEL_DEV,
+              version='1234.56.0',
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='firmware_from_source.tar.bz2',
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_RECOVERY,
+              channel=CHANNEL_DEV,
+              version='1234.56.0',
+              keyset='kukui-foo-bar',
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='recovery_image.tar.xz',
           ),
       ],
   )
@@ -131,8 +180,22 @@ def GenTests(api: RecipeTestApi):
                                         MessageToJson(sample_response)),
       api.post_check(
           post_process.StepCommandContains,
-          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil rsync',
-          ['gs://chromeos-releases/dev-channel/kukui/1234.56.0/']),
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp',
+          [
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-1234.56.0-kukui.zip',
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (2)',
+          [
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-firmware-1234.56.0-kukui.tar.bz2',
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (3)',
+          [
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-recovery-1234.56.0-kukui.tar.xz',
+          ]),
       api.post_check(post_process.MustRun,
                      'sign artifacts.call chromite.api.ImageService/SignImage'),
       api.post_check(
@@ -168,8 +231,10 @@ def GenTests(api: RecipeTestApi):
                                         'ImageService/SignImage', '{}'),
       api.post_check(
           post_process.StepCommandContains,
-          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil rsync',
-          ['gs://chromeos-releases/dev-channel/kukui/1234.56.0/']),
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp',
+          [
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-1234.56.0-kukui.zip'
+          ]),
       api.post_check(post_process.MustRun,
                      'sign artifacts.call chromite.api.ImageService/SignImage'),
       api.post_check(

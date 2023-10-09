@@ -60,12 +60,38 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
     ensure_no_password: true
     firmware_update: true
   }
+  signing_configs {
+    image_type: IMAGE_TYPE_FIRMWARE
+    keyset: "kukui-foo-bar"
+    ensure_no_password: true
+    firmware_update: true
+  }
+  signing_configs {
+    image_type: IMAGE_TYPE_RECOVERY
+    keyset: "kukui-foo-bar"
+    ensure_no_password: true
+    firmware_update: true
+  }
 }'''
 
 
 # How long to wait on gsutil ops.
 GSUTIL_TIMEOUT_SECONDS = 30 * 60
 GSUTIL_MAX_RETRY_COUNT = 2
+
+# Unsigned artifact name mapping.
+IMAGE_TYPE_TO_STRING = {
+    common_pb2.IMAGE_TYPE_BASE: None,
+}
+
+IMAGE_TYPE_TO_SUFFIX = {
+    common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: '.tar.bz2',
+    common_pb2.IMAGE_TYPE_BASE: '.zip',
+    common_pb2.IMAGE_TYPE_FACTORY: '.zip',
+    common_pb2.IMAGE_TYPE_FIRMWARE: '.tar.bz2',
+    common_pb2.IMAGE_TYPE_RECOVERY: '.tar.xz',
+    common_pb2.IMAGE_TYPE_TEST: '.tar.xz',
+}
 
 
 class SigningApi(recipe_api.RecipeApi):
@@ -506,7 +532,8 @@ class SigningApi(recipe_api.RecipeApi):
             self.signing_docker_image,
         ])
 
-        self.upload_unsigned_artifacts(archive_dir, channels)
+        self.upload_unsigned_artifacts(archive_dir, build_target_config,
+                                       channels)
 
         # TODO(b/296086340): Remove once stable and in use.
         with self.m.failures.ignore_exceptions():
@@ -532,11 +559,23 @@ class SigningApi(recipe_api.RecipeApi):
     version = self.m.cros_version.version.platform_version
     return f'gs://{bucket}/{channel}/{build_target}/{version}/'
 
+  def _get_gs_artifact_name(self, build_target: str, version: str,
+                            image_type: common_pb2.ImageType) -> str:
+    """Map artifacts to versioned name expected for paygen signing.
+    """
+    img_type = IMAGE_TYPE_TO_STRING.get(
+        image_type,
+        common_pb2.ImageType.Name(image_type)[len('IMAGE_TYPE_'):].lower())
+    img = ('%s-' % img_type) if img_type else ''
+    suffix = IMAGE_TYPE_TO_SUFFIX.get(image_type, '')
+    return 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)
+
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
   def upload_unsigned_artifacts(self, archive_dir: Path,
+                                build_target_config: BuildTargetSigningConfig,
                                 channels: List['common_pb2.Channel']) -> None:
-    """Uploads all files in archive_dir to GS using gsutil rsync."""
+    """Uploads files from archive_dir to GS based on signing config."""
 
     with self.m.step.nest(
         f'upload unsigned artifacts to {self.gs_upload_bucket} bucket'):
@@ -550,15 +589,22 @@ class SigningApi(recipe_api.RecipeApi):
               'https://console.cloud.google.com/storage/browser/%s' %
               gs_dir[len('gs://'):])
 
-          # -i so we don't clobber existing destination artifacts.
-          self.m.gsutil(['rsync', '-r', '-i', archive_dir, gs_dir],
-                        parallel_upload=True, multithreaded=True,
-                        timeout=GSUTIL_TIMEOUT_SECONDS)
+          for signing_config in build_target_config.signing_configs:
+            artifact_upload_name = self._get_gs_artifact_name(
+                build_target_config.build_target, signing_config.version,
+                signing_config.image_type)
+            # -n so we don't clobber existing destination artifacts.
+            self.m.gsutil([
+                'cp',
+                '-n',
+                os.path.join(str(archive_dir), signing_config.archive_path),
+                os.path.join(gs_dir, artifact_upload_name),
+            ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
   def upload_signed_artifacts(self, response: SignImageResponse) -> None:
-    """Uploads all files in output_dir to GS using gsutil rsync."""
+    """Uploads all files in output_dir to GS using gsutil cp."""
     with self.m.step.nest(
         f'upload signed artifacts to {self.gs_upload_bucket} bucket'
     ) as presentation:
