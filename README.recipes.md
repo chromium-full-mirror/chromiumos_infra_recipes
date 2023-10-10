@@ -3101,7 +3101,7 @@ API for DupIt script. See the design of this recipe in go/cros-dupit.
 
 A module for the DupIt script.
 
-&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#14)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri, ignore_missing_args=False, filter_missing_links=False, regex_for_archival_sync=None, gs_uri_for_archival_sync=None, path_datetime_for_archival_sync=None):**
+&mdash; **def [configure](/recipe_modules/cros_dupit/api.py#14)(self, rsync_mirror_address, rsync_mirror_rate_limit, gs_distfiles_uri, ignore_missing_args=False, filter_missing_links=False, regex_for_archival_sync=None, gs_uri_for_archival_sync=None, path_datetime_for_archival_sync=None, gs_topdir_backfill=False):**
 
 Configure the DupIt script module.
 
@@ -3122,16 +3122,18 @@ Args:
   * path_datetime_for_archival_sync: an additional path for archival
     syncing that is interpreted by datetime strftime (using UTC). Gets
     added to the end of 'gs_uri_for_archival_sync'.
+  * gs_topdir_backfill: enable a workaround for Gentoo distfiles. See
+    b/302226413 for more information.
 
-&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#601)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_distfiles\_uri](/recipe_modules/cros_dupit/api.py#605)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#593)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_address](/recipe_modules/cros_dupit/api.py#597)(self):**
 
-&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#597)(self):**
+&emsp; **@property**<br>&mdash; **def [rsync\_mirror\_rate\_limit](/recipe_modules/cros_dupit/api.py#601)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_dupit/api.py#589)(self):**
+&mdash; **def [run](/recipe_modules/cros_dupit/api.py#593)(self):**
 
-&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#605)(self):**
+&emsp; **@property**<br>&mdash; **def [tmp\_distfiles\_path](/recipe_modules/cros_dupit/api.py#609)(self):**
 ### *recipe_modules* / [cros\_history](/recipe_modules/cros_history)
 
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

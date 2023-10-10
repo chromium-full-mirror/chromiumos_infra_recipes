@@ -47,6 +47,7 @@ def RunSteps(api: RecipeApi, properties: DupitProperties) -> None:
             gs_uri_for_archival_sync=properties.gs_uri_for_archival_sync,
             path_datetime_for_archival_sync=properties
             .path_datetime_for_archival_sync,
+            gs_topdir_backfill=properties.gs_topdir_backfill,
         )
         api.cros_dupit.run()
         mirror_success = True

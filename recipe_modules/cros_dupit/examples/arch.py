@@ -38,6 +38,9 @@ def GenTests(api):
       api.post_process(post_process.MustRun,
                        'copy new distfiles to gs.filtering missing symlinks'),
       api.post_process(
+          post_process.DoesNotRun,
+          'backfill gs distfiles topdir.get list of files in hashed subdirs'),
+      api.post_process(
           post_process.MustRun,
           'copy new distfiles to gs.prepare additional regex files for sync'),
       api.post_process(

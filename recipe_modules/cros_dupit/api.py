@@ -15,7 +15,7 @@ class DupItApi(recipe_api.RecipeApi):
                 gs_distfiles_uri, ignore_missing_args=False,
                 filter_missing_links=False, regex_for_archival_sync=None,
                 gs_uri_for_archival_sync=None,
-                path_datetime_for_archival_sync=None):
+                path_datetime_for_archival_sync=None, gs_topdir_backfill=False):
     """Configure the DupIt script module.
 
     Args:
@@ -35,6 +35,8 @@ class DupItApi(recipe_api.RecipeApi):
       * path_datetime_for_archival_sync: an additional path for archival
         syncing that is interpreted by datetime strftime (using UTC). Gets
         added to the end of 'gs_uri_for_archival_sync'.
+      * gs_topdir_backfill: enable a workaround for Gentoo distfiles. See
+        b/302226413 for more information.
     """
     assert (rsync_mirror_address.endswith('distfiles') or
             rsync_mirror_address.endswith('distfiles/') or
@@ -52,6 +54,7 @@ class DupItApi(recipe_api.RecipeApi):
     self._regex_for_archival_sync = regex_for_archival_sync
     self._gs_uri_for_archival_sync = gs_uri_for_archival_sync
     self._path_datetime_for_archival_sync = path_datetime_for_archival_sync
+    self._gs_topdir_backfill = gs_topdir_backfill
 
   def _get_list_of_gs_distfiles(self):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""
@@ -361,7 +364,8 @@ class DupItApi(recipe_api.RecipeApi):
                                        add_output_log=True)
     self.m.step(cmd=comm_cmd, name=comm_name, stdout=comm_stdout)
 
-    self._backfill_gs_topdir(gs_distfiles)
+    if self._gs_topdir_backfill:
+      self._backfill_gs_topdir(gs_distfiles)
 
     if self._regex_for_archival_sync:
       # Populate our list of regex matches

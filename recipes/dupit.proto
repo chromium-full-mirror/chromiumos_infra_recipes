@@ -35,6 +35,13 @@ message DupitProperties {
   // The string will be formatted by datetime.utcnow().strftime(...) before
   // uploading.
   string path_datetime_for_archival_sync = 7;
+
+  // Backfill the Google Storage topdir.
+  // Due to GLEP-0075 the topdir needs to be backfilled for Gentoo mirrors
+  // (b/302226413). This doesn't work for all distros (namely Arch Linux) so
+  // the behavior is hidden behind this config flag.
+  // Defaults to False.
+  bool gs_topdir_backfill = 8;
 }
 
 message Mirror {

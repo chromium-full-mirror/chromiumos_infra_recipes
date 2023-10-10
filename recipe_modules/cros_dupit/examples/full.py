@@ -20,7 +20,8 @@ def RunSteps(api):
   api.cros_dupit.configure(
       rsync_mirror_address='rsync://mirrors.do.not.exists/distfiles',
       rsync_mirror_rate_limit='1m',
-      gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/')
+      gs_distfiles_uri='gs://stark-trek/the-ultimate-computer/distfiles/',
+      gs_topdir_backfill=True)
   api.cros_dupit.run()
 
 
@@ -33,6 +34,9 @@ def GenTests(api):
                        'add additional regex files to distfiles list'),
       api.post_process(post_process.DoesNotRun,
                        'copy new distfiles to gs.filtering missing symlinks'),
+      api.post_process(
+          post_process.MustRun,
+          'backfill gs distfiles topdir.get list of files in hashed subdirs'),
       api.post_process(
           post_process.DoesNotRun,
           'copy new distfiles to gs.prepare additional regex files for sync'),
