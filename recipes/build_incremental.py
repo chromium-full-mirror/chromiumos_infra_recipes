@@ -103,11 +103,16 @@ def DoOldBuild(api: RecipeApi, config: BuilderConfig,
       toolchain_targets=[api.build_menu.build_target],
       build_source=config.build.sdk_update.compile_source)
   # Use the prebuilts metadata for the old manifest.
-  snapshot_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
-                                  project=api.src_state.gitiles_commit.project,
-                                  id=delta_hash)
+  manifest_dir = api.src_state.workspace_path.join(
+      'manifest' if config.general.manifest ==
+      BuilderConfig.General.PUBLIC else 'manifest-internal')
+  remotes = api.git.ls_remote(['refs/heads/snapshot'], repo_url=manifest_dir)
+  old_commit_hash = remotes[0].hash if remotes else None
+  old_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
+                             project=api.src_state.gitiles_commit.project,
+                             id=old_commit_hash)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance(
-      snapshot_commit=snapshot_commit)
+      snapshot_commit=old_commit)
   packages = env_info.packages
   api.build_menu.bootstrap_sysroot(config)
   if api.build_menu.install_packages(config, packages):
@@ -189,8 +194,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
       # Get the prebuilts metadata to use with the current snapshot.
       branch = 'green' if properties.use_llfg else 'snapshot'
-      manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
-      remotes = api.git.ls_remote([f'refs/remotes/origin/{branch}'],
+      manifest_dir = api.src_state.workspace_path.join(
+          'manifest' if config.general.manifest ==
+          BuilderConfig.General.PUBLIC else 'manifest-internal')
+      remotes = api.git.ls_remote([f'refs/heads/{branch}'],
                                   repo_url=manifest_dir)
       current_commit_hash = remotes[0].hash if remotes else None
       current_commit = GitilesCommit(

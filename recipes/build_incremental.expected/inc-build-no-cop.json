@@ -3281,6 +3281,34 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "ls-remote",
+      "[CLEANUP]/chromiumos_workspace/manifest",
+      "refs/heads/snapshot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "CROS_CLEAN_OUTDATED_PKGS": [
+        "0"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "git ls-remote"
+  },
+  {
     "cmd": [],
     "name": "create sysroot"
   },
@@ -5934,8 +5962,8 @@
     "cmd": [
       "git",
       "ls-remote",
-      "[CLEANUP]/chromiumos_workspace/.repo/manifests",
-      "refs/remotes/origin/snapshot"
+      "[CLEANUP]/chromiumos_workspace/manifest",
+      "refs/heads/snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5956,7 +5984,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "git ls-remote"
+    "name": "git ls-remote (2)"
   },
   {
     "cmd": [],
