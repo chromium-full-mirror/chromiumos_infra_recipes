@@ -7,7 +7,7 @@
 
 from recipe_engine import recipe_api
 
-from PB.chromiumos.common import Channel
+from PB.chromiumos.common import Channel, ImageType
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -80,3 +80,9 @@ class CrosReleaseUtilApi(recipe_api.RecipeApi):
     target_release_builder_name = '{}{}-release-{}'.format(
         staging_prefix, build_target, branch_suffix)
     return target_release_builder_name
+
+  def image_type_to_str(self, image_type: ImageType) -> str:
+    """Extracts the image type as a lowercase string.
+
+    E.g. IMAGE_TYPE_RECOVERY -> recovery."""
+    return ImageType.Name(image_type)[len('IMAGE_TYPE_'):].lower()

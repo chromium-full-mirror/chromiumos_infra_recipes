@@ -579,8 +579,7 @@ class SigningApi(recipe_api.RecipeApi):
                             image_type: common_pb2.ImageType) -> str:
     """Map artifacts to versioned name expected for paygen signing.
     """
-    img_type = common_pb2.ImageType.Name(
-        image_type)[len('IMAGE_TYPE_'):].lower()
+    img_type = self.m.cros_release_util.image_type_to_str(image_type)
     img = ('%s-' % img_type) if img_type else ''
     suffix = IMAGE_TYPE_TO_SUFFIX.get(image_type, '')
     return 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)

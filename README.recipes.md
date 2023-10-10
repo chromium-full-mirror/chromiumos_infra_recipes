@@ -347,6 +347,7 @@
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
   * [cros_release_util:examples/full](#recipes-cros_release_util_examples_full)
   * [cros_release_util:examples/match_channels](#recipes-cros_release_util_examples_match_channels)
+  * [cros_release_util:tests/image_type_str](#recipes-cros_release_util_tests_image_type_str) &mdash; Testing for cros_release_util.
   * [cros_release_util:tests/release_builder_name](#recipes-cros_release_util_tests_release_builder_name)
   * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
   * [cros_relevance:examples/cq_relevance](#recipes-cros_relevance_examples_cq_relevance)
@@ -3822,6 +3823,12 @@ Takes a common_pb2.Channel and returns an unprefixed str (e.g. beta).
 &emsp; **@staticmethod**<br>&mdash; **def [channel\_to\_long\_string](/recipe_modules/cros_release_util/api.py#47)(channel):**
 
 Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel).
+
+&mdash; **def [image\_type\_to\_str](/recipe_modules/cros_release_util/api.py#84)(self, image_type: ImageType):**
+
+Extracts the image type as a lowercase string.
+
+E.g. IMAGE_TYPE_RECOVERY -> recovery.
 
 &emsp; **@staticmethod**<br>&mdash; **def [match\_channels](/recipe_modules/cros_release_util/api.py#17)(channel1, channel2):**
 
@@ -9980,11 +9987,11 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#637)(self, response: SignImageResponse):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#636)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#588)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#587)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 
@@ -12873,6 +12880,14 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_release_util/examples/match_channels.py#21)(api):**
+### *recipes* / [cros\_release\_util:tests/image\_type\_str](/recipe_modules/cros_release_util/tests/image_type_str.py)
+
+[DEPS](/recipe_modules/cros_release_util/tests/image_type_str.py#11): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Testing for cros_release_util.image_type_to_str.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_release_util/tests/image_type_str.py#20)(api):**
 ### *recipes* / [cros\_release\_util:tests/release\_builder\_name](/recipe_modules/cros_release_util/tests/release_builder_name.py)
 
 [DEPS](/recipe_modules/cros_release_util/tests/release_builder_name.py#13): [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
