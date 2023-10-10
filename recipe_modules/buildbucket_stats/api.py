@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""A collection of functions that poll Buildbucket for stats and output properties."""
+
 from collections import OrderedDict
 from typing import Dict, Optional
 
@@ -15,6 +17,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
+
+from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 
 DEMAND_STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
 
@@ -73,63 +77,142 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
     ])
 
-  def _get_snapshot_greenness(self, commit: str,
-                              predicate: builds_service_pb2.BuildPredicate,
-                              fields: frozenset,
-                              pres: StepPresentation) -> OrderedDict():
-    """Returns snapshot run for specified commit, if found.
+  def _poll_and_get_greenness(
+      self,
+      predicate: builds_service_pb2.BuildPredicate,
+      retries: int,
+      use_local_greenness: bool,
+  ) -> OrderedDict:
+    """Returns greenness for the specified build, if found.
 
-    Retries bb query every half hour for up to 5 hours if we don't find the
-    snapshot or build greenness is not yet set.
+    Predicate should be constructed to specify exactly one build that has a
+    greenness output property, e.g. a snapshot orchestrator with a specific
+    buildset.
+
+    Retries bb query every half hour for up to retries times if we don't find
+    the snapshot or build greenness is not yet set.
+
+    Args:
+      predicate: A predicate specifying a build that has a greenness output
+        property. Usually this means the predicate specifies a snapshot
+        orchestrator with a specific buildset tag.
+      retries: Number of times to retry the query. There is a 30 minute sleep
+        before each retry. This allows polling until the specified orchestrator
+        publishes greenness.
+      use_local_greenness: If true, parse the 'local_greenness' output property
+        instead of the 'greenness' output property.
+
+    Returns:
+      An ordered dict mapping target -> Greenness message as a dict. If
+        use_local_greenness is true, the keys are the builder name instead of
+        target, and the values are the Greenness tuple defined in
+        greenness/api.py instead of the Greenness message. Dict will be empty if
+        no greenness is found.
     """
-    # Up to 10 30-minutes sleeps for a total wait of up to 5 hours.
-    for _ in range(10):
-      # Requesting 10 builds as that is more than enough. The default limit of 1000
-      # crashes recipes. b/293312317
-      results = self.m.buildbucket.search([predicate], limit=10, fields=fields,
+    # Up to retries 30-minutes sleeps.
+    # TODO(b/304548989): Use build_poller instead of sleeping.
+    for i in range(retries + 1):
+      results = self.m.buildbucket.search([predicate], limit=1,
+                                          fields={'output.properties'},
                                           timeout=60)
-      for result in results:
-        if result.input.gitiles_commit.id == commit:
-          # Ensure build greenness in last snapshot run is complete.
-          output_props = result.output.properties
-          if 'greenness' in output_props.fields and 'targetGreenness' in output_props[
-              'greenness'].fields:
-            snapshot_greenness = OrderedDict(
-                self.reformat_target_dict(
-                    output_props['greenness']['targetGreenness']))
-            # Remove metric, since we only wait for build to finish, not tests.
-            for v in snapshot_greenness.values():
-              if 'metric' in v:
-                del v['metric']
-            pres.logs[
-                'found'] = f'Found greenness for snapshot for commit {commit}: {snapshot_greenness}'
+      if results:
+        result = results[0]
+        # Ensure build greenness in last snapshot run is complete.
+        output_props = result.output.properties
+        if use_local_greenness:
+          if 'local_greenness' in output_props.fields and 'greenness' in output_props[
+              'local_greenness'].fields:
+            snapshot_greenness = OrderedDict()
+            for builder, greenness_tuple in output_props['local_greenness'][
+                'greenness'].items():
+              snapshot_greenness[builder] = GreennessTuple(
+                  *greenness_tuple.items())
+
             return snapshot_greenness
-      # Wait 30 mins and check again for snapshot with build greennness.
-      self.m.step.empty('sleeping 30 minutes before checking again')
-      self.m.time.sleep(30 * 60)
-    pres.logs[
-        'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
+        elif 'greenness' in output_props.fields and 'targetGreenness' in output_props[
+            'greenness'].fields:
+          snapshot_greenness = OrderedDict(
+              self.reformat_target_dict(
+                  output_props['greenness']['targetGreenness']))
+          # Remove metric, since we only wait for build to finish, not tests.
+          for v in snapshot_greenness.values():
+            if 'metric' in v:
+              del v['metric']
+
+          return snapshot_greenness
+
+      if i < retries:
+        # Wait 30 mins and check again for snapshot with build greennness.
+        self.m.step.empty('sleeping 30 minutes before checking again')
+        self.m.time.sleep(30 * 60)
+
     return OrderedDict()
 
-  def get_snapshot_greenness(self, commit: str, pres: StepPresentation,
-                             end_bbid: Optional[int] = None) -> OrderedDict():
-    """Returns snapshot run for specified commit, if found.
+  def get_snapshot_greenness(
+      self,
+      commit: str,
+      pres: StepPresentation,
+      bucket: Optional[str] = None,
+      builder: Optional[str] = None,
+      end_bbid: Optional[int] = None,
+      retries: int = 9,
+      use_local_greenness: bool = False,
+  ) -> OrderedDict:
+    """Returns greeneness for the specified commit, if found.
 
-    If end_bbid is specified, return all runs that are older than the specified
-    bbid (inclusive).
+    Note this function may poll for up to retries * 30 minutes waiting for the
+    specified greenness to be published.
+
+    Args:
+      commit: Commit to search for greenness for. Must be in
+        chrome-internal.googlesource.com/chromeos/manifest-internal. The builder
+        publishing greenness must have a buildset tag with this commit.
+      pres: StepPresentation to write logs, etc. to.
+      bucket: If specified, the bucket to search in. Defaults to
+        self._snapshot_bucket.
+      builder: If specified, the builder to search for. Defaults to
+        self._snapshot_builder.
+      end_bbid: If specified, return all runs that are older than the specified
+        bbid (inclusive).
+      retries: Number of times to retry the query. There is a 30 minute sleep
+        before each retry. This allows polling until the specified orchestrator
+        publishes greenness.
+      use_local_greenness: If true, parse the 'local_greenness' output property
+        instead of the 'greenness' output property.
+
+    Returns:
+      An ordered dict mapping target -> Greenness message as a dict. If
+        use_local_greenness is true, the keys are the builder name instead of
+        target, and the values are the Greenness tuple defined in
+        greenness/api.py instead of the Greenness message. Dict will be empty if
+        no greenness is found.
     """
     pres.logs[
         'looking'] = f'Trying to find greenness for snapshot for commit {commit}...'
-    fields = frozenset(
-        {'id', 'status', 'input.gitiles_commit.id', 'output.properties'})
     build_range = None
     if end_bbid:
       build_range = builds_service_pb2.BuildRange(end_build_id=end_bbid)
-    predicate = builds_service_pb2.BuildPredicate(build=build_range)
+    predicate = builds_service_pb2.BuildPredicate(
+        build=build_range,
+        tags=self.m.buildbucket.tags(
+            buildset=f'commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/{commit}'
+        ),
+    )
     predicate.builder.project = self._project
-    predicate.builder.bucket = self._snapshot_bucket
-    predicate.builder.builder = self._snapshot_builder
-    return self._get_snapshot_greenness(commit, predicate, fields, pres)
+    predicate.builder.bucket = bucket or self._snapshot_bucket
+    predicate.builder.builder = builder or self._snapshot_builder
+
+    greenness = self._poll_and_get_greenness(predicate, retries,
+                                             use_local_greenness)
+
+    if greenness:
+      pres.logs[
+          'found'] = f'Found greenness for snapshot for commit {commit}: {greenness}'
+    else:
+      pres.logs[
+          'timed out'] = f'Timed out trying to find greenness for snapshot for commit {commit}.'
+
+    return greenness
 
   def reformat_target_dict(
       self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:

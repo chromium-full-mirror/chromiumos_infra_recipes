@@ -44,11 +44,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/ababab\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,

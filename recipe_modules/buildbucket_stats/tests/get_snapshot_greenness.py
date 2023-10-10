@@ -9,6 +9,7 @@ from collections import OrderedDict
 from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
+from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,6 +23,10 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test data.
 TARGET_GREENNESS = {'eve': {'buildMetric': '100'}}
+TARGET_LOCAL_GREENNESS = {
+    'eve':
+        GreennessTuple(score=90, build_score=95, critical=True, relevant=True)
+}
 BUILD_INPUT = build_pb2.Build.Input()
 BUILD_INPUT.gitiles_commit.id = 'bababa'
 BUILD_OUTPUT = build_pb2.Build.Output()
@@ -33,13 +38,22 @@ BUILD_OUTPUT.properties['greenness'] = {
         'target': 'eve'
     }]
 }
+BUILD_OUTPUT.properties['local_greenness'] = {
+    'greenness': {
+        'eve': [90, 95, True, True],
+    }
+}
 
 
 def RunSteps(api):
   with api.step.nest('get snapshot greenness') as pres:
     test_end_bbid = api.properties.get('end_bbid')
     target_greenness = api.buildbucket_stats.get_snapshot_greenness(
-        'bababa', pres, end_bbid=test_end_bbid)
+        'bababa',
+        pres,
+        end_bbid=test_end_bbid,
+        use_local_greenness=api.properties.get('use_local_greenness'),
+    )
     expected_target_greenness = api.properties['expected_target_greenness']
     api.assertions.assertEqual(expected_target_greenness, target_greenness)
 
@@ -89,6 +103,17 @@ def GenTests(api):
   yield api.test(
       'with-end-bbid',
       api.properties(expected_target_greenness=TARGET_GREENNESS, end_bbid=100),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
+                          output=BUILD_OUTPUT, input=BUILD_INPUT),
+      ], 'get snapshot greenness.buildbucket.search'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-local-greenness',
+      api.properties(expected_target_greenness=TARGET_LOCAL_GREENNESS,
+                     use_local_greenness=True),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),

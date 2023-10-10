@@ -44,11 +44,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -82,11 +82,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -120,11 +120,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -158,11 +158,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -196,11 +196,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -234,11 +234,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -272,11 +272,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -310,11 +310,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -348,11 +348,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -386,11 +386,11 @@
       "-json",
       "-nopage",
       "-n",
-      "10",
+      "1",
       "-fields",
-      "id,input.gitiles_commit.id,output.properties,status",
+      "output.properties",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/\"}]}"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -399,20 +399,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "getting last snapshot greenness.sleeping 30 minutes before checking again (10)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "getting last snapshot greenness.sleep 1800 (10)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

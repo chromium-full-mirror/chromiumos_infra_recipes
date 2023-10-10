@@ -13,7 +13,7 @@
   * [build_menu](#recipe_modules-build_menu) &mdash; API providing a menu for build steps.
   * [build_plan](#recipe_modules-build_plan)
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
-  * [buildbucket_stats](#recipe_modules-buildbucket_stats)
+  * [buildbucket_stats](#recipe_modules-buildbucket_stats) &mdash; A collection of functions that poll Buildbucket for stats and output properties.
   * [builder_metadata](#recipe_modules-builder_metadata)
   * [checkpoint](#recipe_modules-checkpoint)
   * [chrome](#recipe_modules-chrome)
@@ -1905,11 +1905,13 @@ Return:
 [DEPS](/recipe_modules/buildbucket_stats/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+A collection of functions that poll Buildbucket for stats and output properties.
+
+#### **class [BuildbucketStatsApi](/recipe_modules/buildbucket_stats/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to get statistics from buildbucket.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#62)(status_map: Dict[(str, int)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_demand](/recipe_modules/buildbucket_stats/api.py#66)(status_map: Dict[(str, int)]):**
 
 Return the demand for bots in a bot group.
 
@@ -1919,7 +1921,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#48)(self, bucket: str):**
+&mdash; **def [get\_bucket\_status](/recipe_modules/buildbucket_stats/api.py#52)(self, bucket: str):**
 
 Return the number of builds in the bucket and their statuses.
 
@@ -1929,7 +1931,7 @@ Args:
 Returns:
   Map of status to number of builds with that status in the bucket.
 
-&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#30)(self, bucket: str, status: common_pb2.Status):**
+&mdash; **def [get\_build\_count](/recipe_modules/buildbucket_stats/api.py#34)(self, bucket: str, status: common_pb2.Status):**
 
 Return the number of builds in the bucket with a specific status.
 
@@ -1940,16 +1942,40 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#114)(self, commit: str, pres: StepPresentation, end_bbid: Optional[int]=None):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#151)(self, commit: str, pres: StepPresentation, bucket: Optional[str]=None, builder: Optional[str]=None, end_bbid: Optional[int]=None, retries: int=9, use_local_greenness: bool=False):**
 
-Returns snapshot run for specified commit, if found.
+Returns greeneness for the specified commit, if found.
 
-If end_bbid is specified, return all runs that are older than the specified
-bbid (inclusive).
+Note this function may poll for up to retries * 30 minutes waiting for the
+specified greenness to be published.
 
-&mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#25)(self):**
+Args:
+  commit: Commit to search for greenness for. Must be in
+    chrome-internal.googlesource.com/chromeos/manifest-internal. The builder
+    publishing greenness must have a buildset tag with this commit.
+  pres: StepPresentation to write logs, etc. to.
+  bucket: If specified, the bucket to search in. Defaults to
+    self._snapshot_bucket.
+  builder: If specified, the builder to search for. Defaults to
+    self._snapshot_builder.
+  end_bbid: If specified, return all runs that are older than the specified
+    bbid (inclusive).
+  retries: Number of times to retry the query. There is a 30 minute sleep
+    before each retry. This allows polling until the specified orchestrator
+    publishes greenness.
+  use_local_greenness: If true, parse the 'local_greenness' output property
+    instead of the 'greenness' output property.
 
-&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#134)(self, list_value: struct_pb2.ListValue):**
+Returns:
+  An ordered dict mapping target -> Greenness message as a dict. If
+    use_local_greenness is true, the keys are the builder name instead of
+    target, and the values are the Greenness tuple defined in
+    greenness/api.py instead of the Greenness message. Dict will be empty if
+    no greenness is found.
+
+&mdash; **def [initialize](/recipe_modules/buildbucket_stats/api.py#29)(self):**
+
+&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#217)(self, list_value: struct_pb2.ListValue):**
 
 Reformat ListValue to a dictionary, using target as key.
 
@@ -11692,10 +11718,10 @@ Builds and uploads the Chromium OS toolchain.
 &mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/examples/get_build_count.py#22)(api):**
 ### *recipes* / [buildbucket\_stats:tests/get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py)
 
-[DEPS](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#13): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#14): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#38)(api):**
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#48)(api):**
 ### *recipes* / [builder\_metadata:tests/get\_models](/recipe_modules/builder_metadata/tests/get_models.py)
 
 [DEPS](/recipe_modules/builder_metadata/tests/get_models.py#10): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
