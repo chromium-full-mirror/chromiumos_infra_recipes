@@ -80,6 +80,7 @@
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) &mdash; APIs for logging step output to Google Storage.
+  * [incremental](#recipe_modules-incremental) &mdash; Recipe module to perform a build on an old checkout state.
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
   * [key_value_store](#recipe_modules-key_value_store) &mdash; Module to interact with key-value store files.
@@ -551,6 +552,7 @@
   * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
+  * [incremental:tests/test_incremental](#recipes-incremental_tests_test_incremental) &mdash; Recipe for testing the incremental recipe_module.
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
   * [ipc:examples/full](#recipes-ipc_examples_full)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
@@ -8051,6 +8053,28 @@ Args:
   gs_prefix (step): Prefix for the logged GS objects. Should contain
     the bucket name, but not the 'gs://' prefix. For example,
     '<bucket>/logging'. If None, nothing is logged.
+### *recipe_modules* / [incremental](/recipe_modules/incremental)
+
+[DEPS](/recipe_modules/incremental/__init__.py#10): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe module to perform a build on an old checkout state.
+
+#### **class [IncrementalApi](/recipe_modules/incremental/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for performing builds on old checkout state.
+
+&mdash; **def [DoOldBuild](/recipe_modules/incremental/api.py#27)(self, api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+
+Rewind the checkout, install packages, and then forward the checkout.
+
+Args:
+    api: The recipe API.
+    config: The BuilderConfig for this incremental builder.
+    properties: Input properties for this build.
+
+Returns:
+    A list of relevant packages built.
 ### *recipe_modules* / [ipc](/recipe_modules/ipc)
 
 [DEPS](/recipe_modules/ipc/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11502,24 +11526,12 @@ Create directories and files of artifacts needed by Ti50 Tast tests.
 &mdash; **def [UploadTestResults](/recipes/build_firmware.py#57)(api, location, builder_name):**
 ### *recipes* / [build\_incremental](/recipes/build_incremental.py)
 
-[DEPS](/recipes/build_incremental.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_incremental.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [incremental](#recipe_modules-incremental), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoOldBuild](/recipes/build_incremental.py#57)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
-
-Rewind the checkout, install packages, and then forward the checkout.
-
-Args:
-  api: The recipe API.
-  config: The BuilderConfig for this incremental builder.
-  properties: Input properties for this build.
-
-Returns:
-  A list of relevant packages built.
-
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#142)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#59)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
 
 Tests reliability of incremental build by performing two builds.
 
@@ -11535,7 +11547,7 @@ Args:
 Returns:
   A list of relevant packages built.
 
-&mdash; **def [RunSteps](/recipes/build_incremental.py#43)(api: RecipeApi, properties: IncrementalProperties):**
+&mdash; **def [RunSteps](/recipes/build_incremental.py#45)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#18): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
@@ -14273,6 +14285,14 @@ Test updating build info for local greenness.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gs_step_logging/examples/full.py#20)(api):**
+### *recipes* / [incremental:tests/test\_incremental](/recipe_modules/incremental/tests/test_incremental.py)
+
+[DEPS](/recipe_modules/incremental/tests/test_incremental.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [incremental](#recipe_modules-incremental), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for testing the incremental recipe_module.
+
+&mdash; **def [RunSteps](/recipe_modules/incremental/tests/test_incremental.py#32)(api):**
 ### *recipes* / [ipc:examples/falsy\_attrs](/recipe_modules/ipc/examples/falsy_attrs.py)
 
 [DEPS](/recipe_modules/ipc/examples/falsy_attrs.py#14): [ipc](#recipe_modules-ipc)
