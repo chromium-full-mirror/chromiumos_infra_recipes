@@ -9,7 +9,7 @@
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 
 from PB.chromite.api.packages import GetTargetVersionsResponse
-from PB.chromiumos.build_report import BuildReport
+from PB.chromiumos.build_report import BuildReport, URI
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
@@ -65,7 +65,8 @@ def RunSteps(api):
               'DEBUG_SYMBOLS': ['/path/to/debug.tgz',],
               # Unsupported, should not be included in pubsub.
               'SDK_TARBALL': ['/path/to/tarball.tgz',]
-          }))
+          }),
+      '/path/to/artifacts')
 
   # Publish the branch.
   api.build_reporting.publish_branch('main')
@@ -118,6 +119,17 @@ def RunSteps(api):
       Channel.CHANNEL_CANARY,
       Channel.CHANNEL_DEV,
   ])
+  api.assertions.assertEqual(len(build_report.artifacts), 1)
+  api.assertions.assertEqual(
+      build_report.artifacts[0],
+      BuildReport.BuildArtifact(
+          type=BuildReport.BuildArtifact.DEBUG_ARCHIVE,
+          uri=URI(
+              gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/debug.tgz',
+          ),
+          sha256='deadbeef',
+          size=111,
+      ))
 
 
 def GenTests(api):

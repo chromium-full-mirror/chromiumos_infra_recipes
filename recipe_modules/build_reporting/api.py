@@ -33,6 +33,7 @@ from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.build_report import BuildReport, URI
 
+from recipe_engine import config_types
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
@@ -521,12 +522,14 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     self.publish(build_report)
 
-  def publish_build_artifacts(self, uploaded_artifacts: UploadedArtifacts):
+  def publish_build_artifacts(self, uploaded_artifacts: UploadedArtifacts,
+                              artifact_dir: config_types.Path):
     """Publish metadata about the specified artifacts(s).
 
     Args:
       uploaded_artifacts: Information about uploaded artifacts as returned
         by cros_artifacts.upload_artifacts.
+      artifact_dir: Local dir where artifacts are staged.
     """
     with self.m.step.nest('publish artifacts to pubsub') as presentation:
       presentation.logs['uploaded artifacts'] = str(uploaded_artifacts)
@@ -545,16 +548,24 @@ class BuildReportingApi(recipe_api.RecipeApi):
         # Supported artifact.
         if build_report_artifact_type:
           # TODO(b/303704765): Throw error if file is missing?
-          if desired_file in [self.m.path.basename(f) for f in files]:
-            uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
-                                             uploaded_artifacts.gs_path,
-                                             desired_file)
-            build_report.artifacts.append(
-                BuildReport.BuildArtifact(
-                    type=build_report_artifact_type,
-                    uri=URI(
-                        gcs=uri,
-                    ),
-                ))
+          for f in files:
+            if desired_file == self.m.path.basename(f):
+              artifact_local_path = self.m.path.join(artifact_dir, f)
+              file_hash = self.m.file.file_hash(artifact_local_path,
+                                                test_data='deadbeef')
+
+              uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
+                                               uploaded_artifacts.gs_path,
+                                               desired_file)
+              build_report.artifacts.append(
+                  BuildReport.BuildArtifact(
+                      type=build_report_artifact_type,
+                      uri=URI(
+                          gcs=uri,
+                      ),
+                      sha256=file_hash,
+                      size=self.m.file.filesizes(f'compute file size for {f}',
+                                                 [artifact_local_path])[0],
+                  ))
 
       self.publish(build_report)

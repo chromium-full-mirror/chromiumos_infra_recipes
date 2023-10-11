@@ -188,7 +188,7 @@ def DoRunSteps(api, config, properties):
           api.bcid_reporter.report_stage('upload')
 
       try:
-        uploaded_artifacts, _ = api.build_menu.upload_artifacts(
+        uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
             config, report_to_spike=api.cros_infra_config.config.artifacts
             .attestation_eligible,
             ignore_breakpad_symbol_generation_errors=failing_build_exception
@@ -197,7 +197,8 @@ def DoRunSteps(api, config, properties):
           gs_image_dir = 'gs://{bucket}/{path}'.format(
               bucket=uploaded_artifacts.gs_bucket,
               path=uploaded_artifacts.gs_path)
-          api.build_reporting.publish_build_artifacts(uploaded_artifacts)
+          api.build_reporting.publish_build_artifacts(uploaded_artifacts,
+                                                      artifact_dir)
           # Copy over the prebuilt DLCs to the upload bucket.
           prebuilt_dlcs = api.dlc_utils.copy_prebuilt_dlcs(
               uploaded_artifacts.gs_bucket,
