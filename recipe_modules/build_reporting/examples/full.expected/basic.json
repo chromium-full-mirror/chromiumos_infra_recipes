@@ -368,7 +368,7 @@
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-release/R12-12345.0.0', files_by_artifact={'DEBUG_SYMBOLS': ['/path/to/debug.tgz'], 'SDK_TARBALL': ['/path/to/tarball.tgz']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-release/R12-12345.0.0', files_by_artifact={'DEBUG_SYMBOLS': ['debug.tgz'], 'FIRMWARE': ['firmware_from_source.tar.bz2'], 'IMAGE_ARCHIVES': ['chromiumos_base_image.tar.xz', 'chromiumos_test_image.tar.xz', 'recovery_image.tar.xz', 'vmlinuz.tar.xz'], 'IMAGE_ZIP': ['image.zip'], 'HWQUAL': ['chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2'], 'SDK_TARBALL': ['/path/to/tarball.tgz']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -380,7 +380,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/path/to/debug.tgz"
+      "/path/to/artifacts/debug.tgz"
     ],
     "infra_step": true,
     "luci_context": {
@@ -408,7 +408,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "filesizes",
-      "/path/to/debug.tgz"
+      "/path/to/artifacts/debug.tgz"
     ],
     "infra_step": true,
     "luci_context": {
@@ -422,10 +422,238 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "publish artifacts to pubsub.compute file size for /path/to/debug.tgz",
+    "name": "publish artifacts to pubsub.compute file size for debug.tgz",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@filesizes@/path/to/debug.tgz: \t111@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/debug.tgz: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/artifacts/firmware_from_source.tar.bz2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.Compute file hash (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "/path/to/artifacts/firmware_from_source.tar.bz2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.compute file size for firmware_from_source.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/artifacts/chromiumos_test_image.tar.xz"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.Compute file hash (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "/path/to/artifacts/chromiumos_test_image.tar.xz"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.compute file size for chromiumos_test_image.tar.xz",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/chromiumos_test_image.tar.xz: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/artifacts/image.zip"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.Compute file hash (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "/path/to/artifacts/image.zip"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.compute file size for image.zip",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/image.zip: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/artifacts/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.Compute file hash (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "/path/to/artifacts/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "publish artifacts to pubsub.compute file size for chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2: \t111@@@",
       "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
@@ -479,6 +707,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"5\",@@@",
@@ -494,7 +754,7 @@
     "name": "publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIkUKFQoTcmVsZWFzZS1SMTItMTIzNDUuQhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AFSgoIwa6V5/Sri8p6',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIkUKFQoTcmVsZWFzZS1SMTItMTIzNDUuQhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ABUoKCMGulef0q4vKeg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -519,7 +779,7 @@
       }
     },
     "name": "publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBIkUKFQoTcmVsZWFzZS1SMTItMTIzNDUuQhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AFSgoIwa6V5/Sri8p6\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBIkUKFQoTcmVsZWFzZS1SMTItMTIzNDUuQhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ABUoKCMGulef0q4vKeg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -577,6 +837,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"6\",@@@",
@@ -592,7 +884,7 @@
     "name": "build status pubsub update (5).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIjYKBgoEbWFpbhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AGSgoIwa6V5/Sri8p6',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIjYKBgoEbWFpbhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ABkoKCMGulef0q4vKeg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -617,7 +909,7 @@
       }
     },
     "name": "build status pubsub update (5).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBIjYKBgoEbWFpbhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AGSgoIwa6V5/Sri8p6\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBIjYKBgoEbWFpbhoOCgxidWlsZF90YXJnZXRCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ABkoKCMGulef0q4vKeg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -681,6 +973,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"7\",@@@",
@@ -696,7 +1020,7 @@
     "name": "build status pubsub update (6).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIjwKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBANCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AHSgoIwa6V5/Sri8p6',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIjwKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBANCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9AB0oKCMGulef0q4vKeg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -721,7 +1045,7 @@
       }
     },
     "name": "build status pubsub update (6).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBIjwKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBANCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AHSgoIwa6V5/Sri8p6\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBIjwKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBANCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9AB0oKCMGulef0q4vKeg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -806,6 +1130,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"8\",@@@",
@@ -821,7 +1177,7 @@
     "name": "build status pubsub update (7).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AISgoIwa6V5/Sri8p6',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ACEoKCMGulef0q4vKeg==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -846,7 +1202,7 @@
       }
     },
     "name": "build status pubsub update (7).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AISgoIwa6V5/Sri8p6\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ACEoKCMGulef0q4vKeg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -931,6 +1287,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"9\",@@@",
@@ -952,7 +1340,7 @@
     "name": "build status pubsub update (8).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AJSgoIwa6V5/Sri8p6ahEyMDIyLjA2LjI2LjE3MDkzOHIrMjAyMi8wNi8lKHRhcmdldClzLTIwMjIuMDYuMjYuMTcwOTM4LnRhci54enoVeDg2XzY0LWNyb3MtbGludXgtZ251ehNpNjg2LWNyb3MtbGludXgtZ251',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ACUoKCMGulef0q4vKemoRMjAyMi4wNi4yNi4xNzA5MzhyKzIwMjIvMDYvJSh0YXJnZXQpcy0yMDIyLjA2LjI2LjE3MDkzOC50YXIueHp6FXg4Nl82NC1jcm9zLWxpbnV4LWdudXoTaTY4Ni1jcm9zLWxpbnV4LWdudQ==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -977,7 +1365,7 @@
       }
     },
     "name": "build status pubsub update (8).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYob0AJSgoIwa6V5/Sri8p6ahEyMDIyLjA2LjI2LjE3MDkzOHIrMjAyMi8wNi8lKHRhcmdldClzLTIwMjIuMDYuMjYuMTcwOTM4LnRhci54enoVeDg2XzY0LWNyb3MtbGludXgtZ251ehNpNjg2LWNyb3MtbGludXgtZ251\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBInUKBgoEbWFpbhoOCgxidWlsZF90YXJnZXQqBAoCBAMyDwgBEgs3OC4wLjM4NzcuMDICCAIyBggFEgI3ODINCAQSCTEyNDM4LjAuMDILCAMSBzU4MTIzNzdCCAoGZm9vYmxlQggKBmJhcmJsZUIICgZiYXpibGUqKxIpCglTVEVQX1NZTkMSHAgBEGQaFgoGCMOAxP0EEgwIxIDE/QQQgMq17gE6WghmEkoKSGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtcmVsZWFzZS9SMTItMTIzNDUuMC4wL2RlYnVnLnRnehoIZGVhZGJlZWYobzptCAMSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYobzptCAQSXQpbZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21pdW1vc190ZXN0X2ltYWdlLnRhci54ehoIZGVhZGJlZWYobzpaCAESSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvaW1hZ2UuemlwGghkZWFkYmVlZihvOoMBCGUScwpxZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvY2hyb21lb3MtaHdxdWFsLWJ1aWxkX3RhcmdldC1SNzgtMTI0MzguMC4wLnRhci5iejIaCGRlYWRiZWVmKG9ACUoKCMGulef0q4vKemoRMjAyMi4wNi4yNi4xNzA5MzhyKzIwMjIvMDYvJSh0YXJnZXQpcy0yMDIyLjA2LjI2LjE3MDkzOC50YXIueHp6FXg4Nl82NC1jcm9zLWxpbnV4LWdudXoTaTY4Ni1jcm9zLWxpbnV4LWdudQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1062,6 +1450,38 @@
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"TEST_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"IMAGE_ZIP\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"HWQUAL_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
       "@@@STEP_LOG_LINE@message@    }@@@",
       "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"10\",@@@",
@@ -1083,7 +1503,7 @@
     "name": "build status pubsub update (9).publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoCCGQidQoGCgRtYWluGg4KDGJ1aWxkX3RhcmdldCoECgIEAzIPCAESCzc4LjAuMzg3Ny4wMgIIAjIGCAUSAjc4Mg0IBBIJMTI0MzguMC4wMgsIAxIHNTgxMjM3N0IICgZmb29ibGVCCAoGYmFyYmxlQggKBmJhemJsZSorEikKCVNURVBfU1lOQxIcCAEQZBoWCgYIw4DE/QQSDAjEgMT9BBCAyrXuATpaCGYSSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZGVidWcudGd6GghkZWFkYmVlZihvQApKCgjBrpXn9KuLynpqETIwMjIuMDYuMjYuMTcwOTM4cisyMDIyLzA2LyUodGFyZ2V0KXMtMjAyMi4wNi4yNi4xNzA5MzgudGFyLnh6ehV4ODZfNjQtY3Jvcy1saW51eC1nbnV6E2k2ODYtY3Jvcy1saW51eC1nbnU=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoCCGQidQoGCgRtYWluGg4KDGJ1aWxkX3RhcmdldCoECgIEAzIPCAESCzc4LjAuMzg3Ny4wMgIIAjIGCAUSAjc4Mg0IBBIJMTI0MzguMC4wMgsIAxIHNTgxMjM3N0IICgZmb29ibGVCCAoGYmFyYmxlQggKBmJhemJsZSorEikKCVNURVBfU1lOQxIcCAEQZBoWCgYIw4DE/QQSDAjEgMT9BBCAyrXuATpaCGYSSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZGVidWcudGd6GghkZWFkYmVlZihvOm0IAxJdCltnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvOm0IBBJdCltnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9jaHJvbWl1bW9zX3Rlc3RfaW1hZ2UudGFyLnh6GghkZWFkYmVlZihvOloIARJKCkhnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9pbWFnZS56aXAaCGRlYWRiZWVmKG86gwEIZRJzCnFnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9jaHJvbWVvcy1od3F1YWwtYnVpbGRfdGFyZ2V0LVI3OC0xMjQzOC4wLjAudGFyLmJ6MhoIZGVhZGJlZWYob0AKSgoIwa6V5/Sri8p6ahEyMDIyLjA2LjI2LjE3MDkzOHIrMjAyMi8wNi8lKHRhcmdldClzLTIwMjIuMDYuMjYuMTcwOTM4LnRhci54enoVeDg2XzY0LWNyb3MtbGludXgtZ251ehNpNjg2LWNyb3MtbGludXgtZ251',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -1108,7 +1528,7 @@
       }
     },
     "name": "build status pubsub update (9).publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoCCGQidQoGCgRtYWluGg4KDGJ1aWxkX3RhcmdldCoECgIEAzIPCAESCzc4LjAuMzg3Ny4wMgIIAjIGCAUSAjc4Mg0IBBIJMTI0MzguMC4wMgsIAxIHNTgxMjM3N0IICgZmb29ibGVCCAoGYmFyYmxlQggKBmJhemJsZSorEikKCVNURVBfU1lOQxIcCAEQZBoWCgYIw4DE/QQSDAjEgMT9BBCAyrXuATpaCGYSSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZGVidWcudGd6GghkZWFkYmVlZihvQApKCgjBrpXn9KuLynpqETIwMjIuMDYuMjYuMTcwOTM4cisyMDIyLzA2LyUodGFyZ2V0KXMtMjAyMi4wNi4yNi4xNzA5MzgudGFyLnh6ehV4ODZfNjQtY3Jvcy1saW51eC1nbnV6E2k2ODYtY3Jvcy1saW51eC1nbnU=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoCCGQidQoGCgRtYWluGg4KDGJ1aWxkX3RhcmdldCoECgIEAzIPCAESCzc4LjAuMzg3Ny4wMgIIAjIGCAUSAjc4Mg0IBBIJMTI0MzguMC4wMgsIAxIHNTgxMjM3N0IICgZmb29ibGVCCAoGYmFyYmxlQggKBmJhemJsZSorEikKCVNURVBfU1lOQxIcCAEQZBoWCgYIw4DE/QQSDAjEgMT9BBCAyrXuATpaCGYSSgpIZ3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2J1aWxkX3RhcmdldC1yZWxlYXNlL1IxMi0xMjM0NS4wLjAvZGVidWcudGd6GghkZWFkYmVlZihvOm0IAxJdCltnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvOm0IBBJdCltnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9jaHJvbWl1bW9zX3Rlc3RfaW1hZ2UudGFyLnh6GghkZWFkYmVlZihvOloIARJKCkhnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9pbWFnZS56aXAaCGRlYWRiZWVmKG86gwEIZRJzCnFnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LXJlbGVhc2UvUjEyLTEyMzQ1LjAuMC9jaHJvbWVvcy1od3F1YWwtYnVpbGRfdGFyZ2V0LVI3OC0xMjQzOC4wLjAudGFyLmJ6MhoIZGVhZGJlZWYob0AKSgoIwa6V5/Sri8p6ahEyMDIyLjA2LjI2LjE3MDkzOHIrMjAyMi8wNi8lKHRhcmdldClzLTIwMjIuMDYuMjYuMTcwOTM4LnRhci54enoVeDg2XzY0LWNyb3MtbGludXgtZ251ehNpNjg2LWNyb3MtbGludXgtZ251\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

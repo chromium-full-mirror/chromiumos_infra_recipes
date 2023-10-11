@@ -534,13 +534,25 @@ class BuildReportingApi(recipe_api.RecipeApi):
     with self.m.step.nest('publish artifacts to pubsub') as presentation:
       presentation.logs['uploaded artifacts'] = str(uploaded_artifacts)
 
-      build_report = BuildReport()
+      files_by_artifact = uploaded_artifacts.files_by_artifact
+      # TODO(b/303704765): Support factory.
       build_report_supported_artifacts = {
           BuilderConfig.Artifacts.DEBUG_SYMBOLS:
               (BuildReport.BuildArtifact.DEBUG_ARCHIVE, 'debug.tgz'),
+          BuilderConfig.Artifacts.FIRMWARE:
+              (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
+               'firmware_from_source.tar.bz2'),
+          BuilderConfig.Artifacts.HWQUAL:
+              (BuildReport.BuildArtifact.HWQUAL_ARCHIVE,
+               files_by_artifact.get('HWQUAL', [None])[0]),
+          BuilderConfig.Artifacts.IMAGE_ARCHIVES:
+              (BuildReport.BuildArtifact.TEST_IMAGE_ARCHIVE,
+               'chromiumos_test_image.tar.xz'),
+          BuilderConfig.Artifacts.IMAGE_ZIP:
+              (BuildReport.BuildArtifact.IMAGE_ZIP, 'image.zip'),
       }
-      files_by_artifact = uploaded_artifacts.files_by_artifact
 
+      build_report = BuildReport()
       for artifact_type, files in files_by_artifact.items():
         enum_val = BuilderConfig.Artifacts.ArtifactTypes.Value(artifact_type)
         build_report_artifact_type, desired_file = build_report_supported_artifacts.get(

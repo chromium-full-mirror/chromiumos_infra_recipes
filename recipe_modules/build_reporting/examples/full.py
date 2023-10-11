@@ -62,7 +62,17 @@ def RunSteps(api):
           'chromeos-image-archive',
           'build_target-release/R12-12345.0.0',
           {
-              'DEBUG_SYMBOLS': ['/path/to/debug.tgz',],
+              'DEBUG_SYMBOLS': ['debug.tgz',],
+              'FIRMWARE': ['firmware_from_source.tar.bz2'],
+              'IMAGE_ARCHIVES': [
+                  'chromiumos_base_image.tar.xz',
+                  # The file we're looking for.
+                  'chromiumos_test_image.tar.xz',
+                  'recovery_image.tar.xz',
+                  'vmlinuz.tar.xz'
+              ],
+              'IMAGE_ZIP': ['image.zip'],
+              'HWQUAL': ['chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2'],
               # Unsupported, should not be included in pubsub.
               'SDK_TARBALL': ['/path/to/tarball.tgz',]
           }),
@@ -119,17 +129,50 @@ def RunSteps(api):
       Channel.CHANNEL_CANARY,
       Channel.CHANNEL_DEV,
   ])
-  api.assertions.assertEqual(len(build_report.artifacts), 1)
+  api.assertions.assertEqual(len(build_report.artifacts), 5)
   api.assertions.assertEqual(
-      build_report.artifacts[0],
-      BuildReport.BuildArtifact(
-          type=BuildReport.BuildArtifact.DEBUG_ARCHIVE,
-          uri=URI(
-              gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/debug.tgz',
+      list(build_report.artifacts), [
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.DEBUG_ARCHIVE,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/debug.tgz',
+              ),
+              sha256='deadbeef',
+              size=111,
           ),
-          sha256='deadbeef',
-          size=111,
-      ))
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/firmware_from_source.tar.bz2',
+              ),
+              sha256='deadbeef',
+              size=111,
+          ),
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.TEST_IMAGE_ARCHIVE,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromiumos_test_image.tar.xz',
+              ),
+              sha256='deadbeef',
+              size=111,
+          ),
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.IMAGE_ZIP,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/image.zip',
+              ),
+              sha256='deadbeef',
+              size=111,
+          ),
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.HWQUAL_ARCHIVE,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2',
+              ),
+              sha256='deadbeef',
+              size=111,
+          ),
+      ])
 
 
 def GenTests(api):
