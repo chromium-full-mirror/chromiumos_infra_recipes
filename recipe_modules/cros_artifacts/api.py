@@ -758,13 +758,14 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return filtered_artifacts_info
 
-  def upload_artifacts(self, builder_name, kind, gs_bucket, *,
-                       artifacts_info=None, chroot=None, sysroot=None,
-                       name='upload artifacts', test_data=None,
-                       private_bundle_func=None, report_to_spike=False,
-                       attestation_eligible=False, upload_coverage=True,
-                       previously_uploaded_artifacts=None,
-                       ignore_breakpad_symbol_generation_errors=False):
+  def upload_artifacts(
+      self, builder_name, kind, gs_bucket, *, artifacts_info=None, chroot=None,
+      sysroot=None, name='upload artifacts', test_data=None,
+      private_bundle_func=None, report_to_spike=False,
+      attestation_eligible=False, upload_coverage=True,
+      previously_uploaded_artifacts=None,
+      ignore_breakpad_symbol_generation_errors=False
+  ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Bundle and upload the given artifacts for the given build target.
 
     This function sets the "artifacts" output property to include the
@@ -806,6 +807,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
+      (Path) path to local dir where artifacts are staged.
     """
     uploaded_artifacts = None
 
@@ -839,7 +841,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           raise StepFailure('Failed to generate: {}'.format(
               ', '.join(failed_artifacts)))
         presentation.step_text = 'No artifacts found.'
-        return uploaded_artifacts
+        return uploaded_artifacts, None
 
       # Upload all of the artifacts to the archive bucket/path.
       gs_path = self.artifacts_gs_path(builder_name, sysroot.build_target, kind,
@@ -938,7 +940,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               f'Failed to generate: {", ".join(failed_artifacts)}')
         with self.m.step.nest('skip publish artifacts') as presentation:
           presentation.step_text = 'Not publishing artifacts in dry run'
-          return uploaded_artifacts
+          return uploaded_artifacts, outpath
 
       # Builders can specify not to publish artifacts (e.g. tryjob artifacts).
       if self.skip_publish:
@@ -959,7 +961,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     if failed_artifacts:
       raise StepFailure('Failed to generate: {}'.format(
           ', '.join(failed_artifacts)))
-    return uploaded_artifacts
+    return uploaded_artifacts, outpath
 
   def upload_metadata(self, name, builder_name, target, gs_bucket, filename,
                       message, template=None):

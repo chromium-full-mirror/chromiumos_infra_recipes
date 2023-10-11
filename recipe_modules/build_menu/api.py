@@ -8,7 +8,7 @@
 import collections
 import contextlib
 import re
-from typing import Iterable, Iterator, List, Optional
+from typing import Iterable, Iterator, List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -25,6 +25,10 @@ from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import common as rdb_common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
+
+from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
+
+from recipe_engine import config_types
 from recipe_engine import recipe_api
 
 
@@ -804,11 +808,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
         self.m.failures.set_test_failed_packages(presentation, pkgs)
 
-  def upload_artifacts(self, config=None, private_bundle_func=None,
-                       sysroot=None, report_to_spike=False,
-                       name='upload artifacts',
-                       previously_uploaded_artifacts=None,
-                       ignore_breakpad_symbol_generation_errors=False):
+  def upload_artifacts(
+      self, config=None, private_bundle_func=None, sysroot=None,
+      report_to_spike=False, name='upload artifacts',
+      previously_uploaded_artifacts=None,
+      ignore_breakpad_symbol_generation_errors=False
+  ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Upload artifacts from the build.
 
     Args:
@@ -841,10 +846,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         config.unit_tests.ebuilds_run_spec)
     run_upload_coverage = self.packages_installed and unit_test_configured
 
-    uploaded = None
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
-      uploaded = self.m.cros_artifacts.upload_artifacts(
+      return self.m.cros_artifacts.upload_artifacts(
           config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
           artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
           sysroot=sysroot, private_bundle_func=private_bundle_func,
@@ -854,7 +858,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           previously_uploaded_artifacts=previously_uploaded_artifacts,
           ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors
       )
-    return uploaded
+    return (None, None)
 
   def artifacts_build_path(self):
     """Get the standard artifacts build path for the builder (without bucket).

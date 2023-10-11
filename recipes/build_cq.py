@@ -120,7 +120,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
 
       if async_unit_tests_enabled:
         api.build_menu.build_images(config)
-        uploaded_artifacts = api.build_menu.upload_artifacts(config)
+        uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
 
         # Pause and throw if test containers failed to upload. Note that this
         # is done before the image_artifacts_uploaded property is set, as

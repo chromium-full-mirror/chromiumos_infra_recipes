@@ -155,7 +155,7 @@ def RunSteps(api, properties):
       UploadTestResults(api, location, build.builder.builder)
       raise ex
 
-    uploaded_artifacts = api.build_menu.upload_artifacts(
+    uploaded_artifacts, _ = api.build_menu.upload_artifacts(
         config=config, report_to_spike=api.cros_infra_config.config.artifacts
         .attestation_eligible)
 

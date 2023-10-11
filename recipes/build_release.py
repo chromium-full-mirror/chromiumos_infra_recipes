@@ -186,7 +186,7 @@ def DoRunSteps(api, config, properties):
           api.bcid_reporter.report_stage('upload')
 
       try:
-        uploaded_artifacts = api.build_menu.upload_artifacts(
+        uploaded_artifacts, _ = api.build_menu.upload_artifacts(
             config, report_to_spike=api.cros_infra_config.config.artifacts
             .attestation_eligible,
             ignore_breakpad_symbol_generation_errors=failing_build_exception

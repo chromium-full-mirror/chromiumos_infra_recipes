@@ -520,7 +520,7 @@ class FirmwareBuilder():
         with self._maybe_step(bt.name, len(self.properties.build_targets) > 1):
           self._setup_board_and_install_packages(bt)
           try:
-            bt_uploaded = self.m.build_menu.upload_artifacts(
+            bt_uploaded, _ = self.m.build_menu.upload_artifacts(
                 private_bundle_func=self._bundle_firmware,
                 sysroot=Sysroot(path='/build/{}'.format(bt.name),
                                 build_target=bt), report_to_spike=self.m

@@ -62,7 +62,7 @@ def RunSteps(api):
   # This verifies that we can upload artifacts, some of which get an acl
   # applied.  Legacy and Toolchain artifacts get us coverage of both paths in
   # the API 1.0.0 case.
-  uploaded = api.cros_artifacts.upload_artifacts(
+  uploaded, _ = api.cros_artifacts.upload_artifacts(
       'target-toolchain', BuilderConfig.Id.TOOLCHAIN, 'artifacts_gs_bucket',
       artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
