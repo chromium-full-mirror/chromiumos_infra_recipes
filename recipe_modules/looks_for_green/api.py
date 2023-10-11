@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions implementing looks for green."""
+
 from collections import namedtuple
 import datetime
 from typing import Any, Dict, List, Optional
@@ -29,6 +31,7 @@ Snapshot = namedtuple('Snapshot', [
     'agg_green',
     'approx_snap_age_hours',
     'target_greenness',
+    'local_greenness',
 ])
 
 
@@ -190,13 +193,28 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
   def _get_snapshots(
-      self, limit: Optional[int] = None,
-      latest_start: Optional[timestamp_pb2.Timestamp] = None
+      self,
+      limit: Optional[int] = None,
+      latest_start: Optional[timestamp_pb2.Timestamp] = None,
+      bucket: Optional[str] = None,
+      builder: Optional[str] = None,
   ) -> List[build_pb2.Build]:
     """Get snapshot builds within the lookback period.
 
     Optionally specify a limit of builds to return. Optionally specify a
     latest_start time in UTC for builds.
+
+    Args:
+      limit: A limit on the number of builds to return.
+      latest_start: The latest start time of snapshot orchestrators to consider,
+        or the current time if not set.
+      bucket: If specified, the bucket to search in. Defaults to
+        self._greenness_bucket.
+      builder: If specified, the builder to search for. Defaults to
+        self._greenness_builder.
+
+    Returns:
+      Snapshot builds found within the lookback period.
     """
     fields = frozenset({
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
@@ -218,8 +236,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                   seconds=latest_seconds - self._lookback_hours * 60 * 60,
               )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
-    predicate.builder.bucket = self._greenness_bucket
-    predicate.builder.builder = self._greenness_builder
+    predicate.builder.bucket = bucket or self._greenness_bucket
+    predicate.builder.builder = builder or self._greenness_builder
     return self.m.buildbucket.search([predicate], limit=limit, fields=fields,
                                      timeout=60)
 
@@ -240,13 +258,18 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           out_props['greenness']['targetGreenness'])
     except ValueError:
       target_greenness = []
+    local_greenness = self.m.buildbucket_stats.parse_local_greenness(out_props)
     approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
-    return Snapshot(bbid=snapshot_result.id,
-                    commit_sha=snapshot_result.input.gitiles_commit.id,
-                    start_time=start_time, end_time=end_time,
-                    agg_green=agg_green,
-                    approx_snap_age_hours=approx_snap_age_hours,
-                    target_greenness=target_greenness)
+    return Snapshot(
+        bbid=snapshot_result.id,
+        commit_sha=snapshot_result.input.gitiles_commit.id,
+        start_time=start_time,
+        end_time=end_time,
+        agg_green=agg_green,
+        approx_snap_age_hours=approx_snap_age_hours,
+        target_greenness=target_greenness,
+        local_greenness=local_greenness,
+    )
 
   def _set_snapshot_stats(
       self,
@@ -344,14 +367,29 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return latest_snap
 
   def find_green_snapshot(
-      self, latest_start: Optional[timestamp_pb2.Timestamp] = None
+      self,
+      latest_start: Optional[timestamp_pb2.Timestamp] = None,
+      bucket: Optional[str] = None,
+      builder: Optional[str] = None,
   ) -> Optional[Snapshot]:
     """Find a green snapshot within the lookback period if one exists.
 
     Optionally specify a latest_start time in UTC for builds.
+
+    Args:
+      latest_start: The latest start time of snapshot orchestrators to consider,
+        or the current time if not set.
+      bucket: If specified, the bucket to search in. Defaults to
+        self._greenness_bucket.
+      builder: If specified, the builder to search for. Defaults to
+        self._greenness_builder.
+
+    Returns:
+      A green snapshot, if one was found.
     """
     with self.m.step.nest('find green snapshot') as presentation:
-      results = self._get_snapshots(latest_start=latest_start)
+      results = self._get_snapshots(latest_start=latest_start, bucket=bucket,
+                                    builder=builder)
       parsed_results = []
       for result in results:
         parsed_results.append(self._parse_snapshot_result(result))

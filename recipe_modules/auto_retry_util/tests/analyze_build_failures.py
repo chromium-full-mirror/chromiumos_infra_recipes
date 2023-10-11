@@ -9,9 +9,13 @@
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
 from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES
+from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN
 
 DEPS = [
     'recipe_engine/assertions',
@@ -41,23 +45,23 @@ def GenTests(api):
   configs = BuilderConfigs()
   orch = configs.builder_configs.add()
   orch.id.name = 'cq-orchestrator'
-  orch.orchestrator.child_specs.add().name = 'builder1'
-  orch.orchestrator.child_specs.add().name = 'builder2'
-  orch.orchestrator.child_specs.add().name = 'builder4'
-  orch.orchestrator.child_specs.add().name = 'builder5'
+  orch.orchestrator.child_specs.add().name = 'builder1-cq'
+  orch.orchestrator.child_specs.add().name = 'builder2-cq'
+  orch.orchestrator.child_specs.add().name = 'builder4-cq'
+  orch.orchestrator.child_specs.add().name = 'builder5-cq'
   orch.orchestrator.child_specs.add().name = 'builder6-cq'
 
   child_build_info = [
       {
           'builder': {
-              'builder': 'builder1'
+              'builder': 'builder1-cq'
           },
           'status': 'SUCCESS',
           'relevant': True
       },
       {
           'builder': {
-              'builder': 'builder2'
+              'builder': 'builder2-cq'
           },
           'status': 'FAILURE',
           'relevant': True
@@ -71,14 +75,14 @@ def GenTests(api):
       },
       {
           'builder': {
-              'builder': 'builder4'
+              'builder': 'builder4-cq'
           },
           'status': 'SUCCESS',
           'relevant': False
       },
       {
           'builder': {
-              'builder': 'builder5'
+              'builder': 'builder5-cq'
           },
           'status': 'INFRA_FAILURE',
           'relevant': True
@@ -98,8 +102,10 @@ def GenTests(api):
       }).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1'], expected_retryable=['builder3'],
-          expected_outstanding=['builder2', 'builder5', 'builder6-slim-cq']),
+          expected_success=['builder1-cq'], expected_retryable=['builder3'],
+          expected_outstanding=[
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq'
+          ]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -117,8 +123,134 @@ def GenTests(api):
                   ])
           }),
       api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(expected_success=['builder1'],
-                     expected_retryable=['builder3', 'builder5'],
-                     expected_outstanding=['builder2', 'builder6-slim-cq']),
+      api.properties(expected_success=['builder1-cq'],
+                     expected_retryable=['builder3', 'builder5-cq'],
+                     expected_outstanding=['builder2-cq', 'builder6-slim-cq']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  FAILED_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
+  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
+      'aggregateMetric': 0,
+  }
+  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
+      'greenness': {
+          'builder2-snapshot': [0, 0, True, True]
+      }
+  }
+
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
+      'aggregateMetric': 100,
+  }
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
+      'greenness': {
+          'builder2-snapshot': [100, 100, True, True]
+      }
+  }
+
+  yield api.test(
+      'wait-for-green-experiment-feature',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
+                  ])
+          }),
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': child_build_info
+          },
+          output_gitiles_commit=common_pb2.GitilesCommit(
+              host='chrome-internal.googlesource.com',
+              project='chromeos/manifest-internal',
+              id='abc',
+              ref='refs/heads/snapshot',
+          ),
+      ).build,
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='postsubmit',
+                  builder='snapshot-orchestrator',
+              ),
+              output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
+          ),
+      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+                                              ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder='snapshot-orchestrator',
+                  ),
+                  output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+              ),
+          ],
+          step_name='analyzing build results.get now green builders.find green snapshot.buildbucket.search'
+      ),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(expected_success=['builder1-cq'],
+                     expected_retryable=['builder2-cq', 'builder3'],
+                     expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'wait-for-green-experiment-feature-no-green-snapshot-found',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
+                  ])
+          }),
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': child_build_info
+          },
+          output_gitiles_commit=common_pb2.GitilesCommit(
+              host='chrome-internal.googlesource.com',
+              project='chromeos/manifest-internal',
+              id='abc',
+              ref='refs/heads/snapshot',
+          ),
+      ).build,
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='postsubmit',
+                  builder='snapshot-orchestrator',
+              ),
+              output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
+          ),
+      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+                                              ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder='snapshot-orchestrator',
+                  ),
+                  output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
+              ),
+          ],
+          step_name='analyzing build results.get now green builders.find green snapshot.buildbucket.search'
+      ),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=['builder1-cq'], expected_retryable=['builder3'],
+          expected_outstanding=[
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq'
+          ]),
       api.post_process(post_process.DropExpectation),
   )

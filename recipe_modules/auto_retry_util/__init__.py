@@ -2,13 +2,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Deps and properties for auto-retry functions."""
+
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
+    'buildbucket_stats',
     'cros_infra_config',
     'cros_tags',
     'easy',
@@ -16,6 +20,8 @@ DEPS = [
     'exoneration_util',
     'gerrit',
     'git_footers',
+    'greenness',
+    'looks_for_green',
     'naming',
     'skylab_results',
     'test_util',

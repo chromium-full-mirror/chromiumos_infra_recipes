@@ -57,6 +57,7 @@ EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES = 'retry-infra-failures'
 # Experiment with retrying any prejob failures.
 # TODO(b/296441878): Remove post-launch.
 EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES = 'retry-prejob-failures'
+EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN = 'wait-for-green'
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -211,6 +212,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           if b.replace('-slim-cq', '-cq') not in active_cq_verifiers
       ]
       retryable_failure_builders.extend(removed_verifier_failure_builders)
+
+      if self.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
+        now_green_builders = self._get_now_green_builders(cq_run)
+        # now_green_builders are snapshot builders, but unsucessful_builders are
+        # cq builders. Replace the suffix when matching them.
+        retryable_failure_builders.extend([
+            b for b in unsuccessful_builders
+            if b.replace('-cq', '-snapshot') in now_green_builders
+        ])
+
       outstanding_failure_builders = [
           b for b in unsuccessful_builders
           if b not in retryable_failure_builders
@@ -299,6 +311,79 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       forced_relevant_builders = list(
           cq_run.output.properties['found_force_relevant_targets'])
     return self._cq_orch_default_child_buiders + forced_relevant_builders
+
+  def _get_now_green_builders(self, cq_run: build_pb2.Build) -> List[str]:
+    """Returns builders that failed on cq_run's snapshot and are now passing at ToT.
+
+    This function first finds the greenness for the snapshot that cq_run ran on
+    and collects non-green builders. The function then finds the green snapshot
+    (as defined by looks-for-green) and returns any builders that failed on
+    cq_run's snapshot and are now green.
+
+    Note that it is possible a builder failed on cq_run's snapshot, but didn't
+    actually fail on cq_run; in this case, the builder is still returned (if it
+    is green on the found snapshot-orchestrator).
+
+    Args:
+      The CQ run for which to get now-green builders.
+
+    Returns:
+      The names of the builders that are now green. Note that these are
+        snapshot builders.
+    """
+    with self.m.step.nest('get now green builders') as pres:
+      now_green_builders = []
+      failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+      current_greenness = self.m.looks_for_green.find_green_snapshot(
+          # The staging auto retrier will still look at prod CQ runs, so it must
+          # lookup greenness on the prod snapshot-orchestrator.
+          bucket='postsubmit',
+          builder='snapshot-orchestrator',
+      )
+
+      if not current_greenness:
+        pres.step_text = 'no green snapshot found'
+        return []
+
+      local_greenness = current_greenness.local_greenness
+      for builder in failed_on_snapshot_builders:
+        if builder in local_greenness and local_greenness[
+            builder].build_score == 100:
+          now_green_builders.append(builder)
+
+      pres.logs['failed on snapshot builders'] = failed_on_snapshot_builders
+      pres.logs['now green builders'] = now_green_builders
+
+      return now_green_builders
+
+  def _failed_on_snapshot_builders(self, cq_run: build_pb2.Build) -> List[str]:
+    """Returns builders that failed on cq_run's snapshot.
+
+    This function finds the greenness for the snapshot that cq_run ran on
+    and collects non-green builders.
+
+    Args:
+      The CQ run for which to get failed builders.
+
+    Returns:
+      The names of the builders that failed on the snapshot.
+    """
+    with self.m.step.nest('get tot failure builders') as pres:
+      builder_to_greenness = self.m.buildbucket_stats.get_snapshot_greenness(
+          cq_run.output.gitiles_commit.id,
+          pres,
+          # The staging auto retrier will still look at prod CQ runs, so it must
+          # lookup greenness on the prod snapshot-orchestrator.
+          bucket='postsubmit',
+          builder='snapshot-orchestrator',
+          retries=0,
+          use_local_greenness=True,
+      )
+
+      non_green_builders = {
+          b: g for b, g in builder_to_greenness.items() if g.build_score < 100
+      }
+      return non_green_builders.keys()
 
   def no_retry_footer_set(self, build):
     """Given an orchestrator's associated CLs, have any opted out via footer."""

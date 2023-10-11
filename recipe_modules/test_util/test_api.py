@@ -85,7 +85,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
                  extra_changes=None, exe=None, input_properties=None,
                  experiments=None, create_time=None, start_time=None,
                  update_time=None, end_time=None, critical=None,
-                 output_properties=None, tags=None, created_by=None, **kwargs):
+                 output_properties=None, output_gitiles_commit=None, tags=None,
+                 created_by=None, **kwargs):
     """Return a buildbucket step_data for a typical test build.
 
     In general, test_orchestrator() should be called for orchestrators, and
@@ -120,6 +121,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
           message and build will have NO output properties.  If specified, the
           output properties will be
           |input_properties|.update(|output_properties|).
+      output_gitiles_commit (GitilesCommit): commit to set on the Output.
       tags: (list[StringPair] or key-value dict): tags to pass to the build.  If
           a dict is given, it will be passed as arguments to cros_tags.tags()
       **kwargs: see buildbucket/test_api.py
@@ -187,6 +189,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     if output_dict:
       msg.output.properties.update(input_dict)
       msg.output.properties.update(output_dict)
+
+    if output_gitiles_commit:
+      msg.output.gitiles_commit.CopyFrom(output_gitiles_commit)
 
     ret = self.m.buildbucket.build(msg)
     if input_dict:

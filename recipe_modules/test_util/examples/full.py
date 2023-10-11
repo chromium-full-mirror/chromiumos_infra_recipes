@@ -189,11 +189,19 @@ def GenTests(api):
   yield api.test(
       'specific-commit-and-changes',
       api.test_util.test_orchestrator(
-          bucket='cq', extra_changes=[
+          bucket='cq',
+          extra_changes=[
               common_pb2.GerritChange(change=5555),
               common_pb2.GerritChange(change=8888),
               common_pb2.GerritChange(change=9999)
-          ], git_ref='refs/heads/mybranch', revision='deadbeefdeadbeef').build,
+          ],
+          git_ref='refs/heads/mybranch',
+          revision='deadbeefdeadbeef',
+          output_gitiles_commit=common_pb2.GitilesCommit(
+              id='deadbeefdeadbeef',
+              ref='refs/heads/mybranch',
+          ),
+      ).build,
       api.properties(
           TestProperties(expected_project='chromeos', expected_bucket='cq',
                          expected_builder='cq-orchestrator', expect_commit=True,

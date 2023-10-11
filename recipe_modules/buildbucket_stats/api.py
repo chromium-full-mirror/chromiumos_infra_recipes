@@ -77,6 +77,29 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
     ])
 
+  def parse_local_greenness(self, properties: struct_pb2.Struct) -> OrderedDict:
+    """Parse the local_greenness output properties.
+
+    Args:
+      properties: Output properties from a build containing a 'local_greenness'
+        output property. This property should contain a 'greenness' key, which
+        is a dict from builder name to GreennessTuple. If this property isn't
+        set, an empty dict is returned.
+
+    Returns:
+      An OrderedDict mapping from builder name to GreennessTuple. If the
+        local_greenness output property isn't found, the dict is empty.
+    """
+    snapshot_greenness = OrderedDict()
+
+    if 'local_greenness' in properties.fields and 'greenness' in properties[
+        'local_greenness'].fields:
+      for builder, greenness_tuple in properties['local_greenness'][
+          'greenness'].items():
+        snapshot_greenness[builder] = GreennessTuple(*greenness_tuple.items())
+
+    return snapshot_greenness
+
   def _poll_and_get_greenness(
       self,
       predicate: builds_service_pb2.BuildPredicate,
@@ -120,14 +143,8 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         # Ensure build greenness in last snapshot run is complete.
         output_props = result.output.properties
         if use_local_greenness:
-          if 'local_greenness' in output_props.fields and 'greenness' in output_props[
-              'local_greenness'].fields:
-            snapshot_greenness = OrderedDict()
-            for builder, greenness_tuple in output_props['local_greenness'][
-                'greenness'].items():
-              snapshot_greenness[builder] = GreennessTuple(
-                  *greenness_tuple.items())
-
+          snapshot_greenness = self.parse_local_greenness(output_props)
+          if snapshot_greenness:
             return snapshot_greenness
         elif 'greenness' in output_props.fields and 'targetGreenness' in output_props[
             'greenness'].fields:
