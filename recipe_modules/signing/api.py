@@ -13,7 +13,7 @@ import os
 import re
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Dict, List, NewType, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
 
 from google.protobuf.text_format import Parse
 
@@ -79,14 +79,9 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
 GSUTIL_TIMEOUT_SECONDS = 30 * 60
 GSUTIL_MAX_RETRY_COUNT = 2
 
-# Unsigned artifact name mapping.
-IMAGE_TYPE_TO_STRING = {
-    common_pb2.IMAGE_TYPE_BASE: None,
-}
-
 IMAGE_TYPE_TO_SUFFIX = {
     common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: '.tar.bz2',
-    common_pb2.IMAGE_TYPE_BASE: '.zip',
+    common_pb2.IMAGE_TYPE_BASE: '.tar.xz',
     common_pb2.IMAGE_TYPE_FACTORY: '.zip',
     common_pb2.IMAGE_TYPE_FIRMWARE: '.tar.bz2',
     common_pb2.IMAGE_TYPE_RECOVERY: '.tar.xz',
@@ -419,14 +414,34 @@ class SigningApi(recipe_api.RecipeApi):
     )
     return build_target_config, archive_dir
 
-  def always_download(self) -> List[str]:
+  def always_download(self) -> Dict[str, Callable[[str, str], str]]:
     """Build artifacts which, if present, are always downloaded
 
     Regardless of requested signing types.
+
+    Returns:
+      Map between archives to download and a function to generate the upload
+      path for the archive. The function must take build_target and version
+      (including milestone, e.g. 'R99-1234.0.0') as its two args.
     """
-    files_to_download = [
-        'recovery_image.tar.xz',
-    ]
+
+    def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType'):
+      return lambda build_target, version: self._get_gs_artifact_name(
+          build_target, version, image_type)
+
+    files_to_download = {
+        'recovery_image.tar.xz':
+            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_RECOVERY),
+        'image.zip':
+            lambda build_target, version:
+            f'ChromeOS-{version}-{build_target}.zip',
+        'debug.tgz':
+            lambda build_target, _: f'debug-{build_target}.tgz',
+        # Required for paygen -- the unsigned test image is used in n2n
+        # payloads.
+        'chromiumos_test_image.tar.xz':
+            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_TEST),
+    }
     return files_to_download
 
   def artifact_name_by_image_type(self,
@@ -486,7 +501,7 @@ class SigningApi(recipe_api.RecipeApi):
     # Otherwise, only the image types specified in |sign_types| are marked for
     # signing.
     with self.m.step.nest('download release artifacts') as pres:
-      to_download = set(self.always_download())
+      to_download = set(self.always_download().keys())
       signing_configured_artifacts = []
 
       for signing_config in relevant_signing_configs:
@@ -564,9 +579,8 @@ class SigningApi(recipe_api.RecipeApi):
                             image_type: common_pb2.ImageType) -> str:
     """Map artifacts to versioned name expected for paygen signing.
     """
-    img_type = IMAGE_TYPE_TO_STRING.get(
-        image_type,
-        common_pb2.ImageType.Name(image_type)[len('IMAGE_TYPE_'):].lower())
+    img_type = common_pb2.ImageType.Name(
+        image_type)[len('IMAGE_TYPE_'):].lower()
     img = ('%s-' % img_type) if img_type else ''
     suffix = IMAGE_TYPE_TO_SUFFIX.get(image_type, '')
     return 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)
@@ -590,10 +604,14 @@ class SigningApi(recipe_api.RecipeApi):
               'https://console.cloud.google.com/storage/browser/%s' %
               gs_dir[len('gs://'):])
 
+          uploaded = set()
+
+          version = self.m.cros_version.version.legacy_version
           for signing_config in build_target_config.signing_configs:
             artifact_upload_name = self._get_gs_artifact_name(
-                build_target_config.build_target, signing_config.version,
+                build_target_config.build_target, version,
                 signing_config.image_type)
+            uploaded.add(signing_config.archive_path)
             # -n so we don't clobber existing destination artifacts.
             self.m.gsutil([
                 'cp',
@@ -601,6 +619,20 @@ class SigningApi(recipe_api.RecipeApi):
                 os.path.join(str(archive_dir), signing_config.archive_path),
                 os.path.join(gs_dir, artifact_upload_name),
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+
+          for archive_path, upload_path in self.always_download().items():
+            if archive_path not in uploaded:
+              uploaded.add(archive_path)
+
+              upload_name = upload_path(build_target_config.build_target,
+                                        version)
+              # -n so we don't clobber existing destination artifacts.
+              self.m.gsutil([
+                  'cp',
+                  '-n',
+                  os.path.join(str(archive_dir), archive_path),
+                  os.path.join(gs_dir, upload_name),
+              ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
