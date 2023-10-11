@@ -40,10 +40,6 @@ def RunSteps(api):
   config = build_report.config
   config.branch.name = 'release-R12-12345.B'
 
-  config.release.channels.append(Channel.CHANNEL_BETA)
-  config.release.channels.append(Channel.CHANNEL_DEV)
-  config.release.channels.append(Channel.CHANNEL_CANARY)
-
   config.models.add().name = 'fooble'
   config.models.add().name = 'barble'
   config.models.add().name = 'bazble'
@@ -73,6 +69,12 @@ def RunSteps(api):
 
   # Publish the branch.
   api.build_reporting.publish_branch('main')
+
+  # Publish channels.
+  api.build_reporting.publish_channels([
+      Channel.CHANNEL_CANARY,
+      Channel.CHANNEL_DEV,
+  ])
 
   # Publish the versions.
   vers = GetTargetVersionsResponse(
@@ -112,6 +114,10 @@ def RunSteps(api):
   api.assertions.assertEqual(build_report.sdk_version, sdk_version)
   api.assertions.assertEqual(build_report.toolchain_url, toolchain_url)
   api.assertions.assertEqual(build_report.toolchains, toolchains)
+  api.assertions.assertEqual(build_report.config.release.channels, [
+      Channel.CHANNEL_CANARY,
+      Channel.CHANNEL_DEV,
+  ])
 
 
 def GenTests(api):

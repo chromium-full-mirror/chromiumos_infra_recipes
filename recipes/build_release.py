@@ -112,6 +112,8 @@ def RunSteps(api, properties):
             branch = branch[len('refs/heads/'):]
           api.build_reporting.publish_branch(branch)
 
+          api.build_reporting.publish_channels(api.cros_release.channels)
+
           with api.step.nest('check that test config exists'):
             try:
               api.cros_test_plan.generate_target_test_requirements_config(
@@ -426,7 +428,10 @@ def GenTests(api):
                   'dryrun': False
               },
               '$chromeos/signing':
-                  MessageToDict(SigningProperties(timeout=5))
+                  MessageToDict(SigningProperties(timeout=5)),
+              '$chromeos/cros_release': {
+                  'channels': [4, 3],
+              }
           }),
       api.signing.setup_mocks(),
       api.step_data(

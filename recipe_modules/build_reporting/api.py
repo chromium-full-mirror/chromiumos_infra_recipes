@@ -22,15 +22,17 @@ the unfiltered top-level topic for all builds.
 
 import base64
 import contextlib
-from typing import Dict
+from typing import Dict, List
 
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 from google.protobuf.json_format import MessageToJson
 
 # infra/proto/src/chromiumos/builder_report.proto
+from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.build_report import BuildReport, URI
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
@@ -255,6 +257,19 @@ class BuildReportingApi(recipe_api.RecipeApi):
     build_report = BuildReport()
     config = build_report.config
     config.branch.name = branch
+    self.publish(build_report)
+
+  def publish_channels(self, channels: List['common_pb2.Channel']):
+    """Publish the build's channels.
+
+    Args:
+      channels: The channels.
+    """
+    build_report = BuildReport()
+    config = build_report.config
+    for channel in channels:
+      if channel not in config.release.channels:
+        config.release.channels.append(channel)
     self.publish(build_report)
 
   def publish_versions(self, gtv_response):
