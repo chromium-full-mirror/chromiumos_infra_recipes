@@ -116,6 +116,8 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
+    StagingReCheck('chromeos', 'staging', r'staging-.*-incremental$',
+                   num_builds=2),
 )
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
