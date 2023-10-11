@@ -258,7 +258,9 @@ def parse_args(args: List[str]) -> argparse.Namespace:
       help='Release up to the commit specified by the instanceid. '
       'Instanceids are found at:\n'
       'https://chrome-infra-packages.appspot.com/p/infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes/+/\n'
-      'Click into an instance to see the commit attached to it.')
+      'Click into an instance to see the commit attached to it.\n'
+      "If the instance starts with a '-', you'll need to pass it in with"
+      '`-i=$instance` instead of `-i $instance`.')
   mode_group.add_argument(
       '--max-covered', action='store_true',
       help='Find the maximum instance that has been adequately covered in staging.'
