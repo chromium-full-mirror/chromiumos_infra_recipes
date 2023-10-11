@@ -2432,7 +2432,7 @@
   },
   {
     "cmd": [],
-    "name": "generate binary config.copy INI configs",
+    "name": "generate binary config.copy suite scheduler configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2449,7 +2449,7 @@
       "[CLEANUP]/tmp_tmp_2/generated_configs"
     ],
     "infra_step": true,
-    "name": "generate binary config.copy INI configs.lab_config.ini",
+    "name": "generate binary config.copy suite scheduler configs.lab_config.ini",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2466,7 +2466,41 @@
       "[CLEANUP]/tmp_tmp_2/generated_configs"
     ],
     "infra_step": true,
-    "name": "generate binary config.copy INI configs.suite_scheduler.ini",
+    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.ini",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.cfg",
+      "[CLEANUP]/tmp_tmp_2/generated_configs"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.copy suite scheduler configs.lab_config.cfg",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.cfg",
+      "[CLEANUP]/tmp_tmp_2/generated_configs"
+    ],
+    "infra_step": true,
+    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.cfg",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

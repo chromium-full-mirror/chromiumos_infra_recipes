@@ -262,7 +262,7 @@ def RunSteps(api: RecipeApi, properties: StarDoctorProperties) -> None:
       _update_release_time(api)
       with api.deferrals.defer_exceptions():
         _regenerate_configs(api)
-      _copy_ini_configs(api)
+      _copy_susch_configs(api)
 
     irrelevant_files = set()
     irrelevant_files.add(TIMELINE_FILENAME)
@@ -410,13 +410,13 @@ def _regenerate_configs(api: RecipeApi) -> None:
           timeout=3 * 60)
 
 
-def _copy_ini_configs(api: RecipeApi) -> None:
-  """Copy .ini files from internal config to the suite_scheduler repo.
+def _copy_susch_configs(api: RecipeApi) -> None:
+  """Copy all config files from internal config to the suite_scheduler repo.
 
   Args:
     api: The recipe modules API.
   """
-  with api.step.nest('copy INI configs'):
+  with api.step.nest('copy suite scheduler configs'):
     orig_dir = api.path.join(CONFIG_INTERNAL.checkout_path, 'test',
                              'suite_scheduler', 'generated')
     dest_dir = api.path.join(SUITE_SCHEDULER.checkout_path, 'generated_configs')
@@ -424,6 +424,10 @@ def _copy_ini_configs(api: RecipeApi) -> None:
                   dest_dir)
     api.file.copy('suite_scheduler.ini',
                   api.path.join(orig_dir, 'suite_scheduler.ini'), dest_dir)
+    api.file.copy('lab_config.cfg', api.path.join(orig_dir, 'lab_config.cfg'),
+                  dest_dir)
+    api.file.copy('suite_scheduler.cfg',
+                  api.path.join(orig_dir, 'suite_scheduler.cfg'), dest_dir)
 
 
 def _upload_all_changes(api: RecipeApi, properties: StarDoctorProperties,
@@ -568,7 +572,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess,
                      'generate binary config.deferring exception until later'),
       api.post_check(post_process.StepSuccess,
-                     'generate binary config.copy INI configs'),
+                     'generate binary config.copy suite scheduler configs'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
