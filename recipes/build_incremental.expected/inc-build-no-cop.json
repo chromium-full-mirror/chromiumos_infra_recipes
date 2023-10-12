@@ -2303,7 +2303,7 @@
     "cmd": [
       "git",
       "clone",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "https://chromium.googlesource.com/chromiumos/manifest",
       "[CLEANUP]/tmp_tmp_2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3279,34 +3279,6 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-remote",
-      "[CLEANUP]/chromiumos_workspace/manifest",
-      "refs/heads/snapshot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "git ls-remote"
   },
   {
     "cmd": [],
@@ -5456,38 +5428,12 @@
   },
   {
     "cmd": [
-      "git",
-      "-C",
-      "[CLEANUP]/tmp_tmp_2",
-      "checkout",
-      "origin/snapshot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Revert manifest to the latest snapshot"
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
-      "--standalone-manifest",
-      "file://[CLEANUP]/tmp_tmp_2/snapshot.xml"
+      "--u",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "-b",
+      "snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5962,8 +5908,8 @@
     "cmd": [
       "git",
       "ls-remote",
-      "[CLEANUP]/chromiumos_workspace/manifest",
-      "refs/heads/snapshot"
+      "[CLEANUP]/chromiumos_workspace/.repo/manifests",
+      "refs/remotes/origin/snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5984,7 +5930,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "git ls-remote (2)"
+    "name": "git ls-remote"
   },
   {
     "cmd": [],

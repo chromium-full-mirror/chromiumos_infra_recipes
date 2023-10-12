@@ -66,31 +66,35 @@ def DoOldBuild(api: RecipeApi, config: BuilderConfig,
   Returns:
     A list of relevant packages built.
   """
+  is_public = config.general.manifest == BuilderConfig.General.PUBLIC
+
   snapshot_branch_name = 'origin/snapshot'
   build_time_delta = properties.build_time_delta
-  manifest_internal_tempdir = api.path.mkdtemp()
-  manifest_internal_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'
+  manifest_tempdir = api.path.mkdtemp()
+  manifest_url = (
+      'https://chromium.googlesource.com/chromiumos/manifest' if is_public else
+      'https://chrome-internal.googlesource.com/chromeos/manifest-internal')
   repo_path = str(api.repo.repo_path)
 
   # Checkout and attempt to build the old snapshot.
-  api.git.clone(manifest_internal_url, target_path=manifest_internal_tempdir)
+  api.git.clone(manifest_url, target_path=manifest_tempdir)
 
   # Get old snapshot hash.
   delta_hash_result = api.step(f'Get {build_time_delta} manifest snapshot', [
-      'git', '-C', manifest_internal_tempdir, 'rev-list', '-1', '--before',
+      'git', '-C', manifest_tempdir, 'rev-list', '-1', '--before',
       build_time_delta, snapshot_branch_name
   ], stdout=api.raw_io.output_text())
   delta_hash = delta_hash_result.stdout.strip()
 
   # Rewind the source to old snapshot.
   api.step(f'Revert manifest to {build_time_delta} snapshot',
-           ['git', '-C', manifest_internal_tempdir, 'checkout', delta_hash])
+           ['git', '-C', manifest_tempdir, 'checkout', delta_hash])
   with api.repo.m.depot_tools.on_path():
     api.step(
         f'Apply {build_time_delta} manifest snapshot',
         [
             repo_path, 'init', '--standalone-manifest',
-            f'file://{manifest_internal_tempdir}/snapshot.xml'
+            f'file://{manifest_tempdir}/snapshot.xml'
         ],
     )
   api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
@@ -103,43 +107,27 @@ def DoOldBuild(api: RecipeApi, config: BuilderConfig,
       toolchain_targets=[api.build_menu.build_target],
       build_source=config.build.sdk_update.compile_source)
   # Use the prebuilts metadata for the old manifest.
-  manifest_dir = api.src_state.workspace_path.join(
-      'manifest' if config.general.manifest ==
-      BuilderConfig.General.PUBLIC else 'manifest-internal')
-  remotes = api.git.ls_remote(['refs/heads/snapshot'], repo_url=manifest_dir)
-  old_commit_hash = remotes[0].hash if remotes else None
   old_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
                              project=api.src_state.gitiles_commit.project,
-                             id=old_commit_hash)
+                             id=delta_hash)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance(
-      snapshot_commit=old_commit)
+      snapshot_commit=old_commit if delta_hash else None)
   packages = env_info.packages
   api.build_menu.bootstrap_sysroot(config)
-  if api.build_menu.install_packages(config, packages):
-    # Fast forward the source to latest snapshot.
-    api.step('Revert manifest to the latest snapshot', [
-        'git', '-C', manifest_internal_tempdir, 'checkout', snapshot_branch_name
-    ])
+  api.build_menu.install_packages(config, packages)
 
   # Attempt to checkout the current snapshot.
   if properties.use_llfg:
     with api.repo.m.depot_tools.on_path():
       api.step(
           'Apply LLFG manifest snapshot',
-          [
-              repo_path, 'init', '--u',
-              'https://chrome-internal.googlesource.com/chromeos/manifest-internal',
-              '-b', 'green'
-          ],
+          [repo_path, 'init', '--u', manifest_url, '-b', 'stable'],
       )
   else:
     with api.repo.m.depot_tools.on_path():
       api.step(
           'Apply latest manifest snapshot',
-          [
-              repo_path, 'init', '--standalone-manifest',
-              f'file://{manifest_internal_tempdir}/snapshot.xml'
-          ],
+          [repo_path, 'init', '--u', manifest_url, '-b', 'snapshot'],
       )
   api.repo.sync(jobs=REPO_SYNC_JOBS, force_sync=True, detach=True,
                 retry_fetches=3, force_remove_dirty=True)
@@ -194,10 +182,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
       # Get the prebuilts metadata to use with the current snapshot.
       branch = 'green' if properties.use_llfg else 'snapshot'
-      manifest_dir = api.src_state.workspace_path.join(
-          'manifest' if config.general.manifest ==
-          BuilderConfig.General.PUBLIC else 'manifest-internal')
-      remotes = api.git.ls_remote([f'refs/heads/{branch}'],
+      manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
+      remotes = api.git.ls_remote([f'refs/remotes/origin/{branch}'],
                                   repo_url=manifest_dir)
       current_commit_hash = remotes[0].hash if remotes else None
       current_commit = GitilesCommit(
