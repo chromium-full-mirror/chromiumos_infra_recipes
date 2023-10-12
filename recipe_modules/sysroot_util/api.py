@@ -332,9 +332,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       # These path parts were created by manually evaluating the code in
       # CreateNetboot and hard-coding the current values.
+      scripts_dir = self.m.src_state.workspace_path.join('src/scripts')
       image_dir = f'/mnt/host/source/src/build/images/{board}/factory_shim'
 
-      with self.m.context(cwd=self.m.cros_sdk.chroot_path):
+      with self.m.context(cwd=scripts_dir):
         self.m.step('Running `make_netboot.sh` for legacy factory branch', [
             './make_netboot.sh', f'--board={board}', f'--image_dir={image_dir}'
         ])

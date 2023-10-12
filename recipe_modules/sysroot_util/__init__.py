@@ -22,6 +22,7 @@ DEPS = [
     'failures',
     'goma',
     'remoteexec',
+    'src_state',
     'workspace_util',
 ]
 
