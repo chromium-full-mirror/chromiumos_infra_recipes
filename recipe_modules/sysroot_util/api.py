@@ -375,6 +375,19 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     if not image_types:
       return None
 
+    if common_pb2.IMAGE_TYPE_FACTORY in image_types:
+      # Factory branches before 14909 are raising a permission error when
+      # writing to /tmp within the chroot, so we'll force the write permission.
+      # Also, we don't have a good way to test when a path does not exist. See:
+      # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
+      if self.m.path.exists(self.m.cros_sdk.chroot_path):  # pragma: nocover
+        chroot_tmp_path = str(self.m.cros_sdk.chroot_path.join('tmp'))
+        chmod_cmd = [
+            'sudo', '-n', 'chmod', '-R', 'u=rwx,g=rwx,o=rwx,-t', chroot_tmp_path
+        ]
+        self.m.step('changing permissions of %s' % chroot_tmp_path, chmod_cmd,
+                    infra_step=True)
+
     build_test_data = build_test_data or json_format.MessageToJson(
         CreateImageResult(
             success=True, images=[
