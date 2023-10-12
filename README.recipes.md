@@ -713,6 +713,7 @@
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs)
   * [tast_results:tests/extract_failed_test_names](#recipes-tast_results_tests_extract_failed_test_names)
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
+  * [test_bazel](#recipes-test_bazel) &mdash; Recipe that runs Bazel tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_new_sdk](#recipes-test_new_sdk) &mdash; Recipe that tests a newly built SDK.
@@ -15463,6 +15464,16 @@ ChromeOS checkout, resulting in much faster tests. The tests will
 use tast executable from build_artifacts.
 
 &mdash; **def [RunSteps](/recipes/tast_vm.py#30)(api: RecipeApi, properties: TastVmProperties):**
+### *recipes* / [test\_bazel](/recipes/test_bazel.py)
+
+[DEPS](/recipes/test_bazel.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [test\_util](#recipe_modules-test_util)
+
+
+Recipe that runs Bazel tests.
+
+This recipe lives on its own because it is agnostic of ChromeOS build targets.
+
+&mdash; **def [RunSteps](/recipes/test_bazel.py#24)(api: RecipeApi):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)

@@ -3151,6 +3151,20 @@
     },
     {
       "id": {
+        "name": "bazel-test-snapshot",
+        "type": "SNAPSHOT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PRIVATE"
+      },
+      "build": {
+        "applyGerritChanges": false
+      }
+    },
+    {
+      "id": {
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"

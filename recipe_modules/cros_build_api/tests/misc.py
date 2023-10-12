@@ -194,6 +194,7 @@ def RunSteps(api):
           'InstallPackages': sysroot.InstallPackagesResponse,
       },
       'TestService': {
+          'BazelTest': empty_pb2.Empty,
           'BuildTargetUnitTest': test.BuildTargetUnitTestResponse,
           'BuildTestServiceContainers': test.BuildTestServiceContainersResponse,
           'ChromitePytest': empty_pb2.Empty,
