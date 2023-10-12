@@ -254,7 +254,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
             api.recipe_analyze.is_recipe_affected(affected_files, recipe)):
 
           # Pass the output gitiles commit to the re-run.
-          if not build.input.gitiles_commit.project:
+          if not build.input.gitiles_commit.project and last_successful_build.output.HasField(
+              'gitiles_commit'):
             build.input.gitiles_commit.CopyFrom(
                 last_successful_build.output.gitiles_commit)
 
@@ -526,8 +527,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
 
     ret = api.buildbucket.simulated_search_results(
-        builds=[build_pb2.Build(id=fake_id, builder={'builder': builder})],
-        step_name=launch_step_name(builder, 'buildbucket.search'))
+        builds=[
+            build_pb2.Build(
+                id=fake_id,
+                builder={'builder': builder},
+                output=build_pb2.Build.Output(
+                    gitiles_commit=common_pb2.GitilesCommit(
+                        host='chromium-review.googlesource.com',
+                        id='123',
+                    ),
+                ),
+            ),
+        ], step_name=launch_step_name(builder, 'buildbucket.search'))
     ret += api.led.mock_edit(_mock_edit, cmd_filter=['edit', '-d'])
     return ret + api.led.mock_get_build(fake_build, fake_id)
 

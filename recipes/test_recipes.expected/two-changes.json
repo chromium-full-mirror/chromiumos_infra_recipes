@@ -645,7 +645,7 @@
     "name": "analyze and launch builders.analyze and launch staging-Annealing.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-Annealing\"}, \"id\": \"1\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-Annealing\"}, \"id\": \"1\", \"output\": {\"gitilesCommit\": {\"host\": \"chromium-review.googlesource.com\", \"id\": \"123\"}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@staging-Annealing@https://cr-buildbucket.appspot.com/build/1@@@"
     ]
@@ -757,7 +757,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-system",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -779,7 +779,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
@@ -812,7 +815,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -834,7 +837,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
@@ -866,7 +872,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-recipe-bundle",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -907,7 +913,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
@@ -941,7 +950,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit-system (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -982,7 +991,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
@@ -1018,7 +1030,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led edit (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1059,7 +1071,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"annealing\"@@@",
@@ -1094,7 +1109,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-Annealing.led launch",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-Annealing 1\"\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-Annealing\"\n        },\n        \"id\": \"1\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"annealing\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-Annealing 1\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1147,7 +1162,7 @@
     "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-chromite-postsubmit\"}, \"id\": \"2\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-chromite-postsubmit\"}, \"id\": \"2\", \"output\": {\"gitilesCommit\": {\"host\": \"chromium-review.googlesource.com\", \"id\": \"123\"}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
@@ -1275,7 +1290,7 @@
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-triggerer\"}, \"id\": \"3\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"staging-release-triggerer\"}, \"id\": \"3\", \"output\": {\"gitilesCommit\": {\"host\": \"chromium-review.googlesource.com\", \"id\": \"123\"}}}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@staging-release-triggerer@https://cr-buildbucket.appspot.com/build/3@@@"
     ]
@@ -1354,7 +1369,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1376,7 +1391,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
@@ -1409,7 +1427,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1431,7 +1449,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
@@ -1465,7 +1486,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"small\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1487,7 +1508,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
@@ -1519,7 +1543,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-recipe-bundle",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1560,7 +1584,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
@@ -1594,7 +1621,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit-system (2)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1635,7 +1662,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
@@ -1671,7 +1701,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led edit (3)",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    }\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1712,7 +1742,10 @@
       "@@@STEP_LOG_LINE@proto.output@          }@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"input\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {},@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"gitiles_commit\": {@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@proto.output@            \"id\": \"123\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          },@@@",
       "@@@STEP_LOG_LINE@proto.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"dry_run\": true,@@@",
       "@@@STEP_LOG_LINE@proto.output@            \"recipe\": \"release_triggerer\"@@@",
@@ -1747,7 +1780,7 @@
       }
     },
     "name": "analyze and launch builders.analyze and launch staging-release-triggerer.led launch",
-    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {},\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-release-triggerer 3\"\n  }\n}",
+    "stdin": "{\n  \"buildbucket\": {\n    \"bbagent_args\": {\n      \"build\": {\n        \"builder\": {\n          \"builder\": \"staging-release-triggerer\"\n        },\n        \"id\": \"3\",\n        \"infra\": {\n          \"buildbucket\": {\n            \"agent\": {\n              \"input\": {\n                \"data\": {\n                  \"kitchen-checkout\": {\n                    \"cas\": {\n                      \"digest\": {\n                        \"hash\": \"a9b9b49ff153c042fd6432e3a659456ad57f1b88c1513dfa1ef0beb4c88b48d7\",\n                        \"size_bytes\": \"1337\"\n                      }\n                    }\n                  }\n                }\n              },\n              \"purposes\": {\n                \"kitchen-checkout\": \"PURPOSE_EXE_PAYLOAD\"\n              }\n            }\n          },\n          \"swarming\": {\n            \"task_dimensions\": [\n              {\n                \"key\": \"bot_size\",\n                \"value\": \"large\"\n              }\n            ]\n          }\n        },\n        \"input\": {\n          \"gitiles_commit\": {\n            \"host\": \"chromium-review.googlesource.com\",\n            \"id\": \"123\"\n          },\n          \"properties\": {\n            \"dry_run\": true,\n            \"recipe\": \"release_triggerer\"\n          }\n        }\n      }\n    },\n    \"name\": \"staging-release-triggerer 3\"\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
