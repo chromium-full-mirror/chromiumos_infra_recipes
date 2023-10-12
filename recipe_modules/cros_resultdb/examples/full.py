@@ -40,6 +40,11 @@ def RunSteps(api):
           'some-key': 'some-value',
           'board': 'fake-board'
       })
+  api.cros_resultdb.report_filtered_test_cases(
+      api.properties.get('filtered_test_names'), base_variant={
+          'some-key': 'some-value',
+          'board': 'fake-board'
+      }, reason='example reason')
   bigquery_export = invocation_pb2.BigQueryExport(
       project='cros-test-analytics', dataset='resultdb', table='test_results',
       test_results=invocation_pb2.BigQueryExport.TestResults())
@@ -456,6 +461,18 @@ def GenTests(api):
                     api.raw_io.stream_output_text('{}'), retcode=1),
       api.post_process(post_process.MustRun,
                        'upload missing test cases (count: 2) (2)'),
+  )
+
+  yield api.test(
+      'filtered-test-results',
+      api.buildbucket.ci_build(),
+      api.properties(
+          rdb_config=rdb_config_json,
+          filtered_test_names=['filtered-test', 'another-filtered-test']),
+      api.step_data('upload filtered test cases (count: 2)',
+                    api.raw_io.stream_output_text('{}'), retcode=1),
+      api.post_process(post_process.MustRun,
+                       'upload filtered test cases (count: 2) (2)'),
   )
 
   yield api.test(

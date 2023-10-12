@@ -14,6 +14,7 @@ from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
+from PB.go.chromium.org.luci.resultdb.proto.v1 import failure_reason as failure_reason_pb2
 from PB.test_platform.request import Request
 from recipe_engine import recipe_api
 
@@ -294,7 +295,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # Returns early if vm test results are for staging testing.
     image = self._extract_tag_value(base_tags, 'image')
     parts = image.split('-')
-    if len(parts) == 0 or parts[0] == "staging":
+    if len(parts) == 0 or parts[0] == 'staging':
       return ''
 
     # The partner vm realm for vm test results which are shared with all
@@ -437,15 +438,15 @@ class ResultDBCommand(recipe_api.RecipeApi):
     result_visibility = config.get(
         'visibility_mode',
         TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED)
-    custom_realm = config.get('custom_realm', "")
+    custom_realm = config.get('custom_realm', '')
     skip_board_model_check = config.get('skip_board_model_check')
 
     if self._should_publish_to_custom_realm(result_visibility, custom_realm):
       realm = custom_realm
 
       # realm needs to be in form <project>:<realm_name>
-      if not realm.startswith("chromeos:"):
-        realm = "chromeos:" + realm
+      if not realm.startswith('chromeos:'):
+        realm = 'chromeos:' + realm
     else:
       realm = self._get_board_model_realm(base_tags, skip_board_model_check)
 
@@ -453,7 +454,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
   def _should_publish_to_custom_realm(self, result_visibility, custom_realm):
     """Determine if realm should be a custom, non board/model realm."""
-    return result_visibility == TestResultVisibility.TEST_RESULTS_VISIBILITY_CUSTOM_REALM and custom_realm != ""
+    return result_visibility == TestResultVisibility.TEST_RESULTS_VISIBILITY_CUSTOM_REALM and custom_realm != ''
 
   def _ensure_result_adapter_executables(self):
     """Ensure the result_adapter CLI is installed."""
@@ -685,6 +686,90 @@ class ResultDBCommand(recipe_api.RecipeApi):
           normalized_req = MessageToDict(req)
           self.m.resultdb._rpc(  # pylint: disable=protected-access
               'upload missing test cases (count: {})'.format(len(reqs)),
+              'luci.resultdb.v1.Recorder', 'BatchCreateTestResults',
+              req=normalized_req, include_update_token=True,
+              step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+                  step_test_data))
+          break
+        except self.m.step.StepFailure:
+          upload_status = 'WARNING'
+      self.m.step.active_result.presentation.status = upload_status
+
+  def report_filtered_test_cases(self, test_names, base_variant, base_tags=None,
+                                 reason='filtered'):
+    """Upload test results for filtered test cases to ResultDB.
+
+    These filtered test cases should not run, so their result status
+    is marked as SKIP and the expected field is True.
+
+    Args:
+      test_names (list[str]): The names of the tests that should not run.
+      base_variant (dict): Variant key-value pairs to attach to the test
+          results.
+      base_tags (list[tuples]): List of tags to attach to the test results.
+    """
+    if not self.m.resultdb.enabled:
+      return
+
+    # Return early if there are no exonerated tests.
+    if not test_names:
+      return
+
+    variant = ParseDict({'def': base_variant},
+                        common_pb2.Variant()) if base_variant else None
+    tags = [
+        common_pb2.StringPair(key=tag[0], value=tag[1]) for tag in base_tags
+    ] if base_tags else None
+
+    reqs_list = []
+    for test in test_names:
+      test_result = test_result_pb2.TestResult(
+          test_id=test, result_id=str(self.m.buildbucket.build.id),
+          status=test_result_pb2.SKIP, expected=True, variant=variant,
+          tags=tags, failure_reason=failure_reason_pb2.FailureReason(
+              primary_error_message=reason))
+      test_result_req = recorder_pb2.CreateTestResultRequest(
+          invocation=self.m.resultdb.current_invocation,
+          test_result=test_result)
+      reqs_list.append(test_result_req)
+
+    step_test_data = self.m.json.dumps({
+        'testResults': [{
+            'name':
+                '%s/test/%s/results/%s' %
+                (self.m.resultdb.current_invocation, test,
+                 str(self.m.buildbucket.build.id)),
+            'resultId':
+                str(self.m.buildbucket.build.id),
+            'status':
+                'SKIP',
+            'failureReason': {
+                'primaryErrorMessage': reason,
+            },
+            'expected':
+                True,
+            'testId':
+                test,
+        } for test in test_names]
+    })
+
+    batched_reqs = [
+        reqs_list[i:i + RPC_BATCH_SIZE]
+        for i in range(0, len(reqs_list), RPC_BATCH_SIZE)
+    ]
+    for reqs in batched_reqs:
+      req = recorder_pb2.BatchCreateTestResultsRequest(
+          invocation=self.m.resultdb.current_invocation, requests=reqs)
+
+      # ResultDB step failures should not fail the build.
+      # TODO(b/206989022): Consider refactoring this to use the exponential
+      # retries decorator.
+      upload_status = 'SUCCESS'
+      for _ in range(2):
+        try:
+          normalized_req = MessageToDict(req)
+          self.m.resultdb._rpc(  # pylint: disable=protected-access
+              'upload filtered test cases (count: {})'.format(len(reqs)),
               'luci.resultdb.v1.Recorder', 'BatchCreateTestResults',
               req=normalized_req, include_update_token=True,
               step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(

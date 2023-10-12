@@ -7,6 +7,7 @@
 
 import collections
 import csv
+import datetime
 import json
 import math
 import re
@@ -74,6 +75,7 @@ DEPS = [
     'cros_test_platform',
     'cros_tool_runner',
     'easy',
+    'future_utils',
     'result_flow',
     'service_version',
     'skylab_results',
@@ -448,11 +450,11 @@ def _enumerate_cft_tests(api, requests):
           if ('chromeos.cros_infra_config.filtering_enabled'
               in api.cros_infra_config.experiments):
             dry_run = False  # pragma: no cover
-          filtered_test_suites = _build_filtered_tests(api, r, test_suites,
-                                                       build_target, dry_run,
-                                                       suite_name)
+          filtered_test_suites, removed_test_case_ids = _build_filtered_tests(
+              api, r, test_suites, build_target, dry_run, suite_name)
           if not dry_run:  # pragma: no cover
             test_suites = filtered_test_suites
+            _upload_filtered_test_cases_async(api, r, removed_test_case_ids)
 
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
                                                        suite_name)
@@ -483,6 +485,89 @@ def _enumerate_cft_tests(api, requests):
     return tagged_responses
 
 
+def _upload_filtered_test_cases_async(api, req, tests):  # pragma: nocover
+  """Upload filtered test cases to rdb, async.
+
+  Args:
+    * api: (object): See RunSteps documentation.
+    * r: test_platform.Request.
+    * tests: (List[str]): Test cases to be filtered.
+
+  Returns: None
+  """
+
+  def _upload_filtered_test_cases(r):  # pragma: nocover
+    """Upload filtered test cases to rdb.
+
+    Args:
+      * r: (Tuple(object, test_platform.Request, List[str]))
+
+    Returns: None
+    """
+    api, req, tests = r
+    try:
+      base_tags, base_variant = _build_rdb_base_variant_and_tags(api, req)
+      api.cros_resultdb.report_filtered_test_cases(
+          tests, base_variant, base_tags,
+          'filtered due to not meeting stability requirements')
+    # Ensure filtered upload is non-breaking
+    except Exception as e:  # pragma: nocover # pylint: disable=broad-except
+      step.presentation.logs['Exception'] = json.dumps({'exception': str(e)},
+                                                       separators=(',', ': '),
+                                                       indent=2)
+
+  if not tests:
+    return
+  with api.step.nest('Upload filtered test cases (async)') as step:
+    runner = api.future_utils.create_parallel_runner()
+    runner.run_function_async(lambda r, _: _upload_filtered_test_cases(r),
+                              (api, req, tests))
+
+
+def _build_rdb_base_variant_and_tags(api, req):  # pragma: nocover
+  """Build variant and tags for rdb upload.
+
+  Args:
+    * api: (object): See RunSteps documentation.
+    * r: test_platform.Request.
+
+  Returns: List[test_suite], List[test_case_id]
+  """
+  queued_time = datetime.datetime.utcfromtimestamp(
+      api.buildbucket.build.create_time.seconds)
+  base_tags = [('is_cft_run', 'True'),
+               ('queued_time', queued_time.strftime('%Y-%m-%d %H:%M:%S.%f UTC'))
+              ]
+  base_variant = {}
+  tags = req.params.decorations.tags
+  keyvals = req.params.decorations.autotest_keyvals
+  if keyvals and 'build_target' in keyvals:
+    base_variant['build_target'] = keyvals['build_target']
+  if not tags:
+    return base_tags, base_variant
+  tags_dict = {}
+  for tag in tags:
+    parts = tag.split(':')
+    if len(parts) == 2:
+      if parts[0] not in tags_dict:
+        tags_dict[parts[0]] = []
+      tags_dict[parts[0]].append(parts[1])
+  if 'label-board' in tags_dict:
+    base_tags.append(('board', tags_dict['label-board'][0]))
+    base_variant['board'] = tags_dict['label-board'][0]
+  if 'label-model' in tags_dict:
+    base_tags.append(('model', tags_dict['label-model'][0]))
+    base_variant['model'] = tags_dict['label-model'][0]
+  if 'label-pool' in tags_dict:
+    base_tags.append(('label_pool', tags_dict['label-pool'][0]))
+  if 'suite' in tags_dict:
+    base_tags.append(('suite', tags_dict['suite'][0]))
+  if 'build' in tags_dict:
+    base_tags.append(('image', tags_dict['build'][0]))
+    base_tags.append(('build', tags_dict['build'][0].split('/')[-1]))
+  return base_tags, base_variant
+
+
 def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
                           suite_name):
   """Create non-breaking step to filter out test cases.
@@ -494,7 +579,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
     * dryrun: bool
     * suite_name: string
 
-  Returns: List[test_suite]
+  Returns: List[test_suite], List[test_case_id]
   """
   with api.step.nest('filter test cases') as step:
     try:
@@ -508,26 +593,23 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       # If no req, do not call the service, just return with no filtering done.
       # This will happen when a suite opts out.
       if not req:  # pragma: no cover
-        return test_suites
+        return test_suites, []
       step.presentation.logs['policy_used'] = json_format.MessageToJson(req)
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:  # pragma: no cover
+        removed = [str(test) for test in pre_test_resp.response.removed_tests]
         step.presentation.logs['removed_tests'] = json.dumps(
-            {
-                'removed': [
-                    str(test) for test in pre_test_resp.response.removed_tests
-                ]
-            }, separators=(',', ': '), indent=2)
+            {'removed': removed}, separators=(',', ': '), indent=2)
+        return pre_test_resp.response.test_suites, removed  # pragma: no cover
       else:
-        return test_suites
+        return test_suites, []
 
-      return pre_test_resp.response.test_suites  # pragma: no cover
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
       step.presentation.logs['Exception'] = json.dumps({'exception': str(e)},
                                                        separators=(',', ': '),
                                                        indent=2)
-      return test_suites
+      return test_suites, []
 
 
 def _build_tast_invocations(api, request, test_suites, suite_name):
