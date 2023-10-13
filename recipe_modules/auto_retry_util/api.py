@@ -105,6 +105,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._chromeos_luci_service_account = (
         props.chromeos_luci_service_account or CHROMEOS_LUCI_SERVICE_ACCOUNT)
 
+    self._filtered_build_stats = {}
+
   def initialize(self):
     # enable_retries should never be set on a staging builder.
     # api.expect_exception doesn't work on exceptions thrown from initialize, so
@@ -485,33 +487,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
   def cq_retry_candidates(self) -> List[build_pb2.Build]:
     """Returns cq-orchestrator builds which may be elegible for auto retry.
 
-    # TODO(b/291767456): Expand to include all criteria listed in the bug.
-    # TODO(b/296271623): Define more elaborate exclusion critia than last.
     Candidate cq-orchestrator builds must meet the following criteria:
       * The build status is in RETRYABLE_STATUSES.
       * The build is the latest cq attempt for the CLs under test.
       * The build had a supported failure mode.
-      * No CL tested in the build opted-out via footer.
-      * The build was not last triggered by our service account.
-      * All CLs in the build are mergeable (as defined by the Gerrit API's
-        GetMergeable).
+      * The CLs under test are active.
     """
     with self.m.step.nest('find candidates') as presentation:
       cq_orchs = self._get_current_cq_orchs_with_retryable_statuses()
-      filter_properties = {'total_with_retryable_statuses': len(cq_orchs)}
-
-      with self.m.step.nest('filter out runs last triggered by retry') as pres:
-        last_our_retry_ids = [
-            c.id for c in cq_orchs if self.triggerer_was_us(c)
-        ]
-        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
-        if last_our_retry_ids:
-          pres.logs['filtered out runs'] = [
-              self.m.buildbucket.build_url(build_id=x)
-              for x in sorted(last_our_retry_ids)
-          ]
-        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
-        filter_properties['already_retried'] = len(last_our_retry_ids)
+      self._filtered_build_stats['total_with_retryable_statuses'] = len(
+          cq_orchs)
 
       with self.m.step.nest('filter out unsupported failure modes') as pres:
         unsupported_failure_mode_ids = [
@@ -526,9 +511,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(unsupported_failure_mode_ids)
           ]
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
-        filter_properties['unsupported_failure_mode'] = len(
+        self._filtered_build_stats['unsupported_failure_mode'] = len(
             unsupported_failure_mode_ids)
 
+      # TODO(b/296441878): Remove now that the fishfood is over.
       with self.m.step.nest('filter by experiment allowlist') as pres:
         if self._experiment_allowlist:
           not_in_allowlist_ids = [
@@ -542,40 +528,26 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                 for x in sorted(not_in_allowlist_ids)
             ]
           pres.step_text = f'filtered out {len(not_in_allowlist_ids)} run(s)'
-          filter_properties['allowlist_filtered'] = len(not_in_allowlist_ids)
+          self._filtered_build_stats['allowlist_filtered'] = len(
+              not_in_allowlist_ids)
         else:
           pres.step_text = 'no experiment allowlist filtering'
-          filter_properties['allowlist_filtered'] = 0
+          self._filtered_build_stats['allowlist_filtered'] = 0
 
-      with self.m.step.nest('filter out by basic eligibility') as pres:
-        non_new_ids, non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids = set(
-        ), set(), set(), set(), set(), set()
-
+      with self.m.step.nest('filter out closed CLs') as pres:
         failed_to_fetch_ids = set()
+        non_new_ids = set()
         for c in cq_orchs:
           try:
-            patch_sets = self.m.gerrit.fetch_patch_sets(
-                c.input.gerrit_changes, include_submittable=True,
-                include_messages=True)
+            patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes)
           except recipe_api.StepFailure:
             failed_to_fetch_ids.add(c.id)
             continue
 
-          non_new_ids.update({c.id for p in patch_sets if p.status != 'NEW'})
-          non_submittable_ids.update(
-              {c.id for p in patch_sets if not p.submittable})
-          wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
-          non_latest_patch_set_ids.update(
-              {c.id for p in patch_sets if not p.is_latest_patch_set()})
-          unresolved_comment_ids.update(
-              {c.id for p in patch_sets if p.unresolved_comment_count})
-          if not self._was_cv_active(c.id, patch_sets):
-            removed_label_ids.add(c.id)
+          if any(p.status != 'NEW' for p in patch_sets):
+            non_new_ids.add(c.id)
 
-        ineligible_ids = (
-            non_new_ids | non_submittable_ids | wip_ids
-            | non_latest_patch_set_ids | failed_to_fetch_ids
-            | unresolved_comment_ids | removed_label_ids)
+        ineligible_ids = non_new_ids | failed_to_fetch_ids
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if failed_to_fetch_ids:
@@ -588,6 +560,98 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(non_new_ids)
           ]
+        self._filtered_build_stats.update({
+            'failed_gerrit_fetch': len(failed_to_fetch_ids),
+            'non_new': len(non_new_ids),
+        })
+
+      presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
+      presentation.properties[
+          'filtered_build_stats'] = self._filtered_build_stats
+
+    return cq_orchs
+
+  def filter_retry_candidates(
+      self, cq_orchs: List[build_pb2.Build]) -> List[build_pb2.Build]:
+    """Returns cq-orchestrator builds which meet the retry criteria.
+
+    cq-orchestrator builds must meet the following criteria:
+      * No CL tested in the build opted-out via footer.
+      # TODO(b/305741866): Define more elaborate retry limits.
+      * The build was not last triggered by our service account.
+      * All CLs in the build are mergeable (as defined by the Gerrit API's
+        GetMergeable) and ready for submission.
+    """
+
+    with self.m.step.nest('filter candidates') as presentation:
+
+      with self.m.step.nest('filter out merge conflicts') as pres:
+        non_mergeable_ids = set()
+        for c in cq_orchs:
+          for change in c.input.gerrit_changes:
+            if not self.m.gerrit.get_change_mergeable(
+                change.change, change.host, change.patchset):
+              non_mergeable_ids.add(c.id)
+              break
+
+        cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]
+        if non_mergeable_ids:
+          pres.logs['non_mergeable'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(non_mergeable_ids)
+          ]
+        pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
+        self._filtered_build_stats['non_mergeable'] = len(non_mergeable_ids)
+
+      with self.m.step.nest('filter out runs last triggered by retry') as pres:
+        last_our_retry_ids = [
+            c.id for c in cq_orchs if self.triggerer_was_us(c)
+        ]
+        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
+        if last_our_retry_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(last_our_retry_ids)
+          ]
+        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
+        self._filtered_build_stats['already_retried'] = len(last_our_retry_ids)
+
+      with self.m.step.nest('filter out opt-out runs') as pres:
+        opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
+        cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
+        pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
+        if opt_out_ids:
+          pres.logs['filtered out runs'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(opt_out_ids)
+          ]
+        self._filtered_build_stats['opt_out'] = len(opt_out_ids)
+
+      with self.m.step.nest('filter out unmet CL requirements') as pres:
+        non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids = set(
+        ), set(), set(), set(), set()
+
+        for c in cq_orchs:
+          patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes,
+                                                      include_submittable=True,
+                                                      include_messages=True)
+
+          non_submittable_ids.update(
+              {c.id for p in patch_sets if not p.submittable})
+          wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
+          non_latest_patch_set_ids.update(
+              {c.id for p in patch_sets if not p.is_latest_patch_set()})
+          unresolved_comment_ids.update(
+              {c.id for p in patch_sets if p.unresolved_comment_count})
+          if not self._was_cv_active(c.id, patch_sets):
+            removed_label_ids.add(c.id)
+
+        ineligible_ids = (
+            non_submittable_ids | wip_ids
+            | non_latest_patch_set_ids
+            | unresolved_comment_ids | removed_label_ids)
+        cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
+        pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if non_submittable_ids:
           pres.logs['non_submittable'] = [
               self.m.buildbucket.build_url(build_id=x)
@@ -613,9 +677,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(removed_label_ids)
           ]
 
-        filter_properties.update({
-            'failed_gerrit_fetch': len(failed_to_fetch_ids),
-            'non_new': len(non_new_ids),
+        self._filtered_build_stats.update({
             'non_submittable': len(non_submittable_ids),
             'wip': len(wip_ids),
             'non_latest_patch_set': len(non_latest_patch_set_ids),
@@ -623,38 +685,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             'removed_label': len(removed_label_ids),
         })
 
-      with self.m.step.nest('filter out merge conflicts') as pres:
-        non_mergeable_ids = set()
-        for c in cq_orchs:
-          for change in c.input.gerrit_changes:
-            if not self.m.gerrit.get_change_mergeable(
-                change.change, change.host, change.patchset):
-              non_mergeable_ids.add(c.id)
-              break
-
-        cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]
-        if non_mergeable_ids:
-          pres.logs['non_mergeable'] = [
-              self.m.buildbucket.build_url(build_id=x)
-              for x in sorted(non_mergeable_ids)
-          ]
-        pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
-        filter_properties['non_mergeable'] = len(non_mergeable_ids)
-
-      with self.m.step.nest('filter out opt-out runs') as pres:
-        opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
-        cq_orchs = [c for c in cq_orchs if c.id not in opt_out_ids]
-        pres.step_text = f'filtered out {len(opt_out_ids)} run(s)'
-        if opt_out_ids:
-          pres.logs['filtered out runs'] = [
-              self.m.buildbucket.build_url(build_id=x)
-              for x in sorted(opt_out_ids)
-          ]
-        filter_properties['opt_out'] = len(opt_out_ids)
-
-      presentation.step_text = f'found {len(cq_orchs)} candidate(s)'
-      self.m.easy.set_properties_step(filtered_build_stats=filter_properties)
-
+      presentation.properties[
+          'filtered_build_stats'] = self._filtered_build_stats
     return cq_orchs
 
   def test_variant_exoneration_analysis(

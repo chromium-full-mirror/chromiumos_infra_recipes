@@ -51,7 +51,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   # A list of (Build, RetryDetails) tuples.
   retryable_runs = []
 
-  with api.step.nest('analyzing candidates'):
+  with api.step.nest('analyzing candidates') as presentation:
     for b in builds:
       with api.step.nest('analyzing %d' % b.id) as pres:
         retry_reason = RetryDetails(original_orch_id=b.id)
@@ -95,7 +95,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         outstanding_test_suite_failures = list(
             set(outstanding_test_suite_failures) - set(exonerated_test_suites))
 
-        # Final determination.
+        # Preliminary determination
         if len(outstanding_build_failures) == 0 and len(
             outstanding_test_suite_failures) == 0 and (
                 retryable_build_failures or retryable_test_suite_failures):
@@ -107,6 +107,12 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
               actionable_retryable_builders=retryable_build_failures,
               actionable_test_suites=retry_reason.retryable_test_suites)
 
+    presentation.step_text = f'found {len(retryable_runs)} retryable run(s)'
+
+  # Final determination
+  filtered_runs = api.auto_retry_util.filter_retry_candidates(
+      [run[0] for run in retryable_runs])
+  retryable_runs = [run for run in retryable_runs if run[0] in filtered_runs]
   unthrottled_retry_n = len(retryable_runs)
   with api.step.nest('check recent executions for throttle'):
     retries_avail = api.auto_retry_util.unthrottled_retries_left()
@@ -221,15 +227,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
-          parent_step_name='find candidates.filter out by basic eligibility'),
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
       api.buildbucket.simulated_search_results(
           [retryable_build_orch],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict),
       api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
+          'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
           change_num=123456,
           revision=7,
@@ -250,15 +257,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
-          parent_step_name='find candidates.filter out by basic eligibility'),
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
       api.buildbucket.simulated_search_results(
           [retryable_test_orch],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict),
       api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
+          'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
           change_num=123456,
           revision=7,
@@ -299,15 +307,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
-          parent_step_name='find candidates.filter out by basic eligibility'),
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
       api.buildbucket.simulated_search_results(
           [retryable_orch_build],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict),
       api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
+          'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
           change_num=123456,
           revision=7,
@@ -349,20 +358,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'no-outstanding-no-retryable',
       api.auto_retry_util.enable_retries(),
-      api.gerrit.set_get_account_id(
-          gerrit_host='chromium-review.googlesource.com',
-          email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
-          parent_step_name='find candidates.filter out by basic eligibility'),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out by basic eligibility', gerrit_changes,
-          eligible_value_dict),
-      api.gerrit.set_get_change_mergeable(
-          'find candidates.filter out merge conflicts',
-          gerrit_host='chromium-review.googlesource.com',
-          change_num=123456,
-          revision=7,
-          value=True,
-      ),
       api.buildbucket.simulated_search_results(
           [orch_build],
           'find candidates.query for cq-orchestrators.buildbucket.search'),
