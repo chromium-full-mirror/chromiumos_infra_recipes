@@ -1487,7 +1487,7 @@
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateBuildMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
     ]

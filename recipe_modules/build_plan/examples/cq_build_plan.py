@@ -531,7 +531,7 @@ def GenTests(api):
   )
 
   output = build_pb2.Build.Output()
-  output.properties['greenness'] = {'aggregateMetric': 100}
+  output.properties['greenness'] = {'aggregateBuildMetric': 100}
   output.properties['commit'] = {'id': 'sampleSnapshotSHA'}
   # Choosing timestamps based on time module's default test data.
   test_start_timestamp = timestamp_pb2.Timestamp(seconds=1336972527)

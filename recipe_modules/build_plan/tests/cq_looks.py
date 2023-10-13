@@ -81,7 +81,7 @@ def GenTests(api):
   build_input.gitiles_commit.host = INTERNAL_HOST_URL
 
   output = build_pb2.Build.Output()
-  output.properties['greenness'] = {'aggregateMetric': 90}
+  output.properties['greenness'] = {'aggregateBuildMetric': 90}
 
   # Choosing timestamps based on time module's default test data.
   test_start_timestamp = timestamp_pb2.Timestamp(seconds=1336972527)
@@ -92,7 +92,7 @@ def GenTests(api):
                                          start_time=test_start_timestamp,
                                          end_time=test_end_timestamp)
 
-  output.properties['greenness'] = {'aggregateMetric': 60}
+  output.properties['greenness'] = {'aggregateBuildMetric': 60}
   red_build = build_pb2.Build(id=234, output=output,
                               start_time=test_start_timestamp,
                               end_time=test_end_timestamp)

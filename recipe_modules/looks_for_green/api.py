@@ -232,7 +232,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         snapshot_result.end_time.seconds)
     out_props = snapshot_result.output.properties
     try:
-      agg_green = int(out_props['greenness']['aggregateMetric'])
+      agg_green = int(out_props['greenness']['aggregateBuildMetric'])
     except ValueError:
       agg_green = -1
     try:
@@ -274,7 +274,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     """Find the latest snapshot with a greenness score."""
     for build in build_results:
       if 'greenness' in build.output.properties and \
-      'aggregateMetric' in build.output.properties['greenness']:
+      'aggregateBuildMetric' in build.output.properties['greenness']:
         return build
     return None
 

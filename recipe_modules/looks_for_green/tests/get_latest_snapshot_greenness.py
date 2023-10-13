@@ -49,7 +49,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   output = build_pb2.Build.Output()
-  output.properties['greenness'] = {'aggregateMetric': 100}
+  output.properties['greenness'] = {'aggregateBuildMetric': 100}
   output.properties['commit'] = {'id': 'sampleSHA'}
   yield api.test(
       'success',
@@ -163,7 +163,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  output.properties['greenness'] = {'aggregateMetric': 70}
+  output.properties['greenness'] = {'aggregateBuildMetric': 70}
   yield api.test(
       'greenness-below-threshold',
       api.properties(expected_greenness=70, expected_is_snap_orch_green=False),
@@ -257,7 +257,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  output.properties['greenness'] = {'aggregateMetric': 100}
+  output.properties['greenness'] = {'aggregateBuildMetric': 100}
   yield api.test(
       'no-greenness-on-latest-snaps',
       api.properties(expected_greenness=-1, expected_is_snap_orch_green=False),

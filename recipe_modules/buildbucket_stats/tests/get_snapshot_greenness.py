@@ -31,7 +31,7 @@ BUILD_INPUT = build_pb2.Build.Input()
 BUILD_INPUT.gitiles_commit.id = 'bababa'
 BUILD_OUTPUT = build_pb2.Build.Output()
 BUILD_OUTPUT.properties['greenness'] = {
-    'aggregateMetric': 98,
+    'aggregateBuildMetric': 98,
     'targetGreenness': [{
         'buildMetric': '100',
         'metric': '98',

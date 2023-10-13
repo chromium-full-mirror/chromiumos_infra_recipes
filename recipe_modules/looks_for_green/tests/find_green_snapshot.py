@@ -39,7 +39,7 @@ output = build_pb2.Build.Output()
 brya_greenness = {'buildMetric': '100', 'metric': '98', 'target': 'brya'}
 eve_greenness = {'buildMetric': '90', 'metric': '80', 'target': 'eve'}
 output.properties['greenness'] = {
-    'aggregateMetric': 80,
+    'aggregateBuildMetric': 80,
     'targetGreenness': [brya_greenness]
 }
 build_input = build_pb2.Build.Input()
@@ -50,7 +50,7 @@ green_build = build_pb2.Build(id=123, output=output, input=build_input,
 
 output = build_pb2.Build.Output()
 output.properties['greenness'] = {
-    'aggregateMetric': 98,
+    'aggregateBuildMetric': 98,
     'targetGreenness': [brya_greenness, eve_greenness]
 }
 build_input.gitiles_commit.id = 'sample'
@@ -59,14 +59,14 @@ green_build2 = build_pb2.Build(id=234, output=output, input=build_input,
                                end_time=TEST_END_TIMESTAMP)
 
 output.properties['greenness'] = {
-    'aggregateMetric': 100,
+    'aggregateBuildMetric': 100,
     'targetGreenness': [brya_greenness]
 }
 greenest_build = build_pb2.Build(id=489, output=output, input=build_input,
                                  start_time=TEST_START_TIMESTAMP,
                                  end_time=TEST_END_TIMESTAMP)
 
-output.properties['greenness'] = {'aggregateMetric': 60}
+output.properties['greenness'] = {'aggregateBuildMetric': 60}
 red_build = build_pb2.Build(id=123, output=output, input=build_input,
                             start_time=TEST_START_TIMESTAMP,
                             end_time=TEST_END_TIMESTAMP)
