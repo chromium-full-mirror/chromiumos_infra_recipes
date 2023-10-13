@@ -132,6 +132,7 @@ def GenTests(api):
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
       'aggregateMetric': 0,
+      'aggregateBuildMetric': 0,
   }
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
       'greenness': {
@@ -142,6 +143,7 @@ def GenTests(api):
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
       'aggregateMetric': 100,
+      'aggregateBuildMetric': 100,
   }
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
       'greenness': {
