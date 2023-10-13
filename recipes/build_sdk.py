@@ -220,7 +220,10 @@ class BuildSDKRun:
     This method sets the self._sdk_tarball_path attribute to the Path of the
     generated tarball.
     """
-    request = sdk_pb2.BuildSdkTarballRequest(chroot=self.m.cros_sdk.chroot)
+    request = sdk_pb2.BuildSdkTarballRequest(
+        chroot=self.m.cros_sdk.chroot,
+        sdk_version=self.version,
+    )
     response = self.m.cros_build_api.SdkService.BuildSdkTarball(request)
     self._sdk_tarball_path = self.m.util.proto_path_to_recipes_path(
         response.sdk_tarball_path)
