@@ -12,6 +12,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import FALLBACK_DEFAULT_SOURCE_TEST_PLAN
+from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import LEGACY_DEFAULT_VM_TEST_PLAN_BETTY_ARC_R
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import VM_LAB_TEST_PLAN
 
 DEPS = [
@@ -60,7 +61,8 @@ def GenTests(api):
           ),
       ),
       api.properties(expected_plans=[
-          json_format.MessageToJson(FALLBACK_DEFAULT_SOURCE_TEST_PLAN)
+          json_format.MessageToJson(FALLBACK_DEFAULT_SOURCE_TEST_PLAN),
+          json_format.MessageToJson(LEGACY_DEFAULT_VM_TEST_PLAN_BETTY_ARC_R)
       ]),
       api.post_process(post_process.DropExpectation),
   )
