@@ -74,6 +74,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     self._resultdb_gitiles_commit = None
     self._minios_unsupported = properties.minios_unsupported
     self._dynamic_qs_account = properties.dynamic_qs_account
+    self._paygen_mpa = properties.paygen_mpa
 
   @property
   def buildspec(self):
@@ -440,6 +441,12 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'full_payload_test_override': 'RESPECT_CONFIG',
           'minios': not self._minios_unsupported,
       }
+      # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+      if self._paygen_mpa:
+        paygen_properties['paygen_mpa'] = True
+        pg_orch_builder = ('staging-paygen-orchestrator-mpa'
+                           if self.m.build_menu.is_staging else
+                           'paygen-orchestrator-mpa')
       if override_qs_account:
         paygen_properties['override_qs_account'] = override_qs_account
       if self.m.signing.local_signing:

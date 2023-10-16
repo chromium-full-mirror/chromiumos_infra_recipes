@@ -389,6 +389,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       self,
       paygen_reqs: List[PaygenProperties.PaygenRequest],
       override_qs_account: Optional[str] = None,
+      paygen_mpa: Optional[bool] = False,
   ) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
@@ -407,7 +408,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     batches = self._batch_paygen_request_dicts(paygen_request_dicts)
     schedule_requests = [
         self._create_bb_schedule_request(
-            batch, override_qs_account=override_qs_account) for batch in batches
+            batch, override_qs_account=override_qs_account,
+            paygen_mpa=paygen_mpa) for batch in batches
     ]
 
     # Define a function to split requests into chunks.
@@ -700,6 +702,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       self,
       paygen_requests: List[PaygenProperties.PaygenRequest],
       override_qs_account: Optional[str] = None,
+      paygen_mpa: Optional[bool] = False,
   ) -> ScheduleBuildRequest:
     """Create a ScheduleBuildRequest for list of paygen requests.
 
@@ -717,6 +720,9 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     if self.m.led.led_build:
       bucket = self.m.led.shadowed_bucket
     builder = 'staging-paygen' if is_staging else 'paygen'
+    # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+    if paygen_mpa:
+      builder = 'staging-paygen-mpa' if is_staging else 'paygen-mpa'
     props = {'requests': paygen_requests}
     if override_qs_account:
       props['override_qs_account'] = override_qs_account

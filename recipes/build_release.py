@@ -17,6 +17,8 @@ from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import \
   CrosArtifactsProperties
 from PB.recipe_modules.chromeos.cros_infra_config.cros_infra_config import (
     CrosInfraConfigProperties)
+from PB.recipe_modules.chromeos.cros_release.cros_release import \
+  CrosReleaseProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import \
   CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -1169,6 +1171,30 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
           }),
       api.signing.setup_mocks(),
       api.post_check(post_process.MustRun, 'overriding release channels'),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )
+
+  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  yield api.build_menu.test(
+      'release-mpa',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+              '$chromeos/cros_release':
+                  MessageToDict(CrosReleaseProperties(paygen_mpa=True))
+          }),
+      api.signing.setup_mocks(),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"builder": "paygen-orchestrator-mpa"']),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='kukui-release-main',

@@ -42,4 +42,7 @@ message CrosReleaseProperties {
 
   // Whether to dynamically compute the QS account to use for release.
   bool dynamic_qs_account = 9;
+
+  // TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  bool paygen_mpa = 11;
 }

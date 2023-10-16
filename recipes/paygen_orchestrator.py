@@ -55,6 +55,7 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   au_testing_models = properties.au_testing_models or []
   au_fsi_testing_models = properties.au_fsi_testing_models or []
+  paygen_mpa = properties.paygen_mpa or False
   minios = properties.minios
 
   # Since this job is intended to be run via a release build, log the
@@ -178,7 +179,8 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
 
   # Schedule child builders, and wait for them to finish.
   res = api.paygen_orchestration.run_paygen_builders(
-      paygen_reqs, override_qs_account=properties.override_qs_account)
+      paygen_reqs, override_qs_account=properties.override_qs_account,
+      paygen_mpa=paygen_mpa)
 
   # Present results.
   with api.step.nest('results') as pres:
@@ -247,6 +249,7 @@ def GenTests(api: RecipeTestApi):
       override_qs_account: str = None,
       local_signing: bool = False,
       docker_image: str = None,
+      paygen_mpa: bool = False,
   ) -> Callable[[PaygenOrchestratorProperties], TestData]:
     delta_types = delta_types or ['OMAHA']
     channels = channels or ['CHANNEL_DEV', 'CHANNEL_BETA']
@@ -255,7 +258,7 @@ def GenTests(api: RecipeTestApi):
                           channels=channels, publish_to_pubsub=pubsub,
                           override_qs_account=override_qs_account,
                           local_signing=local_signing,
-                          docker_image=docker_image)
+                          docker_image=docker_image, paygen_mpa=paygen_mpa)
 
   good_paygen_cfg = api.paygen_orchestration.test_paygen(
       'discovering payload configuration.get paygen json.gsutil cat',
@@ -681,4 +684,26 @@ def GenTests(api: RecipeTestApi):
           test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(5)], 'running children.collect'),
+  )
+
+  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  yield api.test(
+      'paygen-mpa',
+      get_props(paygen_mpa=True),
+      good_paygen_cfg,
+      api.buildbucket.build(build_message),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts.gsutil list'),
+      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
+                                    'discover gs artifacts (2).gsutil list'),
+      api.cros_storage.test_listing(
+          'examining beta-channel.target artifacts.'
+          'discover gs artifacts.gsutil list',
+          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
+      api.buildbucket.simulated_collect_output(
+          [paygen_child_data(x) for x in range(23)],
+          'running children.collect'),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request', ['"builder": "paygen-mpa"']),
+      api.post_process(post_process.DropExpectation),
   )

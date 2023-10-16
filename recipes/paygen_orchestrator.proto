@@ -75,4 +75,7 @@ message PaygenOrchestratorProperties {
   // host. This consists of the name of the docker image, followed by the tag,
   // i.e. "signing:1234".
   string docker_image = 17;
+
+  // TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  bool paygen_mpa = 18;
 }

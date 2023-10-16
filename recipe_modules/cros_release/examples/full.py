@@ -229,3 +229,33 @@ def GenTests(api):
       builder='kukui-release-main',
       bucket='release',
   )
+
+  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  yield api.build_menu.test(
+      'mpa',
+      api.properties(
+          **{
+              '$chromeos/cros_version':
+                  CrosVersionProperties(remove_snapshot_from_version=True),
+              '$chromeos/cros_source': {
+                  'syncToManifest': {
+                      'manifestGsPath':
+                          'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
+                  }
+              },
+              '$chromeos/cros_release':
+                  CrosReleaseProperties(paygen_mpa=True),
+          }),
+      api.buildbucket.simulated_collect_output(
+          [successful_paygen_orch],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
+                                     bucket='release').build,
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"builder": "paygen-orchestrator-mpa"']),
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
+  )

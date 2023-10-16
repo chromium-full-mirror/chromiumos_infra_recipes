@@ -33,8 +33,11 @@ def RunSteps(api: RecipeApi):
       PaygenProperties.PaygenRequest(generation_request=gen_request)
       for gen_request in gen_requests
   ]
+
+  paygen_mpa = api.properties.thaw()['paygen_mpa']
   api.paygen_orchestration.run_paygen_builders(
-      paygen_requests, override_qs_account='custom_qs_account')
+      paygen_requests, override_qs_account='custom_qs_account',
+      paygen_mpa=paygen_mpa)
 
 
 test_bbids = [str(8922054662172514000 + i) for i in range(805)]
@@ -43,7 +46,7 @@ test_bbids = [str(8922054662172514000 + i) for i in range(805)]
 def GenTests(api: RecipeTestApi):
 
   yield api.test(
-      'basic',
+      'basic', api.properties(paygen_mpa=False),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"override_qs_account": "custom_qs_account"']),
       api.buildbucket.build(
@@ -54,7 +57,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'basic-try-build',
+      'basic-try-build', api.properties(paygen_mpa=False),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"override_qs_account": "custom_qs_account"']),
       api.buildbucket.build(
@@ -65,7 +68,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'basic-led-real-build',
+      'basic-led-real-build', api.properties(paygen_mpa=False),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos',
                                            bucket='staging.shadow',
@@ -78,7 +81,7 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'conductor-no-retries',
+      'conductor-no-retries', api.properties(paygen_mpa=False),
       api.properties(
           **{
               '$chromeos/conductor': {
@@ -94,6 +97,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'conductor-retries',
+      api.properties(paygen_mpa=False),
       api.properties(
           **{
               '$chromeos/conductor': {
@@ -107,4 +111,14 @@ def GenTests(api: RecipeTestApi):
       api.conductor.set_collect_output(
           [str(8922054662172514001 + i) for i in range(804)],
           step_name='running children'),
+      api.post_process(post_process.DropExpectation))
+
+  # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
+  yield api.test(
+      'mpa', api.properties(paygen_mpa=True),
+      api.buildbucket.build(
+          api.buildbucket.ci_build_message(project='chromeos', bucket='release',
+                                           builder='paygen-orchestrator-mpa')),
+      api.post_check(post_process.LogContains, 'running children.schedule',
+                     'request', ['"builder": "paygen-mpa"']),
       api.post_process(post_process.DropExpectation))
