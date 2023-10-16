@@ -5,6 +5,8 @@
 
 """Utility function for CQ auto retry."""
 
+import collections
+import dataclasses
 from typing import Dict, FrozenSet, List, NamedTuple, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
@@ -74,6 +76,43 @@ class BasicClInfo(NamedTuple):
   change: str
 
 
+@dataclasses.dataclass
+class WaitForGreenStats:
+  """Per-build statistics about wait-for-green retries."""
+  # Total number of builders found in the snapshot the build ran on. This may be
+  # 0 during normal operation, if the builder ran on a recent snapshot for
+  # which greenness is not yet published.
+  total_builders_in_snapshot: int = 0
+
+  # The names of the failed builders in the snapshot the build ran on. The
+  # CQ build being considered for retry did not necessarily fail on these
+  # builders (e.g. the builder may not have been relevant to the CQ build, or
+  # could be a flaky failure that failed on the snapshot build but passed on the
+  # CQ build).
+  failed_builders_in_snapshot: List[str] = dataclasses.field(
+      default_factory=list)
+
+  # The names of the builders that were not green in the snapshot the build ran
+  # on that are green on the snapshot found by looks for green.
+  now_green_builders: List[str] = dataclasses.field(default_factory=list)
+
+  # The names of the builders that are now retryable. This is the intersection
+  # of the builders that failed for the build and now_green_builders.
+  retryable_builders: List[str] = dataclasses.field(default_factory=list)
+
+
+@dataclasses.dataclass
+class PerBuildStats:
+  """Statistics specific to a candidate build, for monitoring and debugging.
+
+  AutoRetryUtilApi has a map from build id -> PerBuildStats which should be
+  updated by various functions as auto-retry decisions are made. This map should
+  be published as an output property after all auto-retry decisions are made, by
+  publish_per_build_stats.
+  """
+  wait_for_green_stats: WaitForGreenStats = WaitForGreenStats()
+
+
 class AutoRetryUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with the CQ auto retries."""
 
@@ -106,6 +145,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         props.chromeos_luci_service_account or CHROMEOS_LUCI_SERVICE_ACCOUNT)
 
     self._filtered_build_stats = {}
+    self._per_build_stats: Dict[int, PerBuildStats] = collections.defaultdict(
+        PerBuildStats)
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -220,10 +261,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         now_green_builders = self._get_now_green_builders(cq_run)
         # now_green_builders are snapshot builders, but unsucessful_builders are
         # cq builders. Replace the suffix when matching them.
-        retryable_failure_builders.extend([
+        now_green_retryable_builders = [
             b for b in unsuccessful_builders
             if b.replace('-cq', '-snapshot') in now_green_builders
-        ])
+        ]
+        retryable_failure_builders.extend(now_green_retryable_builders)
+        self._per_build_stats[
+            cq_run.
+            id].wait_for_green_stats.retryable_builders = now_green_retryable_builders
 
       outstanding_failure_builders = [
           b for b in unsuccessful_builders
@@ -336,6 +381,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest('get now green builders') as pres:
       now_green_builders = []
       failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+
+      pres.logs['failed on snapshot builders'] = failed_on_snapshot_builders
+      self._per_build_stats[
+          cq_run.id].wait_for_green_stats.failed_builders_in_snapshot = list(
+              failed_on_snapshot_builders)
+
       current_greenness = self.m.looks_for_green.find_green_snapshot(
           # The staging auto retrier will still look at prod CQ runs, so it must
           # lookup greenness on the prod snapshot-orchestrator.
@@ -353,10 +404,24 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             builder].build_score == 100:
           now_green_builders.append(builder)
 
-      pres.logs['failed on snapshot builders'] = failed_on_snapshot_builders
       pres.logs['now green builders'] = now_green_builders
+      self._per_build_stats[
+          cq_run
+          .id].wait_for_green_stats.now_green_builders = now_green_builders
 
       return now_green_builders
+
+  def publish_per_build_stats(self):
+    """Write WaitForGreenStats to an output property.
+
+    WaitForGreenStats are logged for each build passed to
+    analyze_build_failures. This function should be called after every call to
+    analyze_build_failures is complete, to publish the stats to an output
+    property.
+    """
+    self.m.easy.set_properties_step(per_build_stats={
+        k: dataclasses.asdict(v) for k, v in self._per_build_stats.items()
+    })
 
   def _failed_on_snapshot_builders(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns builders that failed on cq_run's snapshot.
@@ -381,6 +446,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           retries=0,
           use_local_greenness=True,
       )
+
+      self._per_build_stats[
+          cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
+              builder_to_greenness)
 
       non_green_builders = {
           b: g for b, g in builder_to_greenness.items() if g.build_score < 100

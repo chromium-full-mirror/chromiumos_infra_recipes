@@ -564,6 +564,13 @@
   },
   {
     "cmd": [],
+    "name": "set per_build_stats",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@per_build_stats@{}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check recent executions for throttle"
   },
   {

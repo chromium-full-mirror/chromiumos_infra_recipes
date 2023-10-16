@@ -113,6 +113,9 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   filtered_runs = api.auto_retry_util.filter_retry_candidates(
       [run[0] for run in retryable_runs])
   retryable_runs = [run for run in retryable_runs if run[0] in filtered_runs]
+
+  api.auto_retry_util.publish_per_build_stats()
+
   unthrottled_retry_n = len(retryable_runs)
   with api.step.nest('check recent executions for throttle'):
     retries_avail = api.auto_retry_util.unthrottled_retries_left()

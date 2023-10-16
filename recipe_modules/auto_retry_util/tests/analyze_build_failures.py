@@ -32,6 +32,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   success, retryable, outstanding = api.auto_retry_util.analyze_build_failures(
       api.buildbucket.build)
+  api.auto_retry_util.publish_per_build_stats()
   expected_success = api.properties['expected_success']
   expected_retryable = api.properties['expected_retryable']
   expected_outstanding = api.properties['expected_outstanding']
@@ -200,6 +201,17 @@ def GenTests(api):
       api.properties(expected_success=['builder1-cq'],
                      expected_retryable=['builder2-cq', 'builder3'],
                      expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
+      api.post_process(
+          post_process.PropertyEquals, 'per_build_stats', {
+              '8945511751514863184': {
+                  'wait_for_green_stats': {
+                      'failed_builders_in_snapshot': ['builder2-snapshot'],
+                      'now_green_builders': ['builder2-snapshot'],
+                      'retryable_builders': ['builder2-cq'],
+                      'total_builders_in_snapshot': 1
+                  }
+              }
+          }),
       api.post_process(post_process.DropExpectation),
   )
 
