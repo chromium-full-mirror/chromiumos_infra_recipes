@@ -8996,6 +8996,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs:///eve-release-publish-img-pkg-sizes/R99-1234.56.0-101-8945511751514863184/build_report.json\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

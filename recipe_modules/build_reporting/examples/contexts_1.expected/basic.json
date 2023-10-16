@@ -220,6 +220,14 @@
   },
   {
     "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://foo/bar/build_report.json\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build status pubsub update (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
@@ -398,6 +406,14 @@
   },
   {
     "cmd": [],
+    "name": "upload build report to GS (2).set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://foo/bar/build_report.json\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build status pubsub update (5)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",
@@ -572,6 +588,14 @@
     "name": "upload build report to GS (3).gsutil write build_report.json to GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload build report to GS (3).set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://foo/bar/build_report.json\"@@@"
     ]
   },
   {

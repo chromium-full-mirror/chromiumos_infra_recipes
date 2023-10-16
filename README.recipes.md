@@ -15,7 +15,7 @@
   * [build_reporting](#recipe_modules-build_reporting) &mdash; Contains functions for building and sending build status to a pub/sub topic.
   * [buildbucket_stats](#recipe_modules-buildbucket_stats) &mdash; A collection of functions that poll Buildbucket for stats and output properties.
   * [builder_metadata](#recipe_modules-builder_metadata)
-  * [checkpoint](#recipe_modules-checkpoint)
+  * [checkpoint](#recipe_modules-checkpoint) &mdash; Module for Checkpoints which enables partially retriable (release) builds.
   * [chrome](#recipe_modules-chrome)
   * [chromite](#recipe_modules-chromite)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
@@ -191,6 +191,7 @@
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
   * [build_reporting:examples/full](#recipes-build_reporting_examples_full)
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
+  * [build_reporting:tests/init_report_from_previous_build](#recipes-build_reporting_tests_init_report_from_previous_build) &mdash; Test init_report_from_previous_build.
   * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
@@ -1747,7 +1748,7 @@ Args:
 Returns: A list of build_pb2.Build objects, deduped and prioritized.
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
-[DEPS](/recipe_modules/build_reporting/__init__.py#8): [build\_menu](#recipe_modules-build_menu), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [signing](#recipe_modules-signing), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/__init__.py#13): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [signing](#recipe_modules-signing), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Contains functions for building and sending build status to a pub/sub topic.
@@ -1765,22 +1766,22 @@ and `pubsub_topic` properties for the module.  If not set, these default to
 `chromeos-build-reporting` and `chromeos-builds-all`, which is intended to be
 the unfiltered top-level topic for all builds.
 
-#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#106)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildReportingApi](/recipe_modules/build_reporting/api.py#108)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 API implemention for build reporting.
 
-&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#120)(build_config, kind, value):**
+&emsp; **@staticmethod**<br>&mdash; **def [add\_version\_msg](/recipe_modules/build_reporting/api.py#122)(build_config, kind, value):**
 
-&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#135)(self):**
+&emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#137)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#223)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#245)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#293)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#315)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1795,9 +1796,16 @@ Args:
 Return:
    _MessageDelegate wrapping StepDetails instance
 
-&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#139)(self):**
+&mdash; **def [init\_report\_from\_previous\_build](/recipe_modules/build_reporting/api.py#168)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#166)(self, build_report, raise_on_failed_publish=False):**
+Initialize the build report from an existing report in GS.
+
+Used for retries. Don't publish, we'll wait until our first legitimate
+publish.
+
+&emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#141)(self):**
+
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#188)(self, build_report, raise_on_failed_publish=False):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1812,14 +1820,14 @@ Args:
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#243)(self, branch: str):**
+&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#265)(self, branch: str):**
 
 Publish the build's branch.
 
 Args:
   branch: The branch.
 
-&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#516)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
+&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#552)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
 
 Publish metadata about the specified artifacts(s).
 
@@ -1828,7 +1836,7 @@ Args:
     by cros_artifacts.upload_artifacts.
   artifact_dir: Local dir where artifacts are staged.
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#419)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#441)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1837,32 +1845,32 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_channels](/recipe_modules/build_reporting/api.py#254)(self, channels: List['common_pb2.Channel']):**
+&mdash; **def [publish\_channels](/recipe_modules/build_reporting/api.py#276)(self, channels: List['common_pb2.Channel']):**
 
 Publish the build's channels.
 
 Args:
   channels: The channels.
 
-&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#498)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#534)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
 
 Publish DLC artifacts to pubsub, including URL and hash.
 
 Args:
   dlc_artifacts: DLC locations in GS and file hashes.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#439)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#464)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#235)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#257)(self, status):**
 
 Publish and merge build status.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#392)(self, gs_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#414)(self, gs_path=None):**
 
 Create a context manager to automatically publish to gs.
 
@@ -1872,7 +1880,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#484)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#516)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1880,7 +1888,7 @@ Args:
   toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
     usage.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#267)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#289)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1890,19 +1898,19 @@ Args:
 Return:
   Nothing
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#127)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_project](/recipe_modules/build_reporting/api.py#129)(self):**
 
-&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#131)(self):**
+&emsp; **@property**<br>&mdash; **def [pubsub\_topic](/recipe_modules/build_reporting/api.py#133)(self):**
 
-&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#143)(self, build_type, build_target):**
+&mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#145)(self, build_type, build_target):**
 
 Set the type for the build, must be set once and only once.
 
-&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#115)(step_name):**
+&emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#117)(step_name):**
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#332)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#354)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 
@@ -2049,59 +2057,61 @@ Returns:
 [DEPS](/recipe_modules/checkpoint/__init__.py#7): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Module for Checkpoints which enables partially retriable (release) builds.
+
+#### **class [CheckpointApi](/recipe_modules/checkpoint/api.py#58)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for managing release build checkpoints.
 
 See go/release-checkpoints-dd for context.
 
-&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#109)(self):**
+&mdash; **def [builder\_children](/recipe_modules/checkpoint/api.py#113)(self):**
 
 Get the BBIDs of the child builders that are image builders.
 
-&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#134)(self, builder: str):**
+&mdash; **def [builder\_retry\_props](/recipe_modules/checkpoint/api.py#138)(self, builder: str):**
 
 Return the `checkpoint` module properties to set for the child builder.
 
-&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#153)(requested_steps: List['RetryStep']):**
+&emsp; **@staticmethod**<br>&mdash; **def [cascade](/recipe_modules/checkpoint/api.py#157)(requested_steps: List['RetryStep']):**
 
 Process step cascades for the requested steps.
 
 Returns:
   All the steps that are meant to be run.
 
-&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#121)(self):**
+&mdash; **def [failed\_builder\_children](/recipe_modules/checkpoint/api.py#125)(self):**
 
 Returns the list of child builders that failed.
 
 Returns:
   Names of child builders that failed, e.g. eve-release-main.
 
-&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#92)(self):**
+&mdash; **def [is\_retry](/recipe_modules/checkpoint/api.py#96)(self):**
 
 Return whether the build is a retry build.
 
-&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#101)(self, step: 'RetryStep'):**
+&mdash; **def [is\_run\_step](/recipe_modules/checkpoint/api.py#105)(self, step: 'RetryStep'):**
 
 Return whether the step will be run in this retry.
 
-&emsp; **@property**<br>&mdash; **def [original\_build\_bbid](/recipe_modules/checkpoint/api.py#96)(self):**
+&emsp; **@property**<br>&mdash; **def [original\_build\_bbid](/recipe_modules/checkpoint/api.py#100)(self):**
 
 Return the BBID of the original build as set in input properties.
 
-&mdash; **def [register](/recipe_modules/checkpoint/api.py#183)(self):**
+&mdash; **def [register](/recipe_modules/checkpoint/api.py#187)(self):**
 
 Perform initial set up for checkpoint / mark the build as a retry.
 
-&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#249)(self, step: 'RetryStep'):**
+&emsp; **@contextmanager**<br>&mdash; **def [retry](/recipe_modules/checkpoint/api.py#253)(self, step: 'RetryStep'):**
 
 Context to handle retry logic / status reporting.
 
-&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#113)(self):**
+&mdash; **def [successful\_builder\_children\_bbids](/recipe_modules/checkpoint/api.py#117)(self):**
 
 Get the BBIDs of the child builders that were successful.
 
-&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#236)(self, step: 'RetryStep', status: str):**
+&mdash; **def [update\_summary](/recipe_modules/checkpoint/api.py#240)(self, step: 'RetryStep', status: str):**
 
 Update the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
@@ -11686,7 +11696,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#129)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#131)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#72)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -11703,16 +11713,24 @@ Recipe for building images for release.
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/contexts_2.py#24)(api):**
 ### *recipes* / [build\_reporting:examples/full](/recipe_modules/build_reporting/examples/full.py)
 
-[DEPS](/recipe_modules/build_reporting/examples/full.py#16): [build\_reporting](#recipe_modules-build_reporting), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/examples/full.py#18): [build\_reporting](#recipe_modules-build_reporting), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#32)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/examples/full.py#34)(api):**
 ### *recipes* / [build\_reporting:tests/full](/recipe_modules/build_reporting/tests/full.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/full.py#18): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/full.py#46)(api):**
+### *recipes* / [build\_reporting:tests/init\_report\_from\_previous\_build](/recipe_modules/build_reporting/tests/init_report_from_previous_build.py)
+
+[DEPS](/recipe_modules/build_reporting/tests/init_report_from_previous_build.py#17): [build\_reporting](#recipe_modules-build_reporting), [checkpoint](#recipe_modules-checkpoint), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Test init_report_from_previous_build.
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/init_report_from_previous_build.py#32)(api: RecipeApi):**
 ### *recipes* / [build\_reporting:tests/publish\_dlcs](/recipe_modules/build_reporting/tests/publish_dlcs.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/publish_dlcs.py#11): [build\_reporting](#recipe_modules-build_reporting)

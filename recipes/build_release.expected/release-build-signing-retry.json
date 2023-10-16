@@ -68,6 +68,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"artifact_link\": \"gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"build_report_uri\": \"gs://foo/build_report.json\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"signing_instructions_uris\": [@@@",
       "@@@STEP_LOG_LINE@json.output@              \"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions\",@@@",
       "@@@STEP_LOG_LINE@json.output@              \"gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions\"@@@",
@@ -103,7 +104,44 @@
       "@@@STEP_LOG_END@artifact_link@@@",
       "@@@STEP_LOG_LINE@signing_instructions_uris@gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions@@@",
       "@@@STEP_LOG_LINE@signing_instructions_uris@gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions@@@",
-      "@@@STEP_LOG_END@signing_instructions_uris@@@"
+      "@@@STEP_LOG_END@signing_instructions_uris@@@",
+      "@@@STEP_LOG_LINE@build_report_uri@gs://foo/build_report.json@@@",
+      "@@@STEP_LOG_END@build_report_uri@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read build report from previous build"
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://foo/build_report.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read build report from previous build.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -7983,6 +8021,14 @@
     "name": "upload build report to GS.gsutil write build_report.json to GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json\"@@@"
     ]
   },
   {

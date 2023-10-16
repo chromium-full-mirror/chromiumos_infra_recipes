@@ -10886,6 +10886,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json\"@@@"
+    ]
+  },
+  {
     "failure": {
       "humanReason": "Infra Failure: Step('upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)"
     },

@@ -73,6 +73,8 @@ def RunSteps(api, properties):
   api.easy.log_parent_step()
   api.cros_try.check_try_version()
   api.checkpoint.register()
+  if api.checkpoint.is_retry():
+    api.build_reporting.init_report_from_previous_build()
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
   api.cros_release.validate_sign_types()
   api.cros_release.check_channel_override()
@@ -1045,6 +1047,8 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       'artifact_link'] = 'gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0'
   original_build.output.properties[
       'signing_instructions_uris'] = api.cros_build_api.INSTRUCTIONS
+  original_build.output.properties[
+      'build_report_uri'] = 'gs://foo/build_report.json'
 
   # Retry release build.
   yield api.build_menu.test(
@@ -1086,6 +1090,10 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                   }
               }
           }),
+      api.step_data(
+          'read build report from previous build.gsutil cat',
+          stdout=api.raw_io.output_text('{}'),
+      ),
       api.buildbucket.simulated_get(
           original_build, step_name='RUNNING IN RETRY MODE.get original build'),
       api.signing.setup_mocks(),

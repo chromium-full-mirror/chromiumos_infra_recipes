@@ -11125,6 +11125,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/build_report.json\"@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Step('install packages.call chromite.api.SysrootService/InstallPackages.call build API script') (retcode: 1)"

@@ -26,6 +26,8 @@ from typing import Dict, List
 
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
+
+from google.protobuf import json_format
 from google.protobuf.json_format import MessageToJson
 
 # infra/proto/src/chromiumos/builder_report.proto
@@ -162,6 +164,26 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self._build_report = BuildReport()
     self._step_order = make_oneup()
     self._msg_counter = make_oneup()
+
+  def init_report_from_previous_build(self):
+    """Initialize the build report from an existing report in GS.
+
+    Used for retries. Don't publish, we'll wait until our first legitimate
+    publish.
+    """
+    if not self.m.checkpoint.is_retry():
+      return
+
+    with self.m.step.nest('read build report from previous build'):
+      build_report = BuildReport()
+      build_report_json = self.m.gsutil.cat(
+          self.m.checkpoint.build_report_uri,
+          stdout=self.m.raw_io.output_text(add_output_log=True))
+      json_format.Parse(build_report_json.stdout, build_report)
+
+      # Want to use our BBID.
+      build_report.buildbucket_id = self.m.buildbucket.build.id
+      self._build_report = build_report
 
   def publish(self, build_report, raise_on_failed_publish=False):
     """Send a BuildReport to the pubsub topic.
@@ -424,6 +446,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
       builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
           build-api.
     """
+    if self._build_report.config.models:
+      raise StepFailure('`models` already published in pub/sub, invalid retry?')
+
     build_report = BuildReport()
     config = build_report.config
 
@@ -442,6 +467,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
     Args:
       signed_build_metadata_list (list[dict]): List of signed build metadata.
     """
+    # Unlike publish_build_target_and_model_metadata, double calls are
+    # acceptable here. Signing will refuse to sign the same image twice and we
+    # only add artifacts with status SUCCESS to the pubsub, so any additions
+    # to the pubsub are guaranteed not to be present already.
+
     build_report = BuildReport()
     for signed_build_metadata in signed_build_metadata_list:
       status = self.m.signing.get_status_from_instructions(
@@ -469,8 +499,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
       build_report_json = MessageToJson(self._build_report)
       self.m.file.write_text('write buildreport json to tmp file', tmp_file,
                              build_report_json)
-      self.m.gsutil(cmd=['cp', tmp_file, gs_path + '/build_report.json'],
-                    name='write build_report.json to GS',
+      gs_full_path = gs_path + '/build_report.json'
+      self.m.gsutil(cmd=['cp', tmp_file,
+                         gs_full_path], name='write build_report.json to GS',
                     use_retry_wrapper=True)
 
       # TODO(b/277799110): Replace with str.removeprefix once we're on Py3.9+.
@@ -480,6 +511,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
       presentation.links['gs upload dir'] = (
           'https://console.cloud.google.com/storage/browser/%s' %
           removeprefix(gs_path, 'gs://'))
+      self.m.easy.set_properties_step(build_report_uri=gs_full_path)
 
   def publish_toolchain_info(self, toolchain_info):
     """Publish metadata about SDK/toolchain usage.
@@ -488,6 +520,10 @@ class BuildReportingApi(recipe_api.RecipeApi):
       toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
         usage.
     """
+    if self._build_report.toolchains:
+      raise StepFailure(
+          '`toolchains` already published in pub/sub, invalid retry?')
+
     build_report = BuildReport()
     build_report.sdk_version = getattr(toolchain_info, 'sdk_version')
     build_report.toolchain_url = getattr(toolchain_info, 'toolchain_url')
@@ -522,6 +558,10 @@ class BuildReportingApi(recipe_api.RecipeApi):
         by cros_artifacts.upload_artifacts.
       artifact_dir: Local dir where artifacts are staged.
     """
+    if self._build_report.artifacts:
+      raise StepFailure(
+          '`artifacts` already published in pub/sub, invalid retry?')
+
     with self.m.step.nest('publish artifacts to pubsub') as presentation:
       presentation.logs['uploaded artifacts'] = str(uploaded_artifacts)
 

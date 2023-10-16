@@ -15651,6 +15651,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "upload build report to GS.set build_report_uri",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101/build_report.json\"@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

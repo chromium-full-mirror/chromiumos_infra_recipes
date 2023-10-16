@@ -13,6 +13,8 @@ from PB.chromiumos.build_report import BuildReport, URI
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
+from recipe_engine.recipe_api import StepFailure
+
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
@@ -79,6 +81,13 @@ def RunSteps(api):
           }),
       '/path/to/artifacts')
 
+  # No additional calls allowed.
+  with api.assertions.assertRaises(StepFailure):
+    api.build_reporting.publish_build_artifacts(
+        UploadedArtifacts('chromeos-image-archive',
+                          'build_target-release/R12-12345.0.0', {}),
+        '/path/to/artifacts')
+
   # Publish the branch.
   api.build_reporting.publish_branch('main')
 
@@ -106,6 +115,14 @@ def RunSteps(api):
           toolchain_url,
           toolchains,
       ))
+  # No additional calls allowed.
+  with api.assertions.assertRaises(StepFailure):
+    api.build_reporting.publish_toolchain_info(
+        api.cros_sdk.ToolchainInfo(
+            sdk_version,
+            toolchain_url,
+            toolchains,
+        ))
 
   # ...
 

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for Checkpoints which enables partially retriable (release) builds."""
+
 import json
 from contextlib import contextmanager
 from typing import List
@@ -43,6 +45,8 @@ ORIGINAL_BUILD_PROPERTIES = [
     ('build_release', RetryStep.STAGE_ARTIFACTS, False, 'artifact_link'),
     ('build_release', RetryStep.PUSH_IMAGES, False,
      'signing_instructions_uris'),
+    # We want the previous build_report_uri regardless of where it failed.
+    ('build_release', None, False, 'build_report_uri'),
 ]
 
 STATUS_STARTED = 'STARTED'
@@ -217,8 +221,8 @@ class CheckpointApi(recipe_api.RecipeApi):
       with self.m.step.nest('verify previous build') as presentation:
         for recipe, trigger_step, inclusion, prop in ORIGINAL_BUILD_PROPERTIES:
           if self._original_build.input.properties['recipe'] == recipe:
-            step_included = trigger_step in self._run_steps
-            if inclusion == step_included:
+            step_included = trigger_step is None or trigger_step in self._run_steps
+            if trigger_step is None or inclusion == step_included:
               if prop not in self._original_build.output.properties:
                 presentation.step_text = 'could not get `%s` from previous build' % prop
                 raise StepFailure(presentation.step_text)

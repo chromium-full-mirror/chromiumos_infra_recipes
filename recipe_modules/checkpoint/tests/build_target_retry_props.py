@@ -58,6 +58,8 @@ def GenTests(api):
   original_build.input.properties['recipe'] = 'orchestrator'
   original_build.output.properties[
       'buildspec_gs_uri'] = 'gs://chromeos-manifest-versions/foo/1.xml'
+  original_build.output.properties[
+      'build_report_uri'] = 'gs://foo/build_report.json'
   original_build.output.properties['child_builds'] = [
       '8922054662172514002',
       '8922054662172514003',

@@ -65,6 +65,8 @@ def GenTests(api: RecipeApi):
   original_build.output.properties[
       'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
   original_build.output.properties['signing_instructions_uris'] = ['foo', 'bar']
+  original_build.output.properties[
+      'build_report_uri'] = 'gs://foo/build_report.json'
 
   yield api.test(
       'basic',
@@ -245,6 +247,8 @@ def GenTests(api: RecipeApi):
   no_signing_uris = build_pb2.Build(id=8922054662172514001, status='FAILURE')
   no_signing_uris.input.properties['recipe'] = 'build_release'
   no_signing_uris.output.properties[
+      'build_report_uri'] = 'gs://foo/build_report.json'
+  no_signing_uris.output.properties[
       'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
   yield api.test(
       'skip-stage-artifacts-missing-signing-uris',
@@ -260,6 +264,33 @@ def GenTests(api: RecipeApi):
           }),
       api.buildbucket.simulated_get(
           no_signing_uris,
+          step_name='RUNNING IN RETRY MODE.get original build'),
+      api.post_check(post_process.StepFailure,
+                     'RUNNING IN RETRY MODE.verify previous build'),
+      api.post_check(post_process.DoesNotRun, 'stage artifacts'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  no_build_report_uri = build_pb2.Build(id=8922054662172514001,
+                                        status='FAILURE')
+  no_build_report_uri.input.properties['recipe'] = 'build_release'
+  no_build_report_uri.output.properties[
+      'artifact_link'] = 'gs://chromeos-image-archive/staging-octopus-release-main/R110-15274.0.0-8922054662172514001'
+  yield api.test(
+      'missing-build-report-uri',
+      api.properties(
+          **{
+              '$chromeos/checkpoint': {
+                  'retry': True,
+                  'original_build_bbid': '8922054662172514001',
+                  'exec_steps': {
+                      'steps': [RetryStep.STAGE_ARTIFACTS]
+                  },
+              }
+          }),
+      api.buildbucket.simulated_get(
+          no_build_report_uri,
           step_name='RUNNING IN RETRY MODE.get original build'),
       api.post_check(post_process.StepFailure,
                      'RUNNING IN RETRY MODE.verify previous build'),

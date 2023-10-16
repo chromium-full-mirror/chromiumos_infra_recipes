@@ -92,6 +92,10 @@ def RunSteps(api):
   response.model_metadata.add()
   api.build_reporting.publish_build_target_and_model_metadata(
       'release-R12-12345.B', response)
+  # No additional calls allowed.
+  with api.assertions.assertRaises(StepFailure):
+    api.build_reporting.publish_build_target_and_model_metadata(
+        'release-R12-12345.B', response)
 
   # check that we can create a raw build report instance
   build_report = api.build_reporting.create_build_report()
