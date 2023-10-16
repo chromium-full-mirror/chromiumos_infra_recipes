@@ -1773,14 +1773,14 @@ API implemention for build reporting.
 
 &emsp; **@property**<br>&mdash; **def [build\_type](/recipe_modules/build_reporting/api.py#135)(self):**
 
-&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#232)(self):**
+&mdash; **def [create\_build\_report](/recipe_modules/build_reporting/api.py#223)(self):**
 
 Create BuildReport instance that can be .published().
 
 Return:
   _MessageDelegate wrapping BuildReport instance
 
-&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#302)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
+&mdash; **def [create\_step\_info](/recipe_modules/build_reporting/api.py#293)(self, step_name, start_time=None, end_time=None, status=BuildReport.StepDetails.STATUS_RUNNING, raise_on_failed_publish=False):**
 
 Create a StepDetails instance to publish information for a step.
 
@@ -1797,7 +1797,7 @@ Return:
 
 &emsp; **@property**<br>&mdash; **def [merged\_build\_report](/recipe_modules/build_reporting/api.py#139)(self):**
 
-&mdash; **def [publish](/recipe_modules/build_reporting/api.py#167)(self, build_report, raise_on_failed_publish=False, override_buildbucket_id=None):**
+&mdash; **def [publish](/recipe_modules/build_reporting/api.py#166)(self, build_report, raise_on_failed_publish=False):**
 
 Send a BuildReport to the pubsub topic.
 
@@ -1808,21 +1808,18 @@ Args:
   build_report (BuildReport): Instance to send to pub/sub.
   raise_on_failed_publish (bool): Should this publish fail, fail the whole
       build.
-  override_buildbucket_id (int): BuildBucketID to publish and override the
-      current build's ID. This is used for paygen reruns jobs, to merge up
-      with the old job to be rerun.
 
 Return:
   Reference to BuildReport input message.
 
-&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#252)(self, branch: str):**
+&mdash; **def [publish\_branch](/recipe_modules/build_reporting/api.py#243)(self, branch: str):**
 
 Publish the build's branch.
 
 Args:
   branch: The branch.
 
-&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#525)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
+&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#516)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
 
 Publish metadata about the specified artifacts(s).
 
@@ -1831,7 +1828,7 @@ Args:
     by cros_artifacts.upload_artifacts.
   artifact_dir: Local dir where artifacts are staged.
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#428)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#419)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1840,32 +1837,32 @@ Args:
   builder_metadata (GetBuilderMetadataResponse): Builder metadata from the
       build-api.
 
-&mdash; **def [publish\_channels](/recipe_modules/build_reporting/api.py#263)(self, channels: List['common_pb2.Channel']):**
+&mdash; **def [publish\_channels](/recipe_modules/build_reporting/api.py#254)(self, channels: List['common_pb2.Channel']):**
 
 Publish the build's channels.
 
 Args:
   channels: The channels.
 
-&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#507)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#498)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
 
 Publish DLC artifacts to pubsub, including URL and hash.
 
 Args:
   dlc_artifacts: DLC locations in GS and file hashes.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#448)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#439)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
 
-&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#244)(self, status):**
+&mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#235)(self, status):**
 
 Publish and merge build status.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#401)(self, gs_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#392)(self, gs_path=None):**
 
 Create a context manager to automatically publish to gs.
 
@@ -1875,7 +1872,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#493)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#484)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1883,7 +1880,7 @@ Args:
   toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
     usage.
 
-&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#276)(self, gtv_response):**
+&mdash; **def [publish\_versions](/recipe_modules/build_reporting/api.py#267)(self, gtv_response):**
 
 Publish and merge versions, sourced from a GetTargetVersionsRequest.
 
@@ -1905,7 +1902,7 @@ Set the type for the build, must be set once and only once.
 
 Convert a BuildReport.StepDetails.StepName to a canonical string.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#341)(self, step_name, raise_on_failed_publish=False):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [step\_reporting](/recipe_modules/build_reporting/api.py#332)(self, step_name, raise_on_failed_publish=False):**
 
 Create a context manager to automatically send out step status.
 

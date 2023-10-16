@@ -203,7 +203,7 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
           BuildReport(payloads=[
               Parse(MessageToJson(payload), BuildReport.Payload())
               for payload in payloads
-          ]), override_buildbucket_id=properties.rerun_buildbucket_id)
+          ]))
 
   if fail:
     infra_fail = [x for x in fail if x.status == common_pb2.INFRA_FAILURE]
@@ -244,7 +244,6 @@ def GenTests(api: RecipeTestApi):
       target_chromeos_version: str = '13505.15.0',
       channels: List[str] = None,
       pubsub: bool = False,
-      bbid: int = None,
       override_qs_account: str = None,
       local_signing: bool = False,
       docker_image: str = None,
@@ -254,7 +253,6 @@ def GenTests(api: RecipeTestApi):
     return api.properties(delta_types=delta_types, builder_name=builder_name,
                           target_chromeos_version=target_chromeos_version,
                           channels=channels, publish_to_pubsub=pubsub,
-                          rerun_buildbucket_id=bbid,
                           override_qs_account=override_qs_account,
                           local_signing=local_signing,
                           docker_image=docker_image)
@@ -564,7 +562,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'basic-with-pubsub',
-      get_props(pubsub=True, bbid=54321),
+      get_props(pubsub=True),
       good_paygen_cfg,
       api.buildbucket.build(build_message),
       api.cros_storage.test_listing('examining beta-channel.source artifacts.'

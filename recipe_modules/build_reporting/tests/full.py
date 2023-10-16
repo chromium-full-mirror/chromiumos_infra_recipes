@@ -133,11 +133,6 @@ def RunSteps(api):
       build_report.buildbucket_id,
       api.buildbucket.build.id,
   )
-  api.build_reporting.publish(BuildReport(), override_buildbucket_id=54321)
-  api.assertions.assertEqual(
-      build_report.buildbucket_id,
-      54321,
-  )
   api.assertions.assertEqual(build_report.config.target.name, 'build_target')
   api.assertions.assertEqual(build_report.status.value, BuildStatus.SUCCESS)
   api.assertions.assertTrue(build_report.HasField('config'))
