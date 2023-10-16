@@ -8,6 +8,7 @@
 from typing import Generator
 from typing import Optional
 
+from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
@@ -253,3 +254,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                             'TestService/BuildTargetUnitTest'),
       builder_name='amd64-generic-bazel-snapshot',
   )
+
+  # Bazel Lite build.
+  yield api.build_menu.test(
+      'bazel-lite',
+      api.build_menu.assert_step_uses_bazel('install packages',
+                                            'SysrootService/InstallPackages'),
+      api.post_check(
+          post_process.LogContains,
+          'install packages.call chromite.api.SysrootService/InstallPackages',
+          'request',
+          [f'"bazelTargets": {InstallPackagesRequest.BazelTargets.LITE}']),
+      builder_name='amd64-generic-bazel-lite-snapshot')

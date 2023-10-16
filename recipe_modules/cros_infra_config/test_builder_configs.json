@@ -424,6 +424,62 @@
     },
     {
       "id": {
+        "name": "amd64-generic-bazel-lite-snapshot",
+        "type": "SNAPSHOT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "artifacts": {
+        "prebuilts": "PUBLIC",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ],
+          "buildImagesOrchestrator": "BAZEL"
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+          "installPackagesOrchestrator": "BAZEL",
+          "bazelTargets": "LITE"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "unitTests": {
+        "packageBlocklist": [],
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "ALL_DEPENDENCIES",
+        "unitTestsOrchestrator": "BAZEL"
+      }
+    },
+    {
+      "id": {
         "name": "amd64-generic-postsubmit-remoteexec",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"

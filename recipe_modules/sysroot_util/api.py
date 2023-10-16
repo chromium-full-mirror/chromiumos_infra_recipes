@@ -193,6 +193,10 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     bazel_build = (
         install_packages.install_packages_orchestrator ==
         builder_config_pb2.BuilderConfig.BAZEL)
+    bazel_targets = (
+        InstallPackagesRequest.BazelTargets.LITE
+        if install_packages.bazel_targets
+        == builder_config_pb2.BuilderConfig.LITE else None)
 
     name = name or 'install packages'
     if timeout_sec == 'DEFAULT':
@@ -231,6 +235,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 path=common_pb2.Path(
                     path=str(self.m.path.mkdtemp()),
                     location=common_pb2.Path.OUTSIDE)),
+            bazel_targets=bazel_targets,
         )
 
       chrome_root = None
