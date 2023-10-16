@@ -137,7 +137,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._retry_service_accounts = props.service_accounts or DEFAULT_RETRY_SERVICE_ACCOUNTS
     self._throttle_24hr = props.throttle_24hr or DEFAULT_24_HR_THROTTLE
     self._throttle_2hr = props.throttle_2hr or DEFAULT_2_HR_THROTTLE
-    self._experiment_allowlist = set(props.experiment_allowlist)
     self._experimental_features = {
         x.name: x.experiment_flag for x in props.experimental_features
     }
@@ -582,26 +581,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         pres.step_text = f'filtered out {len(unsupported_failure_mode_ids)} run(s)'
         self._filtered_build_stats['unsupported_failure_mode'] = len(
             unsupported_failure_mode_ids)
-
-      # TODO(b/296441878): Remove now that the fishfood is over.
-      with self.m.step.nest('filter by experiment allowlist') as pres:
-        if self._experiment_allowlist:
-          not_in_allowlist_ids = [
-              c.id for c in cq_orchs if not set(
-                  c.input.experiments).intersection(self._experiment_allowlist)
-          ]
-          cq_orchs = [c for c in cq_orchs if c.id not in not_in_allowlist_ids]
-          if not_in_allowlist_ids:
-            pres.logs['filtered out runs'] = [
-                self.m.buildbucket.build_url(build_id=x)
-                for x in sorted(not_in_allowlist_ids)
-            ]
-          pres.step_text = f'filtered out {len(not_in_allowlist_ids)} run(s)'
-          self._filtered_build_stats['allowlist_filtered'] = len(
-              not_in_allowlist_ids)
-        else:
-          pres.step_text = 'no experiment allowlist filtering'
-          self._filtered_build_stats['allowlist_filtered'] = 0
 
       with self.m.step.nest('filter out closed CLs') as pres:
         failed_to_fetch_ids = set()

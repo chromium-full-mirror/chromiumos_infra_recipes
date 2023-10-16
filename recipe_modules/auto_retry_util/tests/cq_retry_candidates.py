@@ -361,7 +361,6 @@ def GenTests(api):
       ),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
-              'allowlist_filtered': 0,
               'failed_gerrit_fetch': 1,
               'non_new': 0,
               'total_with_retryable_statuses': 1,
@@ -383,62 +382,12 @@ def GenTests(api):
           }}),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
-              'allowlist_filtered': 0,
               'failed_gerrit_fetch': 0,
               'non_new': 1,
               'total_with_retryable_statuses': 1,
               'unsupported_failure_mode': 0,
           }),
       api.properties(expected_build_ids=[]),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  failure_with_allowlisted_experiment = api.test_util.test_orchestrator(
-      build_id=12,
-      cq=True,
-      extra_changes=[
-          common_pb2.GerritChange(change=1, host='host', patchset=1)
-      ],
-      status='FAILURE',
-      create_time=12,
-      output_properties={
-          'has_child_failures': True
-      },
-      experiments=['auto-retry-fishfood'],
-  ).message
-  failure_without_allowlisted_experiment = api.test_util.test_orchestrator(
-      build_id=13,
-      cq=True,
-      extra_changes=[common_pb2.GerritChange(change=2, host='host')],
-      status='FAILURE',
-      create_time=12,
-      output_properties={
-          'has_child_failures': True
-      },
-      experiments=['some-other-experiment'],
-  ).message
-
-  yield api.test(
-      'filter-by-experiment-allowlist',
-      api.properties(
-          **{
-              '$chromeos/auto_retry_util': {
-                  'experiment_allowlist': ['auto-retry-fishfood']
-              }
-          }),
-      api.buildbucket.simulated_search_results([
-          failure_with_allowlisted_experiment,
-          failure_without_allowlisted_experiment
-      ], 'find candidates.query for cq-orchestrators.buildbucket.search'),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes)),
-      api.post_process(
-          post_process.StepTextEquals,
-          'find candidates.filter by experiment allowlist',
-          'filtered out 1 run(s)',
-      ),
-      api.properties(expected_build_ids=[12]),
       api.post_process(post_process.DropExpectation),
   )
 
