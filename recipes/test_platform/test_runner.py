@@ -1100,6 +1100,16 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
             'artifact_directory'] = api.cros_resultdb.get_drone_artifact_directory(
                 base_dir, result_format, artifact_directory)
 
+      # Populate Chromium tast tests with tags.
+      if result_format == 'tast':
+        sysinfo_file_paths = [
+            os.path.join(base_dir, 'autoserv_test', 'sysinfo')
+        ]
+        sysinfo_keyvals = _read_sysinfo_keyvals(api, sysinfo_file_paths)
+        config['base_tags'] = _generate_resultdb_base_tags(
+            api, properties, test_metadata, autotest_keyval_file,
+            sysinfo_keyvals, cft_is_enabled=False)
+
       # Capture the code sources which were tested.
       try:
         config['sources_file'] = _prepare_resultdb_sources_file(api, properties)
