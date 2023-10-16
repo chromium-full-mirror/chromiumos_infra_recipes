@@ -787,31 +787,6 @@ def GenTests(api):
       ),
   ]
 
-  yield api.orch_menu.test(
-      'ctp2-enabled',
-      api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE, 'CTP2 not implemented'),
-      api.post_process(post_process.DropExpectation),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'check test planning v2 enabled',
-          gerrit_changes,
-          {
-              1234: {
-                  'patch_set': 5,
-                  'files': {
-                      'a/b/d/test.txt': {},
-                  }
-              },
-          },
-      ),
-      input_properties=input_props,
-      builder='postsubmit-orchestrator',
-      with_manifest_refs=True,
-      with_history=True,
-      extra_changes=gerrit_changes,
-      # TODO (b/275363240): audit this test.
-      status='INFRA_FAILURE')
-
   input_props_with_generate_ctpv1_format = copy.deepcopy(input_props)
   input_props_with_generate_ctpv1_format['$chromeos/cros_test_plan_v2'][
       'generate_ctpv1_format'] = True

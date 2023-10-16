@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2019 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""Functions for sending requests and processing results from cros test platform."""
 
 from collections import defaultdict
 from collections import OrderedDict
@@ -165,30 +166,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         )
 
     return starlark_packages
-
-  def run_proctor_v2(self, gerrit_changes):
-    """Runs the test platform v2 for a set of GerritChanges.
-
-    Args:
-      gerrit_changes (list[common_pb2.GerritChange]): changes to test.
-    """
-    with self.m.step.nest('run tests') as pres:
-      with self.m.step.nest('schedule tests'):
-        relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
-
-        starlark_files = self._fetch_starlark_files(relevant_plans)
-
-        if starlark_files:
-          hw_test_plans = self.m.cros_test_plan_v2.generate_hw_test_plans(
-              starlark_files)
-
-          pres.logs['hw_test_plans'] = '\n'.join(
-              json_format.MessageToJson(p) for p in hw_test_plans)
-        else:
-          pres.step_text = 'No starlark files found.'
-
-        # TODO(b/182898188): Call CTP2 when it is available.
-        raise ValueError('CTP2 not implemented')
 
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history, run_async=False, container_metadata=None,
