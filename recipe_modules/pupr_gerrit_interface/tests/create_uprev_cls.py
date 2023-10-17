@@ -163,5 +163,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_process(
           post_process.SummaryMarkdown,
-          'created https://crrev.com/c/123 https://crrev.com/i/456'),
+          'created [chromium:123](https://crrev.com/c/123) '
+          '[chrome-internal:456](https://crrev.com/i/456)'),
       api.post_process(post_process.DropExpectation))

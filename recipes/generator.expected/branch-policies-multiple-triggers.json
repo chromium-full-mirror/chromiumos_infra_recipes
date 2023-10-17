@@ -3374,6 +3374,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "created https://crrev.com/c/1 https://crrev.com/c/1"
+    "summaryMarkdown": "created [chromium:1](https://crrev.com/c/1) [chromium:1](https://crrev.com/c/1)"
   }
 ]

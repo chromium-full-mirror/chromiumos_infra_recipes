@@ -329,9 +329,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
       def gerrit_url(c: GerritChange) -> str:
         if c.host == 'chromium-review.googlesource.com':
-          return f'https://crrev.com/c/{c.change}'
+          return f'[chromium:{c.change}](https://crrev.com/c/{c.change})'
         if c.host == 'chrome-internal-review.googlesource.com':
-          return f'https://crrev.com/i/{c.change}'
+          return f'[chrome-internal:{c.change}](https://crrev.com/i/{c.change})'
         return str(c.change)
 
       return 'created ' + ' '.join(gerrit_url(c) for c in changes)
