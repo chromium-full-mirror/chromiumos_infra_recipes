@@ -76,6 +76,7 @@
   * [git_footers](#recipe_modules-git_footers) &mdash; API wrapping the git_footers script.
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for working with Gitiles.
+  * [gobin](#recipe_modules-gobin) &mdash; API for interacting with Go binaries built from infra/infra.
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) &mdash; APIs for logging step output to Google Storage.
@@ -537,6 +538,8 @@
   * [git_txn:tests/git_transaction](#recipes-git_txn_tests_git_transaction)
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
+  * [gobin:examples/full](#recipes-gobin_examples_full) &mdash; Tests for standard `gobin` module usage.
+  * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
@@ -7881,6 +7884,27 @@ Args:
 
 Returns:
   (str) The url for the repo.
+### *recipe_modules* / [gobin](/recipe_modules/gobin)
+
+[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+API for interacting with Go binaries built from infra/infra.
+
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for interacting with Go binaries built from infra/infra.
+
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#47)(self, package: str):**
+
+Ensure that the specified package is installed.
+
+Looks up the instance associated with the infra/infra commit stored in
+infrainfra-golang.version.
+
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#42)(self):**
+
+Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
 
 [DEPS](/recipe_modules/goma/__init__.py#7): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -14156,6 +14180,22 @@ Test git_footers calls.
 Recipe that schedules jobs based on its triggers.
 
 &mdash; **def [RunSteps](/recipes/gitiles_triggerer.py#47)(api: RecipeApi, properties: GitilesTriggererProperties):**
+### *recipes* / [gobin:examples/full](/recipe_modules/gobin/examples/full.py)
+
+[DEPS](/recipe_modules/gobin/examples/full.py#10): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Tests for standard `gobin` module usage.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/examples/full.py#23)(api):**
+### *recipes* / [gobin:tests/full](/recipe_modules/gobin/tests/full.py)
+
+[DEPS](/recipe_modules/gobin/tests/full.py#12): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Tests for various `gobin` module failure modes.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/tests/full.py#22)(api: recipe_api.RecipeApi):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#14): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
