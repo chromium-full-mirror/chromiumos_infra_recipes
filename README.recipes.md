@@ -6078,7 +6078,7 @@ Returns:
   List of TestVariantFailureRateAnalysis for each input.
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/failures/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API for raising failures and presenting them in cute ways.
@@ -13696,10 +13696,10 @@ json files.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py#21)(api):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/aggregate_failures.py#15): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/aggregate_failures.py#15): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#25)(api):**
 ### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/build_failures.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16182,6 +16182,7 @@ files in projects touched by the input CLs.
 [recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-cipd
 [recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-context
 [recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-cq
+[recipe_engine/recipe_modules/cv]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-cv
 [recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-file
 [recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-futures
 [recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/5699c27a546bf74412b2ca29246836e4ba39f267/README.recipes.md#recipe_modules-json

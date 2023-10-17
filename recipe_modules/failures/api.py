@@ -20,14 +20,14 @@ from PB.chromiumos.common import ImageType
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
+  import CqFailureAttribute, FaultAttributedBuildTarget
 
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
-from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
-  import CqFailureAttribute, FaultAttributedBuildTarget
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -378,7 +378,7 @@ class FailuresApi(RecipeApi):
       summary_lines.append('{} non-critical {} failed'.format(
           non_fatal_count, kind + 's' if non_fatal_count > 1 else kind))
 
-    if self.HW_TEST in failures_by_kind:
+    if self.HW_TEST in failures_by_kind and self.m.cv.active:
       summary_lines.append('')
       summary_lines.append('📢: If this CQ attempt failed on an unrelated test, '
                            'please read go/chromeos-cq-customization-psa')
@@ -468,7 +468,7 @@ class FailuresApi(RecipeApi):
     for failure in failures_to_print:
       key = re.match(grouped_title_pattern, failure.title)
       key = key.group('suite') if key else failure.title
-      failures_grouped_by_suite[key].extend([(k, v) for k, v in failure.link_map.items()])
+      failures_grouped_by_suite[key].extend(failure.link_map.items())
 
     for title, link_map_items in failures_grouped_by_suite.items():
       line = '- {}'.format(title)
@@ -556,7 +556,7 @@ class FailuresApi(RecipeApi):
     else:
       return ''
 
-    comparison_build_start_datetime = datetime.datetime.fromtimestamp(fault_attribute.comparison_snapshot.source_started_unix_timestamp, tz=datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+    comparison_build_start_datetime = datetime.datetime.fromtimestamp(fault_attribute.comparison_snapshot.source_started_unix_timestamp, tz=datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
     milo_link = 'https://ci.chromium.org/ui/b/{}/test-results?q=ExactID:{}'.format(fault_attribute.comparison_snapshot.source_build_id, test_id)
 
     return fault_attribution_text.format(failure_type, comparison_build_start_datetime, milo_link)
@@ -582,7 +582,7 @@ class FailuresApi(RecipeApi):
       if len(failure.link_map.items()) == 0:
         shard_failure_count += 1
 
-      for link_text, link_url in failure.link_map.items():
+      for link_text, _ in failure.link_map.items():
         if re.match(shard_pattern, link_text):
           shard_failure_count += 1
         else:

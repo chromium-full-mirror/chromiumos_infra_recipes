@@ -14,6 +14,7 @@ from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/cv',
     'recipe_engine/step',
     'failures',
 ]
@@ -188,4 +189,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.cv(run_mode=api.cv.FULL_RUN))
