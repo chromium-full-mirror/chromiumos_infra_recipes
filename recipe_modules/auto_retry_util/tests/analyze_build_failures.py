@@ -201,21 +201,19 @@ def GenTests(api):
       api.properties(expected_success=['builder1-cq'],
                      expected_retryable=['builder2-cq', 'builder3'],
                      expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
-      api.post_process(
-          post_process.PropertyEquals, 'per_build_stats', {
-              '8945511751514863184': {
-                  'outstanding_builders': ['builder5-cq', 'builder6-slim-cq'],
-                  'outstanding_test_suites': [],
-                  'retryable_builders': ['builder2-cq', 'builder3'],
-                  'retryable_test_suites': [],
-                  'wait_for_green_stats': {
-                      'failed_builders_in_snapshot': ['builder2-snapshot'],
-                      'now_green_builders': ['builder2-snapshot'],
-                      'retryable_builders': ['builder2-cq'],
-                      'total_builders_in_snapshot': 1
-                  }
-              }
-          }),
+      api.post_process(post_process.PropertyEquals, 'per_build_stats', [{
+          'build_id': 8945511751514863184,
+          'outstanding_builders': ['builder5-cq', 'builder6-slim-cq'],
+          'outstanding_test_suites': [],
+          'retryable_builders': ['builder2-cq', 'builder3'],
+          'retryable_test_suites': [],
+          'wait_for_green_stats': {
+              'failed_builders_in_snapshot': ['builder2-snapshot'],
+              'now_green_builders': ['builder2-snapshot'],
+              'retryable_builders': ['builder2-cq'],
+              'total_builders_in_snapshot': 1
+          }
+      }]),
       api.post_process(post_process.DropExpectation),
   )
 

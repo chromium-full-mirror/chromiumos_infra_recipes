@@ -437,10 +437,15 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     analyze_build_failures. This function should be called after every call to
     analyze_build_failures is complete, to publish the stats to an output
     property.
+
+    To make SQL analysis easier, this function converts per_build_stats from a
+    map to a list and adds a new field 'build_id'. This is done because
+    iterating a JSON object is less convinient than a list in most SQL dialects.
     """
-    self.m.easy.set_properties_step(per_build_stats={
-        k: dataclasses.asdict(v) for k, v in self.per_build_stats.items()
-    })
+    self.m.easy.set_properties_step(per_build_stats=[{
+        'build_id': k,
+        **dataclasses.asdict(v)
+    } for k, v in self.per_build_stats.items()])
 
   def _failed_on_snapshot_builders(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns builders that failed on cq_run's snapshot.
