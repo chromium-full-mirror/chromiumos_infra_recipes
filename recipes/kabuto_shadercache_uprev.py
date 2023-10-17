@@ -113,6 +113,9 @@ def _CommitChanges(api: RecipeApi) -> None:
 
       api.git.commit(commit_message)
       presentation.step_text = f'Shadercache changes committed to {project.name}.'
+      return True
+    presentation.step_text = f'No shadercache changes in {project.name}.'
+    return False
 
 
 def _CreateGerritCL(api: RecipeApi) -> None:
@@ -146,8 +149,8 @@ def _CreateGerritCL(api: RecipeApi) -> None:
 
 def CommitAndUploadCL(api: RecipeApi) -> None:
   """Commit changes and create a Gerrit CL in the current directory."""
-  _CommitChanges(api)
-  _CreateGerritCL(api)
+  if _CommitChanges(api):
+    _CreateGerritCL(api)
 
 
 def _GenerateAndUploadProvenance(api: RecipeApi, dlc_assets_file: str) -> None:
@@ -320,6 +323,8 @@ def GenTests(api: RecipeTestApi) -> None:
       api.step_data('commit dlc changes.git status',
                     stdout=api.raw_io.output_text('')),
       api.post_check(post_process.DoesNotRun, 'commit dlc changes.git commit'),
+      api.post_check(post_process.DoesNotRun, 'upload CL to gerrit'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
@@ -330,4 +335,6 @@ def GenTests(api: RecipeTestApi) -> None:
           'commit dlc changes.git status',
           stdout=api.raw_io.output_text(' M kabuto-example-r1.ebuild')),
       api.post_check(post_process.MustRun, 'commit dlc changes.git commit'),
+      api.post_check(post_process.MustRun, 'upload CL to gerrit'),
+      api.post_process(post_process.DropExpectation),
   )
