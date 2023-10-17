@@ -545,9 +545,10 @@ class BuildSDKRun:
                                 summary_markdown='\n'.join(summary_lines))
 
   def _get_gs_link_to_sdk(self) -> str:
-    """Return a gs:// link to the built SDK tarball."""
+    """Return a https:// link to the built SDK tarball."""
     bucket = self._pick_bucket(SDK_BUCKET)
-    return f'gs://{bucket}/cros-sdk-{self.version}.tar.xz'
+    return (f'https://storage.googleapis.com/{bucket}/'
+            f'cros-sdk-{self.version}.tar.xz')
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
