@@ -161,6 +161,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           'generate CLs.create gerrit change for project2',
           'https://chrome-internal-review.googlesource.com/c/project/+/456'),
       api.path.exists(api.src_state.workspace_path),
-      api.post_process(post_process.SummaryMarkdown,
-                       'created http://crrev/c/123, http://crrev/i/456'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          'created https://crrev.com/c/123 https://crrev.com/i/456'),
       api.post_process(post_process.DropExpectation))

@@ -329,12 +329,12 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
 
       def gerrit_url(c: GerritChange) -> str:
         if c.host == 'chromium-review.googlesource.com':
-          return f'http://crrev/c/{c.change}'
+          return f'https://crrev.com/c/{c.change}'
         if c.host == 'chrome-internal-review.googlesource.com':
-          return f'http://crrev/i/{c.change}'
+          return f'https://crrev.com/i/{c.change}'
         return str(c.change)
 
-      return 'created ' + ', '.join([gerrit_url(c) for c in changes])
+      return 'created ' + ' '.join(gerrit_url(c) for c in changes)
 
   def upload_new_patch_set(self, gerrit_patch_set: PatchSet,
                            message: Optional[str] = None):

@@ -2980,6 +2980,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "created http://crrev/c/1, http://crrev/c/1"
+    "summaryMarkdown": "created https://crrev.com/c/1 https://crrev.com/c/1"
   }
 ]
