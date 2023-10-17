@@ -95,7 +95,7 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', failure_1_changes,
           failure_1_fetch_changes_response, iteration=2),
-      api.properties(expected_build_ids=[1, 2]),
+      api.properties(expected_build_ids=[failure_1.id, failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -130,7 +130,7 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', changes,
           fetch_changes_response),
-      api.properties(expected_build_ids=[2]),
+      api.properties(expected_build_ids=[failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -170,7 +170,7 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', changes,
           fetch_changes_response),
-      api.properties(expected_build_ids=[2]),
+      api.properties(expected_build_ids=[failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -203,14 +203,14 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
           _eligible_gerrit_fetch_changes_response(gerrit_changes)),
-      api.properties(expected_build_ids=[12]),
+      api.properties(expected_build_ids=[failure.id]),
       api.post_process(post_process.DropExpectation),
   )
 
   group_2_cl = common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                        project='project', change=2, patchset=1)
   # Group with a non-retryable run as the "current".
-  failure = api.test_util.test_orchestrator(
+  failure_2x = api.test_util.test_orchestrator(
       build_id=21,
       cq=True,
       extra_changes=[group_2_cl],
@@ -220,14 +220,14 @@ def GenTests(api):
           'has_child_failures': True
       },
   ).message
-  success = api.test_util.test_orchestrator(
+  success_2x = api.test_util.test_orchestrator(
       build_id=22,
       cq=True,
       extra_changes=[group_2_cl],
       status='SUCCESS',
       create_time=22,
   ).message
-  group_2_builds = [success, failure]
+  group_2_builds = [success_2x, failure_2x]
 
   yield api.test(
       'get-latest-from-cq-group-latest-does-not-have-retryable-status',
@@ -281,7 +281,7 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
           _eligible_gerrit_fetch_changes_response(gerrit_changes)),
-      api.properties(expected_build_ids=[33]),
+      api.properties(expected_build_ids=[failure_3.id]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -299,7 +299,7 @@ def GenTests(api):
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
           _eligible_gerrit_fetch_changes_response(gerrit_changes), 2),
-      api.properties(expected_build_ids=[12, 33]),
+      api.properties(expected_build_ids=[failure.id, failure_3.id]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -422,7 +422,7 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
-      api.properties(expected_build_ids=[13]),
+      api.properties(expected_build_ids=[builds[0].id]),
       api.post_process(post_process.DropExpectation),
   )
 

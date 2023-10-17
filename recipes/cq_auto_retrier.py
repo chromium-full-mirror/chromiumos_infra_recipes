@@ -252,11 +252,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.post_process(
           post_process.MustRun,
-          'performing retries.retry build 1111',
+          f'performing retries.retry build {retryable_build_orch.id}',
       ),
-      api.post_process(post_process.LogEquals,
-                       'performing retries.retry build 1111',
-                       'retryable builders', 'builder1'),
+      api.post_process(
+          post_process.LogEquals,
+          f'performing retries.retry build {retryable_build_orch.id}',
+          'retryable builders', 'builder1'),
   )
 
   yield api.test(
@@ -282,11 +283,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.post_process(
           post_process.MustRun,
-          'performing retries.retry build 1111',
+          f'performing retries.retry build {retryable_test_orch.id}',
       ),
-      api.post_process(post_process.LogEquals,
-                       'performing retries.retry build 1111',
-                       'retryable test suites', 'builder1.hw.suite'),
+      api.post_process(
+          post_process.LogEquals,
+          f'performing retries.retry build {retryable_test_orch.id}',
+          'retryable test suites', 'builder1.hw.suite'),
   )
 
   retryable_orch_build = api.test_util.test_orchestrator(
@@ -332,11 +334,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ),
       api.post_process(
           post_process.MustRun,
-          'performing retries.retry build 1111',
+          f'performing retries.retry build {retryable_orch_build.id}',
       ),
-      api.post_process(post_process.LogEquals,
-                       'performing retries.retry build 1111',
-                       'retryable builders', 'cq-orchestrator'),
+      api.post_process(
+          post_process.LogEquals,
+          f'performing retries.retry build {retryable_orch_build.id}',
+          'retryable builders', 'cq-orchestrator'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -348,7 +351,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(
           post_process.DoesNotRun,
-          'performing retries.retry build 1111',
+          f'performing retries.retry build {retryable_orch_build.id}',
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -371,7 +374,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.post_process(
           post_process.DoesNotRun,
-          'performing retries.retry build 1111',
+          f'performing retries.retry build {orch_build.id}',
       ),
       api.post_process(post_process.DropExpectation),
   )
