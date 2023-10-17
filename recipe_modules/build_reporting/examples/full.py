@@ -63,6 +63,7 @@ def RunSteps(api):
           'build_target-release/R12-12345.0.0',
           {
               'DEBUG_SYMBOLS': ['debug.tgz',],
+              'FACTORY_IMAGE': ['factory_image.zip'],
               'FIRMWARE': ['firmware_from_source.tar.bz2'],
               'IMAGE_ARCHIVES': [
                   'chromiumos_base_image.tar.xz',
@@ -129,13 +130,21 @@ def RunSteps(api):
       Channel.CHANNEL_CANARY,
       Channel.CHANNEL_DEV,
   ])
-  api.assertions.assertEqual(len(build_report.artifacts), 5)
+  api.assertions.assertEqual(len(build_report.artifacts), 6)
   api.assertions.assertEqual(
       list(build_report.artifacts), [
           BuildReport.BuildArtifact(
               type=BuildReport.BuildArtifact.DEBUG_ARCHIVE,
               uri=URI(
                   gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/debug.tgz',
+              ),
+              sha256='deadbeef',
+              size=111,
+          ),
+          BuildReport.BuildArtifact(
+              type=BuildReport.BuildArtifact.FACTORY_IMAGE_ZIP,
+              uri=URI(
+                  gcs='gs://chromeos-image-archive/build_target-release/R12-12345.0.0/factory_image.zip',
               ),
               sha256='deadbeef',
               size=111,

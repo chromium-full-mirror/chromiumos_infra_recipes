@@ -535,10 +535,12 @@ class BuildReportingApi(recipe_api.RecipeApi):
       presentation.logs['uploaded artifacts'] = str(uploaded_artifacts)
 
       files_by_artifact = uploaded_artifacts.files_by_artifact
-      # TODO(b/303704765): Support factory.
       build_report_supported_artifacts = {
           BuilderConfig.Artifacts.DEBUG_SYMBOLS:
               (BuildReport.BuildArtifact.DEBUG_ARCHIVE, 'debug.tgz'),
+          BuilderConfig.Artifacts.FACTORY_IMAGE:
+              (BuildReport.BuildArtifact.FACTORY_IMAGE_ZIP, 'factory_image.zip'
+              ),
           BuilderConfig.Artifacts.FIRMWARE:
               (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
                'firmware_from_source.tar.bz2'),
