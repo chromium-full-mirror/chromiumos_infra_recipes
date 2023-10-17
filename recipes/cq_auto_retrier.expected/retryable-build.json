@@ -558,7 +558,7 @@
     "cmd": [],
     "name": "set per_build_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@per_build_stats@{}@@@"
+      "@@@SET_BUILD_PROPERTY@per_build_stats@{\"1111\": {\"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [\"builder1\"], \"retryable_test_suites\": [], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}}@@@"
     ]
   },
   {
