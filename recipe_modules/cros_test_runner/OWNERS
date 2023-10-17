@@ -2,4 +2,4 @@
 set noparent
 
 # CrOS Infra Test Scheduling & Execution Team
-file:/OWNERS.tse
+include chromiumos/owners:v1:/infra/OWNERS.tse

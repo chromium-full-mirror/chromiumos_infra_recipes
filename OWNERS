@@ -21,7 +21,3 @@ per-file README.recipes.md=*
 
 # These are generated files checked by presubmit.
 per-file .../*.expected/*.json=*
-
-# Allow self-service.
-per-file OWNERS.arc=file:/OWNERS.arc
-per-file OWNERS.build=file:/OWNERS.build

@@ -1,13 +1,13 @@
-per-file dupit.*=file:/OWNERS.build
-per-file build_incremental.*=file:/OWNERS.build
-per-file build_sdk_subtools.*=file:/OWNERS.build
-per-file presubmit_cq.*=file:/OWNERS.build
-per-file presubmit_tests.*=file:/OWNERS.build
-per-file regen_build_cache.*=file:/OWNERS.build
-per-file upload_prebuilts_from_cq.*=file:/OWNERS.build
+per-file dupit.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file build_incremental.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file build_sdk_subtools.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file presubmit_cq.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file presubmit_tests.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file regen_build_cache.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file upload_prebuilts_from_cq.* = file:chromiumos/owners:v1:/infra/OWNERS.build
 
 per-file lvfs_mirror.py=file:/recipe_modules/cros_lvfs_mirror/OWNERS
 
-per-file android_uprev.proto=file:/OWNERS.arc
-per-file android_uprev_orchestrator.py=file:/OWNERS.arc
-per-file build_android_uprev.py=file:/OWNERS.arc
+per-file android_uprev.proto = file:chromiumos/owners:v1:/arc/OWNERS.infra
+per-file android_uprev_orchestrator.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
+per-file build_android_uprev.py = file:chromiumos/owners:v1:/arc/OWNERS.infra

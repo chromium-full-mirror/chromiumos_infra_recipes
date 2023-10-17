@@ -1,2 +1,0 @@
-# Workaround code owners unable to do per-file includes across repos.
-include chromiumos/owners:v1:/infra/OWNERS.build
