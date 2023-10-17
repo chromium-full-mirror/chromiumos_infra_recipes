@@ -242,7 +242,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          eligible_value_dict),
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
@@ -273,7 +274,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          eligible_value_dict),
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_test_orch.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
@@ -324,7 +326,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          eligible_value_dict),
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_orch_build.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',

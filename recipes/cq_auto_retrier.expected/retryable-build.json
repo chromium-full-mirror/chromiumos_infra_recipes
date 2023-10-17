@@ -121,7 +121,7 @@
       "[START_DIR]/cipd-support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "find candidates.filter out closed CLs.gerrit-fetch-changes",
+    "name": "find candidates.filter out closed CLs.fetch changes for 1111",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
@@ -449,7 +449,7 @@
       "[START_DIR]/cipd-support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "filter candidates.filter out unmet CL requirements.gerrit-fetch-changes",
+    "name": "filter candidates.filter out unmet CL requirements.fetch changes for 1111",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": true, \"include_submittable\": true}",
     "timeout": 2160,
     "~followup_annotations": [

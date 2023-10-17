@@ -379,6 +379,7 @@ class GerritApi(RecipeApi):
 
   def _gerrit_fetch_changes(
       self, request: JSONObject, test_gerrit_changes: List[GerritChange],
+      step_name: Optional[str] = None,
       test_output_data: Optional[Callable] = None) -> JSONObject:
     """Call the gerrit-fetch-changes support tool directly.
 
@@ -392,12 +393,13 @@ class GerritApi(RecipeApi):
           request, test_gerrit_changes)
     return self.m.support.call('gerrit-fetch-changes', request,
                                test_output_data=test_output_data,
-                               timeout=36 * 60)
+                               timeout=36 * 60, name=step_name)
 
   def fetch_patch_sets(
       self, gerrit_changes: List[GerritChange], include_files: bool = False,
       include_commit_info: bool = False, include_messages: bool = False,
       include_submittable: bool = False, include_detailed_labels: bool = False,
+      step_name: Optional[str] = None,
       test_output_data: Optional[Callable] = None) -> List[PatchSet]:
     """Fetch and return PatchSets from Gerrit.
 
@@ -410,6 +412,7 @@ class GerritApi(RecipeApi):
         submission.
       include_detailed_labels: If True, include information about the labels
         applied to the change.
+      step_name: The name of the step.
       test_output_data: Test output for gerrit-fetch-changes.
 
     Returns:
@@ -436,7 +439,7 @@ class GerritApi(RecipeApi):
     }
 
     try:
-      results = self._gerrit_fetch_changes(request, gerrit_changes,
+      results = self._gerrit_fetch_changes(request, gerrit_changes, step_name,
                                            test_output_data=test_output_data)
     finally:
       # Always log the request for debugging purposes.

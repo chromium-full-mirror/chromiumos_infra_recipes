@@ -48,7 +48,7 @@ class SupportApi(recipe_api.RecipeApi):
         self._support_cipd_path = cipd_dir
 
   def call(self, tool, input_data, test_output_data=None, infra_step=True,
-           timeout=None, add_json_log=True, **kwargs):
+           timeout=None, add_json_log=True, name=None, **kwargs):
     """Run a tool from the support package.
 
     Args:
@@ -58,6 +58,7 @@ class SupportApi(recipe_api.RecipeApi):
       infra_step (bool): Whether or not this is an infrastructure step.
       timeout (int): Timeout of the step in seconds.
       add_json_log (bool): Log the content of the output json.
+      name (str): The step name to display, or None for default.
       * kwargs: Keyword arguments to pass to the 'step' call.
 
     Returns:
@@ -65,7 +66,8 @@ class SupportApi(recipe_api.RecipeApi):
     """
     self.ensure_package_installed()
     tool_path = self._support_cipd_path.join(tool)
-    return self.m.easy.stdout_json_step(tool, [tool_path],
+    step_name = name or tool
+    return self.m.easy.stdout_json_step(step_name, [tool_path],
                                         stdin_json=input_data,
                                         test_stdout=test_output_data,
                                         infra_step=infra_step, timeout=timeout,

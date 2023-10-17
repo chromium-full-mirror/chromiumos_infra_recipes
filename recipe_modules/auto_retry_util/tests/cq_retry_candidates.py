@@ -91,10 +91,12 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', failure_2_changes,
-          failure_2_fetch_changes_response),
+          failure_2_fetch_changes_response,
+          step_name=f'fetch changes for {failure_2.id}'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', failure_1_changes,
-          failure_1_fetch_changes_response, iteration=2),
+          failure_1_fetch_changes_response,
+          step_name=f'fetch changes for {failure_1.id}'),
       api.properties(expected_build_ids=[failure_1.id, failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -129,7 +131,8 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', changes,
-          fetch_changes_response),
+          fetch_changes_response,
+          step_name=f'fetch changes for {failure_2.id}'),
       api.properties(expected_build_ids=[failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -169,7 +172,8 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', changes,
-          fetch_changes_response),
+          fetch_changes_response,
+          step_name=f'fetch changes for {failure_2.id}'),
       api.properties(expected_build_ids=[failure_2.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -202,7 +206,8 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes)),
+          _eligible_gerrit_fetch_changes_response(gerrit_changes),
+          step_name=f'fetch changes for {failure.id}'),
       api.properties(expected_build_ids=[failure.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -280,7 +285,8 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes)),
+          _eligible_gerrit_fetch_changes_response(gerrit_changes),
+          step_name=f'fetch changes for {failure_3.id}'),
       api.properties(expected_build_ids=[failure_3.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -295,10 +301,12 @@ def GenTests(api):
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes)),
+          _eligible_gerrit_fetch_changes_response(gerrit_changes),
+          step_name=f'fetch changes for {failure_3.id}'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes), 2),
+          _eligible_gerrit_fetch_changes_response(gerrit_changes),
+          step_name=f'fetch changes for {failure.id}'),
       api.properties(expected_build_ids=[failure.id, failure_3.id]),
       api.post_process(post_process.DropExpectation),
   )
@@ -352,7 +360,7 @@ def GenTests(api):
           builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),
       api.override_step_data(
-          'find candidates.filter out closed CLs.gerrit-fetch-changes',
+          f'find candidates.filter out closed CLs.fetch changes for {builds[0].id}',
           stdout=api.json.output({'changes': [{}]})),
       api.post_process(
           post_process.StepTextEquals,
@@ -379,7 +387,7 @@ def GenTests(api):
           {123456: {
               'change_number': 123456,
               'status': 'ABANDONED'
-          }}),
+          }}, step_name=f'fetch changes for {builds[0].id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'failed_gerrit_fetch': 0,
@@ -418,7 +426,8 @@ def GenTests(api):
           }),
       api.gerrit.set_gerrit_fetch_changes_response(
           'find candidates.filter out closed CLs', gerrit_changes,
-          _eligible_gerrit_fetch_changes_response(gerrit_changes)),
+          _eligible_gerrit_fetch_changes_response(gerrit_changes),
+          step_name=f'fetch changes for {builds[0].id}'),
       api.buildbucket.simulated_search_results(
           builds,
           'find candidates.query for cq-orchestrators.buildbucket.search'),

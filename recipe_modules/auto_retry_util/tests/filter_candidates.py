@@ -79,19 +79,18 @@ def GenTests(api):
       cq=True,
       status='FAILURE',
       create_time=11,
-      output_properties={
-          'has_child_failures': True
-      },
-  ).build
+      output_properties={'has_child_failures': True},
+  )
 
   yield api.test(
       'basic',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          eligible_value_dict),
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,
@@ -109,7 +108,7 @@ def GenTests(api):
 
   yield api.test(
       'filter-out-non-mergeable',
-      retryable_build,
+      retryable_build.build,
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
@@ -134,7 +133,7 @@ def GenTests(api):
 
   yield api.test(
       'opt-out-via-footer',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       api.properties(filtered_out=True),
       api.git_footers.simulated_get_footers(
@@ -191,12 +190,13 @@ def GenTests(api):
 
   yield api.test(
       'filter-out-wip',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          wip_value_dict),
+          wip_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,
@@ -214,12 +214,13 @@ def GenTests(api):
 
   yield api.test(
       'filter-out-non-latest',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          non_latest_value_dict),
+          non_latest_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,
@@ -237,7 +238,7 @@ def GenTests(api):
 
   yield api.test(
       'cv-not-active',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_get_account_id(
@@ -247,7 +248,8 @@ def GenTests(api):
       ),
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          eligible_value_dict),
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,
@@ -265,12 +267,13 @@ def GenTests(api):
 
   yield api.test(
       'filter-out-non-submittable',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          non_submittable_value_dict),
+          non_submittable_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,
@@ -288,12 +291,13 @@ def GenTests(api):
 
   yield api.test(
       'filter-out-unresolved-comments',
-      retryable_build,
+      retryable_build.build,
       changes_mergeable_test_data,
       set_cv_account_id_test_data,
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
-          unresolved_comments_value_dict),
+          unresolved_comments_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(
           post_process.PropertyEquals, 'filtered_build_stats', {
               'already_retried': 0,

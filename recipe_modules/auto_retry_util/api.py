@@ -612,7 +612,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         non_new_ids = set()
         for c in cq_orchs:
           try:
-            patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes)
+            patch_sets = self.m.gerrit.fetch_patch_sets(
+                c.input.gerrit_changes, step_name=f'fetch changes for {c.id}')
           except recipe_api.StepFailure:
             failed_to_fetch_ids.add(c.id)
             continue
@@ -705,9 +706,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         ), set(), set(), set(), set()
 
         for c in cq_orchs:
-          patch_sets = self.m.gerrit.fetch_patch_sets(c.input.gerrit_changes,
-                                                      include_submittable=True,
-                                                      include_messages=True)
+          patch_sets = self.m.gerrit.fetch_patch_sets(
+              c.input.gerrit_changes, include_submittable=True,
+              include_messages=True, step_name=f'fetch changes for {c.id}')
 
           non_submittable_ids.update(
               {c.id for p in patch_sets if not p.submittable})

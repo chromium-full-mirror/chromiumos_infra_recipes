@@ -108,19 +108,19 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         })
     return resp
 
-  def set_gerrit_fetch_changes_response(self, step_name: str,
-                                        changes: List[GerritChange],
-                                        values_dict: Dict[int, JSONObject],
-                                        iteration: int = 1
-                                       ) -> recipe_test_api.TestData:
+  def set_gerrit_fetch_changes_response(
+      self, parent_step_name: str, changes: List[GerritChange],
+      values_dict: Dict[int, JSONObject], iteration: int = 1,
+      step_name: Optional[str] = None) -> recipe_test_api.TestData:
     """Return a TestData that sets the response from gerrit-fetch-changes.
 
     Args:
-      step_name: name of the step calling gerrit.fetch_patch_sets.
+      parent_step_name: The name of the step calling gerrit.fetch_patch_sets.
       changes: The list of changes which will be found.
       values_dict: Dictionary of {change_number: values} to provide field values
           to _test_fetch_changes_response for each requested change.
       iteration: Which call this applies to for this step/endpoint.
+      step_name: The name of current step.
     """
     iteration_str = '' if iteration == 1 else f' ({iteration})'
     resp_list = []
@@ -136,8 +136,9 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
           self._test_fetch_changes_response(request, change, values))
 
     resp_dict = {'changes': resp_list}
-    prefix = f'{step_name}.' if step_name else ''
-    step_name = f'{prefix}gerrit-fetch-changes{iteration_str}'
+    prefix = f'{parent_step_name}.' if parent_step_name else ''
+    name = step_name or 'gerrit-fetch-changes'
+    step_name = f'{prefix}{name}{iteration_str}'
     return self.step_data(step_name, stdout=self.m.json.output(resp_dict))
 
   def set_query_changes_response(self, step_name: str,
