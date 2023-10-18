@@ -2216,28 +2216,6 @@
   },
   {
     "cmd": [
-      "git",
-      "diff",
-      "--name-only",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "commit dlc changes.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "uprev-kabuto-dlc",
@@ -2263,9 +2241,30 @@
   {
     "cmd": [
       "git",
+      "status",
+      "--porcelain"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "commit dlc changes.git status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
       "add",
-      "a/b/text.txt",
-      "other_test.txt"
+      "changed.txt",
+      "new.txt"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
     "env_suffixes": {
