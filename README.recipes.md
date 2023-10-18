@@ -739,6 +739,7 @@
   * [uprev_chromite_head](#recipes-uprev_chromite_head) &mdash; Recipe for uprev'ing chromite-HEAD.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
+  * [uprev_recipes_pin](#recipes-uprev_recipes_pin) &mdash; Recipe for uprev'ing various pins in infra/recipes/infra/config.
   * [urls:examples/full](#recipes-urls_examples_full) &mdash; Basic tests for the urls recipe module.
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [util:tests/proto_path_to_recipes_path](#recipes-util_tests_proto_path_to_recipes_path)
@@ -16160,6 +16161,14 @@ version.
 Args:
   package: the package to uprev.
   to_version: the version to uprev to.
+### *recipes* / [uprev\_recipes\_pin](/recipes/uprev_recipes_pin.py)
+
+[DEPS](/recipes/uprev_recipes_pin.py#19): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Recipe for uprev'ing various pins in infra/recipes/infra/config.
+
+&mdash; **def [RunSteps](/recipes/uprev_recipes_pin.py#109)(api: RecipeApi, properties: UprevRecipesPinProperties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
 [DEPS](/recipe_modules/urls/examples/full.py#13): [skylab\_results](#recipe_modules-skylab_results), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
