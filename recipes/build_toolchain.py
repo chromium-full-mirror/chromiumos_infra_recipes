@@ -52,9 +52,10 @@ SDK_BUILD_TARGET = 'amd64-host'
 
 SDK_TARBALL_SUFFIX = '.tar.xz'
 
-# The chromeos-sdk builder uses 'chroot' as VERSION_PREFIX.
-# We use a different prefix to avoid conflicts.
-VERSION_PREFIX = 'build_toolchain'
+# Prebuilts are uploaded to a path that contains
+# f"{VERSION_PREFIX}-{sdk_version}". If you change this, make sure all
+# consumers are changed as well; see b/303300440.
+VERSION_PREFIX = 'chroot'
 
 
 def _insert_before_change_id(change: str, description: str, text: str) -> str:

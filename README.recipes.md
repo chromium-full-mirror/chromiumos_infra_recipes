@@ -11815,7 +11815,7 @@ Recipe for building a BuildTarget image for Snapshot.
 
 Builds and uploads the CrOS toolchain.
 
-&mdash; **def [RunSteps](/recipes/build_toolchain.py#85)(api: RecipeApi, properties: BuildToolchainProperties):**
+&mdash; **def [RunSteps](/recipes/build_toolchain.py#86)(api: RecipeApi, properties: BuildToolchainProperties):**
 ### *recipes* / [buildbucket\_stats:examples/get\_bot\_demand](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py)
 
 [DEPS](/recipe_modules/buildbucket_stats/examples/get_bot_demand.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
