@@ -2898,7 +2898,9 @@
     "timeout": 129600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"123\",  \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514000\",  \"builder\": {    \"project\": \"chromeos\",    \"bucket\": \"cq\",    \"builder\": \"amd64-generic-cq\"  },  \"createdBy\": \"project:chromeos\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"SUCCESS\",  \"input\": {    \"properties\": {      \"$chromeos/build_menu\": {        \"build_target\": {          \"name\": \"amd64-generic\"        }      },      \"build_target\": {        \"name\": \"amd64-generic\"      }    },    \"gerritChanges\": [      {        \"host\": \"chromium-review.googlesource.com\",        \"project\": \"project-a\",        \"change\": \"123456\",        \"patchset\": \"7\"      }    ]  },  \"output\": {    \"properties\": {      \"$chromeos/build_menu\": {        \"build_target\": {          \"name\": \"amd64-generic\"        }      },      \"build_target\": {        \"name\": \"amd64-generic\"      },      \"build_cost\": 10.0    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30,      \"botDimensions\": [        {          \"key\": \"bot_size\",          \"value\": \"large\"        }      ]    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514000\"    }  },  \"tags\": [    {      \"key\": \"cq_experimental\",      \"value\": \"false\"    }  ],  \"critical\": \"YES\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514001\",  \"builder\": {    \"project\": \"chromeos\",    \"bucket\": \"cq\",    \"builder\": \"arm-generic-cq\"  },  \"createdBy\": \"project:chromeos\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"STARTED\",  \"input\": {    \"properties\": {      \"$chromeos/build_menu\": {        \"build_target\": {          \"name\": \"arm-generic\"        }      },      \"build_target\": {        \"name\": \"arm-generic\"      }    },    \"gerritChanges\": [      {        \"host\": \"chromium-review.googlesource.com\",        \"project\": \"project-a\",        \"change\": \"123456\",        \"patchset\": \"7\"      }    ]  },  \"infra\": {    \"swarming\": {      \"priority\": 30,      \"botDimensions\": [        {          \"key\": \"bot_size\",          \"value\": \"large\"        }      ]    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514001\"    }  },  \"tags\": [    {      \"key\": \"cq_experimental\",      \"value\": \"false\"    }  ],  \"critical\": \"YES\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514002\",  \"builder\": {    \"project\": \"chromeos\",    \"bucket\": \"cq\",    \"builder\": \"atlas-cq\"  },  \"createdBy\": \"project:chromeos\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"startTime\": \"2019-07-07T04:54:05Z\",  \"status\": \"SUCCESS\",  \"input\": {    \"properties\": {      \"$chromeos/build_menu\": {        \"build_target\": {          \"name\": \"atlas\"        }      },      \"build_target\": {        \"name\": \"atlas\"      }    },    \"gerritChanges\": [      {        \"host\": \"chromium-review.googlesource.com\",        \"project\": \"project-a\",        \"change\": \"123456\",        \"patchset\": \"7\"      }    ]  },  \"infra\": {    \"swarming\": {      \"priority\": 30,      \"botDimensions\": [        {          \"key\": \"bot_size\",          \"value\": \"large\"        }      ]    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514002\"    }  },  \"tags\": [    {      \"key\": \"cq_experimental\",      \"value\": \"false\"    }  ],  \"critical\": \"YES\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2916,16 +2918,34 @@
     "name": "aggregating metadata.container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skipped build info@@@@",
+      "@@@STEP_LOG_LINE@skipped build info@amd64-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@atlas-cq - containers not configured@@@",
       "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "aggregating metadata.container metadata.processing ",
+    "name": "aggregating metadata.container metadata.processing amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no build-target set, skipping@@@"
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing arm-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
     ]
   },
   {
@@ -3148,7 +3168,13 @@
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CHtgDA==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexIgCghjaHJvbWVvcxICY3EaEGFtZDY0LWdlbmVyaWMtY3EiEHByb2plY3Q6Y2hyb21lb3MyBgi5wqLYBWAMeq0BCnYKRwoUJGNocm9tZW9zL2J1aWxkX21lbnUSLyotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljGjMKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEglwcm9qZWN0LWEYwMQHIAeCAZIBCo8BCkcKFCRjaHJvbWVvcy9idWlsZF9tZW51Ei8qLQorCgxidWlsZF90YXJnZXQSGyoZChcKBG5hbWUSDxoNYW1kNjQtZ2VuZXJpYwoXCgpidWlsZF9jb3N0EgkRAAAAAAAAJEAKKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWOSAUASFSAeMhEKCGJvdF9zaXplEgVsYXJnZSonEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAwmgEYCg9jcV9leHBlcmltZW50YWwSBWZhbHNlqAEB\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    },@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNGtpKubruDoexIeCghjaHJvbWVvcxICY3EaDmFybS1nZW5lcmljLWNxIhBwcm9qZWN0OmNocm9tZW9zMgYIucKi2AVgAnqpAQpyCkUKFCRjaHJvbWVvcy9idWlsZF9tZW51Ei0qKwopCgxidWlsZF90YXJnZXQSGSoXChUKBG5hbWUSDRoLYXJtLWdlbmVyaWMKKQoMYnVpbGRfdGFyZ2V0EhkqFwoVCgRuYW1lEg0aC2FybS1nZW5lcmljGjMKIGNocm9taXVtLXJldmlldy5nb29nbGVzb3VyY2UuY29tEglwcm9qZWN0LWEYwMQHIAeSAUASFSAeMhEKCGJvdF9zaXplEgVsYXJnZSonEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAxmgEYCg9jcV9leHBlcmltZW50YWwSBWZhbHNlqAEB\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    },@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexIYCghjaHJvbWVvcxICY3EaCGF0bGFzLWNxIhBwcm9qZWN0OmNocm9tZW9zMgYIucKi2AU6Bgjt9YXpBWAMep0BCmYKPwoUJGNocm9tZW9zL2J1aWxkX21lbnUSJyolCiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVhdGxhcwojCgxidWlsZF90YXJnZXQSEyoRCg8KBG5hbWUSBxoFYXRsYXMaMwogY2hyb21pdW0tcmV2aWV3Lmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRjAxAcgB5IBQBIVIB4yEQoIYm90X3NpemUSBWxhcmdlKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDKaARgKD2NxX2V4cGVyaW1lbnRhbBIFZmFsc2WoAQE=\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"manifestCommit\": \"snapshot-HEAD-SHA\",@@@",
@@ -7312,7 +7338,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\u0006\n\u0004\b{`\f:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0003\n\ufffd\u0003\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 \n\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001e\n\bchromeos\u0012\u0002cq\u001a\u000earm-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002z\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514001\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0002\n\ufffd\u0002\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\n\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005:\u0006\b\ufffd\ufffd\ufffd\ufffd\u0005`\fz\ufffd\u0001\nf\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514002\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

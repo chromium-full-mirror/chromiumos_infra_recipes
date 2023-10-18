@@ -10,7 +10,9 @@ consistent.
 """
 
 from collections import namedtuple
-from typing import List, Tuple
+import typing
+
+from google.protobuf import json_format
 
 from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
@@ -433,8 +435,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
   # TODO(b/279016710): This function could be generalized and allow overriding
   # of child build data.
   def orch_child_builds(
-      self, orchestrator_name: str,
-      child_builder_suffix: str) -> Tuple[List[Build], List[Build]]:
+      self, orchestrator_name: str, child_builder_suffix: str
+  ) -> typing.Tuple[typing.List[Build], typing.List[Build]]:
     """Return a list of child builds that the given orchestrator could run.
 
     Args:
@@ -494,3 +496,18 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       start_build_id += 1
 
     return collect_builds, collect_after_builds
+
+  def build_poller_step_data(
+      self, builds: typing.List[Build],
+      parent_step_name: typing.Optional[str] = '') -> recipe_test_api.TestData:
+    """Set the response to the build_poller `collect` call."""
+    step_name = '.'.join([parent_step_name, 'collect'])
+    test_data = '\n'.join(
+        json_format.MessageToJson(b).replace('\n', '') for b in builds or [])
+
+    return self.step_data(
+        step_name,
+        stdout=self.m.raw_io.output_text(
+            test_data,
+        ),
+    )

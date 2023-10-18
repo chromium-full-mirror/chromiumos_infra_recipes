@@ -13,7 +13,6 @@ from typing import Callable
 from typing import Dict
 
 from google.protobuf.json_format import MessageToDict
-from google.protobuf.json_format import MessageToJson
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.chromiumos.common import Channel
@@ -403,14 +402,8 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'aggregating metadata'),
       api.post_check(post_process.MustRun, 'collect.get'),
       api.post_check(post_process.MustRun, 'check build results'),
-      api.step_data(
-          'run builds.collect',
-          stdout=api.raw_io.output_text(
-              MessageToJson(build_pb2.Build(id=123,
-                                            status=common_pb2.SUCCESS)).replace(
-                                                '\n', ''),
-          ),
-      ),
+      api.orch_menu.build_poller_step_data(builds=data.builds,
+                                           parent_step_name='run builds'),
       builder='cq-orchestrator',
       experiments=['chromeos.build_cq.async_unit_tests'],
   )

@@ -3,10 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
-
-from google.protobuf import json_format
+"""Tests for the plan_and_wait_for_images function."""
 
 from recipe_engine import post_process
 
@@ -174,17 +171,11 @@ def GenTests(api):
                      'run builds.schedule new builds.coral-cq'),
       api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.eve-cq'),
-      api.step_data(
-          'run builds.collect',
-          stdout=api.raw_io.output_text(
-              '\n'.join([
-                  json_format.MessageToJson(b).replace('\n', '') for b in [
-                      build_with_published_image, successful_build,
-                      failed_build, other_build_with_published_image
-                  ]
-              ]),
-          ),
-      ),
+      api.orch_menu.build_poller_step_data(
+          builds=[
+              build_with_published_image, successful_build, failed_build,
+              other_build_with_published_image
+          ], parent_step_name='run builds'),
       api.post_check(post_process.StepCommandContains, 'run builds.collect', [
           '[START_DIR]/cipd_build_poller/build_poller', 'collect', '-loglevel',
           'debug', '-outputprop', 'image_artifacts_uploaded', '-interval',
