@@ -7,7 +7,7 @@
 
 import collections
 import dataclasses
-from typing import Dict, FrozenSet, List, NamedTuple, Tuple
+from typing import Dict, FrozenSet, List, NamedTuple, Set, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
@@ -161,6 +161,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self._filtered_build_stats = {}
     self.per_build_stats: Dict[int, PerBuildStats] = collections.defaultdict(
         PerBuildStats)
+    self._experimental_retries: Dict[int, Set] = collections.defaultdict(set)
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -174,6 +175,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         c.name for c in self.m.cros_infra_config.get_builder_config(
             'cq-orchestrator').orchestrator.child_specs
     ]
+
+  @property
+  def experimental_retries(self):
+    return self._experimental_retries
 
   def is_experimental_feature_enabled(self, feature_name: str,
                                       build: build_pb2.Build):
@@ -248,6 +253,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
           cq_run) and status == bb_common_pb2.Status.Name(
               bb_common_pb2.INFRA_FAILURE):
+        self._experimental_retries[cq_run.id].add(
+            EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
         retryable_builders.append(builder_name)
       else:
         unsuccessful_builders.append(builder_name)
@@ -279,6 +286,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             b for b in unsuccessful_builders
             if b.replace('-cq', '-snapshot') in now_green_builders
         ]
+        if now_green_builders:
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
         retryable_failure_builders.extend(now_green_retryable_builders)
         self.per_build_stats[
             cq_run.
@@ -579,6 +589,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     if (self.is_experimental_feature_enabled(
         EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES, cq_orch) and
         cq_orch.status == bb_common_pb2.INFRA_FAILURE):
+      self._experimental_retries[cq_orch.id].add(
+          EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
       return True
 
     return ('has_child_failures' in cq_orch.output.properties and

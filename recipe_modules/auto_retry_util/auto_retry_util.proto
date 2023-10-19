@@ -19,6 +19,9 @@ message RetryDetails {
 
   // The specific test suite failures that were retryable.
   repeated string retryable_test_suites = 4;
+
+  // A list of any experimental reasons why this run is being retried.
+  repeated string experimental_features = 5;
 }
 
 message ExperimentalFeature {

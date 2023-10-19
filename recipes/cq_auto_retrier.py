@@ -104,6 +104,12 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
               retryable_build_failures or retryable_test_suite_failures):
         retry_reason.retryable_builders.extend(retryable_build_failures)
         retry_reason.retryable_test_suites.extend(retryable_test_suite_failures)
+        retry_reason.experimental_features.extend(
+            sorted([
+                feature for feature, runs in
+                api.auto_retry_util.experimental_retries.items() if b.id in runs
+            ]))
+
         _set_len_prop(actionable_retryable_builders=retryable_build_failures,
                       actionable_test_suites=retry_reason.retryable_test_suites)
         return retry_reason

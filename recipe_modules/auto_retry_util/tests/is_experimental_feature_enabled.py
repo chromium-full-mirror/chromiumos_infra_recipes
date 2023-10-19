@@ -23,6 +23,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
 
+  _ = api.auto_retry_util.experimental_retries
   enabled = api.auto_retry_util.is_experimental_feature_enabled(
       api.properties['feature_name'], api.buildbucket.build)
   api.assertions.assertEqual(enabled, api.properties['expected_enabled'])
