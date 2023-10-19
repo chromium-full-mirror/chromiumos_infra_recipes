@@ -2285,8 +2285,7 @@
     "cmd": [
       "git",
       "add",
-      "changed.txt",
-      "new.txt"
+      "kabuto-example-r1.ebuild"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
     "env_suffixes": {
