@@ -31,6 +31,10 @@ def GenTests(api: recipe_api.RecipeApi):
       api.step_data(
           'ensure chromiumos/infra/branch_util/${platform}.read [CLEANUP]/cipd.json',
           api.file.read_text('{}')),
+      api.post_check(
+          post_process.MustRun,
+          'ensure chromiumos/infra/branch_util/${platform}.read infrainfra golang version'
+      ),
       api.post_check(post_process.LogContains,
                      'ensure chromiumos/infra/branch_util/${platform}',
                      'exception', ['KeyError']),

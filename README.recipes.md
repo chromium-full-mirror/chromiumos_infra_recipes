@@ -539,6 +539,7 @@
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [gobin:examples/full](#recipes-gobin_examples_full) &mdash; Tests for standard `gobin` module usage.
+  * [gobin:tests/enabled](#recipes-gobin_tests_enabled) &mdash; Test that a gobin that hasn't been enabled falls back to the legacy label.
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
@@ -7892,18 +7893,18 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#47)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#65)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#60)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
@@ -14189,6 +14190,14 @@ Recipe that schedules jobs based on its triggers.
 Tests for standard `gobin` module usage.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/examples/full.py#23)(api):**
+### *recipes* / [gobin:tests/enabled](/recipe_modules/gobin/tests/enabled.py)
+
+[DEPS](/recipe_modules/gobin/tests/enabled.py#11): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test that a gobin that hasn't been enabled falls back to the legacy label.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/tests/enabled.py#22)(api: recipe_api.RecipeApi):**
 ### *recipes* / [gobin:tests/full](/recipe_modules/gobin/tests/full.py)
 
 [DEPS](/recipe_modules/gobin/tests/full.py#12): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]

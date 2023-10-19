@@ -16,7 +16,15 @@ from recipe_engine.recipe_api import StepFailure
 # https://chrome-infra-packages.appspot.com/p/chromiumos/infra.
 SUPPORTED_PACKAGES = [
     'branch_util',
+    'conductor',
     'manifest_doctor',
+]
+
+# List of packages for which we should use the new pin (as opposed to falling
+# back to the `prod` label), only intended for use during the initial rollout.
+# TODO(b/305967772): Remove.
+ENABLED_PACKAGES = [
+    'branch_util',
 ]
 
 
@@ -39,6 +47,16 @@ class GobinAPI(recipe_api.RecipeApi):
       return package
     return f'chromiumos/infra/{package}/${{platform}}'
 
+  def _package_shortname(self, package: str) -> str:
+    """Return the short name for a package.
+
+    Example:
+      chromiumos/infra/manifest_doctor/linux-amd64 --> manifest_doctor
+    """
+    if package.startswith('chromiumos/infra/'):
+      return package.split('/')[2]
+    return package
+
   @property
   def supported_packages(self):
     """Return the golang packages supported by this module."""
@@ -60,44 +78,49 @@ class GobinAPI(recipe_api.RecipeApi):
         if package_fullname not in self.supported_packages:
           raise StepFailure(f'unsupported gobin `{package}`')
 
-        # Read the infra/infra commit from the gobin pin file.
-        if not self._infra_infra_commit:
-          self._infra_infra_commit = self.m.file.read_text(
-              'read infrainfra golang version',
-              self.repo_resource('infra', 'config',
-                                 'infrainfra-golang.version'),
-              test_data='deadbeef')
-
         instance_id = None
+        if self._package_shortname(package) in ENABLED_PACKAGES:
+          # Read the infra/infra commit from the gobin pin file.
+          if not self._infra_infra_commit:
+            self._infra_infra_commit = self.m.file.read_text(
+                'read infrainfra golang version',
+                self.repo_resource('infra', 'config',
+                                   'infrainfra-golang.version'),
+                test_data='deadbeef')
 
-        cipd_json_file = self.m.path['cleanup'].join('cipd.json')
-        self.m.step('cipd search', [
-            'cipd', 'search', package_fullname, '-tag',
-            f'git_revision:{self._infra_infra_commit}', '-json-output',
-            cipd_json_file
-        ])
+          cipd_json_file = self.m.path['cleanup'].join('cipd.json')
+          self.m.step('cipd search', [
+              'cipd', 'search', package_fullname, '-tag',
+              f'git_revision:{self._infra_infra_commit}', '-json-output',
+              cipd_json_file
+          ])
 
-        cipd_json = self.m.file.read_text(f'read {cipd_json_file}',
-                                          cipd_json_file)
+          cipd_json = self.m.file.read_text(f'read {cipd_json_file}',
+                                            cipd_json_file)
 
-        try:
-          package_data = json.loads(cipd_json)['result']
-          for package_info in package_data:
-            if package_info['package'].startswith(
-                re.sub(r'\${platform}$', '', package_fullname)):
-              instance_id = package_info['instance_id']
-              break
-        except json.decoder.JSONDecodeError as e:
-          presentation.logs['exception'] = traceback.format_exc()
-          raise StepFailure('could not parse JSON') from e
-        except KeyError as e:
-          presentation.logs['exception'] = traceback.format_exc()
-          raise StepFailure('incorrect JSON') from e
+          try:
+            package_data = json.loads(cipd_json)['result']
+            for package_info in package_data:
+              if package_info['package'].startswith(
+                  re.sub(r'\${platform}$', '', package_fullname)):
+                instance_id = package_info['instance_id']
+                break
+          except json.decoder.JSONDecodeError as e:
+            presentation.logs['exception'] = traceback.format_exc()
+            raise StepFailure('could not parse JSON') from e
+          except KeyError as e:
+            presentation.logs['exception'] = traceback.format_exc()
+            raise StepFailure('incorrect JSON') from e
 
-        if instance_id is None:
-          raise StepFailure(
-              f'could not find instance for infra/infra commit {self._infra_infra_commit}'
-          )
+          if instance_id is None:
+            raise StepFailure(
+                f'could not find instance for infra/infra commit {self._infra_infra_commit}'
+            )
+        else:
+          # The package has not yet been migrated to use the pin.
+          # TODO(b/305967772): Remove.
+          instance_id = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
+          presentation.step_text = f'using legacy `{instance_id}` pin'
 
         cipd_dir = self.m.path['start_dir'].join('cipd')
         pkgs = self.m.cipd.EnsureFile()
