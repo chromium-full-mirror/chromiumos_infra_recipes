@@ -539,8 +539,10 @@
   * [gitiles:examples/full](#recipes-gitiles_examples_full)
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [gobin:examples/full](#recipes-gobin_examples_full) &mdash; Tests for standard `gobin` module usage.
+  * [gobin:examples/get_latest_pin_value](#recipes-gobin_examples_get_latest_pin_value) &mdash; Examples for get_latest_pin_value.
   * [gobin:tests/enabled](#recipes-gobin_tests_enabled) &mdash; Test that a gobin that hasn't been enabled falls back to the legacy label.
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
+  * [gobin:tests/get_latest_pin_value](#recipes-gobin_tests_get_latest_pin_value) &mdash; Tests for get_latest_pin_value.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full)
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
@@ -7871,7 +7873,7 @@ Returns:
   (str) The url for the repo.
 ### *recipe_modules* / [gobin](/recipe_modules/gobin)
 
-[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for interacting with Go binaries built from infra/infra.
@@ -7880,16 +7882,23 @@ API for interacting with Go binaries built from infra/infra.
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#153)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#207)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#84)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#160)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
+
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#127)(self, current_pin: str):**
+
+Returns the most recent infra/infra SHA that is a viable pin.
+
+Specifically, returns the latest SHA for which there is a CIPD instance for
+each of SUPPORTED_PACKAGES.
 
 &emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#79)(self):**
 
@@ -14170,6 +14179,14 @@ Recipe that schedules jobs based on its triggers.
 Tests for standard `gobin` module usage.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/examples/full.py#23)(api):**
+### *recipes* / [gobin:examples/get\_latest\_pin\_value](/recipe_modules/gobin/examples/get_latest_pin_value.py)
+
+[DEPS](/recipe_modules/gobin/examples/get_latest_pin_value.py#16): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Examples for get_latest_pin_value.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/examples/get_latest_pin_value.py#32)(api: RecipeApi, properties: GetLatestPinValueProperties):**
 ### *recipes* / [gobin:tests/enabled](/recipe_modules/gobin/tests/enabled.py)
 
 [DEPS](/recipe_modules/gobin/tests/enabled.py#11): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14186,6 +14203,14 @@ Test that a gobin that hasn't been enabled falls back to the legacy label.
 Tests for various `gobin` module failure modes.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/tests/full.py#22)(api: recipe_api.RecipeApi):**
+### *recipes* / [gobin:tests/get\_latest\_pin\_value](/recipe_modules/gobin/tests/get_latest_pin_value.py)
+
+[DEPS](/recipe_modules/gobin/tests/get_latest_pin_value.py#11): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Tests for get_latest_pin_value.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/tests/get_latest_pin_value.py#25)(api: RecipeApi):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#14): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -16154,12 +16179,12 @@ Args:
   to_version: the version to uprev to.
 ### *recipes* / [uprev\_recipes\_pin](/recipes/uprev_recipes_pin.py)
 
-[DEPS](/recipes/uprev_recipes_pin.py#19): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/uprev_recipes_pin.py#19): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [gobin](#recipe_modules-gobin), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for uprev'ing various pins in infra/recipes/infra/config.
 
-&mdash; **def [RunSteps](/recipes/uprev_recipes_pin.py#109)(api: RecipeApi, properties: UprevRecipesPinProperties):**
+&mdash; **def [RunSteps](/recipes/uprev_recipes_pin.py#123)(api: RecipeApi, properties: UprevRecipesPinProperties):**
 ### *recipes* / [urls:examples/full](/recipe_modules/urls/examples/full.py)
 
 [DEPS](/recipe_modules/urls/examples/full.py#13): [skylab\_results](#recipe_modules-skylab_results), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

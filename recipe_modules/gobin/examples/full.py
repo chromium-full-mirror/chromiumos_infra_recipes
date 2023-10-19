@@ -44,10 +44,13 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
-                    api.file.read_text(CIPD_JSON)),
+      api.step_data(
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef.read [CLEANUP]/cipd.json',
+          api.file.read_text(CIPD_JSON)),
       api.post_check(
-          post_process.StepCommandContains, 'ensure my_gobin.cipd search', [
+          post_process.StepCommandContains,
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef.cipd search',
+          [
               'cipd', 'search', 'chromiumos/infra/my_gobin/${platform}', '-tag',
               'git_revision:deadbeef', '-json-output', '[CLEANUP]/cipd.json'
           ]),

@@ -7,7 +7,7 @@
 
 import json
 import traceback
-from typing import List
+from typing import List, Optional
 import re
 
 from recipe_engine import recipe_api
@@ -56,7 +56,7 @@ class GobinAPI(recipe_api.RecipeApi):
     self._cipd_paths = {}
     self._infra_infra_commit = None
 
-  def _full_package_name(self, package: str) -> str:
+  def _package_fullname(self, package: str) -> str:
     """Return the full package name for a package.
 
     Example:
@@ -79,7 +79,83 @@ class GobinAPI(recipe_api.RecipeApi):
   @property
   def supported_packages(self):
     """Return the golang packages supported by this module."""
-    return [self._full_package_name(package) for package in SUPPORTED_PACKAGES]
+    return [self._package_fullname(package) for package in SUPPORTED_PACKAGES]
+
+  def _get_instance_for_sha(self, package_fullname: str,
+                            sha: str) -> Optional[str]:
+    """Find the associated CIPD instance for the given package for the given infra/infra commit."""
+    package_shortname = self._package_shortname(package_fullname)
+    with self.m.step.nest(
+        f'find cipd instance for {package_shortname} for infra/infra commit {sha}'
+    ) as presentation:
+      cipd_json_file = self.m.path['cleanup'].join('cipd.json')
+      self.m.step('cipd search', [
+          'cipd', 'search', package_fullname, '-tag', f'git_revision:{sha}',
+          '-json-output', cipd_json_file
+      ])
+
+      cipd_json = self.m.file.read_text(f'read {cipd_json_file}',
+                                        cipd_json_file)
+
+      try:
+        package_data = json.loads(cipd_json)['result']
+        for package_info in package_data:
+          if package_info['package'].startswith(
+              re.sub(r'\${platform}$', '', package_fullname)):
+            package_fullname_with_platform = package_info['package']
+            instance_id = package_info['instance_id']
+            presentation.logs[
+                'cipd instance'] = f'https://chrome-infra-packages.appspot.com/p/{package_fullname_with_platform}/+/{instance_id}'
+            return instance_id
+      except json.decoder.JSONDecodeError as e:
+        presentation.logs['exception'] = traceback.format_exc()
+        raise StepFailure('could not parse JSON') from e
+      except KeyError as e:
+        presentation.logs['exception'] = traceback.format_exc()
+        raise StepFailure('incorrect JSON') from e
+
+      return None
+
+  def _is_valid_sha(self, sha: str) -> bool:
+    """Check if there exists a CIPD instance for each supported package for the given infra/infra commit."""
+    for package in SUPPORTED_PACKAGES:
+      package_fullname = self._package_fullname(package)
+      if self._get_instance_for_sha(package_fullname, sha) is None:
+        return False
+    return True
+
+  def get_latest_pin_value(self, current_pin: str) -> str:
+    """Returns the most recent infra/infra SHA that is a viable pin.
+
+    Specifically, returns the latest SHA for which there is a CIPD instance for
+    each of SUPPORTED_PACKAGES.
+    """
+
+    infra_infra_checkout = self.m.path.mkdtemp()
+    with self.m.context(cwd=infra_infra_checkout):
+      self.m.git.clone('https://chromium.googlesource.com/infra/infra/',
+                       branch='main')
+      self.m.git.fetch_ref('https://chromium.googlesource.com/infra/infra/',
+                           current_pin)
+
+      res = self.m.step(
+          f'get commits since {current_pin}',
+          ['git', 'rev-list', '--ancestry-path', f'{current_pin}~..HEAD'],
+          stdout=self.m.raw_io.output_text(add_output_log=True))
+      commits = res.stdout.strip()
+      if not commits:
+        raise StepFailure(f'could not find {current_pin} in the `main` branch')
+      # Remove the current_pin from the end of the list, we queried from its
+      # parent so we can distinguish between no-changes and not-in-main.
+      commits = commits.split('\n')[:-1]
+
+      # Commits are ordered newest to oldest.
+      # TODO(b/305967772): Optimize, use binary search or something.
+      for commit in commits:
+        if self._is_valid_sha(commit):
+          return commit
+      # If none of the commits are valid, just return the current pin.
+      return current_pin
 
   def ensure_package(self, package: str):
     """Ensure that the specified package is installed.
@@ -87,7 +163,7 @@ class GobinAPI(recipe_api.RecipeApi):
     Looks up the instance associated with the infra/infra commit stored in
     infrainfra-golang.version.
     """
-    package_fullname = self._full_package_name(package)
+    package_fullname = self._package_fullname(package)
     if package_fullname not in self.supported_packages:
       raise StepFailure(f'unsupported gobin `{package}`')
 
@@ -108,30 +184,8 @@ class GobinAPI(recipe_api.RecipeApi):
                                    'infrainfra-golang.version'),
                 test_data='deadbeef')
 
-          cipd_json_file = self.m.path['cleanup'].join('cipd.json')
-          self.m.step('cipd search', [
-              'cipd', 'search', package_fullname, '-tag',
-              f'git_revision:{self._infra_infra_commit}', '-json-output',
-              cipd_json_file
-          ])
-
-          cipd_json = self.m.file.read_text(
-              f'read {cipd_json_file}', cipd_json_file,
-              test_data=CIPD_TEST_JSON % package_fullname)
-
-          try:
-            package_data = json.loads(cipd_json)['result']
-            for package_info in package_data:
-              if package_info['package'].startswith(
-                  re.sub(r'\${platform}$', '', package_fullname)):
-                instance_id = package_info['instance_id']
-                break
-          except json.decoder.JSONDecodeError as e:
-            presentation.logs['exception'] = traceback.format_exc()
-            raise StepFailure('could not parse JSON') from e
-          except KeyError as e:
-            presentation.logs['exception'] = traceback.format_exc()
-            raise StepFailure('incorrect JSON') from e
+          instance_id = self._get_instance_for_sha(package_fullname,
+                                                   self._infra_infra_commit)
 
           if instance_id is None:
             raise StepFailure(
@@ -154,7 +208,7 @@ class GobinAPI(recipe_api.RecipeApi):
            **kwargs) -> step_data.StepData:
     """Call a binary with the given args."""
     self.ensure_package(package)
-    package_fullname = self._full_package_name(package)
+    package_fullname = self._package_fullname(package)
 
     cmd = [self._cipd_paths[package_fullname]] + cmd
 

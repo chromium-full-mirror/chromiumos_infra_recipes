@@ -22,10 +22,12 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'gerrit',
     'git',
+    'gobin',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -37,13 +39,15 @@ class PinInfo():
   """Info for a particular pin."""
 
   def __init__(self, pin: UprevRecipesPinProperties.Pin, pin_file: str,
-               pin_fn: Callable[[RecipeApi, UprevRecipesPinProperties], str]):
+               pin_fn: Callable[[RecipeApi, UprevRecipesPinProperties, str],
+                                str]):
     self.pin = pin
     self.pin_file = pin_file
     self.pin_fn = pin_fn
 
 
-def _get_chromite_pin(api: RecipeApi, _: UprevRecipesPinProperties) -> str:
+def _get_chromite_pin(api: RecipeApi, _properties: UprevRecipesPinProperties,
+                      _current_pin_value: str) -> str:
   """Get the new value for the chromite HEAD pin, i.e. the ToT commit."""
   api.step('git init', ['git', 'init'])
   with api.step.nest('get latest commit') as step:
@@ -55,7 +59,8 @@ def _get_chromite_pin(api: RecipeApi, _: UprevRecipesPinProperties) -> str:
 
 
 def _get_signing_docker_pin(api: RecipeApi,
-                            properties: UprevRecipesPinProperties) -> str:
+                            properties: UprevRecipesPinProperties,
+                            _current_pin_value: str) -> str:
   """Get the new value for the signing docker image pin."""
   with api.step.nest('setup build'):
     api.step('git init', ['git', 'init'])
@@ -95,6 +100,12 @@ def _get_signing_docker_pin(api: RecipeApi,
         return image_with_tag
 
 
+def _get_infrainfra_golang_pin(api: RecipeApi, _: UprevRecipesPinProperties,
+                               current_pin_value: str) -> str:
+  """Get the new value for the infra/infra golang pin."""
+  return api.gobin.get_latest_pin_value(current_pin_value)
+
+
 # Maps supported pins to fns to get the new pin value.
 SUPPORTED_PINS = {
     UprevRecipesPinProperties.CHROMITE_HEAD:
@@ -103,6 +114,9 @@ SUPPORTED_PINS = {
     UprevRecipesPinProperties.SIGNING_DOCKER_IMAGE:
         PinInfo(UprevRecipesPinProperties.SIGNING_DOCKER_IMAGE,
                 'signing-docker-image.version', _get_signing_docker_pin),
+    UprevRecipesPinProperties.INFRAINFRA_GOLANG:
+        PinInfo(UprevRecipesPinProperties.INFRAINFRA_GOLANG,
+                'infrainfra-golang.version', _get_infrainfra_golang_pin),
 }
 
 
@@ -111,32 +125,41 @@ def RunSteps(api: RecipeApi, properties: UprevRecipesPinProperties) -> None:
     raise StepFailure('unsupported pin')
   pin_info = SUPPORTED_PINS[properties.pin]
 
-  # 1. get the new pin value.
-  pin_name = UprevRecipesPinProperties.Pin.Name(properties.pin)
-  pin_value = None
-  with api.step.nest(f'get new pin value for {pin_name}'):
-    pin_value = SUPPORTED_PINS[properties.pin].pin_fn(api, properties)
-
-  # 2. clone the recipes repo in a temp dir.
+  # Clone the recipes repo in a temp dir.
   checkout = api.path.mkdtemp()
   with api.context(cwd=checkout):
     api.git.clone('https://chromium.googlesource.com/chromiumos/infra/recipes/',
                   depth=1)
-    # 3. modify the version file.
+
+    # Get the existing pin value.
     version_file_name = f'{checkout}/infra/config/{pin_info.pin_file}'
+    current_pin_value = api.file.read_text(
+        f'read {pin_info.pin_file} file',
+        version_file_name,
+        include_log=True,
+    ).strip()
+
+    # Get the new pin value.
+    pin_name = UprevRecipesPinProperties.Pin.Name(properties.pin)
+    new_pin_value = None
+    with api.step.nest(f'get new pin value for {pin_name}'):
+      new_pin_value = SUPPORTED_PINS[properties.pin].pin_fn(
+          api, properties, current_pin_value)
+
+    # Modify the version file.
     api.file.write_text(
         f'update {pin_info.pin_file} file',
         version_file_name,
-        pin_value,
+        new_pin_value,
         include_log=True,
     )
-    # 3.5. check to make sure there was actually a change.
+    # Check to make sure there was actually a change.
     if not api.git.diff_check(version_file_name):
       return result_pb2.RawResult(
           summary_markdown='No new commits since last uprev',
           status=common_pb2.SUCCESS,
       )
-    # 4. create a cl updating the file.
+    # Create a cl updating the file.
     api.git.add([version_file_name])
     commit_lines = [
         f'Update {pin_info.pin_file}',
@@ -152,13 +175,13 @@ def RunSteps(api: RecipeApi, properties: UprevRecipesPinProperties) -> None:
     }
     api.gerrit.set_change_labels_remote(change, labels)
     if properties.push:
-      # 5. in production mode, we submit the cl.
+      # In production mode, we submit the cl.
       api.gerrit.submit_change(change, project_path=checkout, retries=3)
     else:
-      # 5. in dry_run mode, we abandon the cl.
+      # In dry_run mode, we abandon the cl.
       api.gerrit.abandon_change(change)
     return result_pb2.RawResult(
-        summary_markdown=f'Updated {pin_info.pin_file} pin to {pin_value}',
+        summary_markdown=f'Updated {pin_info.pin_file} pin to {new_pin_value}',
         status=common_pb2.SUCCESS,
     )
 
@@ -283,5 +306,24 @@ def GenTests(api: RecipeTestApi) -> None:
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push'
       ),
       # File / gerrit logic tested in chromite unit tests.
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'infrainfra-golang-full-run-no-change',
+      api.properties(push=True,
+                     pin=UprevRecipesPinProperties.INFRAINFRA_GOLANG),
+      api.step_data(
+          'read infrainfra-golang.version file',
+          api.file.read_text('deadbeef'),
+      ),
+      api.step_data(
+          'get new pin value for INFRAINFRA_GOLANG.get commits since deadbeef',
+          stdout=api.raw_io.output_text('\n'.join(['CAFECAFE']))),
+      # Easiest not to mock anything and fall back to the existing pin.
+      # get_latest_pin_value is well tested in the gobin module, and
+      # file / gerrit logic is tested in the chromite unit tests above.
+      api.post_check(post_process.StepCommandContains,
+                     'update infrainfra-golang.version file', 'deadbeef'),
       api.post_process(post_process.DropExpectation),
   )

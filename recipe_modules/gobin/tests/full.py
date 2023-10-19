@@ -28,22 +28,28 @@ def RunSteps(api: recipe_api.RecipeApi):
 def GenTests(api: recipe_api.RecipeApi):
   yield api.test(
       'wrong-json',
-      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
-                    api.file.read_text('{}')),
+      api.step_data(
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef.read [CLEANUP]/cipd.json',
+          api.file.read_text('{}')),
       api.post_check(post_process.MustRun,
                      'ensure my_gobin.read infrainfra golang version'),
-      api.post_check(post_process.LogContains, 'ensure my_gobin', 'exception',
-                     ['KeyError']),
+      api.post_check(
+          post_process.LogContains,
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef',
+          'exception', ['KeyError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   yield api.test(
       'invalid-json',
-      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
-                    api.file.read_text('{')),
-      api.post_check(post_process.LogContains, 'ensure my_gobin', 'exception',
-                     ['JSONDecodeError']),
+      api.step_data(
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef.read [CLEANUP]/cipd.json',
+          api.file.read_text('{')),
+      api.post_check(
+          post_process.LogContains,
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef',
+          'exception', ['JSONDecodeError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -60,8 +66,9 @@ def GenTests(api: recipe_api.RecipeApi):
 
   yield api.test(
       'missing-package',
-      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
-                    api.file.read_text(CIPD_JSON_DIFFERENT_PACKAGE)),
+      api.step_data(
+          'ensure my_gobin.find cipd instance for my_gobin for infra/infra commit deadbeef.read [CLEANUP]/cipd.json',
+          api.file.read_text(CIPD_JSON_DIFFERENT_PACKAGE)),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
