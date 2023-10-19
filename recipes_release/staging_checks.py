@@ -95,6 +95,21 @@ def vm_test_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
+# TODO(b/299105459): Remove once paygen local signing is stable.
+def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for paygen-orchs/paygen builds from the prototype
+    staging-atlas-signingnext builder.
+
+    See b/299105459 for more context.
+  """
+  if build['input']['properties'].get('builder_name') == 'atlas-signingnext':
+    return True
+  # Catch-all so we don't have to traverse deep into `paygen` properties.
+  if 'atlas-signingnext' in str(build['input']['properties']):
+    return True
+  return False
+
+
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
     StagingReCheck('chromeos', 'staging',
@@ -133,9 +148,10 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
                    r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
                    [image_builder_exemption], num_builds=3),
-    StagingReCheck('chromeos', 'staging', r'staging-paygen', num_builds=15),
+    StagingReCheck('chromeos', 'staging', r'staging-paygen',
+                   [atlas_signingnext_exemption], num_builds=15),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator',
-                   num_builds=15),
+                   [atlas_signingnext_exemption], num_builds=15),
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'staging-release-triggerer',
                    num_builds=3),

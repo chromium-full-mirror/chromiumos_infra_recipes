@@ -218,8 +218,14 @@ class Builds:
             'start_time': change.commit_timestamp.isoformat(),
         },
     }
-    fields = ('id', 'status', 'create_time', 'infra', 'summary_markdown',
-              'cancellation_markdown')
+    fields = [
+        'id', 'status', 'create_time', 'infra', 'summary_markdown',
+        'cancellation_markdown'
+    ]
+    # Need input properties for `atlas_signingnext_exemption`, optimize
+    # by only fetching them for paygen builders.
+    if 'paygen' in builder_name:
+      fields.append('input')
     args = ['-fields', ','.join(fields)]
     return _bb_ls('-predicate', json.dumps(predicate), *args)
 
