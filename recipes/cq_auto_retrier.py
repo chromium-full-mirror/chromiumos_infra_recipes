@@ -10,6 +10,7 @@ from typing import Optional
 
 from google.protobuf import json_format
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
@@ -30,6 +31,7 @@ DEPS = [
     'recipe_engine/time',
     'auto_retry_util',
     'easy',
+    'future_utils',
     'gerrit',
     'test_util',
 ]
@@ -48,70 +50,74 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   builds = api.auto_retry_util.cq_retry_candidates()
   _set_len_prop(orch_builds_considered=builds)
 
+  def _analyzing_candidate(b: build_pb2.Build) -> (Optional[RetryDetails]):
+    with api.step.nest('analyzing %d' % b.id) as pres:
+      retry_reason = RetryDetails(original_orch_id=b.id)
+
+      pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
+
+      # Examine builds.
+      successful_builders, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
+          b)
+      # TODO(b/299482781): When the retry infra failures experiment is active
+      # the cq-orchestrator could be a retryable builder. Remove post-launch.
+      if api.auto_retry_util.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
+          b) and b.status == common.INFRA_FAILURE:
+        retryable_build_failures.append(b.builder.builder)
+
+      _set_len_prop(successful_builders=successful_builders,
+                    retryable_build_failures=retryable_build_failures,
+                    outstanding_build_failures=outstanding_build_failures)
+
+      # Examine test suites.
+      successful_test_suites, retryable_test_suite_failures, outstanding_test_suite_failures = api.auto_retry_util.analyze_test_results(
+          b)
+      _set_len_prop(
+          successful_test_suites=successful_test_suites,
+          retryable_test_suite_failures=retryable_test_suite_failures,
+          outstanding_test_suite_failures=outstanding_test_suite_failures)
+
+      # Examine exonerations.
+      previously_exonerated, newly_exonerated, outstanding_exonerations = api.auto_retry_util.test_variant_exoneration_analysis(
+          b)
+      updated_failed_test_stats = previously_exonerated + newly_exonerated + outstanding_exonerations
+      exonerated_test_suites = api.auto_retry_util.get_exonerated_suites(
+          b, updated_failed_test_stats)
+      _set_len_prop(previously_exonerated_tests=previously_exonerated,
+                    newly_exonerated_tests=newly_exonerated,
+                    outstanding_exonerations_tests=outstanding_exonerations,
+                    exonerated_test_suites=exonerated_test_suites)
+
+      retryable_test_suite_failures.extend(exonerated_test_suites)
+      outstanding_test_suite_failures = list(
+          set(outstanding_test_suite_failures) - set(exonerated_test_suites))
+
+      api.auto_retry_util.per_build_stats[
+          b.id].retryable_test_suites = retryable_test_suite_failures
+      api.auto_retry_util.per_build_stats[
+          b.id].outstanding_test_suites = outstanding_test_suite_failures
+
+      # Preliminary determination
+      if len(outstanding_build_failures) == 0 and len(
+          outstanding_test_suite_failures) == 0 and (
+              retryable_build_failures or retryable_test_suite_failures):
+        retry_reason.retryable_builders.extend(retryable_build_failures)
+        retry_reason.retryable_test_suites.extend(retryable_test_suite_failures)
+        _set_len_prop(actionable_retryable_builders=retryable_build_failures,
+                      actionable_test_suites=retry_reason.retryable_test_suites)
+        return retry_reason
+      return None
+
   # A list of (Build, RetryDetails) tuples.
   retryable_runs = []
 
   with api.step.nest('analyzing candidates') as presentation:
+    runner = api.future_utils.create_parallel_runner()
     for b in builds:
-      with api.step.nest('analyzing %d' % b.id) as pres:
-        retry_reason = RetryDetails(original_orch_id=b.id)
-
-        pres.links['build link'] = api.buildbucket.build_url(build_id=b.id)
-
-        # Examine builds.
-        successful_builders, retryable_build_failures, outstanding_build_failures = api.auto_retry_util.analyze_build_failures(
-            b)
-        # TODO(b/299482781): When the retry infra failures experiment is active
-        # the cq-orchestrator could be a retryable builder. Remove post-launch.
-        if api.auto_retry_util.is_experimental_feature_enabled(
-            EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
-            b) and b.status == common.INFRA_FAILURE:
-          retryable_build_failures.append(b.builder.builder)
-
-        _set_len_prop(successful_builders=successful_builders,
-                      retryable_build_failures=retryable_build_failures,
-                      outstanding_build_failures=outstanding_build_failures)
-
-        # Examine test suites.
-        successful_test_suites, retryable_test_suite_failures, outstanding_test_suite_failures = api.auto_retry_util.analyze_test_results(
-            b)
-        _set_len_prop(
-            successful_test_suites=successful_test_suites,
-            retryable_test_suite_failures=retryable_test_suite_failures,
-            outstanding_test_suite_failures=outstanding_test_suite_failures)
-
-        # Examine exonerations.
-        previously_exonerated, newly_exonerated, outstanding_exonerations = api.auto_retry_util.test_variant_exoneration_analysis(
-            b)
-        updated_failed_test_stats = previously_exonerated + newly_exonerated + outstanding_exonerations
-        exonerated_test_suites = api.auto_retry_util.get_exonerated_suites(
-            b, updated_failed_test_stats)
-        _set_len_prop(previously_exonerated_tests=previously_exonerated,
-                      newly_exonerated_tests=newly_exonerated,
-                      outstanding_exonerations_tests=outstanding_exonerations,
-                      exonerated_test_suites=exonerated_test_suites)
-
-        retryable_test_suite_failures.extend(exonerated_test_suites)
-        outstanding_test_suite_failures = list(
-            set(outstanding_test_suite_failures) - set(exonerated_test_suites))
-
-        api.auto_retry_util.per_build_stats[
-            b.id].retryable_test_suites = retryable_test_suite_failures
-        api.auto_retry_util.per_build_stats[
-            b.id].outstanding_test_suites = outstanding_test_suite_failures
-
-        # Preliminary determination
-        if len(outstanding_build_failures) == 0 and len(
-            outstanding_test_suite_failures) == 0 and (
-                retryable_build_failures or retryable_test_suite_failures):
-          retry_reason.retryable_builders.extend(retryable_build_failures)
-          retry_reason.retryable_test_suites.extend(
-              retryable_test_suite_failures)
-          retryable_runs.append((b, retry_reason))
-          _set_len_prop(
-              actionable_retryable_builders=retryable_build_failures,
-              actionable_test_suites=retry_reason.retryable_test_suites)
-
+      runner.run_function_async(lambda build, _: _analyzing_candidate(build), b)
+    responses = runner.wait_for_and_get_responses()
+    retryable_runs.extend([(x.req, x.resp) for x in responses if x.resp])
     presentation.step_text = f'found {len(retryable_runs)} retryable run(s)'
 
   # Final determination
