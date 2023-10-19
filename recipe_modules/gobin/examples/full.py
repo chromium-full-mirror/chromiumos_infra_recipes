@@ -27,6 +27,9 @@ def RunSteps(api):
   # Again, make sure it doesn't do anything!
   api.gobin.ensure_package('branch_util')
 
+  api.gobin.call('branch_util', ['create', 'foo'])
+  api.gobin.call('branch_util', ['create', 'bar'], step_name='my command')
+
 
 def GenTests(api):
   CIPD_JSON = '''{
@@ -54,5 +57,15 @@ def GenTests(api):
       api.post_check(
           post_process.DoesNotRun,
           'ensure chromiumos/infra/branch_util/${platform} (1).cipd search'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'run branch_util',
+          ['[START_DIR]/cipd/branch_util', 'create', 'foo'],
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'my command',
+          ['[START_DIR]/cipd/branch_util', 'create', 'bar'],
+      ),
       api.post_process(post_process.DropExpectation),
   )

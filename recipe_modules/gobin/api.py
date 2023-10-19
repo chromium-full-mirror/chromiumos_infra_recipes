@@ -7,9 +7,11 @@
 
 import json
 import traceback
+from typing import List
 import re
 
 from recipe_engine import recipe_api
+from recipe_engine import step_data
 from recipe_engine.recipe_api import StepFailure
 
 # Packages are relative to chromiumos/infra/, see
@@ -25,6 +27,7 @@ SUPPORTED_PACKAGES = [
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
     'branch_util',
+    'manifest_doctor',
 ]
 
 
@@ -128,3 +131,13 @@ class GobinAPI(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._cipd_paths[package_fullname] = cipd_dir.join(package)
+
+  def call(self, package: str, cmd: List[str], step_name: str = None,
+           **kwargs) -> step_data.StepData:
+    """Call a binary with the given args."""
+    self.ensure_package(package)
+    package_fullname = self._full_package_name(package)
+
+    cmd = [self._cipd_paths[package_fullname]] + cmd
+
+    return self.m.step(step_name or f'run {package}', cmd, **kwargs)

@@ -7893,18 +7893,22 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#65)(self, package: str):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#135)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+
+Call a binary with the given args.
+
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#68)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#63)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
