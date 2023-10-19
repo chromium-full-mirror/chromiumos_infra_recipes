@@ -7,7 +7,9 @@
 
 import collections
 import contextlib
+import json
 import re
+
 from typing import Iterable, Iterator, List, Optional, Tuple
 
 from google.protobuf import json_format
@@ -18,6 +20,7 @@ from PB.chromite.api.packages import GetTargetVersionsRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import BuildTestServiceContainersRequest
+from PB.chromite.api.test import BuildTestServiceContainersResponse
 from PB.chromite.api.toolchain import SetupToolchainsRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
@@ -886,6 +889,128 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return 'gs://{gs_bucket}/{gs_path}'.format(gs_bucket=gs_bucket,
                                                gs_path=gs_path)
 
+  def _read_container_info_gcs_file(
+      self, gs_path) -> Optional[BuildTestServiceContainersResponse]:
+    """Read the file content, returns cached test service container based on file status
+
+    Reads the json node "status" inside the file and if found "complete", parses the JSON to
+    BuildTestServiceContainersResponse. If not found or status is not "completed", returns None.
+
+    Args:
+      gs_path (str): The GCS path to the file to be read.
+
+    Returns:
+      BuildTestServiceContainersResponse or None
+    """
+    with self.m.step.nest('reading cached container info from gs path: ' +
+                          gs_path) as presentation:
+      response = self.m.gsutil.cat(
+          gs_path, stdout=self.m.raw_io.output_text(name='cat results',
+                                                    add_output_log=True),
+          ok_ret=(0, 1), use_retry_wrapper=True)
+      presentation.logs['cached container gcs'] = response.stdout
+      if response.stdout:
+        response_json = json.loads(response.stdout.strip())
+        status = response_json['status']
+        if status == 'completed':
+          builder_response = BuildTestServiceContainersResponse()
+          builder_response = json_format.Parse(response.stdout,
+                                               builder_response,
+                                               ignore_unknown_fields=True)
+          return builder_response
+        presentation.step_summary_text = "status: '{}'".format(status)
+      return None
+
+  def _get_cached_container_metadata_gcs(
+      self, gs_path, timeout,
+      interval) -> (Optional[BuildTestServiceContainersResponse]):
+    """Reads all file at given gs path and returns cached test service container
+
+    This function reads the contents of all files from a specified GCS path. It lists all files
+    and calls read_container_info_gcs_file on each at requested time interval. Immediately returns
+    if valid service response is returned. If not found within the specified maximum execution time,
+    it returns None at the end of that time period.
+
+    Args:
+      gs_path (str): The GCS path to the file to be read.
+      timeout (int): The maximum execution time in seconds.
+      interval (int): Time interval before reading
+
+    Returns:
+      build_test_container_response (BuildTestServiceContainersResponse): BuildTestServiceContainersResponse or None
+    """
+    with self.m.step.nest('cached container info from gcs') as presentation:
+      start_time = self.m.time.time()
+      attempt_counter = 1
+      # Run the loop for {timeout} seconds at {interval} seconds
+      while self.m.time.time() - start_time < timeout:
+        with self.m.step.nest(
+            'attempt-{}'.format(attempt_counter)) as interval_presentation:
+          response = self.m.gsutil.list(
+              gs_path, timeout=1 * 30,
+              stdout=self.m.raw_io.output_text(name='ls results',
+                                               add_output_log=True),
+              ok_ret=(0, 1))
+          if response.stdout:
+            for uri in response.stdout.split():
+              container_info = self._read_container_info_gcs_file(uri)
+              if container_info:
+                interval_presentation.step_summary_text = 'cached container found in attempt-{}'.format(
+                    attempt_counter)
+                presentation.step_summary_text = "cached test container found at :'{}'".format(
+                    uri)
+                presentation.logs['related gcs files'] = response.stdout
+                return container_info
+          else:
+            interval_presentation.step_summary_text = 'no files present, builder should build fresh container and upload to gcs'
+            presentation.step_summary_text = 'no files present, builder should build fresh container and upload to gcs'
+            return None
+          self.m.time.sleep(interval)
+          interval_presentation.step_summary_text = 'no cached container found in attempt-{}'.format(
+              attempt_counter)
+          attempt_counter = attempt_counter + 1
+
+      presentation.step_summary_text = 'no cached container found at timeout, builder should build fresh container and upload to gcs'
+      return None
+
+  def _update_container_info_gcs(self, status, parent_build_id,
+                                 build_test_container_response=None):
+    """Updates gcs with test service container info and build status
+
+    If builder is creating fresh docker containers, then it should update gcs
+    once with "started" status before actual building and once build is completed
+    it should update gcs with metadata and status as "completed".
+
+    Args:
+      status (str): The status of building container step. "started" or "completed"
+      parent_build_id (str): Unique gspath prefix where file will be updated
+      build_test_container_response (BuildTestServiceContainersResponse): BuildTestServiceContainersResponse or None
+
+    Returns:
+      None
+    """
+    with self.m.step.nest('update test service container build progress as: ' +
+                          status) as presentation:
+      if build_test_container_response:
+        container_build_update = json_format.MessageToDict(
+            build_test_container_response)
+        container_build_update['status'] = status
+      else:
+        container_build_update = {'status': status}
+
+      build_id = self.m.buildbucket.build.id or 'led'
+      with self.m.step.nest('writing update to local file'):
+        tmp_dir = self.m.path.mkdtemp(prefix='cft-builder-json')
+        file_path = tmp_dir.join(str(build_id) + '.json')
+        self.m.file.write_json('Writing response', file_path,
+                               container_build_update)
+
+      gs_path = self.m.path.join('cft-container-json', parent_build_id,
+                                 str(build_id) + '.json')
+      self.m.gsutil.upload(file_path, 'chromeos-image-archive', gs_path)
+      presentation.logs[
+          'gs upload path'] = 'gs://chromeos-image-archive/' + gs_path
+
   def create_containers(self, builder_config=None):
     """Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -906,26 +1031,53 @@ class BuildMenuApi(recipe_api.RecipeApi):
             self.m.cros_build_api.TestService, 'BuildTestServiceContainers'):
           presentation.step_summary_text = 'No endpoint, skipping'
         else:
-          BuildTestServiceContainers = \
-            self.m.cros_build_api.TestService.BuildTestServiceContainers
-
-          version = self.container_version
-          presentation.step_summary_text = "version: '{}'".format(version)
-
           build_id = self.m.buildbucket.build.id
+          parent_build_id = self.m.cros_tags.get_single_value(
+              'parent_buildbucket_id') or 'led-launch-' + self.m.uuid.random()
+          cached_container_gs_path = 'gs://chromeos-image-archive/cft-container-json/' + parent_build_id
+          # if test train then reduce it to 5 seconds to explore all code path for 100% code coverage
+          timeout = 1 * 20 * 60 if self.m.cros_tags.get_single_value(
+              'parent_buildbucket_id') else 5
+          interval = 1 * 30 if self.m.cros_tags.get_single_value(
+              'parent_buildbucket_id') else 1
 
-          response = BuildTestServiceContainers(
-              BuildTestServiceContainersRequest(
-                  build_target=self.build_target,
-                  chroot=self.m.cros_sdk.chroot,
-                  version=version,
-                  tags=[version] + ([str(build_id)] if build_id else []),
-                  labels={
-                      'build-url':
-                          'https://ci.chromium.org/b/{}'.format(build_id)
-                          if build_id else 'led'
-                  },
-              ), timeout=1 * 60 * 60)
+          cft_cache_build_enabled = 'chromeos.build_cq.cft_cache_build' in self.m.cros_infra_config.experiments
+
+          response = None
+          # check if container info exists for parent builder in gcs. Skips building if found or creates fresh containers.
+          if cft_cache_build_enabled:
+            response = self._get_cached_container_metadata_gcs(
+                gs_path=cached_container_gs_path, timeout=timeout,
+                interval=interval)
+          if response is None:
+            # add status file in gcs for other builders from same parent so that they don't make fresh containers.
+            if cft_cache_build_enabled:
+              self._update_container_info_gcs(
+                  status='started', parent_build_id=parent_build_id,
+                  build_test_container_response=None)
+            BuildTestServiceContainers = \
+              self.m.cros_build_api.TestService.BuildTestServiceContainers
+            version = self.container_version
+            presentation.step_summary_text = "version: '{}'".format(version)
+
+            response = BuildTestServiceContainers(
+                BuildTestServiceContainersRequest(
+                    build_target=self.build_target,
+                    chroot=self.m.cros_sdk.chroot,
+                    version=version,
+                    tags=[version] + ([str(build_id)] if build_id else []),
+                    labels={
+                        'build-url':
+                            'https://ci.chromium.org/b/{}'.format(build_id)
+                            if build_id else 'led'
+                    },
+                ), timeout=1 * 60 * 60)
+
+            # update status file in gcs for other builders from same parent to read container info.
+            if cft_cache_build_enabled:
+              self._update_container_info_gcs(
+                  status='completed', parent_build_id=parent_build_id,
+                  build_test_container_response=response)
 
           # Set up links to built containers.
           container_metadata = ContainerMetadata()

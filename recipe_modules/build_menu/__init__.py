@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Deps and properties for build-menu functions."""
+
 from PB.recipe_modules.chromeos.build_menu.build_menu import BuildMenuProperties
 
 DEPS = [
@@ -11,7 +13,11 @@ DEPS = [
     'recipe_engine/cq',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/time',
+    'recipe_engine/uuid',
+    'depot_tools/gsutil',
     'bot_cost',
     'chrome',
     'cros_artifacts',

@@ -6,6 +6,8 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+import json
+
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -82,10 +84,67 @@ def DoRunSteps(api, config, properties):
     if config and config.id.type == BuilderConfig.Id.Type.RELEASE:
       api.build_menu.publish_latest_files('bucket', '{gs_path}')
 
+
+def step_data_no_cached_container_gcs(api):
+  return api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.gsutil list',
+      stdout=api.raw_io.output_text(None), retcode=0)
+
+
+def step_data_complete_cached_container_gcs(api):
+
+  test_data_complete = json.dumps({'status': 'completed'})
+  step_data_ls_attempt_1 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.gsutil list',
+      stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json
+      '''), retcode=0)
+  step_data_cat_attempt_1 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.reading cached container info from gs path: gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json.gsutil cat',
+      stdout=api.raw_io.output_text(test_data_complete))
+  return step_data_ls_attempt_1, step_data_cat_attempt_1
+
+
+def step_data_incomplete_cached_container_gcs(api):
+
+  test_data_incomplete = json.dumps({'status': 'started'})
+
+  step_data_ls_attempt_1 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.gsutil list',
+      stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json
+      '''), retcode=0)
+  step_data_cat_attempt_1 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.reading cached container info from gs path: gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json.gsutil cat',
+      stdout=api.raw_io.output_text(test_data_incomplete))
+  step_data_ls_attempt_2 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-2.gsutil list',
+      stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json
+      '''), retcode=0)
+  step_data_cat_attempt_2 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-2.reading cached container info from gs path: gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json.gsutil cat',
+      stdout=api.raw_io.output_text(test_data_incomplete))
+  step_data_ls_attempt_3 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-3.gsutil list',
+      stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json
+      '''), retcode=0)
+  step_data_cat_attempt_3 = api.step_data(
+      'create test service containers.cached container info from gcs.attempt-3.reading cached container info from gs path: gs://chromeos-image-archive/cft-container-json/8766842719767962417/led.json.gsutil cat',
+      stdout=api.raw_io.output_text(test_data_incomplete))
+  return step_data_ls_attempt_1, step_data_cat_attempt_1, step_data_ls_attempt_2, step_data_cat_attempt_2, step_data_ls_attempt_3, step_data_cat_attempt_3
+
+
 def GenTests(api):
 
+  step_data_complete_ls_attempt_1, step_data_complete_cat_attempt_1 = step_data_complete_cached_container_gcs(
+      api)
+  step_data_ls_attempt_1, step_data_cat_attempt_1, step_data_ls_attempt_2, step_data_cat_attempt_2, step_data_ls_attempt_3, step_data_cat_attempt_3 = step_data_incomplete_cached_container_gcs(
+      api)
+
   yield api.build_menu.test(
-      'cq-build',
+      'cq-build-no-experiment',
       api.properties(
           **api.test_util.build_menu_properties(
             build_target_name='atlas',
@@ -94,6 +153,54 @@ def GenTests(api):
           )
       ),
       cq=True,
+  )
+
+  yield api.build_menu.test(
+      'cq-build-with-no-gcs-cache',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          )
+      ),
+      step_data_no_cached_container_gcs(api),
+      cq=True,
+      experiments=['chromeos.build_cq.cft_cache_build'],
+  )
+
+  yield api.build_menu.test(
+      'cq-build-with-complete-gcs-cache',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          ),
+      ),
+      step_data_complete_ls_attempt_1,
+      step_data_complete_cat_attempt_1,
+      cq=True,
+      experiments=['chromeos.build_cq.cft_cache_build'],
+  )
+
+  yield api.build_menu.test(
+      'cq-build-with-incomplete-gcs-cache',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          ),
+      ),
+      step_data_ls_attempt_1,
+      step_data_cat_attempt_1,
+      step_data_ls_attempt_2,
+      step_data_cat_attempt_2,
+      step_data_ls_attempt_3,
+      step_data_cat_attempt_3,
+      cq=True,
+      experiments=['chromeos.build_cq.cft_cache_build'],
   )
 
   yield api.build_menu.test(
@@ -111,7 +218,7 @@ def GenTests(api):
 
   yield api.build_menu.test(
     'cq-build-no-cherry-pick',
-      api.properties(FullProperties(dont_cherry_pick_changes=True)),
+    api.properties(FullProperties(dont_cherry_pick_changes=True)),
     api.properties(
         **api.test_util.build_menu_properties(
           build_target_name='atlas',
@@ -121,6 +228,7 @@ def GenTests(api):
     ),
     cq=True,
   )
+
 
   # Slim CQ build, with one gerrit_change.
   yield api.build_menu.test('slim-cq-build',
