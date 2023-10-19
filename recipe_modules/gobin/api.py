@@ -20,6 +20,7 @@ SUPPORTED_PACKAGES = [
     'branch_util',
     'conductor',
     'manifest_doctor',
+    'upload_debug_symbols',
     # For testing only.
     'my_gobin',
 ]

@@ -12497,16 +12497,19 @@
   },
   {
     "cmd": [],
-    "name": "upload debug symbols.fetch CIPD packages",
+    "name": "upload debug symbols.uploading breakpad",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@upload logs@@@@",
+      "@@@STEP_LOG_END@upload logs@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload debug symbols.fetch CIPD packages.ensure upload_debug_symbols",
+    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -12539,7 +12542,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.fetch CIPD packages.ensure upload_debug_symbols.ensure_installed",
+    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -12553,15 +12556,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload debug symbols.uploading breakpad",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@upload logs@@@@",
-      "@@@STEP_LOG_END@upload logs@@@"
     ]
   },
   {
@@ -12590,7 +12584,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading breakpad.call upload go binary",
+    "name": "upload debug symbols.uploading breakpad.run upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
@@ -12632,7 +12626,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading vmlinux.call upload go binary",
+    "name": "upload debug symbols.uploading vmlinux.run upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"

@@ -5502,7 +5502,7 @@ GS buckets and archives them if required.
 @param d_dir: The results directory to process.
 ### *recipe_modules* / [debug\_symbols](/recipe_modules/debug_symbols)
 
-[DEPS](/recipe_modules/debug_symbols/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/debug_symbols/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gobin](#recipe_modules-gobin), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Module for working with debug symbols.
@@ -5511,21 +5511,7 @@ Module for working with debug symbols.
 
 Module for working with debug symbols.
 
-&mdash; **def [ensure\_cipd\_package](/recipe_modules/debug_symbols/api.py#23)(self, cipd_package_location, cipd_ref, package_name):**
-
-Use the recipe_engine CIPD api to fetch and store the package locally.
-
-Args:
-  cipd_package_location (str): CIPD location where the package is stored.
-    E.g. chromiumos/infra/upload_debug_symbols/${platform}
-  cipd_ref (String): Instance of package to use. Typically, prod or staging.
-  package_name (String): Name of package minus extra location information.
-    E.g. upload_debug_symbols, manifest_doctor, branch_util.
-
-Returns:
-  Path: Path to the locally stored package.
-
-&mdash; **def [upload\_debug\_symbols](/recipe_modules/debug_symbols/api.py#46)(self, gs_path=None):**
+&mdash; **def [upload\_debug\_symbols](/recipe_modules/debug_symbols/api.py#22)(self, gs_path=None):**
 
 Upload debug symbols to the crash service.
 ### *recipe_modules* / [deferrals](/recipe_modules/deferrals)
@@ -7893,22 +7879,22 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#46)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#47)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#149)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#150)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#80)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#81)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#75)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#76)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)

@@ -7,9 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.debug_symbols;
 
 message DebugSymbolsProperties {
-  // Package ref to target in CIPD.
-  // Default: prod
-  string cipd_ref = 1;
+  reserved 1;
 
   // Location in Google storage in which to fetch debug symbols from.
   // E.g. gs://chromeos-debug-symbols/some-release-area/debug.tgz
