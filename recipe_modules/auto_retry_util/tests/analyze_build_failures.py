@@ -202,7 +202,7 @@ def GenTests(api):
                      expected_retryable=['builder2-cq', 'builder3'],
                      expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
       api.post_process(post_process.PropertyEquals, 'per_build_stats', [{
-          'build_id': 8945511751514863184,
+          'build_id': '8945511751514863184',
           'outstanding_builders': ['builder5-cq', 'builder6-slim-cq'],
           'outstanding_test_suites': [],
           'retryable_builders': ['builder2-cq', 'builder3'],

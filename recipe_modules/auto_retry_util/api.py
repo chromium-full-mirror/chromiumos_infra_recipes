@@ -441,9 +441,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     To make SQL analysis easier, this function converts per_build_stats from a
     map to a list and adds a new field 'build_id'. This is done because
     iterating a JSON object is less convinient than a list in most SQL dialects.
+    build_id is a str to avoid integer trunctation.
     """
     self.m.easy.set_properties_step(per_build_stats=[{
-        'build_id': k,
+        'build_id': str(k),
         **dataclasses.asdict(v)
     } for k, v in self.per_build_stats.items()])
 
