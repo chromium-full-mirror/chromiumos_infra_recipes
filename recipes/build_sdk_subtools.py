@@ -12,7 +12,7 @@ import contextlib
 from typing import Generator
 
 from PB.chromite.api.sdk_subtools import BuildSdkSubtoolsRequest, UploadSdkSubtoolsRequest
-from PB.chromiumos import common as chromiumos_common
+from PB.chromiumos import common as cros_common
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 from recipe_engine import post_process
@@ -47,19 +47,13 @@ class BuildSdkSubtoolsRun:
     with self._setup():
       with self.m.step.nest('Build SDK Subtools') as step:
         request = BuildSdkSubtoolsRequest(chroot=self.m.cros_sdk.chroot)
+        request.result_path.transfer = cros_common.ResultPath.TRANSFER_TRANSLATE
         build_response = self.sdk_subtools_service.BuildSdkSubtools(
             request,
             response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, build_response)
         self.m.failures.set_test_failed_packages(step, pkgs)
-
-      # Build API router only remaps paths when a ResultPath is provided (which
-      # will also copy files, which we don't want). So remap them here to be
-      # outside-chroot paths for the uploader.
-      for path in build_response.bundle_paths:
-        path.path = str(self.m.cros_sdk.chroot_path.join(path.path.lstrip('/')))
-        path.location = chromiumos_common.Path.OUTSIDE
 
       with self.m.step.nest('Upload SDK Subtools') as step:
         request = UploadSdkSubtoolsRequest(
@@ -111,11 +105,11 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
   "useProduction": true,
   "bundlePaths": [
     {
-      "path": "[CACHE]/cros_chroot/chroot/var/tmp/cros-subtools/rustfmt",
+      "path": "[CACHE]/cros_chroot/out/sdk/tmp/cros-subtools/rustfmt",
       "location": 2
     },
     {
-      "path": "[CACHE]/cros_chroot/chroot/var/tmp/cros-subtools/shellcheck",
+      "path": "[CACHE]/cros_chroot/out/sdk/tmp/cros-subtools/shellcheck",
       "location": 2
     }
   ]

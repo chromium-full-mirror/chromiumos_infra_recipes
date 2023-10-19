@@ -624,12 +624,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['BuildSdkSubtools'] = jsonify(bundle_paths=[
         {
-            'path': '/var/tmp/cros-subtools/rustfmt',
-            'location': 1,  # chromiumos.Path.Location.INSIDE
+            'path':
+                str(self.m.path['cache'].join(
+                    'cros_chroot/out/sdk/tmp/cros-subtools/rustfmt')),
+            'location':
+                2,  # chromiumos.Path.Location.OUTSIDE
         },
         {
-            'path': '/var/tmp/cros-subtools/shellcheck',
-            'location': 1,  # chromiumos.Path.Location.INSIDE
+            'path':
+                str(self.m.path['cache'].join(
+                    'cros_chroot/out/sdk/tmp/cros-subtools/shellcheck')),
+            'location':
+                2,  # chromiumos.Path.Location.OUTSIDE
         },
     ])
     responses['UploadSdkSubtools'] = '{}'
