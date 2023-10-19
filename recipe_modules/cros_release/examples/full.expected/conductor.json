@@ -543,7 +543,8 @@
     "cmd": [],
     "name": "generate payloads.running paygen orchestrator.ensure conductor",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {

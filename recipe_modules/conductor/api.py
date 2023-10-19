@@ -26,16 +26,6 @@ class ConductorApi(recipe_api.RecipeApi):
 
   def initialize(self):
     """Initializes the module."""
-    self._conductor_path = None
-
-    self._conductor_cipd_package = (
-        self._properties.conductor_cipd_package or
-        'chromiumos/infra/conductor/${platform}')
-
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._conductor_cipd_ref = (
-        self._properties.conductor_cipd_ref or default_ref)
-
     self._report = {}
 
   @property
@@ -62,9 +52,8 @@ class ConductorApi(recipe_api.RecipeApi):
       timeout: Timeout, in seconds. Defaults to one hour.
       kwargs: Keyword arguments for recipe_engine/step.
     """
-    self._ensure_conductor()
-    self.m.step(step_name or 'conductor: %s' % cmd[0],
-                [self._conductor_path] + cmd, timeout=timeout, **kwargs)
+    self.m.gobin.call('conductor', cmd, step_name=step_name or
+                      'conductor: %s' % cmd[0], timeout=timeout, **kwargs)
 
   def collect(self, collect_name: str, bbids: List[Union[str, int]],
               initial_retry: bool = False, **kwargs) -> List[int]:
@@ -138,18 +127,3 @@ class ConductorApi(recipe_api.RecipeApi):
       except:  #pylint: disable=bare-except
         presentation.step_text = "couldn't parse output, falling back to original bbids"
         return [int(bbid) for bbid in bbids]
-
-  def _ensure_conductor(self):
-    """Ensure the conductor cli is installed."""
-    if self._conductor_path:
-      return  # pragma: nocover
-
-    with self.m.step.nest('ensure conductor'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._conductor_cipd_package, self._conductor_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._conductor_path = cipd_dir.join('conductor')

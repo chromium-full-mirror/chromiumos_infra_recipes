@@ -78,23 +78,3 @@ def GenTests(api: RecipeTestApi):
                      {'child builds': TEST_REPORT}),
       api.post_process(post_process.DropExpectation),
   )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              '$chromeos/conductor': {
-                  'conductor_cipd_package': 'chromiumos/infra/conductor_foo',
-                  'conductor_cipd_ref': 'bar',
-                  'enable_conductor': True,
-                  'collect_configs': {
-                      'child builds': {},
-                  },
-              },
-          }),
-      api.conductor.set_collect_output([123, 457]),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure conductor.ensure_installed',
-                     ['chromiumos/infra/conductor_foo bar']),
-      api.post_process(post_process.DropExpectation),
-  )

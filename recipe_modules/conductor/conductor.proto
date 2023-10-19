@@ -9,13 +9,8 @@ package recipe_modules.chromeos.conductor;
 import "chromiumos/conductor.proto";
 
 message ConductorProperties {
-  // Cipd ref to use for conductor.
-  // Defaults to "chromiumos/infra/conductor/{$platform}".
-  string conductor_cipd_package = 1;
-
-  // Cipd ref to use for conductor.
-  // Defaults to "staging" or "prod".
-  string conductor_cipd_ref = 2;
+  reserved 1;
+  reserved 2;
 
   // If set, will use the conductor for child builds scheduling
   // instead of the native buildbucket collect function.

@@ -2458,7 +2458,7 @@ Args:
   step_name (str): name for the step.
 ### *recipe_modules* / [conductor](/recipe_modules/conductor)
 
-[DEPS](/recipe_modules/conductor/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/conductor/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gobin](#recipe_modules-gobin), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API wrapping the conductor tool.
@@ -2467,7 +2467,7 @@ API wrapping the conductor tool.
 
 A module for calling conductor.
 
-&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#55)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
+&mdash; **def [\_\_call\_\_](/recipe_modules/conductor/api.py#45)(self, cmd: List[str], step_name: str=None, timeout: int=3600, \*\*kwargs):**
 
 Call conductor with the given args.
 
@@ -2477,7 +2477,7 @@ Args:
   timeout: Timeout, in seconds. Defaults to one hour.
   kwargs: Keyword arguments for recipe_engine/step.
 
-&mdash; **def [collect](/recipe_modules/conductor/api.py#69)(self, collect_name: str, bbids: List[Union[(str, int)]], initial_retry: bool=False, \*\*kwargs):**
+&mdash; **def [collect](/recipe_modules/conductor/api.py#58)(self, collect_name: str, bbids: List[Union[(str, int)]], initial_retry: bool=False, \*\*kwargs):**
 
 Calls `conductor collect` with the given args.
 
@@ -2490,11 +2490,11 @@ Args:
 Returns:
   Final set of BBIDs.
 
-&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#49)(self, collect_name: Union[(str, None)]):**
+&mdash; **def [collect\_config](/recipe_modules/conductor/api.py#39)(self, collect_name: Union[(str, None)]):**
 
-&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/conductor/api.py#45)(self):**
+&emsp; **@property**<br>&mdash; **def [dryrun](/recipe_modules/conductor/api.py#35)(self):**
 
-&emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#41)(self):**
+&emsp; **@property**<br>&mdash; **def [enabled](/recipe_modules/conductor/api.py#31)(self):**
 
 &mdash; **def [initialize](/recipe_modules/conductor/api.py#27)(self):**
 

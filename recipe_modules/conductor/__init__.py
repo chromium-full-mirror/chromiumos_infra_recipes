@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API wrapping the conductor tool."""
+
 from PB.recipe_modules.chromeos.conductor.conductor import ConductorProperties
 
 DEPS = [
@@ -13,6 +15,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'easy',
+    'gobin',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
