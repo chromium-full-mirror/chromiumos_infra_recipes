@@ -86,7 +86,6 @@
   * [key_value_store](#recipe_modules-key_value_store) &mdash; Module to interact with key-value store files.
   * [labpack](#recipe_modules-labpack)
   * [looks_for_green](#recipe_modules-looks_for_green) &mdash; Functions implementing looks for green.
-  * [manifest_doctor](#recipe_modules-manifest_doctor) &mdash; API wrapping the manifest_doctor tool.
   * [mass_deploy](#recipe_modules-mass_deploy) &mdash; An API for triggering the mass deploy builder.
   * [metadata](#recipe_modules-metadata) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json)
@@ -582,7 +581,6 @@
   * [looks_for_green:tests/should_lfg](#recipes-looks_for_green_tests_should_lfg)
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
-  * [manifest_doctor:examples/full](#recipes-manifest_doctor_examples_full)
   * [mass_deploy:tests/run_mass_deploy_generation](#recipes-mass_deploy_tests_run_mass_deploy_generation) &mdash; Tests for run_mass_deploy_generation.
   * [metadata:examples/fetch_test_metadata](#recipes-metadata_examples_fetch_test_metadata)
   * [metadata:examples/gspath](#recipes-metadata_examples_gspath)
@@ -3692,7 +3690,7 @@ Args:
   private (bool): Whether or not the target prebuilts are private.
 ### *recipe_modules* / [cros\_release](/recipe_modules/cros_release)
 
-[DEPS](/recipe_modules/cros_release/__init__.py#8): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [manifest\_doctor](#recipe_modules-manifest_doctor), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_release/__init__.py#10): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_source](#recipe_modules-cros_source), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gobin](#recipe_modules-gobin), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [src\_state](#recipe_modules-src_state), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 An API for providing release related operations (e.g. paygen, signing).
@@ -3731,7 +3729,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#560)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#561)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3739,7 +3737,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#496)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#497)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3752,7 +3750,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#524)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#525)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3764,7 +3762,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#576)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#577)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3787,7 +3785,7 @@ Return:
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#412)(self, override_qs_account: str=None):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#413)(self, override_qs_account: str=None):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3798,11 +3796,11 @@ been built.
 Args:
   override_qs_account: QS Account to use instead of whatever is configured.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#616)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#617)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#624)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#625)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
@@ -7896,22 +7894,22 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#136)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#146)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#68)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#77)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#63)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#72)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
@@ -8412,29 +8410,6 @@ Returns looks for green stats
 &emsp; **@property**<br>&mdash; **def [use\_scored\_over\_minted](/recipe_modules/looks_for_green/api.py#92)(self):**
 
 Returns use_scored_over_minted property.
-### *recipe_modules* / [manifest\_doctor](/recipe_modules/manifest_doctor)
-
-[DEPS](/recipe_modules/manifest_doctor/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-API wrapping the manifest_doctor tool.
-
-#### **class [ManifestDoctorApi](/recipe_modules/manifest_doctor/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
-A module for calling manifest_doctor.
-
-&mdash; **def [\_\_call\_\_](/recipe_modules/manifest_doctor/api.py#30)(self, cmd, step_name=None, \*\*kwargs):**
-
-Call manifest_doctor with the given args.
-
-Args:
-  cmd: Command to be run with manifest_doctor.
-  step_name (str): Message to use for step. Optional.
-  kwargs: Keyword arguments for recipe_engine/step.
-
-&mdash; **def [initialize](/recipe_modules/manifest_doctor/api.py#18)(self):**
-
-Initializes the module.
 ### *recipe_modules* / [mass\_deploy](/recipe_modules/mass_deploy)
 
 [DEPS](/recipe_modules/mass_deploy/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14524,18 +14499,12 @@ Recipe for syncing to our local cache LVFS files (https://fwupd.org/).
 &mdash; **def [RunSteps](/recipes/lvfs_mirror.py#17)(api: RecipeApi):**
 ### *recipes* / [manifest\_doctor](/recipes/manifest_doctor.py)
 
-[DEPS](/recipes/manifest_doctor.py#15): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [manifest\_doctor](#recipe_modules-manifest_doctor), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/manifest_doctor.py#15): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [gobin](#recipe_modules-gobin), [repo](#recipe_modules-repo), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for performing various manipulations on ChromeOS manifests.
 
 &mdash; **def [RunSteps](/recipes/manifest_doctor.py#36)(api: RecipeApi, properties: ManifestDoctorProperties):**
-### *recipes* / [manifest\_doctor:examples/full](/recipe_modules/manifest_doctor/examples/full.py)
-
-[DEPS](/recipe_modules/manifest_doctor/examples/full.py#11): [manifest\_doctor](#recipe_modules-manifest_doctor), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/manifest_doctor/examples/full.py#19)(api):**
 ### *recipes* / [mass\_deploy:tests/run\_mass\_deploy\_generation](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py)
 
 [DEPS](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#12): [mass\_deploy](#recipe_modules-mass_deploy), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14947,7 +14916,7 @@ Recipe for running presubmit on multiple CLs.
 &mdash; **def [RunSteps](/recipes/presubmit_tests.py#56)(api: RecipeApi, properties: PresubmitTestsProperties):**
 ### *recipes* / [project\_buildspec](/recipes/project_buildspec.py)
 
-[DEPS](/recipes/project_buildspec.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [manifest\_doctor](#recipe_modules-manifest_doctor), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/project_buildspec.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gobin](#recipe_modules-gobin), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for invoking the per project buildspec tool.

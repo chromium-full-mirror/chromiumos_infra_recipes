@@ -23,7 +23,7 @@ DEPS = [
     'bot_cost',
     'cros_infra_config',
     'cros_source',
-    'manifest_doctor',
+    'gobin',
     'repo',
     'workspace_util',
 ]
@@ -52,7 +52,7 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
       if properties.external_buildspecs_bucket:
         cmd += ['--external-bucket', properties.external_buildspecs_bucket]
 
-      api.manifest_doctor(cmd)
+      api.gobin.call('manifest_doctor', cmd)
 
   if len(properties.buildspec_watch_paths_legacy) > 0:
     with api.step.nest('create external buildspecs (legacy)'):
@@ -66,7 +66,7 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
       if properties.external_buildspecs_bucket:
         cmd += ['--external-bucket', properties.external_buildspecs_bucket]
 
-      api.manifest_doctor(cmd)
+      api.gobin.call('manifest_doctor', cmd)
 
   if len(properties.project_buildspec_watch_paths
         ) > 0 and properties.project_buildspec_min_milestone > 0:
@@ -83,7 +83,7 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
       if properties.push:
         cmd += ['--push']
 
-      api.manifest_doctor(cmd)
+      api.gobin.call('manifest_doctor', cmd)
 
   if properties.local_manifest_branching_min_milestone:
     with api.bot_cost.build_cost_context(), api.workspace_util.setup_workspace(
@@ -120,7 +120,7 @@ def RunSteps(api: RecipeApi, properties: ManifestDoctorProperties):
 
           if properties.push:
             cmd += ['--push']
-          api.manifest_doctor(cmd)
+          api.gobin.call('manifest_doctor', cmd)
 
 
 def GenTests(api: RecipeTestApi):
@@ -249,22 +249,4 @@ def GenTests(api: RecipeTestApi):
           ['--projects', 'src/program/galaxy,src/project/galaxy/milkyway']),
       api.post_check(post_process.StepCommandContains,
                      'branch local manifests.run manifest_doctor', ['--push']),
-  )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              'local_manifest_branching_min_milestone': 90,
-              '$chromeos/manifest_doctor': {
-                  'manifest_doctor_cipd_package':
-                      'chromiumos/infra/manifest_doctor_foo',
-                  'manifest_doctor_cipd_ref':
-                      'bar'
-              }
-          }),
-      api.post_check(
-          post_process.StepCommandContains,
-          'branch local manifests.ensure manifest_doctor.ensure_installed',
-          ['chromiumos/infra/manifest_doctor_foo bar']),
   )

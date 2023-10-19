@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""An API for providing release related operations (e.g. paygen, signing)."""
+
 from PB.recipe_modules.chromeos.cros_release.cros_release import CrosReleaseProperties
 
 DEPS = [
@@ -30,7 +32,7 @@ DEPS = [
     'gerrit',
     'git',
     'git_footers',
-    'manifest_doctor',
+    'gobin',
     'paygen_orchestration',
     'repo',
     'signing',

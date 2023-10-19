@@ -641,7 +641,8 @@
     "cmd": [],
     "name": "create buildspec.ensure manifest_doctor",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {

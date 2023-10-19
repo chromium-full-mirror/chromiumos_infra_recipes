@@ -399,10 +399,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
           # Create the public buildspec immediately so it can be used by the
           # public builder.
-          self.m.manifest_doctor([
-              'public-buildspec', '--paths', gs_path, '--push'
-          ], step_name='create external buildspec gs://chromiumos-manifest-versions/{}'
-                                 .format(gs_path))
+          self.m.gobin.call(
+              'manifest_doctor',
+              ['public-buildspec', '--paths', gs_path, '--push'],
+              step_name=f'create external buildspec gs://chromiumos-manifest-versions/{gs_path}'
+          )
 
       self._buildspec = ManifestLocation(
           manifest_repo_url=self.MANIFEST_VERSIONS_URL, branch=branch,

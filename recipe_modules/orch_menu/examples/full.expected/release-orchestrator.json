@@ -4535,7 +4535,8 @@
     "cmd": [],
     "name": "set up orchestrator.create buildspec.ensure manifest_doctor",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {

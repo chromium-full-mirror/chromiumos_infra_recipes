@@ -18,7 +18,7 @@ DEPS = [
     'recipe_engine/step',
     'bot_cost',
     'cros_infra_config',
-    'manifest_doctor',
+    'gobin',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -37,7 +37,7 @@ def RunSteps(api: RecipeApi, properties: ProjectBuildspecProperties):
       if not properties.dry_run:
         cmd += ['--push']
 
-      api.manifest_doctor(cmd)
+      api.gobin.call('manifest_doctor', cmd)
 
 
 def GenTests(api: RecipeTestApi):

@@ -27,8 +27,17 @@ SUPPORTED_PACKAGES = [
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
     'branch_util',
-    'manifest_doctor',
 ]
+
+CIPD_TEST_JSON = '''{
+    "result": [
+        {
+            "package": "%s",
+            "instance_id": "wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC"
+        }
+    ]
+}
+'''
 
 
 class GobinAPI(recipe_api.RecipeApi):
@@ -99,8 +108,9 @@ class GobinAPI(recipe_api.RecipeApi):
               cipd_json_file
           ])
 
-          cipd_json = self.m.file.read_text(f'read {cipd_json_file}',
-                                            cipd_json_file)
+          cipd_json = self.m.file.read_text(
+              f'read {cipd_json_file}', cipd_json_file,
+              test_data=CIPD_TEST_JSON % package_fullname)
 
           try:
             package_data = json.loads(cipd_json)['result']

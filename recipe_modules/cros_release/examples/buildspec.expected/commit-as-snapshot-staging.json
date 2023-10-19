@@ -2651,7 +2651,8 @@
     "cmd": [],
     "name": "create buildspec (2).ensure manifest_doctor",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using legacy `staging` pin@@@"
     ]
   },
   {
