@@ -88,21 +88,3 @@ def GenTests(api):
           post_process.StepCommandContains, 'create branch from buildspec',
           ['create', '--buildspec-manifest', '89/13729.0.0.xml', '--release']),
   )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              '$chromeos/cros_branch': {
-                  'branch_util_cipd_package':
-                      'chromiumos/infra/branch_util_foo',
-                  'branch_util_cipd_ref':
-                      'bar'
-              }
-          }),
-      api.step_data('create branch from buildspec',
-                    stdout=api.raw_io.output_text(TEST_STDOUT)),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure branch_util.ensure_installed',
-                     ['chromiumos/infra/branch_util_foo bar']),
-  )

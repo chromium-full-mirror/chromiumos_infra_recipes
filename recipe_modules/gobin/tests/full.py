@@ -22,28 +22,28 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: recipe_api.RecipeApi):
   with api.assertions.assertRaises(StepFailure):
     api.gobin.ensure_package('bad_package')
-  api.gobin.ensure_package('chromiumos/infra/branch_util/${platform}')
+  api.gobin.ensure_package('my_gobin')
 
 
 def GenTests(api: recipe_api.RecipeApi):
   yield api.test(
       'wrong-json',
-      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
                     api.file.read_text('{}')),
       api.post_check(post_process.MustRun,
-                     'ensure branch_util.read infrainfra golang version'),
-      api.post_check(post_process.LogContains, 'ensure branch_util',
-                     'exception', ['KeyError']),
+                     'ensure my_gobin.read infrainfra golang version'),
+      api.post_check(post_process.LogContains, 'ensure my_gobin', 'exception',
+                     ['KeyError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   yield api.test(
       'invalid-json',
-      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
                     api.file.read_text('{')),
-      api.post_check(post_process.LogContains, 'ensure branch_util',
-                     'exception', ['JSONDecodeError']),
+      api.post_check(post_process.LogContains, 'ensure my_gobin', 'exception',
+                     ['JSONDecodeError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -60,7 +60,7 @@ def GenTests(api: recipe_api.RecipeApi):
 
   yield api.test(
       'missing-package',
-      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
                     api.file.read_text(CIPD_JSON_DIFFERENT_PACKAGE)),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',

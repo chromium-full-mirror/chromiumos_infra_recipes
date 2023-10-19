@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.cros_branch.cros_branch import CrosBranchProperties
+"""API wrapping the cros branch tool."""
 
 DEPS = [
     'depot_tools/depot_tools',
@@ -13,8 +13,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_infra_config',
     'cros_version',
+    'gobin',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = CrosBranchProperties

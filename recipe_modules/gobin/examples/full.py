@@ -23,19 +23,19 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   _ = api.gobin.supported_packages
 
-  api.gobin.ensure_package('branch_util')
+  api.gobin.ensure_package('my_gobin')
   # Again, make sure it doesn't do anything!
-  api.gobin.ensure_package('branch_util')
+  api.gobin.ensure_package('my_gobin')
 
-  api.gobin.call('branch_util', ['create', 'foo'])
-  api.gobin.call('branch_util', ['create', 'bar'], step_name='my command')
+  api.gobin.call('my_gobin', ['create', 'foo'])
+  api.gobin.call('my_gobin', ['create', 'bar'], step_name='my command')
 
 
 def GenTests(api):
   CIPD_JSON = '''{
     "result": [
         {
-            "package": "chromiumos/infra/branch_util/linux-amd64",
+            "package": "chromiumos/infra/my_gobin/linux-amd64",
             "instance_id": "wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC"
         }
     ]
@@ -44,25 +44,24 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+      api.step_data('ensure my_gobin.read [CLEANUP]/cipd.json',
                     api.file.read_text(CIPD_JSON)),
       api.post_check(
-          post_process.StepCommandContains, 'ensure branch_util.cipd search', [
-              'cipd', 'search', 'chromiumos/infra/branch_util/${platform}',
-              '-tag', 'git_revision:deadbeef', '-json-output',
-              '[CLEANUP]/cipd.json'
+          post_process.StepCommandContains, 'ensure my_gobin.cipd search', [
+              'cipd', 'search', 'chromiumos/infra/my_gobin/${platform}', '-tag',
+              'git_revision:deadbeef', '-json-output', '[CLEANUP]/cipd.json'
           ]),
       api.post_check(post_process.DoesNotRun,
-                     'ensure branch_util (1).cipd search'),
+                     'ensure my_gobin (1).cipd search'),
       api.post_check(
           post_process.StepCommandContains,
-          'run branch_util',
-          ['[START_DIR]/cipd/branch_util', 'create', 'foo'],
+          'run my_gobin',
+          ['[START_DIR]/cipd/my_gobin', 'create', 'foo'],
       ),
       api.post_check(
           post_process.StepCommandContains,
           'my command',
-          ['[START_DIR]/cipd/branch_util', 'create', 'bar'],
+          ['[START_DIR]/cipd/my_gobin', 'create', 'bar'],
       ),
       api.post_process(post_process.DropExpectation),
   )

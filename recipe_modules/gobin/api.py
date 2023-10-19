@@ -20,13 +20,16 @@ SUPPORTED_PACKAGES = [
     'branch_util',
     'conductor',
     'manifest_doctor',
+    # For testing only.
+    'my_gobin',
 ]
 
 # List of packages for which we should use the new pin (as opposed to falling
 # back to the `prod` label), only intended for use during the initial rollout.
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
-    'branch_util',
+    # For testing only.
+    'my_gobin',
 ]
 
 CIPD_TEST_JSON = '''{

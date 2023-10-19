@@ -18,22 +18,6 @@ BRANCH_UTIL_REGEX = r'Creating branch: (?P<branch>.*)\s*'
 class CrosBranchApi(recipe_api.RecipeApi):
   """A module for calling cros branch."""
 
-  def __init__(self, properties, *args, **kwargs):
-    super().__init__(*args, **kwargs)
-    self._properties = properties
-
-  def initialize(self):
-    """Initializes the module."""
-    self._branch_util_path = None
-
-    self._branch_util_cipd_package = (
-        self._properties.branch_util_cipd_package or
-        'chromiumos/infra/branch_util/${platform}')
-
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._branch_util_cipd_ref = (
-        self._properties.branch_util_cipd_ref or default_ref)
-
   def __call__(self, cmd, step_name=None, force=False, push=False, **kwargs):
     """Call cros branch with the given args.
 
@@ -53,10 +37,9 @@ class CrosBranchApi(recipe_api.RecipeApi):
     if push and not self.m.cros_infra_config.is_staging:
       branch_args.append('--push')
 
-    self._ensure_branch_util()
-    step_data = self.m.step(
-        step_name or '%s branch' % cmd[0],
-        [self._branch_util_path] + cmd + branch_args,
+    step_data = self.m.gobin.call(
+        'branch_util', cmd + branch_args, step_name=step_name or
+        f'{cmd[0]} branch',
         stdout=self.m.raw_io.output_text(name='branch_util stdout',
                                          add_output_log=True), **kwargs)
 
@@ -176,19 +159,3 @@ class CrosBranchApi(recipe_api.RecipeApi):
 
     kwargs.setdefault('step_name', 'delete branch %s' % branch.name)
     self(cmd, **kwargs)
-
-  def _ensure_branch_util(self):
-    """Ensure the branch_util cli is installed."""
-    if self._branch_util_path:
-      return  # pragma: nocover
-
-    with self.m.step.nest('ensure branch_util'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._branch_util_cipd_package,
-                         self._branch_util_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._branch_util_path = cipd_dir.join('branch_util')

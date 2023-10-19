@@ -1,7 +1,10 @@
 [
   {
     "cmd": [],
-    "name": "ensure branch_util"
+    "name": "ensure branch_util",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
+    ]
   },
   {
     "cmd": [
