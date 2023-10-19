@@ -28,15 +28,11 @@ def RunSteps(api: recipe_api.RecipeApi):
 def GenTests(api: recipe_api.RecipeApi):
   yield api.test(
       'wrong-json',
-      api.step_data(
-          'ensure chromiumos/infra/branch_util/${platform}.read [CLEANUP]/cipd.json',
-          api.file.read_text('{}')),
-      api.post_check(
-          post_process.MustRun,
-          'ensure chromiumos/infra/branch_util/${platform}.read infrainfra golang version'
-      ),
-      api.post_check(post_process.LogContains,
-                     'ensure chromiumos/infra/branch_util/${platform}',
+      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+                    api.file.read_text('{}')),
+      api.post_check(post_process.MustRun,
+                     'ensure branch_util.read infrainfra golang version'),
+      api.post_check(post_process.LogContains, 'ensure branch_util',
                      'exception', ['KeyError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
@@ -44,11 +40,9 @@ def GenTests(api: recipe_api.RecipeApi):
 
   yield api.test(
       'invalid-json',
-      api.step_data(
-          'ensure chromiumos/infra/branch_util/${platform}.read [CLEANUP]/cipd.json',
-          api.file.read_text('{')),
-      api.post_check(post_process.LogContains,
-                     'ensure chromiumos/infra/branch_util/${platform}',
+      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+                    api.file.read_text('{')),
+      api.post_check(post_process.LogContains, 'ensure branch_util',
                      'exception', ['JSONDecodeError']),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
@@ -66,9 +60,8 @@ def GenTests(api: recipe_api.RecipeApi):
 
   yield api.test(
       'missing-package',
-      api.step_data(
-          'ensure chromiumos/infra/branch_util/${platform}.read [CLEANUP]/cipd.json',
-          api.file.read_text(CIPD_JSON_DIFFERENT_PACKAGE)),
+      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+                    api.file.read_text(CIPD_JSON_DIFFERENT_PACKAGE)),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

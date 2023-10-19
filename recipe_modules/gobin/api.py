@@ -72,17 +72,18 @@ class GobinAPI(recipe_api.RecipeApi):
     infrainfra-golang.version.
     """
     package_fullname = self._full_package_name(package)
+    if package_fullname not in self.supported_packages:
+      raise StepFailure(f'unsupported gobin `{package}`')
+
+    if package_fullname in self._cipd_paths:
+      return
+
+    package_shortname = self._package_shortname(package)
+
     with self.m.context(infra_steps=True):
-      with self.m.step.nest(f'ensure {package_fullname}') as presentation:
-
-        if package_fullname in self._cipd_paths:
-          return
-
-        if package_fullname not in self.supported_packages:
-          raise StepFailure(f'unsupported gobin `{package}`')
-
+      with self.m.step.nest(f'ensure {package_shortname}') as presentation:
         instance_id = None
-        if self._package_shortname(package) in ENABLED_PACKAGES:
+        if package_shortname in ENABLED_PACKAGES:
           # Read the infra/infra commit from the gobin pin file.
           if not self._infra_infra_commit:
             self._infra_infra_commit = self.m.file.read_text(

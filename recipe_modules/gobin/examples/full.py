@@ -44,19 +44,16 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.step_data(
-          'ensure chromiumos/infra/branch_util/${platform}.read [CLEANUP]/cipd.json',
-          api.file.read_text(CIPD_JSON)),
+      api.step_data('ensure branch_util.read [CLEANUP]/cipd.json',
+                    api.file.read_text(CIPD_JSON)),
       api.post_check(
-          post_process.StepCommandContains,
-          'ensure chromiumos/infra/branch_util/${platform}.cipd search', [
+          post_process.StepCommandContains, 'ensure branch_util.cipd search', [
               'cipd', 'search', 'chromiumos/infra/branch_util/${platform}',
               '-tag', 'git_revision:deadbeef', '-json-output',
               '[CLEANUP]/cipd.json'
           ]),
-      api.post_check(
-          post_process.DoesNotRun,
-          'ensure chromiumos/infra/branch_util/${platform} (1).cipd search'),
+      api.post_check(post_process.DoesNotRun,
+                     'ensure branch_util (1).cipd search'),
       api.post_check(
           post_process.StepCommandContains,
           'run branch_util',

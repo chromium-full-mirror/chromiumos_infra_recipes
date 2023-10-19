@@ -31,26 +31,20 @@ def GenTests(api: recipe_api.RecipeApi):
           bucket='release',
           builder='staging-release-main-orchestrator',
       ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'ensure chromiumos/infra/conductor/${platform}.read infrainfra golang version'
-      ),
-      api.post_check(
-          post_process.StepCommandContains,
-          'ensure chromiumos/infra/conductor/${platform}.ensure_installed',
-          ['chromiumos/infra/conductor/${platform} staging']),
+      api.post_check(post_process.DoesNotRun,
+                     'ensure conductor.read infrainfra golang version'),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure conductor.ensure_installed',
+                     ['chromiumos/infra/conductor/${platform} staging']),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'prod',
-      api.post_check(
-          post_process.DoesNotRun,
-          'ensure chromiumos/infra/conductor/${platform}.read infrainfra golang version'
-      ),
-      api.post_check(
-          post_process.StepCommandContains,
-          'ensure chromiumos/infra/conductor/${platform}.ensure_installed',
-          ['chromiumos/infra/conductor/${platform} prod']),
+      api.post_check(post_process.DoesNotRun,
+                     'ensure conductor.read infrainfra golang version'),
+      api.post_check(post_process.StepCommandContains,
+                     'ensure conductor.ensure_installed',
+                     ['chromiumos/infra/conductor/${platform} prod']),
       api.post_process(post_process.DropExpectation),
   )

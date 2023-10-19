@@ -7898,7 +7898,7 @@ API for interacting with Go binaries built from infra/infra.
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#135)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#136)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
