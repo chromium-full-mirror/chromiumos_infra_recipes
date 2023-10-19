@@ -9,6 +9,7 @@
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 
 DEPS = [
     'recipe_engine/assertions',
@@ -80,5 +81,27 @@ def GenTests(api):
               'builder1.hw.suite', 'builder2.tast_vm.non_crit_suite'
           ], expected_retryable=['builder3.tast_gce.suite'],
           expected_outstanding=['builder2.tast_vm.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'previously-exonerated',
+      api.test_util.test_orchestrator(
+          output_properties={
+              'test_summary':
+                  test_summary,
+              PASSED_TESTS_KEY: [
+                  'builder1.hw.suite', 'builder2.tast_vm.non_crit_suite',
+                  'builder2.tast_vm.suite'
+              ]
+          }).build,
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=[
+              'builder1.hw.suite',
+              'builder2.tast_vm.non_crit_suite',
+              'builder2.tast_vm.suite',
+          ], expected_retryable=['builder3.tast_gce.suite'],
+          expected_outstanding=[]),
       api.post_process(post_process.DropExpectation),
   )

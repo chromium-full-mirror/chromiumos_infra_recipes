@@ -322,6 +322,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
       output_dict = json_format.MessageToDict(cq_run.output.properties)
       test_summary = output_dict.get('test_summary', [])
+      # If a suite is exonerated, it does not always get reflected in the
+      # test_summary, but does get added to passed_tests.
+      # TODO(b/306475860): Reflect exonerations on the test_summary.
+      previously_passed_suites = (
+          cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
 
       successful_test_suite_names = []
       retryable_test_suite_names = []
@@ -338,7 +343,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         # after https://crrev.com/c/4718546 is deployed to prod.
         builder_name = t.get('builder_name', t.get('name', '').split('.')[0])
 
-        if status == 'SUCCESS' or not critical:
+        if (status == 'SUCCESS' or not critical or
+            name in previously_passed_suites):
           successful_test_suite_names.append(name)
         elif builder_name not in active_cq_verifiers:
           retryable_test_suite_names.append(name)
