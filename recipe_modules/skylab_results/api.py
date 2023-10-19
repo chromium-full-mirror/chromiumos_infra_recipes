@@ -3,8 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Util functions for parsing HW test results."""
+
 import base64
-from typing import List
+import dataclasses
+import typing
 import zlib
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -13,6 +16,12 @@ from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 from recipe_engine import recipe_api
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult, SkylabTask, UnitHwTest
+
+
+@dataclasses.dataclass
+class PrejobStats:
+  failed: int = 0
+  succeeded: int = 0
 
 
 class SkylabResultsApi(recipe_api.RecipeApi):
@@ -46,8 +55,8 @@ class SkylabResultsApi(recipe_api.RecipeApi):
     return hw_test.common.display_name
 
   def get_previous_results(
-      self, task_ids: List[str],
-      unit_hw_tests: List[UnitHwTest]) -> List[SkylabResult]:
+      self, task_ids: typing.List[str],
+      unit_hw_tests: typing.List[UnitHwTest]) -> typing.List[SkylabResult]:
     """Get the results from the previous tasks with the specified task_ids.
 
     Args:
@@ -74,7 +83,7 @@ class SkylabResultsApi(recipe_api.RecipeApi):
       return results
 
   def extract_failed_test_case_names(
-      self, hw_test_results: List[ExecuteResponse.TaskResult],
+      self, hw_test_results: typing.List[ExecuteResponse.TaskResult],
       ensure_complete: bool = True):
     """Returns the names of the test cases which failed all attempts.
 
@@ -131,7 +140,8 @@ class SkylabResultsApi(recipe_api.RecipeApi):
       return list(failed_test_names)
 
   def extract_failed_test_shard_names(
-      self, hw_test_results: List[ExecuteResponse.TaskResult]) -> List[str]:
+      self, hw_test_results: typing.List[ExecuteResponse.TaskResult]
+  ) -> typing.List[str]:
     """Returns the names of the tests shards which failed all attempts.
 
     Args:
@@ -161,3 +171,30 @@ class SkylabResultsApi(recipe_api.RecipeApi):
           failed_test_shard_names)
       presentation.logs['tests'] = failed_test_shard_names
       return failed_test_shard_names
+
+  def get_per_board_prejob_stats(
+      self, skylab_results: typing.List[SkylabResult]
+  ) -> typing.Dict[str, PrejobStats]:
+    """Returns PrejobStats for each board tested in skylab_results."""
+    prejob_stats_map = {}
+    # There is one SkylabResult per suite.
+    for skylab_result in skylab_results:
+
+      board = skylab_result.task.test.skylab_board
+      if board not in prejob_stats_map:
+        prejob_stats_map[board] = PrejobStats()
+
+      # There is one TaskResult per test_runner launched for the suite.
+      for result in skylab_result.child_results:
+        # No prejob results could mean various things (e.g. the task was never
+        # ran or the task crashed so the results did not get reported).
+        # TODO(b/299117238): Figure out a way categorize and track task results
+        # with no prejob results.
+        if result.prejob_steps:
+          if all(x.verdict == TaskState.VERDICT_PASSED
+                 for x in result.prejob_steps):
+            prejob_stats_map[board].succeeded += 1
+          else:
+            prejob_stats_map[board].failed += 1
+
+    return prejob_stats_map

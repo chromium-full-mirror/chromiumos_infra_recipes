@@ -108,7 +108,7 @@
   * [service_version](#recipe_modules-service_version)
   * [signing](#recipe_modules-signing) &mdash; Module providing signing functionality.
   * [skylab](#recipe_modules-skylab)
-  * [skylab_results](#recipe_modules-skylab_results)
+  * [skylab_results](#recipe_modules-skylab_results) &mdash; Util functions for parsing HW test results.
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli)
@@ -690,6 +690,7 @@
   * [skylab_results:tests/extract_failed_test_case_names](#recipes-skylab_results_tests_extract_failed_test_case_names)
   * [skylab_results:tests/extract_failed_test_shard_names](#recipes-skylab_results_tests_extract_failed_test_shard_names)
   * [skylab_results:tests/get_tagged_response](#recipes-skylab_results_tests_get_tagged_response)
+  * [skylab_results:tests/per_board_prejob_stats](#recipes-skylab_results_tests_per_board_prejob_stats) &mdash; Tests for the get_per_board_prejob_stats function.
   * [skylab_results:tests/test_test_api](#recipes-skylab_results_tests_test_test_api)
   * [skylab_results:tests/translate_result](#recipes-skylab_results_tests_translate_result)
   * [snapshot_orchestrator](#recipes-snapshot_orchestrator) &mdash; Recipe that schedules snapshot/postsubmit child builders and watches for failures.
@@ -10196,11 +10197,13 @@ Returns:
 [DEPS](/recipe_modules/skylab_results/__init__.py#5): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [SkylabResultsApi](/recipe_modules/skylab_results/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Util functions for parsing HW test results.
+
+#### **class [SkylabResultsApi](/recipe_modules/skylab_results/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for working with Skylab Structs and Hw Test Results.
 
-&mdash; **def [extract\_failed\_test\_case\_names](/recipe_modules/skylab_results/api.py#76)(self, hw_test_results: List[ExecuteResponse.TaskResult], ensure_complete: bool=True):**
+&mdash; **def [extract\_failed\_test\_case\_names](/recipe_modules/skylab_results/api.py#85)(self, hw_test_results: typing.List[ExecuteResponse.TaskResult], ensure_complete: bool=True):**
 
 Returns the names of the test cases which failed all attempts.
 
@@ -10213,7 +10216,7 @@ Args:
 Returns:
   The names of the failed test cases.
 
-&mdash; **def [extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/api.py#133)(self, hw_test_results: List[ExecuteResponse.TaskResult]):**
+&mdash; **def [extract\_failed\_test\_shard\_names](/recipe_modules/skylab_results/api.py#142)(self, hw_test_results: typing.List[ExecuteResponse.TaskResult]):**
 
 Returns the names of the tests shards which failed all attempts.
 
@@ -10223,7 +10226,11 @@ Args:
 Returns:
   The names of the failed hw_test_results.
 
-&mdash; **def [get\_previous\_results](/recipe_modules/skylab_results/api.py#48)(self, task_ids: List[str], unit_hw_tests: List[UnitHwTest]):**
+&mdash; **def [get\_per\_board\_prejob\_stats](/recipe_modules/skylab_results/api.py#175)(self, skylab_results: typing.List[SkylabResult]):**
+
+Returns PrejobStats for each board tested in skylab_results.
+
+&mdash; **def [get\_previous\_results](/recipe_modules/skylab_results/api.py#57)(self, task_ids: typing.List[str], unit_hw_tests: typing.List[UnitHwTest]):**
 
 Get the results from the previous tasks with the specified task_ids.
 
@@ -10235,11 +10242,11 @@ Returns:
   The list of Skylab results for the specified unit_hw_tests that ran in
   the tasks with the specified task_ids.
 
-&mdash; **def [get\_tagged\_execute\_responses\_from\_build](/recipe_modules/skylab_results/api.py#21)(self, build):**
+&mdash; **def [get\_tagged\_execute\_responses\_from\_build](/recipe_modules/skylab_results/api.py#30)(self, build):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [request\_tag](/recipe_modules/skylab_results/api.py#44)(hw_test):**
+&emsp; **@staticmethod**<br>&mdash; **def [request\_tag](/recipe_modules/skylab_results/api.py#53)(hw_test):**
 
-&mdash; **def [translate\_result](/recipe_modules/skylab_results/api.py#30)(self, result, task):**
+&mdash; **def [translate\_result](/recipe_modules/skylab_results/api.py#39)(self, result, task):**
 
 Translates result to a Skylab result.
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
@@ -15358,6 +15365,14 @@ Tests for sign_artifacts.
 
 
 &mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/get_tagged_response.py#25)(api):**
+### *recipes* / [skylab\_results:tests/per\_board\_prejob\_stats](/recipe_modules/skylab_results/tests/per_board_prejob_stats.py)
+
+[DEPS](/recipe_modules/skylab_results/tests/per_board_prejob_stats.py#17): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Tests for the get_per_board_prejob_stats function.
+
+&mdash; **def [RunSteps](/recipe_modules/skylab_results/tests/per_board_prejob_stats.py#25)(api):**
 ### *recipes* / [skylab\_results:tests/test\_test\_api](/recipe_modules/skylab_results/tests/test_test_api.py)
 
 [DEPS](/recipe_modules/skylab_results/tests/test_test_api.py#9): [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
