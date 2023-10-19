@@ -49,8 +49,8 @@ def GenTests(api):
           'critical': True,
           'name': 'builder1.hw.suite'
       },
-      # No builder_name, fallsback to parsing name.
       {
+          'builder_name': 'builder2',
           'status': 'FAILURE',
           'critical': True,
           'name': 'builder2.tast_vm.suite'

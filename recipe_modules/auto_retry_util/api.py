@@ -367,9 +367,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         name = t.get('name')
         status = t.get('status')
         critical = t.get('critical')
-        # TODO(b/291769254): Remove fallback to parsing the name a few days
-        # after https://crrev.com/c/4718546 is deployed to prod.
-        builder_name = t.get('builder_name', t.get('name', '').split('.')[0])
+        builder_name = t.get('builder_name')
 
         if (status == 'SUCCESS' or not critical or
             name in previously_passed_suites):
