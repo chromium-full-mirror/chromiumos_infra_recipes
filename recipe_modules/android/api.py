@@ -70,7 +70,8 @@ class AndroidApi(recipe_api.RecipeApi):
                metadata.android_version, metadata.android_branch)
 
   def uprev(self, chroot: Chroot, sysroot: Sysroot, android_package: str,
-            android_version: str, android_branch: Optional[str]) -> bool:
+            android_version: str, android_branch: Optional[str],
+            ignore_data_collector_artifacts: bool = False) -> bool:
     """Uprev the given Android package to the given version.
 
     Args:
@@ -91,6 +92,7 @@ class AndroidApi(recipe_api.RecipeApi):
           android_version=android_version,
           build_targets=[sysroot.build_target],
           skip_commit=True,
+          ignore_data_collector_artifacts=ignore_data_collector_artifacts,
       )
       response = self.m.cros_build_api.AndroidService.MarkStable(request)
 

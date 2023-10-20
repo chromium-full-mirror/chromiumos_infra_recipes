@@ -811,7 +811,7 @@ Args:
 
 #### **class [AndroidApi](/recipe_modules/android/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#109)(self, android_package: str, android_branch: Optional[str]):**
+&mdash; **def [get\_latest\_build](/recipe_modules/android/api.py#111)(self, android_package: str, android_branch: Optional[str]):**
 
 Retrieves the latest Android version for the given Android package.
 
@@ -822,7 +822,7 @@ Args:
 Returns:
   The latest Android version (build ID).
 
-&mdash; **def [uprev](/recipe_modules/android/api.py#72)(self, chroot: Chroot, sysroot: Sysroot, android_package: str, android_version: str, android_branch: Optional[str]):**
+&mdash; **def [uprev](/recipe_modules/android/api.py#72)(self, chroot: Chroot, sysroot: Sysroot, android_package: str, android_version: str, android_branch: Optional[str], ignore_data_collector_artifacts: bool=False):**
 
 Uprev the given Android package to the given version.
 
@@ -845,7 +845,7 @@ Args:
   sysroot: The Sysroot being used.
   patch_sets: List of patch sets (with FileInfo).
 
-&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#130)(self, android_package: str, android_version: str, android_branch: Optional[str]):**
+&mdash; **def [write\_lkgb](/recipe_modules/android/api.py#132)(self, android_package: str, android_version: str, android_branch: Optional[str]):**
 
 Sets LKGB of given Android package to given version.
 

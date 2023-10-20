@@ -53,7 +53,8 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties,
   revved = api.android.uprev(api.build_menu.chroot, api.build_menu.sysroot,
                              properties.android_package,
                              properties.android_version,
-                             properties.android_branch)
+                             properties.android_branch,
+                             ignore_data_collector_artifacts=True)
   if not revved and not properties.always_build:
     return
 

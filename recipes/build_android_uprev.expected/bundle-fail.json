@@ -4202,7 +4202,8 @@
       "@@@STEP_LOG_LINE@request@      \"name\": \"eve\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"skipCommit\": true@@@",
+      "@@@STEP_LOG_LINE@request@  \"skipCommit\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"ignoreDataCollectorArtifacts\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -4224,7 +4225,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"packageName\": \"android-package\",\n  \"androidBuildBranch\": \"android-branch\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"eve\"\n    }\n  ],\n  \"skipCommit\": true\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"packageName\": \"android-package\",\n  \"androidBuildBranch\": \"android-branch\",\n  \"androidVersion\": \"7123456\",\n  \"buildTargets\": [\n    {\n      \"name\": \"eve\"\n    }\n  ],\n  \"skipCommit\": true,\n  \"ignoreDataCollectorArtifacts\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
