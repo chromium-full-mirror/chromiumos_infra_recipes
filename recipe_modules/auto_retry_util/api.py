@@ -930,6 +930,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       display_name = test_summary_dict['name']
       critical = test_summary_dict['critical']
       builder_name = test_summary_dict['builder_name']
+      board = test_summary_dict['board']
       suite = display_name.split('.')[-1]
       hw_test = HwTestCfg.HwTest(
           common=TestSuiteCommon(display_name=display_name,
@@ -938,6 +939,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           # TODO(b/289095330): Populate model in test_summary and pass
           # it in here when a specific model is requested.
           skylab_model='',
+          skylab_board=board,
       )
       unit = HwTestUnit(
           common=TestUnitCommon(
@@ -972,10 +974,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     exon_configs = self.m.exoneration_util.get_updated_configs(
         failed_test_stats, self.m.exonerate.manual_exoneration_configs)
 
-    exonerate_prejob_failures = self.is_experimental_feature_enabled(
-        EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run)
+    # Filter out suites which were previously exonerated.
+    previously_passed_suites = set(
+        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
 
-    exonerated_suites = set()
+    hw_test_results = []
     # Exonerate HW test results.
     if len(skylab_builder_ids) > 0:
       hw_units = [
@@ -983,12 +986,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       ]
       hw_test_results = self.m.skylab_results.get_previous_results(
           skylab_builder_ids, hw_units)
-      exonerated_suites.update({
-          self.m.naming.get_skylab_result_title(result)
-          for result in hw_test_results
-          if self.m.exonerate.is_hw_result_exonerable(
-              result, exon_configs, exonerate_prejob_failures)
-      })
+
+    exonerated_suites = set()
+    exonerated_prejob_failure_suites = set()
+    for result in hw_test_results:
+      suite = self.m.naming.get_skylab_result_title(result)
+      if suite in previously_passed_suites:
+        continue
+
+      if self.m.exonerate.is_hw_result_exonerable(result, exon_configs):
+        exonerated_suites.add(suite)
+      elif self.m.exonerate.is_hw_result_exonerable(
+          result, exon_configs, exonerate_prejob_failures=True):
+        exonerated_prejob_failure_suites.add(suite)
+
     # Exonerate VM test results.
     if len(tast_vm_tests_builder_ids) > 0:
       vm_builds = self.m.buildbucket.get_multi(
@@ -996,14 +1007,27 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       exonerated_suites.update({
           self.m.naming.get_vm_test_title(result)
           for result in vm_builds
-          if self.m.exonerate.is_vm_test_build_exonerable(result, exon_configs)
+          if self.m.exonerate.is_vm_test_build_exonerable(
+              result, exon_configs) and self.m.naming.get_vm_test_title(result)
+          not in previously_passed_suites
       })
 
-    # Filter out suites which were previously exonerated.
-    previously_passed_suites = set(
-        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
+    # Prejob failures are only retryable if the experimental feature is enabled.
+    if self.is_experimental_feature_enabled(
+        EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run):
+      prejob_stats = self.m.skylab_results.get_per_board_prejob_stats(
+          hw_test_results)
+      for suite in exonerated_prejob_failure_suites:
+        # Prejob failures can only be retried if the failure was a known flake.
+        # This is determined by checking that the board that the suite ran on
+        # passed the prejob steps at least once in the run.
+        board = next((x['board'] for x in test_summary if x['name'] == suite))
+        if board in prejob_stats and prejob_stats[board].succeeded > 0:
+          exonerated_suites.add(suite)
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
 
-    return sorted(exonerated_suites.difference(previously_passed_suites))
+    return sorted(exonerated_suites)
 
   def _create_comment(self, build: build_pb2.Build,
                       retryable_builders: List[str],

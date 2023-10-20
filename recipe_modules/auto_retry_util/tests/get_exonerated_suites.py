@@ -87,11 +87,18 @@ def GenTests(api):
                                   life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
                   task_results=[
                       ExecuteResponse.TaskResult(
-                          name='suite', state=TaskState(
+                          name='suite-shard-0', state=TaskState(
                               verdict=TaskState.VERDICT_FAILED), prejob_steps=[
                                   ExecuteResponse.TaskResult.TestCaseResult(
                                       name='prejob-step',
                                       verdict=TaskState.VERDICT_FAILED)
+                              ]),
+                      ExecuteResponse.TaskResult(
+                          name='suite-shard-1', state=TaskState(
+                              verdict=TaskState.VERDICT_PASSED), prejob_steps=[
+                                  ExecuteResponse.TaskResult.TestCaseResult(
+                                      name='prejob-step',
+                                      verdict=TaskState.VERDICT_PASSED)
                               ]),
                   ]),
       })

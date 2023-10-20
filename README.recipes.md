@@ -945,7 +945,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1045)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1069)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
