@@ -7,7 +7,8 @@
 
 import collections
 import dataclasses
-from typing import Dict, FrozenSet, List, NamedTuple, Set, Tuple
+import functools
+from typing import Dict, FrozenSet, List, NamedTuple, Set, Optional, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
@@ -28,6 +29,7 @@ from PB.testplans.generate_test_plan import TestUnitCommon
 from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
+from RECIPE_MODULES.chromeos.looks_for_green.api import Snapshot
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
@@ -157,6 +159,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     }
     self._chromeos_luci_service_account = (
         props.chromeos_luci_service_account or CHROMEOS_LUCI_SERVICE_ACCOUNT)
+
+    # Cache snapshot greenness based on commit. Note that it is possible the
+    # greenness for a snapshot isn't published when it is first looked up
+    # (buildbucket_stats.get_snapshot_greenness returns None), in that case
+    # later calls to get greenness for that snapshot will also return None.
+    self._snapshot_greenness_cache: Dict[
+        str, Optional[collections.OrderedDict]] = {}
 
     self._filtered_build_stats = {}
     self.per_build_stats: Dict[int, PerBuildStats] = collections.defaultdict(
@@ -394,6 +403,23 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.output.properties['found_force_relevant_targets'])
     return self._cq_orch_default_child_buiders + forced_relevant_builders
 
+  @functools.cached_property
+  def _current_greenness(self) -> Optional[Snapshot]:
+    """Find the current green snapshot, as defined by looks for green.
+
+    Note that this property is cached because we assume an auto-retrier run is
+    relatively short, and thus using the same green snapshot for every retry
+    candidate is ok. In addition, more straightforward for all candidates to get
+    the same green snapshot, instead of later calls potentially returning a
+    different snapshot.
+    """
+    return self.m.looks_for_green.find_green_snapshot(
+        # The staging auto retrier will still look at prod CQ runs, so it must
+        # lookup greenness on the prod snapshot-orchestrator.
+        bucket='postsubmit',
+        builder='snapshot-orchestrator',
+    )
+
   def _get_now_green_builders(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns builders that failed on cq_run's snapshot and are now passing at ToT.
 
@@ -422,18 +448,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.id].wait_for_green_stats.failed_builders_in_snapshot = list(
               failed_on_snapshot_builders)
 
-      current_greenness = self.m.looks_for_green.find_green_snapshot(
-          # The staging auto retrier will still look at prod CQ runs, so it must
-          # lookup greenness on the prod snapshot-orchestrator.
-          bucket='postsubmit',
-          builder='snapshot-orchestrator',
-      )
-
-      if not current_greenness:
+      if not self._current_greenness:
         pres.step_text = 'no green snapshot found'
         return []
 
-      local_greenness = current_greenness.local_greenness
+      local_greenness = self._current_greenness.local_greenness
       for builder in failed_on_snapshot_builders:
         if builder in local_greenness and local_greenness[
             builder].build_score == 100:
@@ -477,16 +496,21 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       The names of the builders that failed on the snapshot.
     """
     with self.m.step.nest('get tot failure builders') as pres:
-      builder_to_greenness = self.m.buildbucket_stats.get_snapshot_greenness(
-          cq_run.output.gitiles_commit.id,
-          pres,
-          # The staging auto retrier will still look at prod CQ runs, so it must
-          # lookup greenness on the prod snapshot-orchestrator.
-          bucket='postsubmit',
-          builder='snapshot-orchestrator',
-          retries=0,
-          use_local_greenness=True,
-      )
+      commit = cq_run.output.gitiles_commit.id
+      if commit not in self._snapshot_greenness_cache:
+        self._snapshot_greenness_cache[
+            commit] = self.m.buildbucket_stats.get_snapshot_greenness(
+                cq_run.output.gitiles_commit.id,
+                pres,
+                # The staging auto retrier will still look at prod CQ runs, so it must
+                # lookup greenness on the prod snapshot-orchestrator.
+                bucket='postsubmit',
+                builder='snapshot-orchestrator',
+                retries=0,
+                use_local_greenness=True,
+            )
+
+      builder_to_greenness = self._snapshot_greenness_cache[commit]
 
       self.per_build_stats[
           cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
