@@ -2435,7 +2435,8 @@
     "cmd": [],
     "name": "validate project-a.ensure test_plan",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {

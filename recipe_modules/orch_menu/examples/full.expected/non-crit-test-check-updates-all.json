@@ -6729,10 +6729,40 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "*\ufffd\u0004\n\ufffd\u0004\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u00120\n\bchromeos\u0012\npostsubmit\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012.\n\bchromeos\u0012\npostsubmit\u001a\u0016arm-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514001\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012(\n\bchromeos\u0012\npostsubmit\u001a\u0010grunt-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nf\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\u007f\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514002\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -6761,7 +6791,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6775,35 +6805,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "*\ufffd\u0004\n\ufffd\u0004\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u00120\n\bchromeos\u0012\npostsubmit\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514000\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012.\n\bchromeos\u0012\npostsubmit\u001a\u0016arm-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514001\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012(\n\bchromeos\u0012\npostsubmit\u001a\u0010grunt-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nf\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\u007f\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\ufffd\u0001@\u0012\u0015 \u001e2\u0011\n\bbot_size\u0012\u0005large*'\u0012%invocations/build:8922054662172514002\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -14074,55 +14075,6 @@
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_END@planner_output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up orchestrator.non-critical test check.generate test plan.ensure test_planner",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd",
-      "-ensure-file",
-      "chromiumos/infra/test_plan_generator/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "clean up orchestrator.non-critical test check.generate test plan.ensure test_planner.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_plan_generator/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

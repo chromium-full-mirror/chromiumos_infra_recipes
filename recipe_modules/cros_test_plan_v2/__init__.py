@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions for end-to-end test planning."""
+
 from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosTestPlanV2Properties
 
 DEPS = [
@@ -18,6 +20,7 @@ DEPS = [
     'cros_test_plan',
     'easy',
     'gerrit',
+    'gobin',
     'src_state',
     'depot_tools/gitiles',
 ]

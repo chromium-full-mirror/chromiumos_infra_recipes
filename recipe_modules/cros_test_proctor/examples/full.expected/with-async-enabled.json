@@ -4126,10 +4126,28 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "*\ufffd\u0002\n\ufffd\u0002\b\ufffd\ufffd\u066e\ufffd|\u0012'\n\u0007project\u0012\u0002ci\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -4146,7 +4164,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4160,23 +4178,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\ufffd\ufffd\u066e\ufffd|\u0012'\n\u0007project\u0012\u0002ci\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

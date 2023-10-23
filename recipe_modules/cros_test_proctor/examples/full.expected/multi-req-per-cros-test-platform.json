@@ -4132,10 +4132,28 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "*\ufffd\u0001\n\ufffd\u0001\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001a\u001a\u0018amd64-generic-postsubmit`\fzd\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0001*\ufffd\u0001\n\ufffd\u0001\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016arm-generic-postsubmit`\u0014z\ufffd\u0001\n&\n$\n\fbuild_target\u0012\u0014*\u0012\n\u0010\n\u0004name\u0012\b\u001a\u0006target\u0012C\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a\nCOMMIT_SHA\"\u000frefs/heads/main\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0002:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -4152,7 +4170,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4166,23 +4184,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "*\ufffd\u0001\n\ufffd\u0001\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001a\u001a\u0018amd64-generic-postsubmit`\fzd\n-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0001*\ufffd\u0001\n\ufffd\u0001\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\u001a\u0016arm-generic-postsubmit`\u0014z\ufffd\u0001\n&\n$\n\fbuild_target\u0012\u0014*\u0012\n\u0010\n\u0004name\u0012\b\u001a\u0006target\u0012C\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a\nCOMMIT_SHA\"\u000frefs/heads/main\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\u0002:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
-    ],
-    "infra_step": true,
-    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

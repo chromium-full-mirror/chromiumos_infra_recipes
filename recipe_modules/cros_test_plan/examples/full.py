@@ -73,9 +73,10 @@ def GenTests(api):
       api.gitiles.get_file(TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.buildbucket.try_build(project='chromeos', bucket='cq',
                                 builder='release-R90-13816.B-cq-orchestrator'),
-      api.post_check(post_process.StepCommandContains,
-                     'generate test plan.ensure test_planner.ensure_installed',
-                     ['chromiumos/infra/test_plan_generator/${platform} prod']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'generate test plan.ensure test_plan_generator.ensure_installed',
+          ['chromiumos/infra/test_plan_generator/${platform} prod']),
   )
 
   yield api.test(
@@ -214,20 +215,6 @@ def GenTests(api):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          'generate test plan.ensure test_planner.ensure_installed',
+          'generate test plan.ensure test_plan_generator.ensure_installed',
           ['chromiumos/infra/test_plan_generator/${platform} staging']),
-  )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              '$chromeos/cros_test_plan': {
-                  'test_plan_generator_cipd_package': 'test_plan_generator_foo',
-                  'test_plan_generator_cipd_ref': 'bar',
-              }
-          }),
-      api.post_check(post_process.StepCommandContains,
-                     'generate test plan.ensure test_planner.ensure_installed',
-                     ['test_plan_generator_foo bar']),
   )

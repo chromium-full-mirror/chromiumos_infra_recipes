@@ -110,12 +110,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     self._properties = properties
 
   def initialize(self):
-    self._cipd_package = (
-        self._properties.test_plan_cipd_package or
-        'chromiumos/infra/test_plan/${platform}')
-
     default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._cipd_ref = (self._properties.test_plan_cipd_ref or default_ref)
 
     docker_image_name = (
         self._properties.platform_test_plan_docker_image or 'testplan')
@@ -232,9 +227,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           directory, not a DIR_METADATA file. Any DIR_METADATA files in a
           subdirectory of directory will also be validated.
     """
-    self._ensure_test_plan()
-    self.m.step('test_plan validate {}'.format(directory),
-                [self._test_plan_path, 'validate', directory])
+    self.m.gobin.call('test_plan', ['validate', directory],
+                      step_name='test_plan validate {}'.format(directory))
 
   # TODO(b/277909893): This is called at least twice in a build, determine a
   # caching strategy.
@@ -250,7 +244,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     """
     with self.m.step.nest('find relevant plans') as pres, \
        self.m.context(infra_steps=True):
-      self._ensure_test_plan()
 
       # Split up the input gerrit_changes by (host, project), and run test_plan
       # separately on them. If test_plan returns no relevant plans for a given
@@ -264,7 +257,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       for (host, project), gcs in host_project_to_gerrit_changes.items():
         with self.m.step.nest(project) as inner_pres:
           cmd = [
-              self._test_plan_path,
               'relevant-plans',
               '-loglevel',
               'debug',
@@ -277,7 +269,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
           cmd += ['-out', output]
 
-          self.m.step('call test_plan', cmd)
+          self.m.gobin.call('test_plan', cmd, step_name='call test_plan')
 
           # Output contains relevant plans in separate textproto files.
           output_files = self.m.file.listdir(
@@ -341,10 +333,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         match the DirBQRow schema.
     """
     with self.m.step.nest('dirmd update'), self.m.context(infra_steps=True):
-      self._ensure_test_plan()
-
-      self.m.step('call test_plan', [
-          self._test_plan_path,
+      self.m.gobin.call('test_plan', [
           'chromeos-dirmd-update',
           '-crossrcroot',
           self.m.src_state.workspace_path,
@@ -352,26 +341,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           table,
           '-loglevel',
           'debug',
-      ])
-
-  def _ensure_test_plan(self):
-    """Ensure the test_plan cli is installed.
-
-    Source code for test_plan is under
-    https://source.corp.google.com/chromium_infra/go/src/infra/cros/cmd/test_plan/.
-    """
-    if self._test_plan_path:
-      return
-
-    with self.m.step.nest('ensure test_plan'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._cipd_package, self._cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._test_plan_path = cipd_dir.join('test_plan')
+      ], step_name='call test_plan')
 
   @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
   def _download_config_pb(

@@ -7,15 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_test_plan;
 
 message CrosTestPlanProperties {
-  reserved 1;
-
-  // Cipd ref to use for test plan generator.
-  // Defaults to "chromiumos/infra/test_plan_generator/{$platform}".
-  string test_plan_generator_cipd_package = 2;
-
-  // Cipd ref to use for test plan generator.
-  // Defaults to "staging" or "prod".
-  string test_plan_generator_cipd_ref = 3;
+  reserved 1 to 3;
 
   // TODO(b:191392307): Consider keeping this unbranched, currently the
   // cros_test_plan will use the same git repo/branch pair to fetch all these

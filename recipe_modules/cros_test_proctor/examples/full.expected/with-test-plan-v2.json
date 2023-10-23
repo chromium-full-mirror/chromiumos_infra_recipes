@@ -53,9 +53,17 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.find relevant plans.ensure test_plan",
+    "name": "run tests.schedule tests.find relevant plans.chromeos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.find relevant plans.chromeos.ensure test_plan",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -84,9 +92,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.find relevant plans.ensure test_plan.ensure_installed",
+    "name": "run tests.schedule tests.find relevant plans.chromeos.ensure test_plan.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -98,13 +106,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tests.schedule tests.find relevant plans.chromeos",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

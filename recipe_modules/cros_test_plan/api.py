@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions for end-to-end test planning."""
+
 import json
 
 from google.protobuf import json_format
@@ -36,16 +38,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._properties = properties
-
-  def initialize(self):
-    self._test_planner_path = None
-    self._test_planner_cipd_package = (
-        self._properties.test_plan_generator_cipd_package or
-        'chromiumos/infra/test_plan_generator/${platform}')
-
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._test_planner_cipd_ref = (
-        self._properties.test_plan_generator_cipd_ref or default_ref)
 
   def get_target_test_requirements(self, builders=None):
     """Fetch target test requirements config.
@@ -155,8 +147,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       GenerateTestPlanResponse of test plan.
     """
     with self.m.step.nest(name or 'generate test plan') as presentation:
-      self._ensure_test_planner()
-
       request_proto = GenerateTestPlanRequest(
           manifest_commit=manifest_commit.id, gitiles_commit=ProtoBytes(
               serialized_proto=GitilesCommit.SerializeToString(
@@ -180,8 +170,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
                             request_proto.SerializeToString(deterministic=True))
 
       cmd = [
-          self._test_planner_path, 'gen-test-plan', '--input_binary_pb',
-          input_bin_file, '--output_binary_pb', output_bin_file
+          'gen-test-plan', '--input_binary_pb', input_bin_file,
+          '--output_binary_pb', output_bin_file
       ]
       # We already have a local copy of the manifest.  Use it, rather than
       # fetching it from the network.
@@ -220,7 +210,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       if self._properties.use_prod_config:
         cmd.append('--use_prod_config')
 
-      self.m.step('call test_planner', cmd, infra_step=True)
+      self.m.gobin.call('test_plan_generator', cmd,
+                        step_name='call test_planner', infra_step=True)
 
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
@@ -230,19 +221,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
 
       presentation.logs['planner_output'] = str(response_proto)
       return response_proto
-
-  def _ensure_test_planner(self):
-    """Ensure the test_planner cli is installed."""
-    with self.m.step.nest('ensure test_planner'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._test_planner_cipd_package,
-                         self._test_planner_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._test_planner_path = cipd_dir.join('test_plan_generator')
 
   def get_test_plan_summary(self, test_plan):
     """Return a mapping of display name to criticality.

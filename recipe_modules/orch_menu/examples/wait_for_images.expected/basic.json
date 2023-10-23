@@ -8355,10 +8355,40 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner",
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514003*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -8387,7 +8417,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate test plan.ensure test_planner.ensure_installed",
+    "name": "run tests.schedule tests.generate test plan.ensure test_plan_generator.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -8401,35 +8431,6 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514003*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
-      "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run tests.schedule tests.generate test plan.write input binaryproto",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -17822,55 +17823,6 @@
       "@@@STEP_LOG_LINE@planner_output@  }@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_END@planner_output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up orchestrator.non-critical test check.generate test plan.ensure test_planner",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd",
-      "-ensure-file",
-      "chromiumos/infra/test_plan_generator/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "clean up orchestrator.non-critical test check.generate test plan.ensure test_planner.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/test_plan_generator/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

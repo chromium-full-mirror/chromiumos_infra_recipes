@@ -38,21 +38,10 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_test_plan_v2': {
-                  'test_plan_cipd_package': 'mytestplan',
-                  'test_plan_cipd_ref': 'myref',
                   'platform_test_plan_docker_image': 'mytestplandocker',
                   'platform_test_plan_docker_tag': 'mydockertag',
               }
           }),
-      api.post_process(post_process.StepCommandContains,
-                       'ensure test_plan.ensure_installed', [
-                           'cipd',
-                           'ensure',
-                           '-root',
-                           '[START_DIR]/cipd',
-                           '-ensure-file',
-                           'mytestplan myref',
-                       ]),
       api.post_process(
           post_process.StepCommandEquals,
           'generate hw test plans.ensure docker image.docker pull mytestplandocker:mydockertag',

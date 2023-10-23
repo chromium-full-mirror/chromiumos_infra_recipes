@@ -46,7 +46,7 @@
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
   * [cros_tags](#recipe_modules-cros_tags) &mdash; API for generating tags.
-  * [cros_test_plan](#recipe_modules-cros_test_plan)
+  * [cros_test_plan](#recipe_modules-cros_test_plan) &mdash; Functions for end-to-end test planning.
   * [cros_test_plan_v2](#recipe_modules-cros_test_plan_v2) &mdash; Functions for end-to-end test planning.
   * [cros_test_platform](#recipe_modules-cros_test_platform)
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
@@ -4997,14 +4997,16 @@ Returns:
   (list[StringPair]) tags.
 ### *recipe_modules* / [cros\_test\_plan](/recipe_modules/cros_test_plan)
 
-[DEPS](/recipe_modules/cros_test_plan/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/cros_test_plan/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [gobin](#recipe_modules-gobin), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Functions for end-to-end test planning.
+
+#### **class [CrosTestPlanApi](/recipe_modules/cros_test_plan/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#144)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#136)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -5018,7 +5020,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#85)(self, builders=None, paygen=False):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#77)(self, builders=None, paygen=False):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config. Assumes config-internal is
@@ -5035,7 +5037,7 @@ Args:
 Returns:
   JSON structure of target test requirements or None.
 
-&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#50)(self, builders=None):**
+&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#42)(self, builders=None):**
 
 Fetch target test requirements config.
 
@@ -5047,7 +5049,7 @@ Args:
 Returns:
   JSON structure of target test requirements.
 
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#247)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#225)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -5057,11 +5059,9 @@ Args:
 Returns:
   test_to_crit_map (dict{string: bool}): Map of test display name to
     criticality.
-
-&mdash; **def [initialize](/recipe_modules/cros_test_plan/api.py#40)(self):**
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#7): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gobin](#recipe_modules-gobin), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Functions for end-to-end test planning.
@@ -5070,7 +5070,7 @@ Functions for end-to-end test planning.
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#334)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#326)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5080,16 +5080,16 @@ Args:
     doesn't already exist, and the schema will be updated if it doesn't
     match the DirBQRow schema.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#142)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#137)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#127)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#122)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#524)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#494)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
 
@@ -5106,7 +5106,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#656)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#626)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the testplan Docker image to get a list of testable builders.
 
@@ -5123,7 +5123,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#112)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#241)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#235)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -5134,7 +5134,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#225)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#220)(self, directory: str):**
 
 Call test_plan validate on directory.
 
@@ -7878,29 +7878,29 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#50)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#207)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#209)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#160)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#162)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#127)(self, current_pin: str):**
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#129)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#81)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)

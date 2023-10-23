@@ -7,14 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.cros_test_plan_v2;
 
 message CrosTestPlanV2Properties {
-  // Cipd package to use for test plan.
-  // Defaults to "chromiumos/infra/test_plan/{$platform}".
-  string test_plan_cipd_package = 1;
-
-  // Cipd ref to use for test plan.
-  // Defaults to "staging" or "prod", based on the
-  // cros_infra_config.is_staging property.
-  string test_plan_cipd_ref = 2;
+  reserved 1 to 2;
 
   // Name of the Docker image to use for the platform-owned half of test plan.
   // The image name should be an image under gcr.io/chromeos-bot. Defaults to

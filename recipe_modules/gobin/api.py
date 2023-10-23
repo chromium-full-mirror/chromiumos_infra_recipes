@@ -23,6 +23,8 @@ SUPPORTED_PACKAGES = [
     'conductor',
     'manifest_doctor',
     'pointless_build_checker',
+    'test_plan',
+    'test_plan_generator',
     'upload_debug_symbols',
     # For testing only.
     'my_gobin',
