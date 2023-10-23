@@ -2176,7 +2176,9 @@
     "cmd": [],
     "name": "run bazel tests",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"bazelOutputUserRoot\": \"[CACHE]/bazel\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -2190,7 +2192,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{}",
+      "{\n  \"bazelOutputUserRoot\": \"[CACHE]/bazel\"\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

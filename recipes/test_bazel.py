@@ -14,6 +14,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
+    'recipe_engine/path',
     'cros_build_api',
     'test_util',
 ]
@@ -23,8 +24,10 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), api.build_menu.setup_workspace():
-    api.cros_build_api.TestService.BazelTest(BazelTestRequest(),
-                                             name='run bazel tests')
+    api.cros_build_api.TestService.BazelTest(
+        BazelTestRequest(
+            bazel_output_user_root=str(api.path['cache'].join('bazel'))),
+        name='run bazel tests')
 
 
 def GenTests(api: RecipeTestApi):

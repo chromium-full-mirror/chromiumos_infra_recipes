@@ -15572,14 +15572,14 @@ use tast executable from build_artifacts.
 &mdash; **def [RunSteps](/recipes/tast_vm.py#30)(api: RecipeApi, properties: TastVmProperties):**
 ### *recipes* / [test\_bazel](/recipes/test_bazel.py)
 
-[DEPS](/recipes/test_bazel.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [test\_util](#recipe_modules-test_util)
+[DEPS](/recipes/test_bazel.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [test\_util](#recipe_modules-test_util), [recipe\_engine/path][recipe_engine/recipe_modules/path]
 
 
 Recipe that runs Bazel tests.
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
-&mdash; **def [RunSteps](/recipes/test_bazel.py#24)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/test_bazel.py#25)(api: RecipeApi):**
 ### *recipes* / [test\_chromite](/recipes/test_chromite.py)
 
 [DEPS](/recipes/test_chromite.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [test\_util](#recipe_modules-test_util)
