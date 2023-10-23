@@ -18,7 +18,7 @@ from PB.recipe_modules.chromeos.gcloud.gcloud import (SourceCacheAction)
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 GCE_CACHE_BUCKET = 'chromeos-bot-cache'
-GCE_BUILD_PROJECT = 'chromeos-bot'
+DEFAULT_GCE_PROJECT = 'chromeos-bot'
 
 _SWARMING_HOST_REGEXP = (r'^(chromeos|chromiumos)-'
                          r'\w*-'
@@ -55,6 +55,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self._cleanup_mounted_stack = [[]]
     self._dev_ref = 'a'
     self._disk = None
+    self._gce_project = (properties.gce_project or DEFAULT_GCE_PROJECT)
     self._infra_host = None
     self._overlay_branch_file = 'overlay_branch.txt'
     self._snapshot_suffix = None
@@ -445,7 +446,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image-project={}'.format(GCE_BUILD_PROJECT), '--quiet'
+        '--image-project={}'.format(self._gce_project), '--quiet'
     ]
 
     step_name = 'create empty disk'
@@ -1102,7 +1103,7 @@ class GcloudApi(recipe_api.RecipeApi):
     # Set properties we need for cache disk setup.
     if not self._zone or not self.infra_host:
       self._swarming_information()
-    self.set_gce_project(GCE_BUILD_PROJECT)
+    self.set_gce_project(self._gce_project)
     self._branch = branch
     is_staging = self.m.cros_infra_config.is_staging
     if not self._is_rfc1035_compliant(branch):

@@ -26,4 +26,7 @@ message GcloudProperties {
   // If provided, this will replace the default recovery image. Must be used
   // in conjunction with MOUNT_SPECIFIC_IMAGE or it will throw an error.
   string specific_image_to_mount = 2;
+
+  // If provided, this overrides the GCE project used by the gcloud module.
+  string gce_project = 3;
 }
