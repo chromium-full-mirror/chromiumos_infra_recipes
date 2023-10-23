@@ -68,14 +68,8 @@ message OrchMenuProperties {
   // Whether to schedule a public build. Only used for release builders.
   bool schedule_public_build = 12;
 
-  // Cipd package to use for build_poller.
-  // Defaults to "chromiumos/infra/build_poller/${platform}".
-  string build_poller_cipd_package = 13;
-
-  // Cipd ref to use for build_poller.
-  // Defaults to "staging" or "prod", based on the
-  // cros_infra_config.is_staging property.
-  string build_poller_cipd_ref = 14;
+  reserved 13;
+  reserved 14;
 
   // List of QS accounts for which retries can be enabled.
   // See b/293879623 for context.

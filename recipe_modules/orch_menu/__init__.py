@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API providing a menu for orchestrator steps"""
+
 from PB.recipe_modules.chromeos.orch_menu.orch_menu import OrchMenuProperties
 
 DEPS = [
@@ -41,6 +43,7 @@ DEPS = [
     'git',
     'git_footers',
     'gitiles',
+    'gobin',
     'greenness',
     'looks_for_green',
     'metadata',

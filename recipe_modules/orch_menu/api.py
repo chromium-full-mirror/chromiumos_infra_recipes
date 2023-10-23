@@ -152,16 +152,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # Set the default buildbucket host for buildbucket calls.
     self.m.buildbucket.host = self.m.buildbucket.HOST_PROD
 
-    self._build_poller_cipd_package = (
-        self._properties.build_poller_cipd_package.encode('utf-8') or
-        'chromiumos/infra/build_poller/${platform}')
-    default_build_poller_cipd_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._build_poller_cipd_ref = (
-        self._properties.build_poller_cipd_ref.encode('utf-8') or
-        default_build_poller_cipd_ref)
-
-    self._build_poller_path = None
-
   @property
   def config(self):
     return self.m.cros_infra_config.config
@@ -623,21 +613,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           timeout=60 * 60 * 23,
       )
 
-  def _ensure_build_poller(self):
-    if not self._build_poller_path:
-      with self.m.step.nest('ensure build poller'), self.m.context(
-          infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd_build_poller')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._build_poller_cipd_package,
-                         self._build_poller_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._build_poller_path = cipd_dir.join('build_poller')
-
-    return self._build_poller_path
-
   def _poll_for_output_prop(
       self,
       build_ids: List[int],
@@ -663,17 +638,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if not build_ids:
       return {}
 
-    build_poller_path = self._ensure_build_poller()
-
     # Call build_poller with '-json -' to print build protos to stdout. Build
     # protos will be printed as jsonproto, one per-line.
     try:
-      poll_result = self.m.step(
-          'collect',
+      poll_result = self.m.gobin.call(
+          'build_poller',
           [
-              build_poller_path, 'collect', '-loglevel', 'debug', '-outputprop',
-              output_property, '-interval', f'{interval}s', '-json', '-'
+              'collect', '-loglevel', 'debug', '-outputprop', output_property,
+              '-interval', f'{interval}s', '-json', '-'
           ] + build_ids,
+          step_name='collect',
           timeout=timeout,
           stdout=self.m.raw_io.output_text(add_output_log=True),
           infra_step=True,

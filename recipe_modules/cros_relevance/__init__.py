@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for determining if a build is unnecessary."""
+
 from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 
 DEPS = [
@@ -19,6 +21,7 @@ DEPS = [
     'cros_source',
     'easy',
     'git_footers',
+    'gobin',
     'repo',
     'src_state',
 ]

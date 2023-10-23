@@ -59,10 +59,8 @@ def GenTests(api):
       'basic',
       api.post_check(
           post_process.StepCommandContains,
-          'plan builds.ensure binaries.ensure_installed', [
-              'chromiumos/infra/build_plan_generator/${platform} prod\n' +
-              'chromiumos/infra/pointless_build_checker/${platform} prod'
-          ]),
+          'plan builds.ensure build_plan_generator.ensure_installed',
+          ['chromiumos/infra/build_plan_generator/${platform} prod']),
   )
 
   yield api.test(
@@ -74,32 +72,8 @@ def GenTests(api):
       ),
       api.post_check(
           post_process.StepCommandContains,
-          'plan builds.ensure binaries.ensure_installed', [
-              'chromiumos/infra/build_plan_generator/${platform} staging\n' +
-              'chromiumos/infra/pointless_build_checker/${platform} staging'
-          ]),
-  )
-
-  yield api.test(
-      'with-ref',
-      api.properties(
-          **{
-              '$chromeos/cros_relevance': {
-                  'build_plan_generator_cipd_package':
-                      'build_plan_generator_foo',
-                  'build_plan_generator_cipd_ref':
-                      'bar',
-                  'pointless_build_checker_cipd_package':
-                      'pointless_build_checker_foo',
-                  'pointless_build_checker_cipd_ref':
-                      'bar',
-              }
-          }),
-      api.post_check(post_process.StepCommandContains,
-                     'plan builds.ensure binaries.ensure_installed', [
-                         'build_plan_generator_foo bar\n' +
-                         'pointless_build_checker_foo bar'
-                     ]),
+          'plan builds.ensure build_plan_generator.ensure_installed',
+          ['chromiumos/infra/build_plan_generator/${platform} staging']),
   )
 
   yield api.test(

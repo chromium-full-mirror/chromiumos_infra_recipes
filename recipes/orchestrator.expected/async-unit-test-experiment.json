@@ -2816,9 +2816,10 @@
   },
   {
     "cmd": [],
-    "name": "run builds.ensure build poller",
+    "name": "run builds.ensure build_poller",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -2826,7 +2827,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd_build_poller",
+      "[START_DIR]/cipd",
       "-ensure-file",
       "chromiumos/infra/build_poller/${platform} prod",
       "-max-threads",
@@ -2847,7 +2848,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.ensure build poller.ensure_installed",
+    "name": "run builds.ensure build_poller.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2865,7 +2866,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd_build_poller/build_poller",
+      "[START_DIR]/cipd/build_poller",
       "collect",
       "-loglevel",
       "debug",

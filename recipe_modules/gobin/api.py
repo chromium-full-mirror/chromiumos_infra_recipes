@@ -18,8 +18,11 @@ from recipe_engine.recipe_api import StepFailure
 # https://chrome-infra-packages.appspot.com/p/chromiumos/infra.
 SUPPORTED_PACKAGES = [
     'branch_util',
+    'build_plan_generator',
+    'build_poller',
     'conductor',
     'manifest_doctor',
+    'pointless_build_checker',
     'upload_debug_symbols',
     # For testing only.
     'my_gobin',

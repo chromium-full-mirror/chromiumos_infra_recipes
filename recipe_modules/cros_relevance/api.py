@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for determining if a build is unnecessary."""
+
 from collections import namedtuple
 from typing import List
 
@@ -43,26 +45,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._properties = properties
-
-  def initialize(self):
-    """Initializes the module."""
-    self._pointless_build_checker_path = None
-    self._build_planner_path = None
     # Toolchain changes have been detected, None if not checked.
     self._toolchain_cls_applied = None
-
-    self._build_planner_cipd_package = (
-        self._properties.build_plan_generator_cipd_package or
-        'chromiumos/infra/build_plan_generator/${platform}')
-    self._pointless_build_checker_cipd_package = (
-        self._properties.pointless_build_checker_cipd_package or
-        'chromiumos/infra/pointless_build_checker/${platform}')
-
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._build_planner_cipd_ref = (
-        self._properties.build_plan_generator_cipd_ref or default_ref)
-    self._pointless_build_checker_cipd_ref = (
-        self._properties.pointless_build_checker_cipd_ref or default_ref)
 
   @property
   def toolchain_cls_applied(self):
@@ -98,7 +82,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       PlannedBuilders: Necessary and skipped builders as a tuple.
     """
     with self.m.step.nest(name or 'plan builds') as presentation:
-      self._ensure_binaries()
       request = GenerateBuildPlanRequest(
           gitiles_commit=common_proto_bytes(
               serialized_proto=bbcommon_pb2.GitilesCommit.SerializeToString(
@@ -117,7 +100,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                             request.SerializeToString())
 
       cmd = [
-          self._build_planner_path,
           'generate-plan',
           '--input_binary_pb',
           input_bin_file,
@@ -134,7 +116,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
             self.m.src_state.build_manifest.path.join('default.xml')
         ])
 
-      self.m.step('run planner', cmd, infra_step=True)
+      self.m.gobin.call('build_plan_generator', cmd, step_name='run planner',
+                        infra_step=True)
 
       test_resp = GenerateBuildPlanResponse(
           builds_to_run=test_builder_ids or [])
@@ -363,7 +346,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       check_result (PointlessBuildCheckResponse): The response from calling the
           Pointless Build Checker
     """
-    self._ensure_binaries()
     messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
     input_bin_file = messages_path.join('input.binaryproto')
     output_bin_file = messages_path.join('output.binaryproto')
@@ -372,7 +354,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                           check_request.SerializeToString())
 
     cmd = [
-        self._pointless_build_checker_path,
         'check-build',
         '--input_binary_pb',
         input_bin_file,
@@ -386,7 +367,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                             self.m.cros_source.pinned_manifest)
       cmd.extend(['--manifest_file', pinned_manifest])
 
-    self.m.step('run check', cmd, infra_step=True)
+    self.m.gobin.call('pointless_build_checker', cmd, step_name='run check',
+                      infra_step=True)
 
     test_resp = PointlessBuildCheckResponse()
     test_resp.build_is_pointless.value = is_pointless_test_value
@@ -565,24 +547,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         src_path.path = path
       resp = self.m.cros_build_api.DependencyService.List(req)
       return resp.package_deps
-
-  def _ensure_binaries(self):
-    """Ensure this module's binaries are installed."""
-    if not self._pointless_build_checker_path:
-      with self.m.step.nest('ensure binaries'):
-        with self.m.context(infra_steps=True):
-          cipd_dir = self.m.path['start_dir'].join('cipd')
-
-          pkgs = self.m.cipd.EnsureFile()
-          pkgs.add_package(self._build_planner_cipd_package,
-                           self._build_planner_cipd_ref)
-          pkgs.add_package(self._pointless_build_checker_cipd_package,
-                           self._pointless_build_checker_cipd_ref)
-          self.m.cipd.ensure(cipd_dir, pkgs)
-
-          self._pointless_build_checker_path = (
-              cipd_dir.join('pointless_build_checker'))
-          self._build_planner_path = cipd_dir.join('build_plan_generator')
 
 
 def _flatten_depgraph_paths(depgraph):
