@@ -163,8 +163,8 @@ def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
 
 def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   checkout_path = api.cros_source.workspace_path
-  chroot_path = api.cros_sdk.chroot_path
-  out_dir = api.cros_sdk.out_path
+  chroot_path = api.build_menu.chroot.path
+  out_dir = api.build_menu.chroot.out_path
   borealis_path = checkout_path.join(_BOREALIS_REPO_PATH)
   with api.depot_tools.on_path(), api.context(cwd=borealis_path):
     # This recipe should only run on bots with docker pre-installed.  Abort
