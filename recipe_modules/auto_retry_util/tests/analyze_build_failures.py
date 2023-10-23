@@ -111,7 +111,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'infra-failure-experiment-feature',
+      'infra-failure-experiment-feature-retryable-flake',
       api.test_util.test_orchestrator(output_properties={
           'child_build_info': child_build_info
       }).build,
@@ -127,6 +127,32 @@ def GenTests(api):
       api.properties(expected_success=['builder1-cq'],
                      expected_retryable=['builder3', 'builder5-cq'],
                      expected_outstanding=['builder2-cq', 'builder6-slim-cq']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'infra-failure-experiment-feature-not-retryable',
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': [{
+                  'builder': {
+                      'builder': 'builder1-cq'
+                  },
+                  'status': 'INFRA_FAILURE',
+                  'relevant': True
+              },],
+          }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
+                  ])
+          }),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(expected_success=[], expected_retryable=[],
+                     expected_outstanding=['builder1-cq']),
       api.post_process(post_process.DropExpectation),
   )
 

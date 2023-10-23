@@ -244,6 +244,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     """
     successful_builders = []
     unsuccessful_builders = []
+    infra_failure_builders = []
     retryable_builders = []
     output_dict = json_format.MessageToDict(cq_run.output.properties)
     child_build_info = output_dict.get('child_build_info', [])
@@ -262,11 +263,19 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES,
           cq_run) and status == bb_common_pb2.Status.Name(
               bb_common_pb2.INFRA_FAILURE):
-        self._experimental_retries[cq_run.id].add(
-            EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
-        retryable_builders.append(builder_name)
+        infra_failure_builders.append(builder_name)
       else:
         unsuccessful_builders.append(builder_name)
+
+    # Child build infra failures are only retryable if other child builds did
+    # not infra failure as it gives indication of a possible flake.
+    if infra_failure_builders and (successful_builders or
+                                   unsuccessful_builders):
+      retryable_builders.extend(infra_failure_builders)
+      self._experimental_retries[cq_run.id].add(
+          EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES)
+    else:
+      unsuccessful_builders.extend(infra_failure_builders)
 
     return successful_builders, unsuccessful_builders, retryable_builders
 
