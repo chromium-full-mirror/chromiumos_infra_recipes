@@ -142,7 +142,6 @@ def RunSteps(api, properties):
         api.step('run package_index_cros', [
             'python3',
             package_index_cros_dir.join('main.py'),
-            '--with-build',
             '--with-tests',
             '--keep-going',
             '--board',
