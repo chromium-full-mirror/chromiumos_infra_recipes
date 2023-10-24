@@ -267,7 +267,7 @@
     "cmd": [],
     "name": "filter candidates",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"already_retried\": 0, \"failed_gerrit_fetch\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
+      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"already_retried\": 0, \"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
     ]
   },
   {
@@ -450,7 +450,7 @@
     ],
     "infra_step": true,
     "name": "filter candidates.filter out unmet CL requirements.fetch changes for 1111",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": true, \"include_submittable\": true}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": true, \"include_submittable\": true}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -467,7 +467,28 @@
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"Code-Review\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"all\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@              {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"_account_id\": 1234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"value\": 0@@@",
+      "@@@STEP_LOG_LINE@json.output@              },@@@",
+      "@@@STEP_LOG_LINE@json.output@              {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"_account_id\": 2345678,@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"value\": 2@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            ],@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"optional\": true,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"values\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \" 0\": \"No score\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"+1\": \"Looks good to me, but someone else must approve\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"+2\": \"Looks good to me, approved\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"-1\": \"I would prefer that you did not submit this\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"-2\": \"Do not submit\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"author\": {@@@",
@@ -499,7 +520,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": true, \"include_submittable\": true, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": true, \"include_submittable\": true, \"include_detailed_labels\": true}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },

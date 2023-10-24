@@ -176,7 +176,7 @@ class PatchSet:
     return self._change_info['hashtags']
 
   @property
-  def labels(self) -> Optional[List[JSONObject]]:
+  def labels(self) -> Optional[JSONObject]:
     """Return the labels applied to this PatchSet.
 
     Will return None if detailed labels weren't requested. See
@@ -262,6 +262,25 @@ class PatchSet:
     See: https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#change-info
     """
     return self._change_info.get('unresolved_comment_count', 0)
+
+  def has_label_vote(self, label_name: str, value: int) -> bool:
+    """Return whether the PatchSet includes given value for the given label.
+
+    Args:
+      label_name: The label name for which function checks if it has given value.
+      value: The given vote that we looking for.
+    Raises:
+      InfraFailure: If detailed labels wasn't requested when the patch set was
+      fetched. See `include_detailed_labels` on `gerrit.fetch_patch_sets`.
+    """
+    if self.labels is None:
+      raise InfraFailure(
+          f'No detailed labels for PatchSet {self.display_id}. '
+          'Try adding include_detailed_labels=True into gerrit.fetch_patch_sets().'
+      )
+    return any(
+        x.get('value') == value
+        for x in self.labels.get(label_name, {}).get('all', []))
 
   def to_gerrit_change_proto(self) -> GerritChange:
     """Return a GerritChange proto constructed from this patchset."""

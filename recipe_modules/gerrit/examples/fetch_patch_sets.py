@@ -68,6 +68,8 @@ def _get_values_dict(api):
               'Change topic',
           'message':
               '\n'.join(['a quick description', '', 'Change-Id: deadbeef', '']),
+          'labels':
+              None,
           'url':
               'https://chromium.googlesource.com/chromium/src',
           'ref':
@@ -205,8 +207,7 @@ def _get_values_dict(api):
           'hashtags': ['foo', 'bar'],
           'labels': {
               'Code-Review': {
-                  'optional':
-                      True,
+                  'optional': True,
                   'all': [
                       {
                           '_account_id': 1234567,
@@ -217,14 +218,14 @@ def _get_values_dict(api):
                           'value': 2
                       },
                   ],
+                  'values': {
+                      ' 0': 'No score',
+                      '+1': 'Looks good to me, but someone else must approve',
+                      '+2': 'Looks good to me, approved',
+                      '-1': 'I would prefer that you did not submit this',
+                      '-2': 'Do not submit'
+                  }
               },
-              'values': {
-                  ' 0': 'No score',
-                  '+1': 'Looks good to me, but someone else must approve',
-                  '+2': 'Looks good to me, approved',
-                  '-1': 'I would prefer that you did not submit this',
-                  '-2': 'Do not submit'
-              }
           },
           'messages': [{
               'id': '1',
@@ -241,7 +242,107 @@ def _get_values_dict(api):
               'example.com',
           '_host':
               'example.com',
-      }
+      },
+      4: {
+          'status':
+              'NEW',
+          'created':
+              '2020-08-01 11:11:11.000000000',
+          'updated':
+              '2020-08-02 12:12:22.000000000',
+          'submitted':
+              '',
+          'submittable':
+              False,
+          'unresolved_comment_count':
+              2,
+          'change_id':
+              'Ib767aac2',
+          'current_revision':
+              'b000' * 10,
+          'patch_set':
+              3,
+          'project':
+              'new-project',
+          'has_review_started':
+              True,
+          'work_in_progress':
+              False,
+          'patch_set_revision':
+              'b000' * 10,
+          'branch':
+              'release',
+          'subject':
+              'Different title',
+          'topic':
+              'topic2',
+          'message':
+              '\n'.join(['Different title', '', 'Change-Id: Ib767aac2', '']),
+          'url':
+              'https://example.com/project-path',
+          'ref':
+              'refs/something/02/2/3',
+          'files': {
+              'their/fake/file': {
+                  'status': 'A',
+                  'size_delta': 0,
+                  'size': 0
+              },
+          },
+          'hashtags': ['foo', 'bar'],
+          'labels': {
+              'Code-Review': {
+                  'optional': True,
+                  'all': [
+                      {
+                          '_account_id': 1234567,
+                          'value': 0
+                      },
+                      {
+                          '_account_id': 2345678,
+                          'value': -2
+                      },
+                  ],
+                  'values': {
+                      ' 0': 'No score',
+                      '+1': 'Looks good to me, but someone else must approve',
+                      '+2': 'Looks good to me, approved',
+                      '-1': 'I would prefer that you did not submit this',
+                      '-2': 'Do not submit'
+                  }
+              },
+              'Verified': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1541512,
+                      'value': -1
+                  }, {
+                      '_account_id': 1345347,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'No score',
+                      '+1': 'Verified',
+                      '-1': 'Fails'
+                  }
+              }
+          },
+          'messages': [{
+              'id': '1',
+              'message': 'hello!'
+          }, {
+              'id': '2',
+              'message': 'goodbye.'
+          }],
+          '_display_id':
+              'example.com:2',
+          '_display_url':
+              'https://example.com/c/2',
+          '_short_host':
+              'example.com',
+          '_host':
+              'example.com',
+      },
   }
 
 
@@ -274,7 +375,7 @@ def RunSteps(api):
                                values['work_in_progress'])
     api.assertions.assertEqual(patch.hashtags, values['hashtags'])
     api.assertions.assertEqual(patch.messages, values['messages'])
-    api.assertions.assertEqual(patch.labels, values.get('labels'))
+    api.assertions.assertEqual(patch.labels, values['labels'])
     api.assertions.assertEqual(patch.current_revision,
                                values['current_revision'])
     for fname in values['files']:
@@ -288,6 +389,11 @@ def RunSteps(api):
     api.assertions.assertEqual(
         patch.is_latest_patch_set(),
         values['current_revision'] == values['patch_set_revision'])
+    if patch.labels is not None:
+      api.assertions.assertEqual(
+          patch.has_label_vote('Code-Review', -2),
+          any(x['value'] == -2
+              for x in values['labels'].get('Code-Review', {}).get('all', [])))
 
   with api.step.nest('test fetch_patch_sets_from_change'):
     for change, patch in zip(CHANGES, patches):
@@ -336,27 +442,33 @@ def RunSteps(api):
     with api.assertions.assertRaises(api.step.StepFailure):
       api.gerrit.fetch_patch_set_from_change(change)
 
+  test_response = {
+      'changes': [{
+          'host': 'https://chromium-review.googlesource.com',
+          'change_number': 12345,
+          'patch_set': 1,
+          'info': {
+              '_number': 12345,
+          },
+          'patch_set_revision': 'f000' * 10,
+          'revision_info': {
+              '_number': 1,
+          },
+      }]
+  }
+  patch_sets = api.gerrit.fetch_patch_sets(CHANGES,
+                                           test_output_data=test_response)
+  patch_set = patch_sets[0]
   # Missing commit info
   with api.step.nest('test fetch_patch_sets without commit_info'):
-    test_response = {
-        'changes': [{
-            'host': 'https://chromium-review.googlesource.com',
-            'change_number': 12345,
-            'patch_set': 1,
-            'info': {
-                '_number': 12345,
-            },
-            'patch_set_revision': 'f000' * 10,
-            'revision_info': {
-                '_number': 1,
-            },
-        }]
-    }
-    patch_sets = api.gerrit.fetch_patch_sets(CHANGES,
-                                             test_output_data=test_response)
-    patch_set = patch_sets[0]
     with api.assertions.assertRaises(InfraFailure):
       _ = patch_set.commit_info
+
+
+# Missing detailed labels
+  with api.step.nest('test fetch_patch_sets without detailed labels'):
+    with api.assertions.assertRaises(InfraFailure):
+      _ = patch_set.has_label_vote('Code-Review', -1)
 
   api.gerrit.test_api.test_patch_set()
 

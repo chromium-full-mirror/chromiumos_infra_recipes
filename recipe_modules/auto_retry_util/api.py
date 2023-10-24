@@ -752,13 +752,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         self._filtered_build_stats['opt_out'] = len(opt_out_ids)
 
       with self.m.step.nest('filter out unmet CL requirements') as pres:
-        non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids = set(
-        ), set(), set(), set(), set()
+        non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids, negative_labels_ids = set(
+        ), set(), set(), set(), set(), set()
 
         for c in cq_orchs:
           patch_sets = self.m.gerrit.fetch_patch_sets(
               c.input.gerrit_changes, include_submittable=True,
-              include_messages=True, step_name=f'fetch changes for {c.id}')
+              include_messages=True, include_detailed_labels=True,
+              step_name=f'fetch changes for {c.id}')
 
           non_submittable_ids.update(
               {c.id for p in patch_sets if not p.submittable})
@@ -769,11 +770,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               {c.id for p in patch_sets if p.unresolved_comment_count})
           if not self._was_cv_active(c.id, patch_sets):
             removed_label_ids.add(c.id)
+          negative_labels_ids = {
+              c.id
+              for p in patch_sets
+              if p.has_label_vote('Code-Review', -1) or p.has_label_vote(
+                  'Code-Review', -2) or p.has_label_vote('Verified', -1)
+          }
 
         ineligible_ids = (
             non_submittable_ids | wip_ids
             | non_latest_patch_set_ids
-            | unresolved_comment_ids | removed_label_ids)
+            | unresolved_comment_ids | removed_label_ids | negative_labels_ids)
         cq_orchs = [c for c in cq_orchs if c.id not in ineligible_ids]
         pres.step_text = f'filtered out {len(ineligible_ids)} run(s)'
         if non_submittable_ids:
@@ -800,6 +807,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(removed_label_ids)
           ]
+        if negative_labels_ids:
+          pres.logs['negative_labels'] = [
+              self.m.buildbucket.build_url(build_id=x)
+              for x in sorted(negative_labels_ids)
+          ]
 
         self._filtered_build_stats.update({
             'non_submittable': len(non_submittable_ids),
@@ -807,6 +819,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             'non_latest_patch_set': len(non_latest_patch_set_ids),
             'unresolved_comments': len(unresolved_comment_ids),
             'removed_label': len(removed_label_ids),
+            'negative_labels': len(negative_labels_ids),
         })
 
       presentation.properties[
