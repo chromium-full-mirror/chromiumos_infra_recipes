@@ -24,6 +24,7 @@ SUPPORTED_PACKAGES = [
     'build_plan_generator',
     'build_poller',
     'conductor',
+    'gerrit_related_changes',
     'manifest_doctor',
     'pointless_build_checker',
     'test_plan',

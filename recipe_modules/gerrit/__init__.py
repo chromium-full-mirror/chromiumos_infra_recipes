@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.gerrit.gerrit import GerritProperties
+"""APIs for managing Gerrit changes."""
 
 DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
@@ -21,11 +21,10 @@ DEPS = {
     'git': 'git',
     'gitiles': 'gitiles',
     'git_cl': 'git_cl',
+    'gobin': 'gobin',
     'repo': 'repo',
     'src_state': 'src_state',
     'support': 'support',
 }
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = GerritProperties

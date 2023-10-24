@@ -14,7 +14,6 @@ import typing
 from typing import Any, Callable, Dict, List, NamedTuple, Optional, Tuple, Union
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipe_modules.chromeos.gerrit.gerrit import GerritProperties
 
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
@@ -387,14 +386,11 @@ def _do_change_labels_satisfy_constraints(
 class GerritApi(RecipeApi):
   """A module for Gerrit helpers."""
 
-  def __init__(self, properties: GerritProperties, *args, **kwargs):
+  def __init__(self, *args, **kwargs):
     """Initialize GerritApi."""
     super().__init__(*args, **kwargs)
     self._buildbucket_patch_sets = None
     self._GET_CHANGE_DESCRIPTION_CACHE = {}
-    self._properties = properties
-    # Support for gerrit_related_changes gobin.
-    self._related_changes_path = None
 
   def _gerrit_fetch_changes(
       self, request: JSONObject, test_gerrit_changes: List[GerritChange],
@@ -1048,27 +1044,6 @@ class GerritApi(RecipeApi):
 
     return result
 
-  def _ensure_gerrit_related_changes(self):
-    """Ensure the gerrit_related_changes cli is installed."""
-    with self.m.step.nest('ensure gerrit_related_changes'):
-      with self.m.context(infra_steps=True):
-        self._related_changes_cipd_package = (
-            self._properties.related_changes.related_changes_cipd_package or
-            'chromiumos/infra/gerrit_related_changes/${platform}')
-        default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-        self._related_changes_cipd_ref = (
-            self._properties.related_changes.related_changes_cipd_ref or
-            default_ref)
-
-        cipd_dir = self.m.path['start_dir'].join('cipd')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._related_changes_cipd_package,
-                         self._related_changes_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._related_changes_path = cipd_dir.join('gerrit_related_changes')
-
   def _call_gerrit_related_changes(self, cmd: List[str],
                                    step_name: Optional[str] = None,
                                    timeout: int = 3600):
@@ -1076,9 +1051,8 @@ class GerritApi(RecipeApi):
 
     Ensure the CIPD package is present.
     """
-    self._ensure_gerrit_related_changes()
-    self.m.step(step_name or 'gerrit_related_changes',
-                [self._related_changes_path] + cmd, timeout=timeout)
+    self.m.gobin.call('gerrit_related_changes', cmd, step_name=step_name or
+                      'gerrit_related_changes', timeout=timeout)
 
   def gerrit_related_changes(self, gerrit_change: GerritChange) -> JSONObject:
     """Fetch and return related changes given a Gerrit change.

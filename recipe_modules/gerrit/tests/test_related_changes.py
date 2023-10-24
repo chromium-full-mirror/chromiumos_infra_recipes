@@ -48,22 +48,11 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'with-cipd-props',
-      api.properties(
-          **{
-              '$chromeos/gerrit': {
-                  'related_changes': {
-                      'related_changes_cipd_package':
-                          'chromiumos/infra/related_foo',
-                      'related_changes_cipd_ref':
-                          'bar',
-                  }
-              },
-          }),
+      'basic',
       api.post_check(
           post_process.StepCommandContains,
           'call gerrit_related_changes.ensure gerrit_related_changes.ensure_installed',
-          ['chromiumos/infra/related_foo bar']),
+          ['chromiumos/infra/gerrit_related_changes/${platform} prod']),
       api.post_process(post_process.DropExpectation),
   )
 
