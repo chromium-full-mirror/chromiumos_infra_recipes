@@ -198,7 +198,6 @@
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
   * [build_sdk_subtools](#recipes-build_sdk_subtools) &mdash; Recipe that runs the Subtools Builder.
-  * [build_signing_docker_image](#recipes-build_signing_docker_image) &mdash; Recipe for building the signing docker image.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
   * [build_snapshot](#recipes-build_snapshot) &mdash; Recipe for building a BuildTarget image for Snapshot.
   * [build_toolchain](#recipes-build_toolchain) &mdash; Builds and uploads the CrOS toolchain.
@@ -739,7 +738,6 @@
   * [tricium](#recipes-tricium) &mdash; Recipe for running tricium on CLs.
   * [upload_prebuilts_from_cq](#recipes-upload_prebuilts_from_cq) &mdash; Recipe that retrieves locations from google storage that the binpkgs are uploaded to by the Chrome PUpr and updates *_CQ_BINHOST.
   * [uprev_borealis_deps](#recipes-uprev_borealis_deps) &mdash; Recipe for upreving Borealis build dependencies.
-  * [uprev_chromite_head](#recipes-uprev_chromite_head) &mdash; Recipe for uprev'ing chromite-HEAD.
   * [uprev_guest_vm_pin](#recipes-uprev_guest_vm_pin) &mdash; Recipe for Upreving Guest VM version pin files.
   * [uprev_parallels_pin](#recipes-uprev_parallels_pin) &mdash; Recipe for generating Parallels uprev CLs.
   * [uprev_recipes_pin](#recipes-uprev_recipes_pin) &mdash; Recipe for uprev'ing various pins in infra/recipes/infra/config.
@@ -11780,14 +11778,6 @@ The Subtools builder starts with an SDK, builds some additional _host_ packages,
 then uploads build artifacts to external locations, such as CIPD.
 
 &mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#33)(api: recipe_api.RecipeApi):**
-### *recipes* / [build\_signing\_docker\_image](/recipes/build_signing_docker_image.py)
-
-[DEPS](/recipes/build_signing_docker_image.py#18): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
-
-
-Recipe for building the signing docker image.
-
-&mdash; **def [RunSteps](/recipes/build_signing_docker_image.py#35)(api: RecipeApi, properties: BuildSigningDockerImageProperties):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#22): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16036,14 +16026,6 @@ Args:
 &mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#164)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
 &mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#43)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
-### *recipes* / [uprev\_chromite\_head](/recipes/uprev_chromite_head.py)
-
-[DEPS](/recipes/uprev_chromite_head.py#17): [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-Recipe for uprev'ing chromite-HEAD.version file for go/deployable-chromite
-
-&mdash; **def [RunSteps](/recipes/uprev_chromite_head.py#32)(api: RecipeApi, properties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#38): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
