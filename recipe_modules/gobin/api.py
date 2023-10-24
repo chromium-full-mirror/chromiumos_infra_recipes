@@ -26,6 +26,7 @@ SUPPORTED_PACKAGES = [
     'test_plan',
     'test_plan_generator',
     'upload_debug_symbols',
+    'version_bumper',
     # For testing only.
     'my_gobin',
 ]

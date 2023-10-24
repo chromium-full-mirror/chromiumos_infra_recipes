@@ -93,18 +93,3 @@ def GenTests(api):
           'bump version.commit chromeos/config/chromeos_version.sh.reset to remote branch'
       ),
   )
-
-  yield api.test(
-      'with-ref',
-      orchestrator(),
-      api.properties(
-          **{
-              '$chromeos/cros_version': {
-                  'version_bumper_cipd_package': 'version_bumper_foo',
-                  'version_bumper_cipd_ref': 'bar',
-              }
-          }),
-      api.post_check(post_process.StepCommandContains,
-                     'bump version.ensure version_bumper.ensure_installed',
-                     ['version_bumper_foo bar']),
-  )

@@ -2694,7 +2694,8 @@
     "cmd": [],
     "name": "set up orchestrator.bump version.ensure version_bumper",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using legacy `prod` pin@@@"
     ]
   },
   {
@@ -2702,7 +2703,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd/version_bumper",
+      "[START_DIR]/cipd",
       "-ensure-file",
       "chromiumos/infra/version_bumper/${platform} prod",
       "-max-threads",
@@ -2742,7 +2743,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/version_bumper/version_bumper",
+      "[START_DIR]/cipd/version_bumper",
       "bump-version",
       "--chromiumos_overlay_repo",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
@@ -2762,7 +2763,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.bump version.go version_bumper",
+    "name": "set up orchestrator.bump version.run version_bumper",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

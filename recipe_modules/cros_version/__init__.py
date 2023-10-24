@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for working with CrOS version numbers."""
+
 from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProperties
 
 DEPS = [
@@ -20,6 +22,7 @@ DEPS = [
     'gerrit',
     'git',
     'git_footers',
+    'gobin',
     'src_state',
 ]
 

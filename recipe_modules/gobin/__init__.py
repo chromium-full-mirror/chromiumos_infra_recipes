@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_infra_config',
-    'cros_version',
     'git',
 ]
 

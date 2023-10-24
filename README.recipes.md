@@ -5422,7 +5422,7 @@ A module for checking `cros try` builds.
 Checks that this specific `cros try` invocation is supported.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
-[DEPS](/recipe_modules/cros_version/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_version/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gobin](#recipe_modules-gobin), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API for working with CrOS version numbers.
@@ -5431,7 +5431,7 @@ API for working with CrOS version numbers.
 
 A module for steps that manipulate CrOS versions.
 
-&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#154)(self, dry_run=True, use_local_diff=False):**
+&mdash; **def [bump\_version](/recipe_modules/cros_version/api.py#129)(self, dry_run=True, use_local_diff=False):**
 
 Bumps the chromeos version (as represented in chromeos_version.sh)
 and pushes the change to the chromiumos-overlay repo.
@@ -5444,11 +5444,7 @@ Args:
   use_local_diff (bool): If true, use the local diff instead of diff
     taken against tip-of-branch for the version bump CL.
 
-&mdash; **def [initialize](/recipe_modules/cros_version/api.py#54)(self):**
-
-Initializes the module.
-
-&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#64)(self, name='read chromeos version'):**
+&mdash; **def [read\_workspace\_version](/recipe_modules/cros_version/api.py#51)(self, name='read chromeos version'):**
 
 Read the CrOS version from the workspace.
 
@@ -5460,7 +5456,7 @@ Args:
 Raises:
   ValueError: if the version file had unexpected formatting.
 
-&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#49)(self):**
+&emsp; **@property**<br>&mdash; **def [version](/recipe_modules/cros_version/api.py#46)(self):**
 
 The Version of the workspace checkout.
 ### *recipe_modules* / [ctpv2](/recipe_modules/ctpv2)
@@ -7882,34 +7878,34 @@ Returns:
   (str) The url for the repo.
 ### *recipe_modules* / [gobin](/recipe_modules/gobin)
 
-[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#209)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#210)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#162)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#163)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#129)(self, current_pin: str):**
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#130)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#81)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#82)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)

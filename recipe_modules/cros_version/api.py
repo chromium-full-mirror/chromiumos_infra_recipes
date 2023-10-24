@@ -42,24 +42,11 @@ class CrosVersionApi(RecipeApi):
     self._remove_snapshot_from_version = properties.remove_snapshot_from_version
     self._properties = properties
     self._version = None
-    self._version_bumper_path = None
-    self._version_bumper_cipd_package = None
-    self._version_bumper_cipd_ref = None
 
   @property
   def version(self):
     """The Version of the workspace checkout."""
     return self._version or self.read_workspace_version()
-
-  def initialize(self):
-    """Initializes the module."""
-    self._version_bumper_cipd_package = (
-        self._properties.version_bumper_cipd_package or
-        'chromiumos/infra/version_bumper/${platform}')
-
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-    self._version_bumper_cipd_ref = (
-        self._properties.version_bumper_cipd_ref or default_ref)
 
   def read_workspace_version(self, name='read chromeos version'):
     """Read the CrOS version from the workspace.
@@ -120,18 +107,6 @@ class CrosVersionApi(RecipeApi):
       presentation.step_text = 'found version: %s' % version
       return version
 
-  def _ensure_version_bumper(self):
-    with self.m.step.nest('ensure version_bumper'):
-      with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'version_bumper')
-
-        pkgs = self.m.cipd.EnsureFile()
-        pkgs.add_package(self._version_bumper_cipd_package,
-                         self._version_bumper_cipd_ref)
-        self.m.cipd.ensure(cipd_dir, pkgs)
-
-        self._version_bumper_path = cipd_dir.join('version_bumper')
-
   def _reset_to_remote(self, branch):
     """Reset to the remote branch."""
     self.m.git.fetch_refs('cros', branch)
@@ -167,9 +142,6 @@ class CrosVersionApi(RecipeApi):
       if self.m.cq.active and not dry_run:
         raise StepFailure('CQ must set dry_run')
 
-      # The luciexe module only makes local file changes.
-      self._ensure_version_bumper()
-
       overlay_path = self.m.src_state.workspace_path.join(
           CHROMIUMOS_OVERLAY_REPO)
 
@@ -177,14 +149,13 @@ class CrosVersionApi(RecipeApi):
       push_branch = self.m.cros_source.manifest_push
 
       cmd = [
-          self._version_bumper_path,
           'bump-version',
           '--chromiumos_overlay_repo',
           overlay_path,
           '--bump_from_branch_name',
           self.m.cros_source.manifest_push,
       ]
-      self.m.step('go version_bumper', cmd)
+      self.m.gobin.call('version_bumper', cmd)
 
       # Update the version in output properties.
       new_version = self.read_workspace_version(name='read updated version')

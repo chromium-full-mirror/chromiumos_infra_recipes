@@ -12,10 +12,5 @@ message CrosVersionProperties {
   // artifacts in a standard way.
   bool remove_snapshot_from_version = 1;
 
-  // Cipd package to use for verson_bumper.
-  // Defaults to "chromiumos/infra/version_bumper/${platform}".
-  string version_bumper_cipd_package = 2;
-
-  // Cipd ref to use for verson_bumper. Defaults to "staging" or "prod".
-  string version_bumper_cipd_ref = 3;
+  reserved 2 to 3;
 }
