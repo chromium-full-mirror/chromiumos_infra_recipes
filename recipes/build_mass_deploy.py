@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'cros_infra_config',
+    'easy',
     'failures',
 ]
 
@@ -150,6 +151,32 @@ def _compress_and_upload_mass_deploy_image(api, output_dir, gs_bucket, gs_dir):
         api.bcid_reporter.report_gcs(file_hash, gs_uri)
 
 
+def _strip_hybrid_mbr(api, output_image):
+  """Remove the hybrid mbr from the mass deploy image
+
+  We don't support mass deploy for non-UEFI devices, so the MBR support isn't
+  necessary and can even cause problems (b/291059385).
+  """
+  # https://linux.die.net/man/8/gdisk
+  gdisk_commands = (
+      # Enter "eXpert mode".
+      'x',
+      # New protective MBR, "Use this option [...] if you want to convert a
+      # hybrid MBR into a 'pure' GPT with a conventional protective MBR."
+      'n',
+      # Back to Main menu.
+      'm',
+      # Write data.
+      'w',
+      # Answer yes when asked if we want to write changes.
+      'Y',
+      # Final return.
+      '')
+  # Use easy.step for stdin_data
+  api.easy.step('strip hybrid MBR', stdin_data='\n'.join(gdisk_commands),
+                cmd=['gdisk', output_image])
+
+
 def RunSteps(api, properties):
   if not properties.input_image:
     raise StepFailure('`input_image` is required')
@@ -177,6 +204,7 @@ def RunSteps(api, properties):
     with api.step.nest('create mass deploy image'):
       output_image = _create_empty_image(api, output_dir, image_size)
       _run_automatic_install(api, installer_image, output_image)
+      _strip_hybrid_mbr(api, output_image)
 
     with api.failures.ignore_exceptions():
       if not api.cros_infra_config.is_staging:
@@ -200,6 +228,8 @@ def GenTests(api):
                      'download signed image.gsutil download',
                      ['gs://chromeos-releases/foo/bar.zip']),
       api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess,
+                     'create mass deploy image.strip hybrid MBR'),
       api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
       api.post_check(post_process.StepCommandContains,
                      'upload mass deploy image.gsutil upload',
@@ -216,6 +246,8 @@ def GenTests(api):
                      'download signed image.gsutil download',
                      ['gs://chromeos-releases/foo/bar.zip']),
       api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess,
+                     'create mass deploy image.strip hybrid MBR'),
       api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
       api.post_check(
           post_process.StepCommandContains,
