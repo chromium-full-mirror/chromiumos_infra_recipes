@@ -105,10 +105,7 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         retry_reason.retryable_builders.extend(retryable_build_failures)
         retry_reason.retryable_test_suites.extend(retryable_test_suite_failures)
         retry_reason.experimental_features.extend(
-            sorted([
-                feature for feature, runs in
-                api.auto_retry_util.experimental_retries.items() if b.id in runs
-            ]))
+            sorted(api.auto_retry_util.experimental_retries[b.id]))
 
         _set_len_prop(actionable_retryable_builders=retryable_build_failures,
                       actionable_test_suites=retry_reason.retryable_test_suites)
@@ -263,6 +260,28 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       }
   }
 
+  def retry_reason_has_experiment(check, step_odict, experiment: str):
+    """Check that the retry_reasons property has an experimental feature.
+
+    This check assumes that there is exactly one object in retry_reasons.
+
+    Args:
+        experiment: The experiment to look for in experimentalFeatures.
+
+    Usage:
+        yield(
+            TEST,
+            api.post_check(retry_reason_has_experiment, 'my-experiment'),
+        )
+    """
+    build_properties = post_process.GetBuildProperties(step_odict)
+    retry_reasons = build_properties['run_properties']['retry_reasons']
+    if not check(f'expected exactly one retry_reason, got {retry_reasons}',
+                 len(retry_reasons) == 1):
+      return  # pragma: nocover
+    retry_reason = retry_reasons[0]
+    check(experiment in retry_reason['experimentalFeatures'])
+
   yield api.test(
       'retryable-build',
       api.auto_retry_util.enable_retries(),
@@ -377,6 +396,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.LogEquals,
           f'performing retries.retry build {retryable_orch_build.id}',
           'retryable builders', 'cq-orchestrator'),
+      api.post_check(retry_reason_has_experiment, 'retry-infra-failures'),
       api.post_process(post_process.DropExpectation),
   )
 
