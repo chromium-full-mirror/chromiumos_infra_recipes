@@ -302,9 +302,9 @@ def GenTests(api: RecipeTestApi):
     return api.properties(SignImageProperties(**kwargs))
 
   def check_build_output(check: Checker, steps: OrderedDict, output_prop: str,
-                         value: Any) -> bool:
-    return check(
-        post_process.GetBuildProperties(steps).get(output_prop) == value)
+                         expected_pattern: str) -> bool:
+    actual_value = post_process.GetBuildProperties(steps).get(output_prop)
+    return check(re.match(expected_pattern, actual_value))
 
   yield api.test(
       'basic',
@@ -364,6 +364,12 @@ def GenTests(api: RecipeTestApi):
           gsc_instructions=GscInstructions(target=GscInstructions.NODE_LOCKED,
                                            device_id='12345678-11223344')))
 
+  # The \w{8} bit is randomized - we don't need to match the precise
+  # value in the tests.
+  ti50_tar_pattern = re.escape(
+      'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-'
+  ) + r'\w{8}\.instructions'
+
   yield api.test(
       'gsc-non-release-bucket-prod',
       props(
@@ -378,9 +384,15 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(post_process.MustRun, 'trigger gsc signing.trigger file'),
       api.post_check(lambda check, steps: check_build_output(
-          check, steps, 'instructions_file',
-          'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions'
+          check,
+          steps,
+          'instructions_file',
+          ti50_tar_pattern,
       )))
+
+  ti50_efi_tar_pattern = re.escape(
+      'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.efi.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-'
+  ) + r'\w{8}\.instructions'
 
   yield api.test(
       'gsc-non-release-bucket-prod-efi',
@@ -392,8 +404,10 @@ def GenTests(api: RecipeTestApi):
           allow_non_release_signer_bucket=True),
       api.post_check(post_process.MustRun, 'copy artifacts to release bucket'),
       api.post_check(lambda check, steps: check_build_output(
-          check, steps, 'instructions_file',
-          'gs://chromeos-releases/firmware-ti50-postsubmit/R97-14299.0.0-55770-8832698563268919201/ti50.efi.tar.bz2/ChromeOS-gsc_firmware-RNone-Unknown-ti50-accessory-premp-YwaVWEIe.instructions'
+          check,
+          steps,
+          'instructions_file',
+          ti50_efi_tar_pattern,
       )))
 
   yield api.test(
