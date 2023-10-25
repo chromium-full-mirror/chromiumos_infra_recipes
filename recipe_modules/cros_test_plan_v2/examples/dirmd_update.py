@@ -28,7 +28,7 @@ def GenTests(api):
               'cipd',
               'ensure',
               '-root',
-              '[START_DIR]/cipd',
+              '[START_DIR]/cipd/test_plan',
               '-ensure-file',
               'chromiumos/infra/test_plan/${platform} prod',
           ],
@@ -37,7 +37,7 @@ def GenTests(api):
           post_process.StepCommandEquals,
           'dirmd update.call test_plan',
           [
-              '[START_DIR]/cipd/test_plan', 'chromeos-dirmd-update',
+              '[START_DIR]/cipd/test_plan/test_plan', 'chromeos-dirmd-update',
               '-crossrcroot', '[CLEANUP]/chromiumos_workspace', '-table',
               'proj.dataset.mytable', '-loglevel', 'debug'
           ],

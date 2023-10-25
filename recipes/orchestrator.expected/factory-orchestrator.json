@@ -3154,7 +3154,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/version_bumper",
       "-ensure-file",
       "chromiumos/infra/version_bumper/${platform} prod",
       "-max-threads",
@@ -3194,7 +3194,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/version_bumper",
+      "[START_DIR]/cipd/version_bumper/version_bumper",
       "bump-version",
       "--chromiumos_overlay_repo",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
@@ -9830,7 +9830,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/test_plan_generator",
       "-ensure-file",
       "chromiumos/infra/test_plan_generator/${platform} prod",
       "-max-threads",
@@ -9869,7 +9869,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_plan_generator",
+      "[START_DIR]/cipd/test_plan_generator/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",

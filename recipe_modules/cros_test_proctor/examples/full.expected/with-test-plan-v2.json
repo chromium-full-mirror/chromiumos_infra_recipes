@@ -71,7 +71,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/test_plan",
       "-ensure-file",
       "chromiumos/infra/test_plan/${platform} prod",
       "-max-threads",
@@ -110,7 +110,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_plan",
+      "[START_DIR]/cipd/test_plan/test_plan",
       "relevant-plans",
       "-loglevel",
       "debug",

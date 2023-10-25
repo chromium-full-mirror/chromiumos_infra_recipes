@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Tests for dirmd_update."""
+
 from typing import Generator
 from typing import Optional
 
@@ -42,7 +44,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                        'sync cached directory.ensure synced checkout'),
       api.post_process(
           post_process.StepCommandEquals, 'dirmd update.call test_plan', [
-              '[START_DIR]/cipd/test_plan', 'chromeos-dirmd-update',
+              '[START_DIR]/cipd/test_plan/test_plan', 'chromeos-dirmd-update',
               '-crossrcroot', '[CLEANUP]/chromiumos_workspace', '-table',
               'proj.dataset.mytable', '-loglevel', 'debug'
           ]),

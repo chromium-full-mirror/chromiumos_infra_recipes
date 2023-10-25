@@ -4289,7 +4289,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/test_plan_generator",
       "-ensure-file",
       "chromiumos/infra/test_plan_generator/${platform} staging",
       "-max-threads",
@@ -4328,7 +4328,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_plan_generator",
+      "[START_DIR]/cipd/test_plan_generator/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",

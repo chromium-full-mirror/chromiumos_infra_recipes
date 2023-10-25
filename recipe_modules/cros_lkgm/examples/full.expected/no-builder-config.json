@@ -650,7 +650,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/manifest_doctor",
       "-ensure-file",
       "chromiumos/infra/manifest_doctor/${platform} prod",
       "-max-threads",
@@ -678,7 +678,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/manifest_doctor",
+      "[START_DIR]/cipd/manifest_doctor/manifest_doctor",
       "public-buildspec",
       "--paths",
       "buildspecs/99/1234.56.0.xml",

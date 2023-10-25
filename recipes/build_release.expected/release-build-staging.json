@@ -9749,7 +9749,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/upload_debug_symbols",
       "-ensure-file",
       "chromiumos/infra/upload_debug_symbols/${platform} staging",
       "-max-threads",
@@ -9792,7 +9792,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/upload_debug_symbols",
+      "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
       "upload",
       "-gs-path",
       "gs://chromeos-releases-test/staging-eve-release/R99-1234.56.0-101/debug_breakpad.tar.xz",

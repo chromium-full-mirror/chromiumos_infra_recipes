@@ -2082,7 +2082,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/conductor",
       "-ensure-file",
       "chromiumos/infra/conductor/${platform} prod",
       "-max-threads",
@@ -2121,7 +2121,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/conductor",
+      "[START_DIR]/cipd/conductor/conductor",
       "collect",
       "--input_json",
       "[CLEANUP]/conductor-_tmp_1/input.json",
@@ -6844,7 +6844,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/test_plan_generator",
       "-ensure-file",
       "chromiumos/infra/test_plan_generator/${platform} prod",
       "-max-threads",
@@ -6883,7 +6883,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_plan_generator",
+      "[START_DIR]/cipd/test_plan_generator/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",

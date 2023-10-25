@@ -1418,7 +1418,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/manifest_doctor",
       "-ensure-file",
       "chromiumos/infra/manifest_doctor/${platform} staging",
       "-max-threads",
@@ -1458,7 +1458,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/manifest_doctor",
+      "[START_DIR]/cipd/manifest_doctor/manifest_doctor",
       "public-buildspec",
       "--paths",
       "foo/99/1234.56.0-8945511751514863184.xml",
@@ -2148,7 +2148,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/manifest_doctor",
+      "[START_DIR]/cipd/manifest_doctor/manifest_doctor",
       "public-buildspec",
       "--paths",
       "foo/99/1234.56.0-8945511751514863184.xml",
@@ -2838,7 +2838,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/manifest_doctor",
+      "[START_DIR]/cipd/manifest_doctor/manifest_doctor",
       "public-buildspec",
       "--paths",
       "foo/bar.xml",

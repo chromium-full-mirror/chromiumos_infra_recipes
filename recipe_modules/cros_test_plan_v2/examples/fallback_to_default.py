@@ -87,7 +87,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'find relevant plans.src/projectA.call test_plan',
           [
-              '[START_DIR]/cipd/test_plan',
+              '[START_DIR]/cipd/test_plan/test_plan',
               'relevant-plans',
               '-loglevel',
               'debug',
@@ -101,7 +101,7 @@ def GenTests(api):
           post_process.StepCommandContains,
           'find relevant plans.src/projectB.call test_plan',
           [
-              '[START_DIR]/cipd/test_plan',
+              '[START_DIR]/cipd/test_plan/test_plan',
               'relevant-plans',
               '-loglevel',
               'debug',

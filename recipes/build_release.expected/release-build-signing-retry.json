@@ -5599,7 +5599,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/upload_debug_symbols",
       "-ensure-file",
       "chromiumos/infra/upload_debug_symbols/${platform} prod",
       "-max-threads",
@@ -5642,7 +5642,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/upload_debug_symbols",
+      "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
       "upload",
       "-gs-path",
       "gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0/debug_breakpad.tar.xz",
@@ -5683,7 +5683,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/upload_debug_symbols",
+      "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
       "upload",
       "-gs-path",
       "gs://chromeos-image-archive/kukui-release-main/R91-13818.0.0/vmlinuz.tar.xz",

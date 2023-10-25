@@ -177,9 +177,9 @@ def GenTests(api):
               other_build_with_published_image
           ], parent_step_name='run builds'),
       api.post_check(post_process.StepCommandContains, 'run builds.collect', [
-          '[START_DIR]/cipd/build_poller', 'collect', '-loglevel', 'debug',
-          '-outputprop', 'image_artifacts_uploaded', '-interval', '60s',
-          '-json', '-', '8922054662172514000', '8922054662172514001',
+          '[START_DIR]/cipd/build_poller/build_poller', 'collect', '-loglevel',
+          'debug', '-outputprop', 'image_artifacts_uploaded', '-interval',
+          '60s', '-json', '-', '8922054662172514000', '8922054662172514001',
           '8922054662172514002', '8922054662172514003'
       ]),
       # The final build collect should collect all 7 builds.

@@ -51,7 +51,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/branch_util",
       "-ensure-file",
       "chromiumos/infra/branch_util/${platform} prod",
       "-max-threads",
@@ -78,7 +78,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/branch_util",
+      "[START_DIR]/cipd/branch_util/branch_util",
       "create",
       "--buildspec-manifest",
       "89/13729.0.0.xml",

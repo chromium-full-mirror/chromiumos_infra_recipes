@@ -59,12 +59,12 @@ def GenTests(api):
       api.post_check(
           post_process.StepCommandContains,
           'run my_gobin',
-          ['[START_DIR]/cipd/my_gobin', 'create', 'foo'],
+          ['[START_DIR]/cipd/my_gobin/my_gobin', 'create', 'foo'],
       ),
       api.post_check(
           post_process.StepCommandContains,
           'my command',
-          ['[START_DIR]/cipd/my_gobin', 'create', 'bar'],
+          ['[START_DIR]/cipd/my_gobin/my_gobin', 'create', 'bar'],
       ),
       api.post_process(post_process.DropExpectation),
   )

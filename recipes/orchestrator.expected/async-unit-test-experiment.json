@@ -2827,7 +2827,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/build_poller",
       "-ensure-file",
       "chromiumos/infra/build_poller/${platform} prod",
       "-max-threads",
@@ -2866,7 +2866,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/build_poller",
+      "[START_DIR]/cipd/build_poller/build_poller",
       "collect",
       "-loglevel",
       "debug",
@@ -7324,7 +7324,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/test_plan_generator",
       "-ensure-file",
       "chromiumos/infra/test_plan_generator/${platform} prod",
       "-max-threads",
@@ -7363,7 +7363,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/test_plan_generator",
+      "[START_DIR]/cipd/test_plan_generator/test_plan_generator",
       "gen-test-plan",
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",

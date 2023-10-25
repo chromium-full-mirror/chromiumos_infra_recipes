@@ -434,7 +434,7 @@
   * [deferrals:tests/defer_exceptions_infra_fail](#recipes-deferrals_tests_defer_exceptions_infra_fail)
   * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught)
   * [dirmd:examples/full](#recipes-dirmd_examples_full)
-  * [dirmd_update](#recipes-dirmd_update)
+  * [dirmd_update](#recipes-dirmd_update) &mdash; Tests for dirmd_update.
   * [disk_usage:examples/full](#recipes-disk_usage_examples_full)
   * [dlc_utils:tests/copy_prebuilt_dlcs](#recipes-dlc_utils_tests_copy_prebuilt_dlcs)
   * [dlc_utils:tests/copy_prebuilt_dlcs_exception](#recipes-dlc_utils_tests_copy_prebuilt_dlcs_exception)
@@ -13498,10 +13498,12 @@ Tests for api.cros_version.Version.
 &mdash; **def [RunSteps](/recipe_modules/dirmd/examples/full.py#19)(api):**
 ### *recipes* / [dirmd\_update](/recipes/dirmd_update.py)
 
-[DEPS](/recipes/dirmd_update.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [src\_state](#recipe_modules-src_state), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/dirmd_update.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [src\_state](#recipe_modules-src_state), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipes/dirmd_update.py#27)(api: RecipeApi, properties: DirmdUpdateProperties):**
+Tests for dirmd_update.
+
+&mdash; **def [RunSteps](/recipes/dirmd_update.py#29)(api: RecipeApi, properties: DirmdUpdateProperties):**
 ### *recipes* / [disk\_usage:examples/full](/recipe_modules/disk_usage/examples/full.py)
 
 [DEPS](/recipe_modules/disk_usage/examples/full.py#9): [disk\_usage](#recipe_modules-disk_usage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

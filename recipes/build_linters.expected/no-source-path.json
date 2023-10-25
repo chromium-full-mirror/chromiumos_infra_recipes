@@ -3535,7 +3535,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/pointless_build_checker",
       "-ensure-file",
       "chromiumos/infra/pointless_build_checker/${platform} prod",
       "-max-threads",
@@ -3575,7 +3575,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_1/input.binaryproto",
@@ -4603,7 +4603,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_2/input.binaryproto",
@@ -4752,7 +4752,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/pointless_build_checker",
+      "[START_DIR]/cipd/pointless_build_checker/pointless_build_checker",
       "check-build",
       "--input_binary_pb",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto",

@@ -2408,7 +2408,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/version_bumper",
       "-ensure-file",
       "chromiumos/infra/version_bumper/${platform} staging",
       "-max-threads",
@@ -2448,7 +2448,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/version_bumper",
+      "[START_DIR]/cipd/version_bumper/version_bumper",
       "bump-version",
       "--chromiumos_overlay_repo",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
@@ -3391,7 +3391,7 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd",
+      "[START_DIR]/cipd/manifest_doctor",
       "-ensure-file",
       "chromiumos/infra/manifest_doctor/${platform} staging",
       "-max-threads",
@@ -3431,7 +3431,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/manifest_doctor",
+      "[START_DIR]/cipd/manifest_doctor/manifest_doctor",
       "public-buildspec",
       "--paths",
       "staging/109/15236.0.0-8945511751514863184.xml",

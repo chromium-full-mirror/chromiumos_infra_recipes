@@ -200,7 +200,7 @@ class GobinAPI(recipe_api.RecipeApi):
           instance_id = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
           presentation.step_text = f'using legacy `{instance_id}` pin'
 
-        cipd_dir = self.m.path['start_dir'].join('cipd')
+        cipd_dir = self.m.path['start_dir'].join(f'cipd/{package_shortname}')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(package_fullname, instance_id)
         self.m.cipd.ensure(cipd_dir, pkgs)
