@@ -126,6 +126,8 @@ class GitApi(recipe_api.RecipeApi):
       1 revs - Changes between working directory and given commit
       2 revs - Changes between the two commits
 
+    Note that this does not include new/untracked files.
+
     Args:
       from_rev (str): First revision  (see 'man 7 gitrevisions')
       to_rev (str): Second revision
