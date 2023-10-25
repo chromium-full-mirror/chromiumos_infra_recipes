@@ -55,6 +55,7 @@ def GenTests(api):
     return [
         cipd_lookup_step_data(sha, package, package + instance_id)
         for package in packages
+        if package != 'my_gobin'
     ]
 
   yield api.test(

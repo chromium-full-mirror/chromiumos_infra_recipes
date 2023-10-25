@@ -17,6 +17,9 @@ from recipe_engine.recipe_api import StepFailure
 # Packages are relative to chromiumos/infra/, see
 # https://chrome-infra-packages.appspot.com/p/chromiumos/infra.
 SUPPORTED_PACKAGES = [
+    # For testing only.
+    'my_gobin',
+    # Actual packages.
     'branch_util',
     'build_plan_generator',
     'build_poller',
@@ -27,8 +30,6 @@ SUPPORTED_PACKAGES = [
     'test_plan_generator',
     'upload_debug_symbols',
     'version_bumper',
-    # For testing only.
-    'my_gobin',
 ]
 
 # List of packages for which we should use the new pin (as opposed to falling
@@ -122,6 +123,9 @@ class GobinAPI(recipe_api.RecipeApi):
   def _is_valid_sha(self, sha: str) -> bool:
     """Check if there exists a CIPD instance for each supported package for the given infra/infra commit."""
     for package in SUPPORTED_PACKAGES:
+      # Test package, skip.
+      if package == 'my_gobin':
+        continue
       package_fullname = self._package_fullname(package)
       if self._get_instance_for_sha(package_fullname, sha) is None:
         return False
