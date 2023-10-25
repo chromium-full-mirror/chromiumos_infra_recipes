@@ -97,17 +97,16 @@ def _run_automatic_install(api, installer_image, output_image):
 
   # This will shut down when the install finishes.
   step_result = api.step(
-      'boot input image to install to output image', timeout=300, cmd=[
+      'boot input image to install to output image', timeout=360, cmd=[
           'qemu-system-x86_64',
           '-machine',
-          'q35,smm=on,accel=kvm',
-          '-enable-kvm',
+          'q35,smm=on',
           '-m',
           '8G',
           '-smp',
           '8',
           '-cpu',
-          'host',
+          'qemu64',
           '-vga',
           'virtio',
           '-display',
@@ -236,7 +235,7 @@ def GenTests(api):
       }),
       api.step_data(
           'create mass deploy image.boot input image to install to output image',
-          times_out_after=301),
+          times_out_after=361),
       api.post_check(
           post_process.StepFailure,
           'create mass deploy image.boot input image to install to output image'
