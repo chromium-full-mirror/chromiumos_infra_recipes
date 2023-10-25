@@ -11,6 +11,7 @@ package recipe_modules.chromeos.tast_exec;
 message TastExecProperties {
   // Timeout for tast exec (in seconds).
   int32 exec_timeout = 1;
+  // DEPRECATED: tests will be retied if the builder is critical.
   // Should the exec retry for eligible failed tests.
   bool should_retry = 2;
   // Whether this is a public target.

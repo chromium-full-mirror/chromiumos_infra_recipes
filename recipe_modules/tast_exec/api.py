@@ -85,7 +85,6 @@ class TastExecApi(RecipeApi):
     super().__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
     self._vm_system_services_timeout = properties.vm_system_services_timeout or 10 * 60
-    self._should_retry = properties.should_retry
     self._public_builder = properties.public_builder
     self._tast_cli_supported_flags = []
     self._sshkeys = []
@@ -202,8 +201,7 @@ class TastExecApi(RecipeApi):
     all_test_cases = []
     if task_result.test_cases:
       all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
-    if not self._should_retry:
-      tests_to_retry = []
+    tests_to_retry = tests_to_retry if self.m.buildbucket.is_critical() else []
     results, failed_test_cases = self.m.tast_results.convert_results(
         task_result, tests_to_retry)
     empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED

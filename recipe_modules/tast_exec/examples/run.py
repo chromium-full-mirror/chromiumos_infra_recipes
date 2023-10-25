@@ -8,6 +8,7 @@
 
 from recipe_engine import post_process
 from PB.testplans.generate_test_plan import BuildPayload
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -49,6 +50,7 @@ def RunSteps(api):
       qcow_image, second_image_path=vm_dir.join('second_disk.bin'))
 
   # Run with retry
+  api.buildbucket.build.critical = common_pb2.YES
   api.tast_exec.run_vm(
       'tast_vm', vm_context,
       api.tast_exec.TastInputs(['!informational'], test_artifacts,
@@ -58,6 +60,7 @@ def RunSteps(api):
                                )))
 
   # Run without retry
+  api.buildbucket.build.critical = common_pb2.NO
   results_dir = api.path.mkdtemp(prefix='temp')
   api.tast_exec.run_direct_vm(
       vm_context, results_dir,
@@ -93,20 +96,14 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic', api.buildbucket.ci_build(),
-      api.properties(**{'$chromeos/tast_exec': {
-          'should_retry': True
-      }}), api.tast_exec.simulate_test_list_ret('some.test'),
-      api.post_check(post_process.MustRun, 'second tast iteration'))
+  yield api.test('basic', api.buildbucket.ci_build(),
+                 api.tast_exec.simulate_test_list_ret('some.test'),
+                 api.post_check(post_process.MustRun, 'second tast iteration'))
 
   yield api.test(
       'forgives-delete-instance-failures', api.buildbucket.ci_build(),
-      api.properties(**{'$chromeos/tast_exec': {
-          'should_retry': True
-      }}), api.tast_exec.simulate_test_list_ret('some.test'),
-      api.step_data('first tast iteration (2).delete instance', retcode=1),
-      api.step_data('second tast iteration (2).delete instance', retcode=1))
+      api.tast_exec.simulate_test_list_ret('some.test'),
+      api.step_data('first tast iteration (2).delete instance', retcode=1))
 
   yield api.test(
       'public',

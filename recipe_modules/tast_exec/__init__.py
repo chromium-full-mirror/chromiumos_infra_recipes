@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/archive',
+    'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
