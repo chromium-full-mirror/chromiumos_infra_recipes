@@ -695,6 +695,15 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return cq_orchs
 
+  def _build_was_dry_run(self, build: build_pb2.Build) -> bool:
+    """Returns whether the build was a dry run.
+
+    Args:
+      build: The build for which to determine whether it is a dry run.
+    """
+    return build.input.properties['$recipe_engine/cq'][
+        'runMode'] == self.m.cq.DRY_RUN
+
   def filter_retry_candidates(
       self, cq_orchs: List[build_pb2.Build]) -> List[build_pb2.Build]:
     """Returns cq-orchestrator builds which meet the retry criteria.
@@ -761,8 +770,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               include_messages=True, include_detailed_labels=True,
               step_name=f'fetch changes for {c.id}')
 
-          non_submittable_ids.update(
-              {c.id for p in patch_sets if not p.submittable})
           wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
           non_latest_patch_set_ids.update(
               {c.id for p in patch_sets if not p.is_latest_patch_set()})
@@ -770,12 +777,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               {c.id for p in patch_sets if p.unresolved_comment_count})
           if not self._was_cv_active(c.id, patch_sets):
             removed_label_ids.add(c.id)
-          negative_labels_ids = {
-              c.id
-              for p in patch_sets
-              if p.has_label_vote('Code-Review', -1) or p.has_label_vote(
-                  'Code-Review', -2) or p.has_label_vote('Verified', -1)
-          }
+          if self._build_was_dry_run(c):
+            negative_labels_ids = {
+                c.id
+                for p in patch_sets
+                if p.has_label_vote('Code-Review', -1) or p.has_label_vote(
+                    'Code-Review', -2) or p.has_label_vote('Verified', -1)
+            }
+          else:
+            non_submittable_ids.update(
+                {c.id for p in patch_sets if not p.submittable})
 
         ineligible_ids = (
             non_submittable_ids | wip_ids
@@ -1116,10 +1127,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       pres.logs['retryable test suites'] = ','.join(
           sorted(retryable_test_suites))
 
-      build_was_dry_run = build.input.properties['$recipe_engine/cq'][
-          'runMode'] == self.m.cq.DRY_RUN
       labels = {
-          Label.COMMIT_QUEUE: 1 if build_was_dry_run else 2,
+          Label.COMMIT_QUEUE: 1 if self._build_was_dry_run(build) else 2,
       }
 
       if not self._enable_retries:

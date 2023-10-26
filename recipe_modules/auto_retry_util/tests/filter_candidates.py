@@ -24,8 +24,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-
-  builds = [api.buildbucket.build]
+  build = api.buildbucket.build
+  build.input.properties['$recipe_engine/cq'] = {
+      'runMode': api.properties.get('runMode', 'FULL_RUN')
+  }
+  builds = [build]
   filtered_builds = api.auto_retry_util.filter_retry_candidates(builds)
   expected_filtered_builds = [] if api.properties['filtered_out'] else builds
   api.assertions.assertCountEqual(expected_filtered_builds, filtered_builds)
@@ -349,6 +352,31 @@ def GenTests(api):
   )
 
   yield api.test(
+      'dry-run-no-filter-out-non-submittable',
+      retryable_build.build,
+      changes_mergeable_test_data,
+      set_cv_account_id_test_data,
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          non_submittable_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
+      api.post_process(
+          post_process.PropertyEquals, 'filtered_build_stats', {
+              'already_retried': 0,
+              'non_latest_patch_set': 0,
+              'non_mergeable': 0,
+              'non_submittable': 0,
+              'opt_out': 0,
+              'removed_label': 0,
+              'unresolved_comments': 0,
+              'wip': 0,
+              'negative_labels': 0,
+          }),
+      api.properties(filtered_out=False, runMode='DRY_RUN'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'filter-out-unresolved-comments',
       retryable_build.build,
       changes_mergeable_test_data,
@@ -394,7 +422,32 @@ def GenTests(api):
               'wip': 0,
               'negative_labels': 1,
           }),
-      api.properties(filtered_out=True),
+      api.properties(filtered_out=True, runMode='DRY_RUN'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'full-run-no-filter-out-negative-code-review',
+      retryable_build.build,
+      changes_mergeable_test_data,
+      set_cv_account_id_test_data,
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          negative_labels_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
+      api.post_process(
+          post_process.PropertyEquals, 'filtered_build_stats', {
+              'already_retried': 0,
+              'non_latest_patch_set': 0,
+              'non_mergeable': 0,
+              'non_submittable': 0,
+              'opt_out': 0,
+              'removed_label': 0,
+              'unresolved_comments': 0,
+              'wip': 0,
+              'negative_labels': 0,
+          }),
+      api.properties(filtered_out=False),
       api.post_process(post_process.DropExpectation),
   )
 
