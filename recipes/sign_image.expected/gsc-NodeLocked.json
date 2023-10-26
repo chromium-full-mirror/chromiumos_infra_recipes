@@ -26,20 +26,20 @@
     "name": "upload gsc instructions",
     "~followup_annotations": [
       "@@@STEP_TEXT@instructions uploaded@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@[general]@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@archive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@board = Unknown@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@type = gsc_firmware@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@milestone = RNone@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@version = Unknown@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@versionrev = RNone-Unknown@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@[insns]@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@channel = canary@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@keyset = cr50-accessory-mp@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@target = NodeLocked@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@output_names = @CHIP@_@VERSION@_@TARGET@-@DEVICE_ID@_@KEYSET@@@@",
-      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@device_id = 12345678-11223344@@@",
-      "@@@STEP_LOG_END@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions@@@"
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@[general]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@archive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@board = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@type = gsc_firmware@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@milestone = RNone@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@version = Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@versionrev = RNone-Unknown@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@[insns]@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@channel = canary@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@keyset = cr50-accessory-mp@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@target = NodeLocked@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@output_names = @CHIP@_@VERSION@_@TARGET@-@DEVICE_ID@_@KEYSET@@@@",
+      "@@@STEP_LOG_LINE@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@device_id = 12345678-11223344@@@",
+      "@@@STEP_LOG_END@ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions@@@"
     ]
   },
   {
@@ -51,7 +51,7 @@
       "/path/to/tmp/json",
       "copy",
       "[general]\narchive = ChromeOS-cr50_firmware-R78-12499.10.0-eve.tar.bz2\nboard = Unknown\ntype = gsc_firmware\nmilestone = RNone\nversion = Unknown\nversionrev = RNone-Unknown\n[insns]\nchannel = canary\nkeyset = cr50-accessory-mp\ntarget = NodeLocked\noutput_names = @CHIP@_@VERSION@_@TARGET@-@DEVICE_ID@_@KEYSET@\ndevice_id = 12345678-11223344\n",
-      "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions"
     ],
     "infra_step": true,
     "name": "upload gsc instructions.instructions file",
@@ -68,8 +68,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions",
-      "gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "[CLEANUP]/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions",
+      "gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions"
     ],
     "infra_step": true,
     "name": "upload gsc instructions.gsutil cp",
@@ -82,7 +82,7 @@
     "name": "upload gsc instructions.set instructions_file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@instructions_file@\"gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions\"@@@"
+      "@@@SET_BUILD_PROPERTY@instructions_file@\"gs://chromeos-releases/canary-channel/eve/12499.10.0/ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions\"@@@"
     ]
   },
   {
@@ -101,7 +101,7 @@
       "/path/to/tmp/json",
       "copy",
       "BUILD=0\nBUILD_URL=https://cr-buildbucket.appspot.com/build/0\nTIMESTAMP=2012-05-14 12:53:21 UTC\n",
-      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions"
     ],
     "infra_step": true,
     "name": "trigger gsc signing.trigger file",
@@ -118,8 +118,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions",
-      "gs://chromeos-releases/tobesigned/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-YwaVWEIe.instructions"
+      "[CLEANUP]/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions",
+      "gs://chromeos-releases/tobesigned/50,canary-channel,eve,12499.10.0,ChromeOS-gsc_firmware-RNone-Unknown-cr50-accessory-mp-XChafZLc.instructions"
     ],
     "infra_step": true,
     "name": "trigger gsc signing.gsutil cp",
