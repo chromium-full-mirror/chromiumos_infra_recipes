@@ -116,7 +116,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
                    r'staging-amd64-generic-direct-tast-vm',
                    [vm_test_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
-                   [image_builder_exemption], num_builds=3),
+                   [image_builder_exemption], num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
     StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator',
