@@ -26,7 +26,7 @@
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
   * [cros_cache](#recipe_modules-cros_cache) &mdash; API for working with CrOS cache.
-  * [cros_cq_additional_tests](#recipe_modules-cros_cq_additional_tests)
+  * [cros_cq_additional_tests](#recipe_modules-cros_cq_additional_tests) &mdash; Functions configuring additional CQ testing via footer.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
   * [cros_debug](#recipe_modules-cros_debug)
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
@@ -2988,9 +2988,11 @@ Args:
 [DEPS](/recipe_modules/cros_cq_additional_tests/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CrosCqAdditionalTests](/recipe_modules/cros_cq_additional_tests/api.py#43)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Functions configuring additional CQ testing via footer.
 
-&mdash; **def [append\_user\_provided\_test\_suites\_to\_test\_plan](/recipe_modules/cros_cq_additional_tests/api.py#86)(self, builds: List[build_pb2.Build], gerrit_changes: List[common_pb2.GerritChange], test_plan: GenerateTestPlanResponse):**
+#### **class [CrosCqAdditionalTests](/recipe_modules/cros_cq_additional_tests/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [append\_user\_provided\_test\_suites\_to\_test\_plan](/recipe_modules/cros_cq_additional_tests/api.py#88)(self, builds: List[build_pb2.Build], gerrit_changes: List[common_pb2.GerritChange], test_plan: GenerateTestPlanResponse):**
 
 Reads test suites-related Git footers and appends them to test_plan.
 
@@ -3013,11 +3015,11 @@ Raises:
   CrosCqAddnlTestsMissingBuildTargetsError: When there are test suites not
     run due to failed or not built build targets.
 
-&mdash; **def [get\_additional\_test\_builders](/recipe_modules/cros_cq_additional_tests/api.py#63)(self, builds: List[build_pb2.Build], gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [get\_additional\_test\_builders](/recipe_modules/cros_cq_additional_tests/api.py#65)(self, builds: List[build_pb2.Build], gerrit_changes: List[common_pb2.GerritChange]):**
 
 Returns the builders that had additional testing specified via footer.
 
-&mdash; **def [initialize](/recipe_modules/cros_cq_additional_tests/api.py#55)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_cq_additional_tests/api.py#57)(self):**
 ### *recipe_modules* / [cros\_cq\_depends](/recipe_modules/cros_cq_depends)
 
 [DEPS](/recipe_modules/cros_cq_depends/__init__.py#7): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [support](#recipe_modules-support), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

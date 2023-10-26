@@ -3987,7 +3987,8 @@
     "cmd": [],
     "name": "run builds.categorize builds by collect handling.get additional testable builders",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@skipping: not enabled@@@"
     ]
   },
   {

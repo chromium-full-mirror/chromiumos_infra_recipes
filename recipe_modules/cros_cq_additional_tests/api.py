@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions configuring additional CQ testing via footer."""
+
 from typing import List, Set, Tuple
 
 from recipe_engine import recipe_api
@@ -66,7 +68,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
     """Returns the builders that had additional testing specified via footer."""
     with self.m.step.nest('get additional testable builders') as pres:
       if not self._enable_running_additional_tests:
-        pres.step_text: 'skipping: not enabled'
+        pres.step_text = 'skipping: not enabled'
         return []
 
       builders = []
