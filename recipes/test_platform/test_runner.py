@@ -599,6 +599,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "True", "False"
     * wifi_router_models: A list of router models within the testbed,
         e.g. "gale"
+    * testplan_id: the name of the testplan associated with test runner build
+        e.g. "ltl_testplan"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -618,6 +620,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   declared_name = api.cros_tags.get_values('display_name')
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
+
+  # Get the testplan id (name) from the buildbucket tags.
+  testplan_id = api.cros_tags.get_values('test-plan-id')
+  if testplan_id:
+    base_tags.append(('test-plan-id', testplan_id[0]))
 
   # Fetches the following information from buildbucket.swarming bot dimensions.
   board = api.cros_tags.get_values(
@@ -3492,6 +3499,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'build': 'fake-board-cq/R11-123.45',
               'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+              'test-plan-id': 'fake_testplan',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
@@ -3524,7 +3532,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-model': 'fake-model',
               'build': 'fake-board-cq/R11-123.45',
               'suite': 'fake-suite',
-              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+              'test-plan-id': 'ltl_testplan',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
