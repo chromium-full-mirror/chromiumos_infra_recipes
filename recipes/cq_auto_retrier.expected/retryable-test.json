@@ -579,7 +579,7 @@
     "cmd": [],
     "name": "set per_build_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@per_build_stats@[{\"build_id\": \"1111\", \"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [], \"retryable_test_suites\": [\"builder1.hw.suite\"], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}]@@@"
+      "@@@SET_BUILD_PROPERTY@per_build_stats@[{\"build_id\": \"1111\", \"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [], \"retryable_test_suites\": [\"builder1.hw.suite\"], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"no_snapshot_data_retryable_builders\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}]@@@"
     ]
   },
   {

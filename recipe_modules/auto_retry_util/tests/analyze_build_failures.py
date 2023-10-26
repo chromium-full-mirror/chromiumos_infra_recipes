@@ -51,6 +51,7 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder4-cq'
   orch.orchestrator.child_specs.add().name = 'builder5-cq'
   orch.orchestrator.child_specs.add().name = 'builder6-cq'
+  orch.orchestrator.child_specs.add().name = 'builder7-kernelnext-cq'
 
   child_build_info = [
       {
@@ -69,7 +70,7 @@ def GenTests(api):
       },
       {
           'builder': {
-              'builder': 'builder3'
+              'builder': 'builder3-cq'
           },
           'status': 'FAILURE',
           'relevant': True
@@ -95,6 +96,13 @@ def GenTests(api):
           'status': 'FAILURE',
           'relevant': True
       },
+      {
+          'builder': {
+              'builder': 'builder7-kernelnext-cq'
+          },
+          'status': 'FAILURE',
+          'relevant': True
+      },
   ]
   yield api.test(
       'removed-verifier',
@@ -103,9 +111,10 @@ def GenTests(api):
       }).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'], expected_retryable=['builder3'],
+          expected_success=['builder1-cq'], expected_retryable=['builder3-cq'],
           expected_outstanding=[
-              'builder2-cq', 'builder5-cq', 'builder6-slim-cq'
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
+              'builder7-kernelnext-cq'
           ]),
       api.post_process(post_process.DropExpectation),
   )
@@ -124,9 +133,12 @@ def GenTests(api):
                   ])
           }),
       api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(expected_success=['builder1-cq'],
-                     expected_retryable=['builder3', 'builder5-cq'],
-                     expected_outstanding=['builder2-cq', 'builder6-slim-cq']),
+      api.properties(
+          expected_success=['builder1-cq'],
+          expected_retryable=['builder3-cq', 'builder5-cq'],
+          expected_outstanding=[
+              'builder2-cq', 'builder6-slim-cq', 'builder7-kernelnext-cq'
+          ]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -158,12 +170,15 @@ def GenTests(api):
 
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
-      'aggregateMetric': 0,
-      'aggregateBuildMetric': 0,
+      'aggregateMetric': 75,
+      'aggregateBuildMetric': 75,
   }
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
       'greenness': {
-          'builder2-snapshot': [0, 0, True, True]
+          'builder2-snapshot': [0, 0, True, True],
+          'builder3-snapshot': [100, 100, True, True],
+          'builder5-snapshot': [100, 100, True, True],
+          'builder6-snapshot': [100, 100, True, True],
       }
   }
 
@@ -174,7 +189,10 @@ def GenTests(api):
   }
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
       'greenness': {
-          'builder2-snapshot': [100, 100, True, True]
+          'builder2-snapshot': [100, 100, True, True],
+          'builder3-snapshot': [100, 100, True, True],
+          'builder5-snapshot': [100, 100, True, True],
+          'builder6-snapshot': [100, 100, True, True]
       }
   }
 
@@ -224,20 +242,23 @@ def GenTests(api):
           step_name='analyzing build results.get now green builders.find green snapshot.buildbucket.search'
       ),
       api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(expected_success=['builder1-cq'],
-                     expected_retryable=['builder2-cq', 'builder3'],
-                     expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
+      api.properties(
+          expected_success=['builder1-cq'], expected_retryable=[
+              'builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'
+          ], expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
       api.post_process(post_process.PropertyEquals, 'per_build_stats', [{
           'build_id': '8945511751514863184',
           'outstanding_builders': ['builder5-cq', 'builder6-slim-cq'],
           'outstanding_test_suites': [],
-          'retryable_builders': ['builder2-cq', 'builder3'],
+          'retryable_builders':
+              ['builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'],
           'retryable_test_suites': [],
           'wait_for_green_stats': {
               'failed_builders_in_snapshot': ['builder2-snapshot'],
+              'no_snapshot_data_retryable_builders': ['builder7-kernelnext-cq'],
               'now_green_builders': ['builder2-snapshot'],
               'retryable_builders': ['builder2-cq'],
-              'total_builders_in_snapshot': 1
+              'total_builders_in_snapshot': 4
           }
       }]),
       api.post_process(post_process.DropExpectation),
@@ -290,9 +311,10 @@ def GenTests(api):
       ),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'], expected_retryable=['builder3'],
+          expected_success=['builder1-cq'], expected_retryable=['builder3-cq'],
           expected_outstanding=[
-              'builder2-cq', 'builder5-cq', 'builder6-slim-cq'
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
+              'builder7-kernelnext-cq'
           ]),
       api.post_process(post_process.DropExpectation),
   )

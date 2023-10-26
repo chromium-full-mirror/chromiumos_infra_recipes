@@ -8,6 +8,7 @@
 import collections
 import dataclasses
 import functools
+import re
 from typing import Dict, FrozenSet, List, NamedTuple, Set, Optional, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
@@ -104,6 +105,18 @@ class WaitForGreenStats:
   # of builders that are retryable because they are now green.
   retryable_builders: List[str] = dataclasses.field(default_factory=list)
 
+  # The names of builders that failed for the CQ build, but do not have local
+  # greenness data published. This is possible because local greenness is not
+  # published for some builders, see LOCAL_EXCLUDE_VARIANTS in greenness/api.py.
+  # If there are builders that are now retryable (as defined by the
+  # retryable_builders field), assume that the ones without local greenness
+  # reported are also retryable.
+  #
+  # TODO(b/303454780): Remove this once local greenness is published for all
+  # builders.
+  no_snapshot_data_retryable_builders: List[str] = dataclasses.field(
+      default_factory=list)
+
 
 @dataclasses.dataclass
 class PerBuildStats:
@@ -128,6 +141,15 @@ class PerBuildStats:
 
   wait_for_green_stats: WaitForGreenStats = dataclasses.field(
       default_factory=WaitForGreenStats)
+
+
+def _snapshot_builder(cq_builder: str) -> str:
+  """Converts a cq builder name to matching snapshot builder name.
+
+  For example, 'amd64-generic-cq' -> 'amd64-generic-snapshot' or
+  'amd64-generic-slim-cq' -> 'amd64-generic-snapshot'.
+  """
+  return re.sub('(-slim)?-cq$', '-snapshot', cq_builder)
 
 
 class AutoRetryUtilApi(recipe_api.RecipeApi):
@@ -299,18 +321,37 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
         now_green_builders = self._get_now_green_builders(cq_run)
         # now_green_builders are snapshot builders, but unsucessful_builders are
-        # cq builders. Replace the suffix when matching them.
+        # cq builders. Convert them with _snapshot_builder when matching them.
         now_green_retryable_builders = [
             b for b in unsuccessful_builders
-            if b.replace('-cq', '-snapshot') in now_green_builders
+            if _snapshot_builder(b) in now_green_builders
         ]
-        if now_green_builders:
+        if now_green_retryable_builders:
           self._experimental_retries[cq_run.id].add(
               EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
         retryable_failure_builders.extend(now_green_retryable_builders)
         self.per_build_stats[
             cq_run.
             id].wait_for_green_stats.retryable_builders = now_green_retryable_builders
+
+        # Local greenness is not published for some builders, see
+        # LOCAL_EXCLUDE_VARIANTS in greenness/api.py. As a workaround to prevent
+        # this missing data from blocking retries, if there are builders that
+        # are now retryable, assume that the ones without local greenness
+        # reported are also retryable.
+        #
+        # TODO(b/303454780): Remove this once local greenness is published for all
+        # builders.
+        if now_green_retryable_builders:
+          assert self._current_greenness, 'Must have found a green snapshot if now_green_retryable_builders is non-empty'
+          no_snapshot_data_builders = [
+              b for b in unsuccessful_builders if _snapshot_builder(b) not in
+              self._current_greenness.local_greenness
+          ]
+          self.per_build_stats[
+              cq_run.
+              id].wait_for_green_stats.no_snapshot_data_retryable_builders = no_snapshot_data_builders
+          retryable_failure_builders.extend(no_snapshot_data_builders)
 
       outstanding_failure_builders = [
           b for b in unsuccessful_builders
