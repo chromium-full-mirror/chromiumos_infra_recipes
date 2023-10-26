@@ -917,11 +917,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         critical = test.common.critical and test.common.critical.value
         board = test.skylab_board if isinstance(test,
                                                 HwTestCfg.HwTest) else None
+        model = test.skylab_model if isinstance(test,
+                                                HwTestCfg.HwTest) else None
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
         result.append({
             'name': name,
             'board': board,
+            'model': model,
             'builder_name': builder_name,
             'build_target': build_target,
             'critical': critical,
