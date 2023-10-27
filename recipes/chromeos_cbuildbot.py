@@ -9,7 +9,6 @@ from typing import Generator
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.chromeos_cbuildbot import (ChromeosCbuildbotProperties)
-from recipe_engine.recipe_api import AggregatedStepFailure
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -41,13 +40,6 @@ def RunSteps(api: RecipeApi,
     DoRunSteps(api, properties)
   except InfraFailure as ex:  #pragma: no cover
     result.status = common_pb2.INFRA_FAILURE
-    result.summary_markdown = MakeSummaryMarkdown(api, ex)
-    raise
-  except AggregatedStepFailure as ex:  #pragma: no cover
-    if ex.result.contains_infra_failure:
-      result.status = common_pb2.INFRA_FAILURE
-    else:
-      result.status = common_pb2.FAILURE
     result.summary_markdown = MakeSummaryMarkdown(api, ex)
     raise
   except StepFailure as ex:

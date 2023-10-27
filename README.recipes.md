@@ -12002,14 +12002,14 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chrome/tests/is_chrome_pupr_atomic_uprev.py#34)(api, properties):**
 ### *recipes* / [chromeos\_cbuildbot](/recipes/chromeos_cbuildbot.py)
 
-[DEPS](/recipes/chromeos_cbuildbot.py#19): [bot\_cost](#recipe_modules-bot_cost), [chromite](#recipe_modules-chromite), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipes/chromeos_cbuildbot.py#18): [bot\_cost](#recipe_modules-bot_cost), [chromite](#recipe_modules-chromite), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/legacy\_annotation][recipe_engine/recipe_modules/legacy_annotation], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
-&mdash; **def [DoRunSteps](/recipes/chromeos_cbuildbot.py#61)(api: RecipeApi, properties: ChromeosCbuildbotProperties):**
+&mdash; **def [DoRunSteps](/recipes/chromeos_cbuildbot.py#53)(api: RecipeApi, properties: ChromeosCbuildbotProperties):**
 
-&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#103)(api: RecipeTestApi, failure: StepFailure):**
+&mdash; **def [MakeSummaryMarkdown](/recipes/chromeos_cbuildbot.py#95)(api: RecipeTestApi, failure: StepFailure):**
 
-&mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#36)(api: RecipeApi, properties: ChromeosCbuildbotProperties):**
+&mdash; **def [RunSteps](/recipes/chromeos_cbuildbot.py#35)(api: RecipeApi, properties: ChromeosCbuildbotProperties):**
 ### *recipes* / [chromite:examples/full](/recipe_modules/chromite/examples/full.py)
 
 [DEPS](/recipe_modules/chromite/examples/full.py#12): [chromite](#recipe_modules-chromite), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
