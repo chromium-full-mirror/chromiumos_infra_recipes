@@ -198,9 +198,10 @@ def DoRunSteps(api: RecipeApi,
   # TODO(b/292108614): Remove ignore_exceptions when stable.
   with api.failures.ignore_exceptions():
     if not api.cros_infra_config.is_staging:
-      dlc_assets_file = api.path.join(kabuto_path, 'dlc_assets/snoopy.json')
-      _GenerateAndUploadProvenance(api, dlc_assets_file)
-      api.bcid_reporter.report_stage('upload-complete')
+      with api.step.nest('Generate DLC provenance'):
+        dlc_assets_file = api.path.join(kabuto_path, 'dlc_assets/snoopy.json')
+        _GenerateAndUploadProvenance(api, dlc_assets_file)
+        api.bcid_reporter.report_stage('upload-complete')
 
   partner_overlay_path = chroot_path.join(
       'src/private-overlays/chromeos-partner-overlay')
