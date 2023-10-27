@@ -128,6 +128,15 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
       [run[0] for run in retryable_runs])
   retryable_runs = [run for run in retryable_runs if run[0] in filtered_runs]
 
+  for b, retry_reason in retryable_runs:
+    # Only call build_was_dry_run on builds that are actually retryable, since
+    # it is possible the run mode property was not set on some candidates (
+    # e.g. manually triggered builds). filter_retry_candidates should filter
+    # builds where CV wasn't active, so we expect all retry candidates to have
+    # the run mode property set at this point.
+    retry_reason.original_orch_was_dry_run = api.auto_retry_util.build_was_dry_run(
+        b)
+
   api.auto_retry_util.publish_per_build_stats()
 
   unthrottled_retry_n = len(retryable_runs)
@@ -141,7 +150,11 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   # prioritizing the cq runs to retry in a throttle constrained scenario.
   retryable_runs = retryable_runs[:retries_avail]
 
-  summary = f'{unthrottled_retry_n} run(s) to retry, {throttled_runs_n} are throttled.'
+  unthrottled_retry_dry_run_n = len(
+      [r for _, r in retryable_runs if r.original_orch_was_dry_run])
+  summary = (f'{unthrottled_retry_n - unthrottled_retry_dry_run_n} CQ+2 run(s) '
+             f'to retry, {unthrottled_retry_dry_run_n} CQ+1 run(s) to retry, '
+             f'{throttled_runs_n} are throttled.')
 
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary
@@ -187,6 +200,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'relevant': True
           },]
       }).message
+
+  retryable_build_orch_dry_run = build_pb2.Build()
+  retryable_build_orch_dry_run.CopyFrom(retryable_build_orch)
+  retryable_build_orch_dry_run.input.properties['$recipe_engine/cq'][
+      'runMode'] = 'DRY_RUN'
 
   # An orchestrator with a retryable test failure (builder1 is no longer a CQ
   # blocking builder).
@@ -283,8 +301,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     check(experiment in retry_reason['experimentalFeatures'])
 
   yield api.test(
-      'retryable-build',
-      api.auto_retry_util.enable_retries(),
+      'retryable-build', api.auto_retry_util.enable_retries(),
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
@@ -312,11 +329,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.LogEquals,
           f'performing retries.retry build {retryable_build_orch.id}',
           'retryable builders', 'builder1'),
-  )
+      api.post_process(
+          post_process.SummaryMarkdown,
+          '1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.',
+      ))
 
   yield api.test(
-      'retryable-test',
-      api.auto_retry_util.enable_retries(),
+      'retryable-test', api.auto_retry_util.enable_retries(),
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
@@ -344,6 +363,46 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.LogEquals,
           f'performing retries.retry build {retryable_test_orch.id}',
           'retryable test suites', 'builder1.hw.suite'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          '1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.',
+      ))
+
+  yield api.test(
+      'retryable-dry-run',
+      api.auto_retry_util.enable_retries(),
+      api.gerrit.set_get_account_id(
+          gerrit_host='chromium-review.googlesource.com',
+          email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
+      api.buildbucket.simulated_search_results(
+          [retryable_build_orch_dry_run],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_get_change_mergeable(
+          'filter candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.post_process(
+          post_process.MustRun,
+          f'performing retries.retry build {retryable_build_orch.id}',
+      ),
+      api.post_process(
+          post_process.LogEquals,
+          f'performing retries.retry build {retryable_build_orch.id}',
+          'retryable builders', 'builder1'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          '0 CQ+2 run(s) to retry, 1 CQ+1 run(s) to retry, 0 are throttled.',
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   retryable_orch_build = api.test_util.test_orchestrator(

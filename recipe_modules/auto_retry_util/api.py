@@ -736,8 +736,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return cq_orchs
 
-  def _build_was_dry_run(self, build: build_pb2.Build) -> bool:
+  def build_was_dry_run(self, build: build_pb2.Build) -> bool:
     """Returns whether the build was a dry run.
+
+    Note this assumes the $recipe_engine/cq.runMode input property is set,
+    which may not be true for some builds (e.g. manually triggered builds).
 
     Args:
       build: The build for which to determine whether it is a dry run.
@@ -818,7 +821,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               {c.id for p in patch_sets if p.unresolved_comment_count})
           if not self._was_cv_active(c.id, patch_sets):
             removed_label_ids.add(c.id)
-          if self._build_was_dry_run(c):
+          if self.build_was_dry_run(c):
             negative_labels_ids = {
                 c.id
                 for p in patch_sets
@@ -1134,7 +1137,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       build: build_pb2.Build,
       retryable_builders: List[str],
       retryable_test_suites: List[str],
-  ) -> int:
+  ):
     """Retries build by voting on all of its input changes.
 
     Sets Commit-Queue+1 or 2 (depending on whether build was a dry run)
@@ -1169,7 +1172,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           sorted(retryable_test_suites))
 
       labels = {
-          Label.COMMIT_QUEUE: 1 if self._build_was_dry_run(build) else 2,
+          Label.COMMIT_QUEUE: 1 if self.build_was_dry_run(build) else 2,
       }
 
       if not self._enable_retries:

@@ -14,6 +14,9 @@ message RetryDetails {
   // The original orchestrator's build bucket id.
   int64 original_orch_id = 2;
 
+  // True if the original orchestrator was a dry-run (i.e. triggered by a CQ+1).
+  bool original_orch_was_dry_run = 6;
+
   // The specific build failures that were retryable.
   repeated string retryable_builders = 3;
 
