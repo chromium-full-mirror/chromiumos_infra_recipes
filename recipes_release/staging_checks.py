@@ -66,6 +66,17 @@ def image_builder_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
+def sdk_update_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for SDK update failures."""
+  ignorable_summary_markdown_re = [
+      re.compile('call chromite.api.SdkService/Update.call build API script'),
+  ]
+  for regex in ignorable_summary_markdown_re:
+    if regex.search(build.get('summaryMarkdown', '')):
+      return True
+  return False
+
+
 def cq_cancelled_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for CQ builds cancelled by CV."""
   ignorable_cancellation_markdown = 'LUCI CV no longer needs this Tryjob'
@@ -133,6 +144,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
     StagingReCheck('chromeos', 'staging', r'staging-(?!.*llfg).*-incremental$',
+                   [image_builder_exemption, sdk_update_exemption],
                    num_builds=2),
 )
 
