@@ -35,7 +35,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
 
   with api.build_menu.configure_builder(missing_ok=True, commit=commit):
     project_dir = api.cros_source.workspace_path.join(
-        'chromite/ide_tooling/cros-ide/src')
+        'chromite/ide_tooling/chromiumide/src')
     with api.context(cwd=project_dir):
       api.step('npm ci', [
           'npm',

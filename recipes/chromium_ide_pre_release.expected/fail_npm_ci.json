@@ -598,7 +598,7 @@
       "npm",
       "ci"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/cros-ide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
     "name": "npm ci",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
