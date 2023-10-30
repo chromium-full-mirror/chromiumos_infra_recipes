@@ -34,8 +34,13 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
       build.ClearField(ofield)
     cmd = self._cipd_dir.join('cros_test_runner')
 
-    with self.m.context(infra_steps=True):
-      self.m.step.sub_build('cros_test_runner', [cmd], build, legacy_global_namespace=True)
+    with self.m.context():
+      result = self.m.step.sub_build('cros_test_runner', [cmd], build,
+                                     legacy_global_namespace=True,
+                                     raise_on_failure=False)
+      allowed_statuses = [self.m.step.SUCCESS, self.m.step.FAILURE]
+      self.m.step._raise_on_disallowed_statuses(result, allowed_statuses)
+      return result
 
   def ensure_cros_test_runner(self):
     """Ensure the cros_test_runner CLI is installed."""

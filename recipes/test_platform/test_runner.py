@@ -8,6 +8,9 @@ import datetime
 import os
 import time
 
+import base64
+import zlib
+
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 from RECIPE_MODULES.chromeos.dut_interface import error_messages
 from google.protobuf import duration_pb2
@@ -2040,6 +2043,41 @@ def _trv2_post_processing(api):
       api.cts_results_archive.archive(str(directory))
 
 
+def raise_on_trv2_result(api, res):  # pragma: nocover
+  """Decompress trv2 result and raise StepFailure on prejob or test failure.
+
+  Args:
+    * api (RecipeScriptApi): Ubiquitous recipe api.
+    * res - The step result.
+  """
+  compressed_result = res.step.sub_build.output.properties['compressed_result']
+  decompressed_result = zlib.decompress(base64.b64decode(compressed_result))
+  result = Result()
+  result.ParseFromString(decompressed_result)
+  if result.prejob:
+    for s in result.prejob.step:
+      if s.verdict != Result.Prejob.Step.VERDICT_PASS:
+        raise api.step.StepFailure('prejob %s failed: %s' %
+                                   (s.name, s.human_readable_summary))
+
+  # Collect test failures by verdict for better step failure text
+  failed_tests = {}
+  if result.autotest_result:
+    for test_case in result.autotest_result.test_cases:
+      if test_case.verdict in [
+          Result.Autotest.TestCase.VERDICT_PASS,
+          Result.Autotest.TestCase.VERDICT_NO_VERDICT
+      ]:
+        continue
+      if test_case.verdict not in failed_tests:
+        failed_tests[test_case.verdict] = []
+      failed_tests[test_case.verdict].append(test_case)
+
+  # TODO(cdelagarza): Format test failures grouped by verdicts.
+  if failed_tests:
+    raise api.step.StepFailure('test failed')
+
+
 def run_and_upload(api, properties):
   """Run test and upload results.
 
@@ -2058,7 +2096,8 @@ def run_and_upload(api, properties):
   ):  # pragma: nocover
     try:
       # Use cros_test_runner binary rather than the normal test_runner workflow.
-      api.cros_test_runner.execute_luciexe()
+      result = api.cros_test_runner.execute_luciexe()
+      raise_on_trv2_result(api, result)
     finally:
       _trv2_post_processing(api)
     return

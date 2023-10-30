@@ -5339,11 +5339,11 @@ Args:
 
 Module for issuing cros_test_runner commands
 
-&mdash; **def [cipd\_package\_label](/recipe_modules/cros_test_runner/api.py#55)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/cros_test_runner/api.py#60)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_cros\_test\_runner](/recipe_modules/cros_test_runner/api.py#40)(self):**
+&mdash; **def [ensure\_cros\_test\_runner](/recipe_modules/cros_test_runner/api.py#45)(self):**
 
 Ensure the cros_test_runner CLI is installed.
 
@@ -15775,12 +15775,12 @@ Recipe that triggers cros_test_platform runs.
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#25)(api, config, deadline):**
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
-[DEPS](/recipes/test_platform/test_runner.py#48): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [labpack](#recipe_modules-labpack), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [urls](#recipe_modules-urls), [vmlab](#recipe_modules-vmlab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipes/test_platform/test_runner.py#51): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [labpack](#recipe_modules-labpack), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [urls](#recipe_modules-urls), [vmlab](#recipe_modules-vmlab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2089)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2128)(api, properties):**
 
 Entrypoint to the script
 
@@ -15791,7 +15791,7 @@ Args:
 Returns:
   None
 
-&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#186)(api, interface, test_metadata, result):**
+&mdash; **def [archive\_all\_logs](/recipes/test_platform/test_runner.py#189)(api, interface, test_metadata, result):**
 
 Archive all test logs to Google Storage, updating result in the process.
 
@@ -15805,7 +15805,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1852)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1855)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -15817,7 +15817,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1565)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1568)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -15833,7 +15833,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1478)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1481)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -15849,7 +15849,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1449)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1452)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -15860,7 +15860,15 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2043)(api, properties):**
+&mdash; **def [raise\_on\_trv2\_result](/recipes/test_platform/test_runner.py#2046)(api, res):**
+
+Decompress trv2 result and raise StepFailure on prejob or test failure.
+
+Args:
+  * api (RecipeScriptApi): Ubiquitous recipe api.
+  * res - The step result.
+
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2081)(api, properties):**
 
 Run test and upload results.
 
@@ -15871,7 +15879,7 @@ Args:
 Returns:
   None
 
-&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#116)(step, name, link):**
+&mdash; **def [s\_link](/recipes/test_platform/test_runner.py#119)(step, name, link):**
 
 Add a link `link` named `link_name` to the `step` if it exists.
 
@@ -15880,7 +15888,7 @@ Args:
 * name (str): Link name.
 * link (str): Like URI to add.
 
-&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#102)(step, name, log):**
+&mdash; **def [s\_log](/recipes/test_platform/test_runner.py#105)(step, name, log):**
 
 Add a `log` to a `step`'s log under `name` is it exists.
 
@@ -15889,7 +15897,7 @@ Args:
 * name (str): Log name.
 * log (Any): Object to add to log.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#253)(api, result):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/test_runner.py#256)(api, result):**
 
 Set the output properties that are part of the test_runner API.
 
@@ -15897,7 +15905,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1922)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1925)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -15905,7 +15913,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#206)(api, result):**
+&mdash; **def [summarize\_results\_from\_phosphorus\_results](/recipes/test_platform/test_runner.py#209)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -15913,7 +15921,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * result (DUTResult): The result of all tests.
 
-&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#171)(api, test):**
+&mdash; **def [validate\_request](/recipes/test_platform/test_runner.py#174)(api, test):**
 
 Validate the TestRunnerProperties.
 
