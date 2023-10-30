@@ -166,6 +166,7 @@
   * [breakpad:examples/full](#recipes-breakpad_examples_full)
   * [breakpad:examples/no_symbols](#recipes-breakpad_examples_no_symbols)
   * [build_android_uprev](#recipes-build_android_uprev) &mdash; Recipe for building a BuildTarget image for Android uprev.
+  * [build_bisector](#recipes-build_bisector) &mdash; Recipe for building a BuildTarget image for Bisector.
   * [build_borealis_rootfs](#recipes-build_borealis_rootfs) &mdash; Recipe for building a Borealis rootfs image.
   * [build_chromiumos](#recipes-build_chromiumos) &mdash; Recipe for building public ChromiumOS images.
   * [build_compilation_database](#recipes-build_compilation_database)
@@ -10573,9 +10574,11 @@ Args:
 
 Sysroot archive functions.
 
-#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with sysroot archive.
+
+&mdash; **def [archive\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#21)(self, build_target=None, packages=None):**
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
 [DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11614,6 +11617,16 @@ for example:
 &mdash; **def [DoRunSteps](/recipes/build_android_uprev.py#45)(api: RecipeApi, properties: AndroidUprevProperties, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_android_uprev.py#39)(api: RecipeApi, properties: AndroidUprevProperties):**
+### *recipes* / [build\_bisector](/recipes/build_bisector.py)
+
+[DEPS](/recipes/build_bisector.py#20): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Recipe for building a BuildTarget image for Bisector.
+
+&mdash; **def [DoRunSteps](/recipes/build_bisector.py#45)(api: RecipeApi, config: BuilderConfig):**
+
+&mdash; **def [RunSteps](/recipes/build_bisector.py#34)(api: RecipeApi):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -15773,12 +15786,12 @@ In short, this recipe will:
 5.  Upload the updated contents to the destination URI.
 ### *recipes* / [sysroot\_archive:examples/full](/recipe_modules/sysroot_archive/examples/full.py)
 
-[DEPS](/recipe_modules/sysroot_archive/examples/full.py#8): [sysroot\_archive](#recipe_modules-sysroot_archive)
+[DEPS](/recipe_modules/sysroot_archive/examples/full.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_branch](#recipe_modules-cros_branch), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Test codes for sysroot archive API.
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/examples/full.py#15)(api):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/examples/full.py#23)(api):**
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

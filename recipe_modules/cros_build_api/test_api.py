@@ -675,6 +675,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             },
         },
     )
+    responses['GenerateArchive'] = jsonify(
+        sysroot_archive={
+            'path': '/tmp/foo.zip',
+            'location': 2,
+        },
+    )
     responses['InstallToolchain'] = jsonify(failed_package_data=[])
     responses['InstallPackages'] = jsonify(failed_package_data=[])
     return responses
