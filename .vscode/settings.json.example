@@ -9,8 +9,8 @@
         // sure to use vpython as your interpreter when working in a shell.
         "terminal.integrated.env.linux": {
                 // User site-packages is here to make ptvsd available for import
-               "PYTHONPATH": "${env:HOME}/.local/lib/python2.7/site-packages:${workspaceFolder}/.recipe_deps/recipe_engine:${workspaceFolder}/.recipe_deps/_pb2:${workspaceFolder}/.recipe_deps/_pb3:${workspaceFolder}/.recipe_deps/depot_tools:${workspaceFolder}/.recipe_deps/chromiumos_proto:${env:PYTHONPATH}",
-                "VPYTHON_DEFAULT_SPEC": "${workspaceFolder}/.recipe_deps/recipe_engine/.vpython"
+                "PYTHONPATH": "${env:HOME}/.local/lib/python2.7/site-packages:${workspaceFolder}/.recipe_deps/recipe_engine:${workspaceFolder}/.recipe_deps/_pb2:${workspaceFolder}/.recipe_deps/_pb3:${workspaceFolder}/.recipe_deps/depot_tools:${workspaceFolder}/.recipe_deps/chromiumos_proto:${env:PYTHONPATH}",
+                "VPYTHON_DEFAULT_SPEC": "${workspaceFolder}/.recipe_deps/recipe_engine/.vpython3"
         },
         // We don't have a way to get testing to work with `recipes.py test`, yet.
         "python.testing.pytestEnabled": false,
