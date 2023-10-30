@@ -2401,7 +2401,7 @@ APIs for using Cloud Pub/Sub
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(minutes=2))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
 
 Publish a message to Cloud Pub/Sub
 

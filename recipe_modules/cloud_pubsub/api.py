@@ -15,7 +15,7 @@ from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 class CloudPubsubApi(recipe_api.RecipeApi):
   """A module for Cloud Pub/Sub"""
 
-  @exponential_retry(retries=2, delay=datetime.timedelta(minutes=2))
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def publish_message(self, project_id, topic_id, data, ordering_key=None,
                       endpoint=None, raise_on_failed_publish=True):
     """Publish a message to Cloud Pub/Sub

@@ -67,10 +67,6 @@
   },
   {
     "cmd": [],
-    "name": "sleep 136"
-  },
-  {
-    "cmd": [],
     "name": "publish message (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{'data': 'Some test data',@@@",
@@ -97,10 +93,6 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "sleep 235"
   },
   {
     "cmd": [],
