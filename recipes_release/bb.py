@@ -45,13 +45,6 @@ def _get_affected_recipes(changes: Tuple[git.Commit],
   p = subprocess.run(cmd, capture_output=True, text=True, check=True)
   affected_files = p.stdout.strip().split()
 
-  # Chromite Pin Uprevs return nothing for ./recipes.py analyze, so we
-  # need to manually set affected files.
-  for change in changes:
-    if change.chromite_pin_uprev:
-      affected_files.append('recipe_modules/cros_build_api/api.py')
-      break
-
   with tempfile.NamedTemporaryFile(mode='w') as input_file, \
         tempfile.NamedTemporaryFile() as output_file:
     json.dump(

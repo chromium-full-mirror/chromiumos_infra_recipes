@@ -16,7 +16,6 @@ import common
 from protos.recipes_autoreleaser import ReleaseResult  #pylint: disable=no-name-in-module
 
 RE_TRIVIAL_COMMIT = re.compile(r'Roll recipe.*\(trivial\)\.?$')
-CHROMITE_PIN_COMMIT = re.compile(r'update chromite-HEAD version')
 MISSING_INSTANCE = '---------COULD_NOT_FIND_INSTANCE--------'
 
 
@@ -49,10 +48,6 @@ class Commit:
   @property
   def trivial(self):
     return RE_TRIVIAL_COMMIT.match(self.message)
-
-  @property
-  def chromite_pin_uprev(self):
-    return CHROMITE_PIN_COMMIT.match(self.message)
 
   def get_cipd_instance(self) -> str:
     """Find the recipe bundle instance that contains up to this commit."""

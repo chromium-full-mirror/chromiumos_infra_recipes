@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Unit tests for the `bb` module."""
+
 import collections
 import copy
 import datetime
@@ -68,7 +70,6 @@ class GetAffectedRecipesTest(unittest.TestCase):
         {
             'files': [
                 'recipe_modules/util/api.py', 'recipes/bar.py',
-                'recipe_modules/cros_build_api/api.py'
             ],
             'recipes': ['bar', 'baz', 'foo'],
         }, mock.ANY)
