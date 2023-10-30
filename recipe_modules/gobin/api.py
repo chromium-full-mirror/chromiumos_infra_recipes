@@ -37,6 +37,7 @@ SUPPORTED_PACKAGES = [
 # back to the `prod` label), only intended for use during the initial rollout.
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
+    'manifest_doctor',
     # For testing only.
     'my_gobin',
 ]
@@ -111,8 +112,11 @@ class GobinAPI(recipe_api.RecipeApi):
           '-json-output', cipd_json_file
       ])
 
-      cipd_json = self.m.file.read_text(f'read {cipd_json_file}',
-                                        cipd_json_file)
+      cipd_json = self.m.file.read_text(
+          f'read {cipd_json_file}',
+          cipd_json_file,
+          test_data=CIPD_TEST_JSON % package_fullname,
+      )
 
       try:
         package_data = json.loads(cipd_json)['result']
