@@ -1,0 +1,32 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.sysroot_archive;
+
+message SysrootArchiveApiProperties {
+
+  message SysrootEnabled {
+    // Flag to save sysroot archive.
+    bool save_sysroot_archive = 1;
+
+    // Flag to use sysroot archive during building images.
+    bool use_sysroot_archive = 2;
+
+    // gs_bucket to save sysroot archive.
+    string gs_bucket = 3;
+
+    // Chrome OS start version of the sysroot archive.
+    string chromeos_start_version = 4;
+
+    // Chrome OS end version of the sysroot archive.
+    string chromeos_end_version = 5;
+
+    // Chrome OS CL diff counts from Chrome OS start version.
+    int64 chromeos_cl_diff_counts = 6;
+  }
+
+  SysrootEnabled sysroot_enabled = 1;
+}

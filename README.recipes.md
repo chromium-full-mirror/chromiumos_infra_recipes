@@ -112,6 +112,7 @@
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
   * [swarming_cli](#recipe_modules-swarming_cli)
+  * [sysroot_archive](#recipe_modules-sysroot_archive) &mdash; Sysroot archive functions.
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results) &mdash; Functions for reporting and parsing Tast VM test results.
@@ -713,6 +714,7 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
   * [sync_key_value_store](#recipes-sync_key_value_store) &mdash; Sync values from a source-controlled key-value store to a GS:// file.
+  * [sysroot_archive:examples/full](#recipes-sysroot_archive_examples_full) &mdash; Test codes for sysroot archive API.
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
@@ -10507,6 +10509,16 @@ Args:
   swarming_instance(str): string containing the name of the Swarming
     instance to query.
   limit (int): Number of tasks to return.
+### *recipe_modules* / [sysroot\_archive](/recipe_modules/sysroot_archive)
+
+[DEPS](/recipe_modules/sysroot_archive/__init__.py#9): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Sysroot archive functions.
+
+#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for interacting with sysroot archive.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
 [DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15637,6 +15649,14 @@ In short, this recipe will:
 3.  Prepare updated contents for the destination file.
 4.  Quit early if there are no updates to be made.
 5.  Upload the updated contents to the destination URI.
+### *recipes* / [sysroot\_archive:examples/full](/recipe_modules/sysroot_archive/examples/full.py)
+
+[DEPS](/recipe_modules/sysroot_archive/examples/full.py#8): [sysroot\_archive](#recipe_modules-sysroot_archive)
+
+
+Test codes for sysroot archive API.
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/examples/full.py#15)(api):**
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
