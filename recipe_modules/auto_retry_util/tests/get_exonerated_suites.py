@@ -14,6 +14,7 @@ from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
@@ -22,6 +23,7 @@ from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES
+from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 DEPS = [
     'recipe_engine/assertions',
@@ -115,7 +117,7 @@ def GenTests(api):
                               ]),
                   ]),
       })
-  ctp_build = build_pb2.Build(id=111, status='FAILURE')
+  ctp_build = build_pb2.Build(id=111, status=common_pb2.FAILURE)
   ctp_build.output.properties.update({
       'compressed_responses':
           api.skylab_results.base64_compress_proto(execute_responses).decode()
@@ -124,7 +126,7 @@ def GenTests(api):
   # VM test results mock data.
   vm_build_1 = build_pb2.Build(
       id=222, builder=builder_common_pb2.BuilderID(builder='c-cq'),
-      status='FAILURE')
+      status=common_pb2.FAILURE)
   vm_build_1.input.properties.update({
       'name': 'c-cq.tast_vm.suite',
       'buildTarget': json_format.MessageToDict(BuildTarget(name='c'))
@@ -136,7 +138,7 @@ def GenTests(api):
 
   vm_build_2 = build_pb2.Build(
       id=222, builder=builder_common_pb2.BuilderID(builder='d-cq'),
-      status='FAILURE')
+      status=common_pb2.FAILURE)
   vm_build_2.input.properties.update({
       'name': 'd-cq.tast_gce.suite',
       'buildTarget': json_format.MessageToDict(BuildTarget(name='d'))
@@ -145,6 +147,29 @@ def GenTests(api):
       name='fake.test', verdict=TaskState.VERDICT_FAILED)
   vm_build_2.output.properties.update(
       {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
+
+  # Unexpectedly skipped test case.
+  vm_build_3 = build_pb2.Build(
+      id=333, builder=builder_common_pb2.BuilderID(builder='f-cq'),
+      status=common_pb2.FAILURE)
+  vm_build_3.input.properties.update({
+      'name': 'f-cq.tast_vm.suite',
+      'buildTarget': json_format.MessageToDict(BuildTarget(name='f'))
+  })
+  test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
+      name='fake.test.skipped', verdict=TaskState.VERDICT_FAILED,
+      human_readable_summary=MISSING_TEST_FAILURE_SUMMARY)
+  vm_build_3.output.properties.update(
+      {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
+
+  # No test cases reported.
+  vm_build_4 = build_pb2.Build(
+      id=444, builder=builder_common_pb2.BuilderID(builder='g-cq'),
+      status=common_pb2.FAILURE)
+  vm_build_4.input.properties.update({
+      'name': 'g-cq.tast_vm.suite',
+      'buildTarget': json_format.MessageToDict(BuildTarget(name='g'))
+  })
 
   test_summary = [
       # HW test results.
@@ -196,7 +221,23 @@ def GenTests(api):
           'critical': True,
           'name': 'd-cq.tast_gce.suite'
       },
+      {
+          'builder_name': 'f-cq',
+          'build_target': 'f',
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'f-cq.tast_vm.suite'
+      },
+      {
+          'builder_name': 'g-cq',
+          'build_target': 'g',
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'g-cq.tast_vm.suite'
+      },
   ]
+
+  vm_builds = [vm_build_1, vm_build_2, vm_build_3, vm_build_4]
 
   yield api.test(
       'basic',
@@ -210,7 +251,7 @@ def GenTests(api):
           }).build,
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
+      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(
           expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
       api.post_process(post_process.DropExpectation),
@@ -225,12 +266,12 @@ def GenTests(api):
                   'skylab_builder_ids': [111],
                   'tast_vm_tests_builder_ids': [222, 333]
               },
-              'passed_tests': ['b-cq.hw.suite'],
+              'passed_tests': ['b-cq.hw.suite', 'd-cq.tast_gce.suite'],
           }).build,
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
-      api.properties(expected_exonerated_suites=['d-cq.tast_gce.suite']),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(expected_exonerated_suites=[]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -272,11 +313,13 @@ def GenTests(api):
           }),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
+      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[
           'b-cq.hw.suite',
           'd-cq.tast_gce.suite',
           'e-cq.hw.suite',
+          'f-cq.tast_vm.suite',
+          'g-cq.tast_vm.suite',
           'h-cq.hw.cq-minimal',
       ]),
       api.post_process(post_process.DropExpectation),

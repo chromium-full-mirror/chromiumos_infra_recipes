@@ -721,6 +721,7 @@
   * [tast_results:examples/get_results](#recipes-tast_results_examples_get_results)
   * [tast_results:examples/record_logs](#recipes-tast_results_examples_record_logs)
   * [tast_results:tests/extract_failed_test_names](#recipes-tast_results_tests_extract_failed_test_names)
+  * [tast_results:tests/had_no_unexpected_skips](#recipes-tast_results_tests_had_no_unexpected_skips) &mdash; Tests for the had_no_unexpected_skips function.
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_bazel](#recipes-test_bazel) &mdash; Recipe that runs Bazel tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
@@ -858,7 +859,7 @@ Returns:
   List of modified files.
 ### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
 
-[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Utility function for CQ auto retry.
@@ -916,7 +917,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#971)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1119)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -956,7 +957,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1150)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1191)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -10701,15 +10702,15 @@ Returns:
 
 Functions for reporting and parsing Tast VM test results.
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#35)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#36)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#54)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#55)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -10720,7 +10721,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#200)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#201)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -10733,7 +10734,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#175)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#176)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -10743,7 +10744,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#159)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#160)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -10753,11 +10754,11 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#547)(self, vm_test_build: Build):**
+&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#548)(self, vm_test_build: Build):**
 
 Returns the failed test names from the output properties of the build.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#79)(self, test_results_path, suite_name, tag, tests, build_artifacts_url=None, new_invocation=False):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#80)(self, test_results_path, suite_name, tag, tests, build_artifacts_url=None, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -10776,7 +10777,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#290)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#291)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -10787,7 +10788,11 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#239)(self, failures, empty_result):**
+&mdash; **def [had\_no\_unexpected\_skips](/recipe_modules/tast_results/api.py#555)(self, vm_test_build: Build):**
+
+Returns whether all test cases were attempted.
+
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#240)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -10795,14 +10800,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#264)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#265)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#503)(self, test_results_path, suite_name, missing_test_names, tag, build_artifacts_url=None, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#504)(self, test_results_path, suite_name, missing_test_names, tag, build_artifacts_url=None, new_invocation=False):**
 
 Upload the test results to ResultDB.
 
@@ -11286,10 +11291,10 @@ Tests for the filter_candidates function.
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/footers.py#24)(api):**
 ### *recipes* / [auto\_retry\_util:tests/get\_exonerated\_suites](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#26): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_history](#recipe_modules-cros_history), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#28): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_history](#recipe_modules-cros_history), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#40)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#42)(api):**
 ### *recipes* / [auto\_retry\_util:tests/is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/tests/is_experimental_feature_enabled.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/is_experimental_feature_enabled.py#14): [auto\_retry\_util](#recipe_modules-auto_retry_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15616,6 +15621,14 @@ In short, this recipe will:
 
 
 &mdash; **def [RunSteps](/recipe_modules/tast_results/tests/extract_failed_test_names.py#21)(api):**
+### *recipes* / [tast\_results:tests/had\_no\_unexpected\_skips](/recipe_modules/tast_results/tests/had_no_unexpected_skips.py)
+
+[DEPS](/recipe_modules/tast_results/tests/had_no_unexpected_skips.py#16): [tast\_results](#recipe_modules-tast_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the had_no_unexpected_skips function.
+
+&mdash; **def [RunSteps](/recipe_modules/tast_results/tests/had_no_unexpected_skips.py#26)(api):**
 ### *recipes* / [tast\_vm](/recipes/tast_vm.py)
 
 [DEPS](/recipes/tast_vm.py#15): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

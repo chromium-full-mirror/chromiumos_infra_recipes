@@ -24,6 +24,7 @@ DEPS = [
     'looks_for_green',
     'naming',
     'skylab_results',
+    'tast_results',
     'test_util',
 ]
 

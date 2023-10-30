@@ -968,21 +968,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
 
-  def get_exonerated_suites(
-      self, cq_run: build_pb2.Build,
-      failed_test_stats: List[FailedTestStats]) -> List[str]:
-    """Returns the names of the exonerated test suites for the given CQ run.
 
-    Args:
-      cq_run: The cq-orchestrator build for which to get the exonerated suites.
-      failed_test_stats: A list of FailedTestStats to use when performing
-          auto exoneration rathen that the FailedTestStats in the output
-          properties of the build. This list of FailedTestStats should be
-          updated using the latest LUCI analysis data.
-
-    Returns:
-      The names of the exonerated test suites.
-  """
+  def _get_exonerated_hw_suites(self, cq_run: build_pb2.Build,
+                                exon_configs: Dict):
+    """Returns the names of newly exonerated hw test suites."""
 
     def _hw_unit(test_summary_dict: Dict) -> UnitHwTest:
       """Returns a UnitHwTest created using info from the test summary dict.
@@ -1021,27 +1010,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       )
       return UnitHwTest(unit=unit, hw_test=hw_test)
 
-    # Exit early if the run exceeds any of the exoneration guardrails.
-    override_info = self.m.exoneration_util.override_calculation(
-        failed_test_stats, self.m.exonerate.overall_autoex_limit,
-        self.m.exonerate.per_target_autoex_limit)
-    if override_info.override_reason:
-      return []
-
-    # Get the test result from the test builders.
+    # Get the CTP builds.
     output_dict = json_format.MessageToDict(cq_run.output.properties)
     test_summary = output_dict.get('test_summary', [])
     test_tasks = output_dict.get('test_tasks', {})
     skylab_builder_ids = [
         int(b) for b in test_tasks.get('skylab_builder_ids', [])
     ]
-    tast_vm_tests_builder_ids = [
-        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
-    ]
-
-    # Generate the exoneration configs for this specific CQ run.
-    exon_configs = self.m.exoneration_util.get_updated_configs(
-        failed_test_stats, self.m.exonerate.manual_exoneration_configs)
 
     # Filter out suites which were previously exonerated.
     previously_passed_suites = set(
@@ -1069,18 +1044,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           result, exon_configs, exonerate_prejob_failures=True):
         exonerated_prejob_failure_suites.add(suite)
 
-    # Exonerate VM test results.
-    if len(tast_vm_tests_builder_ids) > 0:
-      vm_builds = self.m.buildbucket.get_multi(
-          tast_vm_tests_builder_ids).values()
-      exonerated_suites.update({
-          self.m.naming.get_vm_test_title(result)
-          for result in vm_builds
-          if self.m.exonerate.is_vm_test_build_exonerable(
-              result, exon_configs) and self.m.naming.get_vm_test_title(result)
-          not in previously_passed_suites
-      })
-
     # Prejob failures are only retryable if the experimental feature is enabled.
     if self.is_experimental_feature_enabled(
         EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run):
@@ -1105,8 +1068,86 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         elif suite_name == CQ_MINIMAL_SUITE_NAME and any(
             x.succeeded for x in prejob_stats.values()):
           exonerated_suites.add(suite)
-          self._experimental_retries[cq_run.id].add(
-              EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+        self._experimental_retries[cq_run.id].add(
+            EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+
+    return exonerated_suites
+
+  def _get_exonerated_legacy_vm_suites(self, cq_run: build_pb2.Build,
+                                       exon_configs: Dict):
+    """Returns the names of newly exonerated legacy vm test suites."""
+    # Get the VM test builds.
+    output_dict = json_format.MessageToDict(cq_run.output.properties)
+    test_tasks = output_dict.get('test_tasks', {})
+    tast_vm_tests_builder_ids = [
+        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
+    ]
+
+    # Filter out suites which were previously exonerated.
+    previously_passed_suites = set(
+        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
+
+    # Exonerate VM test results.
+    exonerated_suites = set()
+    exonerated_unexpected_skip_suites = set()
+    vm_builds = []
+    if len(tast_vm_tests_builder_ids) > 0:
+      vm_builds = self.m.buildbucket.get_multi(
+          tast_vm_tests_builder_ids).values()
+      for result in vm_builds:
+        suite = self.m.naming.get_vm_test_title(result)
+        if suite in previously_passed_suites:
+          continue
+
+        if self.m.exonerate.is_vm_test_build_exonerable(result, exon_configs):
+          exonerated_suites.add(suite)
+        elif self.m.exonerate.is_vm_test_build_exonerable(
+            result, exon_configs, exonerate_unexpected_skips=True):
+          exonerated_unexpected_skip_suites.add(suite)
+
+    # Only retry unexpected skips if the experiment is enabled and at least one
+    # VM test build finished running and reporting the test results.
+    if any(self.m.tast_results.had_no_unexpected_skips(b)
+           for b in vm_builds) and self.is_experimental_feature_enabled(
+               EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run):
+      exonerated_suites.update(exonerated_unexpected_skip_suites)
+      self._experimental_retries[cq_run.id].add(
+          EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+
+    return exonerated_suites
+
+  def get_exonerated_suites(
+      self, cq_run: build_pb2.Build,
+      failed_test_stats: List[FailedTestStats]) -> List[str]:
+    """Returns the names of the exonerated test suites for the given CQ run.
+
+    Args:
+      cq_run: The cq-orchestrator build for which to get the exonerated suites.
+      failed_test_stats: A list of FailedTestStats to use when performing
+          auto exoneration rathen that the FailedTestStats in the output
+          properties of the build. This list of FailedTestStats should be
+          updated using the latest LUCI analysis data.
+
+    Returns:
+      The names of the exonerated test suites.
+  """
+
+    # Exit early if the run exceeds any of the exoneration guardrails.
+    override_info = self.m.exoneration_util.override_calculation(
+        failed_test_stats, self.m.exonerate.overall_autoex_limit,
+        self.m.exonerate.per_target_autoex_limit)
+    if override_info.override_reason:
+      return []
+
+    # Generate the exoneration configs for this specific CQ run.
+    exon_configs = self.m.exoneration_util.get_updated_configs(
+        failed_test_stats, self.m.exonerate.manual_exoneration_configs)
+
+    exonerated_suites = set()
+    exonerated_suites.update(
+        self._get_exonerated_hw_suites(cq_run, exon_configs))
+    exonerated_suites.update(
+        self._get_exonerated_legacy_vm_suites(cq_run, exon_configs))
 
     return sorted(exonerated_suites)
 
