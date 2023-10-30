@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions for exonerating test failures."""
+
 from collections import defaultdict
 from collections import namedtuple
 from typing import Dict, List, Optional, Tuple
@@ -24,6 +26,7 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
@@ -770,13 +773,17 @@ class ExonerateApi(recipe_api.RecipeApi):
 
   def is_vm_test_build_exonerable(
       self, vm_build: build_pb2.Build,
-      exoneration_configs_override: Optional[Dict] = None) -> bool:
+      exoneration_configs_override: Optional[Dict] = None,
+      exonerate_unexpected_skips: bool = False) -> bool:
     """Checks to see if the VM test is exonerable.
 
     Args:
       vm_build: The vm result to check if it is exonerable.
       exoneration_configs_override: Alternate exoneration configs to use when
           determining if the result is exonerable.
+      exonerate_unexpected_skips: Whether to exonerate tests which were
+          unexpectedly skipped. Unexpected skips are tests which did not run
+          because an infrastructure issue interrupted the test execution.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
@@ -786,22 +793,28 @@ class ExonerateApi(recipe_api.RecipeApi):
       return False
 
     if (vm_build.status == common_pb2.SUCCESS or
-        vm_build.critical == common_pb2.NO or
-        'failed_test_cases' not in vm_build.output.properties):
+        vm_build.critical == common_pb2.NO):
       return False
+
+    prop_struct = vm_build.output.properties.get_or_create_list(
+        'failed_test_cases')
+    all_test_cases = json_format.MessageToDict(prop_struct)
+    if not all_test_cases:
+      return exonerate_unexpected_skips
+
     if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
     build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
-    prop_struct = vm_build.output.properties['failed_test_cases']
-    all_test_cases = json_format.MessageToDict(prop_struct)
-    if not all_test_cases:
-      return False
     for test_case in all_test_cases:
-      if test_case[
-          'verdict'] == 'VERDICT_FAILED' and not self._is_test_name_exonerable(
-              test_case['name'], build_target, exoneration_configs_override):
-        return False
+      if test_case['verdict'] == 'VERDICT_FAILED':
+        if test_case.get(
+            'humanReadableSummary'
+        ) == MISSING_TEST_FAILURE_SUMMARY and exonerate_unexpected_skips:
+          continue
+        if not self._is_test_name_exonerable(test_case['name'], build_target,
+                                             exoneration_configs_override):
+          return False
     return True
 
   def get_prev_failed_now_exonerable_test_results(

@@ -3,6 +3,9 @@
 # Copyright 2020 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""Functions for reporting and parsing Tast VM test results."""
+
 import datetime
 from typing import List
 
@@ -21,6 +24,7 @@ PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
 STAINLESS_LOG_PREFIX = 'https://stainless.corp.google.com/browse/'
 TESTHAUS_LOG_PREFIX = 'https://tests.chromeos.goog/p/chromeos/logs/browse/'
 MILO_PREFIX = 'https://ci.chromium.org/b/'
+MISSING_TEST_FAILURE_SUMMARY = 'Test did not run'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 SOURCES_FILE_NAME = 'sources.jsonpb'
 
@@ -164,7 +168,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     return [
         ExecuteResponse.TaskResult.TestCaseResult(
             name=test, verdict=TaskState.VERDICT_FAILED,
-            human_readable_summary='Test did not run')
+            human_readable_summary=MISSING_TEST_FAILURE_SUMMARY)
         for test in missing_test_names
     ]
 

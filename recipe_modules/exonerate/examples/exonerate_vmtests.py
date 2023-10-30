@@ -13,6 +13,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
+from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 from recipe_engine import post_process
 
@@ -72,8 +73,11 @@ def RunSteps(api):
   suite_name = 'betty.tast_vm.tast_vm_default'
   build.input.properties.update({'name': suite_name})
   vm_builds = [build]
-  api.assertions.assertEqual(
-      api.exonerate.is_vm_test_build_exonerable(build), False)
+  # Only exonerable if exonerating unexpected skips.
+  api.assertions.assertFalse(api.exonerate.is_vm_test_build_exonerable(build))
+  api.assertions.assertTrue(
+      api.exonerate.is_vm_test_build_exonerable(
+          build, exonerate_unexpected_skips=True))
   exonerated_vm_builds, exonerated_test_names = api.exonerate.exonerate_vmtests(
       vm_builds)
   api.assertions.assertEqual(exonerated_test_names, [])
@@ -89,6 +93,19 @@ def RunSteps(api):
       {'failed_test_cases': [failed_test_case_dict1]})
   api.assertions.assertEqual(
       api.exonerate.is_vm_test_build_exonerable(build), False)
+
+  # Unexpectedly skipped test case.
+  build = api.exonerate.test_api.fake_vm_build()
+  failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
+      name='unexpectedly-skipped-test', verdict=TaskState.VERDICT_FAILED,
+      human_readable_summary=MISSING_TEST_FAILURE_SUMMARY)
+  failed_test_case_dict1 = json_format.MessageToDict(failed_test_case_result1)
+  build.output.properties.update(
+      {'failed_test_cases': [failed_test_case_dict1]})
+  api.assertions.assertFalse(api.exonerate.is_vm_test_build_exonerable(build))
+  api.assertions.assertTrue(
+      api.exonerate.is_vm_test_build_exonerable(
+          build, exonerate_unexpected_skips=True))
 
   api.exonerate.print_stats(property_name='exoneration_stats')
 
