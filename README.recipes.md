@@ -12022,14 +12022,14 @@ Recipe for building and testing a BuildTarget's packages.
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#39)(api: RecipeApi):**
 ### *recipes* / [build\_snapshot](/recipes/build_snapshot.py)
 
-[DEPS](/recipes/build_snapshot.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_snapshot.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [future\_utils](#recipe_modules-future_utils), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Recipe for building a BuildTarget image for Snapshot.
 
-&mdash; **def [DoRunSteps](/recipes/build_snapshot.py#46)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_snapshot.py#47)(api: RecipeApi, config: BuilderConfig):**
 
-&mdash; **def [RunSteps](/recipes/build_snapshot.py#35)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_snapshot.py#36)(api: RecipeApi):**
 ### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
 
 [DEPS](/recipes/build_toolchain.py#29): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

@@ -26,6 +26,7 @@ DEPS = [
     'build_menu',
     'cros_history',
     'cros_infra_config',
+    'future_utils',
     'test_util',
 ]
 
@@ -56,9 +57,16 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     if api.build_menu.install_packages(config, packages):
       api.build_menu.upload_prebuilts(config)
       api.build_menu.upload_host_prebuilts(config)
-      api.build_menu.create_containers(config)
+
+      test_containers_runner = api.future_utils.create_parallel_runner()
+      test_containers_runner.run_function_async(
+          lambda cfg, _: api.build_menu.create_containers(cfg), config)
+
       api.build_menu.build_and_test_images(config)
       api.build_menu.publish_image_size_data(config)
+
+      test_containers_runner.wait_for_and_throw()
+
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
     # still occur (there is value in uploading the artifact even in cases of
@@ -199,11 +207,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
         )
     ),
       api.post_check(post_process.MustRun, 'install packages'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'create test service containers'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
