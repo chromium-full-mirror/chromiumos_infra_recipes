@@ -444,7 +444,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def _count_successful_critical_relevant_cq_builds(self, builds):
     return len([
         b for b in builds if b.critical == common_pb2.YES and
-        b.status == common_pb2.SUCCESS and self._cq_relevant(b)
+        b.status == common_pb2.SUCCESS and self.cq_relevant(b)
     ])
 
   def _validate_properties(self):
@@ -824,7 +824,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # If relevance tag is not set, assume relevance
     return True
 
-  def _cq_relevant(self, build: build_pb2.Build) -> bool:
+  def cq_relevant(self, build: build_pb2.Build) -> bool:
     """Whether the CQ child build was critical and relevant.
 
     Args:
@@ -846,7 +846,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         cq_relevant_builds = [
             x.builder.builder
             for x in self._builds_status.completed_builds
-            if self._cq_relevant(x)
+            if self.cq_relevant(x)
         ]
         pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
                                                  ['no relevant builds'])

@@ -111,11 +111,13 @@ def GenTests(api):
       }).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'], expected_retryable=['builder3-cq'],
+          expected_success=['builder1-cq', 'builder4-cq'],
+          expected_retryable=['builder3-cq'],
           expected_outstanding=[
               'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
               'builder7-kernelnext-cq'
-          ]),
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -134,7 +136,7 @@ def GenTests(api):
           }),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'],
+          expected_success=['builder1-cq', 'builder4-cq'],
           expected_retryable=['builder3-cq', 'builder5-cq'],
           expected_outstanding=[
               'builder2-cq', 'builder6-slim-cq', 'builder7-kernelnext-cq'
@@ -243,7 +245,7 @@ def GenTests(api):
       ),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'], expected_retryable=[
+          expected_success=['builder1-cq', 'builder4-cq'], expected_retryable=[
               'builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'
           ], expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
       api.post_process(post_process.PropertyEquals, 'per_build_stats', [{
@@ -311,8 +313,8 @@ def GenTests(api):
       ),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
-          expected_success=['builder1-cq'], expected_retryable=['builder3-cq'],
-          expected_outstanding=[
+          expected_success=['builder1-cq', 'builder4-cq'],
+          expected_retryable=['builder3-cq'], expected_outstanding=[
               'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
               'builder7-kernelnext-cq'
           ]),

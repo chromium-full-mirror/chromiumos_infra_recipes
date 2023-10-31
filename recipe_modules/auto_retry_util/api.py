@@ -66,6 +66,7 @@ EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES = 'retry-infra-failures'
 # TODO(b/296441878): Remove post-launch.
 EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES = 'retry-prejob-failures'
 EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN = 'wait-for-green'
+EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES = 'retry-sdk-failures'
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -275,12 +276,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     child_build_info = output_dict.get('child_build_info', [])
 
     for b in child_build_info:
-      relevant = b.get('relevant', False)
       builder_name = b.get('builder', {}).get('builder')
       status = b.get('status')
 
-      if not relevant:
-        continue
       if status == bb_common_pb2.Status.Name(bb_common_pb2.SUCCESS):
         successful_builders.append(builder_name)
       # TODO(b/299482781): Remove post-launch.
@@ -355,6 +353,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               cq_run.
               id].wait_for_green_stats.no_snapshot_data_retryable_builders = no_snapshot_data_builders
           retryable_failure_builders.extend(no_snapshot_data_builders)
+
+      # If there were any successful child builders, it means the SDK failures
+      # are likely not the fault of the CL. Even pointless successful builds
+      # needed to init and update the SDK. Add all the SDK failures as
+      # retryable.
+      if self.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES,
+          cq_run) and successful_builders:
+        retryable_sdk_failures = self._get_sdk_failures(cq_run)
+        retryable_failure_builders.extend(
+            [b for b in unsuccessful_builders if b in retryable_sdk_failures])
 
       outstanding_failure_builders = [
           b for b in unsuccessful_builders
@@ -571,6 +580,53 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           b: g for b, g in builder_to_greenness.items() if g.build_score < 100
       }
       return non_green_builders.keys()
+
+  def _get_sdk_failures(self, cq_run: build_pb2.Build) -> List[str]:
+    """Returns the names of builders that have SDK failures.
+
+    Finds the failed child builders of cq_run and filters for SDK failures.
+    """
+    with self.m.step.nest('get sdk failures'):
+      failed_child_builds = self._get_failed_child_builds(
+          cq_run, fields=['builder', 'status', 'summary_markdown'])
+      return [
+          b.builder.builder
+          for b in failed_child_builds
+          if self._build_had_sdk_failure(b)
+      ]
+
+  def _get_failed_child_builds(
+      self, cq_run: build_pb2.Build,
+      fields: Optional[List[str]] = None) -> List[build_pb2.Build]:
+    """Fetches the failed child builds in cq_run from Buildbucket.
+
+    Args:
+      cq_run: The cq-orchestrator run. Must set the 'child_build_info' output
+        property.
+      fields: An optional list of fields to fetch. If not set defaults to
+        self.m.buildbucket.DEFAULT_FIELDS.
+
+    Returns:
+      The Build protos for the failed child builds.
+    """
+    output_dict = json_format.MessageToDict(cq_run.output.properties)
+    child_build_info = output_dict.get('child_build_info', [])
+
+    failed_build_ids = [
+        int(cbi['id'])
+        for cbi in child_build_info
+        if cbi.get('status') == bb_common_pb2.Status.Name(bb_common_pb2.FAILURE)
+    ]
+    return self.m.buildbucket.get_multi(
+        failed_build_ids, fields=fields or
+        self.m.buildbucket.DEFAULT_FIELDS).values()
+
+  def _build_had_sdk_failure(self, build: build_pb2.Build) -> bool:
+    """Returns whether a build failed on a SDK step.
+
+    Currently just checks the summary markdown.
+    """
+    return build.status == bb_common_pb2.FAILURE and 'chromite.api.SdkService' in build.summary_markdown
 
   def no_retry_footer_set(self, build):
     """Given an orchestrator's associated CLs, have any opted out via footer."""
