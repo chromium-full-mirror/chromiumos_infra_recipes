@@ -101,6 +101,19 @@ def GenTests(api):
                                       verdict=TaskState.VERDICT_PASSED)
                               ]),
                   ]),
+          'h-cq.hw.cq-minimal':
+              ExecuteResponse(
+                  state=TaskState(verdict=TaskState.VERDICT_FAILED,
+                                  life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
+                  task_results=[
+                      ExecuteResponse.TaskResult(
+                          name='suite-shard-0', state=TaskState(
+                              verdict=TaskState.VERDICT_FAILED), prejob_steps=[
+                                  ExecuteResponse.TaskResult.TestCaseResult(
+                                      name='prejob-step',
+                                      verdict=TaskState.VERDICT_FAILED)
+                              ]),
+                  ]),
       })
   ctp_build = build_pb2.Build(id=111, status='FAILURE')
   ctp_build.output.properties.update({
@@ -158,6 +171,14 @@ def GenTests(api):
           'status': 'FAILURE',
           'critical': True,
           'name': 'e-cq.hw.suite'
+      },
+      {
+          'builder_name': 'h-cq',
+          'build_target': 'h',
+          'board': 'h',
+          'status': 'FAILURE',
+          'critical': True,
+          'name': 'h-cq.hw.cq-minimal'
       },
       # VM test results.
       {
@@ -253,7 +274,10 @@ def GenTests(api):
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
       api.buildbucket.simulated_get_multi([vm_build_1, vm_build_2]),
       api.properties(expected_exonerated_suites=[
-          'b-cq.hw.suite', 'd-cq.tast_gce.suite', 'e-cq.hw.suite'
+          'b-cq.hw.suite',
+          'd-cq.tast_gce.suite',
+          'e-cq.hw.suite',
+          'h-cq.hw.cq-minimal',
       ]),
       api.post_process(post_process.DropExpectation),
   )

@@ -31,12 +31,15 @@ from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.looks_for_green.api import Snapshot
+from RECIPE_MODULES.chromeos.skylab_results.api import PrejobStats
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 
 from recipe_engine import recipe_api
 
 # The Chromeos LUCI service account.
 CHROMEOS_LUCI_SERVICE_ACCOUNT = 'chromeos-scoped@luci-project-accounts.iam.gserviceaccount.com'
+
+CQ_MINIMAL_SUITE_NAME = 'cq-minimal'
 
 # Start looking back at 1 days worth of data while we are still developing.
 DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
@@ -1088,7 +1091,19 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         # This is determined by checking that the board that the suite ran on
         # passed the prejob steps at least once in the run.
         board = next((x['board'] for x in test_summary if x['name'] == suite))
-        if board in prejob_stats and prejob_stats[board].succeeded > 0:
+        # TODO(b/289095330): Get the suite name from the test_summary once the
+        # test_summary is updated to include it.
+        suite_name = suite.split('.')[-1]
+        board_prejob_stats = prejob_stats.get(board, PrejobStats())
+        if board_prejob_stats.succeeded:
+          exonerated_suites.add(suite)
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+        # The "cq-minimal" suite is run on only one shard. This makes it so that
+        # prejob data on that board is limited. In this case, a successful
+        # prejob on any board is sufficient.
+        elif suite_name == CQ_MINIMAL_SUITE_NAME and any(
+            x.succeeded for x in prejob_stats.values()):
           exonerated_suites.add(suite)
           self._experimental_retries[cq_run.id].add(
               EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
