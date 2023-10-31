@@ -7,7 +7,7 @@
 
 import json
 import traceback
-from typing import List, Optional
+from typing import Dict, List, Optional, Tuple
 import re
 
 from recipe_engine import recipe_api
@@ -60,6 +60,10 @@ class GobinAPI(recipe_api.RecipeApi):
 
     self._cipd_paths = {}
     self._infra_infra_commit = None
+    # Cache the results of _get_instance_for_sha between calls. Do this manually
+    # because of issues with cache decorators on methods, see
+    # https://pylint.readthedocs.io/en/latest/user_guide/messages/warning/method-cache-max-size-none.html.
+    self._package_and_sha_to_instance: Dict[Tuple[str, str], Optional[str]] = {}
 
   def _package_fullname(self, package: str) -> str:
     """Return the full package name for a package.
@@ -88,7 +92,15 @@ class GobinAPI(recipe_api.RecipeApi):
 
   def _get_instance_for_sha(self, package_fullname: str,
                             sha: str) -> Optional[str]:
-    """Find the associated CIPD instance for the given package for the given infra/infra commit."""
+    """Find the associated CIPD instance for the given package for the given infra/infra commit.
+
+    Note that this method uses _package_and_sha_to_instance to cache results by
+    (package_fullname, sha). Results will be cached even if they are None.
+    """
+    cache_key = (package_fullname, sha)
+    if cache_key in self._package_and_sha_to_instance:
+      return self._package_and_sha_to_instance[cache_key]
+
     package_shortname = self._package_shortname(package_fullname)
     with self.m.step.nest(
         f'find cipd instance for {package_shortname} for infra/infra commit {sha}'
@@ -111,6 +123,7 @@ class GobinAPI(recipe_api.RecipeApi):
             instance_id = package_info['instance_id']
             presentation.logs[
                 'cipd instance'] = f'https://chrome-infra-packages.appspot.com/p/{package_fullname_with_platform}/+/{instance_id}'
+            self._package_and_sha_to_instance[cache_key] = instance_id
             return instance_id
       except json.decoder.JSONDecodeError as e:
         presentation.logs['exception'] = traceback.format_exc()
@@ -119,6 +132,7 @@ class GobinAPI(recipe_api.RecipeApi):
         presentation.logs['exception'] = traceback.format_exc()
         raise StepFailure('incorrect JSON') from e
 
+      self._package_and_sha_to_instance[cache_key] = None
       return None
 
   def _is_valid_sha(self, sha: str) -> bool:
@@ -131,6 +145,34 @@ class GobinAPI(recipe_api.RecipeApi):
       if self._get_instance_for_sha(package_fullname, sha) is None:
         return False
     return True
+
+  def _check_changed_instances(self, git_revision_a, git_revision_b) -> bool:
+    """Return true if any of supported_packages have changed between the revisions.
+
+    A new commit does not necessarily mean any of supported_packages actually
+    changed, because there are other packages in the repo. This function checks
+    if any of the packages actually changed between git revisions.
+
+    git_revision_a and git_revision_b do not necessarily need to be order, this
+    function just checks if there are diffs in the packages between them.
+    """
+    with self.m.step.nest(
+        f'check changed instances between {git_revision_a} and {git_revision_b}'
+    ) as pres:
+      for package in self.supported_packages:
+        # Test package, skip.
+        if self._package_shortname(package) == 'my_gobin':
+          continue
+
+        a_instance_id = self._get_instance_for_sha(package, git_revision_a)
+        b_instance_id = self._get_instance_for_sha(package, git_revision_b)
+
+        if a_instance_id != b_instance_id:
+          pres.step_text = f'instance ids have changed in package {package}: {a_instance_id} -> {b_instance_id}'
+          return True
+
+      pres.step_text = 'no changes'
+      return False
 
   def get_latest_pin_value(self, current_pin: str) -> str:
     """Returns the most recent infra/infra SHA that is a viable pin.
@@ -161,7 +203,13 @@ class GobinAPI(recipe_api.RecipeApi):
       # TODO(b/305967772): Optimize, use binary search or something.
       for commit in commits:
         if self._is_valid_sha(commit):
-          return commit
+          # Once we find a valid commit, check if any of the instances actually
+          # changed. If not, none of the older commits could have changed
+          # either, so just return the current pin now.
+          if self._check_changed_instances(current_pin, commit):
+            return commit
+          return current_pin
+
       # If none of the commits are valid, just return the current pin.
       return current_pin
 
