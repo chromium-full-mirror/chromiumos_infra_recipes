@@ -627,7 +627,7 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   # Get the testplan id (name) from the buildbucket tags.
   testplan_id = api.cros_tags.get_values('test-plan-id')
   if testplan_id:
-    base_tags.append(('test-plan-id', testplan_id[0]))
+    base_tags.append(('test_plan_id', testplan_id[0]))
 
   # Fetches the following information from buildbucket.swarming bot dimensions.
   board = api.cros_tags.get_values(
