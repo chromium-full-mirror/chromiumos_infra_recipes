@@ -110,10 +110,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           config.artifacts.prebuilts_gs_bucket,
           snapshot=current_commit if current_commit_hash else None)
 
-      if api.build_menu.install_packages(config=config, packages=relevant_pkgs,
-                                         package_indexes=package_indexes):
-        # Only want to build and test the image once (after the ff/rebuild).
-        api.build_menu.build_and_test_images(config)
+      api.build_menu.install_packages(config=config, packages=relevant_pkgs,
+                                      package_indexes=package_indexes)
     except StepFailure as sf:
       failing_build_exception = sf
 
@@ -138,7 +136,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   # Finally, if there was an exception caught above in building the image, but
   # the upload succeeded, raise that exception.
-  if failing_build_exception:
+  if failing_build_exception and old_build_successful:
     raise failing_build_exception  # pylint: disable=raising-bad-type
 
 
@@ -155,15 +153,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
-      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'install packages (3)'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -188,15 +185,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
-      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'install packages (3)'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -217,15 +213,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': False})),
-      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'install packages (3)'),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -236,9 +231,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       status='SUCCESS',
   )
 
-  # Build with install-packages failure.
+  # Build with install-packages failure in first build, must be successful.
   yield api.build_menu.test(
-      'inc-install-packages-fail',
+      'inc-install-packages-success',
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -257,9 +252,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'install packages', endpoint='SysrootService/InstallPackages',
           retcode=2,
           data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
-      ), build_target='amd64-generic', status='FAILURE')
+      ), build_target='amd64-generic', status='SUCCESS')
 
-  # Build with install-packages failure in the second build.
+  # Build with install-packages failure in second build, must be failure.
   yield api.build_menu.test(
       'inc-install-packages-2-fail',
       api.properties(
@@ -272,7 +267,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -293,8 +287,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.PropertyEquals, 'error_type',
                      ErrorType.UNKNOWN),
       api.build_menu.set_build_api_return(
