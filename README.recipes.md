@@ -3849,9 +3849,9 @@ Raises:
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#52)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#137)(self, branch, auto_submit: bool):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#140)(self, branch: str, auto_submit: bool, dryrun: bool=False):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -3859,9 +3859,10 @@ While Rubik is being turned-up, this endpoint modifies both the legacy
 config in chromite as well as the Rubik starlark config in infra/config.
 
 Args:
-branch (str): Release or stabilize branch, e.g. "release-R89-13729.B" or
-  "stabilize-15129.B".
-auto_submit (bool): Whether to autosubmit the config change.
+  branch: Release or stabilize branch, e.g. "release-R89-13729.B" or
+    "stabilize-15129.B".
+  auto_submit: Whether to autosubmit the config change.
+  dryrun: If in dryrun mode, we'll abandon the change.
 ### *recipe_modules* / [cros\_release\_util](/recipe_modules/cros_release_util)
 
 [DEPS](/recipe_modules/cros_release_util/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source)

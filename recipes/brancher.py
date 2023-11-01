@@ -88,7 +88,8 @@ def RunSteps(api: RecipeApi, properties: BrancherProperties) -> None:
       if properties.branch_info.type == Branch.RELEASE or is_108_or_greater(
           properties.source_version):
         api.cros_release_config.update_config(
-            branch_name, auto_submit=properties.autosubmit_config)
+            branch_name, auto_submit=properties.autosubmit_config,
+            dryrun=properties.abandon_cl)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:

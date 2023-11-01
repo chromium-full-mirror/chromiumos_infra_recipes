@@ -34,7 +34,7 @@ class CrosBranchApi(recipe_api.RecipeApi):
     branch_args = ['--skip-group-check']
     if force:
       branch_args.append('--force')
-    if push and not self.m.cros_infra_config.is_staging:
+    if push:
       branch_args.append('--push')
 
     step_data = self.m.gobin.call(

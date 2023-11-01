@@ -1,0 +1,462 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "validate branch"
+  },
+  {
+    "cmd": [],
+    "name": "validate branch.validate release branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate CL settings"
+  },
+  {
+    "cmd": [],
+    "name": "get project info"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromeos/infra/config",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "get project info.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromeos/infra/config|src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update config"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb",
+      "/path/to/tmp/tpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "update config.read release/release_builders.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: -1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"main\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 1 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R01-00001.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 2@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R02-00002.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 3@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R03-00003.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 40@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R40-00040.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  expiration_date {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"2100-01-01\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_END@release_builders.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update config.fetch chromiumdash schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromiumdash.appspot.com/fetch_milestone_schedule?mstone=5&n=1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "name": "update config.fetch chromiumdash schedule.curl fetch_milestone_schedule",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "builders {\n  milestone {\n    number: -1\n    branch_name: \"main\"\n  }\n  build_schedule: \"0 1 * * *\"\n}\nbuilders {\n  milestone {\n    number: 1\n    branch_name: \"release-R01-00001.B\"\n  }\n}\nbuilders {\n  milestone {\n    number: 2\n    branch_name: \"release-R02-00002.B\"\n  }\n}\nbuilders {\n  milestone {\n    number: 3\n    branch_name: \"release-R03-00003.B\"\n  }\n}\nbuilders {\n  milestone {\n    number: 40\n    branch_name: \"release-R40-00040.B\"\n  }\n  expiration_date {\n    value: \"2100-01-01\"\n  }\n}\nbuilders {\n  milestone {\n    number: 5\n    branch_name: \"release-R05-00004.B\"\n  }\n  android_branches {\n    key: \"android-container-pi\"\n    value: \"git_pi-arc-m5\"\n  }\n  android_branches {\n    key: \"android-container-rvc\"\n    value: \"git_rvc-arc-m5\"\n  }\n  android_branches {\n    key: \"android-vm-rvc\"\n    value: \"git_rvc-arc-m5\"\n  }\n  android_branches {\n    key: \"android-vm-tm\"\n    value: \"git_tm-arc-m5\"\n  }\n}\n",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/release/release_builders.textpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "update config.write release/release_builders.textpb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: -1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"main\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  build_schedule: \"0 1 * * *\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 1@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R01-00001.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 2@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R02-00002.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 3@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R03-00003.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 40@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R40-00040.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  expiration_date {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"2100-01-01\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@builders {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  milestone {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    number: 5@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    branch_name: \"release-R05-00004.B\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  android_branches {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    key: \"android-container-pi\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"git_pi-arc-m5\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  android_branches {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    key: \"android-container-rvc\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"git_rvc-arc-m5\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  android_branches {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    key: \"android-vm-rvc\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"git_rvc-arc-m5\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  android_branches {@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    key: \"android-vm-tm\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@    value: \"git_tm-arc-m5\"@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@  }@@@",
+      "@@@STEP_LOG_LINE@release_builders.textpb@}@@@",
+      "@@@STEP_LOG_END@release_builders.textpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./regenerate_configs.py"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "name": "update config../regenerate_configs.py",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CL"
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "start",
+      "brancher",
+      "chromeos/infra/config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CL.repo start",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CL.commit in chromeos/infra/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CL.commit in chromeos/infra/config.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Update config to include release-R05-00004.B\n\nGenerated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.\n\nBUG=None\nTEST=None\n",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CL.commit in chromeos/infra/config.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Update config to include release-R05-00004.B@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by brancher, see https://cr-buildbucket.appspot.com/build/0 for job details.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@TEST=None@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "infra_step": true,
+    "name": "create CL.commit in chromeos/infra/config.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.check if project [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.check if project [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "upload",
+      "--bypass-hooks",
+      "--force",
+      "--reviewers",
+      "jackneus@google.com",
+      "--send-mail"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.git_cl upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "status",
+      "--field",
+      "url",
+      "--fast"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "create CL.create gerrit change for [CLEANUP]/chromiumos_workspace/src/chromeos/infra/config.git_cl status",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create CL.abandon CL 1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/chromeos/infra/config/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/gerrit_client.py",
+      "abandon",
+      "--host",
+      "https://chromium-review.googlesource.com",
+      "--change",
+      "1",
+      "--json_file",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
+    },
+    "infra_step": true,
+    "name": "create CL.abandon CL 1.gerrit abandon",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"status\": \"ABANDONED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

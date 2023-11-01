@@ -26,4 +26,7 @@ message BrancherProperties {
 
   // If set, will autosubmit the config CLs.
   bool autosubmit_config = 5;
+
+  // If set, will abandon the config CL. Intended for use in staging.
+  bool abandon_cl = 6;
 }

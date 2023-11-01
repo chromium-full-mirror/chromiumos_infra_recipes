@@ -12,6 +12,7 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 from PB.chromiumos.common import ReleaseBuilder, ReleaseBuilders
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import Email
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
@@ -115,7 +116,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
                reverse=True)[:self._keep_n_milestones])
     return ReleaseBuilders(builders=to_keep)
 
-  def _create_change(self, project, project_path, commit_message, auto_submit):
+  def _create_change(self, project, project_path, commit_message,
+                     auto_submit) -> GerritChange:
     with self.m.step.nest(
         'commit in {}'.format(project)), self.m.context(cwd=project_path):
       self.m.git.add([project_path])
@@ -133,18 +135,19 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           Label.BOT_COMMIT: 1,
           Label.COMMIT_QUEUE: 2,
       })
+    return change
 
-  def update_config(self, branch, auto_submit: bool):
+  def update_config(self, branch: str, auto_submit: bool, dryrun: bool = False):
     """Creates CLs updating config file to include new release branch.
 
     While Rubik is being turned-up, this endpoint modifies both the legacy
     config in chromite as well as the Rubik starlark config in infra/config.
 
     Args:
-    branch (str): Release or stabilize branch, e.g. "release-R89-13729.B" or
-      "stabilize-15129.B".
-    auto_submit (bool): Whether to autosubmit the config change.
-
+      branch: Release or stabilize branch, e.g. "release-R89-13729.B" or
+        "stabilize-15129.B".
+      auto_submit: Whether to autosubmit the config change.
+      dryrun: If in dryrun mode, we'll abandon the change.
     """
     milestone = None
     with self.m.step.nest('validate branch'):
@@ -245,5 +248,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             'TEST=None',
         ]
         commit_message = '\n'.join(commit_lines) + '\n'
-        self._create_change(self.CONFIG_PROJECT, proj_path, commit_message,
-                            auto_submit)
+        change = self._create_change(self.CONFIG_PROJECT, proj_path,
+                                     commit_message, auto_submit)
+        if dryrun:
+          self.m.gerrit.abandon_change(change)

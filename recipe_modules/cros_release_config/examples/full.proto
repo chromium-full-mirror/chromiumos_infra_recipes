@@ -12,4 +12,7 @@ message TestProperties {
 
   // Whether to autosubmit Cls.
   bool auto_submit = 2;
+
+  // Whether to pass `dryrun` to update_config.
+  bool dryrun = 3;
 }

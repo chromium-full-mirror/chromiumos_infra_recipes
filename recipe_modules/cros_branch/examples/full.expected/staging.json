@@ -82,7 +82,8 @@
       "[CLEANUP]/manifests-_tmp_1/download.xml",
       "--release",
       "--skip-group-check",
-      "--force"
+      "--force",
+      "--push"
     ],
     "luci_context": {
       "realm": {
@@ -113,7 +114,8 @@
       "89/13729.0.0.xml",
       "--release",
       "--skip-group-check",
-      "--force"
+      "--force",
+      "--push"
     ],
     "luci_context": {
       "realm": {

@@ -156,7 +156,8 @@ PROPERTIES = TestProperties
 
 def RunSteps(api, properties):
   api.cros_release_config.update_config(properties.branch,
-                                        auto_submit=properties.auto_submit)
+                                        auto_submit=properties.auto_submit,
+                                        dryrun=properties.dryrun)
 
 
 def GenTests(api):
@@ -289,3 +290,16 @@ def GenTests(api):
       api.test_util.test_build(
           created_by='user:fakedeveloper@chromium.org').build,
   )
+
+  yield api.test(
+      'dry-run-abandon-cl',
+      api.properties(
+          **{
+              'dryrun':
+                  True,
+              'branch':
+                  branch,
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='jackneus@google.com')])
+          }))
