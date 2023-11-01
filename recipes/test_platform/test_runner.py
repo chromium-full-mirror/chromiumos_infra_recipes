@@ -219,9 +219,6 @@ def summarize_results_from_phosphorus_results(api, result):
       if result.get_testhaus_log_url():
         s_link(step=step, name='Logs in Testhaus',
                link=result.get_testhaus_log_url())
-      if result.get_stainless_log_url():
-        s_link(step=step, name='Logs in Stainless',
-               link=result.get_stainless_log_url())
     s_log(step=step, name='JSON output', log=result.to_json())
     for pre_job in result.get_prejob_steps():
       _set_step_status(
@@ -1935,9 +1932,6 @@ def summarize_results_from_ctr_results(api, result):
       if result.get_testhaus_log_url():
         s_link(step=step, name='Logs in Testhaus',
                link=result.get_testhaus_log_url())
-      if result.get_stainless_log_url():
-        s_link(step=step, name='Logs in Stainless',
-               link=result.get_stainless_log_url())
     for pre_job in result.get_prejob_steps():
       _set_step_status(api=api, step_name='provision of ' + pre_job.test_id,
                        summary='', failure_condition=pre_job.is_failure())
@@ -2388,7 +2382,6 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "stainless_url": "https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
     "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {

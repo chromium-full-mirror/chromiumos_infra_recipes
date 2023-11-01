@@ -1521,7 +1521,6 @@
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@  },@@@",
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@  \"log_data\": {@@@",
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@    \"gs_url\": \"gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\",@@@",
-      "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\",@@@",
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@    \"testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47\"@@@",
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@  },@@@",
       "@@@STEP_LOG_LINE@autotest_wrapper_tast_result.json@  \"prejob\": {@@@",
@@ -2757,8 +2756,7 @@
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@",
-      "@@@STEP_LINK@Logs in Stainless@https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {
