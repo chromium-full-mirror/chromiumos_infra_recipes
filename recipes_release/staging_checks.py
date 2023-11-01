@@ -146,6 +146,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-(?!.*llfg).*-incremental$',
                    [image_builder_exemption, sdk_update_exemption],
                    num_builds=2),
+    StagingReCheck('chromeos', 'staging', r'staging-brancher', num_builds=3),
 )
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
