@@ -62,9 +62,11 @@ TEST_STDOUT = '''
 def GenTests(api):
   yield api.test(
       'basic',
-      api.post_check(post_process.StepCommandContains,
-                     'ensure branch_util.ensure_installed',
-                     ['chromiumos/infra/branch_util/${platform} prod']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'ensure branch_util.ensure_installed', [
+              'chromiumos/infra/branch_util/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC'
+          ]),
       api.step_data('create branch from buildspec',
                     stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(
@@ -79,9 +81,11 @@ def GenTests(api):
           bucket='release',
           builder='staging-release-main-orchestrator',
       ),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure branch_util.ensure_installed',
-                     ['chromiumos/infra/branch_util/${platform} staging']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'ensure branch_util.ensure_installed', [
+              'chromiumos/infra/branch_util/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC'
+          ]),
       api.step_data('create branch from buildspec',
                     stdout=api.raw_io.output_text(TEST_STDOUT)),
       api.post_check(

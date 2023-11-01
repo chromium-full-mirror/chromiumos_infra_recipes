@@ -37,6 +37,7 @@ SUPPORTED_PACKAGES = [
 # back to the `prod` label), only intended for use during the initial rollout.
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
+    'branch_util',
     'manifest_doctor',
     # For testing only.
     'my_gobin',

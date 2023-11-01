@@ -7905,29 +7905,29 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#56)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#57)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#267)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#268)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#220)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#221)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#181)(self, current_pin: str):**
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#182)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#90)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
