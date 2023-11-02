@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package recipes.chromeos.collect_preuprev_test_results;
+
+message CollectPreuprevTestResults {
+  // TESTING PURPOSE: overriding the current build ID.
+  int64 current_build_id_overridden_for_testing = 1;
+  // TESTING PURPOSE: overriding the gerrit ID of uprev CL to add a comment.
+  int64 uprev_cl_number_overridden_for_testing = 2;
+}

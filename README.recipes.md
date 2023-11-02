@@ -242,6 +242,7 @@
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json)
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov)
+  * [collect_preuprev_test_results](#recipes-collect_preuprev_test_results) &mdash; Recipe that retrieves the result of tests executed before Chrome Uprev to CrOS and warns on failure.
   * [conductor:examples/full](#recipes-conductor_examples_full)
   * [conductor:tests/conductor_failures](#recipes-conductor_tests_conductor_failures)
   * [conductor:tests/no_bbids](#recipes-conductor_tests_no_bbids)
@@ -12308,6 +12309,21 @@ Recipe for cleaning up stale GCP VM images.
 
 
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py#21)(api):**
+### *recipes* / [collect\_preuprev\_test\_results](/recipes/collect_preuprev_test_results.py)
+
+[DEPS](/recipes/collect_preuprev_test_results.py#31): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Recipe that retrieves the result of tests executed before Chrome Uprev to
+CrOS and warns on failure.
+
+&mdash; **def [DoRunSteps](/recipes/collect_preuprev_test_results.py#102)(api: RecipeApi, current_build_id: int, uprev_cl_number_overridden_for_testing: Optional[int]):**
+
+&mdash; **def [GetPreUprevTestBuilders](/recipes/collect_preuprev_test_results.py#60)(api: RecipeApi, release_task_id: int):**
+
+&mdash; **def [GetPuprGeneratorBuilder](/recipes/collect_preuprev_test_results.py#73)(api: RecipeApi, pupr_cordinator_task_id: int):**
+
+&mdash; **def [RunSteps](/recipes/collect_preuprev_test_results.py#87)(api: RecipeApi, properties: CollectPreuprevTestResults):**
 ### *recipes* / [conductor:examples/full](/recipe_modules/conductor/examples/full.py)
 
 [DEPS](/recipe_modules/conductor/examples/full.py#18): [conductor](#recipe_modules-conductor), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
