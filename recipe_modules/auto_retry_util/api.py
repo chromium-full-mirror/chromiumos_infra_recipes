@@ -824,6 +824,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               {c.id for p in patch_sets if p.unresolved_comment_count})
           if not self._was_cv_active(c.id, patch_sets):
             removed_label_ids.add(c.id)
+            # If the CV was not active, the build could have been run manually.
+            # Manually launched builds do not have the `$recipe_engine/cq` property,
+            # so we do not want to check for them what type it was (DryRun/FullRun).
+            continue
           if self.build_was_dry_run(c):
             negative_labels_ids = {
                 c.id
