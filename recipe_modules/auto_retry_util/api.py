@@ -362,6 +362,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES,
           cq_run) and successful_builders:
         retryable_sdk_failures = self._get_sdk_failures(cq_run)
+        if retryable_sdk_failures:
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES)
         retryable_failure_builders.extend(
             [b for b in unsuccessful_builders if b in retryable_sdk_failures])
 

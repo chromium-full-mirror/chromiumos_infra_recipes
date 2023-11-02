@@ -33,9 +33,13 @@ def RunSteps(api):
   expected_success = api.properties['expected_success']
   expected_retryable = api.properties['expected_retryable']
   expected_outstanding = api.properties['expected_outstanding']
+  expected_experimental_retries = dict(
+      api.properties.get('expected_experimental_retries', {}))
   api.assertions.assertCountEqual(success, expected_success)
   api.assertions.assertCountEqual(retryable, expected_retryable)
   api.assertions.assertCountEqual(outstanding, expected_outstanding)
+  api.assertions.assertDictEqual(api.auto_retry_util.experimental_retries,
+                                 expected_experimental_retries)
 
 
 def GenTests(api):
@@ -102,9 +106,11 @@ def GenTests(api):
               ), status=common_pb2.FAILURE, summary_markdown='other failure')
       ], step_name='analyzing build results.get sdk failures.buildbucket.get_multi'
                                          ),
-      api.properties(expected_success=['builder1-cq'],
-                     expected_retryable=['builder2-cq'],
-                     expected_outstanding=['builder3-cq']),
+      api.properties(
+          expected_success=['builder1-cq'], expected_retryable=['builder2-cq'],
+          expected_outstanding=['builder3-cq'], expected_experimental_retries={
+              8945511751514863184: {'retry-sdk-failures'}
+          }),
       api.post_process(post_process.DropExpectation),
   )
 

@@ -871,7 +871,7 @@ A module for util functions associated with the CQ auto retries.
 
 &mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#305)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#390)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#393)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -883,7 +883,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retryable.
 
-&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#798)(self, build: build_pb2.Build):**
+&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#801)(self, build: build_pb2.Build):**
 
 Returns whether the build was a dry run.
 
@@ -895,7 +895,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#166)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#730)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#733)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -907,7 +907,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
 
 &emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#214)(self):**
 
-&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#810)(self, cq_orchs: List[build_pb2.Build]):**
+&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#813)(self, cq_orchs: List[build_pb2.Build]):**
 
 Returns cq-orchestrator builds which meet the retry criteria.
 
@@ -918,7 +918,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1179)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1182)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -940,11 +940,11 @@ Returns whether the given feature is enabled on the build.
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#162)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#631)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#634)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#528)(self):**
+&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#531)(self):**
 
 Write WaitForGreenStats to an output property.
 
@@ -958,7 +958,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1251)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1254)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -980,7 +980,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#170)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#947)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#950)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -998,7 +998,7 @@ Returns:
   A tuple containing 3 lists of FailedTestStats grouped by whether the test
       variant is previously exonerated, newly exonerated, or not exonerated.
 
-&mdash; **def [triggerer\_was\_us](/recipe_modules/auto_retry_util/api.py#639)(self, build):**
+&mdash; **def [triggerer\_was\_us](/recipe_modules/auto_retry_util/api.py#642)(self, build):**
 
 Given the build, return if it was triggered by the auto retry accts.
 
