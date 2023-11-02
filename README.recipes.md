@@ -522,6 +522,7 @@
   * [gerrit:examples/set_change_labels](#recipes-gerrit_examples_set_change_labels)
   * [gerrit:examples/submit_change](#recipes-gerrit_examples_submit_change)
   * [gerrit:tests/get_account_id](#recipes-gerrit_tests_get_account_id) &mdash; Tests for the get_account_id function.
+  * [gerrit:tests/is_merge_commit](#recipes-gerrit_tests_is_merge_commit) &mdash; Tests for the is_merge_commit function.
   * [gerrit:tests/test_related_changes](#recipes-gerrit_tests_test_related_changes)
   * [git:examples/bad_ref](#recipes-git_examples_bad_ref)
   * [git:examples/branch_exists](#recipes-git_examples_branch_exists)
@@ -7017,7 +7018,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1057)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1086)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -7053,6 +7054,21 @@ Args:
 
 Returns:
   Whether the revision of the change is mergeable.
+
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1047)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+
+Returns whether the given change list contains a merge commit.
+
+This is determined by looking at the change's merge list. If the list is
+empty than it is not a merge commit.
+
+Args:
+  change_num: The number of the change to check.
+  gerrit_host: Base URL to curl against.
+  revision: The revision of the change to check.
+
+Returns:
+  Whether the given change contains a merge commit.
 
 &mdash; **def [parse\_gerrit\_change](/recipe_modules/gerrit/api.py#509)(self, gerrit_change_url: str):**
 
@@ -14121,6 +14137,14 @@ additional logic to process the step output.
 Tests for the get_account_id function.
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/tests/get_account_id.py#18)(api):**
+### *recipes* / [gerrit:tests/is\_merge\_commit](/recipe_modules/gerrit/tests/is_merge_commit.py)
+
+[DEPS](/recipe_modules/gerrit/tests/is_merge_commit.py#10): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the is_merge_commit function.
+
+&mdash; **def [RunSteps](/recipe_modules/gerrit/tests/is_merge_commit.py#19)(api):**
 ### *recipes* / [gerrit:tests/test\_related\_changes](/recipe_modules/gerrit/tests/test_related_changes.py)
 
 [DEPS](/recipe_modules/gerrit/tests/test_related_changes.py#15): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

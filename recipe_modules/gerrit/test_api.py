@@ -216,6 +216,35 @@ class ChangesTestApi(recipe_test_api.RecipeTestApi):
         step_name,
         stdout=self.m.raw_io.output(")]}'\n" + self.m.json.dumps(values)))
 
+  def set_is_merge_commit(
+      self, change_num: int, gerrit_host: str, test_value: bool,
+      revision: Optional[str] = 'current', parent_step_name: Optional[str] = '',
+      iteration: Optional[int] = 1) -> recipe_test_api.StepTestData:
+    """Set the test response for gerrit.is_merge_commit.
+
+    This is done by mocking the response from Gerrit's Get Merge List API.
+
+    Args:
+      change_num: The number of the change to check.
+      gerrit_host: URL for the Gerrit host.
+      test_value: Test response.
+      revision: The revision of the change to check.
+      parent_step_name: Name of the step calling gerrit.is_merge_commit.
+      iteration: Which call this applies to for this step/endpoint.
+
+    Returns:
+      Test data instance for the tests.
+    """
+    url = f'https://{gerrit_host}/changes/{change_num}/revisions/{revision}/mergelist'
+    iteration = '' if iteration == 1 else f' ({iteration})'
+    prefix = f'{parent_step_name}.' if parent_step_name else ''
+    step_name = f'{prefix}curl {url}{iteration}'
+
+    resp = [{'commit': 1234}] if test_value else []
+    return self.override_step_data(
+        step_name,
+        stdout=self.m.raw_io.output(")]}'\n" + self.m.json.dumps(resp)))
+
   def test_gerrit_fetch_changes(self, request: JSONObject,
                                 gerrit_changes: List[GerritChange]
                                ) -> JSONObject:

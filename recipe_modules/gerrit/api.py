@@ -1044,6 +1044,35 @@ class GerritApi(RecipeApi):
 
     return result
 
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
+  def is_merge_commit(self, change_num: int, gerrit_host: str,
+                      revision: str = 'current') -> bool:
+    """Returns whether the given change list contains a merge commit.
+
+    This is determined by looking at the change's merge list. If the list is
+    empty than it is not a merge commit.
+
+    Args:
+      change_num: The number of the change to check.
+      gerrit_host: Base URL to curl against.
+      revision: The revision of the change to check.
+
+    Returns:
+      Whether the given change contains a merge commit.
+    """
+    auth_token_path = self._get_auth_token()
+
+    # "Get Merge List" endpoint:
+    # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#get-merge-list
+    get_url = f'https://{gerrit_host}/changes/{change_num}/revisions/{revision}/mergelist'
+    curl_params = ['-f', '-H', f'@{auth_token_path}']
+
+    data = self.m.easy.stdout_step(f'curl {get_url}',
+                                   ['curl'] + curl_params + [get_url]).decode()
+    data = strip_xssi_prefix(data)
+    merge_list = self.m.json.loads(data)
+    return bool(merge_list)
+
   def _call_gerrit_related_changes(self, cmd: List[str],
                                    step_name: Optional[str] = None,
                                    timeout: int = 3600):
