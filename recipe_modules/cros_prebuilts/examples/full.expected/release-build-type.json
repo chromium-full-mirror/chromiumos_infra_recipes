@@ -854,8 +854,10 @@
       "    api.cros_prebuilts.upload_target_prebuilts(properties.build_target,",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 654, in upload_target_prebuilts",
       "    binhost_key = self._binhost_key(kind)",
+      "                  ^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 306, in _binhost_key",
       "    return binhost_pb.BinhostKey.Value('%s_BINHOST' % name.upper())",
+      "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"PYTHON(site-packages)/google/protobuf/internal/enum_type_wrapper.py\", in Value",
       "    raise ValueError('Enum {} has no value defined for name {!r}'.format(",
       "ValueError('Enum BinhostKey has no value defined for name 'RELEASE_BINHOST'')"
