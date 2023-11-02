@@ -11278,12 +11278,12 @@ Tests for the cq_retry_candidates function.
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/cq_retry_candidates.py#30)(api):**
 ### *recipes* / [auto\_retry\_util:tests/filter\_candidates](/recipe_modules/auto_retry_util/tests/filter_candidates.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/filter_candidates.py#13): [auto\_retry\_util](#recipe_modules-auto_retry_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/filter_candidates.py#15): [auto\_retry\_util](#recipe_modules-auto_retry_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Tests for the filter_candidates function.
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/filter_candidates.py#26)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/filter_candidates.py#28)(api):**
 ### *recipes* / [auto\_retry\_util:tests/footers](/recipe_modules/auto_retry_util/tests/footers.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/footers.py#14): [auto\_retry\_util](#recipe_modules-auto_retry_util), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -5,6 +5,8 @@
 
 """Tests for the filter_candidates function."""
 
+import typing
+
 from recipe_engine import post_process
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -35,6 +37,19 @@ def RunSteps(api):
 
 
 def GenTests(api):
+
+  def _filtered_build_stats(**kwargs) -> typing.Dict:
+    return {
+        'already_retried': kwargs.get('already_retried', 0),
+        'non_latest_patch_set': kwargs.get('non_latest_patch_set', 0),
+        'non_mergeable': kwargs.get('non_mergeable', 0),
+        'non_submittable': kwargs.get('non_submittable', 0),
+        'opt_out': kwargs.get('opt_out', 0),
+        'removed_label': kwargs.get('removed_label', 0),
+        'unresolved_comments': kwargs.get('unresolved_comments', 0),
+        'wip': kwargs.get('wip', 0),
+        'negative_labels': kwargs.get('negative_labels', 0),
+    }
 
   gerrit_changes = [
       common_pb2.GerritChange(change=123456,
@@ -118,18 +133,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats()),
       api.properties(filtered_out=False),
       api.post_process(post_process.DropExpectation),
   )
@@ -144,18 +149,8 @@ def GenTests(api):
           revision=7,
           value=False,
       ),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 1,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(non_mergeable=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -167,18 +162,8 @@ def GenTests(api):
       api.properties(filtered_out=True),
       api.git_footers.simulated_get_footers(
           ['None'], 'filter candidates.filter out opt-out runs'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 1,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(opt_out=1)),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -255,18 +240,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           wip_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 1,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(wip=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -280,18 +255,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           non_latest_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 1,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(non_latest_patch_set=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -310,18 +275,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 1,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(removed_label=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -335,18 +290,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           non_submittable_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 1,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(non_submittable=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -360,18 +305,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           non_submittable_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats()),
       api.properties(filtered_out=False, runMode='DRY_RUN'),
       api.post_process(post_process.DropExpectation),
   )
@@ -385,18 +320,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           unresolved_comments_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 1,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(unresolved_comments=1)),
       api.properties(filtered_out=True),
       api.post_process(post_process.DropExpectation),
   )
@@ -410,18 +335,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           negative_labels_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 1,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(negative_labels=1)),
       api.properties(filtered_out=True, runMode='DRY_RUN'),
       api.post_process(post_process.DropExpectation),
   )
@@ -435,18 +350,8 @@ def GenTests(api):
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           negative_labels_value_dict,
           step_name=f'fetch changes for {retryable_build.message.id}'),
-      api.post_process(
-          post_process.PropertyEquals, 'filtered_build_stats', {
-              'already_retried': 0,
-              'non_latest_patch_set': 0,
-              'non_mergeable': 0,
-              'non_submittable': 0,
-              'opt_out': 0,
-              'removed_label': 0,
-              'unresolved_comments': 0,
-              'wip': 0,
-              'negative_labels': 0,
-          }),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats()),
       api.properties(filtered_out=False),
       api.post_process(post_process.DropExpectation),
   )
