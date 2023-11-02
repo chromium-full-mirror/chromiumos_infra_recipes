@@ -376,7 +376,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         } for file_name in CrosBuildApiTestApi.INSTRUCTIONS],
     )
     responses['SignImage'] = jsonify(
-        output_archive_dir='/path/to/archive', signed_artifacts={
+        output_archive_dir='/path/to/signing/archive', signed_artifacts={
             'archive_artifacts': [{
                 'build_target':
                     'kukui',

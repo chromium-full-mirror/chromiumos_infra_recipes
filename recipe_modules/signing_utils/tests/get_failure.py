@@ -13,7 +13,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
     'recipe_engine/step',
-    'signing',
+    'signing_utils',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -22,7 +22,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(
       api.properties['expected'],
-      api.signing.get_failure(api.properties['instructions']),
+      api.signing_utils.get_failure(api.properties['instructions']),
   )
 
 

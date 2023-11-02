@@ -12330,7 +12330,7 @@
       "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"output_archive_dir\": \"/path/to/archive\", \"signed_artifacts\": {\"archive_artifacts\": [{\"build_target\": \"kukui\", \"channel\": 4, \"input_archive_name\": \"recovery_image.tar.xz\", \"keyset\": \"devkeys\", \"signed_artifacts\": [{\"signed_artifact_name\": \"chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys\", \"status\": 1}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{\"output_archive_dir\": \"/path/to/signing/archive\", \"signed_artifacts\": {\"archive_artifacts\": [{\"build_target\": \"kukui\", \"channel\": 4, \"input_archive_name\": \"recovery_image.tar.xz\", \"keyset\": \"devkeys\", \"signed_artifacts\": [{\"signed_artifact_name\": \"chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys\", \"status\": 1}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -12477,7 +12477,7 @@
       "----",
       "cp",
       "-n",
-      "/path/to/archive/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys",
+      "/path/to/signing/archive/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys",
       "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

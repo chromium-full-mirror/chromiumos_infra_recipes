@@ -427,7 +427,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     except InfraFailure as e:
       ex = e
       status = BuildReport.BuildStatus.INFRA_FAILURE
-    except (StepFailure, Exception) as e:
+    except (StepFailure, Exception) as e:  #pylint: disable=broad-except
       ex = e
       status = BuildReport.BuildStatus.FAILURE
     finally:
@@ -498,12 +498,12 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     build_report = BuildReport()
     for signed_build_metadata in signed_build_metadata_list:
-      status = self.m.signing.get_status_from_instructions(
+      status = self.m.signing_utils.get_status_from_instructions(
           signed_build_metadata)
 
       # If the status of the message is unavailable for some reason, short circuit
       # so we don't publish partial data.
-      if not self.m.signing.signing_succeeded(signed_build_metadata):
+      if not self.m.signing_utils.signing_succeeded(signed_build_metadata):
         continue
 
       build_report.signed_builds.append(

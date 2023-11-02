@@ -45,9 +45,14 @@ class CrosReleaseUtilApi(recipe_api.RecipeApi):
     return Channel.Name(channel).replace('CHANNEL_', '').lower()
 
   @staticmethod
+  def channel_to_short_string(channel):
+    """Takes a common_pb2.Channel and returns a unsuffixed str (e.g. dev)."""
+    return CrosReleaseUtilApi.channel_strip_prefix(channel)
+
+  @staticmethod
   def channel_to_long_string(channel):
     """Takes a common_pb2.Channel and returns a suffixed str (e.g. dev-channel)."""
-    return CrosReleaseUtilApi.channel_strip_prefix(channel) + '-channel'
+    return CrosReleaseUtilApi.channel_to_short_string(channel) + '-channel'
 
   @staticmethod
   def channel_long_string_to_enum(str_channel):

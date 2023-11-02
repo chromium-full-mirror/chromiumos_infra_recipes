@@ -23,6 +23,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'signing_utils',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

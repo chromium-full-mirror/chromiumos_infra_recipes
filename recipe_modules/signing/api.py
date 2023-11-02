@@ -13,7 +13,7 @@ import os
 import re
 from json import JSONDecodeError
 from pathlib import Path
-from typing import Any, Callable, Dict, List, NewType, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, NewType, Tuple, Union
 
 from google.protobuf.text_format import Parse
 
@@ -30,15 +30,6 @@ from recipe_engine.recipe_api import StepFailure
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 BuildConfig = BuildReport.BuildConfig
-
-# Signing states that convey signing is complete.
-_PASSED = 'passed'
-_FAILED = 'failed'
-_TERMINAL_STATES = [_PASSED, _FAILED]
-
-_STATUS_OBJECT = 'status'
-_SIGNING_STATUS = 'status'
-_DETAILS = 'details'
 
 INSTRUCTIONS_PATTERN = re.compile(r'^gs://[^/]+/(.*)/[^/]+\.instructions$')
 
@@ -192,8 +183,10 @@ class SigningApi(recipe_api.RecipeApi):
             continue
 
           # Check the status
-          if self.get_status_from_instructions(
-              instructions_info) in _TERMINAL_STATES:
+
+          sig_status = self.m.signing_utils.get_status_from_instructions(
+              instructions_info)
+          if self.m.signing_utils.is_terminal_status(sig_status):
             # Strip out the directory from the instructions file.
             match = INSTRUCTIONS_PATTERN.match(instructions)
             # Be defensive, make None failures obvious.
@@ -203,7 +196,7 @@ class SigningApi(recipe_api.RecipeApi):
             instructions_metadata[instructions] = instructions_info
 
         # Determine if we need to keep polling.
-        keep_polling = self._any_empty(instructions_metadata)
+        keep_polling = self.m.signing_utils.any_empty(instructions_metadata)
         # Sleep as long as we need to poll again.
         if keep_polling:
           self.m.time.sleep(self._sleep_duration)
@@ -247,9 +240,9 @@ class SigningApi(recipe_api.RecipeApi):
       # We consider "passed" success, "failed" a failure, and anything else
       # "Timed Out".
       status = 'PASSED'
-      if not self.signing_succeeded(metadata):
-        if self.signing_failed(metadata):
-          failure = self.get_failure(metadata)
+      if not self.m.signing_utils.signing_succeeded(metadata):
+        if self.m.signing_utils.signing_failed(metadata):
+          failure = self.m.signing_utils.get_failure(metadata)
           pres.logs[instructions] = failure
           status = 'FAILED'
           # If ignore_already_exists_errors is set, don't go red.
@@ -268,77 +261,6 @@ class SigningApi(recipe_api.RecipeApi):
           'One or more signing requests failed or timed out. '
           'See output in step "get signed build metadata" or full metadata in '
           'step "parse metadata".')
-
-  @staticmethod
-  def signing_succeeded(metadata: Dict[str, InstructionsMetadata]) -> bool:
-    """Whether the provided metadata contains a successful signing operation.
-
-    Args:
-      metadata: Metadata from the instructions file.
-
-    Returns:
-      True/False whether the signing succeeded.
-    """
-    return SigningApi.get_status_from_instructions(metadata) == _PASSED
-
-  @staticmethod
-  def signing_failed(metadata: Dict[str, InstructionsMetadata]) -> bool:
-    """Whether the provided metadata contains a failed signing operation.
-
-    Args:
-      metadata: Metadata from the instructions file.
-
-    Returns:
-      True/False whether the signing failed.
-    """
-    return SigningApi.get_status_from_instructions(metadata) == _FAILED
-
-  @staticmethod
-  def get_status_from_instructions(metadata: Dict[str, InstructionsMetadata]
-                                  ) -> Optional[str]:
-    """Given an instructions file, pull out the status of the signing operation.
-
-    Args:
-      metadata: An instructions metadata file.
-
-    Returns:
-      The status of the signing, or None if not available.
-    """
-    if metadata is None or not _STATUS_OBJECT in metadata or not _SIGNING_STATUS in metadata[
-        _STATUS_OBJECT]:
-      return None
-    return metadata[_STATUS_OBJECT][_SIGNING_STATUS]
-
-  @staticmethod
-  def get_failure(metadata: Dict[str, InstructionsMetadata]) -> Optional[str]:
-    """Given an instructions file, pull out the failure of signing.
-
-    Args:
-      metadata: An instructions metadata file.
-
-    Returns:
-      The failure of the signing, or None if not available.
-    """
-    if metadata is None or not _STATUS_OBJECT in metadata or not _DETAILS in metadata[
-        _STATUS_OBJECT]:
-      return None
-    return metadata[_STATUS_OBJECT][_DETAILS]
-
-  @staticmethod
-  def _any_empty(instructions_meta: Dict[str, InstructionsMetadata]) -> bool:
-    """Checks to see if any values in the provided dict are None.
-
-    Args:
-      instructions_meta: Dict of instructions url -> metadata.
-
-    Returns:
-      True if any are None, otherwise false.
-    """
-    for value in instructions_meta.values():
-      if value is None:
-        return True
-
-    return False
 
   def get_config(self) -> BuildTargetSigningConfig:
     """Fetch signing config from the appropriate branch of config-internal."""
@@ -527,7 +449,7 @@ class SigningApi(recipe_api.RecipeApi):
 
   def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
                      channels: List['common_pb2.Channel']) -> None:
-    """Stub implementation for local signing flow."""
+    """Implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
@@ -651,8 +573,8 @@ class SigningApi(recipe_api.RecipeApi):
           else:
             # Allow for any success artifacts to upload, so just store the
             # exception.
-            ex = StepFailure("Failed to sign artifact. Check stdout of signing"
-                             " build API call for more information.")
+            ex = StepFailure('Failed to sign artifact. Check stdout of signing'
+                             ' build API call for more information.')
 
       if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'
