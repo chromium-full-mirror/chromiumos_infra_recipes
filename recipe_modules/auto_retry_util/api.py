@@ -1128,8 +1128,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         elif suite_name == CQ_MINIMAL_SUITE_NAME and any(
             x.succeeded for x in prejob_stats.values()):
           exonerated_suites.add(suite)
-        self._experimental_retries[cq_run.id].add(
-            EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
 
     return exonerated_suites
 
