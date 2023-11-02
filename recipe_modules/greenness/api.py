@@ -277,3 +277,55 @@ class GreennessApi(recipe_api.RecipeApi):
       agg_greenness.aggregate_build_metric = int(
           sum(critical_build_scores) / len(critical_build_scores))
     self.m.easy.set_properties_step(greenness=agg_greenness)
+
+  def get_aggregate_builder_local_greenness(
+      self, snapshot_commit: str, snapshot_builder_names: List[str]) -> int:
+    """Get the aggregate greenness for the given builders on the given commit.
+
+    Returns the average greenness score for the given builders on the given
+    snapshot.
+
+    Note:
+      * If there is no greenness reported for a given builder it is given a
+       score of 0.
+
+    Args:
+      snapshot_commit: The snapshot commit to use when calculating greenness.
+      snapshot_builder_names: The names of the builder for which to get an
+          aggregate greenness calculation.
+
+    Raises:
+      StepFailure if snapshot_builder_names is empty.
+    """
+    with self.m.step.nest('get greenness for specified builders') as pres:
+      if not snapshot_builder_names:
+        raise recipe_api.StepFailure('snapshot_builder_names cannot be empty')
+
+      local_greenness = self.m.buildbucket_stats.get_snapshot_greenness(
+          commit=snapshot_commit, retries=0, use_local_greenness=True,
+          pres=pres)
+      if not local_greenness:
+        pres.step_text = f'cound not find greeness for snapshot {snapshot_commit}'
+        return 0
+
+      running_greenness = 0
+      missing_greenness = []
+      for b in snapshot_builder_names:
+        build_greenness_tuple = local_greenness.get(b)
+
+        if not build_greenness_tuple:
+          missing_greenness.append(b)
+          continue
+
+        build_greenness_tuple = GreennessTuple(*build_greenness_tuple)
+        running_greenness += build_greenness_tuple.build_score
+
+      agg_greenness = int(running_greenness / len(snapshot_builder_names))
+      step_text = f'greenness score: {agg_greenness}'
+
+      if missing_greenness:
+        step_text += f'. Unable to find local greenness for {len(missing_greenness)} target(s)'
+        pres.logs['missing greenness'] = sorted(missing_greenness)
+
+      pres.step_text = step_text
+      return agg_greenness
