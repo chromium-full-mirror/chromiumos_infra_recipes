@@ -12241,7 +12241,7 @@
       "@@@STEP_LOG_LINE@request@  \"archiveDir\": \"[CLEANUP]/signing-dir_tmp_1\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{\"output_archive_dir\": \"/path/to/archive\", \"signed_artifacts\": {\"archive_artifacts\": [{\"build_target\": \"kukui\", \"channel\": 4, \"input_archive_name\": \"recovery_image.tar.xz\", \"keyset\": \"devkeys\", \"signed_artifacts\": [{\"signed_artifact_name\": \"chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys\", \"status\": 1}]}]}}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -12366,8 +12366,52 @@
     "cmd": [],
     "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no signed artifacts@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-n",
+      "/path/to/archive/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys",
+      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

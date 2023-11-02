@@ -8,6 +8,9 @@
 import json
 from typing import Any, Dict, Iterable, List, Optional, Union
 
+from PB.chromiumos import common as common_pb2
+from PB.chromiumos.signing import SigningStatus
+
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.cros_build_api import api as cros_build_api
 
@@ -372,7 +375,26 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             'instructions_file_path': file_name
         } for file_name in CrosBuildApiTestApi.INSTRUCTIONS],
     )
-    responses['SignImage'] = '{}'
+    responses['SignImage'] = jsonify(
+        output_archive_dir='/path/to/archive', signed_artifacts={
+            'archive_artifacts': [{
+                'build_target':
+                    'kukui',
+                'channel':
+                    common_pb2.CHANNEL_CANARY,
+                'input_archive_name':
+                    'recovery_image.tar.xz',
+                'keyset':
+                    'devkeys',
+                'signed_artifacts': [{
+                    'signed_artifact_name':
+                        'chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys',
+                    'status':
+                        SigningStatus.STATUS_SUCCESS
+                }]
+            }]
+        })
+
     responses['Test'] = jsonify(success=True)
     return responses
 
