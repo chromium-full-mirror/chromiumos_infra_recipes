@@ -58,18 +58,16 @@ def RunSteps(api, properties):
     gerrit_changes = multiple_gerrit_changes
   else:
     gerrit_changes = one_gerrit_change
-  should_lfg = api.looks_for_green.should_lfg(properties.experiments,
-                                              gerrit_changes)
+  should_lfg = api.looks_for_green.should_lfg(gerrit_changes)
   api.assertions.assertEqual(properties.expected_should_lfg, should_lfg)
 
 
 def GenTests(api):
-  lfg_experiment = {'chromeos.cros_infra_config.cq_looks': True}
 
   yield api.test(
       'should-lfg',
       api.properties(
-          expected_should_lfg=True, experiments=lfg_experiment, **{
+          expected_should_lfg=True, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -85,25 +83,8 @@ def GenTests(api):
   )
 
   yield api.test(
-      'no-experiment',
-      api.properties(
-          expected_should_lfg=False, experiments={}, **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True
-              },
-          }),
-      api.cq(run_mode=api.cq.FULL_RUN),
-      api.post_check(
-          post_process.DoesNotRun,
-          'check should look for green.check disallow looks for green'),
-      api.post_check(post_process.DoesNotRun,
-                     'check should look for green.gerrit-fetch-changes'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
       'lfg-disabled',
-      api.properties(experiments=lfg_experiment, expected_should_lfg=False),
+      api.properties(expected_should_lfg=False),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.post_check(
           post_process.DoesNotRun,
@@ -116,7 +97,7 @@ def GenTests(api):
   yield api.test(
       'disallow-footer',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -134,7 +115,7 @@ def GenTests(api):
   yield api.test(
       'cq-depend',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -163,7 +144,7 @@ def GenTests(api):
   yield api.test(
       'relation-chain-with-missing',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment,
+          expected_should_lfg=False,
           related_to_apply=json.dumps(related_to_apply), **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
@@ -184,7 +165,7 @@ def GenTests(api):
   yield api.test(
       'merge-commit',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -202,7 +183,7 @@ def GenTests(api):
   yield api.test(
       'cherry-pick-and-merge-commits',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -236,7 +217,7 @@ def GenTests(api):
   yield api.test(
       'not-cq',
       api.properties(
-          expected_should_lfg=False, experiments=lfg_experiment, **{
+          expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },

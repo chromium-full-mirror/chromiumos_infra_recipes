@@ -1124,7 +1124,7 @@
     "name": "filter builds.check should look for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@should_lfg@Found CQ looks experiment: True, Found LFG enabled: True, Found disallow footer: False, Found has merge commit: False@@@",
+      "@@@STEP_LOG_LINE@should_lfg@Found disallow footer: False, Found has merge commit: False@@@",
       "@@@STEP_LOG_END@should_lfg@@@"
     ]
   },

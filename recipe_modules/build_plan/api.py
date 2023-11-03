@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions related to build planning."""
+
 from collections import defaultdict
 from datetime import datetime
 from typing import List, Optional, Tuple
@@ -169,8 +171,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      cq_looks_enabled = self.m.looks_for_green.should_lfg(
-          child_exps, gerrit_changes)
+      cq_looks_enabled = self.m.looks_for_green.should_lfg(gerrit_changes)
       internal_snapshot, external_snapshot = self.choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
