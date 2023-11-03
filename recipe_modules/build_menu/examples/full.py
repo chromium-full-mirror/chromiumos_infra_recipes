@@ -70,6 +70,8 @@ def DoRunSteps(api, config, properties):
         api.build_menu.upload_devinstall_prebuilts()
       if properties.upload_chrome_prebuilts:
         api.build_menu.upload_chrome_prebuilts()
+      if properties.upload_host_prebuilts:
+        api.build_menu.upload_host_prebuilts()
       _ = api.build_menu.artifacts_gs_path()
       api.build_menu.upload_artifacts()
       api.build_menu.create_containers()
@@ -359,6 +361,11 @@ def GenTests(api):
               'override_prebuilts_config': BuilderConfig.Artifacts.PUBLIC,
           }
       }, cq=True)
+
+  yield api.build_menu.test(
+      'uploads-host-prebuilts',
+      api.properties(FullProperties(upload_host_prebuilts=True)),
+      api.post_check(post_process.MustRun, 'upload host prebuilts'))
 
   yield api.build_menu.test(
       'postsubmit-with-snapshot-prebuilts',

@@ -45,4 +45,7 @@ message FullProperties {
 
   // Whether to call upload_chrome_prebuilts.
   bool upload_chrome_prebuilts = 12;
+
+  // Whether to call upload_host_prebuilts.
+  bool upload_host_prebuilts = 13;
 }

@@ -59,6 +59,10 @@ def RunSteps(api: recipe_api.RecipeApi, properties) -> None:
                                                properties.gs_bucket,
                                                properties.private)
 
+  if properties.upload_host_prebuilts:
+    api.cros_prebuilts.upload_host_prebuilts(target, chroot, builder_config,
+                                             properties.gs_bucket)
+
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
@@ -213,6 +217,21 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                      'A gs bucket was not specified .*'),
       api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-host-prebuilts',
+      api.properties(upload_host_prebuilts=True, gs_bucket='test_bucket'),
+      api.post_check(post_process.MustRun, 'upload host prebuilts'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'upload-host-prebuilts-no-gs-bucket',
+      api.properties(upload_host_prebuilts=True, gs_bucket=None),
+      api.post_check(post_process.StepFailure, 'upload host prebuilts'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   # Binhost metadata is published to the binhost lookup service.

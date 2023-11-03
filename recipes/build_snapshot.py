@@ -54,6 +54,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
       api.build_menu.upload_prebuilts(config)
+      api.build_menu.upload_host_prebuilts(config)
       api.build_menu.create_containers(config)
       api.build_menu.build_and_test_images(config)
       api.build_menu.publish_image_size_data(config)

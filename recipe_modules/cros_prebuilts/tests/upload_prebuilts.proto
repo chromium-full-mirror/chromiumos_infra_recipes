@@ -21,4 +21,6 @@ message UploadPrebuiltsProperties {
   string gs_bucket = 5;
   // The name of the profile to use.
   chromiumos.Profile profile = 6;
+  // Whether to upload host prebuilts.
+  bool upload_host_prebuilts = 7;
 }

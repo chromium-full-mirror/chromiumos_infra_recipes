@@ -51,6 +51,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
       BuilderConfig.Artifacts.PUBLIC, BuilderConfig.Artifacts.PRIVATE
   ]
 
+  # Allow uploading host binpkgs from amd64-generic-snapshot builder to fill
+  # gaps between runs of the SDK builder.
+  UPLOADABLE_HOST_PREBUILTS = ['amd64-generic']
+
   def __init__(self, props, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._container_version_fmt = props.container_version_format
@@ -1264,6 +1268,25 @@ class BuildMenuApi(recipe_api.RecipeApi):
           self.build_target, self.sysroot, self.chroot, profile,
           self.config.id.type, artifacts.prebuilts_gs_bucket,
           private=(artifacts.prebuilts == BuilderConfig.Artifacts.PRIVATE))
+
+  def upload_host_prebuilts(self,
+                            config: Optional[BuilderConfig] = None) -> None:
+    """Upload host prebuilts from the build.
+
+    Upload prebuilts if the configuration has uploadable prebuilts.
+
+    Args:
+      config: The Builder Config for the build, or None.
+    """
+    config = config or self.config
+    artifacts = config.artifacts
+
+    prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
+    if (prebuilt_target in self.UPLOADABLE_PREBUILTS and
+        self.build_target.name in self.UPLOADABLE_HOST_PREBUILTS):
+      self.m.cros_prebuilts.upload_host_prebuilts(self.build_target,
+                                                  self.chroot, config.id.type,
+                                                  artifacts.prebuilts_gs_bucket)
 
   def publish_latest_files(self, gs_bucket, gs_path):
     """Write LATEST-... files to GS.

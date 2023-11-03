@@ -94,6 +94,24 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     return 'gs://%s%s/board/%s/%s/packages' % (gs_bucket, bucket_suffix,
                                                target.name, version)
 
+  def _get_host_prebuilts_dest(self, target: BuildTarget,
+                               kind: BuilderConfig.Id.Type,
+                               build_id: str) -> str:
+    """Determine the GS destination in a bucket to upload host prebuilts to.
+
+    Args:
+      target: The build target.
+      kind: The kind of prebuilts, e.g. POSTSUBMIT
+      build_id: The buildbucket id or swarming task id.
+
+    Returns:
+      The GS destination in which to upload prebuilts.
+    """
+    target_name = target.name
+    kind_label = BuilderConfig.Id.Type.Name(kind).lower()
+    version = self.m.cros_version.version
+    return f'host/amd64/{target_name}/{kind_label}-{version}-{build_id}/packages'
+
   def _get_snapshot_package_index_info(self, snapshots, build_target, profile,
                                        gs_bucket, test_data_dict=None):
     """Get prebuilts metadata for snapshots.
@@ -764,3 +782,37 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       step = self.m.step('set properties', cmd=None)
       step.presentation.properties['prebuilts_private'] = private
       step.presentation.properties['prebuilts_uri'] = upload_uri
+
+  def upload_host_prebuilts(self, target: BuildTarget, chroot: Chroot,
+                            kind: BuilderConfig.Id.Type,
+                            gs_bucket: str) -> None:
+    """Upload host binary prebuilts to Google Storage.
+
+    Args:
+      target: The build target to upload prebuilts for.
+      chroot: Chroot to work with.
+      kind: Kind of prebuilts to upload.
+      gs_bucket: Google storage bucket to upload prebuilts to.
+
+    Raises:
+      StepFailure: If a gs bucket was not specified.
+    """
+    with self.m.step.nest('upload host prebuilts'):
+      if not gs_bucket:
+        raise recipe_api.StepFailure(
+            'A gs bucket was not specified for the upload.')
+
+      # Set up the ACLs. Host prebuilts should always be public.
+      acls = ['-a', 'public-read']
+
+      # Determine the upload uri and file paths.
+      upload_dest = self._get_host_prebuilts_dest(target, kind, self._build_id)
+      host_prebuilts_dir = f'{chroot.path}/var/lib/portage/pkgs'
+
+      # Upload the prebuilts to gs.
+      self.m.gsutil.upload(host_prebuilts_dir, gs_bucket, upload_dest,
+                           args=acls + ['-r'], multithreaded=True)
+
+      step = self.m.step('set properties', cmd=None)
+      step.presentation.properties[
+          'prebuilts_uri'] = f'gs://{gs_bucket}/{upload_dest}'

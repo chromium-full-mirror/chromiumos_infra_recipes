@@ -2221,7 +2221,7 @@
       "Traceback (most recent call last):",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/tests/upload_cq.py\", line 36, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 685, in upload_target_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 703, in upload_target_prebuilts",
       "    raise ValueError('CQ should not set the binhost.')",
       "ValueError('CQ should not set the binhost.')"
     ]
