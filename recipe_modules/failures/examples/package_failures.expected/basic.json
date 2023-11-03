@@ -12,6 +12,7 @@
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
       "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"category/package-name\", \"phase\": \"compilation\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -24,6 +25,7 @@
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
       "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"category/package-name\", \"phase\": \"unit testing\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -39,6 +41,7 @@
       "@@@STEP_LOG_END@&#x2f;package1 log@@@",
       "@@@STEP_LOG_LINE@&#x2f;package2 log@test log for package2@@@",
       "@@@STEP_LOG_END@&#x2f;package2 log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"/package1\", \"phase\": \"compilation\"}, {\"name\": \"/package2\", \"phase\": \"compilation\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -54,6 +57,7 @@
       "@@@STEP_LOG_END@&#x2f;package3 log@@@",
       "@@@STEP_LOG_LINE@&#x2f;package4 log@test log for package4@@@",
       "@@@STEP_LOG_END@&#x2f;package4 log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"/package3\", \"phase\": \"unit testing\"}, {\"name\": \"/package4\", \"phase\": \"unit testing\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -64,6 +68,7 @@
       "@@@STEP_TEXT@failed compilation for /package@@@",
       "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
       "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"/package\", \"phase\": \"compilation\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

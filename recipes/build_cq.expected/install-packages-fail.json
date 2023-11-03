@@ -5055,6 +5055,7 @@
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@foo&#x2f;bar log@test data for foo/bar log file@@@",
       "@@@STEP_LOG_END@foo&#x2f;bar log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"foo/bar\", \"phase\": \"compilation\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

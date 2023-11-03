@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import collections
 import contextlib
+import dataclasses
 import datetime
 import operator
 import re
@@ -28,6 +29,16 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
+
+# TODO(b/304634762): Add information about whether the package was affected by
+# the changes included in the run.
+@dataclasses.dataclass
+class PackageFailure:
+  # The name of the failed package in the form of 'category/package-name'.
+  # It should not contain version information.
+  name: str
+  # The build phase during which the package failed to emerge.
+  phase: str
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -285,6 +296,13 @@ class FailuresApi(RecipeApi):
         summary_lines.append('- {}'.format(p))
       failure_message = self._format_summary_markdown(summary_lines)
 
+    package_failures = [
+      dataclasses.asdict(PackageFailure(
+        name=f'{p[0].category}/{p[0].package_name}',
+        phase='compilation' if compile_failure else 'unit testing'
+      )) for p in packages
+    ]
+    enclosing_step.presentation.properties['package_failures'] = package_failures
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.step_text = step_text
     raise StepFailure(failure_message)
