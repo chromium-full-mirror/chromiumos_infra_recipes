@@ -103,10 +103,12 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
         'must set manifest_branch if use_release_build_artifacts is true')
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
-  # Default shadercache build timeout to 6 hours if not specified.
-  shadercache_timeout = 6 if not properties.shadercache_timeout else properties.shadercache_timeout
-  # Default paygen build timeout to 6 hours if not specified.
-  paygen_timeout = 6 if not properties.paygen_timeout else properties.paygen_timeout
+  # Get individual build timeouts from properties or use reasonable default
+  # An extra hour is added to each default to ensure the orchestrator waits
+  # long enough for the child to launch and complete successfully.
+  shadercache_timeout = 9 if not properties.shadercache_timeout else properties.shadercache_timeout
+  paygen_timeout = 7 if not properties.paygen_timeout else properties.paygen_timeout
+  uprev_timeout = 13 if not properties.uprev_timeout else properties.uprev_timeout
 
   bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
@@ -175,7 +177,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   ### Uprev the ebuilds with new shadercaches.
   _launch_builders(api, bucket, 'kabuto_shadercache_uprev',
                    api.build_menu.is_staging, 1, uprev_input_props,
-                   'uprev build')
+                   'uprev build', timeout_hours=uprev_timeout)
 
 
 def GenTests(api: RecipeTestApi) -> None:

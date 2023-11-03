@@ -19,7 +19,7 @@ message KabutoOrchestratorProperties {
   int32 shard_count = 3;
 
   // Timeout (in hours) to wait for the shadercache builders to return.
-  // Defaults to 6 hours if not provided.
+  // Defaults to 9 hours if not provided.
   int32 shadercache_timeout = 4;
 
   // Whether to use release build artifacts instead of building Mesa locally on
@@ -28,6 +28,10 @@ message KabutoOrchestratorProperties {
   bool use_release_build_artifacts = 5;
 
   // Timeout (in hours) to wait for the Kabuto paygen builder to return.
-  // Defaults to 6 hours if not provided.
+  // Defaults to 7 hours if not provided.
   int32 paygen_timeout = 6;
+
+  // Timeout (in hours) to wait for the Kabuto uprev builder to return.
+  // Defaults to 13 hours if not provided.
+  int32 uprev_timeout = 7;
 }
