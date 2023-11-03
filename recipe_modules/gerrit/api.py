@@ -281,6 +281,29 @@ class PatchSet:
         x.get('value') == value
         for x in self.labels.get(label_name, {}).get('all', []))
 
+  def has_default_label_vote(self, label_name: str) -> bool:
+    """Return whether the PatchSet includes only default value for the label.
+
+    This function assumes the CL has assigned reviewer(s), otherwise it will
+    return false.
+
+    Args:
+      label_name: The label name for which function checks if it has only
+        default value.
+
+    Raises:
+      InfraFailure: If detailed labels wasn't requested when the patch set was
+      fetched. See `include_detailed_labels` on `gerrit.fetch_patch_sets`.
+    """
+    if self.labels is None:
+      raise InfraFailure(
+          f'No detailed labels for PatchSet {self.display_id}. '
+          'Try adding include_detailed_labels=True into gerrit.fetch_patch_sets().'
+      )
+    return all(
+        x.get('value') == 0
+        for x in self.labels.get(label_name, {}).get('all', []))
+
   def to_gerrit_change_proto(self) -> GerritChange:
     """Return a GerritChange proto constructed from this patchset."""
     return GerritChange(host=self.host, change=self.change_id,

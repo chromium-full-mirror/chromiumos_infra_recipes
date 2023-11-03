@@ -226,6 +226,21 @@ def _get_values_dict(api):
                       '-2': 'Do not submit'
                   }
               },
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 2
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              }
           },
           'messages': [{
               'id': '1',
@@ -325,6 +340,21 @@ def _get_values_dict(api):
                       '+1': 'Verified',
                       '-1': 'Fails'
                   }
+              },
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 0
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
               }
           },
           'messages': [{
@@ -394,6 +424,10 @@ def RunSteps(api):
           patch.has_label_vote('Code-Review', -2),
           any(x['value'] == -2
               for x in values['labels'].get('Code-Review', {}).get('all', [])))
+      api.assertions.assertEqual(
+          patch.has_default_label_vote('Commit-Queue'),
+          all(x['value'] == 0
+              for x in values['labels'].get('Commit-Queue', {}).get('all', [])))
 
   with api.step.nest('test fetch_patch_sets_from_change'):
     for change, patch in zip(CHANGES, patches):
@@ -469,6 +503,8 @@ def RunSteps(api):
   with api.step.nest('test fetch_patch_sets without detailed labels'):
     with api.assertions.assertRaises(InfraFailure):
       _ = patch_set.has_label_vote('Code-Review', -1)
+    with api.assertions.assertRaises(InfraFailure):
+      _ = patch_set.has_default_label_vote('Commit-Queue')
 
   api.gerrit.test_api.test_patch_set()
 

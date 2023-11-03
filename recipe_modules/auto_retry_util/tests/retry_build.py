@@ -10,14 +10,15 @@ from typing import Dict
 
 import json
 
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/properties',
+    'recipe_engine/buildbucket',
     'auto_retry_util',
+    'gerrit',
     'test_util',
 ]
 
@@ -25,25 +26,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  build = Build(
-      id=123,
-      input=Build.Input(
-          gerrit_changes=[
-              GerritChange(
-                  host='chromium.googlesource.com',
-                  project='projectA',
-                  change=456,
-                  patchset=1,
-              ),
-              GerritChange(
-                  host='chromium.googlesource.com',
-                  project='projectB',
-                  change=789,
-                  patchset=4,
-              ),
-          ],
-      ),
-  )
+  build = api.buildbucket.build
   build.input.properties['$recipe_engine/cq'] = {
       'runMode': api.properties.get('runMode', 'FULL_RUN')
   }
@@ -112,9 +95,80 @@ def GenTests(api):
 
 Did you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.
 '''
+  eligible_value_dict = {
+      456: {
+          'change_number': 456,
+          'labels': {
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 0
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              },
+          }
+      },
+      789: {
+          'change_number': 789,
+          'labels': {
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 0
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              },
+          }
+      },
+  }
+
+  gerrit_changes = [
+      GerritChange(
+          host='chromium.googlesource.com',
+          project='projectA',
+          change=456,
+          patchset=1,
+      ),
+      GerritChange(
+          host='chromium.googlesource.com',
+          project='projectB',
+          change=789,
+          patchset=4,
+      ),
+  ]
+
+  retryable_build = api.test_util.test_orchestrator(
+      build_id=123,
+      cq=True,
+      status='FAILURE',
+      create_time=11,
+      gerrit_changes=gerrit_changes,
+  )
+
   yield api.test(
       'retry-build',
+      retryable_build.build,
       api.auto_retry_util.enable_retries(),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id}', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       check_labels(build_id=123, change_id=456, labels={'Commit-Queue': 2}),
       check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 2}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
@@ -125,10 +179,15 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
   # The orchestrator being retried was dry run.
   yield api.test(
       'orchestrator-dry-run',
+      retryable_build.build,
       api.auto_retry_util.enable_retries(),
       api.properties(
           runMode='DRY_RUN',
       ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id}', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       check_labels(build_id=123, change_id=456, labels={'Commit-Queue': 1}),
       check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 1}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
@@ -139,9 +198,87 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
   # The auto retrier is being dry run.
   yield api.test(
       'dry-run',
+      retryable_build.build,
       api.properties(**{'$chromeos/auto_retry_util': {
           'enable_retries': False
       }}),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id} (dry_run)', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
+      api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
+      api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  already_retried_value_dict = {
+      456: {
+          'change_number': 456,
+          'labels': {
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 0
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 2
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              },
+          }
+      },
+      789: {
+          'change_number': 789,
+          'labels': {
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 1
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              },
+          }
+      },
+  }
+
+  yield api.test(
+      'already-retried',
+      retryable_build.build,
+      api.auto_retry_util.enable_retries(),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id}', gerrit_changes,
+          already_retried_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
+      api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
+      api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # The already retried orchestrator was dry run.
+  yield api.test(
+      'already-retried-dry-run',
+      retryable_build.build,
+      api.auto_retry_util.enable_retries(),
+      api.properties(
+          runMode='DRY_RUN',
+      ),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id}', gerrit_changes,
+          already_retried_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
       api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
       api.post_process(post_process.DropExpectation),
@@ -155,7 +292,12 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
 '''
   yield api.test(
       'many-builds-and-tests',
+      retryable_build.build,
       api.auto_retry_util.enable_retries(),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'retry build {retryable_build.message.id}', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build.message.id}'),
       api.properties(
           retryable_builders=[f'builder{i}' for i in range(10)],
           retryable_test_suites=[f'suite{i}' for i in range(10)],
@@ -167,6 +309,7 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
 
   yield api.test(
       'no-builds-or-tests',
+      retryable_build.build,
       api.auto_retry_util.enable_retries(),
       api.properties(
           retryable_builders=[],

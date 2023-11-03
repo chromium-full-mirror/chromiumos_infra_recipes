@@ -289,6 +289,21 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       '-2': 'Do not submit'
                   }
               },
+              'Commit-Queue': {
+                  'optional': True,
+                  'all': [{
+                      '_account_id': 1234567,
+                      'value': 0
+                  }, {
+                      '_account_id': 2345678,
+                      'value': 0
+                  }],
+                  'values': {
+                      ' 0': 'Not ready',
+                      '+1': 'Dry run',
+                      '+2': 'Commit'
+                  }
+              },
           },
           'patch_set_revision': 'f000' * 10,
           'revision_info': {
@@ -334,6 +349,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
           step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'performing retries.retry build {retryable_build_orch.id}',
+          gerrit_changes, eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
           gerrit_host='chromium-review.googlesource.com',
@@ -367,6 +386,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
+          step_name=f'fetch changes for {retryable_test_orch.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'performing retries.retry build {retryable_test_orch.id}',
+          gerrit_changes, eligible_value_dict,
           step_name=f'fetch changes for {retryable_test_orch.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
@@ -402,6 +425,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'performing retries.retry build {retryable_build_orch.id}',
+          gerrit_changes, eligible_value_dict,
           step_name=f'fetch changes for {retryable_build_orch.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',
@@ -468,6 +495,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response(
           'filter candidates.filter out unmet CL requirements', gerrit_changes,
           eligible_value_dict,
+          step_name=f'fetch changes for {retryable_orch_build.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'performing retries.retry build {retryable_orch_build.id}',
+          gerrit_changes, eligible_value_dict,
           step_name=f'fetch changes for {retryable_orch_build.id}'),
       api.gerrit.set_get_change_mergeable(
           'filter candidates.filter out merge conflicts',

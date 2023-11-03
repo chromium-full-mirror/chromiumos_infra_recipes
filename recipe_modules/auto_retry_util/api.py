@@ -1186,7 +1186,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
 
-
   def _get_exonerated_hw_suites(self, cq_run: build_pb2.Build,
                                 exon_configs: Dict):
     """Returns the names of newly exonerated hw test suites."""
@@ -1448,6 +1447,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       labels = {
           Label.COMMIT_QUEUE: 1 if self.build_was_dry_run(build) else 2,
       }
+
+      patch_sets = self.m.gerrit.fetch_patch_sets(
+          build.input.gerrit_changes, include_detailed_labels=True,
+          step_name=f'fetch changes for {build.id}')
+      if any(not ps.has_default_label_vote(Label.COMMIT_QUEUE.key)
+             for ps in patch_sets):
+        pres.step_text = 'Already retried by someone else.'
+        return
 
       if not self._enable_retries:
         pres.step_text = f'would have set labels { {str(k): v for k, v in labels.items()} }'
