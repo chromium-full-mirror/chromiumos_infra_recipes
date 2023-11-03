@@ -2,23 +2,21 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
-
-import json
+"""Tests for the should_lfg function."""
 
 from recipe_engine import post_process
 from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 
-from PB.chromiumos.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 from PB.recipe_modules.chromeos.looks_for_green.tests.test import ShouldLfgProperties
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/cq',
+    'recipe_engine/json',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'gerrit',
     'git_footers',
     'looks_for_green',
@@ -28,44 +26,37 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = ShouldLfgProperties
 
-one_gerrit_change = [
-    GerritChange(
-        host='chromium-review.googlesource.com',
-        change=1234,
-    )
-]
-multiple_gerrit_changes = [
-    GerritChange(
-        host='chromium-review.googlesource.com',
-        change=1234,
-    ),
-    GerritChange(
-        host='chromium-review.googlesource.com',
-        change=5678,
-    ),
-    GerritChange(
-        host='chromium-review.googlesource.com',
-        change=9012,
-    )
-]
-
 
 def RunSteps(api, properties):
   if properties.related_to_apply:
-    api.looks_for_green.related_changes_to_apply = json.loads(
+    api.looks_for_green.related_changes_to_apply = api.json.loads(
         properties.related_to_apply)
-  if properties.enable_test_on_multiple_changes:
-    gerrit_changes = multiple_gerrit_changes
-  else:
-    gerrit_changes = one_gerrit_change
-  should_lfg = api.looks_for_green.should_lfg(gerrit_changes)
+  should_lfg = api.looks_for_green.should_lfg(
+      api.buildbucket.build.input.gerrit_changes)
   api.assertions.assertEqual(properties.expected_should_lfg, should_lfg)
+
+
+gerrit_change_1 = GerritChange(
+    host='chromium-review.googlesource.com',
+    change=1234,
+)
+
+gerrit_change_2 = GerritChange(
+    host='chromium-review.googlesource.com',
+    change=4568,
+)
+
+gerrit_change_3 = GerritChange(
+    host='chromium-review.googlesource.com',
+    change=9012,
+)
 
 
 def GenTests(api):
 
   yield api.test(
       'should-lfg',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=True, **{
               '$chromeos/looks_for_green': {
@@ -75,8 +66,6 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
-      api.step_data('check should look for green.git log',
-                    api.raw_io.stream_output_text('commitsha1')),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check if CL uses Cq-Depend'),
       api.post_process(post_process.DropExpectation),
@@ -96,6 +85,7 @@ def GenTests(api):
 
   yield api.test(
       'disallow-footer',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
@@ -114,6 +104,7 @@ def GenTests(api):
   # TODO(b/276363760): Remove when Cq-Depended changes are supported.
   yield api.test(
       'cq-depend',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
@@ -143,9 +134,10 @@ def GenTests(api):
   }
   yield api.test(
       'relation-chain-with-missing',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=False,
-          related_to_apply=json.dumps(related_to_apply), **{
+          related_to_apply=api.json.dumps(related_to_apply), **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -153,8 +145,6 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
-      api.step_data('check should look for green.git log',
-                    api.raw_io.stream_output_text('commitsha1')),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check if CL uses Cq-Depend'),
       api.post_check(LooksStatusEquals,
@@ -164,6 +154,7 @@ def GenTests(api):
 
   yield api.test(
       'merge-commit',
+      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
@@ -173,8 +164,9 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
-      api.step_data('check should look for green.git log',
-                    api.raw_io.stream_output_text('commitsha1 commitsha2')),
+      api.gerrit.set_is_merge_commit(
+          gerrit_change_1.change, gerrit_change_1.host, True,
+          parent_step_name='check should look for green'),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
       api.post_process(post_process.DropExpectation),
@@ -182,30 +174,28 @@ def GenTests(api):
 
   yield api.test(
       'cherry-pick-and-merge-commits',
+      api.buildbucket.try_build(
+          gerrit_changes=[gerrit_change_1, gerrit_change_2, gerrit_change_3]),
       api.properties(
           expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
-          }, enable_test_on_multiple_changes=True),
+          }),
       api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green',
           step_number=2),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'check should look for green', multiple_gerrit_changes, {
-              1234: {},
-              4568: {},
-              9012: {},
-          }),
-      # Cherry pick commit (one ancestor)
-      api.step_data('check should look for green.git log',
-                    api.raw_io.stream_output_text('commitsha1')),
-      # Merge commit (multiple ancestors)
-      api.step_data('check should look for green.git log (2)',
-                    api.raw_io.stream_output_text('commitsha1 commitsha2')),
+      # Cherry pick commit.
+      api.gerrit.set_is_merge_commit(
+          gerrit_change_1.change, gerrit_change_1.host, False,
+          parent_step_name='check should look for green'),
+      # Merge commit.
+      api.gerrit.set_is_merge_commit(
+          gerrit_change_2.change, gerrit_change_2.host, True,
+          parent_step_name='check should look for green'),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
       # Should not continue after finding a merge commit.

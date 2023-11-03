@@ -1067,7 +1067,7 @@ class GerritApi(RecipeApi):
 
     return result
 
-  @exponential_retry(retries=4, delay=timedelta(seconds=5))
+  @exponential_retry(retries=1, delay=timedelta(seconds=5))
   def is_merge_commit(self, change_num: int, gerrit_host: str,
                       revision: str = 'current') -> bool:
     """Returns whether the given change list contains a merge commit.
@@ -1091,7 +1091,8 @@ class GerritApi(RecipeApi):
     curl_params = ['-f', '-H', f'@{auth_token_path}']
 
     data = self.m.easy.stdout_step(f'curl {get_url}',
-                                   ['curl'] + curl_params + [get_url]).decode()
+                                   ['curl'] + curl_params + [get_url],
+                                   test_stdout=")]}'\n[]").decode()
     data = strip_xssi_prefix(data)
     merge_list = self.m.json.loads(data)
     return bool(merge_list)

@@ -113,23 +113,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def related_changes_to_apply(self, related_changes_to_apply):
     self._related_changes_to_apply = related_changes_to_apply
 
-  def _has_merge_commit(self, gerrit_changes: List[GerritChange]) -> bool:
-    """Returns whether gerrit_changes contains one or more merge commit."""
-    with self.m.context(cwd=self.m.cros_source.workspace_path):
-      patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes)
-      for patch in patch_sets:
-        project_paths = self.m.cros_source.find_project_paths(
-            patch.project, patch.branch)
-        for project_path in project_paths:
-          with self.m.context(
-              cwd=self.m.cros_source.workspace_path.join(project_path)):
-            commit = self.m.git.fetch_ref(patch.git_fetch_url,
-                                          patch.git_fetch_ref)
-            # One merge commit in a group of CLs is enough to stop LFG.
-            if self.m.git.is_merge_commit(commit):
-              return True
-      return False
-
   def should_lfg(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether looks for green logic should be run."""
     if self._should_lfg is None:
@@ -150,7 +133,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           disallow = self.found_disallow_lfg_footer(gerrit_changes)
           if disallow:
             self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_DISALLOW
-          has_merge_commit = self._has_merge_commit(gerrit_changes)
+          has_merge_commit = any(
+              self.m.gerrit.is_merge_commit(c.change, c.host)
+              for c in gerrit_changes)
           if has_merge_commit:
             self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
           self._should_lfg = (not disallow and not has_merge_commit)

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Deps and properties for LFG functions."""
+
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
 
 DEPS = [
@@ -17,7 +19,6 @@ DEPS = [
     'easy',
     'failures',
     'gerrit',
-    'git',
     'git_footers',
     'greenness',
     'src_state',
