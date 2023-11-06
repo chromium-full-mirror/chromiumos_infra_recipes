@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for cros_tool_runner interface."""
+
 from google.protobuf import json_format
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
@@ -151,6 +153,16 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
         """
     return self._run('test', request, ctr.CrosToolRunnerTestRequest,
                      ctr.CrosToolRunnerTestResponse, send_response=True)
+
+  def post_process(self, request):
+    """Run post process via `post_process` subcommand.
+
+        Args:
+          request: a CrosToolRunnerPostTestRequest.
+        """
+    return self._run('post-process', request, ctr.CrosToolRunnerPostTestRequest,
+                     ctr.CrosToolRunnerPostTestResponse,
+                     send_response=True)  # pragma: no cover
 
   def upload_to_tko(self, autotest_dir, results_dir):
     """Upload test results to TKO via tko-parse.

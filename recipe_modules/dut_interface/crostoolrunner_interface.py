@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""dut_interface for cros_tool_runner."""
+
 from collections import namedtuple
 from collections import defaultdict
 from google.protobuf import json_format
@@ -14,6 +16,7 @@ from RECIPE_MODULES.chromeos.dut_interface.crostoolrunner_results import CrosToo
 from RECIPE_MODULES.chromeos.dut_interface import dut_interface
 
 from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
+from PB.chromiumos.test.api import post_test_service as post_request
 from PB.chromiumos.test.api import test_execution_metadata as Test_Execution_Metadata
 from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadataList
 from PB.chromiumos.test.lab import api as lab_api
@@ -552,6 +555,33 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
     return tko_metadata
 
+  def _process_post_process_response(self, response):
+    """Return the fwinfo from the post_process activity.
+
+    This can be expanded as needed.
+
+    Args:
+    * response (api.RunActivitiesResponse): Response from service.
+
+    Returns: (dict): fwinfo map.
+    """
+    found = False
+    for resp in response.responses:
+      if resp.WhichOneof('response') == 'get_fw_info_response':
+        info = resp.get_fw_info_request
+        found = True
+        break
+
+    if found:
+      return {
+          'ro_fwid': info.ro_fwid,
+          'rw_fwid': info.ro_fwid,
+          'kernel_version': info.kernel_version,
+          'gsc_ro': info.gsc_ro,
+          'gsc_rw': info.gsc_rw
+      }
+    return {}
+
   def upload_to_rdb(
       self, metadata, run_test_response, skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
@@ -573,6 +603,38 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       test_case_metadata_list = TestCaseMetadataList()
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
       # Retrieve ctr_test_response(TestCaseResult type).
+
+      with self._api.step.nest('CrosToolRunner: post_proceess') as step:
+        # We want this step to fail gracefully if there is an error.
+        try:
+          key = self.cft_test_request.primary_dut.container_metadata_key
+          if key in self.cft_test_request.container_metadata:
+            if 'post_process' in self.cft_test_request.container_metadata[key]:
+              primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
+                  dut=metadata.primary_dut, container_metadata_key=self
+                  .cft_test_request.primary_dut.container_metadata_key)
+
+              request = post_request.RunActivitiesRequest(requests=[
+                  post_request.Request(
+                      get_fw_info_request=post_request.GetFWInfoRequest())
+              ])
+
+              post_process_request = ctr.CrosToolRunnerPostProcessRequest(
+                  primary_dut=primary_dut_device,
+                  artifact_dir=metadata.artifact_dir, request=request,
+                  container_metadata_key=self.cft_test_request.primary_dut
+                  .container_metadata_key)
+              resp = self._api.cros_tool_runner.pre_process(
+                  post_process_request)
+              pp_resp = self._process_post_process_response(resp)
+              for k, v in pp_resp.items():
+                if k and v:
+                  metadata.rdb_base_tags[k] = v
+        except Exception as e:  # pragma: nocover # pylint: disable=broad-except
+          step.presentation.status = self._api.step.FAILURE
+          step.presentation.logs[
+              'failure details'] = f'Exception during FW parsing: {e}'
+
       for test_dut_response in run_test_response:
         ctr_test_response = test_dut_response.data
         test_harness_type = ctr_test_response.test_harness.WhichOneof(

@@ -52,7 +52,7 @@
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor) &mdash; Functions for sending requests and processing results from cros test platform.
   * [cros_test_runner](#recipe_modules-cros_test_runner)
-  * [cros_tool_runner](#recipe_modules-cros_tool_runner)
+  * [cros_tool_runner](#recipe_modules-cros_tool_runner) &mdash; API for cros_tool_runner interface.
   * [cros_try](#recipe_modules-cros_try) &mdash; API for working with `cros try`-initiated jobs.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
   * [ctpv2](#recipe_modules-ctpv2)
@@ -5367,54 +5367,63 @@ Returns: bool
 [DEPS](/recipe_modules/cros_tool_runner/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [CrosToolRunnerCommand](/recipe_modules/cros_tool_runner/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+API for cros_tool_runner interface.
+
+#### **class [CrosToolRunnerCommand](/recipe_modules/cros_tool_runner/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing CrosToolRunner commands
 
-&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#36)(self, container_metadata):**
+&mdash; **def [create\_file\_with\_container\_metadata](/recipe_modules/cros_tool_runner/api.py#38)(self, container_metadata):**
 
 Create a temp file with provided container metadata.
 
 Args:
   container_metadata: (ContainerMetadata) container metadata.
 
-&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#202)(self):**
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#214)(self):**
 
 Ensure the CrosToolRunner CLI is installed.
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#127)(self, request):**
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#129)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#137)(self, request):**
+&mdash; **def [post\_process](/recipe_modules/cros_tool_runner/api.py#157)(self, request):**
+
+Run post process via `post_process` subcommand.
+
+Args:
+  request: a CrosToolRunnerPostTestRequest.
+
+&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#139)(self, request):**
 
 Pre process commands via `pre-process` subcommand.
 
 Args:
   request: a CrosToolRunnerPreTestRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#118)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#120)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#238)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#250)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#146)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#148)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#155)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#167)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.

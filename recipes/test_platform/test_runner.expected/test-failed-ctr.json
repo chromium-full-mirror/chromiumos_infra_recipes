@@ -1043,7 +1043,18 @@
       "@@@STEP_LOG_LINE@test_case_metadata_list@    {}@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@  ]@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@}@@@",
-      "@@@STEP_LOG_END@test_case_metadata_list@@@"
+      "@@@STEP_LOG_END@test_case_metadata_list@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.CrosToolRunner: post_proceess",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@failure details@Exception during FW parsing: argument of type 'ContainerMetadata' is not iterable@@@",
+      "@@@STEP_LOG_END@failure details@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
