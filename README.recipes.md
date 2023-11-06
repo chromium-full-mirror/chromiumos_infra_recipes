@@ -14494,11 +14494,11 @@ Recipe for generating a Kabuto payload.
 
 Recipe for uprev'ing shadercache DLC ebuilds
 
-&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#134)(api: RecipeApi):**
+&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#149)(api: RecipeApi):**
 
 Commit changes and create a Gerrit CL in the current directory.
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#172)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#187)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 
 &mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#51)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 ### *recipes* / [kernel\_checkconfig](/recipes/kernel_checkconfig.py)
