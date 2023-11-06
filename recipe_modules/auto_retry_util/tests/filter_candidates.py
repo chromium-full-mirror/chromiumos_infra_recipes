@@ -32,8 +32,12 @@ def RunSteps(api):
   }
   builds = [build]
   filtered_builds = api.auto_retry_util.filter_retry_candidates(builds)
-  expected_filtered_builds = [] if api.properties['filtered_out'] else builds
+  expected_filter_reasons = api.properties.get('filter_reasons', [])
+  expected_filtered_builds = [] if expected_filter_reasons else builds
   api.assertions.assertCountEqual(expected_filtered_builds, filtered_builds)
+  api.assertions.assertCountEqual(
+      api.auto_retry_util.per_build_stats[build.id].filter_reasons,
+      expected_filter_reasons)
 
 
 def GenTests(api):
@@ -135,7 +139,6 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats()),
-      api.properties(filtered_out=False),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -151,7 +154,7 @@ def GenTests(api):
       ),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(non_mergeable=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['non_mergeable']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -159,7 +162,7 @@ def GenTests(api):
       'opt-out-via-footer',
       retryable_build.build,
       changes_mergeable_test_data,
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['opt_out']),
       api.git_footers.simulated_get_footers(
           ['None'], 'filter candidates.filter out opt-out runs'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
@@ -242,7 +245,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(wip=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['wip']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -257,7 +260,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(non_latest_patch_set=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['non_latest_patch_set']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -277,7 +280,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(removed_label=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['removed_label']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -292,7 +295,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(non_submittable=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['non_submittable']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -322,7 +325,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(unresolved_comments=1)),
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['unresolved_comments']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -337,7 +340,7 @@ def GenTests(api):
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
                        _filtered_build_stats(negative_labels=1)),
-      api.properties(filtered_out=True, runMode='DRY_RUN'),
+      api.properties(filter_reasons=['negative_labels'], runMode='DRY_RUN'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -373,7 +376,7 @@ def GenTests(api):
   yield api.test(
       'filter-out-auto-retried-runs',
       auto_retried_build,
-      api.properties(filtered_out=True),
+      api.properties(filter_reasons=['already_retried']),
       changes_mergeable_test_data,
       api.post_process(
           post_process.StepTextEquals,

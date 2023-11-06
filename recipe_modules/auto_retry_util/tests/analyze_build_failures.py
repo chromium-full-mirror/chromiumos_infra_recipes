@@ -261,7 +261,8 @@ def GenTests(api):
               'now_green_builders': ['builder2-snapshot'],
               'retryable_builders': ['builder2-cq'],
               'total_builders_in_snapshot': 4
-          }
+          },
+          'filter_reasons': [],
       }]),
       api.post_process(post_process.DropExpectation),
   )

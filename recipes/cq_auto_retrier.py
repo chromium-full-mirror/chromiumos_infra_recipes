@@ -110,6 +110,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
         _set_len_prop(actionable_retryable_builders=retryable_build_failures,
                       actionable_test_suites=retry_reason.retryable_test_suites)
         return retry_reason
+      api.auto_retry_util.per_build_stats[b.id].filter_reasons.append(
+          'outstanding_failures')
       return None
 
   # A list of (Build, RetryDetails) tuples.
@@ -482,8 +484,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'has_child_failures': True,
       }, experiments=['chromeos.auto_retry_util.retry_infra_failures']).message
 
+  # This test case was added due to an edge case where child_build_info did not
+  # correctly report the status and relevance of the child builds due to a
+  # failure in the buildbucket.search() call (b/303105163).
   yield api.test(
-      'no-outstanding-no-retryable',
+      'no-outstanding-failures-reported-no-retryable',
       api.auto_retry_util.enable_retries(),
       api.buildbucket.simulated_search_results(
           [orch_build],
@@ -492,5 +497,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.DoesNotRun,
           f'performing retries.retry build {orch_build.id}',
       ),
+      api.post_check(lambda check, steps: check(steps[
+          'set per_build_stats'].output_properties['per_build_stats'][0][
+              'filter_reasons'] == ['outstanding_failures'])),
       api.post_process(post_process.DropExpectation),
   )

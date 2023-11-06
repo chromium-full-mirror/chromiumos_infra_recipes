@@ -146,6 +146,9 @@ class PerBuildStats:
   wait_for_green_stats: WaitForGreenStats = dataclasses.field(
       default_factory=WaitForGreenStats)
 
+  # The reasons why this CQ run was not retried.
+  filter_reasons: List[str] = dataclasses.field(default_factory=list)
+
 
 def _snapshot_builder(cq_builder: str) -> str:
   """Converts a cq builder name to matching snapshot builder name.
@@ -529,9 +532,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return now_green_builders
 
   def publish_per_build_stats(self):
-    """Write WaitForGreenStats to an output property.
+    """Write PerBuildStats to an output property.
 
-    WaitForGreenStats are logged for each build passed to
+    PerBuildStats are logged for each build passed to
     analyze_build_failures. This function should be called after every call to
     analyze_build_failures is complete, to publish the stats to an output
     property.
@@ -841,6 +844,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           ]
         pres.step_text = f'filtered out {len(non_mergeable_ids)} run(s)'
         self._filtered_build_stats['non_mergeable'] = len(non_mergeable_ids)
+        for bid in non_mergeable_ids:
+          self.per_build_stats[bid].filter_reasons.append('non_mergeable')
 
       with self.m.step.nest('filter out runs last triggered by retry') as pres:
         last_our_retry_ids = [
@@ -854,6 +859,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           ]
         pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
         self._filtered_build_stats['already_retried'] = len(last_our_retry_ids)
+        for bid in last_our_retry_ids:
+          self.per_build_stats[bid].filter_reasons.append('already_retried')
 
       with self.m.step.nest('filter out opt-out runs') as pres:
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]
@@ -865,6 +872,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               for x in sorted(opt_out_ids)
           ]
         self._filtered_build_stats['opt_out'] = len(opt_out_ids)
+        for bid in opt_out_ids:
+          self.per_build_stats[bid].filter_reasons.append('opt_out')
 
       with self.m.step.nest('filter out unmet CL requirements') as pres:
         non_submittable_ids, wip_ids, non_latest_patch_set_ids, unresolved_comment_ids, removed_label_ids, negative_labels_ids = set(
@@ -909,30 +918,43 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(non_submittable_ids)
           ]
+        for bid in non_submittable_ids:
+          self.per_build_stats[bid].filter_reasons.append('non_submittable')
         if wip_ids:
           pres.logs['wip'] = [
               self.m.buildbucket.build_url(build_id=x) for x in sorted(wip_ids)
           ]
+        for bid in wip_ids:
+          self.per_build_stats[bid].filter_reasons.append('wip')
         if non_latest_patch_set_ids:
           pres.logs['non_latest_patch_set'] = [
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(non_latest_patch_set_ids)
           ]
+        for bid in non_latest_patch_set_ids:
+          self.per_build_stats[bid].filter_reasons.append(
+              'non_latest_patch_set')
         if unresolved_comment_ids:
           pres.logs['unresolved_comments'] = [
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(unresolved_comment_ids)
           ]
+        for bid in unresolved_comment_ids:
+          self.per_build_stats[bid].filter_reasons.append('unresolved_comments')
         if removed_label_ids:
           pres.logs['removed_label'] = [
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(removed_label_ids)
           ]
+        for bid in removed_label_ids:
+          self.per_build_stats[bid].filter_reasons.append('removed_label')
         if negative_labels_ids:
           pres.logs['negative_labels'] = [
               self.m.buildbucket.build_url(build_id=x)
               for x in sorted(negative_labels_ids)
           ]
+        for bid in negative_labels_ids:
+          self.per_build_stats[bid].filter_reasons.append('negative_labels')
 
         self._filtered_build_stats.update({
             'non_submittable': len(non_submittable_ids),
