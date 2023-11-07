@@ -234,7 +234,7 @@ def GenTests(api: RecipeTestApi):
               '/archive_dir/bar.bin',
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
           ]), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='kukui-release-main')
+      build_target='kukui', builder='kukui-release-main', status='FAILURE')
 
   yield api.build_menu.test(
       'no-signed-artifacts',

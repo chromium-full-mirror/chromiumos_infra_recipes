@@ -10156,11 +10156,11 @@ Args:
 Returns:
   True/False whether the signing succeeded.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#636)(self, response: SignImageResponse):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#631)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#587)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#582)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 

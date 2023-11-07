@@ -532,36 +532,31 @@ class SigningApi(recipe_api.RecipeApi):
       raise StepFailure(
           'Cannot sign artifacts when local signing is not configured')
 
-    # TODO(b/296086340): Remove once stable and in use.
-    with self.m.failures.ignore_exceptions():
-      with self.m.step.nest('sign artifacts'):
-        build_target_config, archive_dir = self.setup_signing(
-            sign_types, channels)
-        config = BuildTargetSigningConfigs(
-            build_target_signing_configs=[build_target_config])
+    with self.m.step.nest('sign artifacts'):
+      build_target_config, archive_dir = self.setup_signing(
+          sign_types, channels)
+      config = BuildTargetSigningConfigs(
+          build_target_signing_configs=[build_target_config])
 
-        # BAPI is hermetic so need to pull down the specified docker image
-        # ahead of time.
-        self.m.step('docker pull', [
-            'docker',
-            'pull',
-            self.signing_docker_image,
-        ])
+      # BAPI is hermetic so need to pull down the specified docker image
+      # ahead of time.
+      self.m.step('docker pull', [
+          'docker',
+          'pull',
+          self.signing_docker_image,
+      ])
 
-        self.upload_unsigned_artifacts(archive_dir, build_target_config,
-                                       channels)
+      self.upload_unsigned_artifacts(archive_dir, build_target_config, channels)
 
-        # TODO(b/296086340): Remove once stable and in use.
-        with self.m.failures.ignore_exceptions():
-          request = SignImageRequest(
-              signing_configs=config, archive_dir=str(archive_dir),
-              result_path=common_pb2.ResultPath(
-                  path=common_pb2.Path(
-                      path=self.m.path.abspath(archive_dir),
-                      location=common_pb2.Path.Location.OUTSIDE,
-                  )), docker_image=self.signing_docker_image)
-          response = self.m.cros_build_api.ImageService.SignImage(request)
-        self.upload_signed_artifacts(response)
+      request = SignImageRequest(
+          signing_configs=config, archive_dir=str(archive_dir),
+          result_path=common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=self.m.path.abspath(archive_dir),
+                  location=common_pb2.Path.Location.OUTSIDE,
+              )), docker_image=self.signing_docker_image)
+      response = self.m.cros_build_api.ImageService.SignImage(request)
+      self.upload_signed_artifacts(response)
 
   def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
     """Get the gs path for the given channel.
@@ -641,6 +636,7 @@ class SigningApi(recipe_api.RecipeApi):
         f'upload signed artifacts to {self.gs_upload_bucket} bucket'
     ) as presentation:
       to_upload_by_channel = collections.defaultdict(lambda: [])
+      ex = None
 
       # Group artifacts by channel so that we can organize steps better.
       for archive_artifacts in response.signed_artifacts.archive_artifacts:
@@ -649,12 +645,16 @@ class SigningApi(recipe_api.RecipeApi):
           presentation.step_text = 'skipping artifacts with no channel'
           continue
         for signed_artifact in archive_artifacts.signed_artifacts:
-          # TODO(b/302148521): Surface failures.
           if signed_artifact.status == signing_pb2.STATUS_SUCCESS:
             to_upload_by_channel[channel].append(
                 signed_artifact.signed_artifact_name)
+          else:
+            # Allow for any success artifacts to upload, so just store the
+            # exception.
+            ex = StepFailure("Failed to sign artifact. Check stdout of signing"
+                             " build API call for more information.")
 
-      if not to_upload_by_channel:
+      if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'
         return
 
@@ -674,3 +674,6 @@ class SigningApi(recipe_api.RecipeApi):
                 'cp', '-n',
                 os.path.join(response.output_archive_dir, artifact), gs_dir
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+
+      if ex:
+        raise ex
