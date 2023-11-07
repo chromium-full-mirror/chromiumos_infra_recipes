@@ -33,8 +33,6 @@
     "name": "update amd64-generic",
     "~followup_annotations": [
       "@@@STEP_TEXT@The project is different from the first one.@@@",
-      "@@@STEP_LOG_LINE@binhost_path@[START_DIR]/BINHOST.conf@@@",
-      "@@@STEP_LOG_END@binhost_path@@@",
       "@@@STEP_LOG_LINE@project of this binhost@ProjectInfo(name='[START_DIR]', path='src/[START_DIR]', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
       "@@@STEP_LOG_END@project of this binhost@@@",
       "@@@STEP_LOG_LINE@project of first binhost@ProjectInfo(name='proj', path='', remote='', branch='main', rrev='')@@@",
@@ -43,17 +41,19 @@
   },
   {
     "cmd": [],
-    "name": "update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath",
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": 1@@@",
+      "@@@STEP_LOG_LINE@request@  \"key\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@  \"uri\": \"gs://some-uri/\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"maxUris\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"conf_path\": \"[START_DIR]/BINHOST.conf\"}@@@",
+      "@@@STEP_LOG_LINE@response@{\"output_file\": \"[START_DIR]/BINHOST.conf\"}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -65,11 +65,11 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 1,\n  \"uri\": \"gs://some-uri/\",\n  \"maxUris\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
-    "name": "update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.write input file",
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -83,7 +83,7 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "--log-level",
       "debug",
-      "chromite.api.BinhostService/GetBinhostConfPath"
+      "chromite.api.BinhostService/SetBinhost"
     ],
     "env_suffixes": {
       "PATH": [
@@ -91,7 +91,7 @@
       ]
     },
     "infra_step": true,
-    "name": "update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.call build API script",
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -113,18 +113,117 @@
       ]
     },
     "infra_step": true,
-    "name": "update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.read output file",
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "update amd64-generic.call chromite.api.BinhostService/GetBinhostConfPath.call response",
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"key\": \"POSTSUBMIT_BINHOST\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"uri\": \"gs://some-uri/\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"maxUris\": 1@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"setBinhostResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"outputFile\": \"[START_DIR]/BINHOST.conf\"@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"update amd64-generic|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAXIlCg8KDWFtZDY0LWdlbmVyaWMYASIOZ3M6Ly9zb21lLXVyaS8oAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbaAlZ1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message.ensure support CIPD package",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd-support",
+      "-ensure-file",
+      "chromiumos/infra/support/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message.ensure support CIPD package.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd-support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAXIlCg8KDWFtZDY0LWdlbmVyaWMYASIOZ3M6Ly9zb21lLXVyaS8oAXoaChhbU1RBUlRfRElSXS9CSU5IT1NULmNvbmbaAlZ1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {

@@ -528,10 +528,14 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     binhost_changes = []
     for (target, uri) in binhosts:
       with self.m.step.nest(f'update {target.name}') as presentation:
-        binhost_path = self._get_binhost_path(target, private, key)
-        presentation.logs['binhost_path'] = str(binhost_path)
-
         max_uris = overriding_max_uris.get(target.name, self._max_binhost_uris)
+
+        request = binhost_pb.SetBinhostRequest(build_target=target,
+                                               private=private, key=key,
+                                               uri=uri, max_uris=max_uris)
+        response = self.m.cros_build_api.BinhostService.SetBinhost(
+            request, infra_step=True)
+        binhost_path = response.output_file
 
         # All binhosts must be in the same project.
         current_project = self.m.repo.project_info(
@@ -543,11 +547,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           presentation.logs['project of first binhost'] = str(target_project)
           continue
 
-        request = binhost_pb.SetBinhostRequest(build_target=target,
-                                               private=private, key=key,
-                                               uri=uri, max_uris=max_uris)
-        self.m.cros_build_api.BinhostService.SetBinhost(request,
-                                                        infra_step=True)
+        # Read and output the BINHOST.conf file contents
         binhost_content = self.m.file.read_text('read binhost conf',
                                                 binhost_path)
         binhost_changes.append((binhost_path, binhost_content))
@@ -813,6 +813,12 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       self.m.gsutil.upload(host_prebuilts_dir, gs_bucket, upload_dest,
                            args=acls + ['-r'], multithreaded=True)
 
+      # Update binhosts used by commiting BINHOST.conf changes.
+      upload_uri = f'gs://{gs_bucket}/{upload_dest}'
+      binhost_key = self._binhost_key(kind)
+      with self.m.step.nest('update binhost conf file'):
+        self.set_binhosts([(target, upload_uri)], private=False,
+                          key=binhost_key)
+
       step = self.m.step('set properties', cmd=None)
-      step.presentation.properties[
-          'prebuilts_uri'] = f'gs://{gs_bucket}/{upload_dest}'
+      step.presentation.properties['host_prebuilts_uri'] = upload_uri
