@@ -20,6 +20,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
@@ -50,11 +51,8 @@ DEFAULT_LOOKBACK_SECONDS = 60 * 60 * 24 * 1
 DEFAULT_BUILDS_COMMENT_LIMIT = 5
 DEFAULT_SUITES_COMMENT_LIMIT = 5
 
-# The service accounts considered as one of the auto retriers.
-DEFAULT_RETRY_SERVICE_ACCOUNTS = [
-    'chromeos-ci-staging@chromeos-bot.iam.gserviceaccount.com',
-    'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
-]
+# The service account considered as one of the auto retries.
+DEFAULT_RETRY_SERVICE_ACCOUNT = 'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
 
 # The default setting for the global throttle.
 DEFAULT_24_HR_THROTTLE = 300
@@ -194,13 +192,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
   def suites_comment_limit(self):
     return self._suites_comment_limit
 
-  def __init__(self, props, *args, **kwargs):
+  def __init__(self, props: AutoRetryUtilProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._lookback_seconds = props.lookback_seconds or DEFAULT_LOOKBACK_SECONDS
     self._builds_comment_limit = props.builds_comment_limit or DEFAULT_BUILDS_COMMENT_LIMIT
     self._suites_comment_limit = props.suites_comment_limit or DEFAULT_SUITES_COMMENT_LIMIT
     self._enable_retries = props.enable_retries
-    self._retry_service_accounts = props.service_accounts or DEFAULT_RETRY_SERVICE_ACCOUNTS
+    self._retry_service_account = props.service_account or DEFAULT_RETRY_SERVICE_ACCOUNT
     self._throttle_24hr = props.throttle_24hr or DEFAULT_24_HR_THROTTLE
     self._throttle_2hr = props.throttle_2hr or DEFAULT_2_HR_THROTTLE
     self._experimental_features = {
@@ -220,6 +218,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     self.per_build_stats: Dict[int, PerBuildStats] = collections.defaultdict(
         PerBuildStats)
     self._experimental_retries: Dict[int, Set] = collections.defaultdict(set)
+    self._multi_retry_config: AutoRetryUtilProperties.MultiRetryConfig = props.multi_retry_config
+    if not self._multi_retry_config.max_retries:
+      self._multi_retry_config.max_retries = 1
+
+    # We must have a backoff strategy if more than one auto-retry is used.
+    # Nocover because tests can't expect_exception for exceptions thrown raised
+    # from __init__.
+    if self._multi_retry_config.max_retries > 1 and not self._multi_retry_config.WhichOneof(
+        'backoff_strategy'):  # pragma: nocover
+      raise ValueError('backoff_strategy must be set if max_retries > 1')
 
   def initialize(self):
     # enable_retries should never be set on a staging builder.
@@ -663,13 +671,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return True
     return False
 
-  def triggerer_was_us(self, build):
-    """Given the build, return if it was triggered by the auto retry accts."""
-    cq_triggerer = self.m.cros_tags.get_single_value('cq_triggerer', build.tags)
-    if cq_triggerer in self._retry_service_accounts:
-      return True
-    return False
-
   def _get_current_cq_orchs_with_retryable_statuses(
       self) -> List[build_pb2.Build]:
     """Returns cq-orchestrators that are "current" and have a retryable status.
@@ -834,6 +835,84 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     return build.input.properties['$recipe_engine/cq'][
         'runMode'] == self.m.cq.DRY_RUN
 
+  def _get_auto_retry_counts(self,
+                             cq_orchs: List[build_pb2.Build]) -> Dict[int, int]:
+    """Computes the number of times each of the candidates has been auto-retried.
+
+    For each candidate, find its cq_equivalent_cl_group_key and query
+    Buildbucket for how many auto-retry builds have already been done on this
+    group. Note that any manual tries (including the initial CQ run) on this
+    group will not be included. Any auto / manual tries on the same set of CLs
+    but a different cq_equivalent_cl_group_key will also not be included; this
+    means non-trivial changes will effectively reset the auto-retry count.
+
+    If a candidate doesn't have the cq_equivalent_cl_group_key tag, its step
+    will be set to FAILURE status (this is unexpected), but an exception isn't
+    raised so that this candidate won't block all other retries.
+
+    Args:
+      cq_orchs: The retry candidates.
+
+    Returns:
+      A map from orchestrator id to the auto-retry count for that orch's
+        cq_equivalent_cl_group_key. If a orch didn't have a
+        cq_equivalent_cl_group_key (this is unexpected) it won't be included in
+        the map.
+    """
+    auto_retry_counts = {}
+    for b in cq_orchs:
+      with self.m.step.nest(f'find previous auto-retries for {b.id}') as pres:
+        group_key = self.m.cros_tags.get_single_value(
+            'cq_equivalent_cl_group_key', b.tags)
+        if group_key:
+          builds_found = self.m.buildbucket.search(
+              builds_service_pb2.BuildPredicate(
+                  builder=builder_common_pb2.BuilderID(
+                      builder='cq-orchestrator', bucket='cq',
+                      project='chromeos'), tags=self.m.buildbucket.tags(
+                          cq_equivalent_cl_group_key=group_key,
+                          cq_triggerer=self._retry_service_account,
+                      )),
+          )
+          auto_retry_counts[b.id] = len(builds_found)
+          pres.step_text = f'found {len(builds_found)} total auto-retries for build {b.id}'
+        else:
+          pres.status = self.m.step.FAILURE
+          pres.step_text = f'cq_equivalent_cl_group_key not found for {b.id}'
+
+    return auto_retry_counts
+
+  def _build_is_multi_retry_eligible(self, cq_orch: build_pb2.Build,
+                                     auto_retry_count: int) -> bool:
+    """Return whether the build is eligible for multiple auto-retries.
+
+    Evaluates whether the build is eligible based on self._multi_retry_config.
+
+    Args:
+      cq_orch: The retry candidate.
+      auto_retry_count: The number of times the build has already been
+        auto-retried. If this build was the original CQ run, this should be 0,
+        if this build was the first auto-retry, it should be 1, etc.
+    """
+    # If the count has reached max_retries, never retry.
+    if auto_retry_count >= self._multi_retry_config.max_retries:
+      return False
+
+    # If there haven't been any auto-retries yet, always retry.
+    if not auto_retry_count:
+      return True
+
+    # If using a constant backoff strategy, retry if it has been
+    # constant_backoff_duration since the candidate finished.
+    if self._multi_retry_config.HasField('constant_backoff_duration'):
+      return (self.m.time.time() - cq_orch.end_time.seconds >
+              self._multi_retry_config.constant_backoff_duration.seconds)
+
+    unimplemented_backoff_strategy = self._multi_retry_config.WhichOneof(
+        'backoff_strategy')  # pragma: nocover
+    raise ValueError(  # pragma: nocover
+        f'unimplemented backoff_strategy {unimplemented_backoff_strategy}')
+
   def filter_retry_candidates(
       self, cq_orchs: List[build_pb2.Build]) -> List[build_pb2.Build]:
     """Returns cq-orchestrator builds which meet the retry criteria.
@@ -868,20 +947,29 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         for bid in non_mergeable_ids:
           self.per_build_stats[bid].filter_reasons.append('non_mergeable')
 
-      with self.m.step.nest('filter out runs last triggered by retry') as pres:
-        last_our_retry_ids = [
-            c.id for c in cq_orchs if self.triggerer_was_us(c)
+      with self.m.step.nest('filter multi-retry eligible runs') as pres:
+        auto_retry_counts = self._get_auto_retry_counts(cq_orchs)
+        non_multi_retry_eligible = [
+            c.id for c in cq_orchs if
+            # It is possible, but unexpected, that a candidate doesn't have an
+            # auto-retry count because it didn't have the
+            # cq_equivalent_cl_group_key tag. In this case filter it but don't
+            # crash the build.
+            not (c.id in auto_retry_counts and self
+                 ._build_is_multi_retry_eligible(c, auto_retry_counts[c.id]))
         ]
-        cq_orchs = [c for c in cq_orchs if c.id not in last_our_retry_ids]
-        if last_our_retry_ids:
+        cq_orchs = [c for c in cq_orchs if c.id not in non_multi_retry_eligible]
+        if non_multi_retry_eligible:
           pres.logs['filtered out runs'] = [
               self.m.buildbucket.build_url(build_id=x)
-              for x in sorted(last_our_retry_ids)
+              for x in sorted(non_multi_retry_eligible)
           ]
-        pres.step_text = f'filtered out {len(last_our_retry_ids)} run(s)'
-        self._filtered_build_stats['already_retried'] = len(last_our_retry_ids)
-        for bid in last_our_retry_ids:
-          self.per_build_stats[bid].filter_reasons.append('already_retried')
+        pres.step_text = f'filtered out {len(non_multi_retry_eligible)} run(s)'
+        self._filtered_build_stats['non_multi_retry_eligible'] = len(
+            non_multi_retry_eligible)
+        for bid in non_multi_retry_eligible:
+          self.per_build_stats[bid].filter_reasons.append(
+              'non_multi_retry_eligible')
 
       with self.m.step.nest('filter out opt-out runs') as pres:
         opt_out_ids = [c.id for c in cq_orchs if self.no_retry_footer_set(c)]

@@ -138,6 +138,7 @@
   * [auto_retry_util:tests/footers](#recipes-auto_retry_util_tests_footers)
   * [auto_retry_util:tests/get_exonerated_suites](#recipes-auto_retry_util_tests_get_exonerated_suites)
   * [auto_retry_util:tests/is_experimental_feature_enabled](#recipes-auto_retry_util_tests_is_experimental_feature_enabled)
+  * [auto_retry_util:tests/multi_retry](#recipes-auto_retry_util_tests_multi_retry) &mdash; Tests of multi-retry filtering.
   * [auto_retry_util:tests/retry_build](#recipes-auto_retry_util_tests_retry_build)
   * [auto_retry_util:tests/sdk_failures](#recipes-auto_retry_util_tests_sdk_failures) &mdash; Tests involving SDK failure retries.
   * [auto_retry_util:tests/snapshot_greenness_cache](#recipes-auto_retry_util_tests_snapshot_greenness_cache) &mdash; Tests caching greenness for a specific snapshot and from looks for green.
@@ -864,18 +865,18 @@ Returns:
   List of modified files.
 ### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
 
-[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Utility function for CQ auto retry.
 
-#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#182)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#180)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#328)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#336)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#417)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#425)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -887,7 +888,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retryable.
 
-&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#825)(self, build: build_pb2.Build):**
+&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#826)(self, build: build_pb2.Build):**
 
 Returns whether the build was a dry run.
 
@@ -897,9 +898,9 @@ which may not be true for some builds (e.g. manually triggered builds).
 Args:
   build: The build for which to determine whether it is a dry run.
 
-&emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#189)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#187)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#757)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#758)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -909,9 +910,9 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build had a supported failure mode.
   * The CLs under test are active.
 
-&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#237)(self):**
+&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#245)(self):**
 
-&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#837)(self, cq_orchs: List[build_pb2.Build]):**
+&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#916)(self, cq_orchs: List[build_pb2.Build]):**
 
 Returns cq-orchestrator builds which meet the retry criteria.
 
@@ -922,7 +923,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1225)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1313)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -936,19 +937,19 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#224)(self):**
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#232)(self):**
 
-&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#241)(self, feature_name: str, build: build_pb2.Build):**
+&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#249)(self, feature_name: str, build: build_pb2.Build):**
 
 Returns whether the given feature is enabled on the build.
 
-&emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#185)(self):**
+&emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#183)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#658)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#666)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#555)(self):**
+&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#563)(self):**
 
 Write PerBuildStats to an output property.
 
@@ -962,7 +963,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1297)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1385)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -982,9 +983,9 @@ Args:
   retryable_builders: Names of the child builders that are now retryable.
   retryable_test_suites: Names of the test suites that are now retryable.
 
-&emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#193)(self):**
+&emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#191)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#993)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1081)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -1002,11 +1003,7 @@ Returns:
   A tuple containing 3 lists of FailedTestStats grouped by whether the test
       variant is previously exonerated, newly exonerated, or not exonerated.
 
-&mdash; **def [triggerer\_was\_us](/recipe_modules/auto_retry_util/api.py#666)(self, build):**
-
-Given the build, return if it was triggered by the auto retry accts.
-
-&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#274)(self):**
+&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#282)(self):**
 
 Returns the number of retries left below the 24 and 2 hour throttles.
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
@@ -11365,6 +11362,14 @@ Tests for the filter_candidates function.
 
 
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/is_experimental_feature_enabled.py#24)(api):**
+### *recipes* / [auto\_retry\_util:tests/multi\_retry](/recipe_modules/auto_retry_util/tests/multi_retry.py)
+
+[DEPS](/recipe_modules/auto_retry_util/tests/multi_retry.py#13): [auto\_retry\_util](#recipe_modules-auto_retry_util), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Tests of multi-retry filtering.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/multi_retry.py#26)(api):**
 ### *recipes* / [auto\_retry\_util:tests/retry\_build](/recipe_modules/auto_retry_util/tests/retry_build.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/retry_build.py#18): [auto\_retry\_util](#recipe_modules-auto_retry_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

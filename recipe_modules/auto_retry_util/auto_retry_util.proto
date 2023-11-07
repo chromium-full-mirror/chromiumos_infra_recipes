@@ -4,6 +4,8 @@
 
 syntax = "proto3";
 
+import "google/protobuf/duration.proto";
+
 package recipe_modules.chromeos.auto_retry_util;
 
 message RetryDetails {
@@ -37,6 +39,29 @@ message ExperimentalFeature {
   string experiment_flag = 2;
 }
 
+// Configures whether the auto-retrier will retry a group of CLs multiple times,
+// and the strategy for doing so.
+message MultiRetryConfig {
+  // Maximum number of times to retry a group of CLs. Defaults to 1.
+  uint32 max_retries = 1;
+
+  // Backoff to use after the first retry. This is set because if the first
+  // retry fails it may be more productive to wait some period of time for
+  // external conditions to change (e.g. a test becomes exonerated, ToT becomes
+  // green, lab health improves) before retrying again.
+  //
+  // A backoff strategy MUST be set if max_retries is > 1.
+  //
+  // These strategies only apply after the first retry, i.e. if the CL group
+  // hasn't already been retried, it will be retried as soon as it is an
+  // eligible candidate.
+  oneof backoff_strategy {
+    // Constant duration to wait between retries. Measured since the end of
+    // the candidate build.
+    google.protobuf.Duration constant_backoff_duration = 2;
+  }
+}
+
 message AutoRetryUtilProperties {
 
   // The window in which we will consider CLs that have recently been labeled.
@@ -55,15 +80,19 @@ message AutoRetryUtilProperties {
   // candidate CLs but not take action on them.
   bool enable_retries = 4;
 
-  // The list of service accounts used by auto retry.
-  // e.g. 'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'
-  repeated string service_accounts = 5;
+  // The service account used by auto retry.
+  // e.g. 'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com'. Used to
+  // detect which CQ runs were triggered by the auto retrier.
+  string service_account = 12;
+  reserved 5;
 
   // The maximum CLs we will vote on in a 2hr period.
   uint32 throttle_2hr = 6;
 
   // The maximum CLs we will vote on in a 24hr period.
   uint32 throttle_24hr = 7;
+
+  MultiRetryConfig multi_retry_config = 11;
 
   reserved 8;
 

@@ -58,7 +58,7 @@
     "name": "find candidates.query for cq-orchestrators.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:18:31Z\", \"createdBy\": \"project:chromeos\", \"id\": \"1111\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:1111\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"child_build_info\": [{\"builder\": {\"builder\": \"builder1\"}, \"relevant\": true, \"status\": \"FAILURE\"}], \"has_child_failures\": true}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:18:31Z\", \"createdBy\": \"project:chromeos\", \"id\": \"1111\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:1111\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"child_build_info\": [{\"builder\": {\"builder\": \"builder1\"}, \"relevant\": true, \"status\": \"FAILURE\"}], \"has_child_failures\": true}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@"
     ]
@@ -267,7 +267,7 @@
     "cmd": [],
     "name": "filter candidates",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"already_retried\": 0, \"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
+      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_multi_retry_eligible\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
     ]
   },
   {
@@ -331,10 +331,40 @@
   },
   {
     "cmd": [],
-    "name": "filter candidates.filter out runs last triggered by retry",
+    "name": "filter candidates.filter multi-retry eligible runs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@filtered out 0 run(s)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 1111",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found 0 total auto-retries for build 1111@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}"
+    ],
+    "infra_step": true,
+    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 1111.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

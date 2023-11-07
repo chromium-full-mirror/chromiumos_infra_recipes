@@ -186,12 +186,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # An orchestrator with a retryable child build failure (builder1 is no longer
   # a CQ blocking builder).
   retryable_build_orch = api.test_util.test_orchestrator(
-      cq=True, status='FAILURE', build_id=1111, create_time=1111,
+      cq=True,
+      status='FAILURE',
+      build_id=1111,
+      create_time=1111,
       input_properties={
           '$recipe_engine/cq': {
               'runMode': 'FULL_RUN'
           }
-      }, output_properties={
+      },
+      output_properties={
           'has_child_failures':
               True,
           'child_build_info': [{
@@ -201,7 +205,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'status': 'FAILURE',
               'relevant': True
           },]
-      }).message
+      },
+      tags={
+          'cq_equivalent_cl_group_key': 'group_key1',
+      },
+  ).message
 
   retryable_build_orch_dry_run = build_pb2.Build()
   retryable_build_orch_dry_run.CopyFrom(retryable_build_orch)
@@ -211,12 +219,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # An orchestrator with a retryable test failure (builder1 is no longer a CQ
   # blocking builder).
   retryable_test_orch = api.test_util.test_orchestrator(
-      cq=True, status='FAILURE', build_id=1111, create_time=1111,
+      cq=True,
+      status='FAILURE',
+      build_id=1111,
+      create_time=1111,
       input_properties={
           '$recipe_engine/cq': {
               'runMode': 'FULL_RUN'
           }
-      }, output_properties={
+      },
+      output_properties={
           'has_child_failures':
               True,
           'test_summary': [{
@@ -225,7 +237,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'critical': True,
               'name': 'builder1.hw.suite'
           },]
-      }).message
+      },
+      tags={
+          'cq_equivalent_cl_group_key': 'group_key1',
+      },
+  ).message
 
   gerrit_changes = [
       common.GerritChange(change=123456,
@@ -408,14 +424,23 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   retryable_orch_build = api.test_util.test_orchestrator(
-      cq=True, status='INFRA_FAILURE', build_id=1111, create_time=1111,
+      cq=True,
+      status='INFRA_FAILURE',
+      build_id=1111,
+      create_time=1111,
       input_properties={
           '$recipe_engine/cq': {
               'runMode': 'FULL_RUN'
           }
-      }, output_properties={
+      },
+      output_properties={
           'has_child_failures': False,
-      }, experiments=['chromeos.auto_retry_util.retry_infra_failures']).message
+      },
+      experiments=['chromeos.auto_retry_util.retry_infra_failures'],
+      tags={
+          'cq_equivalent_cl_group_key': 'group_key1',
+      },
+  ).message
 
   yield api.test(
       'retryable-orchestrator-exp-feature',
@@ -475,14 +500,23 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   orch_build = api.test_util.test_orchestrator(
-      cq=True, status='FAILURE', build_id=1111, create_time=1111,
+      cq=True,
+      status='FAILURE',
+      build_id=1111,
+      create_time=1111,
       input_properties={
           '$recipe_engine/cq': {
               'runMode': 'FULL_RUN'
           }
-      }, output_properties={
+      },
+      output_properties={
           'has_child_failures': True,
-      }, experiments=['chromeos.auto_retry_util.retry_infra_failures']).message
+      },
+      experiments=['chromeos.auto_retry_util.retry_infra_failures'],
+      tags={
+          'cq_equivalent_cl_group_key': 'group_key1',
+      },
+  ).message
 
   # This test case was added due to an edge case where child_build_info did not
   # correctly report the status and relevance of the child builds due to a

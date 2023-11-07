@@ -44,9 +44,9 @@ def GenTests(api):
 
   def _filtered_build_stats(**kwargs) -> typing.Dict:
     return {
-        'already_retried': kwargs.get('already_retried', 0),
         'non_latest_patch_set': kwargs.get('non_latest_patch_set', 0),
         'non_mergeable': kwargs.get('non_mergeable', 0),
+        'non_multi_retry_eligible': kwargs.get('non_multi_retry_eligible', 0),
         'non_submittable': kwargs.get('non_submittable', 0),
         'opt_out': kwargs.get('opt_out', 0),
         'removed_label': kwargs.get('removed_label', 0),
@@ -126,6 +126,7 @@ def GenTests(api):
       status='FAILURE',
       create_time=11,
       output_properties={'has_child_failures': True},
+      tags={'cq_equivalent_cl_group_key': 'group_key1'},
   )
 
   yield api.test(
@@ -365,23 +366,27 @@ def GenTests(api):
       tags={
           'cq_triggerer':
               'chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com',
+          'cq_equivalent_cl_group_key':
+              'group_key1',
       },
       status='FAILURE',
       create_time=11,
-      output_properties={
-          'has_child_failures': True
-      },
-  ).build
+      output_properties={'has_child_failures': True},
+  )
 
   yield api.test(
-      'filter-out-auto-retried-runs',
-      auto_retried_build,
-      api.properties(filter_reasons=['already_retried']),
+      'filter-out-multi-retry-runs',
+      auto_retried_build.build,
+      api.properties(filter_reasons=['non_multi_retry_eligible']),
       changes_mergeable_test_data,
       api.post_process(
           post_process.StepTextEquals,
-          'filter candidates.filter out runs last triggered by retry',
+          'filter candidates.filter multi-retry eligible runs',
           'filtered out 1 run(s)',
       ),
+      api.buildbucket.simulated_search_results([
+          auto_retried_build.message
+      ], step_name='filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search'
+                                              ),
       api.post_process(post_process.DropExpectation),
   )
