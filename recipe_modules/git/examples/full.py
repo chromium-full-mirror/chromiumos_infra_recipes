@@ -38,7 +38,6 @@ def RunSteps(api):
   api.git.checkout('main', force=True)
   api.assertions.assertEqual(api.git.remote_head(remote), 'refs/heads/main')
   api.assertions.assertEqual(api.git.remote_head(remote, test_stdout=''), None)
-  api.git.merge_silent_fail('branch', 'yeet')
   api.git.merge('branch', 'yeet')
   api.git.merge_abort()
   api.git.cherry_pick('branch')

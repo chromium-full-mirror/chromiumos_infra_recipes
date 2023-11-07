@@ -291,24 +291,6 @@ class GitApi(recipe_api.RecipeApi):
     kwargs.setdefault('stdout', self.m.raw_io.output_text())
     self._step(['merge', ref, '-m', message] + list(args), **kwargs)
 
-  def merge_silent_fail(self, ref, message, **kwargs):
-    """Runs `git merge` and returns whether the merge succeeded.
-
-    This won't generally throw a StepError.
-
-    Args:
-      ref (str): The ref to merge.
-      message (str): The merge commit message.
-      kwargs (dict): Passed to recipe_engine/step.
-
-    Returns:
-      (bool): whether the merge succeeded
-    """
-    kwargs.setdefault('stdout', self.m.raw_io.output_text())
-    success = self._step(['merge', ref, '-m', message], ok_ret=(0, 1),
-                         **kwargs).retcode == 0
-    return success
-
   def cherry_pick(self, commit, **kwargs):
     """Runs 'git cherry-pick'.
 

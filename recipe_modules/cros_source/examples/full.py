@@ -105,8 +105,6 @@ def GenTests(api):
       api.step_data('apply gerrit patch sets.git merge', retcode=1),
       api.step_data('apply gerrit patch sets.git log',
                     api.raw_io.stream_output_text('commitsha1 commitsha2')),
-      api.step_data('apply gerrit patch sets.git log (2)',
-                    api.raw_io.stream_output_text('commitsha1 commitsha2')),
       gerrit_changes=[
           GerritChange(host='host', project='project', change=555, patchset=3)
       ],

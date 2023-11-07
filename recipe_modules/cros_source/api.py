@@ -1317,15 +1317,12 @@ class CrosSourceApi(RecipeApi):
           self.m.git.merge(commit, 'merge gerrit changes', infra_step=False)
           self.git_strategy = GitStrategy.MERGE
       else:
-        merged = self.m.git.merge_silent_fail(commit, 'merge gerrit changes',
-                                              infra_step=False)
         self.git_strategy = GitStrategy.MERGE
-        if not merged:
+        try:
+          self.m.git.merge(commit, 'merge gerrit changes', infra_step=False)
+        except StepFailure:
           self.m.git.merge_abort()
-          if self.m.git.is_merge_commit(commit):
-            raise StepFailure(
-                'merge %s failed. Aborting: cannot cherry-pick merge commits' %
-                commit)
+          raise StepFailure('merge %s failed. Aborting.' % commit)
       self.m.easy.set_properties_step(
           cros_source_git_strategy=self.git_strategy)
       self._applied_patches[patch.display_id].append(patch)

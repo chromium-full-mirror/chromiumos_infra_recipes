@@ -3109,7 +3109,8 @@
     },
     "name": "apply gerrit patch sets.git merge",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3138,36 +3139,9 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "log",
-      "--pretty=%P",
-      "-n 1",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/project",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "apply gerrit patch sets.git log (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "failure": {
       "failure": {},
-      "humanReason": "merge deadbeefdeadbeefdeadbeefdeadbeefdeadbeef failed. Aborting: cannot cherry-pick merge commits"
+      "humanReason": "merge deadbeefdeadbeefdeadbeefdeadbeefdeadbeef failed. Aborting."
     },
     "name": "$result"
   }

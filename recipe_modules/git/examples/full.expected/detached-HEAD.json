@@ -164,17 +164,6 @@
     "cmd": [
       "git",
       "merge",
-      "branch",
-      "-m",
-      "yeet"
-    ],
-    "infra_step": true,
-    "name": "git merge (2)"
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
       "--abort"
     ],
     "infra_step": true,
