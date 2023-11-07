@@ -197,6 +197,7 @@
   * [build_reporting:tests/init_report_from_previous_build](#recipes-build_reporting_tests_init_report_from_previous_build) &mdash; Test init_report_from_previous_build.
   * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
+  * [build_reporting:tests/status_reporting](#recipes-build_reporting_tests_status_reporting)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
   * [build_sdk_subtools](#recipes-build_sdk_subtools) &mdash; Recipe that runs the Subtools Builder.
   * [build_slim_cq](#recipes-build_slim_cq) &mdash; Recipe for building and testing a BuildTarget's packages.
@@ -1862,7 +1863,7 @@ Publish the build's branch.
 Args:
   branch: The branch.
 
-&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#552)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
+&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#576)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
 
 Publish metadata about the specified artifacts(s).
 
@@ -1871,7 +1872,7 @@ Args:
     by cros_artifacts.upload_artifacts.
   artifact_dir: Local dir where artifacts are staged.
 
-&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#441)(self, branch, builder_metadata):**
+&mdash; **def [publish\_build\_target\_and\_model\_metadata](/recipe_modules/build_reporting/api.py#465)(self, branch, builder_metadata):**
 
 Publish and merge info about the build target and models of a build.
 
@@ -1887,14 +1888,14 @@ Publish the build's channels.
 Args:
   channels: The channels.
 
-&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#534)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#558)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
 
 Publish DLC artifacts to pubsub, including URL and hash.
 
 Args:
   dlc_artifacts: DLC locations in GS and file hashes.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#464)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#488)(self, signed_build_metadata_list):**
 
 Publish metadata about the signed build image(s).
 
@@ -1905,7 +1906,7 @@ Args:
 
 Publish and merge build status.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#414)(self, gs_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [publish\_to\_gs](/recipe_modules/build_reporting/api.py#438)(self, gs_path=None):**
 
 Create a context manager to automatically publish to gs.
 
@@ -1915,7 +1916,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#516)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#540)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -1940,6 +1941,13 @@ Return:
 &mdash; **def [set\_build\_type](/recipe_modules/build_reporting/api.py#145)(self, build_type, build_target):**
 
 Set the type for the build, must be set once and only once.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [status\_reporting](/recipe_modules/build_reporting/api.py#414)(self):**
+
+Create a context manager to automatically publish overall status.
+
+Return:
+  Handle which is used to publish overall status.
 
 &emsp; **@staticmethod**<br>&mdash; **def [step\_as\_str](/recipe_modules/build_reporting/api.py#117)(step_name):**
 
@@ -11810,7 +11818,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#133)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#134)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#74)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -11857,6 +11865,12 @@ Test init_report_from_previous_build.
 
 
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_to_gs.py#21)(api):**
+### *recipes* / [build\_reporting:tests/status\_reporting](/recipe_modules/build_reporting/tests/status_reporting.py)
+
+[DEPS](/recipe_modules/build_reporting/tests/status_reporting.py#10): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/status_reporting.py#21)(api):**
 ### *recipes* / [build\_sdk](/recipes/build_sdk.py)
 
 [DEPS](/recipes/build_sdk.py#35): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [key\_value\_store](#recipe_modules-key_value_store), [src\_state](#recipe_modules-src_state), [util](#recipe_modules-util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

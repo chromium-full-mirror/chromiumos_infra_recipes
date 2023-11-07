@@ -105,29 +105,30 @@ def RunSteps(api, properties):
   #TODO(b/181879769): CHROMEOS_OFFICIAL to be parameterized by config.
   with api.context(env={'CHROMEOS_OFFICIAL': '1'}):
     with api.build_reporting.publish_to_gs():
-      with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
-                                              raise_on_failed_publish=True):
-        with api.build_menu.configure_builder(
-          lookup_config_with_bucket=True,
-        ) as config, \
-            api.build_menu.setup_workspace_and_chroot(replace=True):
-          branch = api.src_state.gitiles_commit.ref
-          if branch.startswith('refs/heads/'):
-            branch = branch[len('refs/heads/'):]
-          api.build_reporting.publish_branch(branch)
+      with api.build_reporting.status_reporting():
+        with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                                raise_on_failed_publish=True):
+          with api.build_menu.configure_builder(
+            lookup_config_with_bucket=True,
+          ) as config, \
+              api.build_menu.setup_workspace_and_chroot(replace=True):
+            branch = api.src_state.gitiles_commit.ref
+            if branch.startswith('refs/heads/'):
+              branch = branch[len('refs/heads/'):]
+            api.build_reporting.publish_branch(branch)
 
-          api.build_reporting.publish_channels(api.cros_release.channels)
+            api.build_reporting.publish_channels(api.cros_release.channels)
 
-          with api.step.nest('check that test config exists'):
-            try:
-              api.cros_test_plan.generate_target_test_requirements_config(
-                  paygen=True)
-            except Exception as e:
-              raise StepFailure(
-                  "testing config doesn't exist for this build target, see go/onboard-to-rubik"
-              ) from e
+            with api.step.nest('check that test config exists'):
+              try:
+                api.cros_test_plan.generate_target_test_requirements_config(
+                    paygen=True)
+              except Exception as e:
+                raise StepFailure(
+                    "testing config doesn't exist for this build target, see go/onboard-to-rubik"
+                ) from e
 
-          return DoRunSteps(api, config, properties)
+            return DoRunSteps(api, config, properties)
 
 
 def DoRunSteps(api, config, properties):

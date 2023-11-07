@@ -412,6 +412,30 @@ class BuildReportingApi(recipe_api.RecipeApi):
       step_info.publish()
 
   @contextlib.contextmanager
+  def status_reporting(self):
+    """Create a context manager to automatically publish overall status.
+
+      Return:
+        Handle which is used to publish overall status.
+      """
+    ex = None
+    status = BuildReport.BuildStatus.SUCCESS
+    # Publish RUNNING to start.
+    self.publish_status(BuildReport.BuildStatus.RUNNING)
+    try:
+      yield
+    except InfraFailure as e:
+      ex = e
+      status = BuildReport.BuildStatus.INFRA_FAILURE
+    except (StepFailure, Exception) as e:
+      ex = e
+      status = BuildReport.BuildStatus.FAILURE
+    finally:
+      self.publish_status(status)
+      if ex:
+        raise ex
+
+  @contextlib.contextmanager
   def publish_to_gs(self, gs_path=None):
     """Create a context manager to automatically publish to gs.
 
