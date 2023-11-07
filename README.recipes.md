@@ -605,7 +605,7 @@
   * [orch_menu:examples/wait_for_images](#recipes-orch_menu_examples_wait_for_images) &mdash; Tests for the plan_and_wait_for_images function.
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
   * [orch_menu:tests/categorize_builds](#recipes-orch_menu_tests_categorize_builds)
-  * [orch_menu:tests/child_build_info](#recipes-orch_menu_tests_child_build_info)
+  * [orch_menu:tests/child_build_info](#recipes-orch_menu_tests_child_build_info) &mdash; Tests for the add_child_build_info_to_output_property function.
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect)
   * [orch_menu:tests/collect_and_check_build_results](#recipes-orch_menu_tests_collect_and_check_build_results)
   * [orch_menu:tests/no_necessary_builds](#recipes-orch_menu_tests_no_necessary_builds)
@@ -8755,7 +8755,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#175)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1465)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1469)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -14770,10 +14770,12 @@ Tests for the plan_and_wait_for_images function.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/categorize_builds.py#28)(api):**
 ### *recipes* / [orch\_menu:tests/child\_build\_info](/recipe_modules/orch_menu/tests/child_build_info.py)
 
-[DEPS](/recipe_modules/orch_menu/tests/child_build_info.py#15): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/orch_menu/tests/child_build_info.py#17): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#24)(api):**
+Tests for the add_child_build_info_to_output_property function.
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#27)(api):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/collect.py#15): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

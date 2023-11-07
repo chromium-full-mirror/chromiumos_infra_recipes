@@ -1450,6 +1450,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
       if 'image_artifacts_uploaded_time' in b.output.properties:
         child_build_dict['image_artifacts_uploaded_time'] = b.output.properties[
             'image_artifacts_uploaded_time']
+      # Add whether this builder failed to emerge any packages.
+      if 'package_failures' in b.output.properties:
+        child_build_dict['package_failures'] = json_format.MessageToDict(
+            b.output.properties['package_failures'])
       if 'output' in child_build_dict:
         del child_build_dict['output']
 

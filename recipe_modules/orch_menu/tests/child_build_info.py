@@ -3,19 +3,22 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Tests for the add_child_build_info_to_output_property function."""
+
+import dataclasses
 
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from RECIPE_MODULES.chromeos.failures.api import PackageFailure
+
 from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
     'cros_test_proctor',
     'orch_menu',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -28,18 +31,19 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def _child_builds(child_builder_names, async_unit_tests_enabled=False):
-    builds = [
-        build_pb2.Build(id=101 + i, builder={
-            'builder': builder,
-            'bucket': 'cq'
-        }) for i, builder in enumerate(child_builder_names)
-    ]
+  def _child_builds(child_builder_names, async_unit_tests_enabled=False,
+                    props=None):
+    props = props or {}
     if async_unit_tests_enabled:
-      for b in builds:
-        b.output.properties[
-            'image_artifacts_uploaded_time'] = json_format.MessageToDict(
-                timestamp_pb2.Timestamp(seconds=101))
+      props.update({
+          'image_artifacts_uploaded_time':
+              json_format.MessageToDict(timestamp_pb2.Timestamp(seconds=101))
+      })
+    builds = [
+        api.test_util.test_build(build_id=101 + i, cq=True, builder=builder,
+                                 output_properties=props).message
+        for i, builder in enumerate(child_builder_names)
+    ]
     return builds
 
   yield api.test(
@@ -54,6 +58,25 @@ def GenTests(api):
       api.post_check(lambda check, steps: check(
           'image_artifacts_uploaded_time' not in steps['set child_build_info'].
           output_properties['child_build_info'][0])),
+      api.post_check(lambda check, steps: check('package_failures' not in steps[
+          'set child_build_info'].output_properties['child_build_info'][0])),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  package_failures = [
+      dataclasses.asdict(
+          PackageFailure(name='test/package', phase='compilation'))
+  ]
+  yield api.test(
+      'package-failures',
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='cq-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-cq'],
+                        props={'package_failures': package_failures})),
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'package_failures'] == package_failures)),
       api.post_process(post_process.DropExpectation),
   )
 
