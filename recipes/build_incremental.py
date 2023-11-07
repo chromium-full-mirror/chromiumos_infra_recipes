@@ -121,18 +121,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   api.easy.set_properties_step(step_name='set incremental failure',
                                error_type=error_type)
-  # Always upload the artifacts, regardless of whether the above threw an
-  # exception.
-  try:
-    api.build_menu.upload_artifacts(
-        config, ignore_breakpad_symbol_generation_errors=failing_build_exception
-        is not None)
-  except StepFailure as sf:
-    # If uploading artifacts threw an exception, surface that exception unless
-    # build_and_test_images above threw an exception, in which case we want to
-    # surface *that* exception for accuracy in reporting the build (and it's
-    # likely that upload artifacts failed as a result of those previous issues).
-    raise failing_build_exception or sf
 
   # Finally, if there was an exception caught above in building the image, but
   # the upload succeeded, raise that exception.
@@ -162,7 +150,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -194,7 +182,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -222,7 +210,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -243,7 +231,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -266,7 +254,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.post_check(post_process.PropertyEquals, 'error_type',
@@ -276,27 +264,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           retcode=2,
           data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
       ), build_target='amd64-generic', status='FAILURE')
-
-  # Build with artifact bundling failure.
-  yield api.build_menu.test(
-      'inc-bundle-fail',
-      api.properties(
-          **{'$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          }}),
-      api.properties(IncrementalProperties(**{'cop_enabled': True})),
-      api.properties(
-          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.PropertyEquals, 'error_type',
-                     ErrorType.UNKNOWN),
-      api.build_menu.set_build_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1),
-      build_target='amd64-generic',
-      status='INFRA_FAILURE',
-  )
 
   # Build without build_time_delta
   yield api.build_menu.test(
