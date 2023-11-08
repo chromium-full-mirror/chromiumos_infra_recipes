@@ -210,7 +210,10 @@ def GenTests(api):
           }),
       api.test_util.test_orchestrator(
           output_properties={
-              'child_build_info': child_build_info
+              'child_build_info': child_build_info,
+              'looks_for_green': {
+                  'status': 'STATUS_FOUND_NONE',
+              },
           },
           output_gitiles_commit=common_pb2.GitilesCommit(
               host='chrome-internal.googlesource.com',
@@ -279,7 +282,10 @@ def GenTests(api):
           }),
       api.test_util.test_orchestrator(
           output_properties={
-              'child_build_info': child_build_info
+              'child_build_info': child_build_info,
+              'looks_for_green': {
+                  'status': 'STATUS_FOUND_NONE',
+              },
           },
           output_gitiles_commit=common_pb2.GitilesCommit(
               host='chrome-internal.googlesource.com',
@@ -319,5 +325,76 @@ def GenTests(api):
               'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
               'builder7-kernelnext-cq'
           ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'wait-for-green-experiment-lfg-stats-missing',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
+                  ])
+          }),
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': child_build_info,
+          },
+          output_gitiles_commit=common_pb2.GitilesCommit(
+              host='chrome-internal.googlesource.com',
+              project='chromeos/manifest-internal',
+              id='abc',
+              ref='refs/heads/snapshot',
+          ),
+      ).build,
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=['builder1-cq', 'builder4-cq'], expected_retryable=[
+              'builder3-cq',
+          ], expected_outstanding=[
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
+              'builder7-kernelnext-cq'
+          ]),
+      api.post_process(post_process.DoesNotRun,
+                       'analyzing build results.get now green builders'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'wait-for-green-experiment-lfg-status-skipped',
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
+                  ])
+          }),
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': child_build_info,
+              'looks_for_green': {
+                  'status': 'STATUS_SKIPPED_CQ_DEPEND'
+              },
+          },
+          output_gitiles_commit=common_pb2.GitilesCommit(
+              host='chrome-internal.googlesource.com',
+              project='chromeos/manifest-internal',
+              id='abc',
+              ref='refs/heads/snapshot',
+          ),
+      ).build,
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=['builder1-cq', 'builder4-cq'], expected_retryable=[
+              'builder3-cq',
+          ], expected_outstanding=[
+              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
+              'builder7-kernelnext-cq'
+          ]),
+      api.post_process(post_process.DoesNotRun,
+                       'analyzing build results.get now green builders'),
       api.post_process(post_process.DropExpectation),
   )

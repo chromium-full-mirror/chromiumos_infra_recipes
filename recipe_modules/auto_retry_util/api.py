@@ -22,6 +22,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import HwTestUnit
@@ -157,6 +158,25 @@ def _snapshot_builder(cq_builder: str) -> str:
   'amd64-generic-slim-cq' -> 'amd64-generic-snapshot'.
   """
   return re.sub('(-slim)?-cq$', '-snapshot', cq_builder)
+
+
+def _lfg_skipped(cq_orch: build_pb2.Build) -> bool:
+  """Returns if cq_orch skipped looking for green.
+
+  Checks the looks_for_green.status output property and returns true if it is
+  any of the STATUS_SKIPPED values. Note that if this output property is missing
+  this function also returns true.
+  """
+  lfg_prop = cq_orch.output.properties.get_or_create_struct('looks_for_green')
+  if 'status' not in lfg_prop:
+    return True
+  status = lfg_prop['status']
+  return LooksForGreenStatus.Value(status) in (
+      LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND,
+      LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES,
+      LooksForGreenStatus.STATUS_SKIPPED_DISALLOW,
+      LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT,
+  )
 
 
 class AutoRetryUtilApi(recipe_api.RecipeApi):
@@ -322,7 +342,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       retryable_failure_builders.extend(removed_verifier_failure_builders)
 
       if self.is_experimental_feature_enabled(
-          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
+          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN,
+          cq_run) and not _lfg_skipped(cq_run):
         now_green_builders = self._get_now_green_builders(cq_run)
         # now_green_builders are snapshot builders, but unsucessful_builders are
         # cq builders. Convert them with _snapshot_builder when matching them.

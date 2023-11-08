@@ -43,6 +43,9 @@ def RunSteps(api):
   for i in range(3):
     candidate = build_pb2.Build()
     candidate.output.properties['child_build_info'] = child_build_info
+    candidate.output.properties['looks_for_green'] = {
+        'status': 'STATUS_FOUND_NONE'
+    }
     candidate.output.gitiles_commit.id = 'abc' if i < 2 else 'def'
     candidates.append(candidate)
 
