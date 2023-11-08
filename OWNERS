@@ -5,6 +5,9 @@ include chromiumos/chromite:/OWNERS.ci
 # CrOS SYD EngProd Team.
 include OWNERS.ci_apac
 
+# CrOS Eng Velocity Team.
+include chromiumos/owners:v1:/infra/OWNERS.engvel
+
 # Additional members of Infra.
 nednguyen@chromium.org #{LAST_RESORT_SUGGESTION}
 
