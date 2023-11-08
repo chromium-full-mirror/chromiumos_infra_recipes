@@ -460,10 +460,9 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.cros_infra_config.set recipes_git_revision",
+    "name": "configure builder.cros_infra_config.set properties",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

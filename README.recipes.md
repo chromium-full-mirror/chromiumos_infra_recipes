@@ -3327,7 +3327,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#704)(self, builds: List[Build]):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#706)(self, builds: List[Build]):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -3425,7 +3425,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#664)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#666)(self, build: Optional[Build]=None):**
 
 Return the build target from input properties.
 
@@ -3436,7 +3436,7 @@ Args:
 Returns:
   The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#689)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#691)(self, build: Optional[Build]=None):**
 
 Return the build target name from input properties.
 
@@ -3542,7 +3542,7 @@ Args:
 Returns:
   Dict mapping builder names to found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#719)(self, critical: Optional['Trinary']=None, override: bool=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#721)(self, critical: Optional['Trinary']=None, override: bool=False):**
 
 Set the buildbucket.build.critical value.
 

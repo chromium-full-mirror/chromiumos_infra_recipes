@@ -613,7 +613,9 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """
     build = self.m.buildbucket.build
     with self.m.step.nest(name) as presentation:
-      easy_props = {'recipes_git_revision': self.package_git_revision}
+      easy_props = {}
+      if self.package_git_revision:
+        easy_props['recipes_git_revision'] = self.package_git_revision
       if self.experiments:
         easy_props['experiments'] = self.experiments
       self.m.easy.set_properties_step(**easy_props)

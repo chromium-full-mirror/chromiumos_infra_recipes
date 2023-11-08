@@ -52,10 +52,9 @@
   },
   {
     "cmd": [],
-    "name": "configure builder.set recipes_git_revision",
+    "name": "configure builder.set properties",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@recipes_git_revision@null@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
