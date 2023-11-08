@@ -137,7 +137,8 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
         orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
     ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
-    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit'),
+    StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit',
+                   [image_builder_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
                    num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
