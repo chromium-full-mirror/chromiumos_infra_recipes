@@ -27,6 +27,7 @@ DEPS = [
     'repo',
     'src_state',
     'test_util',
+    'workspace_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
