@@ -41,6 +41,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--depth",
+      "1",
       "file://[CLEANUP]/tmp_tmp_1/snapshot.xml"
     ],
     "env_suffixes": {
@@ -60,8 +62,10 @@
       "sync",
       "--force-sync",
       "--detach",
+      "--current-branch",
       "--jobs",
       "64",
+      "--no-tags",
       "--retry-fetches",
       "3",
       "--verbose",
@@ -1502,6 +1506,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--depth",
+      "1",
       "file://[CLEANUP]/tmp_tmp_4/snapshot.xml"
     ],
     "env_suffixes": {
@@ -1521,8 +1527,10 @@
       "sync",
       "--force-sync",
       "--detach",
+      "--current-branch",
       "--jobs",
       "64",
+      "--no-tags",
       "--retry-fetches",
       "3",
       "--verbose",
