@@ -39,6 +39,7 @@ DEPS = [
     'cros_infra_config',
     'cros_release',
     'cros_sdk',
+    'cros_source',
     'cros_version',
     'easy',
     'failures',
@@ -422,7 +423,23 @@ class FirmwareBuilder():
       dest_name = '{}/{}'.format(target, _FIRMWARE_TARBALL_NAME)
       self.m.file.ensure_directory('create {}'.format(target),
                                    outpath.join(target))
-      self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
+
+      # TODO(b/299948529): Paths in the chroot have changed. If the old-style
+      # outside path for the tarball cannot be found, we'll try the new path
+      # format. We should replace this with a call to a BuildAPI endpoint that
+      # tells us where we should expect to find the tmp directory.
+      outside_tarball = tarball
+      # We don't have a good way to test when a path does not exist. See:
+      # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
+      if self.m.path.exists(tarball):  # pragma: nocover
+        outside_tarball = tarball
+      else:
+        outside_tarball = self.m.cros_source.workspace_path.join(
+            'out', 'tmp', self.m.path.basename(tmppath),
+            self.m.path.basename(tarball))
+
+      self.m.file.copy('bundle tarball', outside_tarball,
+                       outpath.join(dest_name))
       ret['FIRMWARE_TARBALL'].append(dest_name)
 
       info = metadata.objects.add()

@@ -3152,7 +3152,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
+      "[CLEANUP]/chromiumos_workspace/out/tmp/firmware-bundle_tmp_1/firmware_from_source.tar.bz2",
       "[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
