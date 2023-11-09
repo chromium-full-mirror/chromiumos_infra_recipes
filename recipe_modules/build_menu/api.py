@@ -1281,12 +1281,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
     config = config or self.config
     artifacts = config.artifacts
 
+    profile = _get_profile(config)
     prebuilt_target = self._override_prebuilts_config or artifacts.prebuilts
     if (prebuilt_target in self.UPLOADABLE_PREBUILTS and
         self.build_target.name in self.UPLOADABLE_HOST_PREBUILTS):
       self.m.cros_prebuilts.upload_host_prebuilts(self.build_target,
                                                   self.chroot, config.id.type,
-                                                  artifacts.prebuilts_gs_bucket)
+                                                  artifacts.prebuilts_gs_bucket,
+                                                  profile)
 
   def publish_latest_files(self, gs_bucket, gs_path):
     """Write LATEST-... files to GS.

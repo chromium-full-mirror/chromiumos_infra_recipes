@@ -784,8 +784,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       step.presentation.properties['prebuilts_uri'] = upload_uri
 
   def upload_host_prebuilts(self, target: BuildTarget, chroot: Chroot,
-                            kind: BuilderConfig.Id.Type,
-                            gs_bucket: str) -> None:
+                            kind: BuilderConfig.Id.Type, gs_bucket: str,
+                            profile: Optional[Profile] = None) -> None:
     """Upload host binary prebuilts to Google Storage.
 
     Args:
@@ -793,6 +793,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       chroot: Chroot to work with.
       kind: Kind of prebuilts to upload.
       gs_bucket: Google storage bucket to upload prebuilts to.
+      profile: The build target profile, or None.
 
     Raises:
       StepFailure: If a gs bucket was not specified.
@@ -813,12 +814,16 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       self.m.gsutil.upload(host_prebuilts_dir, gs_bucket, upload_dest,
                            args=acls + ['-r'], multithreaded=True)
 
-      # Update binhosts used by commiting BINHOST.conf changes.
-      upload_uri = f'gs://{gs_bucket}/{upload_dest}'
-      binhost_key = self._binhost_key(kind)
-      with self.m.step.nest('update binhost conf file'):
-        self.set_binhosts([(target, upload_uri)], private=False,
-                          key=binhost_key)
+      # Update binhosts used by commiting BINHOST.conf changes. Only update
+      # for the default profile.
+      commit_overlay_binhost = self._profile_or_default(
+          profile) == self._profile_or_default(None)
+      if commit_overlay_binhost:
+        upload_uri = f'gs://{gs_bucket}/{upload_dest}'
+        binhost_key = self._binhost_key(kind)
+        with self.m.step.nest('update binhost conf file'):
+          self.set_binhosts([(target, upload_uri)], private=False,
+                            key=binhost_key)
 
       step = self.m.step('set properties', cmd=None)
       step.presentation.properties['host_prebuilts_uri'] = upload_uri

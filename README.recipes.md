@@ -1466,7 +1466,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#195)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1311)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1313)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1476,7 +1476,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1291)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1293)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -3707,7 +3707,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/cros_prebuilts/api.py#786)(self, target: BuildTarget, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/cros_prebuilts/api.py#786)(self, target: BuildTarget, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, profile: Optional[Profile]=None):**
 
 Upload host binary prebuilts to Google Storage.
 
@@ -3716,6 +3716,7 @@ Args:
   chroot: Chroot to work with.
   kind: Kind of prebuilts to upload.
   gs_bucket: Google storage bucket to upload prebuilts to.
+  profile: The build target profile, or None.
 
 Raises:
   StepFailure: If a gs bucket was not specified.
