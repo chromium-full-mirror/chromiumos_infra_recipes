@@ -231,8 +231,16 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       redistributable_toolchains = response.generated_files
 
     with api.step.nest('package SDK as tarball'):
+      timestamp = api.buildbucket.build.start_time.ToDatetime().strftime(
+          '%Y.%m.%d.%H%M%S')
+
+      request = BuildSdkTarballRequest(
+          chroot=api.cros_sdk.chroot,
+          sdk_version=f'build-toolchain-{timestamp}',
+      )
+
       tarball_path = api.cros_build_api.SdkService.BuildSdkTarball(
-          BuildSdkTarballRequest(chroot=api.cros_sdk.chroot)).sdk_tarball_path
+          request).sdk_tarball_path
 
     with api.step.nest('create manifest from SDK'):
       api.cros_build_api.SdkService.CreateManifestFromSdk(
