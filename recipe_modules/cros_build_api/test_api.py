@@ -570,6 +570,29 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                   'chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc')
     responses['GeneratePayload'] = jsonify(
         local_path='/tmp/aohiwdadoi/delta.bin', remote_uri=remote_uri)
+    responses['GenerateUnsignedPayload'] = jsonify(unsigned_payloads=[{
+        'version':
+            1,
+        'payload_file_path': {
+            'path': '/tmp/aohiwdadoi/delta.bin',
+            'location': 1,
+        },
+        'partition_names': ['foo-root', 'foo-kernel'],
+        'tgt_partitions': [{
+            'path': '/tmp/aohiwdadoi/tgt_root.bin',
+            'location': 1,
+        }, {
+            'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+            'location': 1,
+        }]
+    }])
+    responses['FinalizePayload'] = jsonify(versioned_artifacts=[{
+        'version': 1,
+        'remote_uri': remote_uri,
+        'file_path': {
+            'path': '/tmp/aohiwdadoi/delta.bin.signed',
+        }
+    }])
     return responses
 
   @property

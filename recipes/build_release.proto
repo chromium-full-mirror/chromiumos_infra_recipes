@@ -34,4 +34,10 @@ message BuildReleaseProperties {
 
   // For ChromeOS Flex/reven board. Build image used by mass deploy systems.
   bool build_mass_deploy_image = 6;
+
+  // If set, will use new GenerateUnsignedPayload and FinalizePayload
+  // BAPI endpoints for paygen.
+  // TODO(b/299105459): Remove when all active builders have been switched
+  // over (won't be for a while, since we have long living stabilize branches).
+  bool use_split_paygen = 7;
 }

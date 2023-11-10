@@ -12,13 +12,18 @@ from typing import Callable
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Tuple
+from typing import Union
 
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
 import PB.chromiumos.common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.chromite.api.payload import GenerationResponse, GenerationRequest
+from PB.chromite.api.payload import (GenerationResponse, GenerationRequest,
+                                     GenerateUnsignedPayloadRequest,
+                                     GenerateUnsignedPayloadResponse,
+                                     FinalizePayloadRequest)
 from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 from recipe_engine import post_process
@@ -107,6 +112,24 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     # exists in paygen.
     api.paygen_orchestration.ensure_artifact_result_path()
 
+    for req in properties.requests:
+      # If a docker image is specified, need to pull it down before calling
+      # the BAPI since the BAPI is hermetic.
+      if req.generation_request.docker_image:
+        # TODO(b/304336865): Remove once LUCI auth context is fixed.
+        api.step('docker auth', [
+            'gcloud',
+            'auth',
+            'configure-docker',
+            'us-docker.pkg.dev',
+        ])
+        api.step('docker pull', [
+            'docker',
+            'pull',
+            req.generation_request.docker_image,
+        ])
+        break
+
     # Iterate through every request.
     with api.cros_build_api.parallel_operations():
       with api.step.nest('running paygen operations in parallel') as pres:
@@ -126,28 +149,30 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           # Number of retries doesn't include the first try.
           suffix = '' if tries == 1 else ' retry ({})'.format(tries - 1)
 
-          # If a docker image is specified, need to pull it down before calling
-          # the BAPI since the BAPI is hermetic.
-          if req.generation_request.docker_image:
-            # TODO(b/304336865): Remove once LUCI auth context is fixed.
-            api.step('docker auth', [
-                'gcloud',
-                'auth',
-                'configure-docker',
-                'us-docker.pkg.dev',
-            ])
-            api.step('docker pull', [
-                'docker',
-                'pull',
-                req.generation_request.docker_image,
-            ])
+          payload_name = api.naming.get_generation_request_title(
+              MessageToDict(req).get('generationRequest', {}))
 
-          # Execute build api endpoint for paygen.
+          # If split paygen is enabled, use the new GenerateUnsignedPayload
+          # and FinalizePayload BAPI endpoints.
+          if properties.use_split_paygen:
+            unsigned_payload_req, finalize_req = split_generation_request(
+                req.generation_request)
+            resp = api.cros_build_api.PayloadService.GenerateUnsignedPayload(
+                unsigned_payload_req,
+                name='making single unsigned payload{}'.format(suffix),
+                step_text=payload_name)
+            if get_failure_reason(resp):
+              return resp
+            finalize_req.payloads.extend(resp.unsigned_payloads)
+            return api.cros_build_api.PayloadService.FinalizePayload(
+                finalize_req, name='finalizing single payload{}'.format(suffix),
+                step_text=payload_name)
+
+          # Otherwise, use the GeneratePayload BAPI endpoint.
           return api.cros_build_api.PayloadService.GeneratePayload(
               req.generation_request,
               name='making single payload{}'.format(suffix),
-              step_text=api.naming.get_generation_request_title(
-                  MessageToDict(req).get('generationRequest', {})))
+              step_text=payload_name)
 
         # Go through each request now and do paygen with our parallel runner.
         for request in properties.requests:
@@ -156,7 +181,8 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           paygen_parallel_runner.run_function_async(
               do_a_paygen, request, success_handler=lambda resp, req=request,
               api=api: report_paygen_success_to_snoopy(api, resp)
-              if not resp.failure_reason else None, try_count=_PAYGEN_TRY_COUNT)
+              if not get_failure_reason(resp) else None,
+              try_count=_PAYGEN_TRY_COUNT)
 
       errors, total_retries = [], 0
       failure_reasons = []
@@ -174,12 +200,13 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           errors.append(paygen_response)
           continue
 
-        if response.failure_reason:
+        failure_reason = get_failure_reason(response)
+        if failure_reason:
           failure_reason_str = 'UNSPECIFIED'
           # Try converting from enum to string.
           try:
-            failure_reason_str = GenerationResponse.FailureReason.Name(
-                response.failure_reason)
+            failure_reason_str = type(response).FailureReason.Name(
+                failure_reason)
           except:  #pylint: disable=bare-except
             pass
           failure_reasons.append({
@@ -190,7 +217,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
                   failure_reason_str
           })
           # See go/rubik-must-paygen-minios for more info about minios skips.
-          if response.failure_reason in [
+          if failure_reason in [
               GenerationResponse.NOT_MINIOS_COMPATIBLE,
               GenerationResponse.MINIOS_COUNT_MISMATCH
           ]:
@@ -198,7 +225,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
             continue
           errors.append(
               api.future_utils.create_custom_response(
-                  request, StepFailure(response.failure_reason),
+                  request, StepFailure(get_failure_reason(response)),
                   paygen_response.call_count))
 
         artifacts = get_paygen_response_artifacts(response)
@@ -292,6 +319,58 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
     exception = _retry_chroot_init_wrapper()
     if exception:
       raise exception  # pylint: disable-msg=E0702
+
+
+def split_generation_request(
+    req: GenerationRequest
+) -> Tuple[GenerateUnsignedPayloadRequest, FinalizePayloadRequest]:
+  """Split a GenerationRequest into the corresponding split paygen requests.
+
+  The FinalizePayloadRequest will be missing the `payload` field, that should
+  be populated with the contents of the `unsigned_payloads` field in the
+  GenerateUnsignedPayloadResponse.
+
+  Args:
+    req: The GenerationRequest.
+
+  Returns:
+    The equivalent GenerateUnsignedPayloadRequest and FinalizePayloadRequest
+    requests.
+  """
+  image_params = {
+      req.WhichOneof('src_image_oneof'):
+          getattr(req, req.WhichOneof('src_image_oneof')),
+      req.WhichOneof('tgt_image_oneof'):
+          getattr(req, req.WhichOneof('tgt_image_oneof'))
+  }
+  unsigned_payload_request = GenerateUnsignedPayloadRequest(
+      minios=req.minios,
+      chroot=req.chroot,
+      result_path=req.result_path,
+      **image_params,
+  )
+  finalize_payload_request = FinalizePayloadRequest(
+      chroot=req.chroot,
+      minios=req.minios,
+      dryrun=req.dryrun,
+      result_path=req.result_path,
+      keyset=req.keyset,
+      verify=req.verify,
+      bucket=req.bucket,
+      # TODO(b/299105459): Support local signing params.
+      **image_params)
+  return unsigned_payload_request, finalize_payload_request
+
+
+def get_failure_reason(
+    resp: Union[GenerationResponse, GenerateUnsignedPayloadResponse,
+                FinalizePayloadRequest]
+) -> int:
+  """Get the failure reason from the given response, if any."""
+  # FinalizePayloadRequest doesn't have a 'failure_reason' field, default to
+  # 0 / UNSPECIFIED.
+  return MessageToDict(resp,
+                       use_integers_for_enums=True).get('failureReason', 0)
 
 
 def get_paygen_response_artifacts(
@@ -628,8 +707,7 @@ def GenTests(api: RecipeTestApi):
           }]),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(
-          post_process.StepCommandContains,
-          'doing paygen.running paygen operations in parallel.docker pull',
+          post_process.StepCommandContains, 'doing paygen.docker pull',
           ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
       api.post_process(post_process.DropExpectation),
   )
@@ -936,4 +1014,107 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.ignored exception'
       ),
+  )
+
+  def generate_split_payload_response(
+      api: RecipeTestApi, payloads: List[Dict[str, Any]] = None,
+      versioned_artifacts: List[Dict[str, Any]] = None,
+      failure_reason: GenerateUnsignedPayloadResponse.FailureReason = None,
+      retcode: int = 0, retry: int = 0) -> TestData:
+    suffix = '' if not retry else ' retry ({})'.format(retry)
+
+    unsigned_payload_data = json.dumps({
+        'failure_reason': failure_reason,
+        'unsigned_payloads': payloads,
+    })
+    finalize_payload_data = json.dumps(
+        {
+            'versioned_artifacts': versioned_artifacts,
+        }, sort_keys=True)
+    ret = [
+        api.cros_build_api.set_api_return(
+            parent_step_name='doing paygen.running paygen operations in parallel',
+            step_name='making single unsigned payload{}'.format(suffix),
+            data=unsigned_payload_data, retcode=retcode),
+    ]
+    # Only add data for the FinalizePayload call if we don't have a failure
+    # reason -- if we do, we'll exit before making this call.
+    if not failure_reason:
+      ret.append(
+          api.cros_build_api.set_api_return(
+              parent_step_name='doing paygen.running paygen operations in parallel',
+              step_name='finalizing single payload{}'.format(suffix),
+              data=finalize_payload_data, retcode=retcode))
+    return ret
+
+  # TODO(b/299105459): Move all tests to use split paygen flow / test data
+  # once the property is removed.
+
+  yield api.test(
+      'split-paygen',
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request':
+                      GenerationRequest(
+                          full_update=True,
+                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+                          bucket='b',
+                          verify=True,
+                          dryrun=True,
+                          result_path=api.paygen_orchestration
+                          .ARTIFACT_RESULT_PATH,
+                      ),
+                  'autoupdate_test_configs': [
+                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                           applicable_models=['woomax']),
+                  ],
+              }], use_split_paygen=True),
+      ),
+      *generate_split_payload_response(
+          api, payloads=[{
+              'version':
+                  1,
+              'payload_file_path': {
+                  'path': '/tmp/aohiwdadoi/delta.bin',
+                  'location': 1,
+              },
+              'partition_names': ['foo-root', 'foo-kernel'],
+              'tgt_partitions': [{
+                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
+                  'location': 1,
+              }, {
+                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+                  'location': 1,
+              }]
+          }], versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin',
+              'file_path': {
+                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+                  'location': 2
+              }
+          }]),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'split-paygen-failed-minios-partition-mismatch',
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request':
+                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+              }], use_split_paygen=True)),
+      *generate_split_payload_response(
+          api, retcode=2,
+          failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(post_process.DoesNotRun, 'testing paygen'),
+      api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
+          'failure_reason': 'MINIOS_COUNT_MISMATCH',
+          'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
+      }]),
+      api.post_process(post_process.DropExpectation),
   )

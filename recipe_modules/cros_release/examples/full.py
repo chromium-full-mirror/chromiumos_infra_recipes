@@ -63,7 +63,7 @@ def RunSteps(api):
 
   api.cros_release.set_output_properties()
   api.cros_release.run_payload_generation(
-      override_qs_account='custom_qs_account')
+      override_qs_account='custom_qs_account', use_split_paygen=True)
 
 
 def GenTests(api):
@@ -101,6 +101,9 @@ def GenTests(api):
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"override_qs_account": "custom_qs_account"']),
+      api.post_check(post_process.LogContains,
+                     'generate payloads.running paygen orchestrator.schedule',
+                     'request', ['"use_split_paygen": true']),
       api.post_check(post_process.DoesNotRun,
                      'generate payloads.inspect failure'),
       api.test_util.test_child_build('kukui', builder_name='kukui-release-main',

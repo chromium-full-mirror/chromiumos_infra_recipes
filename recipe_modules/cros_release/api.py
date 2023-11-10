@@ -411,7 +411,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
       self.m.easy.set_properties_step(buildspec_gs_uri=manifest_gs_path)
 
-  def run_payload_generation(self, override_qs_account: str = None):
+  def run_payload_generation(self, override_qs_account: str = None,
+                             use_split_paygen: bool = False):
     """Run the generation of release payloads using the context of a build.
 
     This is blocking: it will launch the paygen orchestrator, and wait for it to
@@ -420,6 +421,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
 
     Args:
       override_qs_account: QS Account to use instead of whatever is configured.
+      use_split_paygen: Whether to use the new split paygen flow.
     """
     pg_orch_builder = ('staging-paygen-orchestrator' if
                        self.m.build_menu.is_staging else 'paygen-orchestrator')
@@ -449,6 +451,8 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                            'paygen-orchestrator-mpa')
       if override_qs_account:
         paygen_properties['override_qs_account'] = override_qs_account
+      if use_split_paygen:
+        paygen_properties['use_split_paygen'] = use_split_paygen
       if self.m.signing.local_signing:
         paygen_properties['local_signing'] = True
         paygen_properties['docker_image'] = self.m.signing.signing_docker_image

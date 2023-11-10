@@ -166,6 +166,8 @@ def RunSteps(api):
       },
       'PayloadService': {
           'GeneratePayload': payload.GenerationResponse,
+          'GenerateUnsignedPayload': payload.GenerateUnsignedPayloadResponse,
+          'FinalizePayload': payload.FinalizePayloadResponse,
       },
       'PortageExplorerService': {
           'RunSpiders': portage_explorer.RunSpidersResponse,

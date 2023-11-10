@@ -352,7 +352,8 @@ def DoRunSteps(api, config, properties):
         if not properties.skip_paygen and (instructions or
                                            api.signing.local_signing):
           api.cros_release.run_payload_generation(
-              override_qs_account=properties.override_qs_account)
+              override_qs_account=properties.override_qs_account,
+              use_split_paygen=properties.use_split_paygen)
         else:
           with api.step.nest('skipping payloads') as pres:
             if properties.skip_paygen:

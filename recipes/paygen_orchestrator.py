@@ -180,7 +180,7 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Schedule child builders, and wait for them to finish.
   res = api.paygen_orchestration.run_paygen_builders(
       paygen_reqs, override_qs_account=properties.override_qs_account,
-      paygen_mpa=paygen_mpa)
+      paygen_mpa=paygen_mpa, use_split_paygen=properties.use_split_paygen)
 
   # Present results.
   with api.step.nest('results') as pres:

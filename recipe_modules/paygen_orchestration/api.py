@@ -390,12 +390,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       paygen_reqs: List[PaygenProperties.PaygenRequest],
       override_qs_account: Optional[str] = None,
       paygen_mpa: Optional[bool] = False,
+      use_split_paygen: bool = False,
   ) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
       paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
       override_qs_account: QS Account to use instead of whatever is configured.
+      paygen_mpa: Use the MPA bot pool builder.
+      use_split_paygen: Whether to use the new split paygen flow.
 
     Returns:
       A list of completed builds.
@@ -409,7 +412,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     schedule_requests = [
         self._create_bb_schedule_request(
             batch, override_qs_account=override_qs_account,
-            paygen_mpa=paygen_mpa) for batch in batches
+            paygen_mpa=paygen_mpa, use_split_paygen=use_split_paygen)
+        for batch in batches
     ]
 
     # Define a function to split requests into chunks.
@@ -703,12 +707,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       paygen_requests: List[PaygenProperties.PaygenRequest],
       override_qs_account: Optional[str] = None,
       paygen_mpa: Optional[bool] = False,
+      use_split_paygen: Optional[bool] = False,
   ) -> ScheduleBuildRequest:
     """Create a ScheduleBuildRequest for list of paygen requests.
 
     Args:
       paygen_requests: Requests to generate the desired payload.
       override_qs_account: QS Account to use instead of whatever is configured.
+      paygen_mpa: Use the MPA bot pool builder.
+      use_split_paygen: Whether to use the new split paygen flow.
 
     Returns:
       A ScheduleBuildRequest for a Paygen builder.
@@ -726,6 +733,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     props = {'requests': paygen_requests}
     if override_qs_account:
       props['override_qs_account'] = override_qs_account
+    if use_split_paygen:
+      props['use_split_paygen'] = use_split_paygen
     return self.m.buildbucket.schedule_request(
         bucket=bucket,
         builder=builder,
