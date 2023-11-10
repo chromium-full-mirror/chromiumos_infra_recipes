@@ -49,10 +49,6 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.post_check(
-          post_process.StepCommandContains,
-          'call gerrit_related_changes.ensure gerrit_related_changes.ensure_installed',
-          ['chromiumos/infra/gerrit_related_changes/${platform} prod']),
       api.post_process(post_process.DropExpectation),
   )
 

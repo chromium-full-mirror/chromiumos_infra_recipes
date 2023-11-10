@@ -57,10 +57,6 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'basic',
-      api.post_check(
-          post_process.StepCommandContains,
-          'plan builds.ensure build_plan_generator.ensure_installed',
-          ['chromiumos/infra/build_plan_generator/${platform} prod']),
   )
 
   yield api.test(
@@ -70,10 +66,6 @@ def GenTests(api):
           bucket='release',
           builder='staging-release-main-orchestrator',
       ),
-      api.post_check(
-          post_process.StepCommandContains,
-          'plan builds.ensure build_plan_generator.ensure_installed',
-          ['chromiumos/infra/build_plan_generator/${platform} staging']),
   )
 
   yield api.test(

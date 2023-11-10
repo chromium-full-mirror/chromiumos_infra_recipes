@@ -22,18 +22,6 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.post_process(
-          post_process.StepCommandContains,
-          'dirmd update.ensure test_plan.ensure_installed',
-          [
-              'cipd',
-              'ensure',
-              '-root',
-              '[START_DIR]/cipd/test_plan',
-              '-ensure-file',
-              'chromiumos/infra/test_plan/${platform} prod',
-          ],
-      ),
-      api.post_process(
           post_process.StepCommandEquals,
           'dirmd update.call test_plan',
           [

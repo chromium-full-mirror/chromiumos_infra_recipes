@@ -38,7 +38,13 @@ SUPPORTED_PACKAGES = [
 # TODO(b/305967772): Remove.
 ENABLED_PACKAGES = [
     'branch_util',
+    'build_plan_generator',
+    'build_poller',
+    'gerrit_related_changes',
     'manifest_doctor',
+    'pointless_build_checker',
+    'test_plan',
+    'test_plan_generator',
     # For testing only.
     'my_gobin',
 ]
