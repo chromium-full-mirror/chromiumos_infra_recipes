@@ -61,9 +61,7 @@ def DoBorealisBuild(api: RecipeApi, use_cache: bool = True,
     stage: The name of the step from the Dockerfile to build. Does not
       perform a full build, will stop after the specified stage is built.
   """
-  # --skip-license-report is needed for early stage builds to work without
-  # error since they don't run `build/usr/bin/stamp-lsb-release.sh`
-  build_command = ['./tools/build_full.py', '--skip-license-report']
+  build_command = ['./tools/build_full.py']
   if chroot_path:
     build_command.append(f'--chroot={chroot_path}')
   if out_dir:
@@ -74,6 +72,9 @@ def DoBorealisBuild(api: RecipeApi, use_cache: bool = True,
     # When building a stage directly there's no guarantee the tests will
     # exist, so skip running tests if a stage is specified.
     build_command.append('--no-run-tests')
+    # --skip-license-report is needed for early stage builds to work without
+    # error since they don't run `build/usr/bin/stamp-lsb-release.sh`
+    build_command.append('--skip-license-report')
   if not use_cache:
     build_command.append('--no-cache')
   if skip_termina:
@@ -232,12 +233,12 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'Borealis build_full.py',
           [
-              '--skip-license-report',
               '--chroot=[CACHE]/cros_chroot/chroot',
               '--out-dir=[CACHE]/cros_chroot/out',
               '--stage',
               'initial',
               '--no-run-tests',
+              '--skip-license-report',
               '--no-cache',
           ],
       ),
@@ -245,7 +246,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'Arch mirror uprev.Borealis build_full.py',
           [
-              '--skip-license-report',
               '--chroot=[CACHE]/cros_chroot/chroot',
               '--out-dir=[CACHE]/cros_chroot/out',
               '--skip-termina',
@@ -255,7 +255,6 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'PKGBUILDs uprev.Borealis build_full.py',
           [
-              '--skip-license-report',
               '--chroot=[CACHE]/cros_chroot/chroot',
               '--out-dir=[CACHE]/cros_chroot/out',
               '--skip-termina',

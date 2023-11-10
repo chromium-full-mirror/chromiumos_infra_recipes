@@ -1939,12 +1939,12 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--skip-license-report",
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out",
       "--stage",
       "initial",
       "--no-run-tests",
+      "--skip-license-report",
       "--no-cache"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/",
@@ -2008,7 +2008,6 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--skip-license-report",
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out",
       "--skip-termina"
@@ -2532,7 +2531,6 @@
   {
     "cmd": [
       "./tools/build_full.py",
-      "--skip-license-report",
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out",
       "--skip-termina"
