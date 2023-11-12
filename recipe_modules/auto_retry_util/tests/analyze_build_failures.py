@@ -52,6 +52,7 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder5-cq'
   orch.orchestrator.child_specs.add().name = 'builder6-cq'
   orch.orchestrator.child_specs.add().name = 'builder7-kernelnext-cq'
+  orch.orchestrator.child_specs.add().name = 'non-critical-builder-cq'
 
   child_build_info = [
       {
@@ -59,49 +60,64 @@ def GenTests(api):
               'builder': 'builder1-cq'
           },
           'status': 'SUCCESS',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT',
       },
       {
           'builder': {
               'builder': 'builder2-cq'
           },
           'status': 'FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT_AFTER_HW_TEST',
       },
       {
           'builder': {
               'builder': 'builder3-cq'
           },
           'status': 'FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT',
       },
       {
           'builder': {
               'builder': 'builder4-cq'
           },
           'status': 'SUCCESS',
-          'relevant': False
+          'relevant': False,
+          'collect_value': 'COLLECT_AFTER_HW_TEST',
       },
       {
           'builder': {
               'builder': 'builder5-cq'
           },
           'status': 'INFRA_FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT_AFTER_HW_TEST',
       },
       {
           'builder': {
               'builder': 'builder6-slim-cq'
           },
           'status': 'FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT',
       },
       {
           'builder': {
               'builder': 'builder7-kernelnext-cq'
           },
           'status': 'FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT',
+      },
+      {
+          'builder': {
+              'builder': 'non-critical-builder-cq'
+          },
+          'status': 'FAILURE',
+          'relevant': True,
+          'collect_value': 'NO_COLLECT',
       },
   ]
   yield api.test(
@@ -153,7 +169,8 @@ def GenTests(api):
                       'builder': 'builder1-cq'
                   },
                   'status': 'INFRA_FAILURE',
-                  'relevant': True
+                  'relevant': True,
+                  'collect_value': 'COLLECT',
               },],
           }).build,
       api.properties(

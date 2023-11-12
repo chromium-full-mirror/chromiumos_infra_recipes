@@ -203,7 +203,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                   'builder': 'builder1'
               },
               'status': 'FAILURE',
-              'relevant': True
+              'relevant': True,
+              'collect_value': 'COLLECT'
           },]
       },
       tags={
@@ -235,7 +236,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'builder_name': 'builder1',
               'status': 'FAILURE',
               'critical': True,
-              'name': 'builder1.hw.suite'
+              'name': 'builder1.hw.suite',
+              'collect_value': 'COLLECT',
           },]
       },
       tags={

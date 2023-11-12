@@ -13,6 +13,7 @@ from typing import Dict, FrozenSet, List, NamedTuple, Set, Optional, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
+from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
@@ -309,6 +310,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     for b in child_build_info:
       builder_name = b.get('builder', {}).get('builder')
       status = b.get('status')
+      collect_value = b.get('collect_value')
+
+      # If a builder does not have a collect handling value it is likely not an
+      # image builder. If it is set to "NO_COLLECT" then the build is
+      # non-critical.
+      if collect_value not in [
+          builder_config_pb2.BuilderConfig.Orchestrator.ChildSpec
+          .CollectHandling.Name(builder_config_pb2.BuilderConfig.Orchestrator
+                                .ChildSpec.COLLECT_AFTER_HW_TEST),
+          builder_config_pb2.BuilderConfig.Orchestrator.ChildSpec
+          .CollectHandling.Name(
+              builder_config_pb2.BuilderConfig.Orchestrator.ChildSpec.COLLECT),
+      ]:
+        continue
 
       if status == bb_common_pb2.Status.Name(bb_common_pb2.SUCCESS):
         successful_builders.append(builder_name)

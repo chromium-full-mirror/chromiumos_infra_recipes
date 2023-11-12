@@ -62,7 +62,8 @@ def GenTests(api):
                       },
                       'id': '123',
                       'status': 'SUCCESS',
-                      'relevant': True
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
                   },
                   {
                       'builder': {
@@ -70,7 +71,8 @@ def GenTests(api):
                       },
                       'id': '456',
                       'status': 'FAILURE',
-                      'relevant': True
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
                   },
                   {
                       'builder': {
@@ -78,7 +80,8 @@ def GenTests(api):
                       },
                       'id': '789',
                       'status': 'FAILURE',
-                      'relevant': True
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
                   },
               ]
           }).build,
@@ -125,7 +128,8 @@ def GenTests(api):
                       },
                       'id': '123',
                       'status': 'FAILURE',
-                      'relevant': True
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
                   },
                   {
                       'builder': {
@@ -133,7 +137,8 @@ def GenTests(api):
                       },
                       'id': '456',
                       'status': 'FAILURE',
-                      'relevant': True
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
                   },
               ]
           }).build,
