@@ -76,6 +76,14 @@ RETRYABLE_STATUSES = [
 RETRY_OPTIONS_FOOTER_KEY = 'RetryOptions'
 RETRY_OPTIONS_EXEMPT_VALUE = 'None'
 
+# Child builders that don't init an SDK. This is needed for the SDK failure
+# retry analysis; we want to know if any of the child builders were able to
+# init an SDK, but these builders should not count as successful.
+#
+# If there are more of these type of builder in the future, this check should
+# be made based on an input property or similar.
+NO_SDK_CHILD_BUILDERS = {'bazel-test-cq'}
+
 
 class BasicClInfo(NamedTuple):
   """Basic information about the change list."""
@@ -406,8 +414,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       # needed to init and update the SDK. Add all the SDK failures as
       # retryable.
       if self.is_experimental_feature_enabled(
-          EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES,
-          cq_run) and successful_builders:
+          EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES, cq_run
+      ) and successful_builders and not NO_SDK_CHILD_BUILDERS.issuperset(
+          successful_builders):
         retryable_sdk_failures = self._get_sdk_failures(cq_run)
         if retryable_sdk_failures:
           self._experimental_retries[cq_run.id].add(

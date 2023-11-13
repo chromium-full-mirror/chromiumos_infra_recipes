@@ -50,6 +50,7 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder1-cq'
   orch.orchestrator.child_specs.add().name = 'builder2-cq'
   orch.orchestrator.child_specs.add().name = 'builder3-cq'
+  orch.orchestrator.child_specs.add().name = 'bazel-test-cq'
 
   yield api.test(
       'retry-with-other-successful-builds',
@@ -153,5 +154,44 @@ def GenTests(api):
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(expected_success=[], expected_retryable=[],
                      expected_outstanding=['builder1-cq', 'builder2-cq']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-retry-with-non-sdk-child-builders',
+      api.test_util.test_orchestrator(
+          output_properties={
+              'child_build_info': [
+                  {
+                      'builder': {
+                          'builder': 'bazel-test-cq'
+                      },
+                      'id': '123',
+                      'status': 'SUCCESS',
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
+                  },
+                  {
+                      'builder': {
+                          'builder': 'builder2-cq'
+                      },
+                      'id': '456',
+                      'status': 'FAILURE',
+                      'relevant': True,
+                      'collect_value': 'COLLECT',
+                  },
+              ]
+          }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES)
+                  ])
+          }),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(expected_success=['bazel-test-cq'], expected_retryable=[],
+                     expected_outstanding=['builder2-cq']),
       api.post_process(post_process.DropExpectation),
   )
