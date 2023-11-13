@@ -9,7 +9,7 @@ import collections
 import dataclasses
 import functools
 import re
-from typing import Dict, FrozenSet, List, NamedTuple, Set, Optional, Tuple
+from typing import Dict, FrozenSet, Iterable, List, NamedTuple, Set, Optional, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
 
@@ -22,6 +22,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution import CqTestFailureFaultAttributionStats, CqFailureAttribute
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
@@ -29,13 +30,14 @@ from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.generate_test_plan import TestUnitCommon
+from PB.test_platform.taskstate import TaskState
 
 from RECIPE_MODULES.chromeos.cros_history.api import PASSED_TESTS_KEY
 from RECIPE_MODULES.chromeos.gerrit.api import Label
 from RECIPE_MODULES.chromeos.gerrit.api import PatchSet
 from RECIPE_MODULES.chromeos.looks_for_green.api import Snapshot
 from RECIPE_MODULES.chromeos.skylab_results.api import PrejobStats
-from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
+from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult, UnitHwTest
 
 from recipe_engine import recipe_api
 
@@ -67,6 +69,7 @@ EXPERIMENTAL_FEATURE_RETRY_INFRA_FAILURES = 'retry-infra-failures'
 EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES = 'retry-prejob-failures'
 EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN = 'wait-for-green'
 EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES = 'retry-sdk-failures'
+EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES = 'retry-attributed-failures'
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -1200,9 +1203,56 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
 
-  def _get_exonerated_hw_suites(self, cq_run: build_pb2.Build,
-                                exon_configs: Dict):
-    """Returns the names of newly exonerated hw test suites."""
+  def _is_hw_result_attributed(
+      self, result: SkylabResult,
+      fault_attribution_stats: CqTestFailureFaultAttributionStats) -> bool:
+    """Returns true if result can be attributed to a matching snapshot failure.
+
+    Result is considered attributed if all of its failed test cases have the
+    MATCHING_FAILURE_FOUND attribution for at least one build target. Note that
+    this does not need to be the same build target, e.g. if test1 fails on
+    targetA but has a matching failure on targetB, test1 is still considered
+    attributed.
+
+    If result was successful, non-critical, or doesn't have child results,
+    returns false.
+    """
+    result_title = self.m.naming.get_skylab_result_title(result)
+    with self.m.step.nest(f'determine attribution for {result_title}') as pres:
+      if (result.status == bb_common_pb2.SUCCESS or
+          not result.task.test.common.critical.value or
+          not result.child_results):
+        pres.step_text = 'result not eligible for attribution'
+        return False
+
+      attributed_test_failures: Set[str] = set()
+
+      for test_failure_attribution in fault_attribution_stats.test_failure_attributions:
+        for fault_attribution in test_failure_attribution.fault_attributes:
+          if fault_attribution.snapshot_comparison_fault_attribution == CqFailureAttribute.MATCHING_FAILURE_FOUND:
+            attributed_test_failures.add(fault_attribution.test_name)
+
+      for child_result in result.child_results:
+        for test_case in child_result.test_cases:
+          if test_case.verdict == TaskState.VERDICT_NO_VERDICT:
+            pres.step_text = 'cannot attribute results containing NO_VERDICT'
+            return False
+
+          if test_case.verdict in (
+              TaskState.VERDICT_UNSPECIFIED, TaskState.VERDICT_FAILED
+          ) and test_case.name not in attributed_test_failures:
+            pres.step_text = f'{test_case.name} not attributed'
+            return False
+
+      pres.step_text = 'all failures attributed'
+      return True
+
+  def _get_hw_test_results(self, cq_run: build_pb2.Build) -> List[SkylabResult]:
+    """Gets the SkylabResults for a given CQ run.
+
+    Parses the test_summary and test_tasks output properties of the CQ run and
+    then fetches and parses the output properties of the skylab builders.
+    """
 
     def _hw_unit(test_summary_dict: Dict) -> UnitHwTest:
       """Returns a UnitHwTest created using info from the test summary dict.
@@ -1249,10 +1299,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         int(b) for b in test_tasks.get('skylab_builder_ids', [])
     ]
 
-    # Filter out suites which were previously exonerated.
-    previously_passed_suites = set(
-        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
-
     hw_test_results = []
     # Exonerate HW test results.
     if len(skylab_builder_ids) > 0:
@@ -1261,6 +1307,78 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       ]
       hw_test_results = self.m.skylab_results.get_previous_results(
           skylab_builder_ids, hw_units)
+
+    return hw_test_results
+
+  def get_failure_attributed_hw_suites(
+      self, cq_run: build_pb2.Build,
+      already_retryable_suites: Optional[Iterable[str]] = None) -> List[str]:
+    """Returns a list of suites that can have their failures attributed.
+
+    This method is based on the cq_fault_attributions output property of the
+    CQ orchestrator, it does not do the actual attribution analysis. A suite
+    is considered attributed if all of its failed test cases have the
+    MATCHING_FAILURE_FOUND attribution for at least one build target. Note that
+    this does not need to be the same build target, e.g. if test1 fails on
+    targetA but has a matching failure on targetB, test1 is still considered
+    attributed.
+
+    Args:
+      cq_run: The CQ run to check for attributed tests.
+      already_retryable_suites: Suites that have already been determined to be
+        retryable via other methods (e.g. the suite is now exonerated). If set,
+        these suites are removed from the returned list of attributed suites.
+
+    Returns:
+      A list of suite names that have all failing tests attributed.
+    """
+    with self.m.step.nest('get attributed hw suites') as pres:
+      if not self.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES, cq_run):
+        pres.step_text = 'experimental feature not enabled'
+        return []
+
+      output_dict = json_format.MessageToDict(cq_run.output.properties)
+      fault_attribution_stats = CqTestFailureFaultAttributionStats()
+      json_format.ParseDict(
+          output_dict.get('cq_fault_attributions', {}), fault_attribution_stats)
+
+      hw_test_results = self._get_hw_test_results(cq_run)
+      attributed_suites = []
+
+      pres.logs['fault attribution stats'] = json_format.MessageToJson(
+          fault_attribution_stats)
+      pres.logs['hw test results'] = str(hw_test_results)
+
+      for result in hw_test_results:
+        if self._is_hw_result_attributed(result, fault_attribution_stats):
+          attributed_suites.append(
+              self.m.naming.get_skylab_result_title(result))
+
+      pres.step_text = f'found {len(attributed_suites)} attributed suite(s)'
+      pres.logs['attributed suites'] = attributed_suites
+
+      if already_retryable_suites:
+        attributed_suites = list(
+            set(attributed_suites).difference(already_retryable_suites))
+        pres.logs['already retryable suites'] = already_retryable_suites
+        pres.logs[
+            'attributed suites (excluding already retryable)'] = attributed_suites
+
+      if attributed_suites:
+        self._experimental_retries[cq_run.id].add(
+            EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES)
+
+      return attributed_suites
+
+  def _get_exonerated_hw_suites(self, cq_run: build_pb2.Build,
+                                exon_configs: Dict):
+    """Returns the names of newly exonerated hw test suites."""
+    # Filter out suites which were previously exonerated.
+    previously_passed_suites = set(
+        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
+
+    hw_test_results = self._get_hw_test_results(cq_run)
 
     exonerated_suites = set()
     exonerated_prejob_failure_suites = set()
@@ -1280,6 +1398,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run):
       prejob_stats = self.m.skylab_results.get_per_board_prejob_stats(
           hw_test_results)
+
+      output_dict = json_format.MessageToDict(cq_run.output.properties)
+      test_summary = output_dict.get('test_summary', [])
+
       for suite in exonerated_prejob_failure_suites:
         # Prejob failures can only be retried if the failure was a known flake.
         # This is determined by checking that the board that the suite ran on

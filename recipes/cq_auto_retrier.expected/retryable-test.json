@@ -265,6 +265,14 @@
   },
   {
     "cmd": [],
+    "name": "analyzing candidates.analyzing 1111.get attributed hw suites",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@experimental feature not enabled@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter candidates",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_multi_retry_eligible\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"

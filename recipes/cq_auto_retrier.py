@@ -93,6 +93,12 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
       outstanding_test_suite_failures = list(
           set(outstanding_test_suite_failures) - set(exonerated_test_suites))
 
+      attributed_test_suites = api.auto_retry_util.get_failure_attributed_hw_suites(
+          b, already_retryable_suites=retryable_test_suite_failures)
+      retryable_test_suite_failures.extend(attributed_test_suites)
+      outstanding_test_suite_failures = list(
+          set(outstanding_test_suite_failures) - set(attributed_test_suites))
+
       api.auto_retry_util.per_build_stats[
           b.id].retryable_test_suites = retryable_test_suite_failures
       api.auto_retry_util.per_build_stats[
