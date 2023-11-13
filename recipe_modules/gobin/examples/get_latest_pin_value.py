@@ -11,7 +11,7 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 
 from PB.recipe_modules.chromeos.gobin.examples.get_latest_pin_value import GetLatestPinValueProperties
-from RECIPE_MODULES.chromeos.gobin.api import SUPPORTED_PACKAGES
+from RECIPE_MODULES.chromeos.gobin.api import SUPPORTED_PACKAGES, TEST_PACKAGES
 
 DEPS = [
     'recipe_engine/assertions',
@@ -60,7 +60,7 @@ def GenTests(api):
     return [
         cipd_lookup_step_data(sha, package, package + instance_id, step_prefix)
         for package in packages
-        if package != 'my_gobin'
+        if package not in TEST_PACKAGES
     ]
 
   yield api.test(

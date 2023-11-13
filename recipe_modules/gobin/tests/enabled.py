@@ -20,7 +20,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: recipe_api.RecipeApi):
-  api.gobin.ensure_package('chromiumos/infra/conductor/${platform}')
+  api.gobin.ensure_package('chromiumos/infra/my_other_gobin/${platform}')
 
 
 def GenTests(api: recipe_api.RecipeApi):
@@ -32,19 +32,19 @@ def GenTests(api: recipe_api.RecipeApi):
           builder='staging-release-main-orchestrator',
       ),
       api.post_check(post_process.DoesNotRun,
-                     'ensure conductor.read infrainfra golang version'),
+                     'ensure my_other_gobin.read infrainfra golang version'),
       api.post_check(post_process.StepCommandContains,
-                     'ensure conductor.ensure_installed',
-                     ['chromiumos/infra/conductor/${platform} staging']),
+                     'ensure my_other_gobin.ensure_installed',
+                     ['chromiumos/infra/my_other_gobin/${platform} staging']),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'prod',
       api.post_check(post_process.DoesNotRun,
-                     'ensure conductor.read infrainfra golang version'),
+                     'ensure my_other_gobin.read infrainfra golang version'),
       api.post_check(post_process.StepCommandContains,
-                     'ensure conductor.ensure_installed',
-                     ['chromiumos/infra/conductor/${platform} prod']),
+                     'ensure my_other_gobin.ensure_installed',
+                     ['chromiumos/infra/my_other_gobin/${platform} prod']),
       api.post_process(post_process.DropExpectation),
   )

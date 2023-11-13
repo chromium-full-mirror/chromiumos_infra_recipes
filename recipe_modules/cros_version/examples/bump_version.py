@@ -53,33 +53,21 @@ def GenTests(api):
           post_process.MustRun,
           'bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote (2)'
       ),
-      api.post_check(post_process.StepCommandContains,
-                     'bump version.ensure version_bumper.ensure_installed',
-                     ['chromiumos/infra/version_bumper/${platform} prod']),
   )
 
   yield api.test(
       'release-branch',
       orchestrator(git_ref='refs/heads/release-R87-13505.B'),
-      api.post_check(post_process.StepCommandContains,
-                     'bump version.ensure version_bumper.ensure_installed',
-                     ['chromiumos/infra/version_bumper/${platform} prod']),
   )
 
   yield api.test(
       'stabilize-branch',
       orchestrator(git_ref='refs/heads/stabilize-13505.33.B'),
-      api.post_check(post_process.StepCommandContains,
-                     'bump version.ensure version_bumper.ensure_installed',
-                     ['chromiumos/infra/version_bumper/${platform} prod']),
   )
 
   yield api.test(
       'staging',
       orchestrator(builder='staging-release-main-orchestrator'),
-      api.post_check(post_process.StepCommandContains,
-                     'bump version.ensure version_bumper.ensure_installed',
-                     ['chromiumos/infra/version_bumper/${platform} staging']),
       api.post_check(
           post_process.MustRun,
           'bump version.commit chromeos/config/chromeos_version.sh.abandon CL 1.gerrit abandon'

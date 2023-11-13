@@ -63,9 +63,6 @@ def GenTests(api: RecipeTestApi):
                       collect_configs={'child builds': collect_config})
           }),
       api.conductor.set_collect_output([123, 457], report=TEST_REPORT),
-      api.post_check(post_process.StepCommandContains,
-                     'ensure conductor.ensure_installed',
-                     ['chromiumos/infra/conductor/${platform} prod']),
       api.post_check(post_process.StepCommandContains, 'write input json',
                      [json_format.MessageToJson(collect_config)]),
       api.post_check(post_process.StepCommandContains, 'conductor collect',

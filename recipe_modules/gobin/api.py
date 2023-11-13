@@ -19,6 +19,7 @@ from recipe_engine.recipe_api import StepFailure
 SUPPORTED_PACKAGES = [
     # For testing only.
     'my_gobin',
+    'my_other_gobin',
     # Actual packages.
     'branch_util',
     'build_plan_generator',
@@ -40,13 +41,21 @@ ENABLED_PACKAGES = [
     'branch_util',
     'build_plan_generator',
     'build_poller',
+    'conductor',
     'gerrit_related_changes',
     'manifest_doctor',
     'pointless_build_checker',
     'test_plan',
     'test_plan_generator',
+    'upload_debug_symbols',
+    'version_bumper',
     # For testing only.
     'my_gobin',
+]
+
+TEST_PACKAGES = [
+    'my_gobin',
+    'my_other_gobin',
 ]
 
 CIPD_TEST_JSON = '''{
@@ -150,7 +159,7 @@ class GobinAPI(recipe_api.RecipeApi):
     """Check if there exists a CIPD instance for each supported package for the given infra/infra commit."""
     for package in SUPPORTED_PACKAGES:
       # Test package, skip.
-      if package == 'my_gobin':
+      if package in TEST_PACKAGES:
         continue
       package_fullname = self._package_fullname(package)
       if self._get_instance_for_sha(package_fullname, sha) is None:
@@ -172,7 +181,7 @@ class GobinAPI(recipe_api.RecipeApi):
     ) as pres:
       for package in self.supported_packages:
         # Test package, skip.
-        if self._package_shortname(package) == 'my_gobin':
+        if self._package_shortname(package) in TEST_PACKAGES:
           continue
 
         a_instance_id = self._get_instance_for_sha(package, git_revision_a)
