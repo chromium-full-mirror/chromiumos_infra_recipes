@@ -17,6 +17,9 @@ message IncrementalProperties {
   // Whether to use Local Looks For Green for recent build
   // (old build is not currently LLFG)
   bool use_llfg = 3;
+
+  // Whether to run pointless build check.
+  bool run_relevancy_check = 4;
 }
 
 enum ErrorType {

@@ -9,6 +9,7 @@ from typing import Generator, Optional
 
 # pylint: disable=import-error
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties, ErrorType
 from PB.recipe_engine.result import RawResult
@@ -40,7 +41,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_SYNC_JOBS = 64
 
 PROPERTIES = IncrementalProperties
-
 
 def RunSteps(api: RecipeApi,
              properties: IncrementalProperties) -> Optional[RawResult]:
@@ -79,8 +79,17 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not build_time_delta:
     raise StepFailure('build_time_delta input property is empty')
 
+  relevant_pkgs = None
+  if properties.run_relevancy_check:
+    env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+    relevant_pkgs = env_info.packages
+    if env_info.pointless:
+      return RawResult(status=common.SUCCESS,
+                       summary_markdown='Build was not relevant.')
+
   try:
-    relevant_pkgs = api.incremental.DoOldBuild(api, config, properties)
+    _relevant_pkgs = api.incremental.DoOldBuild(api, config, properties)
+    relevant_pkgs = relevant_pkgs or _relevant_pkgs
     old_build_successful = True
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
@@ -126,6 +135,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # the upload succeeded, raise that exception.
   if failing_build_exception and old_build_successful:
     raise failing_build_exception  # pylint: disable=raising-bad-type
+  return None
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -276,4 +286,16 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'install packages'),
       build_target='amd64-generic',
       status='FAILURE',
+  )
+
+  # Build with pointless build check enabled.
+  yield api.build_menu.test(
+      'inc-pointless-build-check',
+      api.buildbucket.ci_build(builder='cq-orchestrator'),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
+      api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
+      api.post_check(post_process.DoesNotRun, 'install packages'),
+      build_target='amd64-generic',
+      status='SUCCESS',
   )
