@@ -24,4 +24,5 @@ message SetupChrootProperties {
     FALSE = 2;
   }
   Update update_sdk = 1;
+  Update force_no_chroot_upgrade = 2;
 }

@@ -37,8 +37,8 @@ UPDATE_DICT = {
 def RunSteps(api: RecipeApi, properties: SetupChrootProperties) -> None:
   """Setup the chroot, like a builder might do."""
   with api.build_menu.configure_builder():
-    update_bool = UPDATE_DICT[properties.update_sdk]
-    api.build_menu.setup_chroot(update=update_bool)
+    force_no_chroot_upgrade = UPDATE_DICT[properties.force_no_chroot_upgrade]
+    api.build_menu.setup_chroot(force_no_chroot_upgrade=force_no_chroot_upgrade)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -49,8 +49,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       expect_update_sdk: bool,
       *args: TestData,
       expect_setup_toolchains: bool = None,
-      update_kwarg: SetupChrootProperties.Update = SetupChrootProperties.Update
-      .NONE,
+      force_no_chroot_upgrade: SetupChrootProperties.Update = (
+          SetupChrootProperties.Update.NONE),
       run_spec: BuilderConfig.RunSpec = (
           BuilderConfig.RunSpec.RUN_SPEC_UNSPECIFIED),
       build_target: Optional[str] = None,
@@ -64,7 +64,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       * Passes `update_kwarg` into the recipe as the `sdk_update` property;
       * Checks whether the 'update sdk' step ran;
       * Checks whether the `setup toolchains` step ran;
-      * Whatever else *args specifies;
       * Drops expectations.
 
     Usage:
@@ -77,7 +76,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       *args: Other stuff to add into the test case.
       expect_setup_toolchains: If given, whether the test case should run the
         `setup toolchains` step.
-      update_kwarg: The `update` kwarg that will be passed into setup_chroot().
+      force_no_chroot_upgrade: What should be passed to force_no_chroot_upgrade
+        argument of setup_chroot.
       run_spec: The RunSpec that will be specified in the BuilderConfig.
       build_target: If given, the build target for this build.
       status: The expected result of the test recipe.
@@ -100,7 +100,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                         sdk_update_run_spec=run_spec),
                 )),
             step_name='configure builder.cros_infra_config',
-        ), api.properties(update_sdk=update_kwarg), status=status)
+        ), api.properties(force_no_chroot_upgrade=force_no_chroot_upgrade),
+        status=status)
     if build_target is not None:
       test_case += api.properties(
           **{
@@ -122,37 +123,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     return test_case
 
   yield _sdk_update_test_case('default', True, expect_setup_toolchains=False)
-  yield _sdk_update_test_case('builder-config-specifies-update-sdk', True,
-                              run_spec=BuilderConfig.RunSpec.RUN)
-  yield _sdk_update_test_case('builder-config-specifies-do-not-update-sdk',
-                              False, expect_setup_toolchains=True,
-                              run_spec=BuilderConfig.RunSpec.NO_RUN,
-                              build_target='amd64-generic')
-
-  yield _sdk_update_test_case('kwarg-specifies-update-sdk', True,
-                              update_kwarg=SetupChrootProperties.Update.TRUE)
-  yield _sdk_update_test_case('kwarg-specifies-do-not-update-sdk', False,
-                              update_kwarg=SetupChrootProperties.Update.FALSE)
-  yield _sdk_update_test_case('kwarg-update-sdk-overrides-builder-config', True,
-                              update_kwarg=SetupChrootProperties.Update.TRUE,
-                              run_spec=BuilderConfig.RunSpec.NO_RUN)
+  yield _sdk_update_test_case('default-with-build-target', True,
+                              build_target='amd64-generic',
+                              expect_setup_toolchains=False)
   yield _sdk_update_test_case(
-      'kwarg-do-not-update-sdk-overrides-builder-config', False,
-      update_kwarg=SetupChrootProperties.Update.FALSE,
-      run_spec=BuilderConfig.RunSpec.RUN)
+      'skip-update-sdk',
+      False,
+      force_no_chroot_upgrade=SetupChrootProperties.Update.TRUE,
+      expect_setup_toolchains=True,
+      build_target='amd64-generic',
+  )
 
   yield _sdk_update_test_case(
       'skip-update-sdk-but-no-toolchain-build-targets',
       False,
+      force_no_chroot_upgrade=SetupChrootProperties.Update.TRUE,
       expect_setup_toolchains=False,
       run_spec=BuilderConfig.RunSpec.NO_RUN,
   )
-
   yield _sdk_update_test_case(
       'skip-update-sdk-but-no-setup-toolchains-endpoint',
       False,
       api.cros_build_api.remove_endpoints(['ToolchainService/SetupToolchains']),
       api.post_check(post_process.StepException, 'setup toolchains'),
+      force_no_chroot_upgrade=SetupChrootProperties.Update.TRUE,
       run_spec=BuilderConfig.RunSpec.NO_RUN,
       build_target='amd64-generic',
       status='INFRA_FAILURE',

@@ -38,8 +38,7 @@ def RunSteps(api: RecipeApi, properties: TestNewSdkProperties) -> None:
       raise InfraFailure('No build target provided')
 
   with api.build_menu.configure_builder(missing_ok=True):
-    with api.build_menu.setup_workspace_and_chroot(
-        replace=True, upgrade_in_update_step=False):
+    with api.build_menu.setup_workspace_and_chroot(replace=True):
       api.cros_sdk('run command in chroot', ['true'])
 
 

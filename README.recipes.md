@@ -1332,7 +1332,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#93)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#870)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#855)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1341,14 +1341,14 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#884)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#869)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#623)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#608)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -1357,7 +1357,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#728)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#713)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -1370,7 +1370,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#683)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#668)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1421,7 +1421,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1018)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1003)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1456,7 +1456,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#580)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#565)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1470,7 +1470,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#83)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#636)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#621)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
 
 Install packages as appropriate.
 
@@ -1495,7 +1495,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#195)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1313)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1298)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1505,7 +1505,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1293)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1278)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1526,14 +1526,14 @@ The GitilesCommit is either passed in by the parent via input property when
 the build was scheduled or can be derived for non-release builders after
 syncing the source.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#743)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#728)(self, config=None):**
 
 run ebuild tests as specified by config.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#401)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False, uprev_packages: bool=True, update: Optional[bool]=None, setup_toolchains_if_no_update: bool=True, force_no_chroot_upgrade: Optional[bool]=None):**
+&mdash; **def [setup\_chroot](/recipe_modules/build_menu/api.py#398)(self, no_chroot_timeout: bool=False, sdk_version: Optional[str]=None, bootstrap: bool=False, replace: bool=False, uprev_packages: bool=True, setup_toolchains_if_no_update: bool=True, force_no_chroot_upgrade: Optional[bool]=None):**
 
 Setup the chroot for the builder.
 
@@ -1544,20 +1544,15 @@ Args:
   bootstrap: Whether to bootstrap the chroot.
   replace: Whether to replace the chroot if it already exists.
   uprev_packages: Whether to uprev packages.
-  update: Whether to update the chroot after creating it (overriding the
-    builder config). If not given, defer to the builder config. If the
-    builder config also does not specify, default to True. When False, the
-    chroot will instead update while creating it (not after).
   setup_toolchains_if_no_update: If True, and the function skips updating
     the chroot (whether due to the `update` kwarg or due to the builder
     config), then it will setup toolchains instead.
-  force_no_chroot_upgrade: If True, chroot update is skipped at both create
-    and update steps.
+  force_no_chroot_upgrade: If True, chroot update is skipped.
 
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#499)(self, with_sysroot=True, snapshot_commit=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#484)(self, with_sysroot=True, snapshot_commit=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1574,7 +1569,7 @@ Returns:
     packages (list[PackageInfo]): The packages for this build, or an empty
       list.
 
-&mdash; **def [setup\_toolchains](/recipe_modules/build_menu/api.py#473)(self):**
+&mdash; **def [setup\_toolchains](/recipe_modules/build_menu/api.py#458)(self):**
 
 Setup toolchains on the builder.
 
@@ -1589,7 +1584,7 @@ This is a noop if we have no build targets to setup.
 Raises:
   InfraFailure: If the endpoint is not available.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#367)(self, cherry_pick_changes=True):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace](/recipe_modules/build_menu/api.py#364)(self, cherry_pick_changes=True):**
 
 Setup the workspace for the builder.
 
@@ -1598,7 +1593,7 @@ Args:
     checkout using cherry-pick. If set to False, will directly checkout
     the changes using the gerrit fetch refs.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#339)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False, upgrade_in_update_step: Optional[bool]=None, force_no_chroot_upgrade: Optional[bool]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_workspace\_and\_chroot](/recipe_modules/build_menu/api.py#339)(self, no_chroot_timeout: bool=False, cherry_pick_changes: bool=True, bootstrap_chroot: bool=False, replace: bool=False, force_no_chroot_upgrade: Optional[bool]=None):**
 
 Setup the workspace and chroot for the builder.
 
@@ -1611,8 +1606,6 @@ Args:
     the changes using the gerrit fetch refs.
   bootstrap_chroot: Whether to bootstrap the chroot.
   replace: Whether to replace the chroot if it already exists.
-  upgrade_in_update_step: Whether to upgrade the chroot after creating it
-    rather than during. See setup_chroot() docstring for details.
   force_no_chroot_upgrade: Whether to prevent the chroot upgrading at all.
 Returns:
   Whether the build is relevant.
@@ -1628,7 +1621,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#713)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#698)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1637,7 +1630,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#818)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#803)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Upload artifacts from the build.
 
@@ -1663,21 +1656,21 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1254)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1239)(self, config: Optional[BuilderConfig]=None):**
 
 Upload Chrome prebuilts from the build.
 
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1241)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1226)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1272)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1257)(self, config: Optional[BuilderConfig]=None):**
 
 Upload host prebuilts from the build.
 
@@ -1686,7 +1679,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1222)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1207)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1695,7 +1688,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1162)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1147)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 

@@ -340,7 +340,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def setup_workspace_and_chroot(
       self, no_chroot_timeout: bool = False, cherry_pick_changes: bool = True,
       bootstrap_chroot: bool = False, replace: bool = False,
-      upgrade_in_update_step: Optional[bool] = None,
       force_no_chroot_upgrade: Optional[bool] = None) -> Iterator[bool]:
     """Setup the workspace and chroot for the builder.
 
@@ -353,15 +352,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
         the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
-      upgrade_in_update_step: Whether to upgrade the chroot after creating it
-        rather than during. See setup_chroot() docstring for details.
       force_no_chroot_upgrade: Whether to prevent the chroot upgrading at all.
     Returns:
       Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
       yield self.setup_chroot(no_chroot_timeout, bootstrap=bootstrap_chroot,
-                              replace=replace, update=upgrade_in_update_step,
+                              replace=replace,
                               force_no_chroot_upgrade=force_no_chroot_upgrade)
 
   @contextlib.contextmanager
@@ -401,7 +398,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
                    replace: bool = False, uprev_packages: bool = True,
-                   update: Optional[bool] = None,
                    setup_toolchains_if_no_update: bool = True,
                    force_no_chroot_upgrade: Optional[bool] = None) -> bool:
     """Setup the chroot for the builder.
@@ -413,15 +409,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
       bootstrap: Whether to bootstrap the chroot.
       replace: Whether to replace the chroot if it already exists.
       uprev_packages: Whether to uprev packages.
-      update: Whether to update the chroot after creating it (overriding the
-        builder config). If not given, defer to the builder config. If the
-        builder config also does not specify, default to True. When False, the
-        chroot will instead update while creating it (not after).
       setup_toolchains_if_no_update: If True, and the function skips updating
         the chroot (whether due to the `update` kwarg or due to the builder
         config), then it will setup toolchains instead.
-      force_no_chroot_upgrade: If True, chroot update is skipped at both create
-        and update steps.
+      force_no_chroot_upgrade: If True, chroot update is skipped.
 
     Returns:
       Whether the build is relevant.
@@ -445,21 +436,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
           in self.m.cros_infra_config.experiments):
         self.m.chrome.sync_chrome_async(config, self.build_target)
 
-      # If update is not specified in kwargs, defer to the builder config.
-      # If the builder config does not specify, default to True.
-      if update is None:
-        run_spec = config.build.sdk_update.sdk_update_run_spec
-        update = run_spec != BuilderConfig.RunSpec.NO_RUN
-
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
           no_chroot_timeout else 'DEFAULT', replace=replace,
-          chroot_upgrade=not update and force_no_chroot_upgrade is not True)
+          chroot_upgrade=False)
       self._chroot_created = True
 
-      if update and force_no_chroot_upgrade is not True:
+      if force_no_chroot_upgrade is not True:
         self.m.cros_sdk.update_chroot(
             build_source=config.build.sdk_update.compile_source,
             toolchain_targets=self._build_targets_for_toolchain_setup)
