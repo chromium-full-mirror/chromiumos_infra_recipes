@@ -235,6 +235,28 @@ class SkylabApi(recipe_api.RecipeApi):
       sw_dep_gsc_bucket = req.params.software_dependencies.add()
       sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
       req.params.scheduling.qs_account = self._qs_account
+      # Check companions
+      primary_dut_board = uht.hw_test.skylab_board
+      for companion in uht.hw_test.companions:
+        comp_dev = req.params.secondary_devices.add()
+        comp_dev.software_attributes.build_target.name = companion.board
+        if companion.config.WhichOneof('config') == 'android':
+          if companion.config.android.android_image_version:
+            cd_sw_dep_android = comp_dev.software_dependencies.add()
+            cd_sw_dep_android.android_image_version = companion.config.android.android_image_version
+          if companion.config.android.gms_core_package:
+            cd_sw_dep_gms = comp_dev.software_dependencies.add()
+            cd_sw_dep_gms.gms_core_package = companion.config.android.gms_core_package
+        else:
+          if companion.board != primary_dut_board:
+            raise recipe_api.StepFailure(
+                'Companion board is different from the primary device')
+          # Directly use the image artifact same as the primary dut. This needs
+          # change when adding support of companion board different from primary
+          cd_sw_dep_build = comp_dev.software_dependencies.add()
+          cd_sw_dep_build.chromeos_build = image_path
+          cd_sw_dep_gcs_bucket = comp_dev.software_dependencies.add()
+          cd_sw_dep_gcs_bucket.chromeos_build_gcs_bucket = image_bucket
 
       allow_critical = True
       if build_target_critical_allowlist is not None and uht.unit.common.build_target.name not in build_target_critical_allowlist:

@@ -404,6 +404,7 @@
   * [cros_tags:tests/get_single_value](#recipes-cros_tags_tests_get_single_value)
   * [cros_tags:tests/get_values](#recipes-cros_tags_tests_get_values)
   * [cros_test_plan:examples/full](#recipes-cros_test_plan_examples_full)
+  * [cros_test_plan:tests/multi_dut_tests](#recipes-cros_test_plan_tests_multi_dut_tests) &mdash; This module tests the utility method of multi-dut suite generation.
   * [cros_test_plan:tests/test_plan_summary](#recipes-cros_test_plan_tests_test_plan_summary)
   * [cros_test_plan_v2:examples/ctpv1_compatible](#recipes-cros_test_plan_v2_examples_ctpv1_compatible)
   * [cros_test_plan_v2:examples/dirmd_update](#recipes-cros_test_plan_v2_examples_dirmd_update)
@@ -692,6 +693,7 @@
   * [signing_utils:tests/status](#recipes-signing_utils_tests_status) &mdash; Verify methods for signing status.
   * [skylab:examples/direct_test_retry](#recipes-skylab_examples_direct_test_retry)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
+  * [skylab:examples/schedule_suites_multi_dut](#recipes-skylab_examples_schedule_suites_multi_dut) &mdash; This module tests companions in test plans conversion into CTP request.
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab:tests/apply_qs_account_overrides](#recipes-skylab_tests_apply_qs_account_overrides)
@@ -10279,7 +10281,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#459)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#481)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -13435,6 +13437,14 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/examples/full.py#61)(api):**
+### *recipes* / [cros\_test\_plan:tests/multi\_dut\_tests](/recipe_modules/cros_test_plan/tests/multi_dut_tests.py)
+
+[DEPS](/recipe_modules/cros_test_plan/tests/multi_dut_tests.py#10): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+This module tests the utility method of multi-dut suite generation.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/multi_dut_tests.py#18)(api):**
 ### *recipes* / [cros\_test\_plan:tests/test\_plan\_summary](/recipe_modules/cros_test_plan/tests/test_plan_summary.py)
 
 [DEPS](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#9): [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -15511,6 +15521,14 @@ Verify methods for signing status.
 
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites.py#39)(api, properties: ScheduleSuitesProperties):**
+### *recipes* / [skylab:examples/schedule\_suites\_multi\_dut](/recipe_modules/skylab/examples/schedule_suites_multi_dut.py)
+
+[DEPS](/recipe_modules/skylab/examples/schedule_suites_multi_dut.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+This module tests companions in test plans conversion into CTP request.
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites_multi_dut.py#25)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

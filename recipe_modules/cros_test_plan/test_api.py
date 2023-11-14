@@ -7,10 +7,12 @@ from recipe_engine import recipe_test_api
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos.test.api.provision_state import CompanionConfig
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TastGceTestCfg
 from PB.testplans.target_test_requirements_config import TastTestShard
 from PB.testplans.target_test_requirements_config import TastVmTestCfg
+from PB.testplans.target_test_requirements_config import TestCompanion
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
 from PB.testplans.generate_test_plan import BuildPayload
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -109,6 +111,32 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
                     skylab_board='target',
                     pool='my skylab pool',
                     hw_test_suite_type=HwTestCfg.TAST,
+                ),
+            ],
+        ),
+    )
+
+  @property
+  def multi_dut_hw_test_unit(self, suite_name='multi-dut-suite'):
+    return HwTestUnit(
+        common=self.test_unit_common(),
+        hw_test_cfg=HwTestCfg(
+            hw_test=[
+                HwTestCfg.HwTest(
+                    common=TestSuiteCommon(
+                        display_name='htarget.hw.' + suite_name,
+                        critical={'value': True}),
+                    suite=suite_name,
+                    skylab_board='target',
+                    pool='my skylab pool',
+                    hw_test_suite_type=HwTestCfg.TAST,
+                    companions=[
+                        TestCompanion(board="companiontarget"),
+                        TestCompanion(
+                            board="pixel7", config=CompanionConfig(
+                                android=CompanionConfig.Android(
+                                    gms_core_package="latest_stable"))),
+                    ],
                 ),
             ],
         ),
