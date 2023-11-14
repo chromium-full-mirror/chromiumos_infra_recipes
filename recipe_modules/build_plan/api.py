@@ -326,10 +326,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
             # Only schedule builds for critical CQ builders.
             if not builder_config.general.critical.value:
               continue
-
             # No need to retry previously-passed builds.
             if builder in completed_builders:
               chrome_log.append('{} already passed'.format(builder))
+              continue
+            # Do not schedule builds that do not use prebuilts.
+            if not builder_config.artifacts.prebuilts_gs_bucket:
               continue
 
             child_build_snapshot = internal_snapshot

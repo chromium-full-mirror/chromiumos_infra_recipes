@@ -449,7 +449,7 @@
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@skip_for_run_when_rules {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"arm64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@skip_for_run_when_rules {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"amd64-generic-slim-cq\"@@@",
@@ -1254,8 +1254,7 @@
     "cmd": [],
     "name": "filter additional chrome pupr builds",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@additional builds@Scheduled atlas-cq as non-critical builder@@@",
-      "@@@STEP_LOG_LINE@additional builds@Scheduled arm64-generic-cq as non-critical builder@@@",
+      "@@@STEP_LOG_LINE@additional builds@Scheduled amd64-generic-cq as non-critical builder@@@",
       "@@@STEP_LOG_LINE@additional builds@amd64-generic-slim-cq already passed@@@",
       "@@@STEP_LOG_END@additional builds@@@"
     ]
@@ -1371,7 +1370,7 @@
     "cmd": [],
     "name": "set properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@3@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@2@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@7@@@",
