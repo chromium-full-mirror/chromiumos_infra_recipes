@@ -849,6 +849,12 @@
       "The recipe has crashed at point 'Uncaught exception'!",
       "",
       "Traceback (most recent call last):",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/engine.py\", in run_steps",
+      "    raw_result = recipe_obj.run_steps(api, engine)",
+      "                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+      "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
+      "    recipe_result = self.global_symbols['RunSteps'](*args)",
+      "                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 49, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(properties.build_target,",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 672, in upload_target_prebuilts",
@@ -859,7 +865,7 @@
       "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"PYTHON(site-packages)/google/protobuf/internal/enum_type_wrapper.py\", in Value",
       "    raise ValueError('Enum {} has no value defined for name {!r}'.format(",
-      "ValueError('Enum BinhostKey has no value defined for name 'RELEASE_BINHOST'')"
+      "ValueError: Enum BinhostKey has no value defined for name 'RELEASE_BINHOST'"
     ]
   },
   {
