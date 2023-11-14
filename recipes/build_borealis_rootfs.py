@@ -69,7 +69,7 @@ def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
 
   with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
-    api.cros_sdk.create_chroot(timeout_sec=None)
+    api.cros_sdk.create_chroot(timeout_sec=None, chroot_upgrade=False)
     api.cros_sdk.update_chroot(timeout_sec=None)
 
     return DoRunSteps(api, properties)
