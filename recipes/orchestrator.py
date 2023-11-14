@@ -302,12 +302,6 @@ def GenTests(api: RecipeTestApi):
                            collect_builds=data.builds, with_history=True,
                            git_footers=[])
 
-  yield api.orch_menu.test('joinable-existing-annealing-builds',
-                           data.ctp_normal,
-                           annealing_builds=data.annealing_builds,
-                           collect_builds=data.builds, with_history=True,
-                           with_manifest_refs=True)
-
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,
       api.buildbucket.ci_build(

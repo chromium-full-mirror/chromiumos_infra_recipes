@@ -4477,7 +4477,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@need 2 new builds (filtered 0)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },

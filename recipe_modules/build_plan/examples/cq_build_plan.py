@@ -42,10 +42,9 @@ PROPERTIES = CqBuildPlanProperties
 def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.child_specs
-  completed_builds, existing_builds, new_requests = api.build_plan.get_build_plan(
+  completed_builds, new_requests = api.build_plan.get_build_plan(
       child_specs, True, api.cros_infra_config.gerrit_changes,
       common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
-  api.assertions.assertCountEqual(existing_builds, [])
   actual_completed_builds = [x.builder.builder for x in completed_builds]
   api.assertions.assertCountEqual(actual_completed_builds,
                                   properties.expected_completed_builds)

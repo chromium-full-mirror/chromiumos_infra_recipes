@@ -2835,7 +2835,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@need 7 new builds (filtered 1)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]

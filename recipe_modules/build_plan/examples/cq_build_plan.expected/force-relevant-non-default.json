@@ -1049,51 +1049,9 @@
   },
   {
     "cmd": [],
-    "name": "get snapshot builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@found 0 snapshot builds@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "2000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"chromeos\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "get snapshot builds.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@need 3 new builds (filtered 4)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",

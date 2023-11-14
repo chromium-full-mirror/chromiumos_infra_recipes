@@ -924,7 +924,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         contains builds that have either completed or have COLLECT handling, the
         second contains builds that have COLLECT_AFTER_HW_TEST handling.
     """
-    completed_builds, existing_builds, new_build_requests = (
+    completed_builds, new_build_requests = (
         self.m.build_plan.get_build_plan(
             child_specs=child_specs,
             enable_history=self._properties.enable_history,
@@ -932,10 +932,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
             internal_snapshot=self.gitiles_commit,
             external_snapshot=self.external_gitiles_commit))
     parent_step.presentation.step_text = ('{} new, {} recycled'.format(
-        len(new_build_requests),
-        len(completed_builds) + len(existing_builds)))
+        len(new_build_requests), len(completed_builds)))
 
     log_msg = ''
+    new_builds = []
     if new_build_requests:
       # Add in extra_props.
       if extra_props:
@@ -967,12 +967,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
           for f in self.m.futures.iwait(futures):
-            existing_builds += f.result()
+            new_builds += f.result()
 
     self.add_child_info_to_output_property()
 
     collect_when_dict = self.categorize_builds_by_collect_handling(
-        child_specs, existing_builds)
+        child_specs, new_builds)
 
     return (completed_builds +
             collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],

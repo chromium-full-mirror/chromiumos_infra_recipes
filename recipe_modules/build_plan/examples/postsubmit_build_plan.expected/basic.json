@@ -49,58 +49,9 @@
   },
   {
     "cmd": [],
-    "name": "get snapshot builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@found 4 snapshot builds@@@",
-      "@@@STEP_LINK@amd64-generic-postsubmit@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "2000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles///+/\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "get snapshot builds.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"status\": \"STARTED\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514005\", \"input\": {\"properties\": {}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-postsubmit\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"status\": \"SCHEDULED\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@amd64-generic-postsubmit@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 2 new builds (filtered 1)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 4 -> 1 joinable after dedup and prioritization@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic exists, will join on it@@@",
+      "@@@STEP_TEXT@need 3 new builds (filtered 0)@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -128,11 +79,11 @@
     "cmd": [],
     "name": "set properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@2@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@3@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@0@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@0@@@",
       "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
       "@@@SET_BUILD_PROPERTY@count_skip_public_builders@0@@@",
       "@@@SET_BUILD_PROPERTY@slim_eligible_run@false@@@"

@@ -188,7 +188,6 @@
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
   * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
   * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
-  * [build_plan:examples/prioritize_builds](#recipes-build_plan_examples_prioritize_builds)
   * [build_plan:tests/cq_looks](#recipes-build_plan_tests_cq_looks)
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
   * [build_postsubmit](#recipes-build_postsubmit) &mdash; Recipe for building a BuildTarget image for Postsubmit.
@@ -1691,13 +1690,13 @@ Returns:
 
 Functions related to build planning.
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#24)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#42)(self):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#41)(self):**
 
-&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#512)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#453)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1712,7 +1711,7 @@ Returns:
   chosen_internal: The internal manifest snapshot that CQ will run with.
   chosen_external: The external manifest snapshot that CQ will run with.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#77)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#76)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
 
 Return a three-tuple of builds, completed, existing, and needed.
 
@@ -1735,7 +1734,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#373)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#343)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1749,7 +1748,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#459)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#400)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1765,7 +1764,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#498)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#439)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1775,19 +1774,6 @@ Args:
 
 Returns:
    The slim builder name.
-
-&mdash; **def [prioritize\_builds](/recipe_modules/build_plan/api.py#430)(self, builds):**
-
-Takes a list of builds and dedups, choosing a best build, dropping others.
-
-See build_orderer for the sort order. This is most useful if you have
-multiple, identical, builds and you want to choose a single one from each
-builder type to carry forward.
-
-Args:
-  builds ([build_pb2.Build]): Builds to dedupe and sort.
-
-Returns: A list of build_pb2.Build objects, deduped and prioritized.
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
 [DEPS](/recipe_modules/build_reporting/__init__.py#13): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [signing\_utils](#recipe_modules-signing_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -11847,16 +11833,10 @@ Args:
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#31)(api, properties):**
 ### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
 
-[DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#15): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#25)(api):**
-### *recipes* / [build\_plan:examples/prioritize\_builds](/recipe_modules/build_plan/examples/prioritize_builds.py)
-
-[DEPS](/recipe_modules/build_plan/examples/prioritize_builds.py#15): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/prioritize_builds.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#22)(api):**
 ### *recipes* / [build\_plan:tests/cq\_looks](/recipe_modules/build_plan/tests/cq_looks.py)
 
 [DEPS](/recipe_modules/build_plan/tests/cq_looks.py#18): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

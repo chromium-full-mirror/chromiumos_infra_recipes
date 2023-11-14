@@ -606,20 +606,6 @@ def GenTests(api):
   )
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
-  # Annealing builds.
-  yield api.orch_menu.test(
-      'existing-annealing-builds', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=data.builds,
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True)),
-      annealing_builds=data.annealing_builds, collect_builds=data.builds,
-      history_builds=data.history_builds, with_history=True,
-      with_manifest_refs=True)
-
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')
   # Joins an inflight orchestrator run.

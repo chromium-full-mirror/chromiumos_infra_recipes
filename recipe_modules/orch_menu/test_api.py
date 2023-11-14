@@ -44,8 +44,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       inflight_orch (list): List of build messages to return when we search for
         inflight orchestrators, or None.  Only used if with_history evaluates
         True.
-      annealing_builds (list): List of build messages to return when we are
-        collecting annealing snapshot builds, or None.
       history_builds (list): List of build messages to return when we are
         checking history, or None.
       collect_builds (list): List of build messages to return when we are
@@ -70,7 +68,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     max_build_failure_ratio = kwargs.pop('max_build_failure_ratio', 0.0)
     git_footers = kwargs.pop('git_footers', None)
     inflight_orch = kwargs.pop('inflight_orch', None)
-    annealing_builds = kwargs.pop('annealing_builds', None)
     history_builds = kwargs.pop('history_builds', None)
     collect_builds = kwargs.pop('collect_builds', [])
     collect_timeout = kwargs.pop('collect_timeout', None)
@@ -122,12 +119,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
               self.m.buildbucket.simulated_collect_output(
                   inflight_orch,
                   'find inflight orchestrator.waiting for existing runs'))
-
-    if annealing_builds is not None:
-      args.append(
-          self.m.buildbucket.simulated_search_results(
-              annealing_builds,
-              'run builds.get snapshot builds.buildbucket.search'))
 
     if collect_builds:
       if collect_timeout:
@@ -216,7 +207,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         orchestrator (Build): Build message for a running orchestrator.
         inflight_orchestrator (Build): Build message for an inflight
           orchestrator.
-        annealing_builds (list): List of child builds from an annealing run.
         builds (list): List of child builds for most tests.
         crit_fail (list): List of builds that includes a failed critical child.
         non_crit_fail (list): List of builds that includes a failed non-critical
@@ -228,10 +218,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
         ctp_failure (StepTestData): StepTestData for build failing tests.
     """
     _ret = namedtuple('_standard_test_data', [
-        'orchestrator', 'inflight_orchestrator', 'annealing_builds', 'builds',
-        'history_builds', 'after_builds', 'crit_fail', 'non_crit_fail',
-        'process_child', 'follow_on_orchestrator', 'mixed_build_results',
-        'local_green_success', 'local_green_fail', 'ctp_normal', 'ctp_failure'
+        'orchestrator', 'inflight_orchestrator', 'builds', 'history_builds',
+        'after_builds', 'crit_fail', 'non_crit_fail', 'process_child',
+        'follow_on_orchestrator', 'mixed_build_results', 'local_green_success',
+        'local_green_fail', 'ctp_normal', 'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -255,25 +245,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     follow_on_orchestrator = self.m.test_util.test_orchestrator(
         build_id=8922054662172515000, bucket='toolchain',
         builder='artifact-verify-orchestrator', status='SUCCESS').message
-
-    annealing_builds = [
-        self.m.test_util.test_child_build('amd64-generic',
-                                          build_id=8922054662172514102,
-                                          bucket='snapshot',
-                                          status='STARTED').message,
-        self.m.test_util.test_child_build('amd64-generic',
-                                          build_id=8922054662172514103,
-                                          bucket='snapshot',
-                                          status='SUCCESS').message,
-        self.m.test_util.test_child_build('amd64-generic',
-                                          build_id=8922054662172514105,
-                                          bucket='snapshot',
-                                          status='SUCCESS').message,
-        self.m.test_util.test_child_build('amd64-generic',
-                                          build_id=8922054662172514104,
-                                          bucket='snapshot',
-                                          status='SCHEDULED').message,
-    ]
 
     builds = [
         _child_build_msg(
@@ -342,7 +313,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     values = [
         orchestrator,
         inflight_orchestrator,
-        annealing_builds,
         collect_builds,
         history_builds,
         after_builds,

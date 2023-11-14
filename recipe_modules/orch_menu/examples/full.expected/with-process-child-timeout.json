@@ -2336,7 +2336,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@need 1 new build (filtered 0)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },

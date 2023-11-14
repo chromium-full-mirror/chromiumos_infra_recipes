@@ -45,7 +45,7 @@ def RunSteps(api, properties):
   expected_external_sha = properties.expected_external_sha or ORIGINAL_EXTERNAL_SHA
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
-  _, _, new_requests = api.build_plan.get_build_plan(
+  _, new_requests = api.build_plan.get_build_plan(
       child_specs, True, api.cros_infra_config.gerrit_changes,
       common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
                                host=INTERNAL_HOST_URL),

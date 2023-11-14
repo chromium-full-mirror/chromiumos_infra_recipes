@@ -5,7 +5,6 @@
 
 """Functions related to build planning."""
 
-from collections import defaultdict
 from datetime import datetime
 from typing import List, Optional, Tuple
 
@@ -98,7 +97,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         A list of ScheduleBuildRequests that have to be scheduled.
     """
     filter_log = []
-    completed_builds, snapshot_builds, new_build_requests = [], [], []
+    completed_builds, new_build_requests = [], []
     is_retry = False
 
     builder_configs = [
@@ -137,26 +136,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
-      # By filtering to the names of the builders in child_specs,
-      # the *-snapshot builders will be ignored. See https://crbug.com/1040593
-      # for details on why we want the actual *-postsubmit builders to run.
-      snapshot_builds = self.m.cros_history.get_snapshot_builds(
-          internal_snapshot, [cs.name for cs in child_specs],
-          [common_pb2.SUCCESS, common_pb2.SCHEDULED, common_pb2.STARTED],
-          patches=gerrit_changes)
-
-    # Find number of builds, make set of builders, prioritize and log.
-    initial_found_builds = len(snapshot_builds)
-    snapshot_builds = self.prioritize_builds(snapshot_builds)
-    filter_log.append(
-        'from {} -> {} joinable after dedup and prioritization'.format(
-            initial_found_builds, len(snapshot_builds)))
-
     completed_builders = [build.builder.builder for build in completed_builds]
-    snapshot_build_targets = \
-        self.m.cros_infra_config.build_target_dict(snapshot_builds)
-
-    filtered_snapshot_builds = []
 
     count_skip_for_source_rules = 0
     count_skip_since_already_passed = 0
@@ -239,16 +219,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
             filter_log.append('{} already passed'.format(standard_builder_name))
             count_skip_since_already_passed += 1
             continue
-
-        # We've already found an existing build, we'll just wait on it later.
-        if child_builder_spec in snapshot_build_targets:
-          snapshot_build = snapshot_build_targets[child_builder_spec]
-          snapshot_build.critical = common_pb2.YES if critical else common_pb2.NO
-          filtered_snapshot_builds.append(snapshot_build)
-          filter_log.append(
-              '{} exists, will join on it'.format(child_builder_spec))
-          count_skip_wait_on_other_run += 1
-          continue
 
         # Don't retry non-critical builds unless recycling is disabled.
         if is_retry and not (critical or force_rebuild):
@@ -368,7 +338,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         slim_eligible_run=slim_eligible_run,
         count_skip_public_builders=count_skip_public_builders)
 
-    return completed_builds, filtered_snapshot_builds, new_build_requests
+    return completed_builds, new_build_requests
 
   def get_completed_builds(self, child_specs, forced_rebuilds):
     """Get the list of previously passed child builds with criticality refreshed.
@@ -426,35 +396,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
       presentation.properties[
           'count_broken_before_rebuilds'] = count_broken_before_rebuilds
       return completed_builds
-
-  def prioritize_builds(self, builds):
-    """Takes a list of builds and dedups, choosing a best build, dropping others.
-
-    See build_orderer for the sort order. This is most useful if you have
-    multiple, identical, builds and you want to choose a single one from each
-    builder type to carry forward.
-
-    Args:
-      builds ([build_pb2.Build]): Builds to dedupe and sort.
-
-    Returns: A list of build_pb2.Build objects, deduped and prioritized.
-    """
-    # add all of them to dict: build_target -> build proto
-    build_map = defaultdict(list)
-    for b in builds:
-      bt = self.m.cros_infra_config.get_build_target_name(b)
-      if bt:
-        build_map[bt].append(b)
-
-    best_builds_list = []
-    for build_list in build_map.values():
-      build_list = [b for b in build_list if b.status == common_pb2.SUCCESS] \
-                   or build_list
-      best_build = min(build_list, key=lambda b: b.create_time.seconds)
-      best_builds_list.append(best_build)
-
-    # return reduced list
-    return best_builds_list
 
   def get_forced_rebuilds(self, gerrit_changes):
     """Gets a list of builders whose builds should not be reused.

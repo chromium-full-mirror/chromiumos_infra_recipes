@@ -3038,53 +3038,10 @@
   },
   {
     "cmd": [],
-    "name": "run builds.get snapshot builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 0 snapshot builds@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "2000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:29Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run builds.get snapshot builds.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.filter builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@need 7 new builds (filtered 1)@@@",
-      "@@@STEP_LOG_LINE@filter log@from 0 -> 0 joinable after dedup and prioritization@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
@@ -9341,7 +9298,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:30Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:29Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9391,7 +9348,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:32Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:30Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9455,7 +9412,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:33Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:32Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9511,7 +9468,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:35Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:33Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
