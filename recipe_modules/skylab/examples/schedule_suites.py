@@ -8,7 +8,7 @@
 
 from typing import Callable, Dict
 
-from google.protobuf import duration_pb2
+from google.protobuf import duration_pb2, struct_pb2
 
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.lab import license as license_pb2
@@ -229,3 +229,15 @@ def GenTests(api):
                                             'apply qs account overrides'),
       api.post_check(verify_qs_account_unmanaged, 'p0_cq_unmanaged'),
   )
+
+  props = struct_pb2.Struct()
+  props['sheriff_rotations'] = ['chromeos']
+  build = api.buildbucket.try_build_message(project='chromeos',
+                                            bucket='chromeos',
+                                            builder='release-orchestrator',
+                                            properties=props)
+  yield api.test(
+      'sheriff_rotations', api.buildbucket.build(build),
+      api.post_check(post_process.LogContains,
+                     'schedule skylab tests v2.buildbucket.schedule', 'request',
+                     ['sheriff_rotations']))

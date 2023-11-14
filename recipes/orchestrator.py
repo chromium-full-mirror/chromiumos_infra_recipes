@@ -224,6 +224,7 @@ def GenTests(api: RecipeTestApi):
       with_history=True,
       collect_builds=data.builds,
       with_manifest_refs=True,
+      sheriff_rotations=['chromeos'],
       bot_size='medium')
 
   yield api.orch_menu.test(

@@ -188,6 +188,7 @@ def GenTests(api):
           'release-main-orchestrator', '-release-main')[0],
       with_manifest_refs=True,
       with_history=True,
+      sheriff_rotations=['chromeos'],
       bot_size='medium',
   )
 

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for issuing commands to Skylab"""
+
 import re
 from typing import Dict, List
 
@@ -31,7 +33,6 @@ TESTING_OVERRIDE_FOOTER = 'Testing-Override'
 
 
 class SkylabApi(recipe_api.RecipeApi):
-  """Module for issuing commands to Skylab"""
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -154,6 +155,12 @@ class SkylabApi(recipe_api.RecipeApi):
 
     props = self.m.cq.props_for_child_build
     props.update({'requests': tagged_requests})
+    # If the orchestrator is watched by a sheriff rotation, populate in CTP.
+    if 'sheriff_rotations' in self.m.buildbucket.build.input.properties:
+      props.update({
+          'sheriff_rotations':
+              self.m.buildbucket.build.input.properties['sheriff_rotations']
+      })
     if self._exclude_sub_invs:
       # If the CTP build we are scheduling is not going to become an included
       # invocation of the current build, it should mark itself for ResultDB

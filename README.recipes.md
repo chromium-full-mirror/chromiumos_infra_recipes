@@ -108,7 +108,7 @@
   * [service_version](#recipe_modules-service_version)
   * [signing](#recipe_modules-signing) &mdash; Module providing signing functionality.
   * [signing_utils](#recipe_modules-signing_utils) &mdash; Module providing helpers for signing functionality.
-  * [skylab](#recipe_modules-skylab)
+  * [skylab](#recipe_modules-skylab) &mdash; Module for issuing commands to Skylab.
   * [skylab_results](#recipe_modules-skylab_results) &mdash; Util functions for parsing HW test results.
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
@@ -10241,11 +10241,11 @@ Returns:
 [DEPS](/recipe_modules/skylab/__init__.py#7): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [metadata](#recipe_modules-metadata), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
-#### **class [SkylabApi](/recipe_modules/skylab/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
-
 Module for issuing commands to Skylab
 
-&mdash; **def [apply\_qs\_account\_overrides](/recipe_modules/skylab/api.py#59)(self, gerrit_changes: List[GerritChange]):**
+#### **class [SkylabApi](/recipe_modules/skylab/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [apply\_qs\_account\_overrides](/recipe_modules/skylab/api.py#60)(self, gerrit_changes: List[GerritChange]):**
 
 Apply any QS account overrides the build is elegible for.
 
@@ -10256,15 +10256,15 @@ PUpr CL.
 Args:
   gerrit_changes: The gerrit changes applied to the build.
 
-&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#103)(self):**
+&emsp; **@property**<br>&mdash; **def [last\_run\_tast\_first\_class\_tests](/recipe_modules/skylab/api.py#104)(self):**
 
 Returns the hw tests which ran as Tast first class in the last run.
 
-&emsp; **@property**<br>&mdash; **def [qs\_account](/recipe_modules/skylab/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [qs\_account](/recipe_modules/skylab/api.py#51)(self):**
 
 Get the quota scheduler account the module is configured to use.
 
-&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#128)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
+&mdash; **def [schedule\_ctp\_requests](/recipe_modules/skylab/api.py#129)(self, tagged_requests, can_outlive_parent=True, bb_tags=None, \*\*kwargs):**
 
 Schedule a cros_test_platform build.
 
@@ -10281,7 +10281,7 @@ Args:
 Returns:
   The scheduled buildbucket build.
 
-&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#181)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None, build_target_critical_allowlist: List[str]=None):**
+&mdash; **def [schedule\_suites](/recipe_modules/skylab/api.py#188)(self, unit_hw_tests: List[UnitHwTest], timeout: Duration, name: str=None, async_suite_run: bool=False, container_metadata: ContainerMetadata=None, require_stable_devices: bool=False, previous_results: Dict[(str, ExecuteResponse)]=None, build_target_critical_allowlist: List[str]=None):**
 
 Schedule HW test suites by invoking the cros_test_platform recipe.
 
@@ -10305,11 +10305,11 @@ Args:
 Returns:
   A list of SkylabTasks with buildbucket_id of the recipe launched.
 
-&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#55)(self, qs_account):**
+&mdash; **def [set\_qs\_account](/recipe_modules/skylab/api.py#56)(self, qs_account):**
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#481)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#488)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 

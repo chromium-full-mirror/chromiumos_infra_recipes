@@ -55,6 +55,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
       process_child_timeout (bool): Whether the process child times out.
       follow_on_orch (Build): The Build message for a follow-on orchestrator, or
         None.
+      sheriff_rotations (list): List of sheriff rotations watching this orch.
       *args (list): Arguments to pass to test_api.test.
       **kwargs (dict): Arguments to pass to test_util.test_build.
 
@@ -76,6 +77,7 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
     local_green_builds = kwargs.pop('local_green_builds', [])
+    sheriff_rotations = kwargs.pop('sheriff_rotations', [])
 
     cq = kwargs.get('cq')
     default_props = {
@@ -95,6 +97,8 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     if with_history:
       kwargs['input_properties'].update(enable_history=True,
                                         assert_singleton=True)
+    if sheriff_rotations:
+      kwargs['input_properties'].update(sheriff_rotations=sheriff_rotations)
 
     ret = self.m.test_util.test_orchestrator(**kwargs).build
     args = list(args)
