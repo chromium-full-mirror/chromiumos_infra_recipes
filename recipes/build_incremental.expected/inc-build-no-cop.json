@@ -2729,7 +2729,11 @@
       "@@@STEP_LOG_LINE@request@  \"ccacheDisable\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3066,7 +3070,11 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3556,7 +3564,15 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_branch_version\": \"git_rvc-arc\", \"android_target_version\": \"bertha\", \"android_version\": \"1\", \"chrome_version\": \"chrome_version\", \"full_version\": \"full_version\", \"milestone_version\": \"milestone_version\", \"platform_version\": \"platform_version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_branch_version\": \"git_rvc-arc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_target_version\": \"bertha\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_version\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"chrome_version\": \"chrome_version\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"full_version\": \"full_version\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"milestone_version\": \"milestone_version\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"platform_version\": \"platform_version\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -3821,7 +3837,26 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"dep_graph\": {\"package_deps\": [{\"dependency_packages\": [{\"category\": \"chromeos-base\", \"package_name\": \"chrome-icu\", \"version\": \"1-r52\"}], \"dependency_source_paths\": [{\"path\": \"some/source/dir\"}]}]}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"dep_graph\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"package_deps\": [@@@",
+      "@@@STEP_LOG_LINE@response@      {@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_packages\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"category\": \"chromeos-base\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"package_name\": \"chrome-icu\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"version\": \"1-r52\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ],@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_source_paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ]@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -4101,7 +4136,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": []@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -4377,7 +4414,13 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"needs_chrome_source\": true, \"reasons\": [\"LOCAL_UPREV\", \"NO_PREBUILT\"]}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"needs_chrome_source\": true,@@@",
+      "@@@STEP_LOG_LINE@response@  \"reasons\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"LOCAL_UPREV\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"NO_PREBUILT\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -4721,7 +4764,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5160,7 +5205,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": []@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5690,7 +5737,11 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -5997,7 +6048,13 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"needs_chrome_source\": true, \"reasons\": [\"LOCAL_UPREV\", \"NO_PREBUILT\"]}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"needs_chrome_source\": true,@@@",
+      "@@@STEP_LOG_LINE@response@  \"reasons\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"LOCAL_UPREV\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"NO_PREBUILT\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -6341,7 +6398,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": \"version\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -6780,7 +6839,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_package_data\": []}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": []@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

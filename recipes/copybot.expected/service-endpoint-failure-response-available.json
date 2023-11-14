@@ -2313,7 +2313,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{ \"failure_reason\": \"FAILURE_DOWNSTREAM_PUSH_ERROR\" }@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failure_reason\": \"FAILURE_DOWNSTREAM_PUSH_ERROR\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@",
       "@@@STEP_FAILURE@@@"
     ]

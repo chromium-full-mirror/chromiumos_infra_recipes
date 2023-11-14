@@ -5,7 +5,20 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"failed_packages\": [], \"images\": [{\"path\": \"[START_DIR]/cros/src/build/images/base.bin\", \"type\": \"IMAGE_TYPE_BASE\"}, {\"path\": \"[START_DIR]/cros/src/build/images/test.bin\", \"type\": \"IMAGE_TYPE_TEST\"}], \"success\": true}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_packages\": [],@@@",
+      "@@@STEP_LOG_LINE@response@  \"images\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[START_DIR]/cros/src/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_BASE\"@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[START_DIR]/cros/src/build/images/test.bin\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_TEST\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

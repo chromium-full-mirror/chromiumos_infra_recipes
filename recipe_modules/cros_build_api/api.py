@@ -10,6 +10,8 @@ import hashlib
 from typing import Any, Callable, List, Optional, Tuple
 
 import contextlib
+
+import json
 from google.protobuf import descriptor
 from google.protobuf import descriptor_pool
 from google.protobuf import json_format
@@ -652,7 +654,8 @@ class CrosBuildApiApi(RecipeApi):
           # have taken them as input (e.g. sheriff-o-matic), we then make a
           # 'response' step that we can have foreknowledge of what the name
           # _should_ be based on the call's results.
-          presentation.logs['response'] = output_json
+          presentation.logs['response'] = json.dumps(
+              json.loads(output_json), indent=2)
           resp_step_name = _response_step_name(output_proto, response_lambda)
 
           with self.m.step.nest(resp_step_name) as resp_pres:

@@ -2480,7 +2480,9 @@
       "@@@STEP_LOG_LINE@request@  \"androidPackage\": \"android-package\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_version\": \"7123456\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_version\": \"7123456\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2783,7 +2785,11 @@
       "@@@STEP_LOG_LINE@request@  \"androidVersion\": \"7123456\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"modified_files\": [\"[CLEANUP]/chromiumos_workspace/src/overlay/modified-file\"]}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"modified_files\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"[CLEANUP]/chromiumos_workspace/src/overlay/modified-file\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

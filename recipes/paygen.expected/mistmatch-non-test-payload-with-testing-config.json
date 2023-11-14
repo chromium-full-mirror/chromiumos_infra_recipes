@@ -1331,7 +1331,11 @@
       "@@@STEP_LOG_LINE@request@  \"ccacheDisable\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"version\": {\"version\": 123}}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"version\": 123@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -1742,7 +1746,10 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"local_path\": \"/tmp/aohiwdadoi/delta.bin\", \"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"local_path\": \"/tmp/aohiwdadoi/delta.bin\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"remote_uri\": \"gs://test-bucket/canary-channel/zork/12345.0.0/payloads/chromeos_12345.0.0_zork_canary-channel_full_test.bin-abc\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },

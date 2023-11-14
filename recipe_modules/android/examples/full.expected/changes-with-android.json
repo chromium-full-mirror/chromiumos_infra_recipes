@@ -18,7 +18,11 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {}@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_branch\": \"git_rvc-arc\", \"android_package\": \"android-vm-rvc\", \"android_version\": \"7123456\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_branch\": \"git_rvc-arc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_package\": \"android-vm-rvc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_version\": \"7123456\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -116,7 +120,14 @@
       "@@@STEP_LOG_LINE@request@  \"skipCommit\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{\"android_atom\": {\"category\": \"chromeos-base\", \"package_name\": \"android-vm-rvc\", \"version\": \"7123456-r1\"}, \"status\": \"MARK_STABLE_STATUS_SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_atom\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"category\": \"chromeos-base\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"package_name\": \"android-vm-rvc\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"version\": \"7123456-r1\"@@@",
+      "@@@STEP_LOG_LINE@response@  },@@@",
+      "@@@STEP_LOG_LINE@response@  \"status\": \"MARK_STABLE_STATUS_SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
