@@ -262,9 +262,6 @@ def search_prebuilts(
             f'The builder configration for {builder_name} does not exist.')
       else:
         profile_name = builder_config.build.portage_profile.profile
-        if profile_name != '' and not is_staging:
-          continue_reason.append(
-              'Non-default profile is allowed only on staging.')
 
         # Skip if the newer (= former in the loop) entry of the same build
         # target exists.
@@ -330,7 +327,7 @@ def search_prebuilts(
   return public_prebuilt_entries, private_prebuilt_entries, running_builds
 
 
-def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
+def set_binhosts(api: RecipeApi, step_name: str, _is_staging: bool,
                  public_prebuilt_entries: List[dict],
                  private_prebuilt_entries: List[dict],
                  finished_builds: Dict[str, Set[str]]) -> None:
@@ -368,8 +365,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
                       public_prebuilt_entries)),
               private=False,
               key=binhost_pb.CQ_BINHOST,
-              overriding_max_uris=(cumulative_binhost_counter
-                                   if is_staging else None),
+              overriding_max_uris=cumulative_binhost_counter,
           )
 
     # Processes private builders.
@@ -385,8 +381,7 @@ def set_binhosts(api: RecipeApi, step_name: str, is_staging: bool,
                       private_prebuilt_entries)),
               private=True,
               key=binhost_pb.CQ_BINHOST,
-              overriding_max_uris=(cumulative_binhost_counter
-                                   if is_staging else None),
+              overriding_max_uris=cumulative_binhost_counter,
           )
 
 
@@ -893,7 +888,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
-                     'Updated all of 2 builders after 1 trials.'),
+                     'Updated all of 3 builders after 1 trials.'),
   )
 
   yield api.build_menu.test(
@@ -952,14 +947,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs.Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 120 sec for next retry'),
-      api.post_check(post_process.DoesNotRun,
+      api.post_check(post_process.MustRun,
                      'set BINHOSTs (2).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
                      'set BINHOSTs (2).Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
-                     'Updated all of 2 builders after 2 trials.'),
+                     'Updated all of 3 builders after 2 trials.'),
   )
 
   yield api.build_menu.test(
@@ -995,14 +990,14 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (2).Private binhosts.update brya'),
       api.post_check(post_process.MustRun, 'waiting 240 sec for next retry'),
-      api.post_check(post_process.DoesNotRun,
+      api.post_check(post_process.MustRun,
                      'set BINHOSTs (3).Public binhosts.update amd64-generic'),
       api.post_check(post_process.MustRun,
                      'set BINHOSTs (3).Private binhosts.update atlas'),
       api.post_check(post_process.DoesNotRun,
                      'set BINHOSTs (3).Private binhosts.update brya'),
       api.post_check(post_process.SummaryMarkdown,
-                     'Updated all of 2 builders after 3 trials.'),
+                     'Updated all of 3 builders after 3 trials.'),
   )
 
   yield api.build_menu.test(
