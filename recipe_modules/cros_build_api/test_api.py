@@ -660,7 +660,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 2,  # chromiumos.Path.Location.OUTSIDE
         },
     ])
-    responses['UploadSdkSubtools'] = '{}'
+    url = 'https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/'
+    responses['UploadSdkSubtools'] = jsonify(
+        step_text='uploaded new instances for: rustfmt, shellcheck',
+        summary_markdown=('uploaded new instances for: '
+                          f'[rustfmt]({url}rustfmt/+/subtools_hash:5e5)'
+                          f'[shellcheck]({url}shellcheck/+/subtools_hash:4f4)'),
+    )
     return responses
 
   @property

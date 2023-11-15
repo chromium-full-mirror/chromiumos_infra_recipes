@@ -11969,7 +11969,7 @@ Recipe that builds a ChromiumOS SDK and cross-compilers.
 &mdash; **def [RunSteps](/recipes/build_sdk.py#74)(api: recipe_api.RecipeApi, properties: build_sdk_pb2.BuildSDKProperties):**
 ### *recipes* / [build\_sdk\_subtools](/recipes/build_sdk_subtools.py)
 
-[DEPS](/recipes/build_sdk_subtools.py#20): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_sdk_subtools.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe that runs the Subtools Builder.
@@ -11977,7 +11977,7 @@ Recipe that runs the Subtools Builder.
 The Subtools builder starts with an SDK, builds some additional _host_ packages,
 then uploads build artifacts to external locations, such as CIPD.
 
-&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#33)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#35)(api: recipe_api.RecipeApi):**
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#22): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]

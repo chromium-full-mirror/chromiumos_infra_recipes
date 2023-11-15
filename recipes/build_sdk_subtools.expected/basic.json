@@ -2017,7 +2017,10 @@
   },
   {
     "cmd": [],
-    "name": "Upload SDK Subtools"
+    "name": "Upload SDK Subtools",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@uploaded new instances for: rustfmt, shellcheck@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2038,7 +2041,10 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"step_text\": \"uploaded new instances for: rustfmt, shellcheck\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"summary_markdown\": \"uploaded new instances for: [rustfmt](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/rustfmt/+/subtools_hash:5e5)[shellcheck](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/shellcheck/+/subtools_hash:4f4)\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -2406,6 +2412,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "uploaded new instances for: [rustfmt](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/rustfmt/+/subtools_hash:5e5)[shellcheck](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/shellcheck/+/subtools_hash:4f4)"
   }
 ]

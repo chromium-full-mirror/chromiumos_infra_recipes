@@ -13,9 +13,11 @@ from typing import Generator
 
 from PB.chromite.api.sdk_subtools import BuildSdkSubtoolsRequest, UploadSdkSubtoolsRequest
 from PB.chromiumos import common as cros_common
+from PB.go.chromium.org.luci.buildbucket.proto import common as buildbucket_common
+from PB.recipe_engine.result import RawResult
+from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
-from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -59,7 +61,11 @@ class BuildSdkSubtoolsRun:
         request = UploadSdkSubtoolsRequest(
             bundle_paths=build_response.bundle_paths,
             use_production=not self.m.build_menu.is_staging)
-        self.sdk_subtools_service.UploadSdkSubtools(request)
+        upload_response = self.sdk_subtools_service.UploadSdkSubtools(request)
+        step.step_text = upload_response.step_text
+
+    return RawResult(summary_markdown=upload_response.summary_markdown,
+                     status=buildbucket_common.Status.SUCCESS)
 
   @contextlib.contextmanager
   def _setup(self) -> Generator:
