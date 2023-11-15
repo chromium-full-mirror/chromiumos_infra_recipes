@@ -4,6 +4,8 @@
 # found in the LICENSE file.
 
 """Recipe for scaling bots in Chrome and CrOS pools."""
+
+import dataclasses
 import json
 
 from google.protobuf import json_format as jsonpb
@@ -56,13 +58,14 @@ def RunSteps(api: RecipeApi, properties: RoboCropProperties):
     has_swarming_fetch_error = False
     try:
       with api.step.nest('get current swarming stats') as pres:
-        swarming_status = api.bot_scaling.get_swarming_stats(bot_policy_config)
-        api.easy.set_properties_step(swarming_stats=swarming_status)
-        pres.logs['swarming_stats'] = str(swarming_status)
+        swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
+        api.easy.set_properties_step(
+            swarming_stats=dataclasses.astuple(swarming_stats))
+        pres.logs['swarming_stats'] = str(swarming_stats)
     except api.step.InfraFailure as e:
       has_swarming_fetch_error = True
       swarming_fetch_error = e
-      swarming_status = None
+      swarming_stats = None
 
       warning_step = api.step('Warning: using bot_fallback configs', [])
       warning_step.presentation.step_text = ('Using bot_fallback configs due to'
@@ -72,7 +75,7 @@ def RunSteps(api: RecipeApi, properties: RoboCropProperties):
 
     with api.step.nest('compute scaling actions') as pres:
       robocrop_action = api.bot_scaling.get_robocrop_action(
-          updated_bot_policy, gce_config, swarming_stats=swarming_status)
+          updated_bot_policy, gce_config, swarming_stats=swarming_stats)
 
       api.easy.set_properties_step(
           robocrop_action=jsonpb.MessageToDict(robocrop_action))

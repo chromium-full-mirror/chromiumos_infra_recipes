@@ -4,7 +4,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from collections import namedtuple
+"""A module that determines how to scale bot groups based on demand."""
+
+import dataclasses
 import decimal
 import itertools
 import math
@@ -30,12 +32,33 @@ from recipe_engine import recipe_api
 DEFAULT_HOURS_BETWEEN_BUILDS = 0.167
 TASK_STATES = ['RUNNING', 'PENDING']
 
-BotStats = namedtuple('BotStats', [
-    'bot_group', 'busy', 'count', 'dead', 'maintenance', 'quarantined', 'min',
-    'max'
-])
-TaskStats = namedtuple('TaskStats', ['bot_group', 'task_state', 'count'])
-SwarmingStats = namedtuple('SwarmingStats', ['bot_stats', 'task_stats'])
+
+@dataclasses.dataclass
+class BotStats:
+  """Statistics about how many bots are in each state."""
+  bot_group: str
+  busy: int
+  count: int
+  dead: int
+  maintenance: int
+  quarantined: int
+  min: int
+  max: int
+
+
+@dataclasses.dataclass
+class TaskStats:
+  """Statistics about how many tasks are in each state."""
+  bot_group: str
+  task_state: str
+  count: int
+
+
+@dataclasses.dataclass
+class SwarmingStats:
+  """Helper class to contain bot and task statistics from Swarming."""
+  bot_stats: List[BotStats]
+  task_stats: List[TaskStats]
 
 
 class BotScalingApi(recipe_api.RecipeApi):
@@ -104,11 +127,10 @@ class BotScalingApi(recipe_api.RecipeApi):
     """Function to compute all the actions of this RoboCrop.
 
     Args:
-      bot_policy_config(BotPolicyCfg): Config define Policy for
-        the RoboCrop.
+      bot_policy_config(BotPolicyCfg): Config define Policy for the RoboCrop.
       configs(Configs): List of GCE Config objects.
-      swarming_stats(SwarmingStats): Named tuple containing current
-        Swarming bot and task counts.
+      swarming_stats(SwarmingStats): Current Swarming bot and task counts, or
+        None if there were errors fetching them.
 
     Returns:
       ScalingAction, comprehensive action to be taken by RoboCrop.
@@ -116,7 +138,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     scaling_actions = []
     missing_bot_fallbacks = []
     for policy in bot_policy_config.bot_policies:
-      # swarming_stats will be None when if there were errors fetching them
+      # swarming_stats will be None when if there were errors fetching them.
       # In this case, set bots to bot_fallback configs
       if swarming_stats is None:
         # There should never be bot_policy configs with missing bot_fallback
@@ -248,7 +270,7 @@ class BotScalingApi(recipe_api.RecipeApi):
     """Return the demand for bots in a bot group.
 
     Args:
-      swarming_stats: Named tuple containing bot and task Swarming stats.
+      swarming_stats: Dataclass containing bot and task stats from Swarming.
       bot_group: Name of bot group.
 
     Returns:
@@ -259,14 +281,14 @@ class BotScalingApi(recipe_api.RecipeApi):
          for stat in swarming_stats.task_stats
          if stat.bot_group == bot_group and stat.task_state in TASK_STATES))
 
-  def _make_swarming_calls(self, policy):
-    """Makes the individual Swarming calls via CLI
+  def _make_swarming_calls(self, policy: BotPolicy) -> SwarmingStats:
+    """Makes the individual Swarming calls via CLI.
 
     Args:
-      policy(BotPolicy): individual bot policy config
+      policy: Individual bot policy config.
 
     Returns:
-      results(dict): Dict containing bot and task stats
+      Bot and task stats fetched from Swarming.
     """
     dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
     bot_stats_hold = None
@@ -281,12 +303,12 @@ class BotScalingApi(recipe_api.RecipeApi):
             policy.scaling_restriction.bot_floor,
             policy.scaling_restriction.bot_ceiling)
       for state in TASK_STATES:
-        task_stats_hold = _task_swarming_stats(
+        task_stats_hold = _update_task_stats(
             policy.bot_group, state, task_stats_hold,
             self.m.swarming_cli.get_task_counts(dim, state,
                                                 policy.lookback_hours,
                                                 policy.swarming_instance))
-    return {'bot_stats': bot_stats_hold, 'task_stats': task_stats_hold}
+    return SwarmingStats(bot_stats=bot_stats_hold, task_stats=task_stats_hold)
 
   def get_swarming_stats(self, bot_policy_config):
     """Determines the current Swarming stats per bot group.
@@ -296,7 +318,7 @@ class BotScalingApi(recipe_api.RecipeApi):
         the RoboCrop.
 
     Returns:
-      SwarmingStats:  bot and task stats named tuple.
+      SwarmingStats: Dataclass containing bot and task stats.
     """
     futures = {}
     for policy in bot_policy_config.bot_policies:
@@ -305,11 +327,11 @@ class BotScalingApi(recipe_api.RecipeApi):
     bot_stats = []
     task_stats = []
     for fut in self.m.futures.iwait(futures.keys()):
-      stats = fut.result()
-      bot_stats.append(stats['bot_stats'])
-      task_stats.extend(stats['task_stats'])
-    bot_stats = sorted(bot_stats, key=lambda e: e[0])
-    task_stats = sorted(task_stats, key=lambda e: e[0])
+      swarming_stats = fut.result()
+      bot_stats.append(swarming_stats.bot_stats)
+      task_stats.extend(swarming_stats.task_stats)
+    bot_stats.sort(key=lambda x: x.bot_group)
+    task_stats.sort(key=lambda x: x.bot_group)
     return SwarmingStats(bot_stats, task_stats)
 
   def get_current_gce_config(self, bot_policy_config):
@@ -583,7 +605,7 @@ def _get_prefix_to_gce_config(configs: Configs) -> Dict[str, Config]:
 
 def _bot_swarming_stats(bot_group: str, cli_stats: Dict, b_min: int,
                         b_max: int) -> BotStats:
-  """Helper method that formats the bot stats into a named tuple.
+  """Helper function that formats the bot stats into a dataclass.
 
   Args:
     bot_group: name of bot group associated with stats.
@@ -592,7 +614,7 @@ def _bot_swarming_stats(bot_group: str, cli_stats: Dict, b_min: int,
     b_max: bot ceiling from config
 
   Returns:
-    Swarming bot stats named tuple.
+    Dataclass containing the bot stats from cli_stats.
   """
   return BotStats(bot_group, int(cli_stats.get('busy', 0)),
                   int(cli_stats.get('count', 0)), int(cli_stats.get('dead', 0)),
@@ -600,33 +622,32 @@ def _bot_swarming_stats(bot_group: str, cli_stats: Dict, b_min: int,
                   int(cli_stats.get('quarantined', 0)), b_min, b_max)
 
 
-def _task_swarming_stats(bot_group: str, state: str, task_stats: TaskStats,
-                         cli_stats: Dict) -> TaskStats:
-  """Helper method that formats the bot stats into a named tuple.
+def _update_task_stats(bot_group: str, state: str, task_stats: List[TaskStats],
+                       cli_stats: Dict) -> List[TaskStats]:
+  """Helper function that updates a list of TaskStats with data from cli_stats.
+
+  If task_stats already includes an element matching bot_group and state, then
+  that element's count will be updated from cli_stats. Otherwise, a new
+  TaskStats will be appended with the count from cli_stats.
 
   Args:
     bot_group: name of bot group associated with stats.
     state: Swarming task state.
-    task_stats: current value of accumulated task stats.
-    cli_stats: swarming CL dict of task stats.
+    task_stats: Swarming task stats already collected. Will be modified
+      in-place.
+    cli_stats: Dict of task stats from the Swarming CLI.
 
   Returns:
-    Swarming task stats named tuple.
+    An updated version of task_stats, now including data from cli_stats.
   """
-  new_task = True
-  updated_stats = []
+  count = int(cli_stats.get('count', 0))
   for stat in task_stats:
     if stat.bot_group == bot_group and stat.task_state == state:
-      updated_stats.append(
-          TaskStats(bot_group, state,
-                    int(stat.count) + int(cli_stats.get('count', 0))))
-      new_task = False
-    else:
-      updated_stats.append(stat)
-  if new_task:
-    updated_stats.append(
-        TaskStats(bot_group, state, int(cli_stats.get('count', 0))))
-  return updated_stats
+      stat.count += count
+      break
+  else:
+    task_stats.append(TaskStats(bot_group, state, count))
+  return task_stats
 
 
 def _calculate_bot_adjustment(bot_policy: BotPolicy, requested: int,
