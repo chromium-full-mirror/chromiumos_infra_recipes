@@ -918,24 +918,34 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         auto-retried. If this build was the original CQ run, this should be 0,
         if this build was the first auto-retry, it should be 1, etc.
     """
-    # If the count has reached max_retries, never retry.
-    if auto_retry_count >= self._multi_retry_config.max_retries:
-      return False
+    with self.m.step.nest(
+        f'determine if {cq_orch.id} is multi-retry eligible') as pres:
+      # If the count has reached max_retries, never retry.
+      if auto_retry_count >= self._multi_retry_config.max_retries:
+        pres.step_text = 'ineligible: count ({auto_retry_count}) >= max_retries ({self._multi_retry_config.max_retries})'
+        return False
 
-    # If there haven't been any auto-retries yet, always retry.
-    if not auto_retry_count:
-      return True
+      # If there haven't been any auto-retries yet, always retry.
+      if not auto_retry_count:
+        pres.step_text = 'eligible: no auto-retries yet'
+        return True
 
-    # If using a constant backoff strategy, retry if it has been
-    # constant_backoff_duration since the candidate finished.
-    if self._multi_retry_config.HasField('constant_backoff_duration'):
-      return (self.m.time.time() - cq_orch.end_time.seconds >
-              self._multi_retry_config.constant_backoff_duration.seconds)
+      # If using a constant backoff strategy, retry if it has been
+      # constant_backoff_duration since the candidate finished.
+      if self._multi_retry_config.HasField('constant_backoff_duration'):
+        seconds_since_candidate = self.m.time.time() - cq_orch.end_time.seconds
+        eligible = seconds_since_candidate > self._multi_retry_config.constant_backoff_duration.seconds
 
-    unimplemented_backoff_strategy = self._multi_retry_config.WhichOneof(
-        'backoff_strategy')  # pragma: nocover
-    raise ValueError(  # pragma: nocover
-        f'unimplemented backoff_strategy {unimplemented_backoff_strategy}')
+        step_text = f'{seconds_since_candidate}s since last candidate (constant_backoff_duration is {self._multi_retry_config.constant_backoff_duration.seconds}s)'
+        pres.step_text = f'eligible: {step_text}' if eligible else f'ineligible: {step_text}'
+
+        return (self.m.time.time() - cq_orch.end_time.seconds >
+                self._multi_retry_config.constant_backoff_duration.seconds)
+
+      unimplemented_backoff_strategy = self._multi_retry_config.WhichOneof(
+          'backoff_strategy')  # pragma: nocover
+      raise ValueError(  # pragma: nocover
+          f'unimplemented backoff_strategy {unimplemented_backoff_strategy}')
 
   def filter_retry_candidates(
       self, cq_orchs: List[build_pb2.Build]) -> List[build_pb2.Build]:
@@ -973,6 +983,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
       with self.m.step.nest('filter multi-retry eligible runs') as pres:
         auto_retry_counts = self._get_auto_retry_counts(cq_orchs)
+        pres.logs['auto retry counts'] = [
+            f'go/bbid/{id} -> {count}'
+            for id, count in auto_retry_counts.items()
+        ]
         non_multi_retry_eligible = [
             c.id for c in cq_orchs if
             # It is possible, but unexpected, that a candidate doesn't have an

@@ -334,7 +334,9 @@
     "name": "filter candidates.filter multi-retry eligible runs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@filtered out 0 run(s)@@@"
+      "@@@STEP_TEXT@filtered out 0 run(s)@@@",
+      "@@@STEP_LOG_LINE@auto retry counts@go/bbid/1111 -> 0@@@",
+      "@@@STEP_LOG_END@auto retry counts@@@"
     ]
   },
   {
@@ -365,6 +367,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter candidates.filter multi-retry eligible runs.determine if 1111 is multi-retry eligible",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@eligible: no auto-retries yet@@@"
     ]
   },
   {
