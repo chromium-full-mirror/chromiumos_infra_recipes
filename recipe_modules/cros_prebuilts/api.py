@@ -825,5 +825,5 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           self.set_binhosts([(target, upload_uri)], private=False,
                             key=binhost_key)
 
-      step = self.m.step('set properties', cmd=None)
-      step.presentation.properties['host_prebuilts_uri'] = upload_uri
+        step = self.m.step('set properties', cmd=None)
+        step.presentation.properties['host_prebuilts_uri'] = upload_uri
