@@ -81,6 +81,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   relevant_pkgs = None
   if properties.run_relevancy_check:
+    api.build_menu.setup_chroot()
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
     relevant_pkgs = env_info.packages
     if env_info.pointless:
