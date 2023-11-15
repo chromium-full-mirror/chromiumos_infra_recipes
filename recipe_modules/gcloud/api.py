@@ -446,7 +446,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     cmd = [
         'gcloud', 'compute', 'disks', 'create', disk, '--zone={}'.format(zone),
-        '--image-project={}'.format(self._gce_project), '--quiet'
+        '--image-project={}'.format(DEFAULT_GCE_PROJECT), '--quiet'
     ]
 
     step_name = 'create empty disk'
