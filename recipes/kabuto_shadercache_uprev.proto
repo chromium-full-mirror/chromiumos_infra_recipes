@@ -14,4 +14,8 @@ message KabutoShadercacheUprevProperties {
   // The manifest branch to check out (e.g. 'release-R105-14989.B')
   // Defaults to main tip of tree if not specified.
   string manifest_branch = 2;
+
+  // The Gerrit CL ref to check out Kabuto to.
+  // Optional
+  string gerrit_cl_ref = 3;
 }

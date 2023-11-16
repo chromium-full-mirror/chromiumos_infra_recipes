@@ -89,13 +89,14 @@ def DoRunSteps(api: RecipeTestApi,
       if properties.manifest_branch:
         api.git.checkout(properties.manifest_branch, force=True)
       # Check out a specific Kabuto commit ref from the tree
-      elif properties.kabuto_commit_ref:
+      elif properties.kabuto_commit_ref and api.build_menu.is_staging:
         api.git.checkout(properties.kabuto_commit_ref, force=True)
-      # Check out a specific Kabuto CL ref from Gerrit
-      elif properties.kabuto_cl_ref:
-        api.git.fetch(remote)
-        api.git.fetch_ref(remote, properties.kabuto_cl_ref)
-        api.git.checkout('FETCH_HEAD', force=True)
+      # Check out a specific Kabuto CL ref from Gerrit (staging only)
+      elif properties.gerrit_cl_ref and api.build_menu.is_staging:
+        with api.step.nest('Checkout Gerrit CL'):
+          api.git.fetch(remote)
+          api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+          api.git.checkout('FETCH_HEAD', force=True)
 
     # Download Mesa headers for Kabuto to ingest.
     with api.step.nest('fetch kabuto payload'):
@@ -233,6 +234,7 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'kabuto_commit_ref',
       api.properties(**props),
+      api.buildbucket.generic_build(bucket='staging'),
       api.post_process(
           post_process.StepCommandContains,
           'clone kabuto.git checkout',
@@ -247,14 +249,16 @@ def GenTests(api: RecipeTestApi) -> None:
   )
 
   props = good_props.copy()
-  props['kabuto_cl_ref'] = 'refs/changes/75/5888475/2'
+  props['gerrit_cl_ref'] = 'refs/changes/75/5888475/2'
   yield api.test(
-      'kabuto_cl_ref',
+      'gerrit_cl_ref',
       api.properties(**props),
-      api.post_check(post_process.MustRun, 'clone kabuto.git fetch'),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_check(post_process.MustRun,
+                     'clone kabuto.Checkout Gerrit CL.git fetch'),
       api.post_process(
           post_process.StepCommandContains,
-          'clone kabuto.git fetch (2)',
+          'clone kabuto.Checkout Gerrit CL.git fetch (2)',
           [
               'git',
               'fetch',
@@ -262,10 +266,11 @@ def GenTests(api: RecipeTestApi) -> None:
               'refs/changes/75/5888475/2:',
           ],
       ),
-      api.post_check(post_process.MustRun, 'clone kabuto.git rev-parse'),
+      api.post_check(post_process.MustRun,
+                     'clone kabuto.Checkout Gerrit CL.git rev-parse'),
       api.post_process(
           post_process.StepCommandContains,
-          'clone kabuto.git checkout',
+          'clone kabuto.Checkout Gerrit CL.git checkout',
           [
               'git',
               'checkout',
@@ -273,5 +278,15 @@ def GenTests(api: RecipeTestApi) -> None:
               'FETCH_HEAD',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/12/345678'
+  yield api.test(
+      'skip-cl-ref-prod',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun,
+                     'clone kabuto.Checkout Gerrit CL'),
       api.post_process(post_process.DropExpectation),
   )

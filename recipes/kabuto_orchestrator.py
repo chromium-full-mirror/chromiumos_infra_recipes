@@ -101,6 +101,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   if properties.use_release_build_artifacts and not properties.manifest_branch:
     raise StepFailure(
         'must set manifest_branch if use_release_build_artifacts is true')
+  gerrit_cl_ref = properties.gerrit_cl_ref
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
   # Get individual build timeouts from properties or use reasonable default
@@ -129,6 +130,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
+    if gerrit_cl_ref and api.build_menu.is_staging:
+      paygen_input_props['gerrit_cl_ref'] = gerrit_cl_ref
     # Launch the Kabuto paygen builder.
     paygen_build = _launch_builders(api, bucket, 'kabuto_paygen',
                                     api.build_menu.is_staging, 1,
@@ -151,6 +154,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
   if manifest_branch:
     shadercache_input_props['manifest_branch'] = manifest_branch
+  if gerrit_cl_ref and api.build_menu.is_staging:
+    shadercache_input_props['gerrit_cl_ref'] = gerrit_cl_ref
 
   ### Build Kabuto shadercaches on sandboxed builders
   shadercache_builds = _launch_builders(api, bucket, 'build_kabuto_shadercache',
@@ -173,6 +178,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   uprev_input_props = {'uprev_info': json.dumps(all_uprev_info)}
   if manifest_branch:
     uprev_input_props['manifest_branch'] = manifest_branch
+  if gerrit_cl_ref and api.build_menu.is_staging:
+    uprev_input_props['gerrit_cl_ref'] = gerrit_cl_ref
 
   ### Uprev the ebuilds with new shadercaches.
   _launch_builders(api, bucket, 'kabuto_shadercache_uprev',
@@ -217,6 +224,15 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'manifest-branch',
       api.properties(**props),
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/12/345678'
+  yield api.test(
+      'gerrit-cl-ref',
+      api.properties(**props),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()

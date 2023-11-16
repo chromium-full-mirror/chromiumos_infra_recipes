@@ -15,6 +15,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -26,6 +27,7 @@ DEPS = [
     'cros_sdk',
     'cros_source',
     'easy',
+    'git',
     'src_state',
 ]
 
@@ -72,6 +74,14 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
   chroot_path = api.cros_source.workspace_path
   kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
+    # If we are operating on a specific Gerrit CL ref on a staging builder we
+    # should checkout platform/borealis to it now.
+    if properties.gerrit_cl_ref and api.build_menu.is_staging:
+      with api.step.nest('Checkout Gerrit CL'):
+        remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
+        api.git.fetch(remote)
+        api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+        api.git.checkout('FETCH_HEAD', force=True)
     # Build Mesa and fossilize tools.
     if properties.use_release_build_artifacts:
       # Use artifacts from a CrOS release build.
@@ -136,6 +146,46 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build fossilize-tools'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/75/5888475/2'
+  yield api.test(
+      'use-cl-ref',
+      api.properties(**props),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_check(post_process.MustRun, 'Checkout Gerrit CL.git fetch'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Checkout Gerrit CL.git fetch (2)',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+              'refs/changes/75/5888475/2:',
+          ],
+      ),
+      api.post_check(post_process.MustRun, 'Checkout Gerrit CL.git rev-parse'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Checkout Gerrit CL.git checkout',
+          [
+              'git',
+              'checkout',
+              '--force',
+              'FETCH_HEAD',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/12/345678'
+  yield api.test(
+      'skip-cl-ref-prod',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'Checkout Gerrit CL'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()

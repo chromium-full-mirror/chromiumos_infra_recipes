@@ -195,6 +195,14 @@ def DoRunSteps(api: RecipeApi,
 
   kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
+    # If we are operating on a specific Gerrit CL ref on a staging builder we
+    # should checkout platform/borealis to it now.
+    if properties.gerrit_cl_ref and api.build_menu.is_staging:
+      with api.step.nest('Checkout Gerrit CL'):
+        remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
+        api.git.fetch(remote)
+        api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+        api.git.checkout('FETCH_HEAD', force=True)
     updated_artifacts_path = _SetupUpdatedArtifacts(api, properties.uprev_info)
     if api.cros_version.version.milestone >= _MILESTONE_USES_KABUTO_UPREV:
       api.step('Upload and uprev', [
@@ -250,6 +258,46 @@ def GenTests(api: RecipeTestApi) -> None:
       # TODO(pobega): change this to test the chroot creation step instead.
       api.post_check(post_process.DoesNotRun, 'Upload and uprev'),
       status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/75/5888475/2'
+  yield api.test(
+      'use-cl-ref',
+      api.properties(**props),
+      api.buildbucket.generic_build(bucket='staging'),
+      api.post_check(post_process.MustRun, 'Checkout Gerrit CL.git fetch'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Checkout Gerrit CL.git fetch (2)',
+          [
+              'git',
+              'fetch',
+              'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+              'refs/changes/75/5888475/2:',
+          ],
+      ),
+      api.post_check(post_process.MustRun, 'Checkout Gerrit CL.git rev-parse'),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Checkout Gerrit CL.git checkout',
+          [
+              'git',
+              'checkout',
+              '--force',
+              'FETCH_HEAD',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['gerrit_cl_ref'] = 'refs/changes/12/345678'
+  yield api.test(
+      'skip-cl-ref-prod',
+      api.properties(**props),
+      api.post_check(post_process.DoesNotRun, 'Checkout Gerrit CL'),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()

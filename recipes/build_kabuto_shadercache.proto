@@ -15,7 +15,7 @@ message BuildKabutoShadercacheProperties {
   string payload_gs_path = 2;
 
   // Commit hash to checkout Kabuto repository.
-  // Optional
+  // Deprecated, will move to reserved soon. Use gerrit_cl_ref instead.
   string kabuto_commit_ref = 3;
 
   // CL ref to checkout Kabuto repository.
@@ -29,4 +29,8 @@ message BuildKabutoShadercacheProperties {
   // The builder's shard number for paralellized builds.
   // Defaults to non-sharded version if not supplied (shard-test)
   string shard = 6;
+
+  // Gerrit CL ref to checkout platform/borealis to.
+  // Optional
+  string gerrit_cl_ref = 7;
 }

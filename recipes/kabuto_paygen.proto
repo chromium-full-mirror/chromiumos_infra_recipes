@@ -26,4 +26,8 @@ message KabutoPaygenProperties {
   // Whether to use postsubmit build artifacts instead of building Mesa locally.
   // Defaults to false if not provided.
   bool use_postsubmit_build_artifacts = 5;
+
+  // The Gerrit CL ref to check out Kabuto to.
+  // Optional
+  string gerrit_cl_ref = 6;
 }
