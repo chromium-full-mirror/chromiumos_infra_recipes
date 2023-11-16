@@ -964,7 +964,7 @@
       }
     },
     "name": "Wait for completion of pre-uprev tests.buildbucket.collect.wait",
-    "timeout": 3600,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1095,6 +1095,7 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
       "@@@STEP_LOG_LINE@generated message@ - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Ask yoshiki@ on the gardener chat if you have a question.@@@",
       "@@@STEP_LOG_END@generated message@@@"
     ]
@@ -1274,7 +1275,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\nAsk yoshiki@ on the gardener chat if you have a question.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nAsk yoshiki@ on the gardener chat if you have a question.\"}]}}",
       "https://chromium-review.googlesource.com/changes/98765/revisions/current/review"
     ],
     "luci_context": {

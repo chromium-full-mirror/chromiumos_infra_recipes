@@ -961,7 +961,7 @@
       }
     },
     "name": "Wait for completion of pre-uprev tests.buildbucket.collect.wait",
-    "timeout": 3600,
+    "timeout": 21600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1078,6 +1078,7 @@
       "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Please stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.@@@",
       "@@@STEP_LOG_END@generated message@@@"
     ]
@@ -1250,7 +1251,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\nPlease stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPlease stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {

@@ -132,14 +132,16 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
             pre_uprev_builders))
 
   with api.step.nest('Wait for completion of pre-uprev tests') as presentation:
-    api.buildbucket.collect_builds(pre_uprev_builder_ids)
+    PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
+    api.buildbucket.collect_builds(pre_uprev_builder_ids,
+                                   timeout=PRE_UPREV_TEST_TIMEOUT)
 
   with api.step.nest(
       'Wait for completion of pupr-generator builder') as presentation:
-    INTERVAL = 5 * 60  # 5 min
-    TIMEOUT = 30 * 60  # 30 min
+    PUPR_GENERATOR_INTERVAL = 5 * 60  # 5 min
+    PUPR_GENERATOR_TIMEOUT = 30 * 60  # 30 min
 
-    with api.time.timeout(seconds=TIMEOUT):
+    with api.time.timeout(seconds=PUPR_GENERATOR_TIMEOUT):
       while True:
         pupr_generator_task = GetPuprGeneratorBuilder(api,
                                                       pupr_cordinator_task_id)
@@ -154,7 +156,7 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
         # The pupr generator has not started or is still running.
         # Will retry after the sleep.
-        api.time.sleep(secs=INTERVAL, with_step=True)
+        api.time.sleep(secs=PUPR_GENERATOR_INTERVAL, with_step=True)
 
     if pupr_generator_task.status != common_pb2.SUCCESS:
       return RawResult(status=common_pb2.FAILURE,
@@ -204,6 +206,7 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
       text += f'({len(successful_builds)} of {total_build_len} builds):\n\n'
       text += ''.join(successful_builds)
 
+    text += '\n'
     if failed_builds:
       text += 'Please stop the uprev if the failure is critical. '
     text += 'Ask yoshiki@ on the gardener chat if you have a question.'
