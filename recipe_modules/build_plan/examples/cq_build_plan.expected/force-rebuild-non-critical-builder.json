@@ -1157,7 +1157,7 @@
       "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@cave already passed@@@",
+      "@@@STEP_LOG_LINE@filter log@cave-cq already passed@@@",
       "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]

@@ -120,8 +120,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     any_public_changes = any(
         c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
 
-    slim_eligible_run = any(x.endswith('slim-cq') for x in necessary_builders)
-
     forced_rebuilds = set()
     if enable_history:
       if gerrit_changes:
@@ -199,15 +197,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
               .format(child_spec.name))
           continue
 
-        # Now we have a list of build names such as ['buddy-postsubmit', ...]
-        # whereas snapshot_builds and completed_builds might be postfixed
-        # with -snapshot. Use this to filter out.
-        # TODO(crbug/991996): Refactor: use something other than string manip.
-        # e.g. amd64-generic-asan-cq -> amd64-generic-asan
-        child_builder_spec = child_builder_name[:child_builder_name.rfind('-')]
         # No need to retry previously-passed builds.
         if child_builder_name in completed_builders:
-          filter_log.append('{} already passed'.format(child_builder_spec))
+          filter_log.append('{} already passed'.format(child_builder_name))
           count_skip_since_already_passed += 1
           continue
 
@@ -335,7 +327,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
             count_skip_noncritical_on_rerun),
         build_plan_new_build_requests=len(new_build_requests),
         count_scheduled_slim_builds=count_scheduled_slim_builds,
-        slim_eligible_run=slim_eligible_run,
+        slim_eligible_run=any(
+            x.endswith('slim-cq') for x in necessary_builders),
         count_skip_public_builders=count_skip_public_builders)
 
     return completed_builds, new_build_requests
