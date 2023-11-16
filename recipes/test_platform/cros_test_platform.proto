@@ -63,6 +63,7 @@ message CrosTestPlatformProperties {
 
   enum LUCIExperiments {
     SUITE_EXECUTION_LIMIT = 0;
+    OPTIMIZED_SHARDING = 1;
   }
   // This field is used for LUCI builder experiments defined in infra/config.
   repeated LUCIExperiments experiments = 11;

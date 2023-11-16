@@ -49,12 +49,19 @@ def RunSteps(api):
     response, _ = api.cros_test_platform.execute_luciexe(
         CrosTestPlatformProperties(), ExecuteRequests())
     api.assertions.assertEqual(ExecuteResponses(), response)
+
   with api.step.nest('callsite-execute-luciexe-with-suite-limit'):
     response, _ = api.cros_test_platform.execute_luciexe(
         CrosTestPlatformProperties(
             experiments=[CrosTestPlatformProperties.SUITE_EXECUTION_LIMIT]),
         ExecuteRequests())
+    api.assertions.assertEqual(ExecuteResponses(), response)
 
+  with api.step.nest('callsite-execute-luciexe-optimized-sharding'):
+    response, _ = api.cros_test_platform.execute_luciexe(
+        CrosTestPlatformProperties(
+            experiments=[CrosTestPlatformProperties.OPTIMIZED_SHARDING]),
+        ExecuteRequests())
     api.assertions.assertEqual(ExecuteResponses(), response)
 
 
@@ -77,4 +84,6 @@ def GenTests(api):
           'callsite-execute-luciexe-no-suite-limit', ExecuteResponses()),
       api.cros_test_platform.set_execute_luciexe_response(
           'callsite-execute-luciexe-with-suite-limit', ExecuteResponses()),
+      api.cros_test_platform.set_execute_luciexe_response(
+          'callsite-execute-luciexe-optimized-sharding', ExecuteResponses()),
   )

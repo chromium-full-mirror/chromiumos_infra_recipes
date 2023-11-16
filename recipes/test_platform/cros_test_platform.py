@@ -74,6 +74,7 @@ DEPS = [
     'cros_resultdb',
     'cros_tags',
     'cros_test_platform',
+    'cros_test_sharding',
     'cros_tool_runner',
     'easy',
     'future_utils',
@@ -92,9 +93,6 @@ PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
 MAX_IN_SHARD = 70
-
-
-
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -252,11 +250,12 @@ def _get_scheduling_error(request):
   return None
 
 
-def enumerate_tests(api, requests, error_in_requests):
+def enumerate_tests(api, properties, requests, error_in_requests):
   """Resolve request into list of tests and their metadata.
 
   Args:
     * api (object): See RunSteps documentation.
+    * properties: Recipe input parameters.
     * requests: {tag: test_platform.Request} dict.
     * error_in_requests: {tag: error(str)} dict.
 
@@ -277,7 +276,7 @@ def enumerate_tests(api, requests, error_in_requests):
     raise api.step.StepFailure('No valid request found')
 
   non_cft_enums = _enumerate_non_cft_tests(api, non_cft_requests)
-  cft_enums = _enumerate_cft_tests(api, cft_requests)
+  cft_enums = _enumerate_cft_tests(api, properties, cft_requests)
 
   all_enums = {}
   for k, v in non_cft_enums.items():
@@ -481,11 +480,12 @@ def _enumerate_non_cft_tests(api, requests):
     return dict(enum_responses.tagged_responses)
 
 
-def _enumerate_cft_tests(api, requests):
+def _enumerate_cft_tests(api, properties, requests):
   """Resolve CFT requests into list of tests and their metadata.
 
   Args:
     * api (object): See RunSteps documentation.
+    * properties: Recipe input parameters.
     * requests: {tag: test_platform.Request} dict.
 
   Returns: {tag: EnumerationResponse} dict.
@@ -535,8 +535,9 @@ def _enumerate_cft_tests(api, requests):
             test_suites = filtered_test_suites
             _upload_filtered_test_cases_async(api, r, removed_test_case_ids)
 
-        autotest_invocations = _build_tast_invocations(api, r, test_suites,
-                                                       suite_name, args)
+        autotest_invocations = _build_tast_invocations(api, properties, r,
+                                                       test_suites, suite_name,
+                                                       args)
       else:
         autotest_invocations = _build_autotest_invocations(
             test_suites, suite_name, args)
@@ -690,10 +691,13 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       return test_suites, []
 
 
-def _build_tast_invocations(api, request, test_suites, suite_name, args):
+def _build_tast_invocations(api, properties, request, test_suites, suite_name,
+                            args):
   """Creates a list of EnumerationResponse.AutotestInvocation with logic for tast such as bucketing and sharding.
 
   Args:
+    * api: Modules for loaded recipe DEPS
+    * properties: Recipe input parameters.
     * request: test_platform.Request
     * test_suites: List[test_suite].
     * suite_name: string.
@@ -724,10 +728,18 @@ def _build_tast_invocations(api, request, test_suites, suite_name, args):
     api.random.seed(seed)
     autotest_invocations = []
     for test_suite in test_suites:
-      test_buckets = _bucket_by_dependencies(
-          list(test_suite.test_cases.test_cases), suite_name)
-      shards = _shard_test_buckets(api, test_buckets, total_shards,
-                                   max_in_shard)
+      test_buckets = []
+      if ( suite_name.__contains__('bvt-tast-cq')\
+          or suite_name.__contains__('cq-medium')) and\
+          ('chromeos.cros_infra_config.optimized_shard_allocation' in api.cros_infra_config.experiments\
+          or CrosTestPlatformProperties.OPTIMIZED_SHARDING in properties.experiments):
+        shards = api.cros_test_sharding.optimized_shard_allocation(
+            test_suite, total_shards)
+      else:
+        test_buckets = _bucket_by_dependencies(
+            list(test_suite.test_cases.test_cases), suite_name)
+        shards = _shard_test_buckets(api, test_buckets, total_shards,
+                                     max_in_shard)
       step.presentation.tags['shard_count'] = str(len(shards))
       step.presentation.tags['unique_dependencies_count'] = str(
           len(test_buckets))
@@ -1169,7 +1181,7 @@ def RunSteps(api, properties):
     _validate_request_error_and_turn_off_cft_if_necessary(
         api, requests, error_in_requests)
     _stage_builds_for_partners(api, requests)
-    enumerations = enumerate_tests(api, requests, error_in_requests)
+    enumerations = enumerate_tests(api, properties, requests, error_in_requests)
     responses, suite_execution_logs = execute(
         api, properties,
         _execute_requests(api, requests, enumerations, properties.config,
@@ -1770,7 +1782,7 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   scheduling=_test_scheduling(), individual_test=False,
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
-                  total_shards=0):
+                  total_shards=0, suite_name=None):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1798,10 +1810,16 @@ def _test_request(request_name_tag, build_target='foo-build-target',
             Request.Test(
                 autotest=Request.Test.Autotest(name=individual_test_name))
         ]))
+  if suite_name is None:
+    request_suite_name = '%s-suite' % request_name_tag
+  else:
+    #  Prevent mangling suite name
+    request_suite_name = suite_name
   return Request(
-      params=params, test_plan=Request.TestPlan(
-          suite=[Request.Suite(name='%s-suite' % request_name_tag)],
-          tag_criteria=tag_criteria, seed=seed, total_shards=total_shards))
+      params=params,
+      test_plan=Request.TestPlan(suite=[Request.Suite(name=request_suite_name)],
+                                 tag_criteria=tag_criteria, seed=seed,
+                                 total_shards=total_shards))
 
 
 # pylint: disable=dangerous-default-value
@@ -1809,13 +1827,13 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       individual_test=False, individual_test_name=None,
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
-                      total_shards=0):
+                      total_shards=0, suite_name=None):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
                            individual_test_name=individual_test_name,
                            tag_criteria=tag_criteria, seed=seed,
                            software_deps=software_deps, retries=retries,
-                           total_shards=total_shards)
+                           total_shards=total_shards, suite_name=suite_name)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -3492,4 +3510,27 @@ def GenTests(api):
       _generic_passing_execute_response(api),
       # Even if staging build fails, we still expect rest of recipe to function as expected.
       status='SUCCESS',
+  )
+
+  yield api.test(
+      'end-to-end-execution-with-passed-tasks-with-optimization',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'bvt-tast-cq', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
+                          total_shards=5, suite_name='bvt-tast-cq')
+              }, experiments=[CrosTestPlatformProperties.OPTIMIZED_SHARDING],
+              config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'bvt-tast-cq'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
   )

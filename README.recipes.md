@@ -52,6 +52,7 @@
   * [cros_test_postprocess](#recipe_modules-cros_test_postprocess)
   * [cros_test_proctor](#recipe_modules-cros_test_proctor) &mdash; Functions for sending requests and processing results from cros test platform.
   * [cros_test_runner](#recipe_modules-cros_test_runner)
+  * [cros_test_sharding](#recipe_modules-cros_test_sharding) &mdash; cros_test_sharding recipe module  Provides optimization algorithm for distributing tests among shards.
   * [cros_tool_runner](#recipe_modules-cros_tool_runner) &mdash; API for cros_tool_runner interface.
   * [cros_try](#recipe_modules-cros_try) &mdash; API for working with `cros try`-initiated jobs.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
@@ -431,6 +432,8 @@
   * [cros_test_proctor:tests/previous_test_results](#recipes-cros_test_proctor_tests_previous_test_results)
   * [cros_test_proctor:tests/schedule_tests](#recipes-cros_test_proctor_tests_schedule_tests)
   * [cros_test_runner:examples/full](#recipes-cros_test_runner_examples_full)
+  * [cros_test_sharding:examples/expand_shard_time](#recipes-cros_test_sharding_examples_expand_shard_time) &mdash; Test against public methods in the cros_test_sharding module.
+  * [cros_test_sharding:examples/method_tests](#recipes-cros_test_sharding_examples_method_tests) &mdash; Test against private methods in the cros_test_sharding module.
   * [cros_tool_runner:examples/full](#recipes-cros_tool_runner_examples_full)
   * [cros_try:examples/full](#recipes-cros_try_examples_full)
   * [cros_version:examples/bump_version](#recipes-cros_version_examples_bump_version)
@@ -5468,6 +5471,16 @@ Execute work via cros_test_runner luciexe binary.
 Checks if cros_test_runner is enabled for use.
 
 Returns: bool
+### *recipe_modules* / [cros\_test\_sharding](/recipe_modules/cros_test_sharding)
+
+
+cros_test_sharding recipe module
+
+Provides optimization algorithm for distributing tests among shards
+
+#### **class [CrosTestShardingAPI](/recipe_modules/cros_test_sharding/api.py#480)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@staticmethod**<br>&mdash; **def [optimized\_shard\_allocation](/recipe_modules/cros_test_sharding/api.py#483)(test_suite, total_shards):**
 ### *recipe_modules* / [cros\_tool\_runner](/recipe_modules/cros_tool_runner)
 
 [DEPS](/recipe_modules/cros_tool_runner/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -13874,6 +13887,22 @@ This module tests the utility method of multi-dut suite generation.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_runner/examples/full.py#21)(api):**
+### *recipes* / [cros\_test\_sharding:examples/expand\_shard\_time](/recipe_modules/cros_test_sharding/examples/expand_shard_time.py)
+
+[DEPS](/recipe_modules/cros_test_sharding/examples/expand_shard_time.py#10): [cros\_test\_sharding](#recipe_modules-cros_test_sharding), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test against public methods in the cros_test_sharding module
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_sharding/examples/expand_shard_time.py#26)(api, shard_count):**
+### *recipes* / [cros\_test\_sharding:examples/method\_tests](/recipe_modules/cros_test_sharding/examples/method_tests.py)
+
+[DEPS](/recipe_modules/cros_test_sharding/examples/method_tests.py#10): [cros\_test\_sharding](#recipe_modules-cros_test_sharding), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test against private methods in the cros_test_sharding module
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_sharding/examples/method_tests.py#32)(api, shard_count, shard_time, expected_shard_count):**
 ### *recipes* / [cros\_tool\_runner:examples/full](/recipe_modules/cros_tool_runner/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tool_runner/examples/full.py#14): [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -16299,14 +16328,14 @@ Updates test plan rules to reflect new risk-based rules.
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#241)(api: RecipeApi, _: TestPlanFilteringProperties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#58): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [ctpv2](#recipe_modules-ctpv2), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [result\_flow](#recipe_modules-result_flow), [satlab](#recipe_modules-satlab), [service\_version](#recipe_modules-service_version), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/test_platform/cros_test_platform.py#58): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [cros\_test\_sharding](#recipe_modules-cros_test_sharding), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [ctpv2](#recipe_modules-ctpv2), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [result\_flow](#recipe_modules-result_flow), [satlab](#recipe_modules-satlab), [service\_version](#recipe_modules-service_version), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1147)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1159)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1258)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1270)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -16315,18 +16344,19 @@ Args:
   * requests: ExecuteRequests.tagged_requests.
   * error_in_requests: {tag: error(str)} dict.
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#255)(api, requests, error_in_requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#253)(api, properties, requests, error_in_requests):**
 
 Resolve request into list of tests and their metadata.
 
 Args:
   * api (object): See RunSteps documentation.
+  * properties: Recipe input parameters.
   * requests: {tag: test_platform.Request} dict.
   * error_in_requests: {tag: error(str)} dict.
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1073)(api, properties, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1085)(api, properties, requests):**
 
 Execute request in the correct backend.
 
@@ -16334,14 +16364,14 @@ Args:
   properties: CrosTestPlatformProperties
   requests: ExecutionRequests payload.
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#100)(api):**
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#98)(api):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1354)(api, requests, responses, skip_postprocess=True):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1366)(api, requests, responses, skip_postprocess=True):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1050)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1062)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -16350,15 +16380,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1549)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1561)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1627)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1639)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1457)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1469)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#119)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#117)(api, properties):**
 
 Get and validate requests from input properties.
 

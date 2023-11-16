@@ -352,6 +352,86 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "callsite-execute-luciexe-optimized-sharding"
+  },
+  {
+    "cmd": [],
+    "name": "callsite-execute-luciexe-optimized-sharding.call binary",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@responses@{}@@@",
+      "@@@STEP_LOG_END@responses@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[START_DIR]/input.json"
+    ],
+    "infra_step": true,
+    "name": "callsite-execute-luciexe-optimized-sharding.call binary.write input",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@input.json@{}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/luciexe",
+      "--output",
+      "[CLEANUP]/tmp_tmp_5/sub_build.pb",
+      "--",
+      "-input_json",
+      "[START_DIR]/input.json",
+      "-output_json",
+      "[START_DIR]/output.json"
+    ],
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_6",
+      "TEMP": "[CLEANUP]/tmp_tmp_6",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_6",
+      "TMP": "[CLEANUP]/tmp_tmp_6",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_6"
+    },
+    "infra_step": true,
+    "name": "callsite-execute-luciexe-optimized-sharding.call binary.launch luciexe",
+    "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@{@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@  \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@step.sub_build@}@@@",
+      "@@@STEP_LOG_END@step.sub_build@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/output.json",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "callsite-execute-luciexe-optimized-sharding.call binary.read output",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@output.json@{}@@@",
+      "@@@STEP_LOG_END@output.json@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
