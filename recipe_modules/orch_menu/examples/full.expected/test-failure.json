@@ -1849,16 +1849,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.check force relevance",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@force relevant 0 target(s)@@@",
-      "@@@STEP_LOG_LINE@found footer builders@found build(s): @@@",
-      "@@@STEP_LOG_END@found footer builders@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.filter builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

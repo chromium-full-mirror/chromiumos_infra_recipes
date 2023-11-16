@@ -105,24 +105,24 @@ class BuildPlanApi(recipe_api.RecipeApi):
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     skipped_builders = []
-    if gerrit_changes and not self._properties.disable_build_plan_pruning:
-      self._check_project_outside_manifest(gerrit_changes)
-      builders_tuple = self.m.cros_relevance.run_build_planner(
-          builder_configs, gerrit_changes, internal_snapshot, test_builder_ids=[
-              b.id for b in builder_configs if 'pointless' not in b.id.name
-          ])
-      necessary_builders = builders_tuple.necessary
-      skipped_builders = builders_tuple.run_when_rules_skipped
-    # Handle forced relevancy.
-    forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
-        gerrit_changes, builder_configs)
-    necessary_builders = list(set(necessary_builders) | set(forced_relevant))
-    any_public_changes = any(
-        c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
-
     forced_rebuilds = set()
-    if enable_history:
-      if gerrit_changes:
+    forced_relevant = []
+    if gerrit_changes:
+      if not self._properties.disable_build_plan_pruning:
+        self._check_project_outside_manifest(gerrit_changes)
+        builders_tuple = self.m.cros_relevance.run_build_planner(
+            builder_configs, gerrit_changes, internal_snapshot,
+            test_builder_ids=[
+                b.id for b in builder_configs if 'pointless' not in b.id.name
+            ])
+        necessary_builders = builders_tuple.necessary
+        skipped_builders = builders_tuple.run_when_rules_skipped
+      # Handle forced relevancy.
+      forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
+          gerrit_changes, builder_configs)
+      necessary_builders = list(set(necessary_builders) | set(forced_relevant))
+
+      if enable_history:
         forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
         with self.m.step.nest('get build history') as presentation:
           orch_config = self.m.cros_infra_config.config_or_default
@@ -153,6 +153,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       internal_snapshot, external_snapshot = self.choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
+      any_public_changes = any(
+          c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
 
       # Create child specs for any non-default CQ targets that were forced
       # relevant. This will allow us to use the existing filtering logic below.
