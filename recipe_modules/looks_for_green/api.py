@@ -295,29 +295,40 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         return build
     return None
 
-  def get_latest_snapshot_greenness(self) -> int:
-    """Returns aggregate greenness of latest scored snapshot-orchestrator.
+  def get_latest_snapshot_greenness(
+      self,
+      bucket: Optional[str] = None,
+      builder: Optional[str] = None,
+  ) -> Optional[Snapshot]:
+    """Returns the latest scored Snapshot.
 
-    Or -1 if no latest scored snapshot is found.
+    Or None if no latest scored snapshot is found.
 
     If the latest snapshot-orchestrator has just started, we won't have
     greenness yet, so look back at the most recent snapshot-orchestrator (of
     the self._max_concurrent_snapshot_runs most recent runs) that does have
     greenness populated.
 
+    Args:
+      bucket: If specified, the bucket to search in. Defaults to
+        self._greenness_bucket.
+      builder: If specified, the builder to search for. Defaults to
+        self._greenness_builder.
+
     Returns:
-      aggregate greenness for latest scored snapshot-orchestrator, or -1 if
-      not found.
+      Snapshot from the latest scored snapshot-orchestrator, or None if not
+        found.
     """
     with self.m.step.nest(
         'checking latest scored snapshot greenness') as presentation:
-      results = self._get_snapshots(limit=self._max_concurrent_snapshot_runs)
+      results = self._get_snapshots(limit=self._max_concurrent_snapshot_runs,
+                                    bucket=bucket, builder=builder)
       scored_snapshot = self._get_latest_scored_snapshot(results)
       if not scored_snapshot:
         presentation.logs['latest scored snapshot greenness'] = (
             'found no scored snapshot in the latest '
             f'{self._max_concurrent_snapshot_runs} builds')
-        return -1
+        return None
       snapshot_stats = self._parse_snapshot_result(scored_snapshot)
       presentation.logs['latest scored snapshot greenness'] = (
           'latest scored snapshot-orchestrator '
@@ -326,7 +337,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           f' End time: {snapshot_stats.end_time}. The current time is '
           f'{self.now_utc}')
       self._set_snapshot_stats(snapshot_stats)
-      return snapshot_stats.agg_green
+      return snapshot_stats
 
   def calc_approx_snap_age_hours(self,
                                  orch_start_time: datetime.datetime) -> int:
@@ -413,8 +424,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Returns:
       Whether latest scored snap-orch run is green
     """
-    self.latest_greenness = self.get_latest_snapshot_greenness()
-    is_snap_orch_green = self.latest_greenness >= self._greenness_threshold
+    latest_greenness = self.get_latest_snapshot_greenness()
+    is_snap_orch_green = latest_greenness is not None and latest_greenness.agg_green >= self._greenness_threshold
     self._stats.latest_scored.is_snap_orch_green = is_snap_orch_green
     # This logic is a bit brittle as it assumes that the caller is not going to
     # turn around and choose a different snapshot.

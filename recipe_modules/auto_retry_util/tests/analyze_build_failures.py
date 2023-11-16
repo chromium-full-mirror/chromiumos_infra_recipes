@@ -367,15 +367,40 @@ def GenTests(api):
           ),
       ).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='postsubmit',
+                  builder='snapshot-orchestrator',
+              ),
+              output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
+          ),
+      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+                                              ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder='snapshot-orchestrator',
+                  ),
+                  output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+                  input=build_pb2.Build.Input(
+                      gitiles_commit=common_pb2.GitilesCommit(id='abc'),
+                  ),
+              ),
+          ],
+          step_name='analyzing build results.get now green builders.checking latest scored snapshot greenness.buildbucket.search'
+      ),
       api.properties(
           expected_success=['builder1-cq', 'builder4-cq'], expected_retryable=[
-              'builder3-cq',
-          ], expected_outstanding=[
-              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
-              'builder7-kernelnext-cq'
-          ]),
-      api.post_process(post_process.DoesNotRun,
-                       'analyzing build results.get now green builders'),
+              'builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'
+          ], expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
+      api.post_process(post_process.StepTextContains,
+                       'analyzing build results.get now green builders',
+                       ['build skipped LFG, using latest scored snapshot']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -404,14 +429,36 @@ def GenTests(api):
           ),
       ).build,
       api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='postsubmit',
+                  builder='snapshot-orchestrator',
+              ),
+              output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
+          ),
+      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+                                              ),
+      api.buildbucket.simulated_search_results(
+          builds=[
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder='snapshot-orchestrator',
+                  ),
+                  output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+              ),
+          ],
+          step_name='analyzing build results.get now green builders.checking latest scored snapshot greenness.buildbucket.search'
+      ),
       api.properties(
           expected_success=['builder1-cq', 'builder4-cq'], expected_retryable=[
-              'builder3-cq',
-          ], expected_outstanding=[
-              'builder2-cq', 'builder5-cq', 'builder6-slim-cq',
-              'builder7-kernelnext-cq'
-          ]),
-      api.post_process(post_process.DoesNotRun,
-                       'analyzing build results.get now green builders'),
+              'builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'
+          ], expected_outstanding=['builder5-cq', 'builder6-slim-cq']),
+      api.post_process(post_process.StepTextContains,
+                       'analyzing build results.get now green builders',
+                       ['build skipped LFG, using latest scored snapshot']),
       api.post_process(post_process.DropExpectation),
   )

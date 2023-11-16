@@ -883,7 +883,7 @@ A module for util functions associated with the CQ auto retries.
 
 &mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#362)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#452)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#453)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -895,7 +895,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retryable.
 
-&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#853)(self, build: build_pb2.Build):**
+&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#883)(self, build: build_pb2.Build):**
 
 Returns whether the build was a dry run.
 
@@ -907,7 +907,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#199)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#785)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#815)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -919,7 +919,7 @@ Candidate cq-orchestrator builds must meet the following criteria:
 
 &emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#257)(self):**
 
-&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#953)(self, cq_orchs: List[build_pb2.Build]):**
+&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#983)(self, cq_orchs: List[build_pb2.Build]):**
 
 Returns cq-orchestrator builds which meet the retry criteria.
 
@@ -930,7 +930,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1472)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1502)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -944,7 +944,7 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1313)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
+&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1343)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
 
 Returns a list of suites that can have their failures attributed.
 
@@ -973,11 +973,11 @@ Returns whether the given feature is enabled on the build.
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#195)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#693)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#723)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#590)(self):**
+&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#620)(self):**
 
 Write PerBuildStats to an output property.
 
@@ -991,7 +991,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1544)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1574)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -1013,7 +1013,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#203)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1122)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1152)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -8411,7 +8411,7 @@ Functions implementing looks for green.
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#331)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#342)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -8421,7 +8421,7 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#363)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#374)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
@@ -8438,7 +8438,7 @@ Args:
 Returns:
   A green snapshot, if one was found.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#428)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#439)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -8448,33 +8448,39 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#494)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#505)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#298)(self):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#298)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
-Returns aggregate greenness of latest scored snapshot-orchestrator.
+Returns the latest scored Snapshot.
 
-Or -1 if no latest scored snapshot is found.
+Or None if no latest scored snapshot is found.
 
 If the latest snapshot-orchestrator has just started, we won't have
 greenness yet, so look back at the most recent snapshot-orchestrator (of
 the self._max_concurrent_snapshot_runs most recent runs) that does have
 greenness populated.
 
-Returns:
-  aggregate greenness for latest scored snapshot-orchestrator, or -1 if
-  not found.
+Args:
+  bucket: If specified, the bucket to search in. Defaults to
+    self._greenness_bucket.
+  builder: If specified, the builder to search for. Defaults to
+    self._greenness_builder.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#454)(self):**
+Returns:
+  Snapshot from the latest scored snapshot-orchestrator, or None if not
+    found.
+
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#465)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
 If there are irrelevant builders for the current snapshot, look at previous
 snapshots to find the last relevant build and update the greenness scores.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#408)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#419)(self):**
 
 Returns whether the latest scored snapshot-orchestrator greenness is
 

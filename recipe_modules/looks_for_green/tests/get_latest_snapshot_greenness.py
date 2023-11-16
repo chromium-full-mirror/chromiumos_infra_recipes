@@ -36,10 +36,11 @@ TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 
 def RunSteps(api, properties):
-  agg_greenness = api.looks_for_green.get_latest_snapshot_greenness()
+  snapshot = api.looks_for_green.get_latest_snapshot_greenness()
   # Call to satisfy recipe coverage rules.
   _ = api.looks_for_green.use_scored_over_minted
-  api.assertions.assertEqual(properties.expected_greenness, agg_greenness)
+  api.assertions.assertEqual(properties.expected_greenness,
+                             snapshot.agg_green if snapshot else -1)
   is_snap_orch_green = api.looks_for_green.is_snap_orch_green()
   api.assertions.assertEqual(properties.expected_is_snap_orch_green,
                              is_snap_orch_green)

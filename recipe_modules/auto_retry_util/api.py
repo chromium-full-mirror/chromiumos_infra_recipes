@@ -376,8 +376,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       retryable_failure_builders.extend(removed_verifier_failure_builders)
 
       if self.is_experimental_feature_enabled(
-          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN,
-          cq_run) and not _lfg_skipped(cq_run):
+          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
         now_green_builders = self._get_now_green_builders(cq_run)
         # now_green_builders are snapshot builders, but unsucessful_builders are
         # cq builders. Convert them with _snapshot_builder when matching them.
@@ -402,10 +401,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         # TODO(b/303454780): Remove this once local greenness is published for all
         # builders.
         if now_green_retryable_builders:
-          assert self._current_greenness, 'Must have found a green snapshot if now_green_retryable_builders is non-empty'
+          current_greenness = self._latest_greenness if _lfg_skipped(
+              cq_run) else self._lfg_greenness
+          assert current_greenness, 'Must have found a current snapshot if now_green_retryable_builders is non-empty'
           no_snapshot_data_builders = [
-              b for b in unsuccessful_builders if _snapshot_builder(b) not in
-              self._current_greenness.local_greenness
+              b for b in unsuccessful_builders
+              if _snapshot_builder(b) not in current_greenness.local_greenness
           ]
           self.per_build_stats[
               cq_run.
@@ -526,7 +527,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     return self._cq_orch_default_child_buiders + forced_relevant_builders
 
   @functools.cached_property
-  def _current_greenness(self) -> Optional[Snapshot]:
+  def _lfg_greenness(self) -> Optional[Snapshot]:
     """Find the current green snapshot, as defined by looks for green.
 
     Note that this property is cached because we assume an auto-retrier run is
@@ -536,6 +537,19 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     different snapshot.
     """
     return self.m.looks_for_green.find_green_snapshot(
+        # The staging auto retrier will still look at prod CQ runs, so it must
+        # lookup greenness on the prod snapshot-orchestrator.
+        bucket='postsubmit',
+        builder='snapshot-orchestrator',
+    )
+
+  @functools.cached_property
+  def _latest_greenness(self) -> Optional[Snapshot]:
+    """Find the latest scored snapshot.
+
+    This property is cached for the same reasons as _lfg_greenness.
+    """
+    return self.m.looks_for_green.get_latest_snapshot_greenness(
         # The staging auto retrier will still look at prod CQ runs, so it must
         # lookup greenness on the prod snapshot-orchestrator.
         bucket='postsubmit',
@@ -570,11 +584,27 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.id].wait_for_green_stats.failed_builders_in_snapshot = list(
               failed_on_snapshot_builders)
 
-      if not self._current_greenness:
-        pres.step_text = 'no green snapshot found'
+      # If the build skipped LFG, use the latest scored snapshot instead of the
+      # snapshot LFG would choose. They retry will actually end up using the
+      # latest minted snapshot, which is usually newer than the latest scored
+      # snapshot. However, we can use the latest scored snapshot as a proxy for
+      # the latest minted snapshot; this will work unless the relevant builders
+      # were re-broken between the latest scored and latest minted snapshots.
+      if _lfg_skipped(cq_run):
+        current_greenness = self._latest_greenness
+        step_text_prefix = 'build skipped LFG, using latest scored snapshot'
+      else:
+        current_greenness = self._lfg_greenness
+        step_text_prefix = 'build used LFG, using current snapshot found by LFG'
+
+      if not current_greenness:
+        pres.step_text = f'{step_text_prefix}: no snapshot found'
         return []
 
-      local_greenness = self._current_greenness.local_greenness
+      pres.step_text = f'{step_text_prefix}: using snapshot {current_greenness.commit_sha}'
+      pres.logs['current greenness'] = str(current_greenness)
+
+      local_greenness = current_greenness.local_greenness
       for builder in failed_on_snapshot_builders:
         if builder in local_greenness and local_greenness[
             builder].build_score == 100:
