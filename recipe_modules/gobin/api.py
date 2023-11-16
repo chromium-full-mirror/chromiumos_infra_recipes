@@ -34,24 +34,6 @@ SUPPORTED_PACKAGES = [
     'version_bumper',
 ]
 
-# List of packages for which we should use the new pin (as opposed to falling
-# back to the `prod` label), only intended for use during the initial rollout.
-# TODO(b/305967772): Remove.
-ENABLED_PACKAGES = [
-    'branch_util',
-    'build_plan_generator',
-    'build_poller',
-    'conductor',
-    'gerrit_related_changes',
-    'manifest_doctor',
-    'pointless_build_checker',
-    'test_plan',
-    'test_plan_generator',
-    'upload_debug_symbols',
-    'version_bumper',
-    # For testing only.
-    'my_gobin',
-]
 
 TEST_PACKAGES = [
     'my_gobin',
@@ -88,9 +70,8 @@ class GobinAPI(recipe_api.RecipeApi):
     Example:
       manifest_doctor --> chromiumos/infra/manifest_doctor/linux-amd64
     """
-    if package.startswith('chromiumos/infra/'):
-      return package
-    return f'chromiumos/infra/{package}/${{platform}}'
+    return package if package.startswith(
+        'chromiumos/infra/') else f'chromiumos/infra/{package}/${{platform}}'
 
   def _package_shortname(self, package: str) -> str:
     """Return the short name for a package.
@@ -249,29 +230,22 @@ class GobinAPI(recipe_api.RecipeApi):
     package_shortname = self._package_shortname(package)
 
     with self.m.context(infra_steps=True):
-      with self.m.step.nest(f'ensure {package_shortname}') as presentation:
-        instance_id = None
-        if package_shortname in ENABLED_PACKAGES:
-          # Read the infra/infra commit from the gobin pin file.
-          if not self._infra_infra_commit:
-            self._infra_infra_commit = self.m.file.read_text(
-                'read infrainfra golang version',
-                self.repo_resource('infra', 'config',
-                                   'infrainfra-golang.version'),
-                test_data='deadbeef')
+      with self.m.step.nest(f'ensure {package_shortname}'):
+        # Read the infra/infra commit from the gobin pin file.
+        if not self._infra_infra_commit:
+          self._infra_infra_commit = self.m.file.read_text(
+              'read infrainfra golang version',
+              self.repo_resource('infra', 'config',
+                                 'infrainfra-golang.version'),
+              test_data='deadbeef')
 
-          instance_id = self._get_instance_for_sha(package_fullname,
-                                                   self._infra_infra_commit)
+        instance_id = self._get_instance_for_sha(package_fullname,
+                                                 self._infra_infra_commit)
 
-          if instance_id is None:
-            raise StepFailure(
-                f'could not find instance for infra/infra commit {self._infra_infra_commit}'
-            )
-        else:
-          # The package has not yet been migrated to use the pin.
-          # TODO(b/305967772): Remove.
-          instance_id = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-          presentation.step_text = f'using legacy `{instance_id}` pin'
+        if instance_id is None:
+          raise StepFailure(
+              f'could not find instance for infra/infra commit {self._infra_infra_commit}'
+          )
 
         cipd_dir = self.m.path['start_dir'].join(f'cipd/{package_shortname}')
         pkgs = self.m.cipd.EnsureFile()

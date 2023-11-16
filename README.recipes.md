@@ -550,7 +550,6 @@
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [gobin:examples/full](#recipes-gobin_examples_full) &mdash; Tests for standard `gobin` module usage.
   * [gobin:examples/get_latest_pin_value](#recipes-gobin_examples_get_latest_pin_value) &mdash; Examples for get_latest_pin_value.
-  * [gobin:tests/enabled](#recipes-gobin_tests_enabled) &mdash; Test that a gobin that hasn't been enabled falls back to the legacy label.
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [gobin:tests/get_latest_pin_value](#recipes-gobin_tests_get_latest_pin_value) &mdash; Tests for get_latest_pin_value.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
@@ -7969,29 +7968,29 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#72)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#283)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#257)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#236)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#217)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#197)(self, current_pin: str):**
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#178)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#105)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#86)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
@@ -14420,14 +14419,6 @@ Tests for standard `gobin` module usage.
 Examples for get_latest_pin_value.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/examples/get_latest_pin_value.py#32)(api: RecipeApi, properties: GetLatestPinValueProperties):**
-### *recipes* / [gobin:tests/enabled](/recipe_modules/gobin/tests/enabled.py)
-
-[DEPS](/recipe_modules/gobin/tests/enabled.py#11): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-Test that a gobin that hasn't been enabled falls back to the legacy label.
-
-&mdash; **def [RunSteps](/recipe_modules/gobin/tests/enabled.py#22)(api: recipe_api.RecipeApi):**
 ### *recipes* / [gobin:tests/full](/recipe_modules/gobin/tests/full.py)
 
 [DEPS](/recipe_modules/gobin/tests/full.py#12): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
