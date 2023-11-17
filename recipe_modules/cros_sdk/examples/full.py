@@ -176,8 +176,9 @@ def GenTests(api):
       api.step_data(
           'init sdk.call chromite.api.SdkService/'
           'Create.call build API script', retcode=1),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
+      # Since create_chroot just downloads a tarball and unpacks it, we should
+      # expect an INFRA_FAILURE when it fails.
+      status='INFRA_FAILURE',
   )
 
   yield api.test(

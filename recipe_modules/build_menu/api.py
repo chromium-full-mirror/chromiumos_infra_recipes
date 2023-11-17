@@ -440,8 +440,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT', replace=replace,
-          chroot_upgrade=False)
+          no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True
 
       if force_no_chroot_upgrade is not True:

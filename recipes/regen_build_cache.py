@@ -83,7 +83,7 @@ def RunSteps(api: RecipeApi):
 
     api.cros_source.ensure_synced_cache()
     api.cros_source.checkout_tip_of_tree()
-    api.cros_sdk.create_chroot(timeout_sec=None, chroot_upgrade=False)
+    api.cros_sdk.create_chroot(timeout_sec=None)
     # NB: We don't bother updating the SDK as the latest prebuilt suffices. The
     # only thing we're doing is updating metadata caches, and those are a pretty
     # stable format across portage releases -- they haven't changed in many many

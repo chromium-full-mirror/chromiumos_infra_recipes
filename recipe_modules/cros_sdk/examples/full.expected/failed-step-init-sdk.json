@@ -22,7 +22,7 @@
     "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -108,12 +108,13 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"skipChrootUpgrade\": true,@@@",
       "@@@STEP_LOG_LINE@request@  \"ccacheDisable\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{}@@@",
       "@@@STEP_LOG_END@response@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -124,7 +125,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"flags\": {\n    \"noUseImage\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"ccacheDisable\": true\n}",
+      "{\n  \"flags\": {\n    \"noUseImage\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"skipChrootUpgrade\": true,\n  \"ccacheDisable\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -149,11 +150,12 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.call build API script",
     "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -172,6 +174,7 @@
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"skipChrootUpgrade\": true,@@@",
       "@@@STEP_LOG_LINE@published event@    \"ccacheDisable\": true@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"createResponse\": {},@@@",
@@ -188,7 +191,7 @@
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBPQoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KAHKAQDaAkJpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBANoCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKIDAggB',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -249,7 +252,7 @@
     },
     "infra_step": true,
     "name": "init sdk.call chromite.api.SdkService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBPQoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KAHKAQDaAkJpbml0IHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHSiAwIIAQ==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAcIBPwoCGAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IAEoAcoBANoCQmluaXQgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvQ3JlYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdKIDAggB\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -321,6 +324,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "init sdk.InitSDK failure.removing sysroot.call chromite.api.SdkService/Clean.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -413,6 +417,7 @@
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
     },
+    "infra_step": true,
     "name": "init sdk.InitSDK failure.delete sdk.call chromite.api.SdkService/Delete.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -554,8 +559,7 @@
   },
   {
     "failure": {
-      "failure": {},
-      "humanReason": "Step('init sdk.call chromite.api.SdkService/Create.call build API script') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('init sdk.call chromite.api.SdkService/Create.call build API script') (retcode: 1)"
     },
     "name": "$result"
   }

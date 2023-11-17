@@ -12,7 +12,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  api.cros_sdk.create_chroot(chroot_upgrade=False)
+  api.cros_sdk.create_chroot()
   api.cros_sdk.update_chroot()
 
 
