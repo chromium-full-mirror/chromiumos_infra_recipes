@@ -9,7 +9,7 @@ import json
 from typing import Any, Dict, Iterable, List, Optional, Union
 
 from PB.chromiumos import common as common_pb2
-from PB.chromiumos.signing import SigningStatus
+from PB.chromiumos.build_report import BuildReport
 
 from recipe_engine import recipe_test_api
 from RECIPE_MODULES.chromeos.cros_build_api import api as cros_build_api
@@ -386,12 +386,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     'recovery_image.tar.xz',
                 'keyset':
                     'devkeys',
-                'status':
-                    SigningStatus.STATUS_SUCCESS,
                 'signed_artifacts': [{
                     'signed_artifact_name':
                         'chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys'
-                }]
+                }],
+                'signing_status':
+                    BuildReport.SignedBuildMetadata.SigningStatus
+                    .SIGNING_STATUS_PASSED
             }]
         })
 

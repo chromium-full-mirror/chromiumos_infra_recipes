@@ -8,6 +8,7 @@
 from google.protobuf.json_format import MessageToDict, MessageToJson
 
 from PB.chromite.api.image import SignImageResponse
+from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=unused-import
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
@@ -27,6 +28,9 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
+
+PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
+FAILED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
 
 
 def RunSteps(api: RecipeApi):
@@ -138,35 +142,38 @@ def GenTests(api: RecipeTestApi):
       signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(
           archive_artifacts=[
               signing_pb2.ArchiveArtifacts(
-                  status=signing_pb2.STATUS_SUCCESS, build_target='kukui',
-                  channel=CHANNEL_DEV, signed_artifacts=[
+                  build_target='kukui',
+                  channel=CHANNEL_DEV,
+                  signed_artifacts=[
                       signing_pb2.SignedArtifact(
                           signed_artifact_name='foo.bin',
                       ),
-                  ]),
-              signing_pb2.ArchiveArtifacts(
-                  status=signing_pb2.STATUS_FAILURE, channel=CHANNEL_DEV,
-                  signed_artifacts=[
                       signing_pb2.SignedArtifact(
                           signed_artifact_name='bad-artifact',
                       )
-                  ]),
+                  ],
+                  signing_status=FAILED,
+              ),
               signing_pb2.ArchiveArtifacts(
-                  status=signing_pb2.STATUS_SUCCESS, build_target='kukui',
-                  channel=CHANNEL_CANARY, signed_artifacts=[
+                  build_target='kukui',
+                  channel=CHANNEL_CANARY,
+                  signed_artifacts=[
                       signing_pb2.SignedArtifact(
                           signed_artifact_name='bar.bin',
                       ),
-                  ]),
+                  ],
+                  signing_status=PASSED,
+              ),
               signing_pb2.ArchiveArtifacts(
                   build_target='kukui',
                   # no channel, gets skipped.
-                  status=signing_pb2.STATUS_SUCCESS,
                   signed_artifacts=[
                       signing_pb2.SignedArtifact(
                           signed_artifact_name='no-channel.bin',
                       ),
-                  ])
+                  ],
+                  signing_status=PASSED,
+              )
           ]))
 
   yield api.build_menu.test(
@@ -224,12 +231,9 @@ def GenTests(api: RecipeTestApi):
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_UNSPECIFIED'
       ),
       api.post_check(
-          post_process.StepCommandContains,
-          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_DEV.gsutil cp',
-          [
-              '/archive_dir/foo.bin',
-              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/'
-          ]),
+          post_process.DoesNotRun,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_DEV'
+      ),
       api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp',

@@ -18,6 +18,7 @@ from typing import Any, Callable, Dict, List, NewType, Tuple, Union
 from google.protobuf.text_format import Parse
 
 from PB.chromite.api.image import SignImageRequest, SignImageResponse
+from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=unused-import
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
@@ -78,6 +79,8 @@ IMAGE_TYPE_TO_SUFFIX = {
     common_pb2.IMAGE_TYPE_RECOVERY: '.tar.xz',
     common_pb2.IMAGE_TYPE_TEST: '.tar.xz',
 }
+
+PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 
 
 class SigningApi(recipe_api.RecipeApi):
@@ -566,8 +569,7 @@ class SigningApi(recipe_api.RecipeApi):
         if not channel:
           presentation.step_text = 'skipping artifacts with no channel'
           continue
-
-        if archive_artifacts.status == signing_pb2.STATUS_SUCCESS:
+        if archive_artifacts.signing_status == PASSED:
           for signed_artifact in archive_artifacts.signed_artifacts:
             to_upload_by_channel[channel].append(
                 signed_artifact.signed_artifact_name)

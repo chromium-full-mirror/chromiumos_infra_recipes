@@ -12615,7 +12615,7 @@
       "@@@STEP_LOG_LINE@response@            \"signed_artifact_name\": \"chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ],@@@",
-      "@@@STEP_LOG_LINE@response@        \"status\": 1@@@",
+      "@@@STEP_LOG_LINE@response@        \"signing_status\": 6@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
       "@@@STEP_LOG_LINE@response@    ]@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
