@@ -485,6 +485,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
       config.models.append(helpers.create_model(model_metadata))
     self.publish(build_report)
 
+  # TODO(b/307589863): Massage legacy data to fit publish_signed_builds and
+  # deprecate.
   def publish_signed_build_metadata(self, signed_build_metadata_list):
     """Publish metadata about the signed build image(s).
 
@@ -508,6 +510,28 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
       build_report.signed_builds.append(
           helpers.create_signed_build(signed_build_metadata, status))
+
+    self.publish(build_report)
+
+  def publish_signed_builds(
+      self, signed_builds: List[BuildReport.SignedBuildMetadata]) -> None:
+    """Publish metadata about the signed build(s))."""
+    # Unlike publish_build_target_and_model_metadata, double calls are
+    # acceptable here. Signing will refuse to sign the same image twice and we
+    # only add artifacts with status SUCCESS to the pubsub, so any additions
+    # to the pubsub are guaranteed not to be present already.
+
+    build_report = BuildReport()
+    for signed_build in signed_builds:
+      status = signed_build.status
+
+      # If the status of the message is unavailable for some reason, short
+      # circuit so we don't publish partial data.
+      if not status or not status == \
+       BuildReport.SignedBuildMetadata.SigningStatus.SIGNING_STATUS_PASSED:
+        continue
+
+      build_report.signed_builds.append(signed_build)
 
     self.publish(build_report)
 

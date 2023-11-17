@@ -450,8 +450,10 @@ class SigningApi(recipe_api.RecipeApi):
 
       return relevant_signing_configs, local_dir
 
-  def sign_artifacts(self, sign_types: List['common_pb2.ImageType'],
-                     channels: List['common_pb2.Channel']) -> None:
+  def sign_artifacts(
+      self, sign_types: List['common_pb2.ImageType'],
+      channels: List['common_pb2.Channel']
+  ) -> List[BuildReport.SignedBuildMetadata]:
     """Implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
@@ -482,6 +484,8 @@ class SigningApi(recipe_api.RecipeApi):
               )), docker_image=self.signing_docker_image)
       response = self.m.cros_build_api.ImageService.SignImage(request)
       self.upload_signed_artifacts(response)
+
+      return self.m.signing_utils.signing_response_to_metadata(response)
 
   def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
     """Get the gs path for the given channel.

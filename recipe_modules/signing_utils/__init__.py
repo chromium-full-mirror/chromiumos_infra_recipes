@@ -4,6 +4,11 @@
 
 """Module providing helpers for signing functionality."""
 
-DEPS = []
+DEPS = [
+    'recipe_engine/file',
+    'recipe_engine/path',
+    'recipe_engine/step',
+    'cros_version',
+]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'

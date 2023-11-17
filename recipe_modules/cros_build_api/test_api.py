@@ -382,10 +382,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     'kukui',
                 'channel':
                     common_pb2.CHANNEL_CANARY,
+                'image_type':
+                    common_pb2.IMAGE_TYPE_RECOVERY,
                 'input_archive_name':
                     'recovery_image.tar.xz',
                 'keyset':
                     'devkeys',
+                'keyset_versions': {
+                    'firmware_key_version': 11,
+                    'firmware_version': 22,
+                    'kernel_key_version': 33,
+                    'kernel_version': 44,
+                },
                 'signed_artifacts': [{
                     'signed_artifact_name':
                         'chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys'
