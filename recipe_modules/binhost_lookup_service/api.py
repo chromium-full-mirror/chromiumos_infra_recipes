@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""APIs to interact with the binhost lookup service."""
+
 import base64
 
 from google.protobuf import json_format
@@ -50,8 +52,10 @@ class BinhostLookupServiceApi(recipe_api.RecipeApi):
         method will automatically prepend "staging-" to the topic.
     """
     self._validate()
-    if self.m.cros_infra_config.is_staging:
+    if self.m.cros_infra_config.is_staging:  # Prefix PubSub topic name based on the env.
       topic = f'staging-{topic}'
+    else:
+      topic = f'prod-{topic}'
     msg_serialized = msg.SerializeToString()
     msg_b64 = base64.b64encode(msg_serialized).decode()
     self.m.cloud_pubsub.publish_message(self._pubsub_project_id, topic, msg_b64)

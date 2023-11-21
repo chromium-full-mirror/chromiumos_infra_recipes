@@ -5221,7 +5221,7 @@
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-prebuilts',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'test_topic_id_update_snapshot_data'}@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'prod-test_topic_id_update_snapshot_data'}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -5244,7 +5244,7 @@
       }
     },
     "name": "publish snapshot metadata.publish external snapshot metadata.publish message.publish-message",
-    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPRgBINDsgNmu8bWSfA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"test_topic_id_update_snapshot_data\"}",
+    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPRgBINDsgNmu8bWSfA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"prod-test_topic_id_update_snapshot_data\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5275,7 +5275,7 @@
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-prebuilts',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'test_topic_id_update_snapshot_data'}@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'prod-test_topic_id_update_snapshot_data'}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -5298,7 +5298,7 @@
       }
     },
     "name": "publish snapshot metadata.publish internal snapshot metadata.publish message.publish-message",
-    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPSDQ7IDZrvG1knw=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"test_topic_id_update_snapshot_data\"}",
+    "stdin": "{\"data\": \"CihkZWFkYmVlZmRlYWRiZWVmZGVhZGJlZWZkZWFkYmVlZmRlYWRiZWVmEMGEPSDQ7IDZrvG1knw=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-prebuilts\", \"topic_id\": \"prod-test_topic_id_update_snapshot_data\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

@@ -30,18 +30,8 @@ def RunSteps(api: RecipeApi):
 
 def GenTests(api: RecipeTestApi):
 
-  # Publish binhost metadata using the binhost_lookup_service module.
-  yield api.test(
-      'publish-binhost-metadata',
-      api.properties(raise_on_failure=False,
-                     **api.binhost_lookup_service.input_properties),
-      api.post_check(
-          post_process.StepSuccess, 'test publish binhost metadata.'
-          'publish binhost metadata.publish message.publish-message'),
-      api.post_check(post_process.StepSuccess, 'test publish binhost metadata'),
-      api.post_process(post_process.DropExpectation))
-
-  # Publish binhost metadata using the binhost_lookup_service module.
+  # Publish binhost metadata in a staging builder using the
+  # binhost_lookup_service module.
   yield api.test(
       'publish-binhost-metadata-staging',
       api.buildbucket.generic_build(bucket='staging'),
@@ -55,6 +45,26 @@ def GenTests(api: RecipeTestApi):
           post_process.LogContains,
           'test publish binhost metadata.publish binhost metadata.publish message',
           'request', ['staging-']),
+      api.post_check(
+          post_process.StepSuccess, 'test publish binhost metadata.'
+          'publish binhost metadata.publish message.publish-message'),
+      api.post_check(post_process.StepSuccess, 'test publish binhost metadata'),
+      api.post_process(post_process.DropExpectation))
+
+  # Publish binhost metadata in a prod builder using the
+  # binhost_lookup_service module.
+  yield api.test(
+      'publish-binhost-metadata-prod',
+      api.properties(raise_on_failure=False,
+                     **api.binhost_lookup_service.input_properties),
+      api.post_check(
+          post_process.LogContains,
+          'test publish binhost metadata.publish binhost metadata.'
+          'publish message', 'request', ['prod-']),
+      api.post_check(
+          post_process.LogContains,
+          'test publish binhost metadata.publish binhost metadata.publish message',
+          'request', ['prod-']),
       api.post_check(
           post_process.StepSuccess, 'test publish binhost metadata.'
           'publish binhost metadata.publish message.publish-message'),

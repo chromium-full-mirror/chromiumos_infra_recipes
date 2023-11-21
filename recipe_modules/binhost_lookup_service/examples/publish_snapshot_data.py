@@ -10,7 +10,8 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
-    'recipe_engine/properties', 'recipe_engine/step', 'binhost_lookup_service'
+    'recipe_engine/buildbucket', 'recipe_engine/properties',
+    'recipe_engine/step', 'binhost_lookup_service'
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -28,19 +29,49 @@ def RunSteps(api: RecipeApi):
 
 def GenTests(api: RecipeTestApi):
 
-  # Publish snapshot metadata using the binhost_lookup_service module.
+  # Publish snapshot metadata in a staging builder using the
+  # binhost_lookup_service module.
   yield api.test(
-      'publish-snapshot-metadata',
+      'publish-snapshot-metadata-staging',
       api.properties(raise_on_failure=False,
                      **api.binhost_lookup_service.input_properties),
+      api.buildbucket.generic_build(
+          builder='staging-'
+      ),  # The `cros_infra_config` module checks for the builder name to determine if its a staging builder.
       api.post_check(
           post_process.StepSuccess, 'test publish snapshot metadata.'
           'publish external snapshot metadata.publish message.publish-message'),
       api.post_check(
+          post_process.LogContains, 'test publish snapshot metadata.'
+          'publish external snapshot metadata.publish message', 'request',
+          ['staging-test_topic_id_update_snapshot_data']),
+      api.post_check(
           post_process.StepSuccess, 'test publish snapshot metadata.'
           'publish internal snapshot metadata.publish message.publish-message'),
       api.post_check(post_process.StepSuccess,
-                     'test publish snapshot metadata'))
+                     'test publish snapshot metadata'),
+      api.post_process(post_process.DropExpectation))
+
+  # Publish snapshot metadata in a prod builder using the
+  # binhost_lookup_service module.
+  yield api.test(
+      'publish-snapshot-metadata-prod',
+      api.properties(raise_on_failure=False,
+                     **api.binhost_lookup_service.input_properties),
+      api.buildbucket.generic_build(builder=''),
+      api.post_check(
+          post_process.StepSuccess, 'test publish snapshot metadata.'
+          'publish external snapshot metadata.publish message.publish-message'),
+      api.post_check(
+          post_process.LogContains, 'test publish snapshot metadata.'
+          'publish external snapshot metadata.publish message', 'request',
+          ['prod-test_topic_id_update_snapshot_data']),
+      api.post_check(
+          post_process.StepSuccess, 'test publish snapshot metadata.'
+          'publish internal snapshot metadata.publish message.publish-message'),
+      api.post_check(post_process.StepSuccess,
+                     'test publish snapshot metadata'),
+      api.post_process(post_process.DropExpectation))
 
   # When `pubsub_project_id` is not passed, the build still succeeds because
   # `publish_snapshot_metadata` has `raise_on_failure=False` by default. The
@@ -90,8 +121,11 @@ def GenTests(api: RecipeTestApi):
   # Properties not passed but build still succeeds when
   # `raise_on_failure=False`.
   yield api.test('passes-non-critical-publish',
-                 api.properties(raise_on_failure=False))
+                 api.properties(raise_on_failure=False),
+                 api.post_process(post_process.DropExpectation))
 
   # Properties not passed so build fails when `raise_on_failure=True`.
   yield api.test('fails-critical-publish',
-                 api.properties(raise_on_failure=True), status='INFRA_FAILURE')
+                 api.properties(raise_on_failure=True),
+                 api.post_process(post_process.DropExpectation),
+                 status='INFRA_FAILURE')

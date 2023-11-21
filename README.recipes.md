@@ -6,7 +6,7 @@
   * [analysis_service](#recipe_modules-analysis_service)
   * [android](#recipe_modules-android)
   * [auto_retry_util](#recipe_modules-auto_retry_util) &mdash; Utility function for CQ auto retry.
-  * [binhost_lookup_service](#recipe_modules-binhost_lookup_service)
+  * [binhost_lookup_service](#recipe_modules-binhost_lookup_service) &mdash; APIs to interact with the binhost lookup service.
   * [bot_cost](#recipe_modules-bot_cost)
   * [bot_scaling](#recipe_modules-bot_scaling) &mdash; A module that determines how to scale bot groups based on demand.
   * [breakpad](#recipe_modules-breakpad)
@@ -1039,11 +1039,13 @@ Returns the number of retries left below the 24 and 2 hour throttles.
 [DEPS](/recipe_modules/binhost_lookup_service/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [BinhostLookupServiceApi](/recipe_modules/binhost_lookup_service/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+APIs to interact with the binhost lookup service.
+
+#### **class [BinhostLookupServiceApi](/recipe_modules/binhost_lookup_service/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for operations related to the binhost lookup service.
 
-&mdash; **def [publish\_binhost\_metadata](/recipe_modules/binhost_lookup_service/api.py#110)(self, build_target: common_pb2.BuildTarget, profile: common_pb2.Profile, snapshot_sha: str, gs_uri: str, gs_bucket_name: str, buildbucket_id: int, complete: bool, private: bool, raise_on_failure: bool=False):**
+&mdash; **def [publish\_binhost\_metadata](/recipe_modules/binhost_lookup_service/api.py#114)(self, build_target: common_pb2.BuildTarget, profile: common_pb2.Profile, snapshot_sha: str, gs_uri: str, gs_bucket_name: str, buildbucket_id: int, complete: bool, private: bool, raise_on_failure: bool=False):**
 
 Publish binhost metadata to Cloud Pub/Sub.
 
@@ -1064,7 +1066,7 @@ Args:
   private: Bool to indicate if the binhost is private.
   raise_on_failure: Whether to raise an exception on failure.
 
-&mdash; **def [publish\_snapshot\_metadata](/recipe_modules/binhost_lookup_service/api.py#79)(self, snapshot_sha: str, snapshot_num: int, external: bool, buildbucket_id: int, raise_on_failure: bool=False):**
+&mdash; **def [publish\_snapshot\_metadata](/recipe_modules/binhost_lookup_service/api.py#83)(self, snapshot_sha: str, snapshot_num: int, external: bool, buildbucket_id: int, raise_on_failure: bool=False):**
 
 Publish snapshot metadata to Cloud Pub/Sub.
 
@@ -11487,12 +11489,12 @@ Test the `publish binhost metadata` functionality of the module.
 &mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#21)(api: RecipeApi):**
 ### *recipes* / [binhost\_lookup\_service:examples/publish\_snapshot\_data](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py)
 
-[DEPS](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#12): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#12): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Test the `publish snapshot metadata` functionality of the module.
 
-&mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#19)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#20)(api: RecipeApi):**
 ### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
 
 [DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#19): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
