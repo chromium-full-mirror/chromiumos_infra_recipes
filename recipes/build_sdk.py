@@ -25,7 +25,6 @@ from PB.recipes.chromeos import generator as generator_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.pupr_local_uprev import (pupr_local_uprev as
                                                          pupr_local_uprev_pb2)
-from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
 
 from recipe_engine import config_types
 from recipe_engine import post_process
@@ -163,7 +162,6 @@ class BuildSDKRun:
       self._create_sdk_manifest()
       self._upload_prebuilts()
       self._upload_sdk_tarball_and_manifest()
-      self._update_gs_latest_file()
       self._report_uploads()
       if self.properties.launch_pupr:
         scheduled_pupr_build = self._schedule_uprev()
@@ -400,19 +398,6 @@ class BuildSDKRun:
     sdk_tarball_uri = self._get_sdk_tarball_upload_uri()
     return GSURI(sdk_tarball_uri.bucket, f'{sdk_tarball_uri.path}.Manifest')
 
-  def _update_gs_latest_file(self) -> None:
-    """Update the GS:// latest SDK file to point to the newly built SDK."""
-    with self.m.step.nest('update gs:// latest file') as presentation:
-      old_contents = self._read_existing_gs_latest_file()
-      new_contents = self.m.key_value_store.update_one_value(
-          old_contents, 'LATEST_SDK_UPREV_TARGET', self.version, True)
-      tempfile = self.m.path.mkstemp()
-      self.m.file.write_text('write local file to upload', tempfile,
-                             new_contents)
-      dest_uri = GSURI(self._pick_bucket(SDK_BUCKET), 'cros-sdk-latest.conf')
-      self._gsutil_upload(tempfile, dest_uri)
-      presentation.properties['new_LATEST_SDK_UPREV_TARGET'] = self.version
-
   def _report_uploads(self) -> None:
     """Report what files were uploaded to Google Storage."""
     with self.m.step.nest('report uploads') as presentation:
@@ -429,24 +414,6 @@ class BuildSDKRun:
       for name, uri in names_to_uris.items():
         presentation.links[name] = uri
       self.m.easy.set_properties_step(uploaded_files=names_to_uris)
-
-  def _read_existing_gs_latest_file(self) -> str:
-    """Read, log, and return the existing latest SDK file on GS://.
-
-    Returns:
-      The raw contents of the remote file.
-    """
-    with self.m.step.nest('read existing latest file') as presentation:
-      contents = self.m.cros_sdk.read_remote_latest_sdk_file()
-      presentation.logs['existing file contents'] = contents
-      contents_dict = self.m.key_value_store.parse_contents(
-          contents, source=cros_sdk_api.REMOTE_LATEST_SDK_URI)
-      presentation.properties['old_LATEST_SDK'] = contents_dict.get(
-          'LATEST_SDK', 'None')
-      presentation.properties[
-          'old_LATEST_SDK_UPREV_TARGET'] = contents_dict.get(
-              'LATEST_SDK_UPREV_TARGET', 'None')
-    return contents
 
   def _pick_bucket(self, prod_bucket: str) -> str:
     """Return a bucket for uploading based on whether this is a staging builder.
@@ -639,22 +606,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
               '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
               'gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz'
           ]),
-      # Check the processing of the upstream latest file.
-      api.post_check(
-          post_process.PropertyEquals,
-          'old_LATEST_SDK',
-          '2023.03.13.222421',
-      ),
-      api.post_check(
-          post_process.PropertyEquals,
-          'old_LATEST_SDK_UPREV_TARGET',
-          '2023.03.14.159265',
-      ),
-      api.post_check(
-          post_process.PropertyEquals,
-          'new_LATEST_SDK_UPREV_TARGET',
-          DEFAULT_VERSION,
-      ),
       # Prod builder should run prod PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
