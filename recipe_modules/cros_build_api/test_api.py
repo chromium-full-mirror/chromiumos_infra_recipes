@@ -386,11 +386,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     'recovery_image.tar.xz',
                 'keyset':
                     'devkeys',
+                'status':
+                    SigningStatus.STATUS_SUCCESS,
                 'signed_artifacts': [{
                     'signed_artifact_name':
-                        'chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys',
-                    'status':
-                        SigningStatus.STATUS_SUCCESS
+                        'chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys'
                 }]
             }]
         })

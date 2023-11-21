@@ -566,15 +566,16 @@ class SigningApi(recipe_api.RecipeApi):
         if not channel:
           presentation.step_text = 'skipping artifacts with no channel'
           continue
-        for signed_artifact in archive_artifacts.signed_artifacts:
-          if signed_artifact.status == signing_pb2.STATUS_SUCCESS:
+
+        if archive_artifacts.status == signing_pb2.STATUS_SUCCESS:
+          for signed_artifact in archive_artifacts.signed_artifacts:
             to_upload_by_channel[channel].append(
                 signed_artifact.signed_artifact_name)
-          else:
-            # Allow for any success artifacts to upload, so just store the
-            # exception.
-            ex = StepFailure('Failed to sign artifact. Check stdout of signing'
-                             ' build API call for more information.')
+        else:
+          # Allow for any success artifacts to upload, so just store the
+          # exception.
+          ex = StepFailure('Failed to sign artifact. Check stdout of signing'
+                           ' build API call for more information.')
 
       if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'

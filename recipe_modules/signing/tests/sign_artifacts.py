@@ -135,36 +135,39 @@ def RunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
   sample_response = SignImageResponse(
       output_archive_dir='/archive_dir/',
-      signed_artifacts=signing_pb2
-      .BuildTargetSignedArtifacts(archive_artifacts=[
-          signing_pb2.ArchiveArtifacts(
-              build_target='kukui', channel=CHANNEL_DEV, signed_artifacts=[
-                  signing_pb2.SignedArtifact(
-                      status=signing_pb2.STATUS_SUCCESS,
-                      signed_artifact_name='foo.bin',
-                  ),
-                  signing_pb2.SignedArtifact(
-                      status=signing_pb2.STATUS_FAILURE,
-                      signed_artifact_name='bad-artifact',
-                  )
-              ]),
-          signing_pb2.ArchiveArtifacts(
-              build_target='kukui', channel=CHANNEL_CANARY, signed_artifacts=[
-                  signing_pb2.SignedArtifact(
-                      status=signing_pb2.STATUS_SUCCESS,
-                      signed_artifact_name='bar.bin',
-                  ),
-              ]),
-          signing_pb2.ArchiveArtifacts(
-              build_target='kukui',
-              # no channel, gets skipped.
-              signed_artifacts=[
-                  signing_pb2.SignedArtifact(
-                      status=signing_pb2.STATUS_SUCCESS,
-                      signed_artifact_name='no-channel.bin',
-                  ),
-              ])
-      ]))
+      signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(
+          archive_artifacts=[
+              signing_pb2.ArchiveArtifacts(
+                  status=signing_pb2.STATUS_SUCCESS, build_target='kukui',
+                  channel=CHANNEL_DEV, signed_artifacts=[
+                      signing_pb2.SignedArtifact(
+                          signed_artifact_name='foo.bin',
+                      ),
+                  ]),
+              signing_pb2.ArchiveArtifacts(
+                  status=signing_pb2.STATUS_FAILURE, channel=CHANNEL_DEV,
+                  signed_artifacts=[
+                      signing_pb2.SignedArtifact(
+                          signed_artifact_name='bad-artifact',
+                      )
+                  ]),
+              signing_pb2.ArchiveArtifacts(
+                  status=signing_pb2.STATUS_SUCCESS, build_target='kukui',
+                  channel=CHANNEL_CANARY, signed_artifacts=[
+                      signing_pb2.SignedArtifact(
+                          signed_artifact_name='bar.bin',
+                      ),
+                  ]),
+              signing_pb2.ArchiveArtifacts(
+                  build_target='kukui',
+                  # no channel, gets skipped.
+                  status=signing_pb2.STATUS_SUCCESS,
+                  signed_artifacts=[
+                      signing_pb2.SignedArtifact(
+                          signed_artifact_name='no-channel.bin',
+                      ),
+                  ])
+          ]))
 
   yield api.build_menu.test(
       'basic',
