@@ -104,16 +104,29 @@ class BuildPlanApi(recipe_api.RecipeApi):
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = [b.id.name for b in builder_configs]
-    skipped_builders = []
+    irrelevant_builders = set()
     forced_rebuilds = set()
     forced_relevant = []
     if gerrit_changes:
+      any_public_changes = any(
+          c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
       if not self._properties.disable_build_plan_pruning:
         self._check_project_outside_manifest(gerrit_changes)
         builders_tuple = self.m.cros_relevance.run_build_planner(
             builder_configs, gerrit_changes, internal_snapshot)
         necessary_builders = builders_tuple.necessary
-        skipped_builders = builders_tuple.run_when_rules_skipped
+        irrelevant_builders = set(builders_tuple.run_when_rules_skipped +
+                                  builders_tuple.global_irrelevance_skipped)
+        # Public builders can only apply changes to the chromium host.
+        # If all CLs are in chrome-internal then we know the build will not be
+        # relevant.
+        for b in necessary_builders:
+          child_builder_config = self.m.cros_infra_config.get_builder_config(b)
+          if (child_builder_config.general.manifest
+              == BuilderConfig.General.PUBLIC) and not any_public_changes:
+            irrelevant_builders.add(b)
+        necessary_builders = list(set(necessary_builders) - irrelevant_builders)
+
       # Handle forced relevancy.
       forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
           gerrit_changes, builder_configs)
@@ -138,7 +151,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     count_skip_wait_on_other_run = 0
     count_skip_noncritical_on_rerun = 0
     count_scheduled_slim_builds = 0
-    count_skip_public_builders = 0
 
     with self.m.step.nest('filter builds') as presentation:
       child_exps = self.m.cros_infra_config.experiments_for_child_build
@@ -150,8 +162,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
       internal_snapshot, external_snapshot = self.choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
-      any_public_changes = any(
-          c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
 
       # Create child specs for any non-default CQ targets that were forced
       # relevant. This will allow us to use the existing filtering logic below.
@@ -183,18 +193,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
         force_relevant = child_builder_name in forced_relevant
         critical = child_builder_config.general.critical.value or force_relevant
-
-        # Public builders can only apply changes to the chromium host.
-        # If all CLs are in chrome-internal then we know the build will not be
-        # relevant.
-        if gerrit_changes and not any_public_changes and (
-            child_builder_config.general.manifest ==
-            BuilderConfig.General.PUBLIC) and not force_relevant:
-          count_skip_public_builders += 1
-          filter_log.append(
-              '{} is a public builder and there are no changes to the external host'
-              .format(child_spec.name))
-          continue
 
         # No need to retry previously-passed builds.
         if child_builder_name in completed_builders:
@@ -259,8 +257,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       # count for display, as they're mentioned in steps above.
       count_total_filtered_builds = (
           count_skip_for_source_rules + count_skip_since_already_passed +
-          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun +
-          count_skip_public_builders)
+          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun)
       presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
           count_total_filtered_builds))
@@ -274,7 +271,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           chrome_log = []
 
           # Schedule additional non-critical builds for Chrome PUpr Uprev CLs.
-          for builder in skipped_builders:
+          for builder in sorted(irrelevant_builders):
             builder_config = self.m.cros_infra_config.get_builder_config(
                 builder)
 
@@ -321,8 +318,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         build_plan_new_build_requests=len(new_build_requests),
         count_scheduled_slim_builds=count_scheduled_slim_builds,
         slim_eligible_run=any(
-            x.endswith('slim-cq') for x in necessary_builders),
-        count_skip_public_builders=count_skip_public_builders)
+            x.endswith('slim-cq') for x in necessary_builders))
 
     return completed_builds, new_build_requests
 
