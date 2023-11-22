@@ -87,7 +87,7 @@
     "cmd": [],
     "name": "plan builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@5 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_TEXT@4 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
@@ -338,9 +338,6 @@
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"atlas-cq\"@@@",
-      "@@@STEP_LOG_LINE@planner_output@}@@@",
-      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
-      "@@@STEP_LOG_LINE@planner_output@  name: \"coral-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"cave-cq\"@@@",

@@ -9,6 +9,9 @@ from datetime import datetime
 from typing import List, Optional, Tuple
 
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto \
+  import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -73,50 +76,109 @@ class BuildPlanApi(recipe_api.RecipeApi):
               'Please add following projects {} to manifest file and retry.'
               .format(not_in_manifest))
 
-  def get_build_plan(self, child_specs, enable_history, gerrit_changes,
-                     internal_snapshot, external_snapshot):
-    """Return a three-tuple of builds, completed, existing, and needed.
+  def _get_necessary_cq_child_specs(
+      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
+      necessary_builders: List[str]
+  ) -> List[BuilderConfig.Orchestrator.ChildSpec]:
+    """Returns a list of all necessary child_specs for the CQ run.
+
+    The cq-orchestrator can schedule more of less child builders than are
+    in its builder config. This function creates child specs for non-default
+    child builds such as slim-cq builds or snapshot-only builds which were
+    forced relevant.
+
+    This function also filters out child specs for builders which were deemed
+    irrelevant by the build planner.
+
+    Args:
+      child_specs: The default child_specs for the CQ orchestrator build as
+          specified in the builder config.
+      necessary_builders: A list of builders deemed necessary by the
+          build_planner and via footer.
+
+    Returns:
+      necessary_child_specs: A list of the necessary child_specs to schedule.
+    """
+
+    necessary_child_specs = []
+    for c in child_specs:
+      if c.name in necessary_builders:
+        necessary_child_specs.append(c)
+      elif self.get_slim_builder_name(c.name) in necessary_builders:
+        slim_cq_child_spec = BuilderConfig.Orchestrator.ChildSpec()
+        slim_cq_child_spec.CopyFrom(c)
+        slim_cq_child_spec.name = self.get_slim_builder_name(c.name)
+        necessary_child_specs.append(slim_cq_child_spec)
+
+    # Create child specs for non-default builders which were forced relevant.
+    necessary_child_spec_names = {c.name for c in necessary_child_specs}
+    for b in necessary_builders:
+      if b not in necessary_child_spec_names:
+        # Builders returned from cros_relevance.check_force_relevance_footer
+        # are guarenteed to exist, so we should not worry about failing here.
+        config = self.m.cros_infra_config.get_builder_config(b)
+        necessary_child_specs.append(
+            BuilderConfig.Orchestrator.ChildSpec(name=b,
+                                                 bucket=config.id.bucket))
+    return necessary_child_specs
+
+  def get_build_plan(
+      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
+      enable_history: bool, gerrit_changes: List[GerritChange],
+      internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit
+  ) -> Tuple[List[build_pb2.Build],
+             List[builds_service_pb2.ScheduleBuildRequest]]:
+    """Return a two-tuple of completed and needed builds.
 
     This will be split into specialized functions for cq, release, others.
 
     Args:
-      child_specs (list[ChildSpec]): List of child specs of the child
-        builders.
-      enable_history (bool): Enables history lookup in the orchestrator.
-      gerrit_changes list(GerritChange): List of patches in the order that they
-        can be cherry-picked.
-      internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
-        to be supplied to child builds syncing to the internal manifest.
-      external_snapshot (GitilesCommit): gitiles_commit of the public manifest
-        to be supplied to child builds syncing to the external manifest.
+      child_specs: List of child specs of the child builders.
+      enable_history: Enables history lookup in the orchestrator.
+      gerrit_changes: List of patches applied to the build.
+      internal_snapshot: The GitilesCommit of the internal manifest passed to
+          child builds syncing to the internal manifest.
+      external_snapshot: The GitilesCommit of the public manifest passed to
+          child builds syncing to the external manifest.
 
     Returns:
-      A tuple of three lists:
+      A tuple of two lists:
         A list of Build objects of successful builds with refreshed criticality.
-        A list of -snapshot builds we don't need to schedule and can join.
         A list of ScheduleBuildRequests that have to be scheduled.
     """
     filter_log = []
     completed_builds, new_build_requests = [], []
     is_retry = False
 
+    count_skip_for_source_rules = 0
+    count_skip_since_already_passed = 0
+    count_skip_wait_on_other_run = 0
+    count_skip_noncritical_on_rerun = 0
+    count_scheduled_slim_builds = 0
+
     builder_configs = [
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
     ]
     necessary_builders = [b.id.name for b in builder_configs]
     irrelevant_builders = set()
+    necessary_child_specs = child_specs
     forced_rebuilds = set()
     forced_relevant = []
     if gerrit_changes:
       any_public_changes = any(
           c.host == EXTERNAL_REVIEW_HOST for c in gerrit_changes)
       if not self._properties.disable_build_plan_pruning:
+        # The build planner cannot run on CLs for repos that are not defined in
+        # the manifest.
         self._check_project_outside_manifest(gerrit_changes)
+
+        # Run the build plan generator.
         builders_tuple = self.m.cros_relevance.run_build_planner(
             builder_configs, gerrit_changes, internal_snapshot)
         necessary_builders = builders_tuple.necessary
         irrelevant_builders = set(builders_tuple.run_when_rules_skipped +
                                   builders_tuple.global_irrelevance_skipped)
+
         # Public builders can only apply changes to the chromium host.
         # If all CLs are in chrome-internal then we know the build will not be
         # relevant.
@@ -132,6 +194,20 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, builder_configs)
       necessary_builders = list(set(necessary_builders) | set(forced_relevant))
 
+      # Given the build plan and forced relevancy results, get a list of all
+      # necessary child specs. This includes creating child specs for
+      # forced relevant and slim cq builds.
+      necessary_child_specs = self._get_necessary_cq_child_specs(
+          list(child_specs), necessary_builders)
+
+      # Log info about irrelevant builds.
+      necessary_child_spec_names = {c.name for c in necessary_child_specs}
+      for c in child_specs:
+        if c.name not in necessary_child_spec_names and self.get_slim_builder_name(
+            c.name) not in necessary_child_spec_names:
+          filter_log.append(f'{c.name} build is not needed for changes')
+          count_skip_for_source_rules += 1
+
       if enable_history:
         forced_rebuilds = self.get_forced_rebuilds(gerrit_changes)
         with self.m.step.nest('get build history') as presentation:
@@ -146,11 +222,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     completed_builders = [build.builder.builder for build in completed_builds]
 
-    count_skip_for_source_rules = 0
-    count_skip_since_already_passed = 0
-    count_skip_wait_on_other_run = 0
-    count_skip_noncritical_on_rerun = 0
-    count_scheduled_slim_builds = 0
 
     with self.m.step.nest('filter builds') as presentation:
       child_exps = self.m.cros_infra_config.experiments_for_child_build
@@ -163,56 +234,33 @@ class BuildPlanApi(recipe_api.RecipeApi):
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, cq_looks_enabled)
 
-      # Create child specs for any non-default CQ targets that were forced
-      # relevant. This will allow us to use the existing filtering logic below.
-      child_spec_names = [c.name for c in child_specs]
-      forced_relevant_child_specs = []
-      for b in forced_relevant:
-        if b not in child_spec_names:
-          # Builders returned from cros_relevance.check_force_relevance_footer
-          # are guarenteed to exist, so we should not worry about failing here.
-          config = self.m.cros_infra_config.get_builder_config(b)
-          forced_relevant_child_specs.append(
-              BuilderConfig.Orchestrator.ChildSpec(name=b,
-                                                   bucket=config.id.bucket))
-
-      for child_spec in list(child_specs) + forced_relevant_child_specs:
-        # Get the builder variant in the build plan.
-        if child_spec.name in necessary_builders:
-          child_builder_name = child_spec.name
-        elif self.get_slim_builder_name(child_spec.name) in necessary_builders:
-          child_builder_name = self.get_slim_builder_name(child_spec.name)
-        else:
-          filter_log.append('{} build is not needed for changes'.format(
-              child_spec.name))
-          count_skip_for_source_rules += 1
-          continue
+      for child_spec in necessary_child_specs:
 
         child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child_builder_name)
-        force_rebuild = child_builder_name in forced_rebuilds or 'all' in forced_rebuilds
-        force_relevant = child_builder_name in forced_relevant
+            child_spec.name)
+        force_rebuild = child_spec.name in forced_rebuilds or 'all' in forced_rebuilds
+        force_relevant = child_spec.name in forced_relevant
         critical = child_builder_config.general.critical.value or force_relevant
 
         # No need to retry previously-passed builds.
-        if child_builder_name in completed_builders:
-          filter_log.append('{} already passed'.format(child_builder_name))
+        if child_spec.name in completed_builders:
+          filter_log.append(f'{child_spec.name} already passed')
           count_skip_since_already_passed += 1
           continue
 
         # Do not retry slim builds if an equivalent standard build passed.
-        if child_builder_name.endswith('slim-cq'):
+        if child_spec.name.endswith('slim-cq'):
           standard_builder_name = standard_builder_name = child_spec.name.replace(
               '-slim-cq', '-cq')
           if standard_builder_name in completed_builders:
-            filter_log.append('{} already passed'.format(standard_builder_name))
+            filter_log.append(f'{standard_builder_name} already passed')
             count_skip_since_already_passed += 1
             continue
 
         # Don't retry non-critical builds unless recycling is disabled.
         if is_retry and not (critical or force_rebuild):
-          filter_log.append('{} is non-critical and this is a CQ rerun'.format(
-              child_builder_name))
+          filter_log.append(
+              f'{child_spec.name} is non-critical and this is a CQ rerun')
           count_skip_noncritical_on_rerun += 1
           continue
 
@@ -239,19 +287,19 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if force_relevant:
           properties.update({'force_relevant_build': True})
 
-        if child_builder_name.endswith('-slim-cq'):
+        if child_spec.name.endswith('-slim-cq'):
           count_scheduled_slim_builds += 1
 
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=child_build_snapshot, inherit_buildsets=False,
-                builder=child_builder_name, bucket=bucket,
+                builder=child_spec.name, bucket=bucket,
                 gerrit_changes=gerrit_changes, critical=critical, tags=tags,
                 properties=properties, experiments=child_exps,
                 swarming_parent_run_id=parent_run_id,
                 can_outlive_parent=can_outlive_parent))
 
-      presentation.logs['filter log'] = filter_log
+      presentation.logs['filter log'] = sorted(filter_log)
 
       # Don't include irrelevant builder configs or snapshot builds in this
       # count for display, as they're mentioned in steps above.

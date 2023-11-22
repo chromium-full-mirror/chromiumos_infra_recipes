@@ -229,7 +229,6 @@ def GenTests(api):
               'arm-generic-cq',
               'arm64-generic-cq',
               'atlas-cq',
-              'coral-cq',
               'cave-cq',
           ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(

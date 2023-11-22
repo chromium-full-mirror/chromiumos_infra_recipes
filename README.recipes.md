@@ -1711,13 +1711,13 @@ Returns:
 
 Functions related to build planning.
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#41)(self):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#44)(self):**
 
-&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#435)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#483)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1732,30 +1732,27 @@ Returns:
   chosen_internal: The internal manifest snapshot that CQ will run with.
   chosen_external: The external manifest snapshot that CQ will run with.
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#76)(self, child_specs, enable_history, gerrit_changes, internal_snapshot, external_snapshot):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#125)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
 
-Return a three-tuple of builds, completed, existing, and needed.
+Return a two-tuple of completed and needed builds.
 
 This will be split into specialized functions for cq, release, others.
 
 Args:
-  child_specs (list[ChildSpec]): List of child specs of the child
-    builders.
-  enable_history (bool): Enables history lookup in the orchestrator.
-  gerrit_changes list(GerritChange): List of patches in the order that they
-    can be cherry-picked.
-  internal_snapshot (GitilesCommit): gitiles_commit of the internal manifest
-    to be supplied to child builds syncing to the internal manifest.
-  external_snapshot (GitilesCommit): gitiles_commit of the public manifest
-    to be supplied to child builds syncing to the external manifest.
+  child_specs: List of child specs of the child builders.
+  enable_history: Enables history lookup in the orchestrator.
+  gerrit_changes: List of patches applied to the build.
+  internal_snapshot: The GitilesCommit of the internal manifest passed to
+      child builds syncing to the internal manifest.
+  external_snapshot: The GitilesCommit of the public manifest passed to
+      child builds syncing to the external manifest.
 
 Returns:
-  A tuple of three lists:
+  A tuple of two lists:
     A list of Build objects of successful builds with refreshed criticality.
-    A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#325)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#373)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1769,7 +1766,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#382)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#430)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1785,7 +1782,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#421)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#469)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
