@@ -14,6 +14,13 @@
       "@@@STEP_LOG_LINE@cft_test_request@      \"modelName\": \"fake_model\"@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    },@@@",
       "@@@STEP_LOG_LINE@cft_test_request@    \"provisionState\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      \"firmware\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        \"mainRwPayload\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          \"firmwareImagePath\": {@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@            \"path\": \"some_firmware_path\"@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@          }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@        }@@@",
+      "@@@STEP_LOG_LINE@cft_test_request@      },@@@",
       "@@@STEP_LOG_LINE@cft_test_request@      \"systemImage\": {@@@",
       "@@@STEP_LOG_LINE@cft_test_request@        \"systemImagePath\": {@@@",
       "@@@STEP_LOG_LINE@cft_test_request@          \"hostType\": \"GS\",@@@",
@@ -535,6 +542,13 @@
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      },@@@",
       "@@@STEP_LOG_LINE@request@      \"provisionState\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"firmware\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"mainRwPayload\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"firmwareImagePath\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"path\": \"some_firmware_path\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"systemImage\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"systemImagePath\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"hostType\": \"GS\",@@@",
@@ -639,7 +653,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run provision.call `cros-tool-runner`.provision",
-    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"id\": {\n          \"value\": \"fake_host\"\n        },\n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          },\n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\",\n            \"modelName\": \"fake_model\"\n          }\n        },\n        \"cacheServer\": {\n          \"address\": {\n            \"address\": \"0.0.0.0\",\n            \"port\": 123\n          }\n        }\n      },\n      \"provisionState\": {\n        \"systemImage\": {\n          \"systemImagePath\": {\n            \"hostType\": \"GS\",\n            \"path\": \"gs://chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000\"\n          }\n        }\n      },\n      \"containerMetadataKey\": \"fake_board\"\n    }\n  ]\n}",
+    "stdin": "{\n  \"devices\": [\n    {\n      \"dut\": {\n        \"id\": {\n          \"value\": \"fake_host\"\n        },\n        \"chromeos\": {\n          \"ssh\": {\n            \"address\": \"fake_host\"\n          },\n          \"dutModel\": {\n            \"buildTarget\": \"fake_board\",\n            \"modelName\": \"fake_model\"\n          }\n        },\n        \"cacheServer\": {\n          \"address\": {\n            \"address\": \"0.0.0.0\",\n            \"port\": 123\n          }\n        }\n      },\n      \"provisionState\": {\n        \"firmware\": {\n          \"mainRwPayload\": {\n            \"firmwareImagePath\": {\n              \"path\": \"some_firmware_path\"\n            }\n          }\n        },\n        \"systemImage\": {\n          \"systemImagePath\": {\n            \"hostType\": \"GS\",\n            \"path\": \"gs://chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000\"\n          }\n        }\n      },\n      \"containerMetadataKey\": \"fake_board\"\n    }\n  ]\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -717,7 +731,8 @@
       "@@@STEP_LOG_LINE@response@        \"value\": \"tauto.dummy_id\"@@@",
       "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"resultDirPath\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"hostType\": \"LOCAL\"@@@",
+      "@@@STEP_LOG_LINE@response@        \"hostType\": \"LOCAL\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"path\": \"dummy-results-dir/subdir\"@@@",
       "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"pass\": {},@@@",
       "@@@STEP_LOG_LINE@response@      \"reason\": \"reason\",@@@",
@@ -773,6 +788,156 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/uname",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read kernel log file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@uname@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/crossystem",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read crossystem keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@crossystem@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/gsctool",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read gsctool keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@gsctool@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/sysinfo/servo",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read servo keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@servo@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.read autotest keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@keyval@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "execution steps.identify sources under test",
     "~followup_annotations": [
@@ -808,6 +973,77 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@sources.jsonpb@https://storage.cloud.google.com/chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000/metadata/sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.identify sources under test.mark sources dirty",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.identify sources under test.mark sources dirty.read sources proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"is_dirty\": true\n}",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.identify sources under test.mark sources dirty.write sources proto",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@  \"is_dirty\": true@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
+      "@@@STEP_LOG_END@sources.jsonpb@@@"
     ]
   },
   {
@@ -970,6 +1206,94 @@
     "stdin": "{\n  \"gsDirectory\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n  \"localDirectory\": \"[CLEANUP]/output_dir_tmp_1\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).Archive CTS results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"build\": null, \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": null, \"parent_job_id\": \"deadbeef\"}@@@",
+      "@@@STEP_LOG_END@json_input@@@",
+      "@@@STEP_LOG_LINE@instructions@[{'destination': 'gs://fake-bucket/fake-folder', 'name': 'fake-instruction', 'source': 'local/directory/to/upload'}]@@@",
+      "@@@STEP_LOG_END@instructions@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
+      "--json-input",
+      "{\"build\": null, \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": null, \"parent_job_id\": \"deadbeef\"}",
+      "--json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.post upload step (ctr).Archive CTS results.prepare uploads",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"instructions\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"destination\": \"gs://fake-bucket/fake-folder\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"name\": \"fake-instruction\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"source\": \"local/directory/to/upload\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.post upload step (ctr).Archive CTS results.Upload prepared results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@0:fake-instruction@https://console.cloud.google.com/storage/browser/fake-bucket/fake-folder@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "-m",
+      "cp",
+      "-eR",
+      "local/directory/to/upload",
+      "gs://fake-bucket/fake-folder"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.post upload step (ctr).Archive CTS results.Upload prepared results.gsutil cp",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

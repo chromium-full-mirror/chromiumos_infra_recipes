@@ -886,7 +886,8 @@ def _prepare_resultdb_sources_file(api, properties):
       build_url = storage_path.path
 
       # Custom firmware is being tested.
-      if provision_state.firmware is not None:
+      if (provision_state.firmware.main_rw_payload.firmware_image_path.path or
+          provision_state.firmware.main_ro_payload.firmware_image_path.path):
         is_dirty_provision = True
 
       # If in future, where custom lacros builds can be deployed via CFT,
@@ -2941,6 +2942,17 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         }
     }
 
+  def _canned_test_runner_request_for_ctr_with_firmware():
+    req = _canned_test_runner_request_for_ctr()
+    req['primary_dut']['provision_state']['firmware'] = {
+        'main_rw_payload': {
+            'firmware_image_path': {
+                'path': 'some_firmware_path',
+            }
+        }
+    }
+    return req
+
   def _canned_test_runner_request_for_ctr_for_vm():
     req = _canned_test_runner_request_for_ctr_gce()
     req['autotest_keyvals']['build'] = 'betty-arc-r-release/R102-14637.0.0'
@@ -4764,5 +4776,18 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           retcode=1),
       # It is possible the sources file will not exist in Google Storage.
       # We should handle this case gracefully.
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'sources-dirty-due-to-firmware-ctr',
+      _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _request_properties_for_ctr(
+          cft_test_request=_canned_test_runner_request_for_ctr_with_firmware(),
+      ),
+      _mock_load_step_for_ctr(),
+      _successful_prejob_step_for_ctr(),
+      _successful_run_test_step_for_ctr(),
       status='SUCCESS',
   )
