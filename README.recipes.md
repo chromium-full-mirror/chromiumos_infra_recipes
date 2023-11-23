@@ -39,7 +39,7 @@
   * [cros_release_config](#recipe_modules-cros_release_config) &mdash; An API for managing release config.
   * [cros_release_util](#recipe_modules-cros_release_util) &mdash; An API for providing release related utility functions.
   * [cros_relevance](#recipe_modules-cros_relevance) &mdash; Module for determining if a build is unnecessary.
-  * [cros_resultdb](#recipe_modules-cros_resultdb)
+  * [cros_resultdb](#recipe_modules-cros_resultdb) &mdash; cros_resultdb is a module to ease interaction with ResultDB for ChromeOS.
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
   * [cros_som](#recipe_modules-cros_som)
@@ -4146,11 +4146,15 @@ Returns:
 [DEPS](/recipe_modules/cros_resultdb/__init__.py#5): [cros\_infra\_config](#recipe_modules-cros_infra_config), [exonerate](#recipe_modules-exonerate), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+cros_resultdb is a module to ease interaction with ResultDB for ChromeOS.  It
+extends the functionality in the resultdb module with ChromeOS scpecific
+utilities.
+
+#### **class [ResultDBCommand](/recipe_modules/cros_resultdb/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#562)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#565)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -4158,7 +4162,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#472)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#475)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -4177,11 +4181,11 @@ Args:
   variant_filter (dict): Attributes which must all be present in the test
       result variant definition in order to exonerate.
 
-&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [current\_invocation\_id](/recipe_modules/cros_resultdb/api.py#51)(self):**
 
 Return the current invocation's id.
 
-&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#58)(self, bigquery_exports=None):**
+&mdash; **def [export\_invocation\_to\_bigquery](/recipe_modules/cros_resultdb/api.py#61)(self, bigquery_exports=None):**
 
 Modifies the current invocation to be exported to BigQuery (along with
 its children) once it is finalized.
@@ -4198,7 +4202,7 @@ Args:
   bigquery_exports (list(resultdb.BigQueryExport)): The BigQuery export
   configurations of tables and predicates of what to export.
 
-&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#90)(self, test_args):**
+&mdash; **def [extract\_chromium\_resultdb\_settings](/recipe_modules/cros_resultdb/api.py#93)(self, test_args):**
 
 Extract resultdb settings from test_args for chromium test results.
 
@@ -4220,7 +4224,7 @@ Returns:
 Raises:
   ValueError: If resultdb settings are not found in the test_args.
 
-&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#160)(self, base_dir, result_format=None, artifact_directory=''):**
+&mdash; **def [get\_drone\_artifact\_directory](/recipe_modules/cros_resultdb/api.py#163)(self, base_dir, result_format=None, artifact_directory=''):**
 
 Get the path to the test results artifact directory on the drone.
 
@@ -4239,7 +4243,7 @@ Args:
 Returns:
   Path to the test results artifact directory on the drone server.
 
-&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#128)(self, base_dir, result_format, autotest_name='chromium'):**
+&mdash; **def [get\_drone\_result\_file](/recipe_modules/cros_resultdb/api.py#131)(self, base_dir, result_format, autotest_name='chromium'):**
 
 Get the path to the test results file on the drone.
 
@@ -4256,7 +4260,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_filtered\_test\_cases](/recipe_modules/cros_resultdb/api.py#698)(self, test_names, base_variant, base_tags=None, reason='filtered'):**
+&mdash; **def [report\_filtered\_test\_cases](/recipe_modules/cros_resultdb/api.py#701)(self, test_names, base_variant, base_tags=None, reason='filtered'):**
 
 Upload test results for filtered test cases to ResultDB.
 
@@ -4269,7 +4273,7 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#616)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#619)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -4282,7 +4286,7 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#184)(self, config, testhaus_url=None, step_name='upload test results to rdb'):**
+&mdash; **def [upload](/recipe_modules/cros_resultdb/api.py#187)(self, config, testhaus_url=None, step_name='upload test results to rdb'):**
 
 Wrapper for uploading test results to resultDB.
 

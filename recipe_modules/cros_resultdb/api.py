@@ -2,6 +2,10 @@
 # Copyright 2021 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""cros_resultdb is a module to ease interaction with ResultDB for ChromeOS.  It
+extends the functionality in the resultdb module with ChromeOS scpecific
+utilities."""
 import base64
 import os
 import re
@@ -14,7 +18,6 @@ from PB.go.chromium.org.luci.resultdb.proto.v1 import common as common_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import invocation as invocation_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import recorder as recorder_pb2
 from PB.go.chromium.org.luci.resultdb.proto.v1 import test_result as test_result_pb2
-from PB.go.chromium.org.luci.resultdb.proto.v1 import failure_reason as failure_reason_pb2
 from PB.test_platform.request import Request
 from recipe_engine import recipe_api
 
@@ -726,8 +729,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
       test_result = test_result_pb2.TestResult(
           test_id=test, result_id=str(self.m.buildbucket.build.id),
           status=test_result_pb2.SKIP, expected=True, variant=variant,
-          tags=tags, failure_reason=failure_reason_pb2.FailureReason(
-              primary_error_message=reason))
+          tags=tags, summary_html=reason,
+          skip_reason=test_result_pb2.AUTOMATICALLY_DISABLED_FOR_FLAKINESS)
       test_result_req = recorder_pb2.CreateTestResultRequest(
           invocation=self.m.resultdb.current_invocation,
           test_result=test_result)
@@ -743,9 +746,10 @@ class ResultDBCommand(recipe_api.RecipeApi):
                 str(self.m.buildbucket.build.id),
             'status':
                 'SKIP',
-            'failureReason': {
-                'primaryErrorMessage': reason,
-            },
+            'skip_reason':
+                'AUTOMATICALLY_DISABLED_FOR_FLAKINESS',
+            'summary_html':
+                reason,
             'expected':
                 True,
             'testId':
