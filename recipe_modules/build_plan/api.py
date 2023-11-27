@@ -228,13 +228,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
-        # Technically per current approaches a bisecting orchestrator doing hw
-        # test bisection should find all builds already completed or in flight
-        # as *-snapshot builds. If it does need to schedule such a build, those
-        # builders run in the postsubmit bucket.
         bucket = child_spec.bucket or self.m.buildbucket.build.builder.bucket
-        if bucket == 'bisect':
-          bucket = 'postsubmit'
         parent_run_id = None
         can_outlive_parent = True
         if (child_spec.collect_handling !=
