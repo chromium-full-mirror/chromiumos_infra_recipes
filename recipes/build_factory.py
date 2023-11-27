@@ -6,12 +6,20 @@
 """Recipe for generating artifacts for Factory builders.
 
 This recipe supports the workflow necessary to support factory builders."""
+from google.protobuf.json_format import MessageToDict
+
 from recipe_engine import post_process
 
+from PB.recipe_modules.chromeos.cros_source.cros_source import \
+  CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+
 DEPS = [
+    'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
+    'cros_infra_config',
     'cros_release',
     'signing',
     'test_util',
@@ -21,6 +29,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
+  api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
+
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
@@ -45,9 +55,19 @@ def RunSteps(api):
 
 
 def GenTests(api):
+  manifest_url = 'https://chrome-internal.googlesource.com/chromeos/manifest-versions'
 
   yield api.build_menu.test(
       'basic',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml')))
+          }),
       # Make sure signing times out after 5 seconds to not explode test runs.
       api.signing.set_timeout(timeout=5),
       # Mock signing responses.
@@ -63,7 +83,16 @@ def GenTests(api):
       builder='factory-corsola-15197.B-corsola')
 
   yield api.build_menu.test(
-      'staging', api.post_check(post_process.MustRun, 'build images'),
+      'staging',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml')))
+          }), api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'skipping signing'),
@@ -73,7 +102,16 @@ def GenTests(api):
       builder='staging-factory-corsola-15197.B-corsola')
 
   yield api.build_menu.test(
-      'no instructions', api.post_check(post_process.MustRun, 'build images'),
+      'no instructions',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml')))
+          }), api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.cros_build_api.set_api_return(parent_step_name='push images',

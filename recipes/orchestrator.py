@@ -82,10 +82,12 @@ def DoRunSteps(api: RecipeApi):
   if api.cros_source.sync_to_manifest:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
         CrosSourceProperties(sync_to_manifest=api.cros_source.sync_to_manifest))
-  # If a release builder, need to pass information about the pinned manifest.
-  elif api.orch_menu.is_release_orchestrator:
+  # If a release or factory builder, need to pass information about the pinned manifest.
+  elif api.orch_menu.is_release_orchestrator or api.orch_menu.is_factory_orchestrator:
     extra_child_props['$chromeos/cros_source'] = MessageToDict(
         CrosSourceProperties(sync_to_manifest=api.cros_release.buildspec))
+
+  if api.orch_menu.is_release_orchestrator:
     if api.orch_menu.skip_paygen:
       extra_child_props['skip_paygen'] = True
 
