@@ -1,0 +1,13 @@
+[
+  {
+    "cmd": [],
+    "name": "Fetch Package",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@Fetching golang binary from CIP@Pass@@@",
+      "@@@STEP_LOG_END@Fetching golang binary from CIP@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

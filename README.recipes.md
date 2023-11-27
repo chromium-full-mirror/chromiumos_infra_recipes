@@ -746,6 +746,7 @@
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
   * [test_platform/result_flow](#recipes-test_platform_result_flow)
+  * [test_platform/suite_manager](#recipes-test_platform_suite_manager) &mdash; Recipe for the ChromeOS TSE SuiteManager builder.
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
@@ -16017,6 +16018,23 @@ Recipe that triggers cros_test_platform runs.
 &mdash; **def [run\_test\_ctp\_flow](/recipes/test_platform/result_flow.py#35)(api, config, deadline):**
 
 &mdash; **def [run\_test\_runner\_flow](/recipes/test_platform/result_flow.py#25)(api, config, deadline):**
+### *recipes* / [test\_platform/suite\_manager](/recipes/test_platform/suite_manager.py)
+
+[DEPS](/recipes/test_platform/suite_manager.py#10): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for the ChromeOS TSE SuiteManager builder.
+
+&mdash; **def [RunSteps](/recipes/test_platform/suite_manager.py#19)(api, properties):**
+
+Builder Entry Point
+
+Args:
+  api: a RecipeScriptApi instance
+  properties: default recipe properties
+
+Returns:
+  None
 ### *recipes* / [test\_platform/test\_runner](/recipes/test_platform/test_runner.py)
 
 [DEPS](/recipes/test_platform/test_runner.py#51): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_runner](#recipe_modules-cros_test_runner), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [cts\_results\_archive](#recipe_modules-cts_results_archive), [dut\_interface](#recipe_modules-dut_interface), [easy](#recipe_modules-easy), [gcloud](#recipe_modules-gcloud), [labpack](#recipe_modules-labpack), [phosphorus](#recipe_modules-phosphorus), [result\_flow](#recipe_modules-result_flow), [urls](#recipe_modules-urls), [vmlab](#recipe_modules-vmlab), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
