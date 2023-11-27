@@ -20,6 +20,7 @@ import base64
 import collections
 import json
 import urllib
+from xml.etree import cElementTree as ElementTree
 import zlib
 
 from google.protobuf import json_format
@@ -30,6 +31,7 @@ from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.chromite.api.packages import RevBumpChromeRequest
 
 from recipe_engine import post_process
+from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
@@ -161,10 +163,22 @@ def RunSteps(api, properties):
         snapshot_xml_extern = api.repo.manifest(
             external_manifest.path.join('default.xml'), pinned=True,
             step_name='generate external manifest')
+        # TODO(b/315001529): build shouldn't need this forever.
+        snapshot_xml_extern = _remove_notice_node(
+            api,
+            snapshot_xml_extern,
+            step_name='remove <notice> from external manifest',
+        )
 
       # snapshot internal manifest
       snapshot_xml_intern = api.repo.manifest(
           pinned=True, step_name='generate internal manifest')
+      # TODO(b/315001529): build shouldn't need this forever.
+      snapshot_xml_intern = _remove_notice_node(
+          api,
+          snapshot_xml_intern,
+          step_name='remove <notice> from internal manifest',
+      )
       manifest_diffs = api.repo.diff_remote_and_local_manifests(
           internal_manifest.url, manifest_ref, snapshot_xml_intern,
           use_merge_base=True)
@@ -317,6 +331,26 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
     presentation.logs['diffs'] = json.dumps(diff_paths, sort_keys=True,
                                             indent=2, separators=(',', ':'))
     return diff_paths
+
+
+def _remove_notice_node(api: RecipeApi, xml_data: str, step_name: str):
+  """Remove any <notice> elements from the source XML tree.
+
+    Args:
+      api:                  See RunSteps documentation
+      manifest_xml_content: String repr of XML tree
+      step_name:            Name of step in LUCI/MILO
+
+    Return:
+      xml_result(str): Modified XML content
+    """
+  with api.step.nest(step_name) as presentation:
+    root = ElementTree.fromstring(xml_data)
+    for element in root.findall('notice'):
+      root.remove(element)
+    xml_result = ElementTree.tostring(root)
+    presentation.logs['xml result'] = xml_result
+  return xml_result
 
 
 def _uprev_packages(api, properties, workspace_path, manifest_diffs, dry_run):
@@ -1260,3 +1294,91 @@ def GenTests(api):
           )),
       api.post_check(post_process.StepException, 'publish snapshot metadata'),
       api.post_check(post_process.DropExpectation))
+
+  yield api.test(
+      'remove-notice-tag-from-manifest-xml',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<notice>Hi!</notice>'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>'),
+      ),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<notice>Hi!</notice>'
+              '<project name="NAME" remote="cros-internal" revision="TO_REV"/>'
+              '</manifest>'),
+      ),
+      api.post_check(post_process.MustRun,
+                     'remove <notice> from external manifest'),
+      api.post_check(post_process.MustRun,
+                     'remove <notice> from internal manifest'),
+      api.post_check(
+          post_process.LogEquals,
+          'remove <notice> from external manifest',
+          'xml result',
+          '<manifest visibility="external">'
+          '<project name="NAME" revision="TO_REV" />'
+          '</manifest>',
+      ),
+      api.post_check(
+          post_process.LogEquals,
+          'remove <notice> from internal manifest',
+          'xml result',
+          '<manifest visibility="internal">'
+          '<project name="NAME" remote="cros-internal" revision="TO_REV" />'
+          '</manifest>',
+      ),
+      # We make no assertions in this test that a diff was generated so a Gerrit
+      # CL is unnecessary. We do want to ensure that subsequent steps run.
+      api.post_check(post_process.MustRun, 'diff remote and local manifest'),
+      api.post_check(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'remove-missing-notice-tag-from-manifest-xml-succeeds',
+      api.properties(AnnealingProperties(manifest_ref='snapshot')),
+      api.step_data(
+          'generate external manifest',
+          stdout=api.raw_io.output_text(
+              '<manifest visibility="external">'
+              '<project name="NAME" revision="TO_REV"/>'
+              '</manifest>'),
+      ),
+      api.step_data(
+          'generate internal manifest',
+          stdout=api.raw_io.output_text(
+              '<manifest visibility="internal">'
+              '<project name="NAME" remote="cros-internal" revision="TO_REV"/>'
+              '</manifest>'),
+      ),
+      api.post_check(post_process.StepSuccess,
+                     'remove <notice> from external manifest'),
+      api.post_check(
+          post_process.LogEquals,
+          'remove <notice> from external manifest',
+          'xml result',
+          '<manifest visibility="external">'
+          '<project name="NAME" revision="TO_REV" />'
+          '</manifest>',
+      ),
+      api.post_check(post_process.StepSuccess,
+                     'remove <notice> from internal manifest'),
+      api.post_check(
+          post_process.LogEquals,
+          'remove <notice> from internal manifest',
+          'xml result',
+          '<manifest visibility="internal">'
+          '<project name="NAME" remote="cros-internal" revision="TO_REV" />'
+          '</manifest>',
+      ),
+      # We make no assertions in this test that a diff was generated so a Gerrit
+      # CL is unnecessary. We do want to ensure that subsequent steps run.
+      api.post_check(post_process.MustRun, 'diff remote and local manifest'),
+      api.post_check(post_process.DropExpectation),
+  )

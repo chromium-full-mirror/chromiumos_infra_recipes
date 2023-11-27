@@ -2754,7 +2754,7 @@
     "infra_step": true,
     "name": "generate external manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"external\"><notice>Hi!</notice><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2784,7 +2784,7 @@
     "infra_step": true,
     "name": "generate internal manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/><project name=\"SNAP\" revision=\"TO_REV\"><annotation name=\"snapshot-mode\" value=\"ignore-diff\"/></project></manifest>@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"internal\"><notice>Hi!</notice><project name=\"NAME\" remote=\"cros-internal\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2792,7 +2792,7 @@
     "cmd": [],
     "name": "remove <notice> from internal manifest",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@xml result@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\" /><project name=\"SNAP\" revision=\"TO_REV\"><annotation name=\"snapshot-mode\" value=\"ignore-diff\" /></project></manifest>@@@",
+      "@@@STEP_LOG_LINE@xml result@<manifest visibility=\"internal\"><project name=\"NAME\" remote=\"cros-internal\" revision=\"TO_REV\" /></manifest>@@@",
       "@@@STEP_LOG_END@xml result@@@"
     ]
   },

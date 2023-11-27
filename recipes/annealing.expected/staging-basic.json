@@ -4116,6 +4116,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "remove <notice> from external manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@xml result@<manifest />@@@",
+      "@@@STEP_LOG_END@xml result@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
@@ -4147,6 +4155,14 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "remove <notice> from internal manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@xml result@<manifest />@@@",
+      "@@@STEP_LOG_END@xml result@@@"
     ]
   },
   {

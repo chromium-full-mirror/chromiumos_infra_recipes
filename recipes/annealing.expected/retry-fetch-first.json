@@ -2965,6 +2965,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "remove <notice> from external manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@xml result@<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_END@xml result@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "manifest",
@@ -2984,6 +2992,14 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw_io.output_text@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "remove <notice> from internal manifest",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@xml result@<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\" /></manifest>@@@",
+      "@@@STEP_LOG_END@xml result@@@"
     ]
   },
   {
@@ -3356,7 +3372,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>",
+      "<manifest visibility=\"external\"><project name=\"NAME\" revision=\"TO_REV\" /></manifest>",
       "[CLEANUP]/chromiumos_workspace/manifest/snapshot.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
@@ -3559,7 +3575,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\"/></manifest>",
+      "<manifest visibility=\"internal\"><project name=\"NAME\" revision=\"TO_REV\" /></manifest>",
       "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
