@@ -138,6 +138,17 @@ def GenTests(api: RecipeTestApi):
   "is_delta": true
 }'''
 
+  str_json_data = '''{
+  "appid": "appid",
+  "metadata_signature": "signature",
+  "metadata_size": "1337",
+  "size": "1234",
+  "source_version": "1.2.3",
+  "target_version": "4.5.6",
+  "sha256_hex": "deadbeef",
+  "is_delta": true
+}'''
+
   yield api.test(
       'basic',
       api.step_data('gsutil cat gs://path/to/standard/payload.json',
@@ -146,3 +157,12 @@ def GenTests(api: RecipeTestApi):
                     stdout=api.raw_io.output(json_data)),
       api.step_data('gsutil cat gs://path/to/dlc/payload.json',
                     stdout=api.raw_io.output(json_data)))
+
+  yield api.test(
+      'int-parsing',
+      api.step_data('gsutil cat gs://path/to/standard/payload.json',
+                    stdout=api.raw_io.output(str_json_data)),
+      api.step_data('gsutil cat gs://path/to/minios/payload.json',
+                    stdout=api.raw_io.output(str_json_data)),
+      api.step_data('gsutil cat gs://path/to/dlc/payload.json',
+                    stdout=api.raw_io.output(str_json_data)))

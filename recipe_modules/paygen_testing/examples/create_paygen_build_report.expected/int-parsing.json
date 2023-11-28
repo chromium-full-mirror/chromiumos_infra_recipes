@@ -1,0 +1,90 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://path/to/standard/payload.json"
+    ],
+    "infra_step": true,
+    "name": "gsutil cat gs://path/to/standard/payload.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@{@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"appid\": \"appid\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_signature\": \"signature\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_size\": \"1337\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"size\": \"1234\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"source_version\": \"1.2.3\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"target_version\": \"4.5.6\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"sha256_hex\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"is_delta\": true@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@}@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://path/to/minios/payload.json"
+    ],
+    "infra_step": true,
+    "name": "gsutil cat gs://path/to/minios/payload.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@{@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"appid\": \"appid\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_signature\": \"signature\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_size\": \"1337\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"size\": \"1234\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"source_version\": \"1.2.3\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"target_version\": \"4.5.6\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"sha256_hex\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"is_delta\": true@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@}@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://path/to/dlc/payload.json"
+    ],
+    "infra_step": true,
+    "name": "gsutil cat gs://path/to/dlc/payload.json",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@raw_io.output@{@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"appid\": \"appid\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_signature\": \"signature\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"metadata_size\": \"1337\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"size\": \"1234\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"source_version\": \"1.2.3\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"target_version\": \"4.5.6\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"sha256_hex\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@  \"is_delta\": true@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@}@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

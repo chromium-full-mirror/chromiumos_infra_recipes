@@ -424,10 +424,10 @@ class PaygenTestingApi(recipe_api.RecipeApi):
         ), payload_type=payload_type, appid=payload_info['appid'],
         channel=self._get_channel_from_paygen_request(gen_req),
         metadata_signature=payload_info['metadata_signature'],
-        metadata_size=payload_info['metadata_size'],
+        metadata_size=int(payload_info['metadata_size']),
         source_version=payload_info.get('source_version', None),
-        target_version=payload_info['target_version'],
-        size=payload_info['size'], recovery_key_version=recovery_key_version)
+        target_version=payload_info['target_version'], size=int(
+            payload_info['size']), recovery_key_version=recovery_key_version)
 
   @exponential_retry(retries=5, delay=timedelta(minutes=2))
   def _discover_source_test_full_payload(self, root_uri: str) -> FullPayload:
