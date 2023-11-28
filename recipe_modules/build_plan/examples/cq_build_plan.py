@@ -536,8 +536,7 @@ def GenTests(api):
   yield api.test(
       'cq-looks-enabled',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
@@ -558,7 +557,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
-          expected_experiments=['chromeos.cros_infra_config.cq_looks'],
+          expected_experiments=[],
           expected_additional_chrome_pupr_builders=[],
       ),
       api.git_footers.simulated_get_footers([],

@@ -7,7 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.build_plan.tests;
 
 message CqLooksProperties {
-  repeated string expected_experiments = 1;
+  reserved 1;
   string expected_internal_sha = 2;
   string expected_external_sha = 3;
 }

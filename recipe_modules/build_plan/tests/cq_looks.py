@@ -52,13 +52,6 @@ def RunSteps(api, properties):
       common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
                                host=EXTERNAL_HOST_URL))
 
-  enabled_experiments = {
-      exp: enabled
-      for exp, enabled in new_requests[0].experiments.items()
-      if enabled
-  }
-  api.assertions.assertEqual({x: True for x in properties.expected_experiments},
-                             enabled_experiments)
   for request in new_requests:
     if request.gitiles_commit.host == INTERNAL_HOST_URL:
       api.assertions.assertEqual(expected_internal_sha,
@@ -100,13 +93,11 @@ def GenTests(api):
   yield api.test(
       'switch-to-green',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
-          }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
-          expected_internal_sha=MODIFIED_INTERNAL_SHA,
+          }}, expected_internal_sha=MODIFIED_INTERNAL_SHA,
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
@@ -143,12 +134,12 @@ def GenTests(api):
       'use-complete-snapshot',
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+          ),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True,
               'use_complete_snapshot': True
-          }}, expected_experiments=['chromeos.cros_infra_config.cq_looks'],
+          }},
           expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers([], 'filter builds.check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
@@ -179,12 +170,12 @@ def GenTests(api):
           step_name_prefix='filter builds.looks for green.checking mergability'
       ),
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
-          }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+          }},
+      ),
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
@@ -222,10 +213,8 @@ def GenTests(api):
   yield api.test(
       'lfg-disabled',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
-      api.properties(
-          expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(),
       api.post_check(
           post_process.DoesNotRun,
           'filter builds.looks for green.checking latest scored snapshot'),
@@ -237,14 +226,12 @@ def GenTests(api):
   yield api.test(
       'lfg-disallow-footer',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
-          **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True,
-              }
-          }, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True,
+          }},
+      ),
       api.git_footers.simulated_get_footers([
           'True'
       ], 'filter builds.check should look for green.check disallow looks for green'
@@ -265,12 +252,12 @@ def GenTests(api):
   yield api.test(
       'no-green',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.cros_infra_config.cq_looks']),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
-          }}, expected_experiments=['chromeos.cros_infra_config.cq_looks']),
+          }},
+      ),
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.check should look for green.check disallow looks for green'
