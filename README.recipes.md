@@ -7963,34 +7963,40 @@ Returns:
   (str) The url for the repo.
 ### *recipe_modules* / [gobin](/recipe_modules/gobin)
 
-[DEPS](/recipe_modules/gobin/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/gobin/__init__.py#7): [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#257)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#265)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#217)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#218)(self, package: str):**
 
 Ensure that the specified package is installed.
 
 Looks up the instance associated with the infra/infra commit stored in
 infrainfra-golang.version.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#178)(self, current_pin: str):**
+Args:
+  package: The package to ensure.
+
+Returns:
+  The path to the relevant cipd binary.
+
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#179)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#86)(self):**
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#87)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
@@ -10512,7 +10518,7 @@ It will contain the base checkout and any modifications made by the build,
 and is discarded after the build.
 ### *recipe_modules* / [support](/recipe_modules/support)
 
-[DEPS](/recipe_modules/support/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/support/__init__.py#8): [easy](#recipe_modules-easy), [gobin](#recipe_modules-gobin), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 APIs for running recipes/support tools.
@@ -10521,7 +10527,7 @@ APIs for running recipes/support tools.
 
 A module for support tool steps.
 
-&mdash; **def [call](/recipe_modules/support/api.py#50)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, add_json_log=True, name=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/support/api.py#14)(self, tool, input_data, test_output_data=None, infra_step=True, timeout=None, add_json_log=True, name=None, \*\*kwargs):**
 
 Run a tool from the support package.
 
@@ -10537,12 +10543,6 @@ Args:
 
 Returns:
   Data passed as output from the tool (deserialized from JSON).
-
-&mdash; **def [ensure\_package\_installed](/recipe_modules/support/api.py#35)(self):**
-
-Ensure the CIPD support package is installed.
-
-&mdash; **def [initialize](/recipe_modules/support/api.py#18)(self):**
 ### *recipe_modules* / [swarming\_cli](/recipe_modules/swarming_cli)
 
 [DEPS](/recipe_modules/swarming_cli/__init__.py#6): [easy](#recipe_modules-easy), [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

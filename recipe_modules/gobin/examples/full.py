@@ -23,9 +23,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api):
   _ = api.gobin.supported_packages
 
-  api.gobin.ensure_package('my_gobin')
+  cipd_path = api.gobin.ensure_package('my_gobin')
+  api.assertions.assertEqual(cipd_path, '[START_DIR]/cipd/my_gobin/my_gobin')
   # Again, make sure it doesn't do anything!
   api.gobin.ensure_package('my_gobin')
+  api.assertions.assertEqual(cipd_path, '[START_DIR]/cipd/my_gobin/my_gobin')
 
   api.gobin.call('my_gobin', ['create', 'foo'])
   api.gobin.call('my_gobin', ['create', 'bar'], step_name='my command')

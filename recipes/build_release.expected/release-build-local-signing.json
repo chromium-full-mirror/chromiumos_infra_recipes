@@ -216,9 +216,124 @@
   },
   {
     "cmd": [],
-    "name": "build status pubsub update.publish message.ensure support CIPD package",
+    "name": "build status pubsub update.publish message.ensure support",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
+      "/path/to/tmp/"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.publish message.ensure support.read infrainfra golang version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
+      "@@@STEP_LOG_END@infrainfra-golang.version@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build status pubsub update.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/support/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
+      "@@@STEP_LOG_END@cipd instance@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "search",
+      "chromiumos/infra/support/${platform}",
+      "-tag",
+      "git_revision:deadbeef",
+      "-json-output",
+      "[CLEANUP]/cipd.json"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/cipd.json",
+      "/path/to/tmp/"
+    ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build status pubsub update.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@cipd.json@{@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    \"result\": [@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        {@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"package\": \"chromiumos/infra/support/${platform}\",@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"instance_id\": \"wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC\"@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        }@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    ]@@@",
+      "@@@STEP_LOG_LINE@cipd.json@}@@@",
+      "@@@STEP_LOG_END@cipd.json@@@"
     ]
   },
   {
@@ -226,9 +341,9 @@
       "cipd",
       "ensure",
       "-root",
-      "[START_DIR]/cipd-support",
+      "[START_DIR]/cipd/support",
       "-ensure-file",
-      "chromiumos/infra/support/${platform} prod",
+      "chromiumos/infra/support/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC",
       "-max-threads",
       "0",
       "-json-output",
@@ -250,14 +365,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "build status pubsub update.publish message.ensure support CIPD package.ensure_installed",
+    "name": "build status pubsub update.publish message.ensure support.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
       "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-wzCA5zCcIkg0uYro\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    ]@@@",
@@ -268,7 +383,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -342,7 +457,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -474,7 +589,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/gitiles-fetch-ref"
+      "[START_DIR]/cipd/support/gitiles-fetch-ref"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -3247,7 +3362,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3616,7 +3731,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -3965,7 +4080,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -4048,7 +4163,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -4126,7 +4241,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -4443,7 +4558,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -4982,7 +5097,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -5098,7 +5213,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -5381,7 +5496,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -6006,7 +6121,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -6531,7 +6646,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -7450,7 +7565,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -7718,7 +7833,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -8035,7 +8150,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -8183,7 +8298,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -8547,7 +8662,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -8822,7 +8937,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -9097,7 +9212,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -9372,7 +9487,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -9647,7 +9762,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -9922,7 +10037,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -10197,7 +10312,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -10472,7 +10587,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -11333,7 +11448,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -11753,7 +11868,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -11914,7 +12029,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -12280,7 +12395,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -13058,7 +13173,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -13297,7 +13412,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -13351,41 +13466,6 @@
     "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.read infrainfra golang version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
-      "@@@STEP_LOG_END@infrainfra-golang.version@@@"
     ]
   },
   {
@@ -13774,7 +13854,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -14369,7 +14449,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -14600,7 +14680,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -14845,7 +14925,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15082,7 +15162,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -16086,7 +16166,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"
@@ -16311,7 +16391,7 @@
   },
   {
     "cmd": [
-      "[START_DIR]/cipd-support/publish-message"
+      "[START_DIR]/cipd/support/publish-message"
     ],
     "env": {
       "CHROMEOS_OFFICIAL": "1"

@@ -28,6 +28,7 @@ SUPPORTED_PACKAGES = [
     'gerrit_related_changes',
     'manifest_doctor',
     'pointless_build_checker',
+    'support',
     'test_plan',
     'test_plan_generator',
     'upload_debug_symbols',
@@ -214,18 +215,24 @@ class GobinAPI(recipe_api.RecipeApi):
       # If none of the commits are valid, just return the current pin.
       return current_pin
 
-  def ensure_package(self, package: str):
+  def ensure_package(self, package: str) -> str:
     """Ensure that the specified package is installed.
 
     Looks up the instance associated with the infra/infra commit stored in
     infrainfra-golang.version.
+
+    Args:
+      package: The package to ensure.
+
+    Returns:
+      The path to the relevant cipd binary.
     """
     package_fullname = self._package_fullname(package)
     if package_fullname not in self.supported_packages:
       raise StepFailure(f'unsupported gobin `{package}`')
 
     if package_fullname in self._cipd_paths:
-      return
+      return str(self._cipd_paths[package_fullname])
 
     package_shortname = self._package_shortname(package)
 
@@ -253,6 +260,7 @@ class GobinAPI(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._cipd_paths[package_fullname] = cipd_dir.join(package)
+        return str(cipd_dir.join(package))
 
   def call(self, package: str, cmd: List[str], step_name: str = None,
            **kwargs) -> step_data.StepData:
