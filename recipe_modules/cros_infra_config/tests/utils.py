@@ -7,6 +7,7 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.chromiumos.builder_config import BuilderConfig
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,6 +23,12 @@ def RunSteps(api):
   api.assertions.assertTrue(api.cros_infra_config.should_run(BuilderConfig.RUN))
   api.assertions.assertTrue(
       api.cros_infra_config.should_run(BuilderConfig.RUN_EXIT))
+  api.assertions.assertTrue(
+      api.cros_infra_config.should_run(BuilderConfig.RUN_SPEC_UNSPECIFIED,
+                                       True))
+  api.assertions.assertFalse(
+      api.cros_infra_config.should_run(BuilderConfig.RUN_SPEC_UNSPECIFIED,
+                                       False))
 
   api.assertions.assertFalse(
       api.cros_infra_config.should_exit(BuilderConfig.NO_RUN))
@@ -32,4 +39,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.post_process(post_process.DropExpectation))

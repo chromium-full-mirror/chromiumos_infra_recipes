@@ -412,7 +412,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       setup_toolchains_if_no_update: If True, and the function skips updating
         the chroot (whether due to the `update` kwarg or due to the builder
         config), then it will setup toolchains instead.
-      force_no_chroot_upgrade: If True, chroot update is skipped.
+      force_no_chroot_upgrade: If True, chroot update is skipped, regardless of
+        the builder config.
 
     Returns:
       Whether the build is relevant.
@@ -443,7 +444,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           no_chroot_timeout else 'DEFAULT', replace=replace)
       self._chroot_created = True
 
-      if force_no_chroot_upgrade is not True:
+      if self._should_update_chroot() and not force_no_chroot_upgrade:
         self.m.cros_sdk.update_chroot(
             build_source=config.build.sdk_update.compile_source,
             toolchain_targets=self._build_targets_for_toolchain_setup)
@@ -453,6 +454,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.setup_toolchains()
 
     return relevance != Relevance.POINTLESS
+
+  def _should_update_chroot(self) -> bool:
+    """Return whether to update chroot, based on builder config."""
+    return self.m.cros_infra_config.should_run(
+        self.config_or_default.build.sdk_update.sdk_update_run_spec,
+        default=True)
 
   def setup_toolchains(self) -> None:
     """Setup toolchains on the builder.

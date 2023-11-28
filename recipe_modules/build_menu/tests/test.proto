@@ -18,11 +18,15 @@ message TestProperties {
 }
 
 message SetupChrootProperties {
-  enum Update {
+  // OptionalBool lets us specify True, False, or None.
+  // This is useful for testing optional kwargs (like force_no_chroot_upgrade).
+  enum OptionalBool {
     NONE = 0;
     TRUE = 1;
     FALSE = 2;
   }
-  Update update_sdk = 1;
-  Update force_no_chroot_upgrade = 2;
+
+  // force_no_chroot_upgrade is the value we'll pass into
+  // api.build_menu.setup_chroot().
+  OptionalBool force_no_chroot_upgrade = 1;
 }

@@ -364,8 +364,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     """Force a reload of the config map from ToT."""
     self._get_name_to_builder_config(force_reload=True)
 
-  def should_run(self, run_spec: 'BuilderConfig.RunSpec') -> bool:
-    return run_spec in [BuilderConfig.RUN, BuilderConfig.RUN_EXIT]
+  def should_run(self, run_spec: 'BuilderConfig.RunSpec',
+                 default: bool = False) -> bool:
+    """Return whether run_spec represents a step that should run.
+
+    Args:
+      run_spec: The RunSpec enum value to check.
+      default: The value to return if run_spec is UNSPECIFIED.
+    """
+    if run_spec is BuilderConfig.RUN_SPEC_UNSPECIFIED:
+      return default
+    return run_spec in (BuilderConfig.RUN, BuilderConfig.RUN_EXIT)
 
   def should_exit(self, run_spec: 'BuilderConfig.RunSpec') -> bool:
     return run_spec == BuilderConfig.RUN_EXIT
