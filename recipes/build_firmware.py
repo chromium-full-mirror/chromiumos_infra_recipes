@@ -467,7 +467,9 @@ def GenTests(api):
 
   yield test(
       'create test containers exception',
-      api.step_data('Create test containers.set target_versions', retcode=1),
+      api.step_data(
+          'Create test containers.call chromite.api.PackageService/GetTargetVersions.call build API script',
+          retcode=1),
       api.post_check(
           post_process.DoesNotRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'

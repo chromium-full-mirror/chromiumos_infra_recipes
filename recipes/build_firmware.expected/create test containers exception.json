@@ -4168,7 +4168,7 @@
     "cmd": [],
     "name": "Create test containers",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Failed to create containers: Step('Create test containers.set target_versions') (retcode: 1)@@@",
+      "@@@STEP_TEXT@Failed to create containers: Step('Create test containers.call chromite.api.PackageService/GetTargetVersions.call build API script') (retcode: 1)@@@",
       "@@@STEP_WARNINGS@@@"
     ]
   },
@@ -4435,16 +4435,9 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"android_branch_version\": \"git_rvc-arc\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"android_target_version\": \"bertha\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"android_version\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"chrome_version\": \"chrome_version\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"full_version\": \"full_version\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"milestone_version\": \"milestone_version\",@@@",
-      "@@@STEP_LOG_LINE@response@  \"platform_version\": \"platform_version\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
+      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_END@response@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -4508,58 +4501,7 @@
     },
     "name": "Create test containers.call chromite.api.PackageService/GetTargetVersions.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Create test containers.call chromite.api.PackageService/GetTargetVersions.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Create test containers.call chromite.api.PackageService/GetTargetVersions.call response",
-    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Create test containers.set target_versions",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
