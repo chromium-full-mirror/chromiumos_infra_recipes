@@ -358,7 +358,7 @@
   * [cros_release_util:examples/match_channels](#recipes-cros_release_util_examples_match_channels)
   * [cros_release_util:tests/image_type_str](#recipes-cros_release_util_tests_image_type_str) &mdash; Testing for cros_release_util.
   * [cros_release_util:tests/release_builder_name](#recipes-cros_release_util_tests_release_builder_name)
-  * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan)
+  * [cros_relevance:examples/build_plan](#recipes-cros_relevance_examples_build_plan) &mdash; Unit tests for the run_build_planner function.
   * [cros_relevance:examples/cq_relevance](#recipes-cros_relevance_examples_cq_relevance)
   * [cros_relevance:examples/forced_relevance](#recipes-cros_relevance_examples_forced_relevance)
   * [cros_relevance:examples/is_depgraph_affected](#recipes-cros_relevance_examples_is_depgraph_affected)
@@ -1715,7 +1715,7 @@ A module to plan the builds to be launched.
 
 &emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#41)(self):**
 
-&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#442)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
+&mdash; **def [choose\_snapshots](/recipe_modules/build_plan/api.py#439)(self, original_internal: GitilesCommit, original_external: GitilesCommit, gerrit_changes: List[GerritChange], internal_manifest: ManifestProject, cq_looks_enabled: Optional[bool]=False):**
 
 Returns chosen manifest snapshot to run CQ with.
 
@@ -1753,7 +1753,7 @@ Returns:
     A list of -snapshot builds we don't need to schedule and can join.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#332)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#329)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1767,7 +1767,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#389)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#386)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1783,7 +1783,7 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#428)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#425)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -3986,7 +3986,7 @@ Module for determining if a build is unnecessary.
 
 A module for determining if a build is unnecessary.
 
-&mdash; **def [call\_pointless\_build\_checker](/recipe_modules/cros_relevance/api.py#333)(self, check_request, step_presentation, is_pointless_test_value=False):**
+&mdash; **def [call\_pointless\_build\_checker](/recipe_modules/cros_relevance/api.py#332)(self, check_request, step_presentation, is_pointless_test_value=False):**
 
 Returns the result of calling the Pointless Build Checker.
 
@@ -4002,7 +4002,7 @@ Returns:
   check_result (PointlessBuildCheckResponse): The response from calling the
       Pointless Build Checker
 
-&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#430)(self, gerrit_changes, configs):**
+&mdash; **def [check\_force\_relevance\_footer](/recipe_modules/cros_relevance/api.py#429)(self, gerrit_changes, configs):**
 
 Check the incoming gerrit changes to determine if we force relevance.
 
@@ -4013,7 +4013,7 @@ Args:
 Returns:
   A list of target names, derived from `configs`, to be forced relevant.
 
-&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#503)(self, patch_sets):**
+&mdash; **def [get\_affected\_paths](/recipe_modules/cros_relevance/api.py#502)(self, patch_sets):**
 
 Returns the union of all paths in the list of patchsets.
 
@@ -4024,7 +4024,7 @@ Args:
 Returns:
   List[str]: The union of all paths in the patchsets.
 
-&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#408)(self, sysroot, chroot, packages=None):**
+&mdash; **def [get\_dependency\_graph](/recipe_modules/cros_relevance/api.py#407)(self, sysroot, chroot, packages=None):**
 
 Calculates the dependency graph for the build target & SDK
 
@@ -4040,7 +4040,7 @@ Returns:
       graph for the target and the second element the graph for the
       SDK/chroot.
 
-&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#524)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
+&mdash; **def [get\_package\_dependencies](/recipe_modules/cros_relevance/api.py#523)(self, sysroot, chroot, patch_sets=None, packages=None, include_rev_deps=False):**
 
 Calculates the dependencies for the build target.
 
@@ -4057,7 +4057,7 @@ Args:
 Returns:
   (List[str]): A list of package dependencies for the build target.
 
-&mdash; **def [is\_cq\_build\_relevant](/recipe_modules/cros_relevance/api.py#178)(self, patch_sets: List[PatchSet], dep_graph: DepGraph, force_relevant: bool=False, is_pointless_test_value: bool=False):**
+&mdash; **def [is\_cq\_build\_relevant](/recipe_modules/cros_relevance/api.py#177)(self, patch_sets: List[PatchSet], dep_graph: DepGraph, force_relevant: bool=False, is_pointless_test_value: bool=False):**
 
 Determines if changes are relevant to the CQ run.
 
@@ -4076,7 +4076,7 @@ Args:
 Returns:
   bool: Whether the changes are relevant to the CQ run.
 
-&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#383)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
+&mdash; **def [is\_depgraph\_affected](/recipe_modules/cros_relevance/api.py#382)(self, gerrit_changes, gitiles_commit, dep_graph, test_value=None, name=None):**
 
 Determines if a Gerrit Change affects a given dependency graph.
 
@@ -4093,7 +4093,7 @@ Args:
 Returns:
   bool: Whether the given Gerrit Change affects the given dependency graph.
 
-&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#240)(self, gitiles_commit, dep_graph):**
+&mdash; **def [postsubmit\_relevance\_check](/recipe_modules/cros_relevance/api.py#239)(self, gitiles_commit, dep_graph):**
 
 Determines if postsubmit builder is relevant for given snapshot.
 
@@ -4107,7 +4107,7 @@ Returns:
   bool: Whether any packages that target depends on have been upreved
   in the latest snapshot or the build was forced relevant.
 
-&mdash; **def [run\_build\_planner](/recipe_modules/cros_relevance/api.py#63)(self, builder_configs, gerrit_changes, gitiles_commit, name=None, test_builder_ids=None):**
+&mdash; **def [run\_build\_planner](/recipe_modules/cros_relevance/api.py#63)(self, builder_configs, gerrit_changes, gitiles_commit, name=None):**
 
 Determines which builders must be run (and which can be skipped).
 
@@ -4123,7 +4123,6 @@ Args:
   gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
       snapshot Gitiles commit.
   name (str): The step name.
-  test_builder_ids (list[BuilderConfig.Id]): test override
 
 Returns:
   PlannedBuilders: Necessary and skipped builders as a tuple.
@@ -13205,10 +13204,12 @@ Testing for cros_release_util.image_type_to_str.
 &mdash; **def [RunSteps](/recipe_modules/cros_release_util/tests/release_builder_name.py#25)(api, properties):**
 ### *recipes* / [cros\_relevance:examples/build\_plan](/recipe_modules/cros_relevance/examples/build_plan.py)
 
-[DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#15): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_relevance/examples/build_plan.py#18): [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#32)(api, properties):**
+Unit tests for the run_build_planner function.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_relevance/examples/build_plan.py#33)(api, properties):**
 ### *recipes* / [cros\_relevance:examples/cq\_relevance](/recipe_modules/cros_relevance/examples/cq_relevance.py)
 
 [DEPS](/recipe_modules/cros_relevance/examples/cq_relevance.py#17): [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14885,12 +14886,12 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#45)(api, properties):**
 ### *recipes* / [orch\_menu:examples/wait\_for\_images](/recipe_modules/orch_menu/examples/wait_for_images.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#15): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#15): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
 Tests for the plan_and_wait_for_images function.
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/wait_for_images.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/wait_for_images.py#22)(api):**
 ### *recipes* / [orch\_menu:tests/builds\_status](/recipe_modules/orch_menu/tests/builds_status.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/builds_status.py#11): [failures](#recipe_modules-failures), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

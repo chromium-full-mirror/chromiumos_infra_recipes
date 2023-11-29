@@ -1917,7 +1917,7 @@
     "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@7 new, 0 recycled@@@"
+      "@@@STEP_TEXT@8 new, 0 recycled@@@"
     ]
   },
   {
@@ -1973,7 +1973,7 @@
     "name": "run builds.plan builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@7 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_TEXT@8 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
@@ -2339,6 +2339,11 @@
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
+      "@@@STEP_LOG_LINE@planner_output@  bucket: \"cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-pointless-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
       "@@@STEP_LOG_LINE@planner_output@  bucket: \"cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
@@ -2834,8 +2839,7 @@
     "name": "run builds.filter builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@need 7 new builds (filtered 1)@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_TEXT@need 8 new builds (filtered 0)@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -2893,10 +2897,10 @@
     "name": "run builds.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@7@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@8@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@0@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@0@@@",
       "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
       "@@@SET_BUILD_PROPERTY@count_skip_public_builders@0@@@",
@@ -3447,8 +3451,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.schedule new builds.atlas-cq",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"atlas\", \"builder\": \"atlas-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "run builds.schedule new builds.arm-generic-pointless-cq",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"arm-generic-pointless-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001340\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3457,7 +3461,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"atlas-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"arm-generic-pointless-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -3479,7 +3483,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -3490,12 +3494,12 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"atlas\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"atlas-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"arm-generic-pointless-cq\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
@@ -3510,9 +3514,9 @@
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        ],@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"snapshot-HEAD-SHA\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromiumos/manifest\",@@@",
       "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
@@ -3545,7 +3549,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
@@ -3557,7 +3561,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@arm-generic-pointless-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
     ]
   },
   {
@@ -3616,8 +3620,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.schedule new builds.cave-cq",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"cave-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001343\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "run builds.schedule new builds.atlas-cq",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"atlas\", \"builder\": \"atlas-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001343\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3626,7 +3630,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cave-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"atlas-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -3648,7 +3652,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -3659,12 +3663,12 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"cave-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"atlas\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"atlas-cq\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
@@ -3726,7 +3730,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
     ]
   },
   {
@@ -3785,8 +3789,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.schedule new builds.coral-cq",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"coral-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001346\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "run builds.schedule new builds.cave-cq",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"cave-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001346\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3795,7 +3799,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"coral-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cave-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -3829,7 +3833,7 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"coral-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"cave-cq\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\",@@@",
@@ -3895,7 +3899,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -3954,8 +3958,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run builds.schedule new builds.eve-cq",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"eve-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001349\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "name": "run builds.schedule new builds.coral-cq",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"coral-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001349\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3964,7 +3968,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"coral-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -3998,11 +4002,11 @@
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"coral-cq\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
       "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
@@ -4064,7 +4068,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@eve-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+      "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -4097,6 +4101,175 @@
       "@@@STEP_LOG_LINE@json.input@{@@@",
       "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
       "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8922054662172514006\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run builds.schedule new builds.eve-cq",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"cq\", \"builder\": \"eve-cq\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514007\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"canOutliveParent\": \"NO\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"critical\": \"YES\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"gerritChanges\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"change\": \"123456\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"patchset\": \"7\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"project-a\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ],@@@",
+      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
+      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"$recipe_engine/cq\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"active\": true,@@@",
+      "@@@STEP_LOG_LINE@request@            \"run_mode\": \"FULL_RUN\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"commit_position\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"0\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"cq_experimental\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"false\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"hide-test-results-in-gerrit\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"true\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@eve-cq@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateIncludedInvocations",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "run builds.schedule new builds.include sub resultdb invocations (8)",
+    "stdin": "{\"addInvocations\": [\"invocations/build:8922054662172514007\"], \"includingInvocation\": \"invocations/build:8945511751514863184\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8922054662172514007\"@@@",
       "@@@STEP_LOG_LINE@json.input@  ],@@@",
       "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/build:8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@json.input@}@@@",
@@ -4144,6 +4317,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@COLLECT@amd64-generic-cq@@@",
       "@@@STEP_LOG_LINE@COLLECT@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@COLLECT@arm-generic-pointless-cq@@@",
       "@@@STEP_LOG_LINE@COLLECT@arm64-generic-cq@@@",
       "@@@STEP_LOG_LINE@COLLECT@atlas-cq@@@",
       "@@@STEP_LOG_END@COLLECT@@@",
@@ -4316,7 +4490,8 @@
       "8922054662172514000",
       "8922054662172514001",
       "8922054662172514002",
-      "8922054662172514003"
+      "8922054662172514003",
+      "8922054662172514004"
     ],
     "infra_step": true,
     "luci_context": {
@@ -4337,7 +4512,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514001\",  \"builder\": {    \"project\": \"project\",    \"bucket\": \"ci\",    \"builder\": \"arm-generic-cq\"  },  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"STARTED\",  \"input\": {    \"gitilesCommit\": {      \"host\": \"chromium.googlesource.com\",      \"project\": \"project\",      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",      \"ref\": \"refs/heads/main\"    }  },  \"output\": {    \"properties\": {      \"image_artifacts_uploaded\": true    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514001\"    }  }}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514002\",  \"builder\": {    \"project\": \"project\",    \"bucket\": \"ci\",    \"builder\": \"arm64-generic-cq\"  },  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"SUCCESS\",  \"input\": {    \"gitilesCommit\": {      \"host\": \"chromium.googlesource.com\",      \"project\": \"project\",      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",      \"ref\": \"refs/heads/main\"    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514002\"    }  }}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514003\",  \"builder\": {    \"project\": \"project\",    \"bucket\": \"ci\",    \"builder\": \"atlas-cq\"  },  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"FAILURE\",  \"input\": {    \"gitilesCommit\": {      \"host\": \"chromium.googlesource.com\",      \"project\": \"project\",      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",      \"ref\": \"refs/heads/main\"    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514003\"    }  }}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514004\",  \"builder\": {    \"project\": \"project\",    \"bucket\": \"ci\",    \"builder\": \"atlas-cq\"  },  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"FAILURE\",  \"input\": {    \"gitilesCommit\": {      \"host\": \"chromium.googlesource.com\",      \"project\": \"project\",      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",      \"ref\": \"refs/heads/main\"    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514004\"    }  }}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{  \"id\": \"8922054662172514000\",  \"builder\": {    \"project\": \"project\",    \"bucket\": \"ci\",    \"builder\": \"amd64-generic-cq\"  },  \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",  \"createTime\": \"2018-05-25T23:50:17Z\",  \"status\": \"STARTED\",  \"input\": {    \"gitilesCommit\": {      \"host\": \"chromium.googlesource.com\",      \"project\": \"project\",      \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",      \"ref\": \"refs/heads/main\"    }  },  \"output\": {    \"properties\": {      \"image_artifacts_uploaded\": true    }  },  \"infra\": {    \"swarming\": {      \"priority\": 30    },    \"resultdb\": {      \"invocation\": \"invocations/build:8922054662172514000\"    }  }}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -4417,7 +4592,7 @@
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexIfCgdwcm9qZWN0EgJjaRoQYXJtNjQtZ2VuZXJpYy1jcSIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWlukgEtEgIgHionEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAy\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNOtpKubruDoexIXCgdwcm9qZWN0EgJjaRoIYXRsYXMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgFHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwMw==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNStpKubruDoexIXCgdwcm9qZWN0EgJjaRoIYXRsYXMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgFHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwNA==\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexIfCgdwcm9qZWN0EgJjaRoQYW1kNjQtZ2VuZXJpYy1jcSIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWACemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWluggEiCiAKHgoYaW1hZ2VfYXJ0aWZhY3RzX3VwbG9hZGVkEgIgAZIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwMA==\"@@@",
@@ -8780,7 +8955,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514003*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u052d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514004*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0002za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -9046,7 +9221,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@container metadata@{}@@@",
       "@@@STEP_LOG_END@container metadata@@@",
-      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
+      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
       "@@@SET_BUILD_PROPERTY@count_direct_test_retry_tests@0@@@",
       "@@@SET_BUILD_PROPERTY@tast_first_class_tests@[]@@@"
     ]
@@ -9352,7 +9527,7 @@
       }
     },
     "name": "run tests.schedule tests.schedule hardware tests.schedule skylab tests v2.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:DUT_POOL_QUOTA\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:bvt-cq\", \"label-model:model\"]}, \"hardwareAttributes\": {\"model\": \"model\"}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"another_target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:another_target\", \"suite:bvt-inline\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"another_target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-other-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"requests\": {\"htarget.hw.bvt-cq\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:DUT_POOL_QUOTA\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:bvt-cq\", \"label-model:model\"]}, \"hardwareAttributes\": {\"model\": \"model\"}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"managedPool\": \"MANAGED_POOL_QUOTA\", \"qsAccount\": \"pcq\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-cq\"}]}}, \"htarget.hw.bvt-inline\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"another_target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:another_target\", \"suite:bvt-inline\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"another_target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"bvt-inline\"}]}}, \"htarget.hw.some-other-suite\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-other-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-other-suite\"}]}}, \"htarget.hw.some-suite\": {\"params\": {\"decorations\": {\"autotestKeyvals\": {\"build_target\": \"target\"}, \"tags\": [\"label-pool:my skylab pool\", \"build:target-cq/R12-3.4.5-6789\", \"label-board:target\", \"suite:some-suite\"]}, \"hardwareAttributes\": {}, \"metadata\": {\"containerMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789/metadata/containers.jsonpb\", \"debugSymbolsArchiveUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\", \"testMetadataUrl\": \"gs://chromeos-image-archive/target-cq/R12-3.4.5-6789\"}, \"retry\": {\"allow\": true, \"max\": 30.0}, \"scheduling\": {\"qsAccount\": \"pcq\", \"unmanagedPool\": \"my skylab pool\"}, \"softwareAttributes\": {\"buildTarget\": {\"name\": \"target\"}}, \"softwareDependencies\": [{\"chromeosBuild\": \"target-cq/R12-3.4.5-6789\"}, {\"chromeosBuildGcsBucket\": \"chromeos-image-archive\"}], \"testExecutionBehavior\": \"NON_CRITICAL\", \"time\": {\"maximumDuration\": \"32400s\"}}, \"testPlan\": {\"suite\": [{\"name\": \"some-suite\"}]}}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9364,7 +9539,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cros_test_platform\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514008\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -9618,7 +9793,7 @@
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          }@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134c\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -9653,7 +9828,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514007@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+      "@@@STEP_LINK@8922054662172514008@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
     ]
   },
   {
@@ -9727,21 +9902,11 @@
       }
     },
     "name": "run tests.schedule tests.schedule tast vm tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet_shard_1_of_2\", \"totalShards\": \"2\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet_shard_2_of_2\", \"shardIndex\": \"1\", \"totalShards\": \"2\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001352\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-vm-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"name\": \"ttarget.tast.sweet-informational\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001355\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet_shard_1_of_2\", \"totalShards\": \"2\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001352\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-direct-tast-vm\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"name\": \"ttarget.tast.sweet_shard_2_of_2\", \"shardIndex\": \"1\", \"totalShards\": \"2\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001355\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-vm-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"name\": \"ttarget.tast.sweet-informational\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001358\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-direct-tast-vm\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514008\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
@@ -9756,10 +9921,20 @@
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm-informational\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-direct-tast-vm\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514010\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-vm-informational\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514011\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -9969,7 +10144,7 @@
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet_shard_1_of_2\",@@@",
       "@@@STEP_LOG_LINE@request@          \"totalShards\": \"2\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000134f\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001352\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -10208,7 +10383,7 @@
       "@@@STEP_LOG_LINE@request@          \"shardIndex\": \"1\",@@@",
       "@@@STEP_LOG_LINE@request@          \"totalShards\": \"2\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001352\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001355\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -10445,7 +10620,7 @@
       "@@@STEP_LOG_LINE@request@          ],@@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast.sweet-informational\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001355\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001358\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -10484,7 +10659,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514010@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514011@@@"
     ]
   },
   {
@@ -10542,7 +10717,7 @@
       }
     },
     "name": "run tests.schedule tests.schedule tast GCE tests",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast_gce.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001358\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast_gce.sweet-informational\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135b\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"!informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast_gce.sweet\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135b\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}, {\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"target-tast-gce-informational\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$recipe_engine/cq\": {\"active\": true, \"run_mode\": \"FULL_RUN\"}, \"buildPayload\": {\"artifactsGsBucket\": \"chromeos-image-archive\", \"artifactsGsPath\": \"target-cq/R12-3.4.5-6789\", \"filesByArtifact\": {\"ARTIFACT_TYPES_UNSPECIFIED\": [\"artifact_types_unspecified.txt\"], \"AUTOTEST_FILES\": [\"autotest_files.txt\"], \"BAZEL_PERFORMANCE_ARTIFACTS\": [\"bazel_performance_artifacts.txt\"], \"BREAKPAD_DEBUG_SYMBOLS\": [\"breakpad_debug_symbols.txt\"], \"BUILD_MANIFEST\": [\"build_manifest.txt\"], \"CHROMEOS_CONFIG\": [\"chromeos_config.txt\"], \"CHROME_AFDO_PROFILE_FOR_ANDROID_LINUX\": [\"chrome_afdo_profile_for_android_linux.txt\"], \"CHROME_DEBUG_BINARY\": [\"chrome_debug_binary.txt\"], \"CHROME_EBUILD_ENV\": [\"chrome_ebuild_env.txt\"], \"CLANG_CRASH_DIAGNOSES\": [\"clang_crash_diagnoses.txt\"], \"CODE_COVERAGE_E2E\": [\"code_coverage_e2e.txt\"], \"CODE_COVERAGE_GOLANG\": [\"code_coverage_golang.txt\"], \"CODE_COVERAGE_HTML\": [\"code_coverage_html.txt\"], \"CODE_COVERAGE_LLVM_JSON\": [\"code_coverage_llvm_json.txt\"], \"CODE_COVERAGE_RUST_LLVM_JSON\": [\"code_coverage_rust_llvm_json.txt\"], \"COMPILER_RUSAGE_LOG\": [\"compiler_rusage_log.txt\"], \"DEBUG_SYMBOLS\": [\"debug_symbols.txt\"], \"DLC_IMAGE\": [\"dlc_image.txt\"], \"EBUILD_LOGS\": [\"ebuild_logs.txt\"], \"FACTORY_IMAGE\": [\"factory_image.txt\"], \"FIRMWARE\": [\"firmware.txt\"], \"FIRMWARE_LCOV\": [\"firmware_lcov.txt\"], \"FIRMWARE_TARBALL\": [\"firmware_tarball.txt\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_tarball_info.txt\"], \"FIRMWARE_TOKEN_DATABASE\": [\"firmware_token_database.txt\"], \"FPMCU_UNITTESTS\": [\"fpmcu_unittests.txt\"], \"FUZZER_SYSROOT\": [\"fuzzer_sysroot.txt\"], \"GCE_TARBALL\": [\"gce_tarball.txt\"], \"HWQUAL\": [\"hwqual.txt\"], \"IMAGE_ARCHIVES\": [\"image_archives.txt\"], \"IMAGE_SCRIPTS\": [\"image_scripts.txt\"], \"IMAGE_ZIP\": [\"image_zip.txt\"], \"LICENSE_CREDITS\": [\"license_credits.txt\"], \"PINNED_GUEST_IMAGES\": [\"pinned_guest_images.txt\"], \"SDK_TARBALL\": [\"sdk_tarball.txt\"], \"SDK_TOOLCHAIN_PREBUILTS\": [\"sdk_toolchain_prebuilts.txt\"], \"SIMPLE_CHROME_SYSROOT\": [\"simple_chrome_sysroot.txt\"], \"STRIPPED_PACKAGES\": [\"stripped_packages.txt\"], \"SYSROOT_ARCHIVE\": [\"sysroot_archive.txt\"], \"TAST_FILES\": [\"tast_files.txt\"], \"TEST_UPDATE_PAYLOAD\": [\"test_update_payload.txt\"], \"TOOLCHAIN_WARNING_LOGS\": [\"toolchain_warning_logs.txt\"], \"UNIT_TESTS\": [\"unit_tests.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"unverified_chrome_benchmark_afdo_file.txt\"], \"UNVERIFIED_CHROME_BENCHMARK_PERF_FILE\": [\"unverified_chrome_benchmark_perf_file.txt\"], \"UNVERIFIED_CHROME_CWP_AFDO_FILE\": [\"unverified_chrome_cwp_afdo_file.txt\"], \"UNVERIFIED_KERNEL_CWP_AFDO_FILE\": [\"unverified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"verified_chrome_benchmark_afdo_file.txt\"], \"VERIFIED_CHROME_CWP_AFDO_FILE\": [\"verified_chrome_cwp_afdo_file.txt\"], \"VERIFIED_KERNEL_CWP_AFDO_FILE\": [\"verified_kernel_cwp_afdo_file.txt\"], \"VERIFIED_RELEASE_AFDO_FILE\": [\"verified_release_afdo_file.txt\"]}}, \"buildTarget\": {\"name\": \"target\"}, \"expressions\": [\"informational\"], \"gceMetadata\": {\"machineType\": \"n2-standard-2\", \"network\": \"gce-test-project-network\", \"project\": \"gce-test-project\", \"subnet\": \"us-west1-a\", \"zone\": \"us-west1-a\"}, \"name\": \"ttarget.tast_gce.sweet-informational\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135e\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}, {\"key\": \"hide-in-gerrit\", \"value\": \"true\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -10554,7 +10729,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514011\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514012\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -10564,7 +10739,7 @@
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"target-tast-gce-informational\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514012\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514013\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -10780,7 +10955,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast_gce.sweet\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001358\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135b\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -11024,7 +11199,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"name\": \"ttarget.tast_gce.sweet-informational\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
-      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135b\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000135e\",@@@",
       "@@@STEP_LOG_LINE@request@        \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"parentRunId\": \"fake-task-id\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
@@ -11063,7 +11238,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514012@@@"
+      "@@@STEP_LINK@@https://cr-buildbucket.appspot.com/build/8922054662172514013@@@"
     ]
   },
   {
@@ -11086,7 +11261,7 @@
     "name": "run tests.schedule tests.set test_tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [\"8922054662172514007\"], \"tast_vm_tests_builder_ids\": [\"8922054662172514008\", \"8922054662172514009\", \"8922054662172514010\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [\"8922054662172514008\"], \"tast_vm_tests_builder_ids\": [\"8922054662172514009\", \"8922054662172514010\", \"8922054662172514011\"]}@@@"
     ]
   },
   {
@@ -11101,7 +11276,7 @@
     "name": "run tests.collect tests.collect skylab tasks v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514007, url='https://cr-buildbucket.appspot.com/build/8922054662172514007', test=suite: \"bvt-cq\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514008, url='https://cr-buildbucket.appspot.com/build/8922054662172514008', test=suite: \"bvt-cq\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-cq\"@@@",
@@ -11650,7 +11825,7 @@
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514007, url='https://cr-buildbucket.appspot.com/build/8922054662172514007', test=suite: \"some-other-suite\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514008, url='https://cr-buildbucket.appspot.com/build/8922054662172514008', test=suite: \"some-other-suite\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.some-other-suite\"@@@",
@@ -12197,7 +12372,7 @@
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514007, url='https://cr-buildbucket.appspot.com/build/8922054662172514007', test=suite: \"some-suite\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514008, url='https://cr-buildbucket.appspot.com/build/8922054662172514008', test=suite: \"some-suite\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.some-suite\"@@@",
@@ -12742,7 +12917,7 @@
       "@@@STEP_LOG_LINE@return value@  }@@@",
       "@@@STEP_LOG_LINE@return value@}@@@",
       "@@@STEP_LOG_LINE@return value@), status=20, child_results=[])@@@",
-      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514007, url='https://cr-buildbucket.appspot.com/build/8922054662172514007', test=suite: \"bvt-inline\"@@@",
+      "@@@STEP_LOG_LINE@return value@SkylabResult(task=SkylabTask(id=8922054662172514008, url='https://cr-buildbucket.appspot.com/build/8922054662172514008', test=suite: \"bvt-inline\"@@@",
       "@@@STEP_LOG_LINE@return value@skylab_board: \"another_target\"@@@",
       "@@@STEP_LOG_LINE@return value@common {@@@",
       "@@@STEP_LOG_LINE@return value@  display_name: \"htarget.hw.bvt-inline\"@@@",
@@ -13307,7 +13482,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514007"
+      "8922054662172514008"
     ],
     "infra_step": true,
     "luci_context": {
@@ -13349,14 +13524,14 @@
       }
     },
     "name": "run tests.collect tests.collect skylab tasks v2.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514007\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514008\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514008\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -13368,13 +13543,13 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514007\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514008\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514007@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+      "@@@STEP_LINK@8922054662172514008@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
     ]
   },
   {
@@ -13392,9 +13567,9 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514008",
       "8922054662172514009",
-      "8922054662172514010"
+      "8922054662172514010",
+      "8922054662172514011"
     ],
     "infra_step": true,
     "luci_context": {
@@ -13436,17 +13611,11 @@
       }
     },
     "name": "run tests.collect tests.collect tast vm tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514008\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514009\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514010\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514009\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514010\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514011\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514008\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514009\",@@@",
@@ -13458,18 +13627,18 @@
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514010\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514011\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514008\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
@@ -13481,13 +13650,19 @@
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514010\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514011\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514008@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
       "@@@STEP_LINK@8922054662172514009@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@",
-      "@@@STEP_LINK@8922054662172514010@https://cr-buildbucket.appspot.com/build/8922054662172514010@@@"
+      "@@@STEP_LINK@8922054662172514010@https://cr-buildbucket.appspot.com/build/8922054662172514010@@@",
+      "@@@STEP_LINK@8922054662172514011@https://cr-buildbucket.appspot.com/build/8922054662172514011@@@"
     ]
   },
   {
@@ -13505,8 +13680,8 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "8922054662172514011",
-      "8922054662172514012"
+      "8922054662172514012",
+      "8922054662172514013"
     ],
     "infra_step": true,
     "luci_context": {
@@ -13548,20 +13723,20 @@
       }
     },
     "name": "run tests.collect tests.collect tast GCE tests.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514011\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514012\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514012\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"8922054662172514013\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514011\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514012\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514012\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514013\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -13573,20 +13748,20 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514011\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514012\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514012\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514013\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@8922054662172514011@https://cr-buildbucket.appspot.com/build/8922054662172514011@@@",
-      "@@@STEP_LINK@8922054662172514012@https://cr-buildbucket.appspot.com/build/8922054662172514012@@@"
+      "@@@STEP_LINK@8922054662172514012@https://cr-buildbucket.appspot.com/build/8922054662172514012@@@",
+      "@@@STEP_LINK@8922054662172514013@https://cr-buildbucket.appspot.com/build/8922054662172514013@@@"
     ]
   },
   {
@@ -13677,7 +13852,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13686,7 +13861,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13695,7 +13870,7 @@
     "name": "check test results.hw test results.htarget.hw.some-other-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13705,7 +13880,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@failed but is not critical@@@",
-      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
     ]
   },
   {
@@ -13721,7 +13896,7 @@
     "name": "check test results.vm test results.",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514008@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@"
     ]
   },
   {
@@ -13729,7 +13904,7 @@
     "name": "check test results.vm test results. (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514009@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514010@@@"
     ]
   },
   {
@@ -13737,7 +13912,7 @@
     "name": "check test results.vm test results. (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514010@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514011@@@"
     ]
   },
   {
@@ -13753,7 +13928,7 @@
     "name": "check test results.vm test results (2).",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514011@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514012@@@"
     ]
   },
   {
@@ -13761,7 +13936,7 @@
     "name": "check test results.vm test results (2). (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514012@@@"
+      "@@@STEP_LINK@test page@https://cr-buildbucket.appspot.com/build/8922054662172514013@@@"
     ]
   },
   {
@@ -13792,7 +13967,8 @@
       "8922054662172514003",
       "8922054662172514004",
       "8922054662172514005",
-      "8922054662172514006"
+      "8922054662172514006",
+      "8922054662172514007"
     ],
     "infra_step": true,
     "luci_context": {
@@ -13834,7 +14010,7 @@
       }
     },
     "name": "final build collect.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514000\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514002\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514003\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514004\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514005\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514006\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514000\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514002\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514003\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514004\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514005\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514006\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514007\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13945,10 +14121,10 @@
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514003\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514004\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
@@ -13969,15 +14145,15 @@
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cave-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"arm-generic-pointless-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514004\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514003\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514004\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514003\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
@@ -13998,7 +14174,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"coral-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"cave-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -14027,7 +14203,7 @@
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"coral-cq\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
@@ -14036,6 +14212,35 @@
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514006\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"project\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/heads/main\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"eve-cq\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"project\": \"project\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createTime\": \"2018-05-25T23:50:17Z\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514007\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build:8922054662172514007\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          \"swarming\": {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"priority\": 30@@@",
@@ -14098,6 +14303,12 @@
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514006\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514007\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -14105,10 +14316,11 @@
       "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_LINK@amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
-      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
-      "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
-      "@@@STEP_LINK@eve-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
+      "@@@STEP_LINK@arm-generic-pointless-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
+      "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@",
+      "@@@STEP_LINK@eve-cq@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
     ]
   },
   {
@@ -14118,6 +14330,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@amd64-generic-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-cq@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-pointless-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@arm64-generic-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@atlas-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@cave-cq@@@",
@@ -14132,7 +14345,7 @@
     "name": "final build collect.check build results.set child_builds_relevant",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@child_builds_relevant@7@@@"
+      "@@@SET_BUILD_PROPERTY@child_builds_relevant@8@@@"
     ]
   },
   {
@@ -14156,7 +14369,7 @@
     "name": "final build collect.check build results.build results.relevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@1 build failed, 6 succeeded@@@",
+      "@@@STEP_TEXT@1 build failed, 7 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -14165,7 +14378,7 @@
     "name": "final build collect.check build results.build results.relevant critical build results.atlas-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -14187,6 +14400,14 @@
   },
   {
     "cmd": [],
+    "name": "final build collect.check build results.build results.relevant critical build results.arm-generic-pointless-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "final build collect.check build results.build results.relevant critical build results.arm64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
@@ -14198,7 +14419,7 @@
     "name": "final build collect.check build results.build results.relevant critical build results.cave-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
@@ -14206,7 +14427,7 @@
     "name": "final build collect.check build results.build results.relevant critical build results.coral-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -14214,7 +14435,7 @@
     "name": "final build collect.check build results.build results.relevant critical build results.eve-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
     ]
   },
   {
@@ -14361,16 +14582,19 @@
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexIfCgdwcm9qZWN0EgJjaRoQYXJtNjQtZ2VuZXJpYy1jcSIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWlukgEtEgIgHionEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAy\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNOtpKubruDoexIXCgdwcm9qZWN0EgJjaRoIYXRsYXMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgFHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwMw==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNStpKubruDoexIXCgdwcm9qZWN0EgJjaRoIYXRsYXMtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgFHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwNA==\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNStpKubruDoexIWCgdwcm9qZWN0EgJjaRoHY2F2ZS1jcSIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWlukgEtEgIgHionEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDA0\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNOtpKubruDoexInCgdwcm9qZWN0EgJjaRoYYXJtLWdlbmVyaWMtcG9pbnRsZXNzLWNxIi91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFYAx6YRJfChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEgdwcm9qZWN0GigyZDcyNTEwZTQ0N2FiNjBhOTcyOGFlZWEyMzYyZDhiZTJjYmQ3Nzg5Ig9yZWZzL2hlYWRzL21haW6SAS0SAiAeKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDM=\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNWtpKubruDoexIXCgdwcm9qZWN0EgJjaRoIY29yYWwtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgDHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwNQ==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNWtpKubruDoexIWCgdwcm9qZWN0EgJjaRoHY2F2ZS1jcSIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWlukgEtEgIgHionEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDA1\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNatpKubruDoexIVCgdwcm9qZWN0EgJjaRoGZXZlLWNxIi91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFYAx6YRJfChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEgdwcm9qZWN0GigyZDcyNTEwZTQ0N2FiNjBhOTcyOGFlZWEyMzYyZDhiZTJjYmQ3Nzg5Ig9yZWZzL2hlYWRzL21haW6SAS0SAiAeKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDY=\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNatpKubruDoexIXCgdwcm9qZWN0EgJjaRoIY29yYWwtY3EiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgDHphEl8KGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SB3Byb2plY3QaKDJkNzI1MTBlNDQ3YWI2MGE5NzI4YWVlYTIzNjJkOGJlMmNiZDc3ODkiD3JlZnMvaGVhZHMvbWFpbpIBLRICIB4qJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwNg==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    },@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNetpKubruDoexIVCgdwcm9qZWN0EgJjaRoGZXZlLWNxIi91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFYAx6YRJfChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEgdwcm9qZWN0GigyZDcyNTEwZTQ0N2FiNjBhOTcyOGFlZWEyMzYyZDhiZTJjYmQ3Nzg5Ig9yZWZzL2hlYWRzL21haW6SAS0SAiAeKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDc=\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"manifestCommit\": \"snapshot-HEAD-SHA\",@@@",
@@ -18730,7 +18954,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514003*\ufffd\u0001\n\ufffd\u0001\b\u052d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0016\n\u0007project\u0012\u0002ci\u001a\u0007cave-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514004*\ufffd\u0001\n\ufffd\u0001\b\u056d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\bcoral-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514005*\ufffd\u0001\n\ufffd\u0001\b\u05ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0015\n\u0007project\u0012\u0002ci\u001a\u0006eve-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514006:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0002\n\ufffd\u0002\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001d\n\u0007project\u0012\u0002ci\u001a\u000earm-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514001*\ufffd\u0002\n\ufffd\u0002\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010amd64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\"\n \n\u001e\n\u0018image_artifacts_uploaded\u0012\u0002 \u0001\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514000*\ufffd\u0001\n\ufffd\u0001\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001f\n\u0007project\u0012\u0002ci\u001a\u0010arm64-generic-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514002*\ufffd\u0001\n\ufffd\u0001\b\u052d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\batlas-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\u0014za\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514004*\ufffd\u0002\n\ufffd\u0002\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012'\n\u0007project\u0012\u0002ci\u001a\u0018arm-generic-pointless-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514003*\ufffd\u0001\n\ufffd\u0001\b\u056d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0016\n\u0007project\u0012\u0002ci\u001a\u0007cave-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514005*\ufffd\u0001\n\ufffd\u0001\b\u05ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0017\n\u0007project\u0012\u0002ci\u001a\bcoral-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514006*\ufffd\u0001\n\ufffd\u0001\b\u05ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0015\n\u0007project\u0012\u0002ci\u001a\u0006eve-cq\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8922054662172514007:\u0011snapshot-HEAD-SHAB5\n3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007Jh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_2/input.binaryproto"
     ],
     "infra_step": true,

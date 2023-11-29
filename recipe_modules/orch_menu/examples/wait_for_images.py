@@ -15,7 +15,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/raw_io',
     'orch_menu',
 ]
 
@@ -42,6 +41,7 @@ def RunSteps(api):
     all_expected_builders = [
         'amd64-generic-cq',
         'arm-generic-cq',
+        'arm-generic-pointless-cq',
         'arm64-generic-cq',
         'atlas-cq',
         'cave-cq',
@@ -97,24 +97,28 @@ def GenTests(api):
 
   # atlas-cq is originally in FAILURE status.
   failed_build = api.buildbucket.ci_build_message(
-      build_id=8922054662172514003,
+      build_id=8922054662172514004,
       builder='atlas-cq',
       status='FAILURE',
   )
-
   # The rest of these builds have COLLECT_AFTER_HW_TEST set.
+  arm_generic_pointless = api.buildbucket.ci_build_message(
+      build_id=8922054662172514003,
+      builder='arm-generic-pointless-cq',
+      status='SUCCESS',
+  )
   cave = api.buildbucket.ci_build_message(
-      build_id=8922054662172514004,
+      build_id=8922054662172514005,
       builder='cave-cq',
       status='SUCCESS',
   )
   coral = api.buildbucket.ci_build_message(
-      build_id=8922054662172514005,
+      build_id=8922054662172514006,
       builder='coral-cq',
       status='SUCCESS',
   )
   eve = api.buildbucket.ci_build_message(
-      build_id=8922054662172514006,
+      build_id=8922054662172514007,
       builder='eve-cq',
       status='SUCCESS',
   )
@@ -124,6 +128,7 @@ def GenTests(api):
       other_build_with_published_image,
       successful_build,
       failed_build,
+      arm_generic_pointless,
       cave,
       coral,
       eve,
@@ -162,6 +167,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.arm-generic-cq'),
       api.post_check(post_process.MustRun,
+                     'run builds.schedule new builds.arm-generic-pointless-cq'),
+      api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.arm64-generic-cq'),
       api.post_check(post_process.MustRun,
                      'run builds.schedule new builds.atlas-cq'),
@@ -182,14 +189,14 @@ def GenTests(api):
           '60s', '-json', '-', '8922054662172514000', '8922054662172514001',
           '8922054662172514002', '8922054662172514003'
       ]),
-      # The final build collect should collect all 7 builds.
+      # The final build collect should collect all 8 builds.
       api.post_check(post_process.StepCommandRE,
                      'final build collect.collect.wait', [
                          'bb', 'collect', '-host', '.*', '-interval', '.*',
                          '8922054662172514000', '8922054662172514001',
                          '8922054662172514002', '8922054662172514003',
                          '8922054662172514004', '8922054662172514005',
-                         '8922054662172514006'
+                         '8922054662172514006', '8922054662172514007'
                      ]),
       api.post_check(post_process.MustRun,
                      'final build collect.check build results'),
@@ -219,14 +226,14 @@ def GenTests(api):
           build_with_published_image, successful_build, failed_build,
           other_build_with_published_image
       ], step_name='run builds.collect after timeout'),
-      # The final build collect should collect all 7 builds.
+      # The final build collect should collect all 8 builds.
       api.post_check(post_process.StepCommandRE,
                      'final build collect.collect.wait', [
                          'bb', 'collect', '-host', '.*', '-interval', '.*',
                          '8922054662172514000', '8922054662172514001',
                          '8922054662172514002', '8922054662172514003',
                          '8922054662172514004', '8922054662172514005',
-                         '8922054662172514006'
+                         '8922054662172514006', '8922054662172514007'
                      ]),
       api.post_check(post_process.MustRun,
                      'final build collect.check build results'),

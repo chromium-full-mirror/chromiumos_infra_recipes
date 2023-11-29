@@ -87,7 +87,7 @@
     "cmd": [],
     "name": "plan builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@7 relevant, 0 irrelevant builder configs@@@",
+      "@@@STEP_TEXT@8 relevant, 0 irrelevant builder configs@@@",
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"gerritChanges\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
@@ -451,6 +451,11 @@
       "@@@STEP_LOG_LINE@planner_output@}@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
       "@@@STEP_LOG_LINE@planner_output@  name: \"arm64-generic-cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
+      "@@@STEP_LOG_LINE@planner_output@  bucket: \"cq\"@@@",
+      "@@@STEP_LOG_LINE@planner_output@}@@@",
+      "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
+      "@@@STEP_LOG_LINE@planner_output@  name: \"arm-generic-pointless-cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@  type: CQ@@@",
       "@@@STEP_LOG_LINE@planner_output@  bucket: \"cq\"@@@",
       "@@@STEP_LOG_LINE@planner_output@}@@@",
@@ -1136,7 +1141,7 @@
       "@@@STEP_LOG_LINE@filter log@amd64-generic-cq is a public builder and there are no changes to the external host@@@",
       "@@@STEP_LOG_LINE@filter log@arm-generic-cq is a public builder and there are no changes to the external host@@@",
       "@@@STEP_LOG_LINE@filter log@arm64-generic-cq is a public builder and there are no changes to the external host@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq is a public builder and there are no changes to the external host@@@",
       "@@@STEP_LOG_END@filter log@@@"
     ]
   },
@@ -1193,10 +1198,10 @@
       "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@4@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@0@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@1@@@",
+      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@0@@@",
       "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
-      "@@@SET_BUILD_PROPERTY@count_skip_public_builders@3@@@",
+      "@@@SET_BUILD_PROPERTY@count_skip_public_builders@4@@@",
       "@@@SET_BUILD_PROPERTY@slim_eligible_run@false@@@"
     ]
   },

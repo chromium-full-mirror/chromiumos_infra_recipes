@@ -61,7 +61,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     self._toolchain_cls_applied = value
 
   def run_build_planner(self, builder_configs, gerrit_changes, gitiles_commit,
-                        name=None, test_builder_ids=None):
+                        name=None):
     """Determines which builders must be run (and which can be skipped).
 
     This filters on preconfigured RunWhen rules, as well as on rules allowing
@@ -76,7 +76,6 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       gitiles_commit (bbcommon_pb2.GitilesCommit): The manifest-internal
           snapshot Gitiles commit.
       name (str): The step name.
-      test_builder_ids (list[BuilderConfig.Id]): test override
 
     Returns:
       PlannedBuilders: Necessary and skipped builders as a tuple.
@@ -120,7 +119,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
                         infra_step=True)
 
       test_resp = GenerateBuildPlanResponse(
-          builds_to_run=test_builder_ids or [])
+          builds_to_run=[b.id for b in builder_configs])
       response_bin = self.m.file.read_raw(
           'read output file', output_bin_file,
           test_data=test_resp.SerializeToString())
