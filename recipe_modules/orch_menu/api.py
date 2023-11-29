@@ -366,26 +366,26 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Yield while inside of the bot_cost.cq_run_cost_context.
       yield config
 
-  def create_recipe_result(self, include_build_details=False,
-                           ignore_build_test_failures=False):
+  def create_recipe_result(
+      self, include_build_details: bool = False,
+      ignore_build_test_failures: bool = False,
+      no_nest_final_build_collect: bool = False) -> result_pb2.RawResult:
     """Create the correct return value for RunSteps.
 
     Args:
-      include_build_details (bool): If True augment RawResults.summary_markdown
+      include_build_details: If True augment RawResults.summary_markdown
         with additional details about the build for both successes and failures.
-      ignore_build_test_failures (bool): If True, we will still produce a summary
+      ignore_build_test_failures: If True, we will still produce a summary
         of failures if present, but we will not set the build status to FAILURE.
+      no_nest_final_build_collect: If True, we do not create the parent 'final
+        build collect' step so that 'check build results' step is a top-level
+        step.
 
     Returns:
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
     """
     # If there are any remaining children to collect, collect them now.
-    #
-    # If async unit tests are enabled, don't create the nested 'final build
-    # collect' step, so that the 'check build results' step is a top-level step.
-    no_nest = ('chromeos.build_cq.async_unit_tests'
-               in self.m.cros_infra_config.experiments)
-    self._collect_remaining_children(no_nest=no_nest)
+    self._collect_remaining_children(no_nest=no_nest_final_build_collect)
 
     if not self.builds_status.fatal_failures:
       self._push_manifest_refs(self._properties.update_manifest_refs.test)

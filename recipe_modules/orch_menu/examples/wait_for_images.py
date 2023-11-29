@@ -61,7 +61,7 @@ def RunSteps(api):
         len(api.orch_menu.builds_status.completed_builds), 0)
 
     # All builders should be in "completed" state after the final build collect.
-    api.orch_menu.create_recipe_result()
+    api.orch_menu.create_recipe_result(no_nest_final_build_collect=True)
     api.assertions.assertCountEqual([
         b.builder.builder for b in api.orch_menu.builds_status.completed_builds
     ], all_expected_builders)
@@ -158,8 +158,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'basic',
       schedule_output(api),
-      api.buildbucket.simulated_collect_output(completed_builds,
-                                               'final build collect.collect'),
+      api.buildbucket.simulated_collect_output(completed_builds, 'collect'),
       # Expect to schedule 7 child builds. 4 should have COLLECT behavior, so
       # are included in the call build_poller.
       api.post_check(post_process.MustRun,
@@ -190,16 +189,13 @@ def GenTests(api):
           '8922054662172514002', '8922054662172514003'
       ]),
       # The final build collect should collect all 8 builds.
-      api.post_check(post_process.StepCommandRE,
-                     'final build collect.collect.wait', [
-                         'bb', 'collect', '-host', '.*', '-interval', '.*',
-                         '8922054662172514000', '8922054662172514001',
-                         '8922054662172514002', '8922054662172514003',
-                         '8922054662172514004', '8922054662172514005',
-                         '8922054662172514006', '8922054662172514007'
-                     ]),
-      api.post_check(post_process.MustRun,
-                     'final build collect.check build results'),
+      api.post_check(post_process.StepCommandRE, 'collect.wait', [
+          'bb', 'collect', '-host', '.*', '-interval', '.*',
+          '8922054662172514000', '8922054662172514001', '8922054662172514002',
+          '8922054662172514003', '8922054662172514004', '8922054662172514005',
+          '8922054662172514006', '8922054662172514007'
+      ]),
+      api.post_check(post_process.MustRun, 'check build results'),
       cq=True,
   )
 
@@ -218,8 +214,7 @@ def GenTests(api):
   yield api.orch_menu.test(
       'times-out',
       schedule_output(api),
-      api.buildbucket.simulated_collect_output(builds,
-                                               'final build collect.collect'),
+      api.buildbucket.simulated_collect_output(builds, 'collect'),
       # If the build_poller command times out, a get_multi should run after.
       api.step_data('run builds.collect', times_out_after=60 * 60 * 40),
       api.buildbucket.simulated_get_multi([
@@ -227,16 +222,13 @@ def GenTests(api):
           other_build_with_published_image
       ], step_name='run builds.collect after timeout'),
       # The final build collect should collect all 8 builds.
-      api.post_check(post_process.StepCommandRE,
-                     'final build collect.collect.wait', [
-                         'bb', 'collect', '-host', '.*', '-interval', '.*',
-                         '8922054662172514000', '8922054662172514001',
-                         '8922054662172514002', '8922054662172514003',
-                         '8922054662172514004', '8922054662172514005',
-                         '8922054662172514006', '8922054662172514007'
-                     ]),
-      api.post_check(post_process.MustRun,
-                     'final build collect.check build results'),
+      api.post_check(post_process.StepCommandRE, 'collect.wait', [
+          'bb', 'collect', '-host', '.*', '-interval', '.*',
+          '8922054662172514000', '8922054662172514001', '8922054662172514002',
+          '8922054662172514003', '8922054662172514004', '8922054662172514005',
+          '8922054662172514006', '8922054662172514007'
+      ]),
+      api.post_check(post_process.MustRun, 'check build results'),
       api.post_process(post_process.DropExpectation),
       cq=True,
   )

@@ -14493,17 +14493,7 @@
   },
   {
     "cmd": [],
-    "name": "final build collect",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "final build collect.collect",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "collect"
   },
   {
     "cmd": [
@@ -14530,10 +14520,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "final build collect.collect.wait",
+    "name": "collect.wait",
     "timeout": 129600,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -14556,10 +14546,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "final build collect.collect.get",
+    "name": "collect.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514005\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514006\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514007\"}}]}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -14796,9 +14786,8 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results",
+    "name": "check build results (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@amd64-generic-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@arm-generic-cq@@@",
       "@@@STEP_LOG_LINE@cq_relevant_builds@arm64-generic-cq@@@",
@@ -14812,76 +14801,75 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.set child_builds_relevant",
+    "name": "check build results (2).set child_builds_relevant",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@child_builds_relevant@7@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.set testing_toolchain",
+    "name": "check build results (2).set testing_toolchain",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@testing_toolchain@false@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results",
+    "name": "check build results (2).build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results",
+    "name": "check build results (2).build results.relevant critical build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@1 build failed, 2 succeeded@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results.coral-cq",
+    "name": "check build results (2).build results.relevant critical build results.coral-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results.cave-cq",
+    "name": "check build results (2).build results.relevant critical build results.cave-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results.eve-cq",
+    "name": "check build results (2).build results.relevant critical build results.eve-cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.non-critical build check",
+    "name": "non-critical build check (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@new non-critical builders@coral-cq@@@",
       "@@@STEP_LOG_END@new non-critical builders@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.non-critical build check.read builder configs",
+    "name": "non-critical build check (2).read builder configs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -14909,17 +14897,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "final build collect.non-critical build check.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "non-critical build check (2).read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "final build collect.print greenness",
+    "name": "print greenness (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('cave', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('coral', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('eve', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@greenness@@@"
     ]

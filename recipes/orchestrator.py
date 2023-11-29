@@ -17,6 +17,7 @@ from google.protobuf.json_format import MessageToDict
 from PB.chromiumos.checkpoint import RetryStep
 from PB.chromiumos.common import Channel
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
@@ -69,7 +70,8 @@ def RunSteps(api: RecipeApi,
     return api.orch_menu.create_recipe_result(
         include_build_details=is_release or is_public,
         ignore_build_test_failures=is_release and
-        not properties.build_failures_fatal)
+        not properties.build_failures_fatal,
+        no_nest_final_build_collect=api.orch_menu.is_cq_orchestrator)
 
 
 def DoRunSteps(api: RecipeApi):
@@ -124,8 +126,7 @@ def DoRunSteps(api: RecipeApi):
             MessageToDict(api.cros_release.resultdb_gitiles_commit)
     }
 
-  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in api.buildbucket.build.input.experiments
-  if api.orch_menu.is_cq_orchestrator and async_unit_tests_enabled:
+  if api.orch_menu.is_cq_orchestrator:
     testable_builds = api.orch_menu.plan_and_wait_for_images(
         extra_child_props=extra_child_props)
     # Aggregate any metadata produced by the child builds into our own GS bucket
@@ -173,6 +174,24 @@ def DoRunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data()
+
+  def _cq_schedule_and_collect_builds_test_data():
+    cq_collect, cq_collect_after = api.orch_menu.orch_child_builds(
+        'cq-orchestrator', '-cq')
+    ret = api.buildbucket.simulated_search_results(
+        cq_collect + cq_collect_after,
+        'clean up orchestrator.buildbucket.search')
+    for build in cq_collect + cq_collect_after:
+      ret += api.buildbucket.simulated_schedule_output(
+          builds_service_pb2.BatchResponse(responses=[{
+              'schedule_build': build
+          }]),
+          'run builds.schedule new builds.{}'.format(build.builder.builder))
+    ret += api.orch_menu.build_poller_step_data(builds=cq_collect,
+                                                parent_step_name='run builds')
+    ret += api.buildbucket.simulated_collect_output(
+        cq_collect + cq_collect_after, 'collect')
+    return ret
 
   yield api.orch_menu.test('basic', data.ctp_normal,
                            with_history=True, collect_builds=data.builds,
@@ -301,31 +320,33 @@ def GenTests(api: RecipeTestApi):
           }), builder='factory-corsola-15197.B-orchestrator', with_history=True,
       collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
 
-  yield api.orch_menu.test('builds-with-history', data.ctp_normal, cq=True,
-                           collect_builds=data.builds, with_history=True,
+  yield api.orch_menu.test('builds-with-history',
+                           _cq_schedule_and_collect_builds_test_data(),
+                           data.ctp_normal, cq=True, with_history=True,
                            git_footers=[])
 
   yield api.orch_menu.test(
-      'chromium-src-ref-cq-cl-tag', data.ctp_normal,
+      'chromium-src-ref-cq-cl-tag',
+      data.ctp_normal,
       api.buildbucket.ci_build(
           project='chromeos', bucket='cq', builder='cq-orchestrator',
           tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
-      collect_builds=data.builds)
+      _cq_schedule_and_collect_builds_test_data(),
+  )
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
-      'join-if-inflight-orchs', data.ctp_normal,
+      'join-if-inflight-orchs',
+      _cq_schedule_and_collect_builds_test_data(), data.ctp_normal,
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
-      collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
-      cq=True, with_history=True)
+      inflight_orch=[data.inflight_orchestrator], cq=True, with_history=True)
 
   yield api.orch_menu.test(
-      'runs-if-no-inflight-orchs', data.ctp_normal,
-      api.post_check(post_process.MustRun, find_inflight_name),
-      api.post_check(post_process.DoesNotRun,
-                     wait_inflight_name), git_footers=[],
-      collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
+      'runs-if-no-inflight-orchs', _cq_schedule_and_collect_builds_test_data(),
+      data.ctp_normal, api.post_check(post_process.MustRun, find_inflight_name),
+      api.post_check(post_process.DoesNotRun, wait_inflight_name),
+      git_footers=[], inflight_orch=[], cq=True, with_history=True)
 
   yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
                            collect_builds=data.builds,
@@ -339,8 +360,8 @@ def GenTests(api: RecipeTestApi):
                            with_manifest_refs=True)
 
   yield api.orch_menu.test('missing-gitiles-commit-with-changes',
-                           data.ctp_normal,
-                           collect_builds=data.builds, revision=None, cq=True,
+                           _cq_schedule_and_collect_builds_test_data(),
+                           data.ctp_normal, revision=None, cq=True,
                            with_history=True, git_footers=[])
 
   def verify_qs_account_pupr(check: Callable[[bool], bool],
@@ -354,13 +375,11 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test(
       'quota-scheduler-override', data.ctp_normal,
+      _cq_schedule_and_collect_builds_test_data(),
       api.post_check(verify_qs_account_pupr), cq=True, with_history=True,
       tags={'cq_cl_tag': 'pupr:chromeos-base/lacros-ash-atomic'},
-      git_footers=[], collect_builds=data.builds)
+      git_footers=[])
 
-  yield api.orch_menu.test('retry-only-critical-builds', data.ctp_normal,
-                           cq=True, with_history=True, git_footers=[],
-                           collect_builds=data.non_crit_fail)
 
   yield api.orch_menu.test(
       'critical-child-builder-fails',
@@ -393,7 +412,7 @@ def GenTests(api: RecipeTestApi):
                            collect_builds=data.non_crit_fail)
 
   yield api.orch_menu.test(
-      'async-unit-test-experiment',
+      'cq-orchestrator',
       data.ctp_normal,
       api.post_check(post_process.MustRun, 'run builds.schedule new builds'),
       api.post_check(post_process.MustRun, 'aggregating metadata'),
@@ -402,7 +421,6 @@ def GenTests(api: RecipeTestApi):
       api.orch_menu.build_poller_step_data(builds=data.builds,
                                            parent_step_name='run builds'),
       builder='cq-orchestrator',
-      experiments=['chromeos.build_cq.async_unit_tests'],
   )
 
   yield api.orch_menu.test(

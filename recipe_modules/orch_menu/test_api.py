@@ -136,9 +136,10 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
             self.m.buildbucket.simulated_collect_output(collect_builds,
                                                         'run builds.collect'))
     if collect_after_builds:
+      step_name = 'collect' if cq else 'final build collect.collect'
       args.append(
-          self.m.buildbucket.simulated_collect_output(
-              collect_after_builds, 'final build collect.collect'))
+          self.m.buildbucket.simulated_collect_output(collect_after_builds,
+                                                      step_name))
 
     child_builds = collect_builds + collect_after_builds
     if child_builds:
