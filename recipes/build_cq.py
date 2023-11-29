@@ -77,16 +77,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   failing_build_exception = None
   uploaded_artifacts = None
 
-  # The 'async_unit_tests' experiment does an initial upload of artifacts after
-  # building images, before running unit tests. This allows the CQ orchestrator
-  # to immediately use the image artifacts without waiting for unit testing to
-  # complete. A final upload will be done at the end of the build, for any
-  # additional artifacts produced by unit testing, or if an exception was
-  # thrown.
-  #
-  # TODO(b/261873853): Remove this experiment once this is the default flow.
-  async_unit_tests_enabled = 'chromeos.build_cq.async_unit_tests' in \
-      api.buildbucket.build.input.experiments
   upload_prebuilts_from_cq = 'chromeos.build_cq.upload_prebuilts' in \
       api.buildbucket.build.input.experiments
 
@@ -118,30 +108,29 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
       test_containers_runner.run_function_async(
           lambda cfg, _: api.build_menu.create_containers(cfg), config)
 
-      if async_unit_tests_enabled:
-        api.build_menu.build_images(config)
-        uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
+      api.build_menu.build_images(config)
 
-        # Pause and throw if test containers failed to upload. Note that this
-        # is done before the image_artifacts_uploaded property is set, as
-        # containers need to be present for testing.
-        test_containers_runner.wait_for_and_throw()
+      # This Recipe support async unit testing by doing an initial upload of
+      # artifacts after buing images and before running unit tests. This allows
+      # the orchestrator use the image artifacts without waiting for unit
+      # testing to complete. A final upload will be done at the end of the
+      # build, for any additional artifacts produced by unit testing, or if an
+      # exception was thrown.
+      uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
 
-        # Set a property to indicate image artifacts are uploaded, so CQ
-        # orchestrator can poll for this property.
-        api.easy.set_properties_step(image_artifacts_uploaded=True)
-        api.easy.set_properties_step(image_artifacts_uploaded_time=api.time
-                                     .utcnow().strftime('%FT%T.%fZ'))
-        # We have no steps following unit_test_images, so we don't need to
-        # check the return value.
-        api.build_menu.unit_test_images(config)
-      else:
-        # Steps following build_and_test_images should alwasy run, so we don't
-        # need to check the return value.
-        api.build_menu.build_and_test_images(config)
+      # Pause and throw if test containers failed to upload. Note that this
+      # is done before the image_artifacts_uploaded property is set, as
+      # containers need to be present for testing.
+      test_containers_runner.wait_for_and_throw()
 
-        test_containers_runner.wait_for_and_throw()
-
+      # Set a property to indicate image artifacts are uploaded, so CQ
+      # orchestrator can poll for this property.
+      api.easy.set_properties_step(image_artifacts_uploaded=True)
+      api.easy.set_properties_step(
+          image_artifacts_uploaded_time=api.time.utcnow().strftime('%FT%T.%fZ'))
+      # We have no steps following unit_test_images, so we don't need to
+      # check the return value.
+      api.build_menu.unit_test_images(config)
 
       # Publish image and package sizes.
       # This method, as written, is expected to never raise exceptions.
@@ -155,17 +144,11 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   # Always upload the artifacts, regardless of whether the above threw an
   # exception.
   try:
-    if async_unit_tests_enabled:
-      api.build_menu.upload_artifacts(
-          config, name='final upload artifacts',
-          previously_uploaded_artifacts=uploaded_artifacts,
-          ignore_breakpad_symbol_generation_errors=failing_build_exception
-          is not None)
-    else:
-      api.build_menu.upload_artifacts(
-          config,
-          ignore_breakpad_symbol_generation_errors=failing_build_exception
-          is not None)
+    api.build_menu.upload_artifacts(
+        config, name='final upload artifacts',
+        previously_uploaded_artifacts=uploaded_artifacts,
+        ignore_breakpad_symbol_generation_errors=failing_build_exception
+        is not None)
   except StepFailure as sf:
     # If uploading artifacts threw an exception, surface that exception unless
     # build_and_test_images above threw an exception, in which case we want to
@@ -187,24 +170,10 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'cq-build', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'), cq=True,
       build_target='coral')
-
-  # Normal CQ build, with the async_unit_tests experiment enabled. Note that
-  # this build runs multiple upload artifact steps.
-  yield api.build_menu.test(
-      'async-unit-test-experiment',
-      api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.MustRun, 'final upload artifacts'),
-      api.post_check(post_process.PropertyEquals, 'image_artifacts_uploaded',
-                     True),
-      cq=True,
-      build_target='coral',
-      experiments=['chromeos.build_cq.async_unit_tests'],
-  )
 
   # Build a change that has the ignore_breakpad_symbol_generation_errors set to
   # true in the builder config. Even though the build succeeds, the False passed
@@ -214,7 +183,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'ignore_breakpad_symbol_generation_errors',
       api.post_check(
           post_process.LogContains,
-          'upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get',
+          'final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get',
           'request', ['"ignoreBreakpadSymbolGenerationErrors": true']),
       api.post_process(post_process.DropExpectation), cq=True,
       builder_name='amd64-generic-asan-cq', build_target='amd64-generic')
@@ -273,6 +242,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'), cq=True,
       build_target='coral',
@@ -285,6 +255,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'), cq=True,
       build_target='staging-amd64-generic', pointless=True)
@@ -294,7 +265,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'install-packages-fail',
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'),
       api.build_menu.set_build_api_return(
@@ -307,15 +278,31 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       status='FAILURE',
   )
 
-
-  # CQ build with artifact bundling failure.
+  # CQ build with initial upload artifact failure.
+  # TODO(b/313914665): Consider still running unit test and retrying artifact
+  # upload at the end.
   yield api.build_menu.test(
-      'bundle-fail',
+      'initial-artifact-upload-bundle-fail',
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           retcode=1),
+      cq=True,
+      build_target='coral',
+      status='INFRA_FAILURE',
+  )
+
+  # CQ build with final upload artifact failure.
+  yield api.build_menu.test(
+      'final-artifact-upload-bundle-fail',
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
+      api.build_menu.set_build_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1),
       cq=True,
       build_target='coral',
       status='INFRA_FAILURE',
@@ -326,13 +313,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'install-packages-and-bundle-fail',
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
       api.build_menu.set_build_api_return('install packages',
                                           'SysrootService/InstallPackages',
                                           retcode=1),
       api.build_menu.set_build_api_return(
-          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1),
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1),
       cq=True,
       build_target='coral',
       status='FAILURE',
@@ -340,15 +327,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # This covers any staging-specific logic.
   yield api.build_menu.test(
-      'staging-cq-build',
-      api.post_check(post_process.MustRun, 'build images'),
+      'staging-cq-build', api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      cq=True,
-      build_target='staging-amd64-generic',
-      pointless=False)
+                     'upload artifacts.publish artifacts'), cq=True,
+      build_target='staging-amd64-generic', pointless=False)
 
   yield api.build_menu.test(
       'publish-image-size-fails',

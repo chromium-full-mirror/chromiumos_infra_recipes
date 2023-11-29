@@ -6609,21 +6609,21 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts",
+    "name": "final upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throwaway/coral-cq/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -6691,7 +6691,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.write input file",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -6726,7 +6726,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -6761,14 +6761,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.read output file",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call response",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -6777,7 +6777,7 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
@@ -6820,17 +6820,17 @@
       "@@@STEP_LOG_LINE@published event@    ]@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"upload artifacts|bundle IMAGE_ZIP for upload|call chromite.api.ArtifactsService/BundleImageZip|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"final upload artifacts|bundle IMAGE_ZIP for upload|call chromite.api.ArtifactsService/BundleImageZip|call build API script\"@@@",
       "@@@STEP_LOG_LINE@published event@}@@@",
       "@@@STEP_LOG_END@published event@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMiMKIQofW1NUQVJUX0RJUl0vdG1wL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ0dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMiMKIQofW1NUQVJUX0RJUl0vdG1wL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ6ZmluYWwgdXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6861,8 +6861,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI6IDE/QQQgMq17gEiBgjqgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMiMKIQofW1NUQVJUX0RJUl0vdG1wL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ0dXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "name": "final upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI6IDE/QQQgMq17gEiBgjqgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMiMKIQofW1NUQVJUX0RJUl0vdG1wL2FydGlmYWN0LnRhci5netAC0OyA2a7xtZJ82gJ6ZmluYWwgdXBsb2FkIGFydGlmYWN0c3xidW5kbGUgSU1BR0VfWklQIGZvciB1cGxvYWR8Y2FsbCBjaHJvbWl0ZS5hcGkuQXJ0aWZhY3RzU2VydmljZS9CdW5kbGVJbWFnZVppcHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6873,14 +6873,14 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.call artifacts service",
+    "name": "final upload artifacts.call artifacts service",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get",
+    "name": "final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
@@ -6978,7 +6978,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.write input file",
+    "name": "final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.write input file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -7013,7 +7013,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script",
+    "name": "final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -7048,14 +7048,14 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.read output file",
+    "name": "final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.read output file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call response",
+    "name": "final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -7064,7 +7064,7 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.set artifact_link property",
+    "name": "final upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-throwaway/coral-cq/R99-1234.56.0-101-8945511751514863184\"@@@"
@@ -7100,7 +7100,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload artifacts.gsutil rsync",
+    "name": "final upload artifacts.gsutil rsync",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -7108,7 +7108,7 @@
   },
   {
     "cmd": [],
-    "name": "upload artifacts.output artifact GS paths",
+    "name": "final upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"coral-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
