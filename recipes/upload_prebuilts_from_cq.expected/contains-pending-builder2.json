@@ -985,7 +985,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "infra_step": true,
@@ -1015,7 +1015,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos/workdir/chromeos"
     ],
     "infra_step": true,
@@ -1045,7 +1045,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos"
     ],
     "infra_step": true,
@@ -1157,7 +1157,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "infra_step": true,
@@ -1187,7 +1187,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "infra_step": true,
@@ -1217,7 +1217,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,
@@ -1325,7 +1325,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "infra_step": true,

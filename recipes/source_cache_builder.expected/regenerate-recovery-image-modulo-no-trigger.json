@@ -315,7 +315,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
@@ -454,7 +454,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",

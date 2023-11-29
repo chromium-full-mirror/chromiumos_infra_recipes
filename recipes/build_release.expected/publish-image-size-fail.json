@@ -980,7 +980,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "env": {
@@ -1013,7 +1013,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos/workdir/chromeos"
     ],
     "env": {
@@ -1046,7 +1046,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos"
     ],
     "env": {
@@ -1112,7 +1112,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/cros_chroot/chroot"
     ],
     "env": {
@@ -1310,7 +1310,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/chromeos"
     ],
     "env": {
@@ -1931,7 +1931,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "env": {
@@ -1964,7 +1964,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "env": {
@@ -1997,7 +1997,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "env": {
@@ -2191,7 +2191,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3403,7 +3403,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/chromiumos_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

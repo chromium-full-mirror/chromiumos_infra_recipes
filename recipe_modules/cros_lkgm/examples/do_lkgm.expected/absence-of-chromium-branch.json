@@ -411,7 +411,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/manifest-versions_tmp_1/buildspecs/99"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",

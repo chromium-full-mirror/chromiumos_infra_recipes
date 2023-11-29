@@ -68,7 +68,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/ensure"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
@@ -203,7 +203,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/ensure/.repo/local_manifests"
     ],
     "cwd": "[CLEANUP]/ensure",

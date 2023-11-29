@@ -315,7 +315,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromeos"
     ],
     "env": {
@@ -454,7 +454,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromeos"
     ],
     "cwd": "[CLEANUP]/snapshot/chromeos",
@@ -1267,7 +1267,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chrome"
     ],
     "env": {
@@ -1339,7 +1339,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chrome/src"
     ],
     "infra_step": true,
@@ -1357,7 +1357,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chrome/chrome_cache"
     ],
     "infra_step": true,
@@ -1900,7 +1900,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "env": {
@@ -2039,7 +2039,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/snapshot/chromiumos"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",

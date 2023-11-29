@@ -292,7 +292,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000000/amd64-generic/base"
     ],
     "infra_step": true,
@@ -434,7 +434,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000001/amd64-generic/base"
     ],
     "infra_step": true,
@@ -576,7 +576,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000002/amd64-generic/base"
     ],
     "infra_step": true,
@@ -718,7 +718,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/metadata_tmp_1/deadbeef00000000000000000000000000000003/amd64-generic/base"
     ],
     "infra_step": true,

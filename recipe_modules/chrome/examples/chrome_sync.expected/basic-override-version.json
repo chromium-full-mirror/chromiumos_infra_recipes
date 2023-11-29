@@ -30,7 +30,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome/src"
     ],
     "cwd": "[CLEANUP]/snapshot_chrome/src",
@@ -49,7 +49,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome/chrome_cache"
     ],
     "cwd": "[CLEANUP]/snapshot_chrome/src",
@@ -182,7 +182,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome"
     ],
     "cwd": "[CLEANUP]/snapshot_chrome/src",

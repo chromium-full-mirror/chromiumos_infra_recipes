@@ -955,7 +955,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome/src"
     ],
     "infra_step": true,
@@ -985,7 +985,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome/chrome_cache"
     ],
     "infra_step": true,
@@ -1299,7 +1299,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/chrome"
     ],
     "infra_step": true,

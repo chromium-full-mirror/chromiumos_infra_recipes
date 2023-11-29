@@ -20,7 +20,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/a/upperdir/a"
     ],
     "infra_step": true,
@@ -38,7 +38,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CACHE]/a/workdir/a"
     ],
     "infra_step": true,
@@ -56,7 +56,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_a"
     ],
     "infra_step": true,
@@ -96,7 +96,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/b/upperdir/b"
     ],
     "infra_step": true,
@@ -114,7 +114,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/b/workdir/b"
     ],
     "infra_step": true,
@@ -132,7 +132,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_b"
     ],
     "infra_step": true,
@@ -172,7 +172,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/c/upperdir/c"
     ],
     "infra_step": true,
@@ -190,7 +190,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/c/workdir/c"
     ],
     "infra_step": true,
@@ -208,7 +208,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_c"
     ],
     "infra_step": true,
@@ -336,7 +336,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/a/upperdir/a"
     ],
     "infra_step": true,
@@ -354,7 +354,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/a/workdir/a"
     ],
     "infra_step": true,
@@ -372,7 +372,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_a"
     ],
     "infra_step": true,
@@ -412,7 +412,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/b/upperdir/b"
     ],
     "infra_step": true,
@@ -430,7 +430,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/b/workdir/b"
     ],
     "infra_step": true,
@@ -448,7 +448,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_b"
     ],
     "infra_step": true,
@@ -516,7 +516,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/c/upperdir/c"
     ],
     "infra_step": true,
@@ -534,7 +534,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[CLEANUP]/overlayfs/c/workdir/c"
     ],
     "infra_step": true,
@@ -552,7 +552,7 @@
       "/path/to/tmp/json",
       "ensure-directory",
       "--mode",
-      "0777",
+      "0o777",
       "[START_DIR]/mount_c"
     ],
     "infra_step": true,
