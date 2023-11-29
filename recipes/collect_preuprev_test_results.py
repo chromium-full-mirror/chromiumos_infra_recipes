@@ -54,6 +54,7 @@ PRE_UPREV_TEST_BUILDERS = [
     'chromeos-volteer-chrome-skylab',
     'chromeos-betty-pi-arc-chrome',
     'chromeos-betty-arc-r-chrome',
+    'linux-chromeos-chrome',
 ]
 
 
