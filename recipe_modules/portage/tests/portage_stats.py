@@ -53,6 +53,15 @@ def GenTests(api):
   )
 
   yield api.test(
+      'ignored-emerge-packages',
+      api.properties(
+          TestMetricsInputProperties(
+              step_name='test',
+              bapi_stdout=api.portage.EXAMPLE_IGNORED_EMERGE_PACKAGES,
+              expected=api.portage.EXAMPLE_IGNORED_EMERGE_PACKAGES_EXPECTED)),
+  )
+
+  yield api.test(
       'two-emerge-init-sdk',
       api.properties(
           TestMetricsInputProperties(

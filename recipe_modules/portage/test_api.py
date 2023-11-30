@@ -33,3 +33,7 @@ class PortageTestApi(recipe_test_api.RecipeTestApi):
       'example_double_emerge_init_sdk.txt', __file__)
   EXAMPLE_DOUBLE_EMERGE_INIT_SDK_EXPECTED = read_test_file(
       'example_double_emerge_init_sdk_expected.json', __file__)
+  EXAMPLE_IGNORED_EMERGE_PACKAGES = read_test_file(
+      'example_ignored_emerge_packages.txt', __file__)
+  EXAMPLE_IGNORED_EMERGE_PACKAGES_EXPECTED = read_test_file(
+      'example_ignored_emerge_packages_expected.json', __file__)

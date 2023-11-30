@@ -130,6 +130,9 @@ class PortageApi(recipe_api.RecipeApi):
           elif self._DURATION_REGEX.match(line):
             group_dict = self._DURATION_REGEX.search(line).groupdict()
             key = _get_key(group_dict)
+            # Only process packages that have seen _PORTAGE_EMERGE_TYPE
+            if key not in seen:
+              continue
             seen[key].append(group_dict)
 
             # Have an emerge type, start, and a stop, thus process and pop.

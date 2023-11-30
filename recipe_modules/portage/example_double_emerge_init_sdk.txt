@@ -196,6 +196,8 @@ Calculating dependencies  ...... done!
 [ebuild     U  ] app-editors/vim-8.2.4586::portage-stable [8.2.4328-r1::portage-stable] USE="acl nls python -X -crypt -cscope -debug -gpm -lua -lua_single_target_lua5-1 -lua_single_target_luajit -minimal -perl -racket -ruby -selinux -sound -tcl -terminal -vim-pager" PYTHON_SINGLE_TARGET="python3_6 -python3_7 -python3_8 -python3_9" 0 KiB
 [ebuild  N     ] virtual/target-chrome-os-sdk-1.3-r5::chromeos  0 KiB
 [ebuild     U  ] virtual/target-sdk-1.3-r1::chromeos [1-r3::chromiumos] 0 KiB
+[ebuild     U  ] chromeos-base/test-case-library-1.3-r1::chromeos [1-r3::chromiumos] 0 KiB
+
 
 Total: 91 packages (48 upgrades, 37 new, 2 in new slots, 4 reinstalls, 22 binaries), Size of downloads: 846,155 KiB
 

@@ -1,0 +1,265 @@
+17:39:22.972: DEBUG: Services registered successfully.
+17:39:22.976: INFO: Re-executing the endpoint inside the chroot.
+17:39:22.976: DEBUG: Skipping goma_config.log_dir; no directory given.
+17:39:22.976: INFO: Writing input message to: /b/s/w/ir/cache/cros_chroot/chroot/tmp/tmp7qy88flh/input_proto
+17:39:22.977: INFO: Writing config message to: /b/s/w/ir/cache/cros_chroot/chroot/tmp/tmp7qy88flh/config_proto
+17:39:22.977: INFO: run: cros_sdk --chroot /b/s/w/ir/cache/cros_chroot/chroot 'USE=chrome_internal' -- build_api chromite.api.SysrootService/InstallPackages --input-json /tmp/tmp7qy88flh/input_proto --output-json /tmp/tmp7qy88flh/output_proto --config-binary /tmp/tmp7qy88flh/config_proto --debug
+17:39:23.912: DEBUG: Services registered successfully.
+17:39:24.000: DEBUG: Validating sysroot.build_target.name is set.
+17:39:24.001: DEBUG: Validating sysroot.path exists.
+17:39:24.001: DEBUG: Validating use_flags.[each].flag is set.
+17:39:24.001: INFO: Setting up metrics collection (BUILD_API_METRICS_LOG=/tmp/build-metrics-s3zcudft).
+17:39:24.007: DEBUG: run: /build/eve/build/bin/portageq envvar -v PORTAGE_BINHOST in /mnt/host/source
+17:39:24.307: INFO: Portage Binhost: gs://staging-chromeos-prebuilt/board/eve/postsubmit-R111-15324.0.0-46951-8791145181419110417/packages
+17:39:24.308: DEBUG: Error reading CPU scaling governor file: [Errno 2] No such file or directory: '/sys/devices/system/cpu/cpu0/cpufreq/scaling_available_governors'
+17:39:24.309: INFO: Clearing shadow-utils lockfiles under /build/eve
+17:39:24.309: DEBUG: run: /build/eve/build/bin/portageq envvar -v PORTAGE_BINHOST in /mnt/host/source
+17:39:24.662: INFO: PORTAGE_BINHOST: gs://staging-chromeos-prebuilt/board/eve/postsubmit-R111-15324.0.0-46951-8791145181419110417/packages
+17:39:24.662: INFO: Rebuilding Portage cache.
+17:39:24.663: INFO: Rebuilding Portage dependency cache.
+17:39:24.663: INFO: run: parallel_emerge --regen --quiet '--sysroot=/build/eve'
+17:39:24.909: INFO: Running: emerge --regen --quiet --sysroot /build/eve --root-deps '--jobs=21' '--rebuild-exclude=chromeos-base/chromeos-chrome' '--rebuild-exclude=chromeos-base/chromium-source' '--rebuild-exclude=chromeos-base/chrome-icu'
+17:39:26.841: INFO: service.sysroot.BuildPackages.RegenPortageCache: 2.177s
+17:39:26.841: INFO: Cleaning stale binpkgs.
+17:39:26.921: INFO: run: /build/eve/build/bin/eclean -d -e /tmp/tmpsqwmfv6x packages
+cli --exclude option
+>>> Building file list for packages cleaning...
+>>> Your packages directory was already clean.
+17:39:27.662: INFO: Detected cros_workon modified packages: 
+17:39:27.662: INFO: service.sysroot.GetForceLocalBuildPackages: 0.421s
+17:39:27.663: INFO: Merging board packages now.
+17:39:27.663: INFO: run: sudo --preserve-env 'USE=chrome_internal chrome_internal' 'PORTAGE_BINHOST=gs://staging-chromeos-prebuilt/board/eve/postsubmit-R111-15324.0.0-46951-8791145181419110417/packages' 'PKGDIR=/build/eve/packages' 'CROS_METRICS_DIR=/tmp/tmp6vs5aiy1' -- /mnt/host/source/chromite/bin/parallel_emerge '--sysroot=/build/eve' '--root=/build/eve' -uDNv '--backtrack=30' --newrepo --with-test-deps y --getbinpkg --with-bdeps y --usepkg --rebuild-if-new-rev '--reinstall-atoms=chromeos-base/chromeos-ssh-testkeys' '--usepkg-exclude=chromeos-base/chromeos-ssh-testkeys' '--useoldpkg-atoms=dev-embedded/hps-sdk dev-lang/rust dev-lang/go sys-libs/glibc sys-devel/gcc' '--rebuild-exclude=dev-embedded/hps-sdk dev-lang/rust dev-lang/go sys-libs/glibc sys-devel/gcc' virtual/target-os virtual/target-os-dev virtual/target-os-factory virtual/target-os-factory-shim virtual/target-os-test chromeos-base/autotest-all
+17:39:27.914: INFO: Running: emerge -uDNv '--backtrack=30' --newrepo --with-test-deps y --getbinpkg --with-bdeps y --usepkg --rebuild-if-new-rev '--reinstall-atoms=chromeos-base/chromeos-ssh-testkeys' '--usepkg-exclude=chromeos-base/chromeos-ssh-testkeys' '--useoldpkg-atoms=dev-embedded/hps-sdk dev-lang/rust dev-lang/go sys-libs/glibc sys-devel/gcc' '--rebuild-exclude=dev-embedded/hps-sdk dev-lang/rust dev-lang/go sys-libs/glibc sys-devel/gcc' virtual/target-os virtual/target-os-dev virtual/target-os-factory virtual/target-os-factory-shim virtual/target-os-test chromeos-base/autotest-all --sysroot /build/eve --root /build/eve --root-deps '--jobs=21' '--rebuild-exclude=chromeos-base/chromeos-chrome' '--rebuild-exclude=chromeos-base/chromium-source' '--rebuild-exclude=chromeos-base/chrome-icu'
+
+These are the packages that would be merged, in order:
+
+Calculating dependencies  .. . ........ done in 0:00:49.162728
+[binary  N     ] sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/ USE="kvm_host -auto_seed_etc_files" 60 KiB
+[binary  N     ] virtual/pkgconfig-2::portage-stable to /build/eve/ 16 KiB
+[binary  N     ] virtual/rust-binaries-1-r6:0/1-r6::chromiumos to /build/eve/ 16 KiB
+[binary  N     ] dev-go/go-sys-0.0.1-r6::chromiumos to /build/eve/ 610 KiB
+[binary  N     ] dev-libs/re2-0.2021.11.01:0/9::portage-stable to /build/eve/ USE="-icu" ABI_X86="(64) -32 (-x32)" 1364 KiB
+
+Total: 5 packages (5 new, 5 binaries), Size of downloads: 10244742 KiB
+>>> 17:40:21.453 Jobs: 0 of 5 complete, 1 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.453 Emerging binary (1 of 5) sys-apps/baselayout-2.2-r1::chromiumos for /build/eve/
+>>> 17:40:21.453 Jobs: 0 of 5 complete, 1 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.463 Jobs: 0 of 5 complete, 1 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.463 Emerging binary (2 of 5) virtual/pkgconfig-2::portage-stable for /build/eve/
+>>> 17:40:21.463 Jobs: 0 of 5 complete, 2 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.472 Jobs: 0 of 5 complete, 2 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.472 Emerging binary (3 of 5) virtual/rust-binaries-1-r6::chromiumos for /build/eve/
+>>> 17:40:21.472 Jobs: 0 of 5 complete, 3 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.482 Jobs: 0 of 5 complete, 3 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.591 Installing (1 of 5) sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/
+>>> 17:40:21.649 Jobs: 4 of 5 complete, 3 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:21.758 Jobs: 4 of 5 complete, 3 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:21.882 Emerging binary (4 of 5) dev-go/go-sys-0.0.1-r6::chromiumos for /build/eve/
+>>> 17:40:21.900 Jobs: 0 of 5 complete, 4 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:21.901 Jobs: 0 of 5 complete, 4 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:22.495 Emerging binary (5 of 5) dev-libs/re2-0.2021.11.01::portage-stable for /build/eve/
+>>> 17:40:23.495 Jobs: 0 of 5 complete, 5 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:23.504 Jobs: 0 of 5 complete, 5 running             Load avg: 1.00, 4.22, 8.09
+>>> 17:40:23.506 Completed (1 of 5) sys-apps/baselayout-2.2-r1::chromiumos to /build/eve/
+>>> 17:40:23.508 Installing (2 of 5) virtual/pkgconfig-2::portage-stable to /build/eve/
+>>> 17:40:23.560 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:23.569 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:23.604 Installing (4 of 5) dev-go/go-sys-0.0.1-r6::chromiumos to /build/eve/
+>>> 17:40:23.660 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:23.669 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:24.148 Installing (5 of 5) dev-libs/re2-0.2021.11.01::portage-stable to /build/eve/
+>>> 17:40:24.570 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:24.579 Jobs: 1 of 5 complete, 4 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:25.499 Completed (5 of 5) dev-libs/re2-0.2021.11.01::portage-stable to /build/eve/
+>>> 17:40:25.852 Completed (2 of 5) virtual/pkgconfig-2::portage-stable to /build/eve/
+>>> 17:40:26.627 Jobs: 3 of 5 complete, 2 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:26.637 Jobs: 3 of 5 complete, 2 running            Load avg: 1.00, 4.22, 8.09
+>>> 17:40:27.477 Installing (3 of 5) virtual/rust-binaries-1-r6::chromiumos to /build/eve/
+>>> 17:40:27.691 Jobs: 3 of 5 complete, 2 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:27.704 Jobs: 3 of 5 complete, 2 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:27.715 Jobs: 3 of 5 complete, 2 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:28.438 Completed (3 of 5) virtual/rust-binaries-1-r6::chromiumos to /build/eve/
+>>> 17:40:28.962 Jobs: 4 of 5 complete, 1 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:28.976 Jobs: 4 of 5 complete, 1 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:28.990 Jobs: 4 of 5 complete, 1 running            Load avg: 1.64, 4.30, 8.09
+>>> 17:40:29.832 Completed (4 of 5) dev-go/go-sys-0.0.1-r6::chromiumos to /build/eve/
+
+ * Messages for package media-libs/openh264-2.1.1 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/media-libs:openh264-2.1.1:20230125-014204.log
+
+ * Utilities h264enc and h264dec are installed as openh264enc and openh264dec
+ * to avoid file collisions with media-video/h264enc
+ * 
+
+ * Messages for package dev-libs/boost-1.79.0-r2 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/dev-libs:boost-1.79.0-r2:20230125-014200.log
+
+ * Boost.Regex is *extremely* ABI sensitive. If you get errors such as
+ * 
+ *   undefined reference to `boost::re_detail_107900::cpp_regex_traits_implementation
+ *     <char>::transform_primary[abi:cxx11](char const*, char const*) const'
+ * 
+ * Then you need to recompile Boost and all its reverse dependencies
+ * using the same toolchain. In general, *every* change of the C++ toolchain
+ * requires a complete rebuild of the Boost-dependent ecosystem.
+ * 
+ * See for instance https://bugs.gentoo.org/638138
+
+ * Messages for package sys-apps/coreutils-8.32-r1 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/sys-apps:coreutils-8.32-r1:20230125-014230.log
+
+ * Make sure you run 'hash -r' in your active shells.
+ * You should also re-source your shell settings for LS_COLORS
+ *   changes, such as: source /etc/profile
+
+ * Messages for package chromeos-base/toolchain-tests-0.0.1-r7588 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/chromeos-base:toolchain-tests-0.0.1-r7588:20230125-014217.log
+
+ * WARNING: PYTHON_COMPAT_OVERRIDE in effect. The following Python
+ * implementation will be used:
+ * 
+ *  python3_6
+ * 
+ * Dependencies won't be satisfied, and EPYTHON/eselect-python will be ignored.
+
+ * Messages for package sys-apps/kmod-30 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/sys-apps:kmod-30:20230125-014252.log
+
+ * 
+ * You need to add kmod-static-nodes to the sysinit runlevel for
+ * kernel modules to have required static nodes!
+ * Run this command:
+ *  rc-update add kmod-static-nodes sysinit
+
+ * Messages for package sys-apps/dbus-1.12.20-r4 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/sys-apps:dbus-1.12.20-r4:20230125-014248.log
+
+ * Some applications require a session bus in addition to the system
+ * bus. Please see `man dbus-launch` for more information.
+ * 
+ * (Note: Above message is only printed the first time package is
+ * installed. Please look at /usr/share/doc/dbus-1.12.20-r4/README.gentoo*
+ * for future reference)
+
+ * Messages for package net-firewall/iptables-1.8.5 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/net-firewall:iptables-1.8.5:20230125-014254.log
+
+ * Current iptables implementation is unset, setting to xtables-legacy-multi
+
+ * Messages for package sys-libs/pam-1.3.1-r3 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/sys-libs:pam-1.3.1-r3:20230125-014324.log
+
+ * Some software with pre-loaded PAM libraries might experience
+ * warnings or failures related to missing symbols and/or versions
+ * after any update. While unfortunate this is a limit of the
+ * implementation of PAM and the software, and it requires you to
+ * restart the software manually after the update.
+ * 
+ * You can get a list of such software running a command like
+ *   lsof / | egrep -i 'del.*libpam\.so'
+ * 
+ * Alternatively, simply reboot your system.
+
+ * Messages for package sys-libs/ncurses-6.3_p20220423 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/sys-libs:ncurses-6.3_p20220423:20230125-014337.log
+
+ Calculating dependencies  ... done in 0:00:01.663258
+>>> 18:09:50.368 Jobs: 0 of 1 complete, 1 running                Load avg: 1.54, 2.46, 3.26
+>>> 18:09:50.368 Emerging (1 of 1) sys-kernel/chromeos-kernel-5_15-5.15.138-r2504::chromiumos for /build/nissa/
+>>> 18:09:50.368 Jobs: 0 of 1 complete, 1 running                Load avg: 1.54, 2.46, 3.26
+>>> 18:13:40.007 Jobs: 0 of 1 complete                           Load avg: 14.0, 12.7, 7.5
+>>> 18:13:40.009 Jobs: 1 of 1 complete                           Load avg: 14.0, 12.7, 7.5
+
+ * Old versions of installed libraries were detected on your system.
+ * In order to avoid breaking packages that depend on these old libs,
+ * the libraries are not being removed.  You need to run revdep-rebuild
+ * in order to remove these old dependencies.  If you do not have this
+ * helper program, simply emerge the 'gentoolkit' package.
+ * 
+ *   # revdep-rebuild --library '/lib64/libncurses.so.5' && rm '/lib64/libncurses.so.5'
+
+ * Extra package that should not be parsed (actual output from bot)
+ Calculating dependencies  ... done in 0:00:01.782293
+>>> 18:13:43.690 Jobs: 0 of 1 complete, 1 running                Load avg: 14.0, 12.7, 7.5
+>>> 18:13:43.691 Emerging binary (1 of 1) sys-kernel/chromeos-kernel-5_15-5.15.138-r2504::chromiumos for /build/nissa/factory-root/
+>>> 18:13:43.691 Jobs: 0 of 1 complete, 1 running                Load avg: 14.0, 12.7, 7.5
+>>> 18:13:48.311 Installing (1 of 1) sys-kernel/chromeos-kernel-5_15-5.15.138-r2504::chromiumos to /build/nissa/factory-root/
+>>> 18:13:48.311 Jobs: 0 of 1 complete, 1 running                Load avg: 12.9, 12.5, 7.5
+>>> 18:13:48.320 Jobs: 0 of 1 complete                           Load avg: 12.9, 12.5, 7.5
+>>> 18:13:50.920 Completed (1 of 1) sys-kernel/chromeos-kernel-5_15-5.15.138-r2504::chromiumos to /build/nissa/factory-root/
+>>> 18:13:50.920 Jobs: 0 of 1 complete                           Load avg: 12.0, 12.3, 7.4
+>>> 18:13:50.921 Jobs: 1 of 1 complete                           Load avg: 12.0, 12.3, 7.4
+
+ * Messages for package app-misc/screen-4.9.0 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/app-misc:screen-4.9.0:20230125-014454.log
+
+ * Some dangerous key bindings have been removed or changed to more safe values.
+ * We enable some xterm hacks in our default screenrc, which might break some
+ * applications. Please check /etc/screenrc for information on these changes.
+ * Warning: tmpfiles.d not processed on ROOT != /. If you do not use
+ * a service manager supporting tmpfiles.d, you need to run
+ * the following command after booting (or chroot-ing with all
+ * appropriate filesystems mounted) into the ROOT:
+ * 
+ *   tmpfiles --create
+ * 
+
+ * Messages for package dev-vcs/git-2.37.3 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/dev-vcs:git-2.37.3:20230125-014556.log
+
+ * Please read /usr/share/bash-completion/completions/git for Git bash command
+ * completion.
+ * Please read /usr/share/git/git-prompt.sh for Git bash prompt
+ * Note that the prompt bash code is now in that separate script
+ * These additional scripts need some dependencies:
+ *   git-quiltimport  : dev-util/quilt
+ *   git-instaweb     : || ( www-servers/lighttpd www-servers/apache www-servers/nginx )
+ * 
+ *  python3_6
+ * 
+ * Dependencies won't be satisfied, and EPYTHON/eselect-python will be ignored.
+ * ***************************************************************
+ * * Not building any tests, because the requested list is empty *
+ * ***************************************************************
+
+ * Messages for package chromeos-base/autotest-private-all-0.0.1-r286 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/chromeos-base:autotest-private-all-0.0.1-r286:20230125-021535.log
+
+ * ***************************************************************
+ * * Not building any tests, because the requested list is empty *
+ * ***************************************************************
+
+ * Messages for package chromeos-base/autotest-tests-0.0.4-r9014 merged to /build/eve/:
+ * Log file: /build/eve/tmp/portage/logs/chromeos-base:autotest-tests-0.0.4-r9014:20230125-021523.log
+
+ * WARNING: PYTHON_COMPAT_OVERRIDE in effect. The following Python
+ * implementation will be used:
+ * 
+ *  python3_6
+ * 
+ * Dependencies won't be satisfied, and EPYTHON/eselect-python will be ignored.
+
+>>> Using system located in ROOT tree /build/eve/
+18:15:55.238: INFO: service.sysroot.BuildPackages.emerge: 36m27.575s
+18:15:55.238: INFO: Builds complete.
+18:15:55.239: INFO: Fetching the debug symbols.
+18:15:55.245: INFO: run: /mnt/host/source/chromite/bin/cros_install_debug_syms '--board=eve' --all
+18:15:55.515: INFO: run: sudo -- /mnt/host/source/chromite/bin/cros_install_debug_syms '--board=eve' --all
+18:15:55.774: INFO: run: /mnt/host/source/chromite/bin/cros_install_debug_syms --list '--board=eve' --all
+18:15:57.845: INFO: No packages found needing debug symbols.
+18:15:57.913: INFO: run: /build/eve/build/bin/eclean -d packages
+>>> Building file list for packages cleaning...
+>>> Your packages directory was already clean.
+18:15:58.536: INFO: service.sysroot.BuildPackages: 36m34.228s
+18:15:58.537: INFO: reading metrics logs from /tmp/build-metrics-s3zcudft
+18:15:58.537: INFO: [metrics log file]
+1674610764308|service.sysroot.BuildPackages|start-timer|6efe286d-3b0c-43c4-906a-999a839a95b2
+1674610764663|service.sysroot.BuildPackages.RegenPortageCache|start-timer|0b8ff4ad-89e0-4129-a49e-a0139598b1d6
+1674610766841|service.sysroot.BuildPackages.RegenPortageCache|stop-timer|0b8ff4ad-89e0-4129-a49e-a0139598b1d6
+1674610767242|service.sysroot.GetForceLocalBuildPackages|start-timer|a09160bd-f41e-4aed-ba6e-62fc1a510673
+1674610767662|service.sysroot.GetForceLocalBuildPackages|stop-timer|a09160bd-f41e-4aed-ba6e-62fc1a510673
+1674610767663|service.sysroot.BuildPackages.emerge|start-timer|2f469aa5-24ba-4148-844e-730865c9eb9e
+1674612955236|service.sysroot.BuildPackages.emerge|stop-timer|2f469aa5-24ba-4148-844e-730865c9eb9e
+1674612958536|service.sysroot.BuildPackages|stop-timer|6efe286d-3b0c-43c4-906a-999a839a95b2
+
+18:15:58.784: INFO: Endpoint execution completed, return code: 0
