@@ -608,8 +608,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         # We want this step to fail gracefully if there is an error.
         try:
           key = self.cft_test_request.primary_dut.container_metadata_key
-          if key in self.cft_test_request.container_metadata:
-            if 'post_process' in self.cft_test_request.container_metadata[key]:
+          if key in self.cft_test_request.container_metadata.containers:
+            if 'post_process' in self.cft_test_request.container_metadata.containers[
+                key].images:
               primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
                   dut=metadata.primary_dut, container_metadata_key=self
                   .cft_test_request.primary_dut.container_metadata_key)

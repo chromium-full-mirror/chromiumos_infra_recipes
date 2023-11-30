@@ -124,8 +124,7 @@
       "@@@STEP_LOG_LINE@result upload deadline info@start: Mon May 14 12:53:26 2012@@@",
       "@@@STEP_LOG_LINE@result upload deadline info@end: Thu Jan  1 00:00:00 1970@@@",
       "@@@STEP_LOG_LINE@result upload deadline info@total_seconds: 900@@@",
-      "@@@STEP_LOG_END@result upload deadline info@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@result upload deadline info@@@"
     ]
   },
   {
@@ -1009,18 +1008,14 @@
       "@@@STEP_LOG_LINE@test_case_metadata_list@    {}@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@  ]@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@}@@@",
-      "@@@STEP_LOG_END@test_case_metadata_list@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_LOG_END@test_case_metadata_list@@@"
     ]
   },
   {
     "cmd": [],
     "name": "execution steps.CrosToolRunner: upload to rdb.CrosToolRunner: post_proceess",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@failure details@Exception during FW parsing: argument of type 'ContainerMetadata' is not iterable@@@",
-      "@@@STEP_LOG_END@failure details@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
