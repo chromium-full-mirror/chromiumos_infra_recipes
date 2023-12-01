@@ -310,9 +310,13 @@ def _reconstruct_build_target(r):
   dep = None
   for dep in r.params.software_dependencies:
     if dep.WhichOneof('dep') == 'chromeos_build':
-      dep_parts = dep.chromeos_build.split('/')[0].split('-')[:-1]
-      # Strip prefixes that aren't included in build_target
-      if dep_parts[0] == 'staging' or dep_parts[0] == 'dev':
+      dep_parts = dep.chromeos_build.split('/')[0].split('-')
+      # Strip postfixes that aren't included in the build_target.
+      if dep_parts[-1] in ['main']:
+        dep_parts = dep_parts[:-1]
+      dep_parts = dep_parts[:-1]
+      # Strip prefixes that aren't included in build_target.
+      if dep_parts[0] in ['staging', 'dev']:
         dep_parts = dep_parts[1:]
       dep = '-'.join(dep_parts)
       break
@@ -601,8 +605,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
         step.presentation.logs['removed_tests'] = json.dumps(
             {'removed': removed}, separators=(',', ': '), indent=2)
         return pre_test_resp.response.test_suites, removed  # pragma: no cover
-      else:
-        return test_suites, []
+      return test_suites, []
 
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
@@ -1619,7 +1622,7 @@ def _test_scheduling():
 def _default_software_dependencies():
   return [
       Request.Params.SoftwareDependency(
-          chromeos_build='staging-foo-build-target-postsubmit/R108-33333.0.0-112318231231',
+          chromeos_build='staging-foo-build-target-postsubmit-main/R108-33333.0.0-112318231231',
       ),
       Request.Params.SoftwareDependency(
           ro_firmware_build='single-ro-firmware',
