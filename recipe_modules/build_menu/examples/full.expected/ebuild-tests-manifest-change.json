@@ -5826,6 +5826,7 @@
       "@@@STEP_LOG_LINE@relevance_input@affected_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"src/chromeos/manifest-internal/otherfile.xml\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@builder_name: \"cave-slim-cq\"@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -5885,7 +5886,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "J\u0011\n\u000fsome/source/dirZ/\n-src/chromeos/manifest-internal/a/b/d/test.txtZ.\n,src/chromeos/manifest-internal/otherfile.xml",
+      "J\u0011\n\u000fsome/source/dirZ/\n-src/chromeos/manifest-internal/a/b/d/test.txtZ.\n,src/chromeos/manifest-internal/otherfile.xmlb\fcave-slim-cq",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

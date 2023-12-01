@@ -214,12 +214,13 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
       for source_path in relevant_paths:
         relevant_path = check_request.relevant_paths.add()
         relevant_path.path = source_path
+      check_request.builder_name = self.m.buildbucket.build.builder.builder
 
       response = self.call_pointless_build_checker(check_request, presentation,
                                                    is_pointless_test_value)
       relevant = not bool(response.build_is_pointless.value)
 
-      # Do this in a step instead of a presentaion to avoid multiple lines in
+      # Do this in a step instead of a presentation to avoid multiple lines in
       # the output properties (in led jobs).
       # TODO(seanabraham): stop writing 'pointless_build' property once Plx
       # scripts have switched over to 'relevant_build'.

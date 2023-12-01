@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevan
 
 DEPS = [
     'cros_build_api',
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/cq',
     'recipe_engine/context',

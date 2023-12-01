@@ -5081,6 +5081,7 @@
       "@@@STEP_LOG_LINE@relevance_input@affected_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"src/project-a/my/fake/file\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@builder_name: \"staging-amd64-generic-cq\"@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@  value: true@@@",
@@ -5141,7 +5142,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "J\u0011\n\u000fsome/source/dirZ\u001c\n\u001asrc/project-a/my/fake/file",
+      "J\u0011\n\u000fsome/source/dirZ\u001c\n\u001asrc/project-a/my/fake/fileb\u0018staging-amd64-generic-cq",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

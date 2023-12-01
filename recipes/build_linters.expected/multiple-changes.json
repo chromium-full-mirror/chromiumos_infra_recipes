@@ -5265,6 +5265,7 @@
       "@@@STEP_LOG_LINE@relevance_input@affected_paths {@@@",
       "@@@STEP_LOG_LINE@relevance_input@  path: \"src/fake-project/my/fake/file\"@@@",
       "@@@STEP_LOG_LINE@relevance_input@}@@@",
+      "@@@STEP_LOG_LINE@relevance_input@builder_name: \"atlas-cq\"@@@",
       "@@@STEP_LOG_END@relevance_input@@@",
       "@@@STEP_LOG_LINE@relevance_output@build_is_pointless {@@@",
       "@@@STEP_LOG_LINE@relevance_output@}@@@",
@@ -5362,7 +5363,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "J\u0011\n\u000fsome/source/dirZ\u001f\n\u001dsrc/fake-project/my/fake/fileZ\u001f\n\u001dsrc/fake-project/my/fake/file",
+      "J\u0011\n\u000fsome/source/dirZ\u001f\n\u001dsrc/fake-project/my/fake/fileZ\u001f\n\u001dsrc/fake-project/my/fake/fileb\batlas-cq",
       "[CLEANUP]/pointless-build-_tmp_3/input.binaryproto"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
