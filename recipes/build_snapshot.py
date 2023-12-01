@@ -26,6 +26,7 @@ DEPS = [
     'build_menu',
     'cros_history',
     'cros_infra_config',
+    'test_util',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -91,6 +92,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'create test service containers'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
@@ -107,6 +117,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Pointless snapshot build.
   yield api.build_menu.test(
       'pointless-postsubmit-build',
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
       api.buildbucket.simulated_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
@@ -119,6 +136,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
+      api.post_check(post_process.DoesNotRun, 'create test service containers'),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
@@ -131,13 +156,76 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       status='FAILURE',
   )
 
-  # Snapshot build with artifact bundling failure.
+  # Snapshot build with build images failure.
+  yield api.build_menu.test(
+      'build-images-failure',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.MustRun, 'create test service containers'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.build_menu.set_build_api_return('build images',
+                                          'ImageService/Create',
+                                          retcode=1),
+      status='FAILURE',
+  )
+
+  # Snapshot build with create containers failure.
+  yield api.build_menu.test(
+      'create-containers-failure',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
+      api.post_check(post_process.MustRun, 'install packages'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.MustRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'create test service containers'),
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun,
+                     'upload artifacts.publish artifacts'),
+      api.build_menu.set_build_api_return('create test service containers',
+                                          'TestService/BuildTestServiceContainers',
+                                          retcode=1),
+      status='FAILURE',
+  )
+
   yield api.build_menu.test(
       'bundle-fail',
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload prebuilts'),
@@ -155,6 +243,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
           }}),
+    api.properties(
+        **api.test_util.build_menu_properties(
+          build_target_name='amd64-generic',
+          container_version_format=\
+            '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
+        )
+    ),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
