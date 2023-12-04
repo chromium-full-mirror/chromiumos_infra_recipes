@@ -538,11 +538,11 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check disallow looks for green'
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
       api.properties(
           **{'$chromeos/looks_for_green': {

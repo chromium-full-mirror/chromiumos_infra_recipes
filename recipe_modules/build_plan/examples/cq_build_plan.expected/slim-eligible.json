@@ -1262,18 +1262,18 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.check should look for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.check should look for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

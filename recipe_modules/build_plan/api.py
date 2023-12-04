@@ -229,10 +229,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      cq_looks_enabled = self.m.looks_for_green.should_lfg(gerrit_changes)
       internal_snapshot, external_snapshot = self.choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
-          self.m.src_state.internal_manifest, cq_looks_enabled)
+          self.m.src_state.internal_manifest)
 
       for child_spec in necessary_child_specs:
 
@@ -492,7 +491,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
       original_external: Latest external manifest snapshot.
       gerrit_changes: List of changes to be tested by CQ.
       internal_manifest: Manifest project for the internal snapshot.
-      cq_looks_enabled: Whether to run CQ looks for green logic.
 
     Returns:
       chosen_internal: The internal manifest snapshot that CQ will run with.
@@ -507,6 +505,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       original_external_id = original_external.id
       with self.m.step.nest('looks for green') as presentation:
         cq_looks_log = []
+        cq_looks_enabled = self.m.looks_for_green.should_lfg(gerrit_changes)
         if cq_looks_enabled:
           cq_looks_log.append('CQ looks experiment enabled')
           disallow = self.m.looks_for_green.found_disallow_lfg_footer(

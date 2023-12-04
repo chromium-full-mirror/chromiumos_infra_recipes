@@ -1259,18 +1259,28 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.check should look for green",
+    "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
+      "@@@STEP_LOG_LINE@cq looks log@Found footer to disable looks for green: True. Using original snapshot.@@@",
+      "@@@STEP_LOG_END@cq looks log@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.check should look for green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@should_lfg@Found disallow footer: False, Found has merge commit: False@@@",
       "@@@STEP_LOG_END@should_lfg@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.check should look for green.check disallow looks for green",
+    "name": "filter builds.looks for green.check should look for green.check disallow looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: []@@@",
       "@@@STEP_LOG_END@check disallow looks for green@@@"
     ]
@@ -1295,17 +1305,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.check should look for green.check disallow looks for green.read git footers",
+    "name": "filter builds.looks for green.check should look for green.check disallow looks for green.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.check should look for green.ensure auth token",
+    "name": "filter builds.looks for green.check should look for green.ensure auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1329,9 +1339,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.check should look for green.ensure auth token.Retrieve service_account auth token",
+    "name": "filter builds.looks for green.check should look for green.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1358,9 +1368,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.check should look for green.ensure auth token.Write auth token to temp file",
+    "name": "filter builds.looks for green.check should look for green.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {
@@ -1383,16 +1393,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.check should look for green.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist",
+    "name": "filter builds.looks for green.check should look for green.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.check should look for green.check if CL uses Cq-Depend",
+    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1415,27 +1425,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.check should look for green.check if CL uses Cq-Depend.read git footers",
+    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.check should look for green.check if CL has related changes not included",
+    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.check should look for green.check if CL has related changes not included",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
-      "@@@STEP_LOG_LINE@cq looks log@Found footer to disable looks for green: True. Using original snapshot.@@@",
-      "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {

@@ -101,11 +101,11 @@ def GenTests(api):
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check disallow looks for green'
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -141,10 +141,10 @@ def GenTests(api):
               'use_complete_snapshot': True
           }},
           expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
-      api.git_footers.simulated_get_footers([], 'filter builds.check should look for green.check disallow looks for green'),
+      api.git_footers.simulated_get_footers([], 'filter builds.looks for green.check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -178,11 +178,11 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check disallow looks for green'
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -234,12 +234,12 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([
           'True'
-      ], 'filter builds.check should look for green.check disallow looks for green'
+      ], 'filter builds.looks for green.check should look for green.check disallow looks for green'
                                            ),
       api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
-          'filter builds.check should look for green.check disallow looks for green'
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
       ),
       api.post_check(
           post_process.DoesNotRun,
@@ -260,11 +260,11 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check disallow looks for green'
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
