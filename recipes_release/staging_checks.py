@@ -118,6 +118,12 @@ def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
   # Catch-all so we don't have to traverse deep into `paygen` properties.
   if 'atlas-signingnext' in str(build['input']['properties']):
     return True
+
+  # Also filter out all split paygen builds, as those are still experimental.
+  if build['input']['properties'].get('recipe') in [
+      'paygen_orchestrator', 'paygen'
+  ] and build['input']['properties'].get('use_split_paygen', False):
+    return True
   return False
 
 
