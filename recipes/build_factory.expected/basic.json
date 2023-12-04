@@ -5621,7 +5621,7 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
-    "timeout": 28800,
+    "timeout": 43200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -12,8 +12,7 @@ from google.protobuf.json_format import MessageToDict
 from recipe_engine import post_process
 
 from PB.chromiumos.build_report import BuildReport
-from PB.recipe_modules.chromeos.cros_source.cros_source import \
-  CrosSourceProperties
+from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 DEPS = [
@@ -51,12 +50,13 @@ def RunSteps(api):
             branch = branch[len('refs/heads/'):]
           api.build_reporting.publish_branch(branch)
 
-          env_info = (api.build_menu.setup_sysroot_and_determine_relevance())
+          env_info = api.build_menu.setup_sysroot_and_determine_relevance()
           # After the sysroot is setup we have the package versions determined.
           api.build_reporting.publish_versions(api.build_menu.target_versions)
 
           api.build_menu.bootstrap_sysroot(config)
-          api.build_menu.install_packages(config, env_info.packages)
+          api.build_menu.install_packages(config, env_info.packages,
+                                          timeout_sec=60 * 60 * 12)
           api.build_menu.build_and_test_images(config, include_version=True)
 
           (
@@ -82,7 +82,7 @@ def RunSteps(api):
           else:
             with api.step.nest('skipping signing') as pres:
               if not instructions:
-                pres.step_text = ('no signing instructions generated')
+                pres.step_text = 'no signing instructions generated'
               if api.build_menu.is_staging:
                 pres.step_text = 'signing is not run in staging'
 
@@ -98,8 +98,10 @@ def GenTests(api):
                   MessageToDict(
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='main',
-                              manifest_file='buildspecs/100/15197.0.0.xml')))
+                              manifest_repo_url=manifest_url,
+                              branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml',
+                          )))
           }),
       # Make sure signing times out after 5 seconds to not explode test runs.
       api.signing.set_timeout(timeout=5),
@@ -120,8 +122,10 @@ def GenTests(api):
                   MessageToDict(
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='main',
-                              manifest_file='buildspecs/100/15197.0.0.xml')))
+                              manifest_repo_url=manifest_url,
+                              branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml',
+                          )))
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -144,8 +148,10 @@ def GenTests(api):
                   MessageToDict(
                       CrosSourceProperties(
                           sync_to_manifest=ManifestLocation(
-                              manifest_repo_url=manifest_url, branch='main',
-                              manifest_file='buildspecs/100/15197.0.0.xml')))
+                              manifest_repo_url=manifest_url,
+                              branch='main',
+                              manifest_file='buildspecs/100/15197.0.0.xml',
+                          )))
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
