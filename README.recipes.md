@@ -549,6 +549,7 @@
   * [gitiles_triggerer](#recipes-gitiles_triggerer) &mdash; Recipe that schedules jobs based on its triggers.
   * [gobin:examples/full](#recipes-gobin_examples_full) &mdash; Tests for standard `gobin` module usage.
   * [gobin:examples/get_latest_pin_value](#recipes-gobin_examples_get_latest_pin_value) &mdash; Examples for get_latest_pin_value.
+  * [gobin:examples/mirror_prod_refs_to_latest](#recipes-gobin_examples_mirror_prod_refs_to_latest) &mdash; An example for mirror_prod_refs_to_latest.
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [gobin:tests/get_latest_pin_value](#recipes-gobin_tests_get_latest_pin_value) &mdash; Tests for get_latest_pin_value.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
@@ -7964,15 +7965,15 @@ Returns:
 
 API for interacting with Go binaries built from infra/infra.
 
-#### **class [GobinAPI](/recipe_modules/gobin/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [GobinAPI](/recipe_modules/gobin/api.py#64)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for interacting with Go binaries built from infra/infra.
 
-&mdash; **def [call](/recipe_modules/gobin/api.py#265)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
+&mdash; **def [call](/recipe_modules/gobin/api.py#286)(self, package: str, cmd: List[str], step_name: str=None, \*\*kwargs):**
 
 Call a binary with the given args.
 
-&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#218)(self, package: str):**
+&mdash; **def [ensure\_package](/recipe_modules/gobin/api.py#239)(self, package: str):**
 
 Ensure that the specified package is installed.
 
@@ -7985,14 +7986,21 @@ Args:
 Returns:
   The path to the relevant cipd binary.
 
-&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#179)(self, current_pin: str):**
+&mdash; **def [get\_latest\_pin\_value](/recipe_modules/gobin/api.py#188)(self, current_pin: str):**
 
 Returns the most recent infra/infra SHA that is a viable pin.
 
 Specifically, returns the latest SHA for which there is a CIPD instance for
 each of SUPPORTED_PACKAGES.
 
-&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#87)(self):**
+&mdash; **def [mirror\_prod\_refs\_to\_latest](/recipe_modules/gobin/api.py#227)(self):**
+
+Mirror the 'prod' ref to the 'latest' ref for PROD_MIRRORED_PACKAGES.
+
+See the comment on PROD_MIRRORED_PACKAGES for context on why this is needed
+for some packages.
+
+&emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#96)(self):**
 
 Return the golang packages supported by this module.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
@@ -14440,6 +14448,14 @@ Tests for standard `gobin` module usage.
 Examples for get_latest_pin_value.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/examples/get_latest_pin_value.py#32)(api: RecipeApi, properties: GetLatestPinValueProperties):**
+### *recipes* / [gobin:examples/mirror\_prod\_refs\_to\_latest](/recipe_modules/gobin/examples/mirror_prod_refs_to_latest.py)
+
+[DEPS](/recipe_modules/gobin/examples/mirror_prod_refs_to_latest.py#12): [gobin](#recipe_modules-gobin)
+
+
+An example for mirror_prod_refs_to_latest.
+
+&mdash; **def [RunSteps](/recipe_modules/gobin/examples/mirror_prod_refs_to_latest.py#17)(api):**
 ### *recipes* / [gobin:tests/full](/recipe_modules/gobin/tests/full.py)
 
 [DEPS](/recipe_modules/gobin/tests/full.py#12): [gobin](#recipe_modules-gobin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]

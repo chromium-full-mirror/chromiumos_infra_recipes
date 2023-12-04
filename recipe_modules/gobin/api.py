@@ -41,6 +41,15 @@ TEST_PACKAGES = [
     'my_other_gobin',
 ]
 
+# Recipes now use pinned versions of gobins (determined by
+# get_latest_pin_value). However, there are still some manually-run tools that
+# use the legacy 'prod' ref. Packages in this list will have the 'prod' ref
+# mirrored to the 'latest' ref. See b/310994165 for additional context.
+PROD_MIRRORED_PACKAGES = [
+    'setup_project',
+    'try',
+]
+
 CIPD_TEST_JSON = '''{
     "result": [
         {
@@ -214,6 +223,18 @@ class GobinAPI(recipe_api.RecipeApi):
 
       # If none of the commits are valid, just return the current pin.
       return current_pin
+
+  def mirror_prod_refs_to_latest(self):
+    """Mirror the 'prod' ref to the 'latest' ref for PROD_MIRRORED_PACKAGES.
+
+    See the comment on PROD_MIRRORED_PACKAGES for context on why this is needed
+    for some packages.
+    """
+    for package in PROD_MIRRORED_PACKAGES:
+      with self.m.step.nest(f'mirror prod to latest for {package}') as pres:
+        set_pin = self.m.cipd.set_ref(
+            self._package_fullname(package), version='latest', refs=['prod'])
+        pres.step_text = f'prod is now {set_pin.instance_id}'
 
   def ensure_package(self, package: str) -> str:
     """Ensure that the specified package is installed.

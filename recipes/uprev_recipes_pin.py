@@ -5,7 +5,7 @@
 
 """Recipe for uprev'ing various pins in infra/recipes/infra/config."""
 
-from typing import Callable
+from typing import Callable, Generator
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -125,6 +125,14 @@ def RunSteps(api: RecipeApi, properties: UprevRecipesPinProperties) -> None:
     raise StepFailure('unsupported pin')
   pin_info = SUPPORTED_PINS[properties.pin]
 
+  # There are still some manually-run tools that use the legacy 'prod' ref for
+  # gobins. Mirror the 'prod' ref to 'latest' so that these tools get updates.
+  # This step is a bit different from the main purpose of this recipe, but it
+  # is related, so do it here as it is probably not worthwhile to create a
+  # separate builder.
+  if properties.push and properties.pin == UprevRecipesPinProperties.INFRAINFRA_GOLANG:
+    api.gobin.mirror_prod_refs_to_latest()
+
   # Clone the recipes repo in a temp dir.
   checkout = api.path.mkdtemp()
   with api.context(cwd=checkout):
@@ -186,7 +194,7 @@ def RunSteps(api: RecipeApi, properties: UprevRecipesPinProperties) -> None:
     )
 
 
-def GenTests(api: RecipeTestApi) -> None:
+def GenTests(api: RecipeTestApi) -> Generator:
   yield api.test(
       'unsupported-pin',
       api.properties(pin=UprevRecipesPinProperties.UNSPECIFIED),
@@ -320,6 +328,8 @@ def GenTests(api: RecipeTestApi) -> None:
       api.step_data(
           'get new pin value for INFRAINFRA_GOLANG.get commits since deadbeef',
           stdout=api.raw_io.output_text('\n'.join(['CAFECAFE']))),
+      api.post_process(post_process.MustRun,
+                       'mirror prod to latest for setup_project'),
       # Easiest not to mock anything and fall back to the existing pin.
       # get_latest_pin_value is well tested in the gobin module, and
       # file / gerrit logic is tested in the chromite unit tests above.
