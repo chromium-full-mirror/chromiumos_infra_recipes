@@ -24,6 +24,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_history',
+    'cros_relevance',
     'gerrit',
     'repo',
     'test_util',
@@ -615,6 +616,34 @@ def GenTests(api):
       }}),
       api.post_process(post_process.StepTextEquals, 'run ebuild tests',
                        'running all unit tests on manifest changes'),
+      api.post_check(
+          post_process.MustRun,
+          'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest'),
+  )
+
+  gerrit_changes = [
+      GerritChange(host='chromium-review.googlesource.com',
+                   project='chromiumos/overlays/chromiumos-overlay',
+                   change=1235)
+  ]
+  yield api.test(
+      'ebuild-tests-toolchain-change',
+      api.buildbucket.try_build(builder='cave-slim-cq',
+                                gerrit_changes=gerrit_changes),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'cherry-pick gerrit changes', gerrit_changes, {
+              1235: {
+                  'files': {
+                      'sys-devel/llvm/llvm-9999.ebuild': {},
+                  },
+              },
+          }, iteration=1),
+      api.cros_relevance.toolchain_cls_applied(True),
+      api.properties(**{'$recipe_engine/cq': {
+          'active': True
+      }}),
+      api.post_process(post_process.StepTextEquals, 'run ebuild tests',
+                       'running all unit tests on toolchain changes'),
       api.post_check(
           post_process.MustRun,
           'run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest'),

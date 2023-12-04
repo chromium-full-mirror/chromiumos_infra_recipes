@@ -738,6 +738,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build, or None.
     """
 
+    def _has_toolchain_changes(presentation):
+      if not self.m.cros_relevance.toolchain_cls_applied:
+        return False
+      presentation.step_text = 'running all unit tests on toolchain changes'
+      return True
+
     def _has_manifest_changes(presentation):
       affected_paths = self.m.cros_relevance.get_affected_paths(
           self.m.workspace_util.patch_sets)
@@ -756,7 +762,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
         testable_packages_optional = False
         filter_only_cros_workon = False
         bazel = unit_tests.unit_tests_orchestrator == BuilderConfig.BAZEL
-        if (config.unit_tests.dependencies
+        if (not _has_toolchain_changes(presentation) and
+            config.unit_tests.dependencies
             == BuilderConfig.CL_AFFECTED_DEPENDENCIES and
             not _has_manifest_changes(presentation)):
           testable_packages_optional = True

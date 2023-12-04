@@ -6475,7 +6475,10 @@
   },
   {
     "cmd": [],
-    "name": "run ebuild tests"
+    "name": "run ebuild tests",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@running all unit tests on toolchain changes@@@"
+    ]
   },
   {
     "cmd": [],
@@ -6719,7 +6722,10 @@
   },
   {
     "cmd": [],
-    "name": "run ebuild tests (2)"
+    "name": "run ebuild tests (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@running all unit tests on toolchain changes@@@"
+    ]
   },
   {
     "cmd": [],
