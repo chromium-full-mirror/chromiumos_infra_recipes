@@ -109,95 +109,32 @@
   },
   {
     "cmd": [],
-    "name": "retrieve container metadata",
+    "name": "staging requested build(s)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@unique container metadata urls in request@gs://foo-container-metadata-url@@@",
-      "@@@STEP_LOG_END@unique container metadata urls in request@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "retrieve container metadata.get container metadata from GS",
+    "name": "staging requested build(s).staging brya-release/R108-33333.222.111",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cat",
-      "gs://foo-container-metadata-url"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/moblabapi",
+      "-lifetime",
+      "3m"
     ],
     "infra_step": true,
-    "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
+    "name": "staging requested build(s).staging brya-release/R108-33333.222.111.get access token for default account",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"containers\": {\"foo-build-target\": {\"images\": {\"some-service\": {\"digest\": \"123abc\"}}}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "assign container metadata to requests"
-  },
-  {
-    "cmd": [],
-    "name": "assign container metadata to requests.default",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@container metadata@{@@@",
-      "@@@STEP_LOG_LINE@container metadata@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container metadata@    \"foo-build-target\": {@@@",
-      "@@@STEP_LOG_LINE@container metadata@      \"images\": {@@@",
-      "@@@STEP_LOG_LINE@container metadata@        \"some-service\": {@@@",
-      "@@@STEP_LOG_LINE@container metadata@          \"digest\": \"123abc\"@@@",
-      "@@@STEP_LOG_LINE@container metadata@        }@@@",
-      "@@@STEP_LOG_LINE@container metadata@      }@@@",
-      "@@@STEP_LOG_LINE@container metadata@    }@@@",
-      "@@@STEP_LOG_LINE@container metadata@  }@@@",
-      "@@@STEP_LOG_LINE@container metadata@}@@@",
-      "@@@STEP_LOG_END@container metadata@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "enumerate CFT tests",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@autotest tests for default@[@@@",
-      "@@@STEP_LOG_LINE@autotest tests for default@  \"foo-suite-shard-0\"@@@",
-      "@@@STEP_LOG_LINE@autotest tests for default@]@@@",
-      "@@@STEP_LOG_END@autotest tests for default@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@{@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@  \"default\": {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@    \"autotestInvocations\": [@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@      {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@        \"resultKeyvals\": {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"suite\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@        },@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@        \"test\": {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"allowRetries\": true,@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"dependencies\": [@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@            {@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@              \"label\": \"foo-dep:bar\"@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@            }@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          ],@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"executionEnvironment\": \"EXECUTION_ENVIRONMENT_CLIENT\",@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"maxRetries\": 1,@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"name\": \"foo-suite-shard-0\",@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          \"names\": [@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@            \"foo-test\"@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@          ]@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@        }@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@      }@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@    ]@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@  }@@@",
-      "@@@STEP_LOG_LINE@constructed cft enumeration response@}@@@",
-      "@@@STEP_LOG_END@constructed cft enumeration response@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -208,167 +145,68 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"containers\": {\n    \"foo-build-target\": {\n      \"images\": {\n        \"some-service\": {\n          \"digest\": \"123abc\"\n        }\n      }\n    }\n  }\n}",
-      "[CLEANUP]/container_images_tmp_1"
+      "Authorization: Bearer extra.secret.token.should.not.be.logged",
+      "/tmp/headers.txt"
     ],
     "infra_step": true,
-    "name": "enumerate CFT tests.writing container metadata to file",
+    "name": "staging requested build(s).staging brya-release/R108-33333.222.111.write headers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@{@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@  \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@    \"foo-build-target\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@      \"images\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@        \"some-service\": {@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@          \"digest\": \"123abc\"@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@        }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@      }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@    }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@  }@@@",
-      "@@@STEP_LOG_LINE@container_images_tmp_1@}@@@",
-      "@@@STEP_LOG_END@container_images_tmp_1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "--fail-with-body",
+      "-X",
+      "POST",
+      "-H",
+      "@/tmp/headers.txt",
+      "https://chromeosmoblab.googleapis.com/v1beta1/buildTargets/brya/models/foo/builds/33333.222.1/artifacts/bucket:stage?filter=type=release"
+    ],
+    "infra_step": true,
+    "name": "staging requested build(s).staging brya-release/R108-33333.222.111.stage build request",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "enumerate CFT tests.call `cros-tool-runner`",
+    "name": "enumerate tests",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@autotest tests for default@[@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@  \"foo-test\"@@@",
+      "@@@STEP_LOG_LINE@autotest tests for default@]@@@",
+      "@@@STEP_LOG_END@autotest tests for default@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"testSuites\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"testCaseTagCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@          \"beep\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"boop\"@@@",
-      "@@@STEP_LOG_LINE@request@        ],@@@",
-      "@@@STEP_LOG_LINE@request@        \"tagExcludes\": [@@@",
-      "@@@STEP_LOG_LINE@request@          \"blap\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"blop\"@@@",
-      "@@@STEP_LOG_LINE@request@        ]@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"containerMetadataKey\": \"foo-build-target\"@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"testSuites\": [@@@",
-      "@@@STEP_LOG_LINE@response@    {@@@",
-      "@@@STEP_LOG_LINE@response@      \"testCases\": {@@@",
-      "@@@STEP_LOG_LINE@response@        \"testCases\": [@@@",
-      "@@@STEP_LOG_LINE@response@          {@@@",
-      "@@@STEP_LOG_LINE@response@            \"id\": {@@@",
-      "@@@STEP_LOG_LINE@response@              \"value\": \"foo-test\"@@@",
-      "@@@STEP_LOG_LINE@response@            },@@@",
-      "@@@STEP_LOG_LINE@response@            \"dependencies\": [@@@",
-      "@@@STEP_LOG_LINE@response@              {@@@",
-      "@@@STEP_LOG_LINE@response@                \"value\": \"foo-dep:bar\"@@@",
-      "@@@STEP_LOG_LINE@response@              }@@@",
-      "@@@STEP_LOG_LINE@response@            ]@@@",
+      "@@@STEP_LOG_LINE@response@  \"taggedResponses\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"autotestInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"test\": {@@@",
+      "@@@STEP_LOG_LINE@response@            \"name\": \"foo-test\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
-      "@@@STEP_LOG_LINE@response@        ]@@@",
-      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
-      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "enumerate CFT tests.call `cros-tool-runner`.ensure cros-tool-runner",
+    "name": "enumerate tests.call binary.ensure cros_test_platform",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/cros-tool-runner",
-      "-ensure-file",
-      "chromiumos/infra/cros-tool-runner/${platform} prod",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "name": "enumerate CFT tests.call `cros-tool-runner`.ensure cros-tool-runner.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/cros-tool-runner/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "sudo",
-      "--non-interactive",
-      "--preserve-env=CONTAINER_CACHE_SERVICE_PORT,CONTAINER_CACHE_SERVICE_HOST,DOCKER_DRONE_IMAGE,DOCKER_DRONE_SERVER_NAME,DRONE_AGENT_BOT_BLKIO_READ_BPS,DRONE_AGENT_BOT_BLKIO_WRITE_BPS,LOGDOG_STREAM_PREFIX,SWARMING_TASK_ID",
-      "[START_DIR]/cipd/cros-tool-runner/cros-tool-runner",
-      "test-finder",
-      "-docker_key_file",
-      "/creds/service_accounts/skylab-drone.json",
-      "-images",
-      "[CLEANUP]/container_images_tmp_1",
-      "-input",
-      "/dev/stdin",
-      "-output",
-      "/dev/stdout"
-    ],
-    "infra_step": true,
-    "name": "enumerate CFT tests.call `cros-tool-runner`.test-finder",
-    "stdin": "{\n  \"testSuites\": [\n    {\n      \"testCaseTagCriteria\": {\n        \"tags\": [\n          \"beep\",\n          \"boop\"\n        ],\n        \"tagExcludes\": [\n          \"blap\",\n          \"blop\"\n        ]\n      }\n    }\n  ],\n  \"containerMetadataKey\": \"foo-build-target\"\n}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "enumerate CFT tests.Shard test cases",
-    "tags": {
-      "shard_count": "1",
-      "unique_dependencies_count": "1"
-    },
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@shard seed@{@@@",
-      "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000003@@@",
-      "@@@STEP_LOG_LINE@shard seed@}@@@",
-      "@@@STEP_LOG_END@shard seed@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@{@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"shardName\": \"foo-suite-shard-0\",@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"dependencies\": [@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@    \"foo-dep:bar\"@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@  ],@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@  \"testNames\": [@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@    \"foo-test\"@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@  ]@@@",
-      "@@@STEP_LOG_LINE@foo-suite-shard-0@}@@@",
-      "@@@STEP_LOG_END@foo-suite-shard-0@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "execute"
-  },
-  {
-    "cmd": [],
-    "name": "execute.ensure cros_test_platform",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -385,9 +223,9 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "execute.ensure cros_test_platform.ensure_installed",
+    "name": "enumerate tests.call binary.ensure cros_test_platform.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -400,6 +238,54 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate tests.call binary.pre-execution debug data",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cmd@[START_DIR]/cipd/cros_test_platform/cros_test_platform enumerate -input_json /dev/stdin -output_json /dev/stdout@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"taggedRequests\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"default\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"testMetadataUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"@@@",
+      "@@@STEP_LOG_LINE@request@      },@@@",
+      "@@@STEP_LOG_LINE@request@      \"testPlan\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"suite\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"name\": \"foo-suite\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/cros_test_platform/cros_test_platform",
+      "enumerate",
+      "-input_json",
+      "/dev/stdin",
+      "-output_json",
+      "/dev/stdout"
+    ],
+    "infra_step": true,
+    "name": "enumerate tests.call binary.enumerate",
+    "stdin": "{\n  \"taggedRequests\": {\n    \"default\": {\n      \"metadata\": {\n        \"testMetadataUrl\": \"gs://foo-metadata-url\",\n        \"debugSymbolsArchiveUrl\": \"gs://foo-metadata-url\",\n        \"containerMetadataUrl\": \"gs://foo-container-metadata-url\"\n      },\n      \"testPlan\": {\n        \"suite\": [\n          {\n            \"name\": \"foo-suite\"\n          }\n        ]\n      }\n    }\n  }\n}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execute"
   },
   {
     "cmd": [],
@@ -453,7 +339,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"build\": {\n    \"create_time\": \"1970-01-01T00:00:00Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"autotest_invocations\": [\n          {\n            \"result_keyvals\": {\n              \"suite\": \"foo-suite\"\n            },\n            \"test\": {\n              \"allow_retries\": true,\n              \"dependencies\": [\n                {\n                  \"label\": \"foo-dep:bar\"\n                }\n              ],\n              \"execution_environment\": \"EXECUTION_ENVIRONMENT_CLIENT\",\n              \"max_retries\": 1,\n              \"name\": \"foo-suite-shard-0\",\n              \"names\": [\n                \"foo-test\"\n              ]\n            }\n          }\n        ]\n      },\n      \"request_params\": {\n        \"execution_param\": {\n          \"container_metadata\": {\n            \"containers\": {\n              \"foo-build-target\": {\n                \"images\": {\n                  \"some-service\": {\n                    \"digest\": \"123abc\"\n                  }\n                }\n              }\n            }\n          }\n        },\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"container_metadata_url\": \"gs://foo-container-metadata-url\",\n          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",\n          \"test_metadata_url\": \"gs://foo-metadata-url\"\n        },\n        \"retry\": {},\n        \"run_via_cft\": true,\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_attributes\": {\n          \"build_target\": {\n            \"name\": \"foo-build-target\"\n          }\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"staging-foo-build-target-postsubmit-main/R108-33333.0.0-112318231231\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          }\n        ]\n      }\n    }\n  }\n}",
+      "{\n  \"build\": {\n    \"create_time\": \"1970-01-01T00:00:00Z\"\n  },\n  \"tagged_requests\": {\n    \"default\": {\n      \"config\": {\n        \"skylab_worker\": {\n          \"luci_project\": \"foo luci project\"\n        }\n      },\n      \"enumeration\": {\n        \"autotest_invocations\": [\n          {\n            \"test\": {\n              \"name\": \"foo-test\"\n            }\n          }\n        ]\n      },\n      \"request_params\": {\n        \"hardware_attributes\": {\n          \"model\": \"foo-model\"\n        },\n        \"metadata\": {\n          \"container_metadata_url\": \"gs://foo-container-metadata-url\",\n          \"debug_symbols_archive_url\": \"gs://foo-metadata-url\",\n          \"test_metadata_url\": \"gs://foo-metadata-url\"\n        },\n        \"retry\": {},\n        \"scheduling\": {\n          \"qs_account\": \"foo-qs-account\"\n        },\n        \"software_attributes\": {\n          \"build_target\": {\n            \"name\": \"foo-build-target\"\n          }\n        },\n        \"software_dependencies\": [\n          {\n            \"chromeos_build\": \"brya-release/R108-33333.222.111\"\n          },\n          {\n            \"ro_firmware_build\": \"single-ro-firmware\"\n          },\n          {\n            \"rw_firmware_build\": \"single-rw-firmware\"\n          },\n          {\n            \"chromeos_build_gcs_bucket\": \"foo\"\n          }\n        ]\n      }\n    }\n  }\n}",
       "[START_DIR]/input.json"
     ],
     "infra_step": true,
@@ -474,40 +360,13 @@
       "@@@STEP_LOG_LINE@input.json@      \"enumeration\": {@@@",
       "@@@STEP_LOG_LINE@input.json@        \"autotest_invocations\": [@@@",
       "@@@STEP_LOG_LINE@input.json@          {@@@",
-      "@@@STEP_LOG_LINE@input.json@            \"result_keyvals\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"suite\": \"foo-suite\"@@@",
-      "@@@STEP_LOG_LINE@input.json@            },@@@",
       "@@@STEP_LOG_LINE@input.json@            \"test\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"allow_retries\": true,@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"dependencies\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@                {@@@",
-      "@@@STEP_LOG_LINE@input.json@                  \"label\": \"foo-dep:bar\"@@@",
-      "@@@STEP_LOG_LINE@input.json@                }@@@",
-      "@@@STEP_LOG_LINE@input.json@              ],@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"execution_environment\": \"EXECUTION_ENVIRONMENT_CLIENT\",@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"max_retries\": 1,@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"name\": \"foo-suite-shard-0\",@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"names\": [@@@",
-      "@@@STEP_LOG_LINE@input.json@                \"foo-test\"@@@",
-      "@@@STEP_LOG_LINE@input.json@              ]@@@",
+      "@@@STEP_LOG_LINE@input.json@              \"name\": \"foo-test\"@@@",
       "@@@STEP_LOG_LINE@input.json@            }@@@",
       "@@@STEP_LOG_LINE@input.json@          }@@@",
       "@@@STEP_LOG_LINE@input.json@        ]@@@",
       "@@@STEP_LOG_LINE@input.json@      },@@@",
       "@@@STEP_LOG_LINE@input.json@      \"request_params\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@        \"execution_param\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@          \"container_metadata\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@            \"containers\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@              \"foo-build-target\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@                \"images\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@                  \"some-service\": {@@@",
-      "@@@STEP_LOG_LINE@input.json@                    \"digest\": \"123abc\"@@@",
-      "@@@STEP_LOG_LINE@input.json@                  }@@@",
-      "@@@STEP_LOG_LINE@input.json@                }@@@",
-      "@@@STEP_LOG_LINE@input.json@              }@@@",
-      "@@@STEP_LOG_LINE@input.json@            }@@@",
-      "@@@STEP_LOG_LINE@input.json@          }@@@",
-      "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"hardware_attributes\": {@@@",
       "@@@STEP_LOG_LINE@input.json@          \"model\": \"foo-model\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
@@ -517,7 +376,6 @@
       "@@@STEP_LOG_LINE@input.json@          \"test_metadata_url\": \"gs://foo-metadata-url\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"retry\": {},@@@",
-      "@@@STEP_LOG_LINE@input.json@        \"run_via_cft\": true,@@@",
       "@@@STEP_LOG_LINE@input.json@        \"scheduling\": {@@@",
       "@@@STEP_LOG_LINE@input.json@          \"qs_account\": \"foo-qs-account\"@@@",
       "@@@STEP_LOG_LINE@input.json@        },@@@",
@@ -528,13 +386,16 @@
       "@@@STEP_LOG_LINE@input.json@        },@@@",
       "@@@STEP_LOG_LINE@input.json@        \"software_dependencies\": [@@@",
       "@@@STEP_LOG_LINE@input.json@          {@@@",
-      "@@@STEP_LOG_LINE@input.json@            \"chromeos_build\": \"staging-foo-build-target-postsubmit-main/R108-33333.0.0-112318231231\"@@@",
+      "@@@STEP_LOG_LINE@input.json@            \"chromeos_build\": \"brya-release/R108-33333.222.111\"@@@",
       "@@@STEP_LOG_LINE@input.json@          },@@@",
       "@@@STEP_LOG_LINE@input.json@          {@@@",
       "@@@STEP_LOG_LINE@input.json@            \"ro_firmware_build\": \"single-ro-firmware\"@@@",
       "@@@STEP_LOG_LINE@input.json@          },@@@",
       "@@@STEP_LOG_LINE@input.json@          {@@@",
       "@@@STEP_LOG_LINE@input.json@            \"rw_firmware_build\": \"single-rw-firmware\"@@@",
+      "@@@STEP_LOG_LINE@input.json@          },@@@",
+      "@@@STEP_LOG_LINE@input.json@          {@@@",
+      "@@@STEP_LOG_LINE@input.json@            \"chromeos_build_gcs_bucket\": \"foo\"@@@",
       "@@@STEP_LOG_LINE@input.json@          }@@@",
       "@@@STEP_LOG_LINE@input.json@        ]@@@",
       "@@@STEP_LOG_LINE@input.json@      }@@@",

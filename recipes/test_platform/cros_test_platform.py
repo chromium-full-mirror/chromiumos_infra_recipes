@@ -65,6 +65,7 @@ DEPS = [
     'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
+    'recipe_engine/service_account',
     'recipe_engine/step',
     'recipe_engine/time',
     'ctpv2',
@@ -77,6 +78,7 @@ DEPS = [
     'easy',
     'future_utils',
     'result_flow',
+    'satlab',
     'service_version',
     'skylab_results',
 ]
@@ -332,6 +334,72 @@ def _should_enumerate_via_ctf(r):
   Returns: bool
   """
   return r.params.run_via_cft and _build_supports_cros_test_finder(r)
+
+
+def _stage_builds_for_partners(api, requests):
+  """Attempt to use the Moblab API to stage builds to a partners' bucket.
+
+  Will not block recipe execution on failure.
+
+  Args:
+    * api (object): See RunSteps documentation.
+    * requests: {tag: test_platform.Request} dict.
+  """
+  builds, bucket = _extract_builds_to_stage(requests)
+  if not builds:
+    return
+  with api.step.nest('staging requested build(s)') as step:
+    for build in builds:
+      try:
+        with api.step.nest(f'staging {build}') as step:
+          api.satlab.stage_build(build, "bucket")
+      except:
+        continue
+
+
+def _extract_builds_to_stage(requests):
+  """Determines which builds (if any) to stage.
+
+  Args:
+    * requests: {tag: test_platform.Request} dict.
+
+  Returns: set(str) - set of builds, str - bucket
+  """
+  builds = set()
+  for t, r in requests.items():
+    bucket = _extract_bucket_from_request(r)
+    if bucket and bucket != 'chromeos-image-archive':
+      build = _extract_build_from_request(r)
+      if build:
+        builds.add(build)
+  # just use the last bucket since they in theory should be the same.
+  return builds, bucket
+
+
+def _extract_build_from_request(r):
+  """Extracts the build in a test_platform request
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: str
+  """
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build':
+      return dep.chromeos_build
+
+
+def _extract_bucket_from_request(r):
+  """Extracts the bucket in a test_platform request
+
+  Args:
+    * r: test_platform.Request
+
+  Returns: str
+  """
+  for dep in r.params.software_dependencies:
+    if dep.WhichOneof('dep') == 'chromeos_build_gcs_bucket':
+      return dep.chromeos_build_gcs_bucket
 
 
 def _extract_build_numbers_from_request(r):
@@ -1068,6 +1136,7 @@ def RunSteps(api, properties):
     add_container_metadata(api, requests, error_in_requests)
     _validate_request_error_and_turn_off_cft_if_necessary(
         api, requests, error_in_requests)
+    _stage_builds_for_partners(api, requests)
     enumerations = enumerate_tests(api, requests, error_in_requests)
     responses, suite_execution_logs = execute(
         api, properties,
@@ -1629,6 +1698,23 @@ def _default_software_dependencies():
       ),
       Request.Params.SoftwareDependency(
           rw_firmware_build='single-rw-firmware',
+      ),
+  ]
+
+
+def _different_bucket_software_deps(bucket):
+  return [
+      Request.Params.SoftwareDependency(
+          chromeos_build='brya-release/R108-33333.222.111',
+      ),
+      Request.Params.SoftwareDependency(
+          ro_firmware_build='single-ro-firmware',
+      ),
+      Request.Params.SoftwareDependency(
+          rw_firmware_build='single-rw-firmware',
+      ),
+      Request.Params.SoftwareDependency(
+          chromeos_build_gcs_bucket=bucket,
       ),
   ]
 
@@ -3340,4 +3426,38 @@ def GenTests(api):
               }, config=_test_config('foo'))),
       _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'test-different-bucket',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _test_request(
+                          'foo',
+                          software_deps=_different_bucket_software_deps("foo")),
+              }, config=_test_config('foo'))),
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'test-different-bucket-stage-fails',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _test_request(
+                          'foo',
+                          software_deps=_different_bucket_software_deps("foo")),
+              }, config=_test_config('foo'))),
+      api.step_data(
+          'staging requested build(s).staging brya-release/R108-33333.222.111.stage build request',
+          retcode=22),
+      _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      # Even if staging build fails, we still expect rest of recipe to function as expected.
+      status='SUCCESS',
   )
