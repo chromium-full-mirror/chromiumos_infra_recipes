@@ -105,6 +105,7 @@
   * [remoteexec](#recipe_modules-remoteexec) &mdash; API for working with re-client for remote execution.
   * [repo](#recipe_modules-repo) &mdash; API for working with the 'repo' VCS tool.
   * [result_flow](#recipe_modules-result_flow)
+  * [satlab](#recipe_modules-satlab)
   * [service_version](#recipe_modules-service_version)
   * [signing](#recipe_modules-signing) &mdash; Module providing signing functionality.
   * [signing_utils](#recipe_modules-signing_utils) &mdash; Module providing helpers for signing functionality.
@@ -682,6 +683,8 @@
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
   * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and CrOS pools.
+  * [satlab:tests/basic](#recipes-satlab_tests_basic)
+  * [satlab:tests/invalid_image](#recipes-satlab_tests_invalid_image)
   * [service_version:examples/full](#recipes-service_version_examples_full)
   * [sign_image](#recipes-sign_image) &mdash; Recipe for signing ChromeOS images.
   * [signing:tests/download_release_artifacts](#recipes-signing_tests_download_release_artifacts) &mdash; Tests for download_release_artifacts.
@@ -10066,6 +10069,22 @@ Args:
   * parent_uid (str): An attribute placed inside the message
 Returns:
   JSON proto of test_platform.result_flow.PublishResponse
+### *recipe_modules* / [satlab](/recipe_modules/satlab)
+
+[DEPS](/recipe_modules/satlab/__init__.py#8): [cros\_version](#recipe_modules-cros_version), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+#### **class [Satlab](/recipe_modules/satlab/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for Satlab related functionality
+
+&mdash; **def [stage\_build](/recipe_modules/satlab/api.py#20)(self, build, target_bucket):**
+
+Stage a build to a partner bucket. Will raise an exception on failure.
+
+Args:
+  build: string, formated as <board>-release/RXXX-YYY.ZZ.A
+  bucket: string, name of gs bucket to stage builds too
 ### *recipe_modules* / [service\_version](/recipe_modules/service_version)
 
 [DEPS](/recipe_modules/service_version/__init__.py#8): [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15530,6 +15549,18 @@ Instead, try to process the other projects, and THEN fail.
 Recipe for scaling bots in Chrome and CrOS pools.
 
 &mdash; **def [RunSteps](/recipes/robocrop.py#32)(api: RecipeApi, properties: RoboCropProperties):**
+### *recipes* / [satlab:tests/basic](/recipe_modules/satlab/tests/basic.py)
+
+[DEPS](/recipe_modules/satlab/tests/basic.py#8): [satlab](#recipe_modules-satlab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+
+&mdash; **def [RunSteps](/recipe_modules/satlab/tests/basic.py#19)(api):**
+### *recipes* / [satlab:tests/invalid\_image](/recipe_modules/satlab/tests/invalid_image.py)
+
+[DEPS](/recipe_modules/satlab/tests/invalid_image.py#8): [satlab](#recipe_modules-satlab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+
+
+&mdash; **def [RunSteps](/recipe_modules/satlab/tests/invalid_image.py#19)(api):**
 ### *recipes* / [service\_version:examples/full](/recipe_modules/service_version/examples/full.py)
 
 [DEPS](/recipe_modules/service_version/examples/full.py#12): [service\_version](#recipe_modules-service_version), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
