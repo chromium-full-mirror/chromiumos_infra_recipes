@@ -7,6 +7,8 @@
 
 from collections import namedtuple
 from collections import defaultdict
+import traceback
+
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 from google.protobuf.any_pb2 import Any
@@ -566,9 +568,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     Returns: (dict): fwinfo map.
     """
     found = False
-    for resp in response.responses:
+    for resp in response.response.responses:
       if resp.WhichOneof('response') == 'get_fw_info_response':
-        info = resp.get_fw_info_request
+        info = resp.get_fw_info_response
         found = True
         break
 
@@ -609,9 +611,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         try:
           key = self.cft_test_request.primary_dut.container_metadata_key
           if key in self.cft_test_request.container_metadata.containers:
-            if 'post_process' in self.cft_test_request.container_metadata.containers[
+            if 'post-process' in self.cft_test_request.container_metadata.containers[
                 key].images:
-              primary_dut_device = ctr.CrosToolRunnerTestRequest.Device(
+              primary_dut_device = ctr.CrosToolRunnerPostTestRequest.Device(
                   dut=metadata.primary_dut, container_metadata_key=self
                   .cft_test_request.primary_dut.container_metadata_key)
 
@@ -619,23 +621,23 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                   post_request.Request(
                       get_fw_info_request=post_request.GetFWInfoRequest())
               ])
-
-              post_process_request = ctr.CrosToolRunnerPostProcessRequest(
+              post_process_request = ctr.CrosToolRunnerPostTestRequest(
                   primary_dut=primary_dut_device,
                   artifact_dir=metadata.artifact_dir, request=request,
                   container_metadata_key=self.cft_test_request.primary_dut
                   .container_metadata_key)
-              resp = self._api.cros_tool_runner.pre_process(
+              resp = self._api.cros_tool_runner.post_process(
                   post_process_request)
               pp_resp = self._process_post_process_response(resp)
               for k, v in pp_resp.items():
                 if k and v:
-                  metadata.rdb_base_tags[k] = v
+                  metadata.rdb_base_tags.append((k, v))
         except Exception as e:  # pragma: nocover # pylint: disable=broad-except
           step.presentation.status = self._api.step.FAILURE
           step.presentation.logs[
               'failure details'] = f'Exception during FW parsing: {e}'
-
+          step.presentation.logs[
+              'full'] = f'Exception during PostProcess parsing: {traceback.format_exc()}'
       for test_dut_response in run_test_response:
         ctr_test_response = test_dut_response.data
         test_harness_type = ctr_test_response.test_harness.WhichOneof(
