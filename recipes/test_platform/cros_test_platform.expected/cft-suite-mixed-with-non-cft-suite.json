@@ -457,7 +457,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@shard seed@{@@@",
-      "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000001@@@",
+      "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000003@@@",
       "@@@STEP_LOG_LINE@shard seed@}@@@",
       "@@@STEP_LOG_END@shard seed@@@",
       "@@@STEP_LOG_LINE@foo-suite-shard-0@{@@@",
