@@ -11,6 +11,7 @@ from recipe_engine import post_process
 from google.protobuf import json_format
 
 from PB.chromiumos.common import BuildTarget
+from PB.chromiumos import test_disablement as test_disablement_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -26,6 +27,7 @@ from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RET
 from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 DEPS = [
+    'depot_tools/gitiles',
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/json',
@@ -317,6 +319,123 @@ def GenTests(api):
       api.properties(expected_exonerated_suites=[
           'b-cq.hw.suite',
           'd-cq.tast_gce.suite',
+          'e-cq.hw.suite',
+          'f-cq.tast_vm.suite',
+          'g-cq.tast_vm.suite',
+          'h-cq.hw.cq-minimal',
+      ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  # Excludes test cases.
+  suite_excludes_cfg = test_disablement_pb2.ExcludeCfg(exclude_suites=[
+      test_disablement_pb2.ExcludeCfg.ExcludeSuite(name='suite')
+  ])
+  yield api.test(
+      'excludes-suite',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              suite_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(expected_exonerated_suites=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'excludes-suite-no-impact-on-prejob-failures',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+                  ])
+          }),
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              suite_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(expected_exonerated_suites=[
+          'e-cq.hw.suite',
+          'f-cq.tast_vm.suite',
+          'g-cq.tast_vm.suite',
+          'h-cq.hw.cq-minimal',
+      ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  test_case_excludes_cfg = test_disablement_pb2.ExcludeCfg(exclude_tests=[
+      test_disablement_pb2.ExcludeCfg.ExcludeTest(name='fake.test')
+  ])
+  yield api.test(
+      'excludes-test-case',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              test_case_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(expected_exonerated_suites=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'excludes-test-case-no-impact-on-prejob-failures',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.properties(
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
+                  ])
+          }),
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              test_case_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(expected_exonerated_suites=[
           'e-cq.hw.suite',
           'f-cq.tast_vm.suite',
           'g-cq.tast_vm.suite',

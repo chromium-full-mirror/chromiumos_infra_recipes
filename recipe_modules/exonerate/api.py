@@ -749,6 +749,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
+    display_name = self.m.naming.get_skylab_result_title(hw_test_result)
+    suite_name = self.m.rdb_util.get_suite(display_name)
     build_target = hw_test_result.task.unit.common.build_target.name
     child_results = hw_test_result.child_results
     if not child_results:
@@ -765,6 +767,10 @@ class ExonerateApi(recipe_api.RecipeApi):
         test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
         if test_case.verdict in (TaskState.VERDICT_UNSPECIFIED,
                                  TaskState.VERDICT_FAILED):
+          if self._excludes_enabled and (suite_name in self._excludes['suites']
+                                         or
+                                         test_name in self._excludes['tests']):
+            return False
           if not self._is_test_name_exonerable(test_name, build_target,
                                                exoneration_configs_override):
             return False
@@ -805,6 +811,8 @@ class ExonerateApi(recipe_api.RecipeApi):
     if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
+    display_name = self.m.naming.get_vm_test_title(vm_build)
+    suite_name = self.m.rdb_util.get_suite(display_name)
     build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
     for test_case in all_test_cases:
       if test_case['verdict'] == 'VERDICT_FAILED':
@@ -812,6 +820,10 @@ class ExonerateApi(recipe_api.RecipeApi):
             'humanReadableSummary'
         ) == MISSING_TEST_FAILURE_SUMMARY and exonerate_unexpected_skips:
           continue
+        if self._excludes_enabled and (suite_name in self._excludes['suites'] or
+                                       test_case['name']
+                                       in self._excludes['tests']):
+          return False
         if not self._is_test_name_exonerable(test_case['name'], build_target,
                                              exoneration_configs_override):
           return False

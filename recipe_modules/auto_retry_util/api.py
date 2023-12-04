@@ -246,6 +246,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     # api.expect_exception doesn't work on exceptions thrown from initialize, so
     # don't cover this case.
     self.m.cros_infra_config.determine_if_staging()
+    # TODO(b/314002402): Figure out how to only enable excludes for
+    # auto-exonerations.
+    self.m.exonerate.enable_excludes()
     if self.m.cros_infra_config.is_staging and self._enable_retries:  # pragma: nocover
       raise ValueError('enable_retries should not be set on staging builders')
 

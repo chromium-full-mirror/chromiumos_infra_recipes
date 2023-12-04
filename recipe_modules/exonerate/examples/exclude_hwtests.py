@@ -70,6 +70,8 @@ def RunSteps(api):
       common_pb2.FAILURE in [f.status for f in updated_test_results])
   api.assertions.assertEqual(exonerated_test_names, [])
   api.assertions.assertEqual(len(updated_test_results[0].child_results), 3)
+  api.assertions.assertFalse(
+      api.exonerate.is_hw_result_exonerable(hw_test_failures[0]))
 
 
 def GenTests(api):

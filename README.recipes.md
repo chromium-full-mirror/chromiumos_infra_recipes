@@ -887,9 +887,9 @@ Utility function for CQ auto retry.
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#362)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#365)(self, cq_run: build_pb2.Build):**
 
-&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#453)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#456)(self, cq_run: build_pb2.Build):**
 
 Returns a list of test suite names grouped by retryable status.
 
@@ -901,7 +901,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retryable.
 
-&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#883)(self, build: build_pb2.Build):**
+&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#886)(self, build: build_pb2.Build):**
 
 Returns whether the build was a dry run.
 
@@ -913,7 +913,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#199)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#815)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#818)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -923,9 +923,9 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build had a supported failure mode.
   * The CLs under test are active.
 
-&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#257)(self):**
+&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#260)(self):**
 
-&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#983)(self, cq_orchs: List[build_pb2.Build]):**
+&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#986)(self, cq_orchs: List[build_pb2.Build]):**
 
 Returns cq-orchestrator builds which meet the retry criteria.
 
@@ -936,7 +936,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1506)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1509)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -950,7 +950,7 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1347)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
+&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1350)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
 
 Returns a list of suites that can have their failures attributed.
 
@@ -973,17 +973,17 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#244)(self):**
 
-&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#261)(self, feature_name: str, build: build_pb2.Build):**
+&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#264)(self, feature_name: str, build: build_pb2.Build):**
 
 Returns whether the given feature is enabled on the build.
 
 &emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#195)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#723)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#726)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#620)(self):**
+&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#623)(self):**
 
 Write PerBuildStats to an output property.
 
@@ -997,7 +997,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1578)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1581)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -1019,7 +1019,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#203)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1152)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1155)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -1037,7 +1037,7 @@ Returns:
   A tuple containing 3 lists of FailedTestStats grouped by whether the test
       variant is previously exonerated, newly exonerated, or not exonerated.
 
-&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#294)(self):**
+&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#297)(self):**
 
 Returns the number of retries left below the 24 and 2 hour throttles.
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
@@ -5971,7 +5971,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#885)(self, hw_test_results: List[SkylabResult]):**
+&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#897)(self, hw_test_results: List[SkylabResult]):**
 
 Get the results from the previous failed hardware tests that can now be exonerated.
 
@@ -5981,7 +5981,7 @@ Args:
 Returns:
   A list of the exonerable hardware test results.
 
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#867)(self, vm_test_builds: List[build_pb2.Build]):**
+&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#879)(self, vm_test_builds: List[build_pb2.Build]):**
 
 Get the results from the previous failed VM test builds that can now be exonerated.
 
@@ -6001,7 +6001,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#820)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#832)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -6053,7 +6053,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#774)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None, exonerate_unexpected_skips: bool=False):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#780)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None, exonerate_unexpected_skips: bool=False):**
 
 Checks to see if the VM test is exonerable.
 
@@ -11467,10 +11467,10 @@ Tests for the filter_candidates function.
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/footers.py#24)(api):**
 ### *recipes* / [auto\_retry\_util:tests/get\_exonerated\_suites](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#28): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_history](#recipe_modules-cros_history), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#29): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_history](#recipe_modules-cros_history), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#42)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/get_exonerated_suites.py#44)(api):**
 ### *recipes* / [auto\_retry\_util:tests/get\_failure\_attributed\_suites](/recipe_modules/auto_retry_util/tests/get_failure_attributed_suites.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/get_failure_attributed_suites.py#22): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [skylab\_results](#recipe_modules-skylab_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
