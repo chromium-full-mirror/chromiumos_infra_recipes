@@ -350,15 +350,10 @@ def split_generation_request(
       **image_params,
   )
   finalize_payload_request = FinalizePayloadRequest(
-      chroot=req.chroot,
-      minios=req.minios,
-      dryrun=req.dryrun,
-      result_path=req.result_path,
-      keyset=req.keyset,
-      verify=req.verify,
-      bucket=req.bucket,
-      # TODO(b/299105459): Support local signing params.
-      **image_params)
+      chroot=req.chroot, minios=req.minios, dryrun=req.dryrun,
+      result_path=req.result_path, keyset=req.keyset, verify=req.verify,
+      bucket=req.bucket, use_local_signing=req.use_local_signing,
+      docker_image=req.docker_image, **image_params)
   return unsigned_payload_request, finalize_payload_request
 
 
@@ -1116,5 +1111,59 @@ def GenTests(api: RecipeTestApi):
           'failure_reason': 'MINIOS_COUNT_MISMATCH',
           'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
       }]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'split-paygen-local-signing',
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request':
+                      GenerationRequest(
+                          full_update=True,
+                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+                          bucket='b',
+                          verify=True,
+                          dryrun=True,
+                          result_path=api.paygen_orchestration
+                          .ARTIFACT_RESULT_PATH,
+                          use_local_signing=True,
+                          docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
+                      ),
+                  'autoupdate_test_configs': [
+                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
+                                           applicable_models=['woomax']),
+                  ],
+              }], use_split_paygen=True),
+      ),
+      *generate_split_payload_response(
+          api, payloads=[{
+              'version':
+                  1,
+              'payload_file_path': {
+                  'path': '/tmp/aohiwdadoi/delta.bin',
+                  'location': 1,
+              },
+              'partition_names': ['foo-root', 'foo-kernel'],
+              'tgt_partitions': [{
+                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
+                  'location': 1,
+              }, {
+                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+                  'location': 1,
+              }]
+          }], versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin',
+              'file_path': {
+                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+                  'location': 2
+              }
+          }]),
+      api.post_check(post_process.MustRun, 'doing paygen'),
+      api.post_check(
+          post_process.StepCommandContains, 'doing paygen.docker pull',
+          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
       api.post_process(post_process.DropExpectation),
   )

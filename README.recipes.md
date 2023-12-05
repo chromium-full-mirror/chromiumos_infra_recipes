@@ -15075,11 +15075,11 @@ Recipe for generating ChromeOS payloads (AU deltas etc).
 
 &mdash; **def [RunSteps](/recipes/paygen.py#74)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_failure\_reason](/recipes/paygen.py#365)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
+&mdash; **def [get\_failure\_reason](/recipes/paygen.py#360)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
 
 Get the failure reason from the given response, if any.
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#376)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#371)(resp: GenerationResponse):**
 
 &mdash; **def [initialize\_directories](/recipes/paygen.py#263)(api: RecipeApi, properties: PaygenProperties):**
 
@@ -15089,7 +15089,7 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#390)(api: RecipeApi, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#385)(api: RecipeApi, resp: GenerationResponse):**
 
 &mdash; **def [split\_generation\_request](/recipes/paygen.py#324)(req: GenerationRequest):**
 
