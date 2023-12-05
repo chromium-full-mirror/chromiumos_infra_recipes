@@ -4,21 +4,6 @@
     "name": "configure chroot path"
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0o777",
-      "[CLEANUP]/chromiumos_workspace/artifacts"
-    ],
-    "infra_step": true,
-    "name": "create artifact_result_path"
-  },
-  {
     "name": "$result"
   }
 ]

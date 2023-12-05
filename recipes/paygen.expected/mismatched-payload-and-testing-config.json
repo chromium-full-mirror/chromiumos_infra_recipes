@@ -1694,24 +1694,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0o777",
-      "[CLEANUP]/chromiumos_workspace/artifacts"
-    ],
-    "infra_step": true,
-    "name": "doing paygen.create artifact_result_path",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "doing paygen.running paygen operations in parallel",
     "~followup_annotations": [
@@ -1747,12 +1729,6 @@
       "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"resultPath\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"location\": \"OUTSIDE\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
@@ -1765,6 +1741,24 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/chromiumos_workspace/artifacts/bdf2a7023a4ffcd388c93cebbf746f"
+    ],
+    "infra_step": true,
+    "name": "doing paygen.running paygen operations in parallel.create artifact_result_path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1806,7 +1800,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts/bdf2a7023a4ffcd388c93cebbf746f\",@@@",
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
@@ -1827,7 +1821,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"srcUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"tgtUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"srcUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"tgtUnsignedImage\": {\n    \"build\": {\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      },\n      \"version\": \"13425.90.0\",\n      \"bucket\": \"b\",\n      \"channel\": \"stable-channel\"\n    },\n    \"imageType\": 3,\n    \"milestone\": \"86\"\n  },\n  \"bucket\": \"b\",\n  \"verify\": true,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/chromiumos_workspace/artifacts/bdf2a7023a4ffcd388c93cebbf746f\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "infra_step": true,

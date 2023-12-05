@@ -115,10 +115,6 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
       image_type=common_pb2.IMAGE_TYPE_RECOVERY,
   )
 
-  ARTIFACT_RESULT_PATH = common_pb2.ResultPath(
-      path=common_pb2.Path(path='[CLEANUP]/chromiumos_workspace/artifacts',
-                           location=common_pb2.Path.OUTSIDE))
-
   def get_example_gen_requests_delta_signed(
       self, minios=True) -> List[GenerationRequest]:
     ret = [
@@ -129,16 +125,19 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
     if minios:
       ret.append(
-          GenerationRequest(src_signed_image=self.SIGNED_SRC,
-                            tgt_signed_image=self.SIGNED_TGT, bucket='b',
-                            verify=True, dryrun=False,
-                            chroot=self.m.cros_sdk.chroot(), minios=True,
-                            result_path=self.ARTIFACT_RESULT_PATH))
+          GenerationRequest(
+              src_signed_image=self.SIGNED_SRC,
+              tgt_signed_image=self.SIGNED_TGT,
+              bucket='b',
+              verify=True,
+              dryrun=False,
+              chroot=self.m.cros_sdk.chroot(),
+              minios=True,
+          ))
     return ret
 
   @property
@@ -151,13 +150,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         ),
-        GenerationRequest(src_unsigned_image=self.UNSIGNED_SRC,
-                          tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                          verify=True, dryrun=False,
-                          chroot=self.m.cros_sdk.chroot(), minios=True,
-                          result_path=self.ARTIFACT_RESULT_PATH)
+        GenerationRequest(
+            src_unsigned_image=self.UNSIGNED_SRC,
+            tgt_unsigned_image=self.UNSIGNED_TGT,
+            bucket='b',
+            verify=True,
+            dryrun=False,
+            chroot=self.m.cros_sdk.chroot(),
+            minios=True,
+        )
     ]
 
   @property
@@ -170,7 +172,6 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
 
@@ -184,15 +185,19 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
     if minios:
       ret.append(
-          GenerationRequest(full_update=True, tgt_signed_image=self.SIGNED_TGT,
-                            bucket='b', verify=True, dryrun=True,
-                            chroot=self.m.cros_sdk.chroot(), minios=True,
-                            result_path=self.ARTIFACT_RESULT_PATH))
+          GenerationRequest(
+              full_update=True,
+              tgt_signed_image=self.SIGNED_TGT,
+              bucket='b',
+              verify=True,
+              dryrun=True,
+              chroot=self.m.cros_sdk.chroot(),
+              minios=True,
+          ))
     return ret
 
   def get_example_gen_requests_full_unsigned(
@@ -205,16 +210,19 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
     if minios:
       ret.append(
-          GenerationRequest(full_update=True,
-                            tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                            verify=True, dryrun=True,
-                            chroot=self.m.cros_sdk.chroot(), minios=True,
-                            result_path=self.ARTIFACT_RESULT_PATH))
+          GenerationRequest(
+              full_update=True,
+              tgt_unsigned_image=self.UNSIGNED_TGT,
+              bucket='b',
+              verify=True,
+              dryrun=True,
+              chroot=self.m.cros_sdk.chroot(),
+              minios=True,
+          ))
     return ret
 
   @property
@@ -228,13 +236,16 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         ),
-        GenerationRequest(full_update=True,
-                          tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
-                          bucket='b', verify=True, dryrun=True,
-                          chroot=self.m.cros_sdk.chroot(), minios=True,
-                          result_path=self.ARTIFACT_RESULT_PATH)
+        GenerationRequest(
+            full_update=True,
+            tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
+            bucket='b',
+            verify=True,
+            dryrun=True,
+            chroot=self.m.cros_sdk.chroot(),
+            minios=True,
+        )
     ]
 
   @property
@@ -247,7 +258,6 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=True,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
 
@@ -261,16 +271,19 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
             verify=True,
             dryrun=False,
             chroot=self.m.cros_sdk.chroot(),
-            result_path=self.ARTIFACT_RESULT_PATH,
         )
     ]
     if minios:
       ret.append(
-          GenerationRequest(src_unsigned_image=self.UNSIGNED_TGT,
-                            tgt_unsigned_image=self.UNSIGNED_TGT, bucket='b',
-                            verify=True, dryrun=False,
-                            chroot=self.m.cros_sdk.chroot(), minios=True,
-                            result_path=self.ARTIFACT_RESULT_PATH))
+          GenerationRequest(
+              src_unsigned_image=self.UNSIGNED_TGT,
+              tgt_unsigned_image=self.UNSIGNED_TGT,
+              bucket='b',
+              verify=True,
+              dryrun=False,
+              chroot=self.m.cros_sdk.chroot(),
+              minios=True,
+          ))
     return ret
 
   @property

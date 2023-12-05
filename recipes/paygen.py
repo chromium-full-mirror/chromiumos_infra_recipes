@@ -6,6 +6,7 @@
 """Recipe for generating ChromeOS payloads (AU deltas etc)."""
 
 import datetime
+import hashlib
 import json
 from typing import Any
 from typing import Callable
@@ -108,10 +109,6 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     paygen_parallel_runner = api.future_utils.create_parallel_runner(
         max_concurrent_requests)
 
-    # We create paygen requests in the orchestration, so ensure the result_path
-    # exists in paygen.
-    api.paygen_orchestration.ensure_artifact_result_path()
-
     for req in properties.requests:
       # If a docker image is specified, need to pull it down before calling
       # the BAPI since the BAPI is hermetic.
@@ -133,6 +130,10 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     # Iterate through every request.
     with api.cros_build_api.parallel_operations():
       with api.step.nest('running paygen operations in parallel') as pres:
+        # Artifacts need to be placed within the chromiumos checkout so that
+        # the BAPI can find them.
+        artifact_result_path_base = api.cros_source.workspace_path.join(
+            'artifacts')
 
         # Function to do a single paygen, given a request object.
         def do_a_paygen(req: PaygenProperties.PaygenRequest,
@@ -151,6 +152,24 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
 
           payload_name = api.naming.get_generation_request_title(
               MessageToDict(req).get('generationRequest', {}))
+
+          # Each paygen request should get its own result path dir so as to avoid
+          # clobbering. Create that here as the field is not populated by the
+          # orchestrator.
+          # We hash the payload_name to get something unique and deterministic.
+          # pylint is broken for hexdigest, see https://github.com/pylint-dev/pylint/issues/4039.
+          payload_name_hash = hashlib.shake_128(  # pylint: disable=too-many-function-args
+              payload_name.encode('utf-8')).hexdigest(15)
+          artifact_result_path = api.path.join(artifact_result_path_base,
+                                               payload_name_hash)
+
+          api.file.ensure_directory('create artifact_result_path',
+                                    artifact_result_path)
+          result_path = common_pb2.ResultPath(
+              path=common_pb2.Path(
+                  path=str(artifact_result_path),
+                  location=common_pb2.Path.OUTSIDE))
+          req.generation_request.result_path.CopyFrom(result_path)
 
           # If split paygen is enabled, use the new GenerateUnsignedPayload
           # and FinalizePayload BAPI endpoints.
@@ -343,6 +362,7 @@ def split_generation_request(
       req.WhichOneof('tgt_image_oneof'):
           getattr(req, req.WhichOneof('tgt_image_oneof'))
   }
+
   unsigned_payload_request = GenerateUnsignedPayloadRequest(
       minios=req.minios,
       chroot=req.chroot,
@@ -682,7 +702,6 @@ def GenTests(api: RecipeTestApi):
                       bucket='b',
                       verify=True,
                       dryrun=True,
-                      result_path=api.paygen_orchestration.ARTIFACT_RESULT_PATH,
                       use_local_signing=True,
                       docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
                   ),
@@ -1058,8 +1077,6 @@ def GenTests(api: RecipeTestApi):
                           bucket='b',
                           verify=True,
                           dryrun=True,
-                          result_path=api.paygen_orchestration
-                          .ARTIFACT_RESULT_PATH,
                       ),
                   'autoupdate_test_configs': [
                       AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
@@ -1127,8 +1144,6 @@ def GenTests(api: RecipeTestApi):
                           bucket='b',
                           verify=True,
                           dryrun=True,
-                          result_path=api.paygen_orchestration
-                          .ARTIFACT_RESULT_PATH,
                           use_local_signing=True,
                           docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
                       ),
