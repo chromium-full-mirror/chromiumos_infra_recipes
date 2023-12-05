@@ -8,6 +8,7 @@
 CrOS and warns on failure.
 """
 
+import re
 from typing import Any, List, Optional
 from collections import OrderedDict
 
@@ -81,6 +82,20 @@ def GetPuprGeneratorBuilder(api: RecipeApi, pupr_cordinator_task_id: int):
   for build in builds:
     if build.builder.builder == PUPR_GENERATOR_BUILDER_NAME:
       return build
+
+  return None
+
+
+def GetUprevClNumber(pupr_generator_task: build_pb2.Build) -> Optional[int]:
+  PREFIX = 'created https://crrev.com/c/'
+  if pupr_generator_task.summary_markdown.startswith(PREFIX):
+    PREFIX_LEN = len(PREFIX)
+    return int(pupr_generator_task.summary_markdown[PREFIX_LEN:])
+
+  PATTERN = r'chromium:(\d+)'
+  pattern_result = re.search(PATTERN, pupr_generator_task.summary_markdown)
+  if pattern_result:
+    return int(pattern_result.group(1))
 
   return None
 
@@ -164,16 +179,16 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
                        summary_markdown='Pupr generator has failed')
 
   with api.step.nest('Find the uprev CL') as presentation:
-    PREFIX = 'created https://crrev.com/c/'
-    PREFIX_LEN = len(PREFIX)
-    if pupr_generator_task.summary_markdown.startswith(PREFIX):
-      uprev_cl_number = int(pupr_generator_task.summary_markdown[PREFIX_LEN:])
-      presentation.step_summary_text = f'https://crrev.com/c/{uprev_cl_number}'
+    uprev_cl_number = GetUprevClNumber(pupr_generator_task)
+    if uprev_cl_number is not None:
+      presentation.step_summary_text = (
+          f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})'
+      )
     else:
       presentation.step_summary_text = (
           'Uprev CL is not found. Probably it is not generated?')
       return RawResult(status=common_pb2.FAILURE,
-                       summary_markdown='Uprev CL is not found')
+                       summary_markdown='Uprev CL is not found.')
 
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
@@ -226,7 +241,8 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
     uprev_change_data = api.gerrit.fetch_patch_set_from_change(uprev_change)
     presentation.step_summary_text = (
-        f'https://crrev.com/c/{uprev_cl_number} {uprev_change_data.status}')
+        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
+        f' {uprev_change_data.status}')
 
     if uprev_change_data.status != 'NEW':
       return RawResult(status=common_pb2.FAILURE,
@@ -239,7 +255,9 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
                                 change=uprev_cl_number)
     api.gerrit.add_change_comment_remote(uprev_change, text)
 
-    overall_summary = f'Add a message to https://crrev.com/c/{uprev_cl_number}'
+    overall_summary = (
+        'Add a message to ' +
+        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})')
 
   return RawResult(status=common_pb2.SUCCESS, summary_markdown=overall_summary)
 
@@ -259,10 +277,14 @@ def GenTests(api: RecipeTestApi):
   PUPR_GENERATOR_BUILD_ID = 300
   CURRENT_BUILD_ID = 301
 
-  PUPR_GENERATOR_BUILD = build_pb2.Build(
+  PUPR_GENERATOR_BUILD_OLD = build_pb2.Build(
       id=PUPR_GENERATOR_BUILD_ID, status=common_pb2.SUCCESS,
       builder=builder_common_pb2.BuilderID(builder=PUPR_GENERATOR_BUILDER_NAME),
       summary_markdown='created https://crrev.com/c/123456')
+  PUPR_GENERATOR_BUILD = build_pb2.Build(
+      id=PUPR_GENERATOR_BUILD_ID, status=common_pb2.SUCCESS,
+      builder=builder_common_pb2.BuilderID(builder=PUPR_GENERATOR_BUILDER_NAME),
+      summary_markdown='created [chromium:123456](https://crrev.com/c/123456)')
   PUPR_GENERATOR_BUILD_RUNNING = build_pb2.Build(
       id=PUPR_GENERATOR_BUILD_ID, status=common_pb2.STARTED,
       builder=builder_common_pb2.BuilderID(builder=PUPR_GENERATOR_BUILDER_NAME))
@@ -350,6 +372,19 @@ def GenTests(api: RecipeTestApi):
                      'Add a comment to the uprev CL.add comment on CL 123456'),
       current_build=CURRENT_BUILD,
       pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
+      uprev_test_builds=[
+          PRE_UPREV_TEST_BUILDER_1,
+          PRE_UPREV_TEST_BUILDER_2,
+      ],
+      uprev_gerrit_change=UPREV_GERRIT_CHANGE_VALUES,
+  )
+
+  yield test(
+      'tests-succeeded-old',
+      api.post_check(post_process.MustRun,
+                     'Add a comment to the uprev CL.add comment on CL 123456'),
+      current_build=CURRENT_BUILD,
+      pupr_generater_build_resps=[PUPR_GENERATOR_BUILD_OLD],
       uprev_test_builds=[
           PRE_UPREV_TEST_BUILDER_1,
           PRE_UPREV_TEST_BUILDER_2,

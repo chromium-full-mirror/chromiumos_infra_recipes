@@ -992,7 +992,7 @@
     "cmd": [],
     "name": "Find pre-uprev tests",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-skylab: [bbid/203](https://ci.chromium.org/ui/b/203)\n@@@"
+      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-skylab: [bbid/201](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [bbid/202](https://ci.chromium.org/ui/b/202)\n@@@"
     ]
   },
   {
@@ -1025,9 +1025,11 @@
     "name": "Find pre-uprev tests.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"id\": \"203\", \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"id\": \"201\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-brya-chrome-skylab\"}, \"id\": \"202\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@"
+      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@",
+      "@@@STEP_LINK@202@https://cr-buildbucket.appspot.com/build/202@@@"
     ]
   },
   {
@@ -1049,7 +1051,8 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "203"
+      "201",
+      "202"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1089,14 +1092,20 @@
       }
     },
     "name": "Wait for completion of pre-uprev tests.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"203\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"201\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"202\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"203\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"201\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"202\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
@@ -1108,13 +1117,20 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"203\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"201\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"202\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@"
+      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@",
+      "@@@STEP_LINK@202@https://cr-buildbucket.appspot.com/build/202@@@"
     ]
   },
   {
@@ -1158,7 +1174,7 @@
     "name": "Wait for completion of pupr-generator builder.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"lacros-ash-atomic-pupr-generator\"}, \"id\": \"300\", \"status\": \"SUCCESS\", \"summaryMarkdown\": \"created [chromium:123456](https://crrev.com/c/123456)\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"lacros-ash-atomic-pupr-generator\"}, \"id\": \"300\", \"status\": \"SUCCESS\", \"summaryMarkdown\": \"created https://crrev.com/c/123456\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@300@https://cr-buildbucket.appspot.com/build/300@@@"
     ]
@@ -1174,15 +1190,16 @@
     "cmd": [],
     "name": "Prepare the result message",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@generated message@[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed@@@",
+      "@@@STEP_LOG_LINE@generated message@[EXPERIMENTAL] Pre-uprev test result: All builds succeeded@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@---@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@ - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Please stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.@@@",
+      "@@@STEP_LOG_LINE@generated message@Ask yoshiki@ on the gardener chat if you have a question.@@@",
       "@@@STEP_LOG_END@generated message@@@"
     ]
   },
@@ -1354,7 +1371,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPlease stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nAsk yoshiki@ on the gardener chat if you have a question.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {

@@ -1174,7 +1174,7 @@
     "name": "Wait for completion of pupr-generator builder.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"lacros-ash-atomic-pupr-generator\"}, \"id\": \"300\", \"status\": \"SUCCESS\", \"summaryMarkdown\": \"created https://crrev.com/c/123456\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"lacros-ash-atomic-pupr-generator\"}, \"id\": \"300\", \"status\": \"SUCCESS\", \"summaryMarkdown\": \"created [chromium:123456](https://crrev.com/c/123456)\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@300@https://cr-buildbucket.appspot.com/build/300@@@"
     ]
@@ -1183,7 +1183,7 @@
     "cmd": [],
     "name": "Find the uprev CL",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@https://crrev.com/c/123456@@@"
+      "@@@STEP_SUMMARY_TEXT@[chromium:123456](https://crrev.com/c/123456)@@@"
     ]
   },
   {
@@ -1207,7 +1207,7 @@
     "cmd": [],
     "name": "Find the uprev CL on gerrit",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@https://crrev.com/c/123456 NEW@@@"
+      "@@@STEP_SUMMARY_TEXT@[chromium:123456](https://crrev.com/c/123456) NEW@@@"
     ]
   },
   {
@@ -1449,6 +1449,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Add a message to https://crrev.com/c/123456"
+    "summaryMarkdown": "Add a message to [chromium:123456](https://crrev.com/c/123456)"
   }
 ]
