@@ -28,6 +28,7 @@ MILO_PREFIX = 'https://ci.chromium.org/b/'
 MISSING_TEST_FAILURE_SUMMARY = 'Test did not run'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
 SOURCES_FILE_NAME = 'sources.jsonpb'
+TAST_TEST_NAME_PREFIX = 'tast.'
 
 
 class TastResultsApi(recipe_api.RecipeApi):
@@ -537,9 +538,16 @@ class TastResultsApi(recipe_api.RecipeApi):
     # a new log URL format.
     testhaus_log_url = TESTHAUS_LOG_PREFIX + gs_bucket_path
     self.m.cros_resultdb.upload(config, testhaus_log_url)
-    self.m.cros_resultdb.report_missing_test_cases(missing_test_names,
-                                                   config.get('base_variant'),
-                                                   config.get('base_tags'))
+
+    missing_test_names_with_prefix = []
+    for test_name in missing_test_names:
+      prefix = '' if test_name.startswith(
+          TAST_TEST_NAME_PREFIX) else TAST_TEST_NAME_PREFIX
+      missing_test_names_with_prefix.append(f'{prefix}{test_name}')
+
+    self.m.cros_resultdb.report_missing_test_cases(
+        missing_test_names_with_prefix, config.get('base_variant'),
+        config.get('base_tags'))
     if not self.m.buildbucket.is_critical():
       behavior = TestPlatformRequest.Params.TestExecutionBehavior.NON_CRITICAL
       self.m.cros_resultdb.apply_exonerations(
