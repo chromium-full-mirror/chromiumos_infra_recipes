@@ -279,8 +279,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   # CQ build with initial upload artifact failure.
-  # TODO(b/313914665): Consider still running unit test and retrying artifact
-  # upload at the end.
   yield api.build_menu.test(
       'initial-artifact-upload-bundle-fail',
       api.post_check(post_process.MustRun, 'build images'),
