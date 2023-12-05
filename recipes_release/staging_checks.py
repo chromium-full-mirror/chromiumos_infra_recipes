@@ -132,6 +132,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator',
                    num_builds=3),
+    StagingReCheck('chromeos', 'staging', r'staging-cop', num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-cq-auto-retrier'),
     StagingReCheck('chromeos', 'staging', r'staging-cq-orchestrator', [
         orchestrator_exemption, cq_cancelled_exemption, merge_conflict_exemption
