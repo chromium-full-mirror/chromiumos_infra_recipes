@@ -35,6 +35,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = KabutoPaygenProperties
 
+_MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122
+
 
 def _gs_path(api: RecipeApi, bucket: str, path: str) -> str:
   """Returns the full gs:// path for given bucket and path."""
@@ -85,10 +87,17 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
     # Build Mesa and fossilize tools.
     if properties.use_release_build_artifacts:
       # Use artifacts from a CrOS release build.
-      api.step('build fossilize-tools', [
-          './kabuto', 'build-fossilize-tools-release',
-          f'--manifest-branch={properties.manifest_branch}'
-      ])
+      build_fossilize_tools_release_cmd = ['./kabuto']
+      # --input-manifest-branch is required in Kabuto from M122 onward to
+      # support Spanner metrics. Do not use this flag in earlier releases.
+      if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
+        build_fossilize_tools_release_cmd.append(
+            f'--input-manifest-branch={properties.manifest_branch}')
+      build_fossilize_tools_release_cmd.append('build-fossilize-tools-release')
+      if properties.manifest_branch and properties.milestone < _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
+        build_fossilize_tools_release_cmd.append(
+            f'--manifest-branch={properties.manifest_branch}')
+      api.step('build fossilize-tools', build_fossilize_tools_release_cmd)
     elif properties.use_postsubmit_build_artifacts:
       # Use artifacts from a CrOS postsubmit build.
       api.step('build fossilize-tools',
@@ -207,7 +216,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   )
 
   props = good_props.copy()
-  props['manifest_branch'] = 'release-R105-14989.B'
+  props['manifest_branch'] = 'release-R122-12345.B'
+  props['milestone'] = 122
   props['use_release_build_artifacts'] = True
   yield api.test(
       'use-release-artifacts',
@@ -216,8 +226,28 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandContains,
           'build fossilize-tools',
           [
-              './kabuto', 'build-fossilize-tools-release',
-              '--manifest-branch=release-R105-14989.B'
+              './kabuto',
+              '--input-manifest-branch=release-R122-12345.B',
+              'build-fossilize-tools-release',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R121-12345.B'
+  props['milestone'] = 121
+  props['use_release_build_artifacts'] = True
+  yield api.test(
+      'no-input-manifest-branch-before-122',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'build fossilize-tools',
+          [
+              './kabuto',
+              'build-fossilize-tools-release',
+              '--manifest-branch=release-R121-12345.B',
           ],
       ),
       api.post_process(post_process.DropExpectation),

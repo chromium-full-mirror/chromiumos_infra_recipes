@@ -44,6 +44,7 @@ GERRIT_CL_REVIEWERS = [
 ]
 
 _MILESTONE_USES_KABUTO_UPREV = 118
+_MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
@@ -205,10 +206,15 @@ def DoRunSteps(api: RecipeApi,
         api.git.checkout('FETCH_HEAD', force=True)
     updated_artifacts_path = _SetupUpdatedArtifacts(api, properties.uprev_info)
     if api.cros_version.version.milestone >= _MILESTONE_USES_KABUTO_UPREV:
-      api.step('Upload and uprev', [
-          './kabuto', 'dlc-upload-and-uprev', '--updated-artifacts-path',
+      kabuto_cmd = ['./kabuto']
+      if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
+        kabuto_cmd.append(
+            f'--input-manifest-branch={properties.manifest_branch}')
+      kabuto_cmd += [
+          'dlc-upload-and-uprev', '--updated-artifacts-path',
           updated_artifacts_path
-      ])
+      ]
+      api.step('Upload and uprev', kabuto_cmd)
     else:
       api.step(
           'Upload and uprev',
@@ -330,9 +336,30 @@ def GenTests(api: RecipeTestApi) -> None:
       api.post_process(post_process.DropExpectation),
   )
 
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R122-12345.B'
+  props['milestone'] = 122
   yield api.test(
       'use-new-uprev-method',
-      api.cros_version.workspace_version('R118-98765.0.0'),
+      api.cros_version.workspace_version('R122-12345.0.0'),
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Upload and uprev',
+          [
+              './kabuto', '--input-manifest-branch=release-R122-12345.B',
+              'dlc-upload-and-uprev', '--updated-artifacts-path'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R118-12345.B'
+  props['milestone'] = 118
+  yield api.test(
+      'no-input-manifest-branch-before-122',
+      api.cros_version.workspace_version('R118-12345.0.0'),
       api.properties(**props),
       api.post_process(
           post_process.StepCommandContains,

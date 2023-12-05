@@ -29,6 +29,8 @@ DEPS = [
 
 PROPERTIES = BuildKabutoShadercacheProperties
 
+_MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122
+
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 GS_BUCKET = 'kabuto_cache'
@@ -112,6 +114,9 @@ def DoRunSteps(api: RecipeTestApi,
     # this will be changed to using deferred for prod.
     with api.failures.ignore_exceptions():
       kabuto_cmd = ['./tools/kabuto/kabuto', '--gcs', '--no-interactive']
+      if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
+        kabuto_cmd.append(
+            f'--input-manifest-branch={properties.manifest_branch}')
       if properties.shard:
         # If a shard number is specified we use that shard's config from
         # Kabuto's input directory.
@@ -288,5 +293,42 @@ def GenTests(api: RecipeTestApi) -> None:
       api.properties(**props),
       api.post_check(post_process.DoesNotRun,
                      'clone kabuto.Checkout Gerrit CL'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['shard'] = '0'
+  props['manifest_branch'] = 'release-R122-12345.B'
+  props['milestone'] = 122
+  yield api.test(
+      'input-manifest-branch',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'run kabuto',
+          [
+              './tools/kabuto/kabuto', '--gcs', '--no-interactive',
+              '--input-manifest-branch=release-R122-12345.B',
+              '--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json'
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['shard'] = '0'
+  props['manifest_branch'] = 'release-R121-12345.B'
+  props['milestone'] = 121
+  yield api.test(
+      'no-input-manifest-branch-before-122',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'run kabuto',
+          [
+              './tools/kabuto/kabuto', '--gcs', '--no-interactive',
+              '--kabuto-config=tools/kabuto/in/prod/shard-0/kabuto.json'
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
   )
