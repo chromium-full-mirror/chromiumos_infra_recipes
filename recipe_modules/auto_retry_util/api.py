@@ -1263,6 +1263,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             attributed_test_failures.add(fault_attribution.test_name)
 
       for child_result in result.child_results:
+        if child_result.state.life_cycle != TaskState.LIFE_CYCLE_COMPLETED:
+          pres.step_text = 'cannot attribute results that are not LIFE_CYCLE_COMPLETED'
+          return False
+
         for test_case in child_result.test_cases:
           if test_case.verdict == TaskState.VERDICT_NO_VERDICT:
             pres.step_text = 'cannot attribute results containing NO_VERDICT'

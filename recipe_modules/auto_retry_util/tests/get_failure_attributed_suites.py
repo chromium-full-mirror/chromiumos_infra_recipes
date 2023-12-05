@@ -45,8 +45,23 @@ def RunSteps(api):
 def GenTests(api):
 
   def get_ctp_build(
-      verdicts: Optional[List[Optional[TaskState.Verdict]]] = None
+      verdicts: Optional[List[TaskState.Verdict]] = None,
+      life_cycle: Optional[
+          TaskState.LifeCycle] = TaskState.LifeCycle.LIFE_CYCLE_COMPLETED,
   ) -> build_pb2.Build:
+    """Get a CTP build for test data.
+
+    Returns a CTP build that ran a suite called 'a-cq.hw.suite' with two test
+    cases, 'fake.test1' and 'fake.test2'.
+
+    Args:
+      verdicts: An optional list of the two verdicts for the test cases.
+        Defaults to both getting VERDICT_FAILED.
+      life_cycle: Optionally override the life_cycle of the result.
+
+    Returns:
+      A CTP build.
+    """
     if not verdicts:
       verdicts = [
           TaskState.Verdict.VERDICT_FAILED, TaskState.Verdict.VERDICT_FAILED
@@ -60,12 +75,11 @@ def GenTests(api):
         tagged_responses={
             'a-cq.hw.suite':
                 ExecuteResponse(
-                    state=TaskState(verdict=task_verdict,
-                                    life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
-                    task_results=[
+                    state=TaskState(verdict=task_verdict), task_results=[
                         ExecuteResponse.TaskResult(
                             name='suite',
-                            state=TaskState(verdict=TaskState.VERDICT_FAILED),
+                            state=TaskState(verdict=TaskState.VERDICT_FAILED,
+                                            life_cycle=life_cycle),
                             test_cases=[
                                 ExecuteResponse.TaskResult.TestCaseResult(
                                     name=f'fake.test{i+1}', verdict=verdict)
@@ -386,6 +400,52 @@ def GenTests(api):
           }).build,
       api.buildbucket.simulated_get_multi([
           get_ctp_build([TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED])
+      ], 'get attributed hw suites.get previous skylab tasks v2.buildbucket.get_multi'
+                                         ),
+      api.properties(
+          expected_failure_attributed_suites=[],
+          **{
+              '$chromeos/auto_retry_util':
+                  AutoRetryUtilProperties(experimental_features=[
+                      ExperimentalFeature(
+                          name=EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES)
+                  ])
+          },
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'ctp-build-with-life-cycle-rejected-is-not-attributed',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111]
+              },
+              'cq_fault_attributions': {
+                  'test_failure_attributions': [{
+                      'build_target':
+                          'a',
+                      'fault_attributes': [
+                          {
+                              'test_name':
+                                  'fake.test1',
+                              'snapshot_comparison_fault_attribution':
+                                  'MATCHING_FAILURE_FOUND',
+                          },
+                          {
+                              'test_name':
+                                  'fake.test2',
+                              'snapshot_comparison_fault_attribution':
+                                  'MATCHING_FAILURE_FOUND',
+                          },
+                      ]
+                  },]
+              }
+          }).build,
+      api.buildbucket.simulated_get_multi([
+          get_ctp_build(life_cycle=TaskState.LIFE_CYCLE_REJECTED)
       ], 'get attributed hw suites.get previous skylab tasks v2.buildbucket.get_multi'
                                          ),
       api.properties(
