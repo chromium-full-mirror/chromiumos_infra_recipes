@@ -2061,7 +2061,6 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
     for test_case in result.autotest_result.test_cases:
       if test_case.verdict in [
           Result.Autotest.TestCase.VERDICT_PASS,
-          Result.Autotest.TestCase.VERDICT_NO_VERDICT
       ]:
         continue
       if test_case.verdict not in failed_tests:

@@ -16144,7 +16144,7 @@ Returns:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2123)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2122)(api, properties):**
 
 Entrypoint to the script
 
@@ -16232,7 +16232,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * res - The step result.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2076)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2075)(api, properties):**
 
 Run test and upload results.
 
