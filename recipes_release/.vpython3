@@ -1,4 +1,4 @@
-python_version: "3.11"
+python_version: "3.8"
 
 wheel: <
   name: "infra/python/wheels/tabulate-py3"
