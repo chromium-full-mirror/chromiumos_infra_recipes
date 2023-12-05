@@ -12576,12 +12576,12 @@ This recipe calls the RunCopybot endpoint from the Build API CopybotService.
 Call the RunCopybot endpoint.
 ### *recipes* / [cq\_auto\_retrier](/recipes/cq_auto_retrier.py)
 
-[DEPS](/recipes/cq_auto_retrier.py#27): [auto\_retry\_util](#recipe_modules-auto_retry_util), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/cq_auto_retrier.py#27): [auto\_retry\_util](#recipe_modules-auto_retry_util), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for analyzing and retrying failed CQ runs.
 
-&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#42)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#43)(api: RecipeApi):**
 ### *recipes* / [cq\_fault\_attribution:tests/comparison\_snapshots\_retrieval](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py)
 
 [DEPS](/recipe_modules/cq_fault_attribution/tests/comparison_snapshots_retrieval.py#22): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [looks\_for\_green](#recipe_modules-looks_for_green), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

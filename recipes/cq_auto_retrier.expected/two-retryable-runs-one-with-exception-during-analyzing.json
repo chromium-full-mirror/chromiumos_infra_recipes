@@ -26,8 +26,8 @@
     "cmd": [],
     "name": "find candidates",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 candidate(s)@@@",
-      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"non_new\": 0, \"total_with_retryable_statuses\": 1, \"unsupported_failure_mode\": 0}@@@"
+      "@@@STEP_TEXT@found 2 candidate(s)@@@",
+      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"non_new\": 0, \"total_with_retryable_statuses\": 2, \"unsupported_failure_mode\": 0}@@@"
     ]
   },
   {
@@ -35,8 +35,9 @@
     "name": "find candidates.query for cq-orchestrators",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found 1 builds@@@",
-      "@@@STEP_LINK@2222@https://cr-buildbucket.appspot.com/build/2222@@@"
+      "@@@STEP_TEXT@found 2 builds@@@",
+      "@@@STEP_LINK@2222@https://cr-buildbucket.appspot.com/build/2222@@@",
+      "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@"
     ]
   },
   {
@@ -58,8 +59,10 @@
     "name": "find candidates.query for cq-orchestrators.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:18:31Z\", \"createdBy\": \"project:chromeos\", \"id\": \"1111\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:1111\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"child_build_info\": [{\"builder\": {\"builder\": \"builder1\"}, \"collect_value\": \"COLLECT\", \"relevant\": true, \"status\": \"FAILURE\"}], \"has_child_failures\": true}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": \"1970-01-01T00:37:02Z\", \"createdBy\": \"project:chromeos\", \"id\": \"2222\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:2222\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"small\"}], \"priority\": 30}}, \"input\": {\"gerritChanges\": [{\"change\": \"234567\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\"}], \"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}}}, \"output\": {\"properties\": {\"$recipe_engine/cq\": {\"runMode\": \"FULL_RUN\"}, \"has_child_failures\": true, \"test_summary\": [{\"builder_name\": \"builder1\", \"collect_value\": \"COLLECT\", \"critical\": true, \"name\": \"builder1.hw.suite\", \"status\": \"FAILURE\"}]}}, \"status\": \"FAILURE\", \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key2\"}, {\"key\": \"cq_experimental\", \"value\": \"false\"}]}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@",
       "@@@STEP_LINK@2222@https://cr-buildbucket.appspot.com/build/2222@@@"
     ]
   },
@@ -252,10 +255,76 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/support/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "name": "find candidates.filter out closed CLs.fetch changes for 1111",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "timeout": 2160,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "analyzing candidates",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 1 retryable run(s)@@@"
+      "@@@STEP_TEXT@found 1 retryable run(s)@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -263,7 +332,8 @@
     "name": "analyzing candidates.analyzing 2222",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@build link@https://cr-buildbucket.appspot.com/build/2222@@@"
+      "@@@STEP_LINK@build link@https://cr-buildbucket.appspot.com/build/2222@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -312,6 +382,64 @@
     "name": "analyzing candidates.analyzing 2222.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1111",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@build link@https://cr-buildbucket.appspot.com/build/1111@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1111.analyzing build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@0 success, 1 retryable, 0 outstanding@@@",
+      "@@@STEP_LOG_END@successful_builders@@@",
+      "@@@STEP_LOG_LINE@retryable_failure_builders@builder1@@@",
+      "@@@STEP_LOG_END@retryable_failure_builders@@@",
+      "@@@STEP_LOG_END@outstanding_failure_builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1111.analyzing test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@0 success, 0 retryable, 0 outstanding@@@",
+      "@@@STEP_LOG_END@successful_test_suite_names@@@",
+      "@@@STEP_LOG_END@retryable_test_suite_names@@@",
+      "@@@STEP_LOG_END@outstanding_failure_test_suite_names@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "analyzing candidates.analyzing 1111.exoneration analysis",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@skipping: no test variant failures@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/test_exoneration.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "analyzing candidates.analyzing 1111.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
@@ -327,7 +455,7 @@
       "--format",
       "text"
     ],
-    "name": "analyzing candidates.analyzing 2222.fetch HEAD:test/exoneration/generated/excludes.binaryproto",
+    "name": "analyzing candidates.analyzing 1111.fetch HEAD:test/exoneration/generated/excludes.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -335,7 +463,7 @@
   },
   {
     "cmd": [],
-    "name": "analyzing candidates.analyzing 2222.get attributed hw suites",
+    "name": "analyzing candidates.analyzing 1111.get attributed hw suites",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@experimental feature not enabled@@@"
@@ -343,9 +471,18 @@
   },
   {
     "cmd": [],
+    "name": "analyzing candidates.deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('analyzing candidates.analyzing 2222.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter candidates",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_multi_retry_eligible\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
+      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_multi_retry_eligible\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 2, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
     ]
   },
   {
@@ -400,9 +537,9 @@
       "-f",
       "-H",
       "@[CLEANUP]/service_account_auth_token_tmp_1",
-      "https://chromium-review.googlesource.com/changes/234567/revisions/7/mergeable"
+      "https://chromium-review.googlesource.com/changes/123456/revisions/7/mergeable"
     ],
-    "name": "filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/234567/revisions/7/mergeable",
+    "name": "filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/123456/revisions/7/mergeable",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -413,16 +550,16 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@filtered out 0 run(s)@@@",
-      "@@@STEP_LOG_LINE@auto retry counts@go/bbid/2222 -> 0@@@",
+      "@@@STEP_LOG_LINE@auto retry counts@go/bbid/1111 -> 0@@@",
       "@@@STEP_LOG_END@auto retry counts@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 2222",
+    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 1111",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 0 total auto-retries for build 2222@@@"
+      "@@@STEP_TEXT@found 0 total auto-retries for build 1111@@@"
     ]
   },
   {
@@ -438,10 +575,10 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key2\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}"
     ],
     "infra_step": true,
-    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 2222.buildbucket.search",
+    "name": "filter candidates.filter multi-retry eligible runs.find previous auto-retries for 1111.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -449,7 +586,7 @@
   },
   {
     "cmd": [],
-    "name": "filter candidates.filter multi-retry eligible runs.determine if 2222 is multi-retry eligible",
+    "name": "filter candidates.filter multi-retry eligible runs.determine if 1111 is multi-retry eligible",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@eligible: no auto-retries yet@@@"
@@ -465,14 +602,14 @@
   },
   {
     "cmd": [],
-    "name": "filter candidates.filter out opt-out runs.get CL 234567 description",
+    "name": "filter candidates.filter out opt-out runs.get CL 123456 description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Change-Id: deadbeef@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/234567@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project-a/+/123456/7@@@"
     ]
   },
   {
@@ -480,18 +617,18 @@
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "filter candidates.filter out opt-out runs.get CL 234567 description.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 234567, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "name": "filter candidates.filter out opt-out runs.get CL 123456 description.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
@@ -500,7 +637,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
@@ -519,8 +656,8 @@
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/67/234567/7\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
@@ -530,13 +667,13 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/67/234567/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 234567, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -567,18 +704,18 @@
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "filter candidates.filter out unmet CL requirements.fetch changes for 2222",
-    "stdin": "{\"changes\": [{\"change_number\": 234567, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": true, \"include_submittable\": true}",
+    "name": "filter candidates.filter out unmet CL requirements.fetch changes for 1111",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": true, \"include_submittable\": true}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
@@ -630,9 +767,9 @@
       "@@@STEP_LOG_LINE@json.output@            \"author\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"_account_id\": 1234@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2022-09-26 21:59:27.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"321321321321321321321321321321\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 1:\\n\\nThis CL has failed the run. Reason: Tryjob [cq-orch](https://2222) failed\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2022-09-26 19:59:27.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123123123123123123123123123123\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 1:\\n\\nThis CL has failed the run. Reason: Tryjob [cq-orch](https://1111) failed\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"tag\": \"autogenerated:cq:full-run\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ],@@@",
@@ -656,7 +793,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 234567, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": true, \"include_submittable\": true, \"include_detailed_labels\": true}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": true, \"include_submittable\": true, \"include_detailed_labels\": true}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -715,7 +852,7 @@
     "cmd": [],
     "name": "set per_build_stats",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@per_build_stats@[{\"build_id\": \"2222\", \"filter_reasons\": [], \"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [], \"retryable_test_suites\": [\"builder1.hw.suite\"], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"no_snapshot_data_retryable_builders\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}]@@@"
+      "@@@SET_BUILD_PROPERTY@per_build_stats@[{\"build_id\": \"2222\", \"filter_reasons\": [], \"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [], \"retryable_test_suites\": [], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"no_snapshot_data_retryable_builders\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}, {\"build_id\": \"1111\", \"filter_reasons\": [], \"outstanding_builders\": [], \"outstanding_test_suites\": [], \"retryable_builders\": [\"builder1\"], \"retryable_test_suites\": [], \"wait_for_green_stats\": {\"failed_builders_in_snapshot\": [], \"no_snapshot_data_retryable_builders\": [], \"now_green_builders\": [], \"retryable_builders\": [], \"total_builders_in_snapshot\": 0}}]@@@"
     ]
   },
   {
@@ -771,17 +908,17 @@
     "name": "performing retries",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.@@@",
-      "@@@STEP_LINK@2222@https://cr-buildbucket.appspot.com/build/2222@@@"
+      "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "performing retries.retry build 2222",
+    "name": "performing retries.retry build 1111",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@retryable builders@@@@",
+      "@@@STEP_LOG_LINE@retryable builders@builder1@@@",
       "@@@STEP_LOG_END@retryable builders@@@",
-      "@@@STEP_LOG_LINE@retryable test suites@builder1.hw.suite@@@",
+      "@@@STEP_LOG_LINE@retryable test suites@@@@",
       "@@@STEP_LOG_END@retryable test suites@@@"
     ]
   },
@@ -790,18 +927,18 @@
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "infra_step": true,
-    "name": "performing retries.retry build 2222.fetch changes for 2222",
-    "stdin": "{\"changes\": [{\"change_number\": 234567, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "name": "performing retries.retry build 1111.fetch changes for 1111",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 234567,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
@@ -853,9 +990,9 @@
       "@@@STEP_LOG_LINE@json.output@            \"author\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"_account_id\": 1234@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2022-09-26 21:59:27.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"321321321321321321321321321321\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 1:\\n\\nThis CL has failed the run. Reason: Tryjob [cq-orch](https://2222) failed\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"date\": \"2022-09-26 19:59:27.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"123123123123123123123123123123\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"message\": \"Patch Set 1:\\n\\nThis CL has failed the run. Reason: Tryjob [cq-orch](https://1111) failed\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"tag\": \"autogenerated:cq:full-run\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ],@@@",
@@ -879,23 +1016,23 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 234567, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": true}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": true}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "performing retries.retry build 2222.set labels on CL 234567",
+    "name": "performing retries.retry build 1111.set labels on CL 123456",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@labels@{\"Commit-Queue\": 2}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/234567@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/project-a/+/123456/7@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "performing retries.retry build 2222.set labels on CL 234567.ensure auth token",
+    "name": "performing retries.retry build 1111.set labels on CL 123456.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -909,7 +1046,7 @@
       "-json-output",
       "-"
     ],
-    "name": "performing retries.retry build 2222.set labels on CL 234567.ensure auth token.Retrieve service_account auth token",
+    "name": "performing retries.retry build 1111.set labels on CL 123456.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -926,7 +1063,7 @@
       "[CLEANUP]/service_account_auth_token_tmp_3"
     ],
     "infra_step": true,
-    "name": "performing retries.retry build 2222.set labels on CL 234567.ensure auth token.Write auth token to temp file",
+    "name": "performing retries.retry build 1111.set labels on CL 123456.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -943,23 +1080,23 @@
       "Content-Type: application/json",
       "-d",
       "{\"labels\": {\"Commit-Queue\": 2}}",
-      "https://chromium-review.googlesource.com/changes/234567/revisions/current/review"
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
-    "name": "performing retries.retry build 2222.set labels on CL 234567.curl https://chromium-review.googlesource.com/changes/234567/revisions/current/review",
+    "name": "performing retries.retry build 1111.set labels on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "performing retries.retry build 2222.add comment on CL 234567",
+    "name": "performing retries.retry build 1111.add comment on CL 123456",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "performing retries.retry build 2222.add comment on CL 234567.ensure auth token",
+    "name": "performing retries.retry build 1111.add comment on CL 123456.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -973,7 +1110,7 @@
       "-json-output",
       "-"
     ],
-    "name": "performing retries.retry build 2222.add comment on CL 234567.ensure auth token.Retrieve service_account auth token",
+    "name": "performing retries.retry build 1111.add comment on CL 123456.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -990,7 +1127,7 @@
       "[CLEANUP]/service_account_auth_token_tmp_4"
     ],
     "infra_step": true,
-    "name": "performing retries.retry build 2222.add comment on CL 234567.ensure auth token.Write auth token to temp file",
+    "name": "performing retries.retry build 1111.add comment on CL 123456.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -1006,10 +1143,10 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The previous build (https://cr-buildbucket.appspot.com/build/2222) is being automatically retried for the following reasons:\\n- Some tests are now retryable:builder1.hw.suite\\n\\nDid you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.\\n\"}]}}",
-      "https://chromium-review.googlesource.com/changes/234567/revisions/current/review"
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"The previous build (https://cr-buildbucket.appspot.com/build/1111) is being automatically retried for the following reasons:\\n- Some child builders are now retryable:builder1\\n\\nDid you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.\\n\"}]}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
-    "name": "performing retries.retry build 2222.add comment on CL 234567.curl https://chromium-review.googlesource.com/changes/234567/revisions/current/review",
+    "name": "performing retries.retry build 1111.add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -1018,11 +1155,14 @@
     "cmd": [],
     "name": "set run_properties",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@run_properties@{\"actionable_retryable_builders\": 0, \"actionable_test_suites\": 1, \"exonerated_test_suites\": 0, \"newly_exonerated_tests\": 0, \"orch_builds_considered\": 1, \"outstanding_build_failures\": 0, \"outstanding_exonerations_tests\": 0, \"outstanding_test_suite_failures\": 0, \"previously_exonerated_tests\": 0, \"retries_made\": 1, \"retry_reasons\": [{\"originalOrchId\": \"2222\", \"retryAgeSeconds\": 1337000003, \"retryableTestSuites\": [\"builder1.hw.suite\"]}], \"retryable_build_failures\": 0, \"retryable_test_suite_failures\": 1, \"successful_builders\": 0, \"successful_test_suites\": 0, \"throttled_runs\": 0}@@@"
+      "@@@SET_BUILD_PROPERTY@run_properties@{\"actionable_retryable_builders\": 1, \"actionable_test_suites\": 0, \"exonerated_test_suites\": 0, \"newly_exonerated_tests\": 0, \"orch_builds_considered\": 2, \"outstanding_build_failures\": 0, \"outstanding_exonerations_tests\": 0, \"outstanding_test_suite_failures\": 0, \"previously_exonerated_tests\": 0, \"retries_made\": 1, \"retry_reasons\": [{\"originalOrchId\": \"1111\", \"retryAgeSeconds\": 1337000003, \"retryableBuilders\": [\"builder1\"]}], \"retryable_build_failures\": 1, \"retryable_test_suite_failures\": 1, \"successful_builders\": 0, \"successful_test_suites\": 0, \"throttled_runs\": 0}@@@"
     ]
   },
   {
-    "name": "$result",
-    "summaryMarkdown": "1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled."
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('analyzing candidates.analyzing 2222.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto') (retcode: 1)"
+    },
+    "name": "$result"
   }
 ]
