@@ -173,11 +173,12 @@ def RunSteps(api, properties):
         bucket = 'staging' if api.build_menu.is_staging else 'release'
         builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
         for artifact_name in [
-            a for a in uploaded_artifacts[2]['FIRMWARE_TARBALL']
+            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
             if not SKIP_SIGNING_RE.match(a)
         ]:
-          archive = 'gs://%s/%s/%s' % (uploaded_artifacts[0],
-                                       uploaded_artifacts[1], artifact_name)
+          archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
+                                       uploaded_artifacts.gs_path,
+                                       artifact_name)
           sign_image_props['archive'] = archive
           requests.append(
               api.buildbucket.schedule_request(bucket=bucket, builder=builder,

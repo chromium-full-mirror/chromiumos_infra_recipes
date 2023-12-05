@@ -11766,7 +11766,7 @@ This recipe should only be used for ToT firmware builds and build_legacy_fw
 
 &mdash; **def [CreateContainers](/recipes/build_firmware.py#78)(api, config):**
 
-&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#195)(api, location, config):**
+&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#196)(api, location, config):**
 
 Create directories and files of artifacts needed by Ti50 Tast tests.
 

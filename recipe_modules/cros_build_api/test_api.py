@@ -344,6 +344,11 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                             'location': 'PLATFORM_EC',
                             'paths': [_uploaded_path('fw_metadata.json')],
                         },
+                        {
+                            'artifact_type': 'FIRMWARE_TOKEN_DATABASE',
+                            'location': 'PLATFORM_EC',
+                            'paths': [_uploaded_path('tokens.bin')],
+                        },
                     ]
                 },
             )

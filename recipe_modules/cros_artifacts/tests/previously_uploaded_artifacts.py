@@ -139,6 +139,7 @@ def GenTests(api):
                   'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
                   'FIRMWARE_TARBALL_INFO':
                       ['../../[START_DIR]/fw_metadata.json'],
+                  'FIRMWARE_TOKEN_DATABASE': ['../../[START_DIR]/tokens.bin'],
                   'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile']
               },
               'gs_bucket': 'test_bucket',
