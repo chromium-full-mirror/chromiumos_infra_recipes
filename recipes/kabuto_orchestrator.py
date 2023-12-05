@@ -101,6 +101,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   if properties.use_release_build_artifacts and not properties.manifest_branch:
     raise StepFailure(
         'must set manifest_branch if use_release_build_artifacts is true')
+  if properties.manifest_branch and not properties.milestone or properties.milestone and not properties.manifest_branch:
+    raise StepFailure('manifest_branch and milestone must both be specified.')
   gerrit_cl_ref = properties.gerrit_cl_ref
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
@@ -113,9 +115,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
 
   bucket = STAGING_BUCKET if api.build_menu.is_staging else INFRA_BUCKET
 
-  manifest_branch = None
-  if properties.manifest_branch:
-    manifest_branch = properties.manifest_branch
+  manifest_branch = None if not properties.manifest_branch else properties.manifest_branch
+  milestone = None if not properties.milestone else properties.milestone
 
   ### Build and upload a Kabuto payload.
   # If the payload_gs_url was supplied as an input property skip the build
@@ -130,6 +131,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
     if manifest_branch:
       paygen_input_props['manifest_branch'] = manifest_branch
+      paygen_input_props['milestone'] = milestone
     if gerrit_cl_ref and api.build_menu.is_staging:
       paygen_input_props['gerrit_cl_ref'] = gerrit_cl_ref
     # Launch the Kabuto paygen builder.
@@ -154,6 +156,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     }
   if manifest_branch:
     shadercache_input_props['manifest_branch'] = manifest_branch
+    shadercache_input_props['milestone'] = milestone
   if gerrit_cl_ref and api.build_menu.is_staging:
     shadercache_input_props['gerrit_cl_ref'] = gerrit_cl_ref
 
@@ -178,6 +181,7 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   uprev_input_props = {'uprev_info': json.dumps(all_uprev_info)}
   if manifest_branch:
     uprev_input_props['manifest_branch'] = manifest_branch
+    uprev_input_props['milestone'] = milestone
   if gerrit_cl_ref and api.build_menu.is_staging:
     uprev_input_props['gerrit_cl_ref'] = gerrit_cl_ref
 
@@ -221,9 +225,28 @@ def GenTests(api: RecipeTestApi) -> None:
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
+  props['milestone'] = 105
   yield api.test(
       'manifest-branch',
       api.properties(**props),
+  )
+
+  props = good_props.copy()
+  props['manifest_branch'] = 'release-R105-14989.B'
+  yield api.test(
+      'manifest-no-milestone',
+      api.properties(**props),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  props = good_props.copy()
+  props['milestone'] = 105
+  yield api.test(
+      'milestone-no-manifest',
+      api.properties(**props),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
   )
 
   props = good_props.copy()
@@ -237,6 +260,7 @@ def GenTests(api: RecipeTestApi) -> None:
 
   props = good_props.copy()
   props['manifest_branch'] = 'release-R105-14989.B'
+  props['milestone'] = 105
   props['use_release_build_artifacts'] = True
   yield api.test(
       'use-release-build-artifacts', api.properties(**props),

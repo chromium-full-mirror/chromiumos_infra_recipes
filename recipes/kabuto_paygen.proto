@@ -30,4 +30,9 @@ message KabutoPaygenProperties {
   // The Gerrit CL ref to check out Kabuto to.
   // Optional
   string gerrit_cl_ref = 6;
+
+  // Milestone number we are building. Used to gate flags that only exit in
+  // specific branches.
+  // Optional.
+  int32 milestone = 7;
 }

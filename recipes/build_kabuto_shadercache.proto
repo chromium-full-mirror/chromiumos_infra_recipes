@@ -33,4 +33,9 @@ message BuildKabutoShadercacheProperties {
   // Gerrit CL ref to checkout platform/borealis to.
   // Optional
   string gerrit_cl_ref = 7;
+
+  // Milestone number we are building. Used to gate flags that only exit in
+  // specific branches.
+  // Optional.
+  int32 milestone = 8;
 }
