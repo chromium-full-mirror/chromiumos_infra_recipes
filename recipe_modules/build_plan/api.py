@@ -220,9 +220,41 @@ class BuildPlanApi(recipe_api.RecipeApi):
           presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
-    completed_builders = [build.builder.builder for build in completed_builds]
+      completed_builders = [build.builder.builder for build in completed_builds]
+      filtered_child_specs = []
+      for child_spec in necessary_child_specs:
+        # No need to retry previously-passed builds.
+        if child_spec.name in completed_builders:
+          filter_log.append(f'{child_spec.name} already passed')
+          count_skip_since_already_passed += 1
+          continue
 
+        # Do not retry slim builds if an equivalent standard build passed.
+        if child_spec.name.endswith('slim-cq'):
+          standard_builder_name = child_spec.name.replace('-slim-cq', '-cq')
+          if standard_builder_name in completed_builders:
+            filter_log.append(f'{standard_builder_name} already passed')
+            count_skip_since_already_passed += 1
+            continue
 
+        # Don't retry non-critical builds unless recycling is disabled.
+        child_builder_config = self.m.cros_infra_config.get_builder_config(
+            child_spec.name)
+        force_rebuild = child_spec.name in forced_rebuilds or 'all' in forced_rebuilds
+        force_relevant = child_spec.name in forced_relevant
+        critical = child_builder_config.general.critical.value or force_relevant
+        if is_retry and not (critical or force_rebuild):
+          filter_log.append(
+              f'{child_spec.name} is non-critical and this is a CQ rerun')
+          count_skip_noncritical_on_rerun += 1
+          continue
+
+        # If we made it this far, we need to schedule the build.
+        filtered_child_specs.append(child_spec)
+
+      necessary_child_specs = filtered_child_specs
+
+    # TODO(b/311037472): Rename this step.
     with self.m.step.nest('filter builds') as presentation:
       child_exps = self.m.cros_infra_config.experiments_for_child_build
       footer_exps = self.m.git_footers.get_footer_values(
@@ -234,34 +266,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
           self.m.src_state.internal_manifest)
 
       for child_spec in necessary_child_specs:
-
         child_builder_config = self.m.cros_infra_config.get_builder_config(
             child_spec.name)
-        force_rebuild = child_spec.name in forced_rebuilds or 'all' in forced_rebuilds
         force_relevant = child_spec.name in forced_relevant
         critical = child_builder_config.general.critical.value or force_relevant
-
-        # No need to retry previously-passed builds.
-        if child_spec.name in completed_builders:
-          filter_log.append(f'{child_spec.name} already passed')
-          count_skip_since_already_passed += 1
-          continue
-
-        # Do not retry slim builds if an equivalent standard build passed.
-        if child_spec.name.endswith('slim-cq'):
-          standard_builder_name = standard_builder_name = child_spec.name.replace(
-              '-slim-cq', '-cq')
-          if standard_builder_name in completed_builders:
-            filter_log.append(f'{standard_builder_name} already passed')
-            count_skip_since_already_passed += 1
-            continue
-
-        # Don't retry non-critical builds unless recycling is disabled.
-        if is_retry and not (critical or force_rebuild):
-          filter_log.append(
-              f'{child_spec.name} is non-critical and this is a CQ rerun')
-          count_skip_noncritical_on_rerun += 1
-          continue
 
         child_build_snapshot = internal_snapshot
         if (child_builder_config.general.manifest ==
