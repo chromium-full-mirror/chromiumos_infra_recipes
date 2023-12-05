@@ -16664,8 +16664,8 @@ files in projects touched by the input CLs.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/916dda0a0b15bc08af8a8877593d9ddf94e8a610/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/916dda0a0b15bc08af8a8877593d9ddf94e8a610/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/916dda0a0b15bc08af8a8877593d9ddf94e8a610/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/f2e2a847f9d4f3063e3525c0d9573d90d55e8bed/recipes/README.recipes.md#recipe_modules-codesearch
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/f2e2a847f9d4f3063e3525c0d9573d90d55e8bed/recipes/README.recipes.md#recipe_modules-docker
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/a094c821ccf92f76d86d3bf2ca98cbbf176b7d6e/recipes/README.recipes.md#recipe_modules-codesearch
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/a094c821ccf92f76d86d3bf2ca98cbbf176b7d6e/recipes/README.recipes.md#recipe_modules-docker
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/66b4d4941055898d70c787c6d9c19ef808ed93a9/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/66b4d4941055898d70c787c6d9c19ef808ed93a9/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/66b4d4941055898d70c787c6d9c19ef808ed93a9/README.recipes.md#recipe_modules-bcid_reporter
