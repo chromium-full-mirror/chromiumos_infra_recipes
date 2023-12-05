@@ -54,13 +54,13 @@ wheel: <
 #google-api-core-dep
 wheel: <
   name: "infra/python/wheels/grpcio/${vpython_platform}"
-  version: "version:1.44.0"
+  version: "version:1.57.0"
 >
 
 #google-api-core-dep
 wheel: <
   name: "infra/python/wheels/grpcio-status-py3"
-  version: "version:1.44.0"
+  version: "version:1.57.0"
 >
 
 #google-api-core dep
