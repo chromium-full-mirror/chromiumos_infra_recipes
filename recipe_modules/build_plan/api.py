@@ -311,9 +311,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
           gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
           step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       child_exps.update({x: True for x in footer_exps})
-      internal_snapshot, external_snapshot = self.choose_snapshots(
-          internal_snapshot, external_snapshot, gerrit_changes,
-          self.m.src_state.internal_manifest)
+
+      # Only do LFG logic if there are builds to schedule.
+      if necessary_child_specs or necessary_chrome_builders:
+        internal_snapshot, external_snapshot = self._choose_snapshots(
+            internal_snapshot, external_snapshot, gerrit_changes,
+            self.m.src_state.internal_manifest)
 
       for child_spec in necessary_child_specs:
         child_builder_config = self.m.cros_infra_config.get_builder_config(
@@ -513,10 +516,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
     builder_spec, env_suffix = builder_name.rsplit('-', 1)
     return builder_spec + '-slim-' + env_suffix
 
-  def choose_snapshots(
+  def _choose_snapshots(
       self, original_internal: GitilesCommit, original_external: GitilesCommit,
-      gerrit_changes: List[GerritChange], internal_manifest: ManifestProject,
-      cq_looks_enabled: Optional[bool] = False
+      gerrit_changes: List[GerritChange], internal_manifest: ManifestProject
   ) -> Tuple[GitilesCommit, GitilesCommit]:
     """Returns chosen manifest snapshot to run CQ with.
 

@@ -51,13 +51,10 @@ def RunSteps(api, properties):
   actual_build_requests = [x.builder.builder for x in new_requests]
   api.assertions.assertCountEqual(actual_build_requests,
                                   properties.expected_build_requests)
-  enabled_experiments = {
-      exp: enabled
-      for exp, enabled in new_requests[0].experiments.items()
-      if enabled
-  }
-  api.assertions.assertEqual({x: True for x in properties.expected_experiments},
-                             enabled_experiments)
+  expected_experiments = {exp: True for exp in properties.expected_experiments}
+  for req in new_requests:
+    api.assertions.assertDictContainsSubset(expected_experiments,
+                                            req.experiments)
   api.assertions.assertEqual(
       api.build_plan.additional_chrome_pupr_builders,
       properties.expected_additional_chrome_pupr_builders)
@@ -652,4 +649,34 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepSuccess,
                      'check for projects outside manifest'),
+  )
+
+  yield api.test(
+      'no-necessary-builds',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.step_data(
+          'check for projects outside manifest.check if project existent-project exists.repo info',
+          stderr=api.raw_io.output_text('')),
+      cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
+          common_pb2.GerritChange(
+              host='chrome-internal-review.googlesource.com',
+              project='existent-project', change=1235),
+      ]),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[], skipped_builders=[
+              'amd64-generic-cq',
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+              'coral-cq',
+              'eve-cq',
+          ]),
+      api.properties(
+          expected_build_requests=[],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     'run builds.filter builds.looks for green'),
   )
