@@ -28,8 +28,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TIMEOUT_SECONDS = 30 * 60  # 30 minutes
 DEFAULT_CTP_REPLAY_MAX_RUNTIME = 20 * 60
-CTP_BUILDS_TO_REPLAY = 2
+CTP_BUILDS_TO_REPLAY = 10
 REPLAYED_PROD_BUILD_ID_TAG = 'replay_from_prod_buildbucket_id'
+
+MAX_CFT_BUILDS = 7
+MAX_PHOSPHORUS_BUILDS = 3
 
 
 def RunSteps(api, properties):
@@ -48,7 +51,7 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
                                          num_builds=CTP_BUILDS_TO_REPLAY,
                                          time_limit_seconds=TIMEOUT_SECONDS):
   # Only search up to 6 hrs back to make sure we replay relevant prod CTP data.
-  six_hours_back = _bb_time_range(api, 6 * 60)
+  six_hours_back = _bb_time_range(api, 12 * 60)
   ctp_prod_builder = 'cros_test_platform'
   successful_prod_builds = api.buildbucket.search(
       bb_service.BuildPredicate(
@@ -57,7 +60,7 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
               'bucket': 'testplatform',
               'builder': ctp_prod_builder,
           }, status=bb_common.SUCCESS,
-          create_time=six_hours_back), fields=['*'], limit=100,
+          create_time=six_hours_back), fields=['*'], limit=1000,
       step_name='find recent green %s builds' % ctp_prod_builder)
   if not successful_prod_builds:
     raise api.step.StepFailure('No successful builds found for builder %s' %
@@ -67,12 +70,30 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
       api, replay_builder, six_hours_back)
 
   builds = []
+  cft_builds = 0
+  phosphorus_builds = 0
   for build in successful_prod_builds:
+    is_cft_build = False
+
     run_time = build.end_time.seconds - build.start_time.seconds
     # If run time is less than time_limit_seconds, use the build.
     # Otherwise keep looking.
     if run_time < time_limit_seconds and build.id not in already_replayed_build_ids:
-      builds.append(build)
+
+      # Check if build is a CFT build
+      reqs = MessageToDict(build.input.properties['requests'])
+      for _, req in reqs.items():
+        if req.get('params') and req.get('params').get('runViaCft') is True:
+          is_cft_build = True
+
+      # Enforce a max ratio of CFT vs Phosphorus builds
+      if is_cft_build and cft_builds < MAX_CFT_BUILDS:
+        cft_builds += 1
+        builds.append(build)
+      elif phosphorus_builds < MAX_PHOSPHORUS_BUILDS:
+        phosphorus_builds += 1
+        builds.append(build)
+
       if len(builds) == num_builds:
         break
   if not builds:
@@ -145,8 +166,8 @@ def _check_dev_env_and_cft(replay_builder, reqs_dict):
 
 
 def GenTests(api):
-  ctp_input_properties = struct_pb2.Struct()
-  ctp_input_properties['requests'] = {
+  cft_input_properties = struct_pb2.Struct()
+  cft_input_properties['requests'] = {
       'gale_gale': {
           'params': {
               'decorations': {
@@ -194,7 +215,57 @@ def GenTests(api):
           }
       }
   }
-  green_ctp_builds = [
+
+  phosphorus_input_properties = struct_pb2.Struct()
+  phosphorus_input_properties['requests'] = {
+      'gale_gale': {
+          'params': {
+              'decorations': {
+                  'tags': [
+                      'label-board:gale', 'analytics_name:RLZ',
+                      'label-model:gale', 'build:gale-release/R89-13729.57.2',
+                      'suite:rlz', 'ctp-fwd-task-name:RLZ',
+                      'label-pool:MANAGED_POOL_QUOTA'
+                  ]
+              },
+              'hardwareAttributes': {
+                  'model': 'gale'
+              },
+              'metadata': {
+                  'debugSymbolsArchiveUrl':
+                      'gs://chromeos-image-archive/gale-release/R89-13729.57.2',
+                  'testMetadataUrl':
+                      'gs://chromeos-image-archive/gale-release/R89-13729.57.2'
+              },
+              'retry': {
+                  'allow': True,
+                  'max': 3
+              },
+              'scheduling': {
+                  'managedPool': 'MANAGED_POOL_QUOTA',
+                  'qsAccount': 'legacypool-suites'
+              },
+              'softwareAttributes': {
+                  'buildTarget': {
+                      'name': 'gale'
+                  }
+              },
+              'softwareDependencies': [{
+                  'chromeosBuild': 'gale-release/R89-13729.57.2'
+              }],
+              'time': {
+                  'maximumDuration': '153000s'
+              }
+          },
+          'testPlan': {
+              'suite': [{
+                  'name': 'rlz'
+              }]
+          }
+      }
+  }
+
+  green_cft_builds = [
       # This build should always be skipped since it was previously replayed.
       build_pb2.Build(
           id=100,
@@ -206,7 +277,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 5),
           status='SUCCESS',
-          input={'properties': ctp_input_properties},
+          input={'properties': cft_input_properties},
       ),
       build_pb2.Build(
           id=123,
@@ -218,7 +289,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 65),
           status='SUCCESS',
-          input={'properties': ctp_input_properties},
+          input={'properties': cft_input_properties},
       ),
       build_pb2.Build(
           id=456,
@@ -230,7 +301,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 15),
           status='SUCCESS',
-          input={'properties': ctp_input_properties},
+          input={'properties': cft_input_properties},
       ),
       build_pb2.Build(
           id=789,
@@ -242,7 +313,118 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': ctp_input_properties},
+          input={'properties': cft_input_properties},
+      ),
+      build_pb2.Build(
+          id=7891,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': cft_input_properties},
+      ),
+      build_pb2.Build(
+          id=78912,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': cft_input_properties},
+      ),
+      build_pb2.Build(
+          id=78913,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': cft_input_properties},
+      ),
+      build_pb2.Build(
+          id=78914,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': cft_input_properties},
+      ),
+      build_pb2.Build(
+          id=78915,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': cft_input_properties},
+      )
+  ]
+  green_phosphorus_builds = [
+      # This build should always be skipped since it was previously replayed.
+      build_pb2.Build(
+          id=1,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 5),
+          status='SUCCESS',
+          input={'properties': phosphorus_input_properties},
+      ),
+      build_pb2.Build(
+          id=2,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 65),
+          status='SUCCESS',
+          input={'properties': phosphorus_input_properties},
+      ),
+      build_pb2.Build(
+          id=3,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 15),
+          status='SUCCESS',
+          input={'properties': phosphorus_input_properties},
+      ),
+      build_pb2.Build(
+          id=4,
+          builder={
+              'project': 'chromeos',
+              'bucket': 'testplatform',
+              'builder': 'cros_test_platform',
+          },
+          start_time=timestamp_pb2.Timestamp(seconds=1617230018),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
+          status='SUCCESS',
+          input={'properties': phosphorus_input_properties},
       )
   ]
   previous_replayed_runs = [
@@ -268,7 +450,27 @@ def GenTests(api):
               }
           }),
       api.buildbucket.simulated_search_results(
-          green_ctp_builds,
+          green_cft_builds,
+          step_name='replay prod CTP run.find recent green cros_test_platform builds'
+      ),
+      api.buildbucket.simulated_search_results(
+          previous_replayed_runs,
+          step_name='replay prod CTP run.filter out already-replayed builds'),
+  )
+
+  yield api.test(
+      'successful-run-with-ratios',
+      api.properties(
+          **{
+              'ctp_replay_max_runtime': 70 * 60,
+              'ctp_num_replay_builds': 10,
+              'ctp_builder': 'cros_test_platform-foo_env',
+              '$chromeos/skylab': {
+                  'ctp_builder': 'cros_test_platform-foo_env'
+              }
+          }),
+      api.buildbucket.simulated_search_results(
+          green_cft_builds + green_phosphorus_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
@@ -288,7 +490,7 @@ def GenTests(api):
               }
           }),
       api.buildbucket.simulated_search_results(
-          green_ctp_builds,
+          green_cft_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
@@ -314,7 +516,7 @@ def GenTests(api):
               'ctp_builder': 'cros_test_platform-foo_env',
           }),
       api.buildbucket.simulated_search_results(
-          green_ctp_builds,
+          green_cft_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(

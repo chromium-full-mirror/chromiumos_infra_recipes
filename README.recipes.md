@@ -16119,7 +16119,7 @@ Returns: Struct containing requests.
 
 Recipe that triggers cros_test_platform runs.
 
-&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#35)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/ctp_traffic_generator.py#38)(api, properties):**
 ### *recipes* / [test\_platform/dut\_leaser](/recipes/test_platform/dut_leaser.py)
 
 [DEPS](/recipes/test_platform/dut_leaser.py#15): [phosphorus](#recipe_modules-phosphorus), [service\_version](#recipe_modules-service_version), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
