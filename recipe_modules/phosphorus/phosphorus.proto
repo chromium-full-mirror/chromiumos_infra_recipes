@@ -26,4 +26,5 @@ message PhosphorusEnvProperties {
   string SWARMING_BOT_ID = 1;
   string SWARMING_TASK_ID = 2;
   string SKYLAB_DUT_ID = 3;
+  string CLOUDBOTS_DUT_HOSTNAME = 4;
 }

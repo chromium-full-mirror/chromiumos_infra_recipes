@@ -45,4 +45,5 @@ class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
         }) + self.m.properties.environ(
             PhosphorusEnvProperties(SWARMING_BOT_ID=bot_id,
                                     SWARMING_TASK_ID='placeholder-task-id',
-                                    SKYLAB_DUT_ID='placeholder-dut-id'))
+                                    SKYLAB_DUT_ID='placeholder-dut-id'),
+            CLOUDBOTS_DUT_HOSTNAME="placeholder-cloudbots-dut-hostname")

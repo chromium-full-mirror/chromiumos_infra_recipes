@@ -106,3 +106,11 @@ def GenTests(api):
               json_format.MessageToJson(
                   load.LoadResponse(results_dir='placeholder-results-dir')))),
   ) + api.post_process(DropExpectation))
+  yield (api.test(
+      'cloudbots-dut-host-bot',
+      api.phosphorus.properties(dut_name='cloudbots-prod-placeholder-asdf'),
+      api.step_data(
+          'call `phosphorus` (12).load', stdout=api.raw_io.output(
+              json_format.MessageToJson(
+                  load.LoadResponse(results_dir='placeholder-results-dir')))),
+  ))
