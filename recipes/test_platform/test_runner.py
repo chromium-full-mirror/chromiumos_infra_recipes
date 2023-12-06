@@ -979,7 +979,8 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
                                              custom_realm):
   """Upload the Autotest wrapper result for Tast test with base variants and
   base tags. The Autotest wrapper result is captured in the first test case
-  after the test execution.
+  after the test execution. An additional tag 'is_control_file_result' will be
+  added for the downstream clients to identify.
 
   Context: b/245017288
 
@@ -1037,6 +1038,8 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
     test_result_file = temp_dir.join('autotest_wrapper_tast_result.json')
     api.file.write_proto('write autotest wrapper result for tast',
                          test_result_file, autotest_result, 'JSONPB')
+
+    base_tags.append(('is_control_file_result', 'True'))
 
     # Uploads test results to ResultDB only when the test result file exists.
     result_file_content = _read_test_result_file(api, test_result_file)
