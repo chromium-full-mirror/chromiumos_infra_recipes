@@ -377,7 +377,8 @@ def check_recent_build_statuses(
       problem_str = f'Needed {num_builds_needed} consecutive good builds, only {good_builds} (good) builds available.'
   else:
     success = False
-    problem_str = f'Needed {num_builds_needed} consecutive good builds, found failures. Statuses: {", ".join(sorted(list(found_statuses)))} ({", ".join(bad_build_ids)})'
+    problem_str = f'Needed {num_builds_needed} consecutive good builds, found failures. Statuses: {", ".join(sorted(list(found_statuses)))} '
+    problem_str += f'Sample failures: ({", ".join(bad_build_ids[:max(len(bad_build_ids), 10)])})'
 
   success_str = f'{common.BOLDGREEN}Success{common.RESET}' if success else f'{common.BOLDRED}Non-success{common.RESET}'
   status_str = f'{success_str}: {get_builder_link(builder)} --> {problem_str}'

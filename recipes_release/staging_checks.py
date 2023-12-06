@@ -166,7 +166,7 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
                    r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
                    [image_builder_exemption], num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-paygen',
-                   [atlas_signingnext_exemption], num_builds=15),
+                   [atlas_signingnext_exemption], num_builds=200),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator',
                    [atlas_signingnext_exemption], num_builds=15),
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
