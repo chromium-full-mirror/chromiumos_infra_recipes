@@ -4856,7 +4856,8 @@
     "cmd": [],
     "name": "run builds.filter additional chrome pupr builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no additional builds needed@@@"
     ]
   },
   {

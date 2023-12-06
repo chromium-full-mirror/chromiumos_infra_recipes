@@ -458,8 +458,7 @@ def GenTests(api):
   yield api.test(
       'chrome-pupr-additional-builders',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.build_plan.add_chrome_pupr_builders']),
+      cq_orchestrator_build_with_gerrit_change(experiments=[]),
       api.properties(
           expected_build_requests=[
               'eve-cq',
@@ -469,7 +468,7 @@ def GenTests(api):
               'amd64-generic-slim-cq',
               'cave-cq',
           ],
-          expected_experiments=['chromeos.build_plan.add_chrome_pupr_builders'],
+          expected_experiments=[],
           expected_additional_chrome_pupr_builders=[
               'amd64-generic-cq',
           ],
@@ -512,11 +511,10 @@ def GenTests(api):
   yield api.test(
       'chrome-pupr-no-additional-builders',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          experiments=['chromeos.build_plan.add_chrome_pupr_builders']),
+      cq_orchestrator_build_with_gerrit_change(experiments=[]),
       api.properties(
           expected_build_requests=['eve-cq'],
-          expected_experiments=['chromeos.build_plan.add_chrome_pupr_builders'],
+          expected_experiments=[],
       ),
       api.cros_relevance.simulated_run_build_planner(
           necessary_builders=['eve-cq'],

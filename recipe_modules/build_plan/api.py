@@ -319,50 +319,47 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     with self.m.step.nest(
         'filter additional chrome pupr builds') as presentation:
-      if ('chromeos.build_plan.add_chrome_pupr_builders'
-          in self.m.cros_infra_config.experiments):
-        if (len(gerrit_changes) == 1 and
-            self.m.chrome.is_chrome_pupr_atomic_uprev(gerrit_changes[0])):
-          chrome_log = []
+      if (len(gerrit_changes) == 1 and
+          self.m.chrome.is_chrome_pupr_atomic_uprev(gerrit_changes[0])):
+        chrome_log = []
 
-          # Schedule additional non-critical builds for Chrome PUpr Uprev CLs.
-          for builder in sorted(irrelevant_builders):
-            builder_config = self.m.cros_infra_config.get_builder_config(
-                builder)
+        # Schedule additional non-critical builds for Chrome PUpr Uprev CLs.
+        for builder in sorted(irrelevant_builders):
+          builder_config = self.m.cros_infra_config.get_builder_config(builder)
 
-            # Only schedule builds for critical CQ builders.
-            if not builder_config.general.critical.value:
-              continue
-            # No need to retry previously-passed builds.
-            if builder in completed_builders:
-              chrome_log.append('{} already passed'.format(builder))
-              continue
-            # Do not schedule builds that do not use prebuilts.
-            if not builder_config.artifacts.prebuilts_gs_bucket:
-              continue
+          # Only schedule builds for critical CQ builders.
+          if not builder_config.general.critical.value:
+            continue
+          # No need to retry previously-passed builds.
+          if builder in completed_builders:
+            chrome_log.append('{} already passed'.format(builder))
+            continue
+          # Do not schedule builds that do not use prebuilts.
+          if not builder_config.artifacts.prebuilts_gs_bucket:
+            continue
 
-            child_build_snapshot = internal_snapshot
-            if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
-              child_build_snapshot = external_snapshot
-            tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
-            tags.extend(
-                self.m.cros_tags.tags(
-                    **{'hide-in-gerrit': 'chrome-additional-builder'}))
-            properties = self.m.cq.props_for_child_build
-            properties.update(self.m.cros_infra_config.props_for_child_build)
+          child_build_snapshot = internal_snapshot
+          if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
+            child_build_snapshot = external_snapshot
+          tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+          tags.extend(
+              self.m.cros_tags.tags(
+                  **{'hide-in-gerrit': 'chrome-additional-builder'}))
+          properties = self.m.cq.props_for_child_build
+          properties.update(self.m.cros_infra_config.props_for_child_build)
 
-            new_build_requests.append(
-                self.m.buildbucket.schedule_request(
-                    gitiles_commit=child_build_snapshot, builder=builder,
-                    bucket=builder_config.id.bucket,
-                    gerrit_changes=gerrit_changes, critical=False, tags=tags,
-                    properties=properties, experiments=child_exps))
-            self._additional_chrome_pupr_builders.append(builder)
-            chrome_log.append(
-                'Scheduled {} as non-critical builder'.format(builder))
-          presentation.logs['additional builds'] = chrome_log
-        else:
-          presentation.step_text = 'no additional builds needed'
+          new_build_requests.append(
+              self.m.buildbucket.schedule_request(
+                  gitiles_commit=child_build_snapshot, builder=builder,
+                  bucket=builder_config.id.bucket,
+                  gerrit_changes=gerrit_changes, critical=False, tags=tags,
+                  properties=properties, experiments=child_exps))
+          self._additional_chrome_pupr_builders.append(builder)
+          chrome_log.append(
+              'Scheduled {} as non-critical builder'.format(builder))
+        presentation.logs['additional builds'] = chrome_log
+      else:
+        presentation.step_text = 'no additional builds needed'
 
     self.m.easy.set_properties_step(
         build_plan_skip_for_source_rules=count_skip_for_source_rules,
