@@ -3,6 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Various methods for debugging recipes builds."""
+
+import random
+
 from recipe_engine import recipe_api
 
 # Max out the total amount of time a bot can sleep to 4 hours, for safety.
@@ -75,3 +79,22 @@ class CrosDebugApi(recipe_api.RecipeApi):
           if self.m.path.exists(file_to_watch):
             self.m.easy.stdout_step('remove resume file', ['rm', file_to_watch],
                                     infra_step=True)
+
+  def patch_chromite_head(self, cl_number: int, patchset: int = 1):
+    """Patch the chromite-HEAD checkout with the given CL.
+
+    Intended for use in a led job. To use this, call this function at the end
+    of cros_build_api.reset_checkout.
+
+    Args:
+      cl_number: Number of the (chromite) CL, e.g. 5095955.
+      patchset: Patchset of the change.
+    """
+    self.m.step(
+        f'fetch crrev.com/c/{cl_number}',
+        f'git fetch https://chromium.googlesource.com/chromiumos/chromite refs/changes/{cl_number % 100}/{cl_number}/{patchset}'
+        .split())
+    self.m.step(
+        f'checkout crrev.com/c/{cl_number}',
+        f'git checkout -b change-{cl_number}{random.randint(1, 10000)} FETCH_HEAD'
+        .split())

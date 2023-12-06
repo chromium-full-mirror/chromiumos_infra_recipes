@@ -28,7 +28,7 @@
   * [cros_cache](#recipe_modules-cros_cache) &mdash; API for working with CrOS cache.
   * [cros_cq_additional_tests](#recipe_modules-cros_cq_additional_tests) &mdash; Functions configuring additional CQ testing via footer.
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
-  * [cros_debug](#recipe_modules-cros_debug)
+  * [cros_debug](#recipe_modules-cros_debug) &mdash; Various methods for debugging recipes builds.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
   * [cros_history](#recipe_modules-cros_history)
   * [cros_infra_config](#recipe_modules-cros_infra_config) &mdash; Module providing builder config.
@@ -303,6 +303,7 @@
   * [cros_cq_additional_tests:tests/get_additional_test_builders](#recipes-cros_cq_additional_tests_tests_get_additional_test_builders)
   * [cros_cq_depends:examples/cq_depend_strings](#recipes-cros_cq_depends_examples_cq_depend_strings)
   * [cros_cq_depends:examples/ensure_manifest_cq_depends_fulfilled](#recipes-cros_cq_depends_examples_ensure_manifest_cq_depends_fulfilled)
+  * [cros_debug:examples/patch_chromite_head](#recipes-cros_debug_examples_patch_chromite_head) &mdash; Success workflow tests for the signing recipe module.
   * [cros_debug:tests/pause_and_wait_for_signal](#recipes-cros_debug_tests_pause_and_wait_for_signal) &mdash; Success workflow tests for the signing recipe module.
   * [cros_debug:tests/pause_and_wait_for_signal_timeout](#recipes-cros_debug_tests_pause_and_wait_for_signal_timeout) &mdash; Success workflow tests for the signing recipe module.
   * [cros_dupit:examples/arch](#recipes-cros_dupit_examples_arch)
@@ -3128,11 +3129,24 @@ Return:
 [DEPS](/recipe_modules/cros_debug/__init__.py#6): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [CrosDebugApi](/recipe_modules/cros_debug/api.py#12)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Various methods for debugging recipes builds.
+
+#### **class [CrosDebugApi](/recipe_modules/cros_debug/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to be used for debugging builders.
 
-&mdash; **def [pause\_and\_wait\_for\_signal](/recipe_modules/cros_debug/api.py#15)(self, timeout=(10 \* 60), override_led_launch_only_staging=False, test_location_override=None):**
+&mdash; **def [patch\_chromite\_head](/recipe_modules/cros_debug/api.py#83)(self, cl_number: int, patchset: int=1):**
+
+Patch the chromite-HEAD checkout with the given CL.
+
+Intended for use in a led job. To use this, call this function at the end
+of cros_build_api.reset_checkout.
+
+Args:
+  cl_number: Number of the (chromite) CL, e.g. 5095955.
+  patchset: Patchset of the change.
+
+&mdash; **def [pause\_and\_wait\_for\_signal](/recipe_modules/cros_debug/api.py#19)(self, timeout=(10 \* 60), override_led_launch_only_staging=False, test_location_override=None):**
 
 Halt the builder and wait for a signal to continue.
 
@@ -12886,6 +12900,14 @@ Recipe for analyzing and retrying failed CQ runs.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_cq_depends/examples/ensure_manifest_cq_depends_fulfilled.py#28)(api):**
+### *recipes* / [cros\_debug:examples/patch\_chromite\_head](/recipe_modules/cros_debug/examples/patch_chromite_head.py)
+
+[DEPS](/recipe_modules/cros_debug/examples/patch_chromite_head.py#10): [cros\_debug](#recipe_modules-cros_debug), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Success workflow tests for the signing recipe module.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_debug/examples/patch_chromite_head.py#23)(api):**
 ### *recipes* / [cros\_debug:tests/pause\_and\_wait\_for\_signal](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal.py)
 
 [DEPS](/recipe_modules/cros_debug/tests/pause_and_wait_for_signal.py#13): [cros\_debug](#recipe_modules-cros_debug), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
