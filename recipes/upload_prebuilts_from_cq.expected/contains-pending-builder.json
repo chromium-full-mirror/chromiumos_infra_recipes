@@ -3115,8 +3115,8 @@
     "cmd": [],
     "name": "search the prebuilts (2)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Total 6 builds:<br/>- 1 previously-updated builds<br/>- 2 succeeded builds with uploaded prebuilts<br/>- 0 running builds<br/>@@@",
-      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662175514000: amd64-generic-asan: amd64-generic: asan: xxx (False): => Uploading prebuilts@@@",
+      "@@@STEP_TEXT@Total 6 builds:<br/>- 1 previously-updated builds<br/>- 1 succeeded builds with uploaded prebuilts<br/>- 0 running builds<br/>@@@",
+      "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662175514000: amd64-generic-asan: amd64-generic: asan: xxx (False): => Skipped (Non-default profile is allowed only on staging.)@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514009: amd64-generic-cq: amd64-generic: : None (None): => Skipped (The builder did not upload prebuilts. / The prebuilts are already uploaded.)@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514008: arm64-generic-cq: arm64-generic: : xxx (True): => Skipped (The builder has failed.)@@@",
       "@@@STEP_LOG_LINE@debug_prebuilts_log@8922054662172514007: amd64-generic-cq: amd64-generic: : xxx (False): => Skipped (The prebuilts are already uploaded.)@@@",
@@ -3126,12 +3126,11 @@
       "@@@STEP_LOG_LINE@private_prebuilt_entries@[{'build_target': name: \"atlas\"@@@",
       "@@@STEP_LOG_LINE@private_prebuilt_entries@, 'prebuilts_private': True, 'prebuilts_uri': 'xxx', 'build_profile': '', 'builder_name': 'atlas-cq'}]@@@",
       "@@@STEP_LOG_END@private_prebuilt_entries@@@",
-      "@@@STEP_LOG_LINE@public_prebuilt_entries@[{'build_target': name: \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@public_prebuilt_entries@, 'prebuilts_private': False, 'prebuilts_uri': 'xxx', 'build_profile': 'asan', 'builder_name': 'amd64-generic-asan'}]@@@",
+      "@@@STEP_LOG_LINE@public_prebuilt_entries@[]@@@",
       "@@@STEP_LOG_END@public_prebuilt_entries@@@",
       "@@@STEP_LOG_LINE@running_builds@[]@@@",
       "@@@STEP_LOG_END@running_builds@@@",
-      "@@@STEP_LOG_LINE@build_targets@{'amd64-generic': ['amd64-generic-asan'], 'atlas': ['atlas-cq']}@@@",
+      "@@@STEP_LOG_LINE@build_targets@{'atlas': ['atlas-cq']}@@@",
       "@@@STEP_LOG_END@build_targets@@@"
     ]
   },
@@ -3190,7 +3189,7 @@
     "cmd": [],
     "name": "set BINHOSTs (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@cumulative_binhost_counter@{'amd64-generic': 2, 'atlas': 1}@@@",
+      "@@@STEP_LOG_LINE@cumulative_binhost_counter@{'amd64-generic': 1, 'atlas': 1}@@@",
       "@@@STEP_LOG_END@cumulative_binhost_counter@@@"
     ]
   },
@@ -3199,794 +3198,7 @@
     "name": "set BINHOSTs (2).Public binhosts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@Set 1 binhosts.@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.call chromite.api.BinhostService/GetBinhostConfPath",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": 5@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"conf_path\": \"[START_DIR]/BINHOST.conf\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 5\n}",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.call chromite.api.BinhostService/GetBinhostConfPath.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.BinhostService/GetBinhostConfPath"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.call chromite.api.BinhostService/GetBinhostConfPath.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.call chromite.api.BinhostService/GetBinhostConfPath.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.call chromite.api.BinhostService/GetBinhostConfPath.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[START_DIR]",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]|src/[START_DIR]|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
-      "@@@STEP_LOG_END@HEAD@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "cros",
-      "refs/heads/main:"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.git rev-parse (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"key\": 5,@@@",
-      "@@@STEP_LOG_LINE@request@  \"uri\": \"xxx\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"maxUris\": 2@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"output_file\": \"[START_DIR]/BINHOST.conf\"@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"key\": 5,\n  \"uri\": \"xxx\",\n  \"maxUris\": 2\n}",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.BinhostService/SetBinhost"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"amd64-generic\"@@@",
-      "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"key\": \"CQ_BINHOST\",@@@",
-      "@@@STEP_LOG_LINE@published event@    \"uri\": \"xxx\",@@@",
-      "@@@STEP_LOG_LINE@published event@    \"maxUris\": 2@@@",
-      "@@@STEP_LOG_LINE@published event@  },@@@",
-      "@@@STEP_LOG_LINE@published event@  \"setBinhostResponse\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"outputFile\": \"[START_DIR]/BINHOST.conf\"@@@",
-      "@@@STEP_LOG_LINE@published event@  },@@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"set BINHOSTs (2)|Public binhosts|update amd64-generic|call chromite.api.BinhostService/SetBinhost|call build API script\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
-      "@@@STEP_LOG_END@published event@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIzYDE/QQQgMq17gEiBgjPgMT9BHIaCg8KDWFtZDY0LWdlbmVyaWMYBSIDeHh4KAJ6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAndzZXQgQklOSE9TVHMgKDIpfFB1YmxpYyBiaW5ob3N0c3x1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
-      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/publish-message"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BHIaCg8KDWFtZDY0LWdlbmVyaWMYBSIDeHh4KAJ6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAndzZXQgQklOSE9TVHMgKDIpfFB1YmxpYyBiaW5ob3N0c3x1cGRhdGUgYW1kNjQtZ2VuZXJpY3xjYWxsIGNocm9taXRlLmFwaS5CaW5ob3N0U2VydmljZS9TZXRCaW5ob3N0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "[START_DIR]",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[START_DIR]|src/[START_DIR]|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[START_DIR]/BINHOST.conf",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.update amd64-generic.read binhost conf",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@BINHOST.conf@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.create change",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_TEXT@Transaction aborted without failure.@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.git branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "-b",
-      "main",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "--set-upstream-to=cros/main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.git branch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[START_DIR]/BINHOST.conf"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.try remove existing file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "",
-      "[START_DIR]/BINHOST.conf"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.write file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.diff check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "ls-files",
-      "--error-unmatch",
-      "[START_DIR]/BINHOST.conf"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.diff check.git ls-files",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "diff",
-      "--quiet",
-      "HEAD",
-      "[START_DIR]/BINHOST.conf"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.create change.update ref.gerrit transaction.diff check.git diff",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@6@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set BINHOSTs (2).Public binhosts.git checkout (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_SUMMARY_TEXT@Set 0 binhosts.@@@"
     ]
   },
   {
@@ -4025,7 +3237,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"private\": true,\n  \"key\": 5\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4050,9 +3262,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/GetBinhostConfPath"
@@ -4089,7 +3301,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4304,7 +3516,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"private\": true,\n  \"key\": 5,\n  \"uri\": \"xxx\",\n  \"maxUris\": 1\n}",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
     "infra_step": true,
@@ -4329,9 +3541,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.BinhostService/SetBinhost"
@@ -4368,7 +3580,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[START_DIR]",
@@ -4410,8 +3622,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:39.500Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:41Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"setBinhostRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"atlas\"@@@",
@@ -4435,7 +3647,7 @@
     "name": "set BINHOSTs (2).Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI04DE/QQQgMq17gEiBgjVgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAnBzZXQgQklOSE9TVHMgKDIpfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGF0bGFzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIzYDE/QQQgMq17gEiBgjPgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAnBzZXQgQklOSE9TVHMgKDIpfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGF0bGFzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -4467,7 +3679,7 @@
       }
     },
     "name": "set BINHOSTs (2).Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI04DE/QQQgMq17gEiBgjVgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAnBzZXQgQklOSE9TVHMgKDIpfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGF0bGFzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIzYDE/QQQgMq17gEiBgjPgMT9BHIUCgcKBWF0bGFzEAEYBSIDeHh4KAF6GgoYW1NUQVJUX0RJUl0vQklOSE9TVC5jb25m0ALQ7IDZrvG1knzaAnBzZXQgQklOSE9TVHMgKDIpfFByaXZhdGUgYmluaG9zdHN8dXBkYXRlIGF0bGFzfGNhbGwgY2hyb21pdGUuYXBpLkJpbmhvc3RTZXJ2aWNlL1NldEJpbmhvc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@6@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4896,6 +4108,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Updated all of 3 builders after 2 trials."
+    "summaryMarkdown": "Updated all of 2 builders after 2 trials."
   }
 ]
