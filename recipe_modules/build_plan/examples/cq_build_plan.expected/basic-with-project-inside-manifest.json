@@ -436,7 +436,9 @@
       "@@@STEP_LOG_LINE@planner_input@      }@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
-      "@@@STEP_LOG_LINE@planner_input@  \"gitilesCommit\": {}@@@",
+      "@@@STEP_LOG_LINE@planner_input@  \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@planner_input@    \"serializedProto\": \"CiBjaHJvbWUtaW50ZXJuYWwuZ29vZ2xlc291cmNlLmNvbRIaY2hyb21lb3MvbWFuaWZlc3QtaW50ZXJuYWwaA2FiYyITcmVmcy9oZWFkcy9zbmFwc2hvdA==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@  }@@@",
       "@@@STEP_LOG_LINE@planner_input@}@@@",
       "@@@STEP_LOG_END@planner_input@@@",
       "@@@STEP_LOG_LINE@planner_output@builds_to_run {@@@",
@@ -490,7 +492,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n@\n>\n'chrome-internal-review.googlesource.com\u0012\u0010existent-project\u0018\ufffd\t\u001a\ufffd\u0001\n\u0018\n\u0010amd64-generic-cq\u0018\u0001\"\u0002cq\u0012\u0006\n\u0002\b\u00018\u0001\"4\b\u0003\u001a\u0013prebuilts_gs_bucket\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001c\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aP\n\u0016\n\u000earm-generic-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aA\n\u0018\n\u0010arm64-generic-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001aZ\n \n\u0018arm-generic-pointless-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a|\n\u0013\n\batlas-cq\u0018\u0001\"\u0005atlas\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a?\n\u000f\n\u0007cave-cq\u0018\u0001\"\u0002cq*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a\ufffd\u0001\n\u0010\n\bcoral-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001ac\n\u000e\n\u0006eve-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\"\u0000",
+      "\n@\n>\n'chrome-internal-review.googlesource.com\u0012\u0010existent-project\u0018\ufffd\t\u001a\ufffd\u0001\n\u0018\n\u0010amd64-generic-cq\u0018\u0001\"\u0002cq\u0012\u0006\n\u0002\b\u00018\u0001\"4\b\u0003\u001a\u0013prebuilts_gs_bucket\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001c\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aP\n\u0016\n\u000earm-generic-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aA\n\u0018\n\u0010arm64-generic-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001aZ\n \n\u0018arm-generic-pointless-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a|\n\u0013\n\batlas-cq\u0018\u0001\"\u0005atlas\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a?\n\u000f\n\u0007cave-cq\u0018\u0001\"\u0002cq*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a\ufffd\u0001\n\u0010\n\bcoral-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001ac\n\u000e\n\u0006eve-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\"Z\nX\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0003abc\"\u0013refs/heads/snapshot",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -1260,6 +1262,29 @@
     "name": "filter builds.looks for green.check should look for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.update src_state.gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {

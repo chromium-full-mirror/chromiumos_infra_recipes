@@ -43,8 +43,22 @@ def RunSteps(api, properties):
   child_specs = api.cros_infra_config.get_builder_config(
       api.buildbucket.build.builder.builder).orchestrator.child_specs
   completed_builds, new_requests = api.build_plan.get_build_plan(
-      child_specs, True, api.cros_infra_config.gerrit_changes,
-      common_pb2.GitilesCommit(), common_pb2.GitilesCommit())
+      child_specs,
+      True,
+      api.cros_infra_config.gerrit_changes,
+      internal_snapshot=common_pb2.GitilesCommit(
+          host='chrome-internal.googlesource.com',
+          project='chromeos/manifest-internal',
+          id='abc',
+          ref='refs/heads/snapshot',
+      ),
+      external_snapshot=common_pb2.GitilesCommit(
+          host='chromium.googlesource.com',
+          project='chromiumos/manifest',
+          id='def',
+          ref='refs/heads/snapshot',
+      ),
+  )
   actual_completed_builds = [x.builder.builder for x in completed_builds]
   api.assertions.assertCountEqual(actual_completed_builds,
                                   properties.expected_completed_builds)

@@ -23,8 +23,22 @@ def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(
       'postsubmit-orchestrator').orchestrator.child_specs
   completed_builds, new_requests = api.build_plan.get_build_plan(
-      child_specs, True, [], common_pb2.GitilesCommit(),
-      common_pb2.GitilesCommit())
+      child_specs,
+      True,
+      [],
+      internal_snapshot=common_pb2.GitilesCommit(
+          host='chrome-internal.googlesource.com',
+          project='chromeos/manifest-internal',
+          id='abc',
+          ref='refs/heads/snapshot',
+      ),
+      external_snapshot=common_pb2.GitilesCommit(
+          host='chromium.googlesource.com',
+          project='chromiumos/manifest',
+          id='def',
+          ref='refs/heads/snapshot',
+      ),
+  )
   api.assertions.assertEqual(completed_builds, [])
   api.assertions.assertEqual(len(new_requests), 3)
 
