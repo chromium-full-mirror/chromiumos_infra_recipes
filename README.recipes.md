@@ -240,6 +240,7 @@
   * [clean_vm_images](#recipes-clean_vm_images) &mdash; Recipe for cleaning up stale GCP VM images.
   * [cloud_pubsub:examples/full](#recipes-cloud_pubsub_examples_full)
   * [cloud_pubsub:tests/raises_on_failed_publish](#recipes-cloud_pubsub_tests_raises_on_failed_publish)
+  * [cloud_pubsub:tests/request_size_too_large](#recipes-cloud_pubsub_tests_request_size_too_large) &mdash; Tests the case where a request is larger than the Pub/Sub limit.
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json)
@@ -2423,13 +2424,17 @@ Returns: (context manager) A context manager that inserts system python
 
 APIs for using Cloud Pub/Sub
 
-#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CloudPubsubApi](/recipe_modules/cloud_pubsub/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for Cloud Pub/Sub
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#18)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [publish\_message](/recipe_modules/cloud_pubsub/api.py#23)(self, project_id, topic_id, data, ordering_key=None, endpoint=None, raise_on_failed_publish=True):**
 
 Publish a message to Cloud Pub/Sub
+
+Note that if the request is larger than the Pub/Sub request limit, this
+method will return before it even tries to send a request, raising an
+exception if raise_on_failed_publish is true.
 
 When specifying an ordering key to ensure message ordering, an explicit
 endpoint needs to be specified, and only messages going through the same
@@ -12377,6 +12382,14 @@ Recipe for cleaning up stale GCP VM images.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/tests/raises_on_failed_publish.py#17)(api):**
+### *recipes* / [cloud\_pubsub:tests/request\_size\_too\_large](/recipe_modules/cloud_pubsub/tests/request_size_too_large.py)
+
+[DEPS](/recipe_modules/cloud_pubsub/tests/request_size_too_large.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests the case where a request is larger than the Pub/Sub limit.
+
+&mdash; **def [RunSteps](/recipe_modules/cloud_pubsub/tests/request_size_too_large.py#17)(api):**
 ### *recipes* / [code\_coverage:examples/firmware\_lcov](/recipe_modules/code_coverage/examples/firmware_lcov.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/firmware_lcov.py#11): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
