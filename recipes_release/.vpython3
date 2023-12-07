@@ -1,4 +1,4 @@
-python_version: "3.8"
+python_version: "3.11"
 
 wheel: <
   name: "infra/python/wheels/tabulate-py3"
@@ -32,7 +32,7 @@ wheel: <
 
 wheel: <
   name: "infra/python/wheels/uritemplate-py2_py3"
-  version: "version:3.0.0"
+  version: "version:3.0.1"
 >
 
 wheel: <
