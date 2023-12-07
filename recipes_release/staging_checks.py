@@ -135,9 +135,6 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
                    [image_builder_exemption], num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
-    # TODO(b/315313857): Re-enable when backfiller issues are fixed, or remove
-    # permanently.
-    # StagingReCheck('chromeos', 'staging', r'staging-backfiller'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator',
                    num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-cop', num_builds=2),
