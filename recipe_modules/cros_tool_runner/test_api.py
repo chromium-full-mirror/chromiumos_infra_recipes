@@ -36,4 +36,5 @@ class CrosToolRunnerTestApi(recipe_test_api.RecipeTestApi):
         ctr_properties}) + self.m.properties.environ(
             CrosToolRunnerEnvProperties(SWARMING_BOT_ID=bot_id,
                                         SWARMING_TASK_ID='placeholder-task-id',
-                                        SKYLAB_DUT_ID='placeholder-dut-id'))
+                                        SKYLAB_DUT_ID='placeholder-dut-id'),
+            CLOUDBOTS_DUT_HOSTNAME='cloudbots-placeholder-hostname')

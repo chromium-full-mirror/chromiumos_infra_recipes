@@ -96,3 +96,7 @@ def GenTests(api):
       'basic-with-new-bot-prefix',
       api.cros_tool_runner.properties(bot_id='cros-chromeos1-row2-rack3-host4'))
          + api.post_process(DropExpectation))
+  yield (api.test(
+      'cloudbots-dut-hostname',
+      api.cros_tool_runner.properties(bot_id='cloudbots-prod-0-zxcv')) +
+         api.post_process(DropExpectation))

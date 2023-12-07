@@ -22,8 +22,11 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
-    self._dut_hostname = self._dut_hostname_from_bot_id(
-        env_vars.SWARMING_BOT_ID)
+    if env_vars.SWARMING_BOT_ID.startswith("cloudbots-"):
+      self._dut_hostname = env_vars.CLOUDBOTS_DUT_HOSTNAME
+    else:
+      self._dut_hostname = self._dut_hostname_from_bot_id(
+          env_vars.SWARMING_BOT_ID)
     self._dut_id = env_vars.SKYLAB_DUT_ID
     self._run_id = env_vars.SWARMING_TASK_ID
     self._docker_key_file_location = '/creds/service_accounts/skylab-drone.json'
