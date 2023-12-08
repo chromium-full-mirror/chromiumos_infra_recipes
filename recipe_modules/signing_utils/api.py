@@ -5,7 +5,7 @@
 """Module providing helpers for signing functionality."""
 
 import json
-from typing import Any, Dict, List, NewType, Optional
+from typing import Any, Dict, List, NewType, Optional, Union
 
 from google.protobuf.json_format import MessageToDict
 
@@ -45,8 +45,10 @@ InstructionsMetadata = NewType('InstructionsMetadata', Any)
 class SigningUtilsApi(recipe_api.RecipeApi):
   """A module to encapsulate helpers for signing operations."""
 
+  # TODO(b/315495109): Remove with legacy signing.
   @staticmethod
-  def signing_succeeded(metadata: Dict[str, InstructionsMetadata]) -> bool:
+  def legacy_signing_succeeded(
+      metadata: Dict[str, InstructionsMetadata]) -> bool:
     """Whether the provided metadata contains a successful signing operation.
 
     Args:
@@ -57,8 +59,9 @@ class SigningUtilsApi(recipe_api.RecipeApi):
     """
     return SigningUtilsApi.get_status_from_instructions(metadata) == _PASSED
 
+  # TODO(b/315495109): Remove with legacy signing.
   @staticmethod
-  def signing_failed(metadata: Dict[str, InstructionsMetadata]) -> bool:
+  def legacy_signing_failed(metadata: Dict[str, InstructionsMetadata]) -> bool:
     """Whether the provided metadata contains a failed signing operation.
 
     Args:
@@ -68,6 +71,16 @@ class SigningUtilsApi(recipe_api.RecipeApi):
       True/False whether the signing failed.
     """
     return SigningUtilsApi.get_status_from_instructions(metadata) == _FAILED
+
+  # TODO(b/315495109): Remove legacy handling with legacy signing.
+  @staticmethod
+  def signing_succeeded(status: Union[
+      str, BuildReport.SignedBuildMetadata.SigningStatus],
+                        local_signing: Optional[bool] = False) -> bool:
+    """Wrapper to see whether signing succeeded for new or legacy signing."""
+    if local_signing:
+      return status == BuildReport.SignedBuildMetadata.SigningStatus.SIGNING_STATUS_PASSED
+    return status == _PASSED
 
   @staticmethod
   def is_terminal_status(status: str) -> bool:
@@ -88,6 +101,16 @@ class SigningUtilsApi(recipe_api.RecipeApi):
         _STATUS_OBJECT]:
       return None
     return metadata[_STATUS_OBJECT][_SIGNING_STATUS]
+
+  # TODO(b/315495109): Remove legacy handling with legacy signing.
+  @staticmethod
+  def get_signing_status(metadata: Union[Dict[str, InstructionsMetadata],
+                                         BuildReport.SignedBuildMetadata],
+                         local_signing: Optional[bool] = False):
+    """Wrapper to get signing status from new or legacy signing."""
+    if local_signing:
+      return metadata.status
+    return SigningUtilsApi.get_status_from_instructions(metadata)
 
   @staticmethod
   def get_failure(metadata: Dict[str, InstructionsMetadata]) -> Optional[str]:

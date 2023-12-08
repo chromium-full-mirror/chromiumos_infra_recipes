@@ -22,7 +22,7 @@ the unfiltered top-level topic for all builds.
 
 import base64
 import contextlib
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
 from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
@@ -485,9 +485,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
       config.models.append(helpers.create_model(model_metadata))
     self.publish(build_report)
 
-  # TODO(b/307589863): Massage legacy data to fit publish_signed_builds and
-  # deprecate.
-  def publish_signed_build_metadata(self, signed_build_metadata_list):
+  # TODO(b/315495109): Remove legacy handling with legacy signing.
+  def publish_signed_build_metadata(
+      self,
+      signed_build_metadata_list: List[Union[dict,
+                                             BuildReport.SignedBuildMetadata]]):
     """Publish metadata about the signed build image(s).
 
     Args:
@@ -499,39 +501,22 @@ class BuildReportingApi(recipe_api.RecipeApi):
     # to the pubsub are guaranteed not to be present already.
 
     build_report = BuildReport()
+    local_signing = self.m.signing.local_signing
     for signed_build_metadata in signed_build_metadata_list:
-      status = self.m.signing_utils.get_status_from_instructions(
-          signed_build_metadata)
+      status = self.m.signing_utils.get_signing_status(
+          signed_build_metadata, local_signing=local_signing)
 
       # If the status of the message is unavailable for some reason, short circuit
       # so we don't publish partial data.
-      if not self.m.signing_utils.signing_succeeded(signed_build_metadata):
+      if not self.m.signing_utils.signing_succeeded(
+          status, local_signing=local_signing):
         continue
 
-      build_report.signed_builds.append(
-          helpers.create_signed_build(signed_build_metadata, status))
-
-    self.publish(build_report)
-
-  def publish_signed_builds(
-      self, signed_builds: List[BuildReport.SignedBuildMetadata]) -> None:
-    """Publish metadata about the signed build(s))."""
-    # Unlike publish_build_target_and_model_metadata, double calls are
-    # acceptable here. Signing will refuse to sign the same image twice and we
-    # only add artifacts with status SUCCESS to the pubsub, so any additions
-    # to the pubsub are guaranteed not to be present already.
-
-    build_report = BuildReport()
-    for signed_build in signed_builds:
-      status = signed_build.status
-
-      # If the status of the message is unavailable for some reason, short
-      # circuit so we don't publish partial data.
-      if not status or not status == \
-       BuildReport.SignedBuildMetadata.SigningStatus.SIGNING_STATUS_PASSED:
-        continue
-
-      build_report.signed_builds.append(signed_build)
+      if local_signing:
+        build_report.signed_builds.append(signed_build_metadata)
+      else:
+        build_report.signed_builds.append(
+            helpers.create_signed_build(signed_build_metadata, status))
 
     self.publish(build_report)
 

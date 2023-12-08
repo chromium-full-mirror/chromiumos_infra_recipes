@@ -230,6 +230,7 @@ class SigningApi(recipe_api.RecipeApi):
 
     return list(instructions_metadata.values())
 
+  # TODO(b/315495109): Remove with legacy signing.
   def verify_signing_success(
       self, instructions_metadata: Dict[str, InstructionsMetadata],
       pres: StepPresentation):
@@ -243,8 +244,8 @@ class SigningApi(recipe_api.RecipeApi):
       # We consider "passed" success, "failed" a failure, and anything else
       # "Timed Out".
       status = 'PASSED'
-      if not self.m.signing_utils.signing_succeeded(metadata):
-        if self.m.signing_utils.signing_failed(metadata):
+      if not self.m.signing_utils.legacy_signing_succeeded(metadata):
+        if self.m.signing_utils.legacy_signing_failed(metadata):
           failure = self.m.signing_utils.get_failure(metadata)
           pres.logs[instructions] = failure
           status = 'FAILED'
