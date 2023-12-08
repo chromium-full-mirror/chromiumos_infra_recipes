@@ -564,10 +564,10 @@ def GenTests(api):
               'cave-cq',
           ], skipped_builders=[]),
       api.buildbucket.simulated_search_results(
-          builds, 'get build history.get completed builds.'
+          builds[:4], 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
       api.buildbucket.simulated_search_results(
-          builds, 'get build history.find matching builds.'
+          builds[:4], 'get build history.find matching builds.'
           'buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=[
@@ -576,6 +576,46 @@ def GenTests(api):
                               end_time=test_end_timestamp)
           ],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
+      ),
+  )
+
+  yield api.test(
+      'broken-before-disables-lfg',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True,
+          }},
+          expected_build_requests=[
+              'atlas-cq',
+              'arm64-generic-cq',
+          ],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
+          expected_experiments=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+          ], skipped_builders=[]),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.get completed builds.'
+          'get change build history.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          builds, 'get build history.find matching builds.'
+          'buildbucket.search'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'filter builds.looks for green.check should look for green.check disallow looks for green.read git footers'
       ),
   )
 

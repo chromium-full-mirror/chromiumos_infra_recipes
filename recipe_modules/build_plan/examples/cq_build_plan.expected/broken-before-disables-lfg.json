@@ -1090,6 +1090,9 @@
       "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514001@@@",
       "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514002@@@",
       "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514003@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514004@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514005@@@",
+      "@@@STEP_LOG_LINE@matching builds@https://ci.chromium.org/b/8922054662172514006@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
@@ -1128,11 +1131,17 @@
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@amd64-generic-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
+      "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -1140,8 +1149,11 @@
     "name": "get build history.get completed builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
       "@@@STEP_LOG_END@skip log@@@",
-      "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@0@@@"
+      "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@3@@@"
     ]
   },
   {
@@ -1151,6 +1163,9 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@some builds already completed@@@",
       "@@@STEP_LINK@amd64-generic-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@",
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
+      "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
       "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
     ]
   },
@@ -1189,11 +1204,17 @@
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@amd64-generic-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@STEP_LINK@coral-cq@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@",
-      "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@"
+      "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514003@@@",
+      "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
+      "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
+      "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
     ]
   },
   {
@@ -1274,8 +1295,7 @@
     "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
-      "@@@STEP_LOG_LINE@cq looks log@Found footer to disable looks for green: True. Using original snapshot.@@@",
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
@@ -1283,261 +1303,7 @@
     "cmd": [],
     "name": "filter builds.looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@should_lfg@Found disallow footer: False, Found has merge commit: False@@@",
-      "@@@STEP_LOG_END@should_lfg@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check disallow looks for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: []@@@",
-      "@@@STEP_LOG_END@check disallow looks for green@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Disallow-Looks-For-Green"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check should look for green.check disallow looks for green.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.ensure auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "luci-auth",
-      "token",
-      "-scopes",
-      "https://www.googleapis.com/auth/gerritcodereview",
-      "-json-output",
-      "-"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check should look for green.ensure auth token.Retrieve service_account auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_1"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check should look for green.ensure auth token.Write auth token to temp file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-f",
-      "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_1",
-      "https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check should look for green.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Cq-Depend"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check if CL has related changes not included",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check disallow looks for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Found Disallow-Looks-For-Green. Disabling looks for green behavior.@@@",
-      "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: [':Disallow-Looks-For-Green', 'Change-Id: deadbeef', 'a quick description']@@@",
-      "@@@STEP_LOG_END@check disallow looks for green@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Disallow-Looks-For-Green"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check disallow looks for green.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.checking latest scored snapshot greenness",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@latest scored snapshot greenness@latest scored snapshot-orchestrator go/bbid/123 has aggregate greenness of 100. Start time: 2012-05-14 05:15:27 End time: 2012-05-14 12:10:27. The current time is 2012-05-14 12:53:27@@@",
-      "@@@STEP_LOG_END@latest scored snapshot greenness@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "25",
-      "-fields",
-      "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-14T02:53:26Z\"}}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search",
-    "timeout": 60,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateBuildMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.set looks_for_green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latestScored\": {\"approxSnapAgeHours\": 8, \"isSnapOrchGreen\": true, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}, \"status\": \"STATUS_RAN_LATEST_MINTED\"}@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

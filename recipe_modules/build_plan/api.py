@@ -450,6 +450,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   build.builder.builder,
                   datetime.utcfromtimestamp(
                       builder_config.general.broken_before.seconds)))
+          # We are planning to switch broken_before to use snapshot instead of time.
+          # Temporarily, just disable lfg. b/314764930
+          self.m.looks_for_green.enable_looks_for_green = False
           continue
 
         # Refresh the criticality of the builders.
