@@ -33,11 +33,6 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 INTERNAL_HOST_URL = 'chrome-internal.googlesource.com'
 EXTERNAL_HOST_URL = 'chromium.googlesource.com'
 
-INTERNAL_MANIFEST_PROJECT = 'chromeos/manifest-internal'
-EXTERNAL_MANIFEST_PROJECT = 'chromiumos/manifest'
-
-SNAPSHOT_REF = 'refs/heads/snapshot'
-
 ORIGINAL_INTERNAL_SHA = 'internalSHA'
 ORIGINAL_EXTERNAL_SHA = 'externalSHA'
 
@@ -56,13 +51,9 @@ def RunSteps(api, properties):
     _, new_requests = api.build_plan.get_build_plan(
         child_specs, True, api.cros_infra_config.gerrit_changes,
         common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
-                                 host=INTERNAL_HOST_URL,
-                                 project=INTERNAL_MANIFEST_PROJECT,
-                                 ref=SNAPSHOT_REF),
+                                 host=INTERNAL_HOST_URL),
         common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
-                                 host=EXTERNAL_HOST_URL,
-                                 project=EXTERNAL_MANIFEST_PROJECT,
-                                 ref=SNAPSHOT_REF))
+                                 host=EXTERNAL_HOST_URL))
 
   for request in new_requests:
     if request.gitiles_commit.host == INTERNAL_HOST_URL:

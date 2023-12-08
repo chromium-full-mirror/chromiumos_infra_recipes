@@ -598,11 +598,4 @@ class BuildPlanApi(recipe_api.RecipeApi):
         else:
           cq_looks_log.append('CQ looks not enabled. Using original snapshot.')
         presentation.logs['cq looks log'] = cq_looks_log
-
-      # Set the orchestrator's output gitiles commit to the chosen internal
-      # snapshot. This is done because users and tooling expect that the
-      # orchestrator's output gitiles commit is the snapshot that is actually
-      # built by child builders.
-      self.m.src_state.gitiles_commit = chosen_internal
-
     return chosen_internal, chosen_external
