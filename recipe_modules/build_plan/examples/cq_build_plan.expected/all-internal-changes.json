@@ -1178,6 +1178,13 @@
   },
   {
     "cmd": [],
+    "name": "filter additional chrome pupr builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no additional builds needed@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@need 2 new builds (filtered 6)@@@",
@@ -1253,13 +1260,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter additional chrome pupr builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no additional builds needed@@@"
     ]
   },
   {

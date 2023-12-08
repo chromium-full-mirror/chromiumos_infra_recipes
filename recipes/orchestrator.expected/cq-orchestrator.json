@@ -1965,14 +1965,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.filter additional chrome pupr builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no additional builds needed@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
