@@ -53,8 +53,8 @@ SDK_BUILD_TARGET = 'amd64-host'
 SDK_TARBALL_SUFFIX = '.tar.xz'
 
 # Prebuilts are uploaded to a path that contains
-# f"{VERSION_PREFIX}-{sdk_version}". If you change this, make sure all
-# consumers are changed as well; see b/303300440.
+# f"{VERSION_PREFIX}-{sdk_version}".
+# NOTE: See "Version String Assumptions" below before changing this.
 VERSION_PREFIX = 'chroot'
 
 
@@ -104,6 +104,13 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
 
   # Unlike normal CrOS builds, the SDK has no concept of pinned CrOS manifest
   # or specific Chrome version.  Use a datestamp instead.
+  #
+  # [[Version String Assumptions]]
+  #
+  # NOTE: Assumptions about the version string and VERSION_PREFIX exist
+  # outside this code. We have had bugs in the past due to changing the
+  # version prefix or version string (b/289990183#comment6,
+  # b/303300440, b/315375738).
   version = api.time.utcnow().strftime('%Y.%m.%d.%H%M%S')
   version_year, version_month, _ = version.split('.', maxsplit=2)
   api.step.empty('new SDK version', step_text=version)
@@ -231,12 +238,10 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       redistributable_toolchains = response.generated_files
 
     with api.step.nest('package SDK as tarball'):
-      timestamp = api.buildbucket.build.start_time.ToDatetime().strftime(
-          '%Y.%m.%d.%H%M%S')
-
       request = BuildSdkTarballRequest(
           chroot=api.cros_sdk.chroot,
-          sdk_version=f'build-toolchain-{timestamp}',
+          # NOTE: See "Version String Assumptions" above before changing this.
+          sdk_version=version,
       )
 
       tarball_path = api.cros_build_api.SdkService.BuildSdkTarball(
@@ -284,6 +289,8 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
         #  - The basename of the toolchain tarball, without extensions.
         #  - The SDK version.
         #  - The extensions.
+        # NOTE: See "Version String Assumptions" above before changing the
+        # strings used here.
         basename, extensions = os.path.basename(tc.path).split('.', maxsplit=1)
         upload_path = (f'{version_year}/'
                        f'{version_month}/'
@@ -297,6 +304,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       api.cros_build_api.SdkService.UploadPrebuiltPackages(
           UploadPrebuiltPackagesRequest(
               chroot=api.cros_sdk.chroot,
+              # NOTE: See "Version String Assumptions" above before changing this.
               prepend_version=VERSION_PREFIX,
               version=version,
               upload_location=f'gs://{properties.prebuilts_gs_bucket}',
@@ -310,6 +318,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       sdk_tarball_template = f'{year}/{month}/%(target)s-{version}{SDK_TARBALL_SUFFIX}'
       response = api.cros_build_api.SdkService.CreateBinhostCLs(
           CreateBinhostCLsRequest(
+              # NOTE: See "Version String Assumptions" above before changing this.
               prepend_version=VERSION_PREFIX,
               version=version,
               upload_location=properties.prebuilts_gs_bucket,
