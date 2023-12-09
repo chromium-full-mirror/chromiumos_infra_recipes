@@ -66,6 +66,7 @@
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [exonerate](#recipe_modules-exonerate) &mdash; Functions for exonerating test failures.
   * [exoneration_util](#recipe_modules-exoneration_util)
+  * [factory_util](#recipe_modules-factory_util) &mdash; A module for util functions associated with factory builds.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [future_utils](#recipe_modules-future_utils)
   * [gce_provider](#recipe_modules-gce_provider)
@@ -480,6 +481,7 @@
   * [exoneration_util:examples/override_calculation](#recipes-exoneration_util_examples_override_calculation)
   * [exoneration_util:examples/per_target_limit](#recipes-exoneration_util_examples_per_target_limit)
   * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate)
+  * [factory_util:tests/upload_factory_artifacts](#recipes-factory_util_tests_upload_factory_artifacts) &mdash; Tests for factory util methods.
   * [failures:examples/additional_test_not_run_critical_cq](#recipes-failures_examples_additional_test_not_run_critical_cq)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
@@ -6173,6 +6175,30 @@ Args:
 
 Returns:
   List of TestVariantFailureRateAnalysis for each input.
+### *recipe_modules* / [factory\_util](/recipe_modules/factory_util)
+
+[DEPS](/recipe_modules/factory_util/__init__.py#7): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+A module for util functions associated with factory builds.
+
+#### **class [FactoryUtilApi](/recipe_modules/factory_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [upload\_factory](/recipe_modules/factory_util/api.py#18)(self, config: BuilderConfig, artifact_dir: str):**
+
+Compress and upload factory artifacts.
+
+Used for older factory branches which predate ArtifactsService.
+
+Args:
+  config - Which contains builder info used to construct GS path.
+  artifact_dir - Local dir containing build artifacts.
+
+&mdash; **def [upload\_factory\_artifacts](/recipe_modules/factory_util/api.py#74)(self, config: BuilderConfig, artifact_dir: str):**
+
+&mdash; **def [zip\_factory\_image](/recipe_modules/factory_util/api.py#42)(self, artifact_dir: str, images_path: Path, bundle_path: Path, version_str: str):**
+
+Zip up artifacts for factory.zip
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
 [DEPS](/recipe_modules/failures/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_som](#recipe_modules-cros_som), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -11745,14 +11771,14 @@ Recipe for building a BuildTarget image for CQ.
 &mdash; **def [RunSteps](/recipes/build_cq.py#54)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
-[DEPS](/recipes/build_factory.py#18): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_factory.py#18): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_version](#recipe_modules-cros_version), [factory\_util](#recipe_modules-factory_util), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for generating artifacts for Factory builders.
 
 This recipe supports the workflow necessary to support factory builders.
 
-&mdash; **def [RunSteps](/recipes/build_factory.py#36)(api):**
+&mdash; **def [RunSteps](/recipes/build_factory.py#39)(api):**
 ### *recipes* / [build\_firmware](/recipes/build_firmware.py)
 
 [DEPS](/recipes/build_firmware.py#26): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14034,6 +14060,14 @@ json files.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/query_failure_rate.py#19)(api):**
+### *recipes* / [factory\_util:tests/upload\_factory\_artifacts](/recipe_modules/factory_util/tests/upload_factory_artifacts.py)
+
+[DEPS](/recipe_modules/factory_util/tests/upload_factory_artifacts.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [factory\_util](#recipe_modules-factory_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Tests for factory util methods.
+
+&mdash; **def [RunSteps](/recipe_modules/factory_util/tests/upload_factory_artifacts.py#19)(api):**
 ### *recipes* / [failures:examples/additional\_test\_not\_run\_critical\_cq](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py)
 
 [DEPS](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py#12): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]

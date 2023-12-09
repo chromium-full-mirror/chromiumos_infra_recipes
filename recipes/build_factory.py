@@ -16,6 +16,7 @@ from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourcePropert
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
 DEPS = [
+    'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
@@ -23,6 +24,8 @@ DEPS = [
     'cros_build_api',
     'cros_infra_config',
     'cros_release',
+    'cros_version',
+    'factory_util',
     'signing',
     'src_state',
     'test_util',
@@ -63,6 +66,10 @@ def RunSteps(api):
               uploaded_artifacts,
               artifact_dir,
           ) = api.build_menu.upload_artifacts(config)
+          # TODO(b/316925119): Remove support when all factory versions>=13295.
+          # Workaround to support branches cut before ArtifactsService.
+          if not api.cros_version.version.is_after('13929.0.0'):
+            api.factory_util.upload_factory(config, artifact_dir)
           if uploaded_artifacts:
             api.build_reporting.publish_build_artifacts(uploaded_artifacts,
                                                         artifact_dir)
@@ -103,6 +110,11 @@ def GenTests(api):
                               manifest_file='buildspecs/100/15197.0.0.xml',
                           )))
           }),
+      api.step_data(
+          'read chromeos version.read chromeos_version.sh',
+          api.file.read_text(
+              text_content=api.cros_version.chromeos_version_contents(
+                  'R92-13929.158.0'))),
       # Make sure signing times out after 5 seconds to not explode test runs.
       api.signing.set_timeout(timeout=5),
       # Mock signing responses.
@@ -111,6 +123,8 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'get signed build metadata'),
+      api.post_check(post_process.DoesNotRun,
+                     'uploading factory artifacts for older branch'),
       builder='factory-corsola-15197.B-corsola',
   )
 
@@ -168,6 +182,34 @@ def GenTests(api):
           'skipping signing',
           ['no signing instructions generated'],
       ),
+      api.post_process(post_process.DropExpectation),
+      builder='factory-corsola-15197.B-corsola',
+  )
+
+  yield api.build_menu.test(
+      'version-before-13929',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url,
+                              branch='main',
+                              manifest_file='buildspecs/99/13928.55.0.xml',
+                          )))
+          }),
+      api.step_data(
+          'read chromeos version.read chromeos_version.sh',
+          api.file.read_text(
+              text_content=api.cros_version.chromeos_version_contents(
+                  'R99-13928.55.0'))),
+      # Make sure signing times out after 5 seconds to not explode test runs.
+      api.signing.set_timeout(timeout=5),
+      # Mock signing responses.
+      api.signing.setup_mocks(board='corsola'),
+      api.post_check(post_process.MustRun,
+                     'uploading factory artifacts for older branch'),
       api.post_process(post_process.DropExpectation),
       builder='factory-corsola-15197.B-corsola',
   )
