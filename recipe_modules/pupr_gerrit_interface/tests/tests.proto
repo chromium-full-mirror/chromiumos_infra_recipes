@@ -20,9 +20,10 @@ message ApplyRetryPolicyProperties {
 }
 
 message CreateUprevClsProperties {
-  recipes.chromeos.generator.SendToCqPolicy policy = 1;
+  recipes.chromeos.generator.SendToCqPolicy send_to_cq_policy = 1;
   bool existing_cls = 2;
   int32 projects = 3;
+  recipes.chromeos.generator.CrPolicy cr_policy = 4;
 }
 
 message FindOpenUprevCLsProperties {

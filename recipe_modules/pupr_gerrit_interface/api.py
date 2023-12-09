@@ -14,6 +14,7 @@ from recipe_engine.config_types import Path
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
+from PB.recipes.chromeos.generator import CR_REJECT
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
@@ -320,6 +321,8 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         }.get(send_to_cq_policy, {})
         if self.m.cros_infra_config.is_staging:
           labels.pop(Label.BOT_COMMIT, None)
+        if policy.cr_policy == CR_REJECT:
+          labels[Label.CODE_REVIEW] = -2
         if labels:
           self.m.gerrit.set_change_labels_remote(change, labels)
 

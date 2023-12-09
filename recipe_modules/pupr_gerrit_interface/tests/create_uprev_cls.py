@@ -11,6 +11,7 @@ from PB.recipe_modules.chromeos.pupr_gerrit_interface.tests.tests import \
   CreateUprevClsProperties
 from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
+from PB.recipes.chromeos.generator import CR_REJECT
 from PB.recipes.chromeos.generator import DRY_RUN
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import Reviewer
@@ -36,21 +37,29 @@ PROPERTIES = CreateUprevClsProperties
 
 def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
   if properties.existing_cls:
-    branch_policy = BranchPolicy(pattern='.*', repl='',
-                                 reviewers=[Reviewer(email='a@example.com')],
-                                 existing_cls_policy=properties.policy)
+    branch_policy = BranchPolicy(
+        pattern='.*',
+        repl='',
+        reviewers=[Reviewer(email='a@example.com')],
+        existing_cls_policy=properties.send_to_cq_policy,
+        cr_policy=properties.cr_policy,
+    )
   else:
-    branch_policy = BranchPolicy(pattern='.*', repl='',
-                                 reviewers=[Reviewer(email='a@example.com')],
-                                 no_existing_cls_policy=properties.policy)
-  path_ = [
+    branch_policy = BranchPolicy(
+        pattern='.*',
+        repl='',
+        reviewers=[Reviewer(email='a@example.com')],
+        no_existing_cls_policy=properties.send_to_cq_policy,
+        cr_policy=properties.cr_policy,
+    )
+  projects = [
       ProjectInfo(name=f'galaxy{i}', path=f'project{i}', remote='cros',
                   branch=api.src_state.workspace_path,
                   rrev=api.src_state.workspace_path)
       for i in range(1, properties.projects + 1)
   ]
 
-  summary = api.pupr_gerrit_interface.create_uprev_cls(path_, [],
+  summary = api.pupr_gerrit_interface.create_uprev_cls(projects, [],
                                                        properties.existing_cls,
                                                        branch_policy, 'a topic')
   return result.RawResult(status=common.SUCCESS, summary_markdown=summary)
@@ -82,7 +91,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
                           'labels', [f'"{label}"'])
 
   yield api.test(
-      'submit', api.properties(policy=SUBMIT, projects=1),
+      'submit', api.properties(send_to_cq_policy=SUBMIT, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -94,7 +103,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'dry-run', api.properties(policy=DRY_RUN, projects=1),
+      'dry-run', api.properties(send_to_cq_policy=DRY_RUN, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -106,7 +115,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'dry-run-staging', api.properties(policy=DRY_RUN, projects=1),
+      'dry-run-staging', api.properties(send_to_cq_policy=DRY_RUN, projects=1),
       api.buildbucket.generic_build(project='chromeos', bucket='staging',
                                     builder='staging-my-cool-pupr-generator'),
       api.gerrit.simulated_create_change(
@@ -120,8 +129,23 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'full-run', api.properties(policy=FULL_RUN, projects=2,
-                                 existing_cls=True),
+      'dry-run-cr-reject',
+      api.properties(send_to_cq_policy=DRY_RUN, cr_policy=CR_REJECT,
+                     projects=1),
+      api.gerrit.simulated_create_change(
+          'generate CLs.create gerrit change for project1',
+          'https://host-review.googlesource.com/c/project/+/123'),
+      api.path.exists(api.src_state.workspace_path),
+      check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 1),
+      check_label(123, 'Code-Review', -2),
+      api.post_check(post_process.StepSuccess,
+                     'update CL labels.set labels on CL 123'),
+      api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'full-run',
+      api.properties(send_to_cq_policy=FULL_RUN, projects=2, existing_cls=True),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -139,7 +163,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'abandon', api.properties(policy=ABANDON, projects=1),
+      'abandon', api.properties(send_to_cq_policy=ABANDON, projects=1),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://host-review.googlesource.com/c/project/+/123'),
@@ -151,7 +175,8 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'summary', api.properties(policy=FULL_RUN, projects=2, existing_cls=True),
+      'summary',
+      api.properties(send_to_cq_policy=FULL_RUN, projects=2, existing_cls=True),
       api.gerrit.simulated_create_change(
           'generate CLs.create gerrit change for project1',
           'https://chromium-review.googlesource.com/c/project/+/123'),

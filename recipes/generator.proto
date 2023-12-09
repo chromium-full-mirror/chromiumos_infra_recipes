@@ -78,6 +78,16 @@ enum RetryClPolicy {
   RETRY_LATEST_PINNED = 2;
 }
 
+// Describes how PUpr should vote for Code-Review on its uploaded CLs.
+enum CrPolicy {
+  // No Code-Review vote (default).
+  CR_DO_NOTHING = 0;
+
+  // Vote CR-2 on any uploaded CLs. This should block them from being submitted,
+  // even if humans vote CR+2/CQ+2.
+  CR_REJECT = 1;
+}
+
 // Ref to use for scheduled retries.
 // Pupr runs more often than necessary to look for failed CLs to retry.
 // This ref points to the repository containing retry-able CLs, i.e.
@@ -158,6 +168,9 @@ message BranchPolicy {
 
   // Policy to follow for retrying open failed CLs.
   RetryClPolicy retry_cl_policy = 8;
+
+  // Policy to determine how to vote for Code-Review. Defaults to CR_DO_NOTHING.
+  CrPolicy cr_policy = 10;
 }
 
 // Holds information needed for packages who need to fetch a file from the

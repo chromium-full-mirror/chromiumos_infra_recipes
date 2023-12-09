@@ -9483,15 +9483,15 @@ Returns:
 
 Module to interface with Gerrit for PUpr (Parallel Uprevs).
 
-#### **class [PuprGerritInterfaceApi](/recipe_modules/pupr_gerrit_interface/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PuprGerritInterfaceApi](/recipe_modules/pupr_gerrit_interface/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to interface between PUpr builders and Gerrit.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/pupr_gerrit_interface/api.py#43)(self, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/pupr_gerrit_interface/api.py#44)(self, \*args, \*\*kwargs):**
 
 Initialize the module's attributes.
 
-&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#366)(self, open_changes: List[GerritChange], most_recent_uprev: Optional[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
+&mdash; **def [apply\_retry\_policy](/recipe_modules/pupr_gerrit_interface/api.py#369)(self, open_changes: List[GerritChange], most_recent_uprev: Optional[PatchSet], policy: BranchPolicy, topic: str, retry_only_run: bool):**
 
 Retry any open uprev CLs based on the retry policy.
 
@@ -9503,7 +9503,7 @@ Args:
   retry_only_run: this weirdly named property only causes a run in
     `OUTDATED_LEAVE_COMMENT` mode to not actually leave a comment if true.
 
-&mdash; **def [create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#233)(self, repo_projects: List[ProjectInfo], open_changes: List[GerritChange], existing_cls: bool, policy: BranchPolicy, topic: str):**
+&mdash; **def [create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#234)(self, repo_projects: List[ProjectInfo], open_changes: List[GerritChange], existing_cls: bool, policy: BranchPolicy, topic: str):**
 
 Create appropriate CLs for the uprevs.
 
@@ -9517,7 +9517,7 @@ Args:
 Returns:
   Human-readable summary of the operation.
 
-&mdash; **def [find\_most\_recently\_merged\_uprev](/recipe_modules/pupr_gerrit_interface/api.py#121)(self, projects_by_remote: ProjectsByRemote, topic: str):**
+&mdash; **def [find\_most\_recently\_merged\_uprev](/recipe_modules/pupr_gerrit_interface/api.py#122)(self, projects_by_remote: ProjectsByRemote, topic: str):**
 
 Return the most recently merged relevant uprev.
 
@@ -9525,7 +9525,7 @@ Args:
   projects_by_remote: A mapping from Git remotes to repo projects on that
     remote that are relevant to this PUpr.
 
-&mdash; **def [find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#76)(self, projects_by_remote: ProjectsByRemote, topic: str):**
+&mdash; **def [find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/api.py#77)(self, projects_by_remote: ProjectsByRemote, topic: str):**
 
 Return any open uprev CLs matching the right projects and topic.
 
@@ -9535,7 +9535,7 @@ Args:
   topic: A string to match against CLs' Gerrit topic, which is used to
     identify relevant PUpr CLs.
 
-&mdash; **def [handle\_outdated\_changes](/recipe_modules/pupr_gerrit_interface/api.py#100)(self, open_changes: List[GerritChange], most_recent_uprev: PatchSet, policy: BranchPolicy, retry_only_run: bool):**
+&mdash; **def [handle\_outdated\_changes](/recipe_modules/pupr_gerrit_interface/api.py#101)(self, open_changes: List[GerritChange], most_recent_uprev: PatchSet, policy: BranchPolicy, retry_only_run: bool):**
 
 Abandon already-open and outdated uprev CLs.
 
@@ -9549,11 +9549,11 @@ Args:
 Returns:
   A bool stating whether any open CLs remain after abandoning.
 
-&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#350)(self, patch_set: PatchSet, cq_label: int):**
+&mdash; **def [retry\_cl](/recipe_modules/pupr_gerrit_interface/api.py#353)(self, patch_set: PatchSet, cq_label: int):**
 
 Retry sending the CL through CQ by setting its Gerrit labels.
 
-&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_gerrit_interface/api.py#53)(self, rebase_before_retry: bool):**
+&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_gerrit_interface/api.py#54)(self, rebase_before_retry: bool):**
 
 Set attributes whose values are determined in Generator.
 
@@ -9564,15 +9564,15 @@ Args:
 TODO(b/259445191): All of these attributes should be moved from
   generator.proto to pupr_local_uprev.proto.
 
-&mdash; **def [sort\_projects\_by\_remote](/recipe_modules/pupr_gerrit_interface/api.py#65)(self, projects: List[ProjectInfo]):**
+&mdash; **def [sort\_projects\_by\_remote](/recipe_modules/pupr_gerrit_interface/api.py#66)(self, projects: List[ProjectInfo]):**
 
 Return a dict which sorts the given projects by their remote.
 
-&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#339)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
+&mdash; **def [upload\_new\_patch\_set](/recipe_modules/pupr_gerrit_interface/api.py#342)(self, gerrit_patch_set: PatchSet, message: Optional[str]=None):**
 
 Upload a new revision onto an existing Gerrit PatchSet.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_gerrit_interface/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_gerrit_interface/api.py#49)(self):**
 
 Return the checkout path where the build is processed.
 ### *recipe_modules* / [pupr\_local\_uprev](/recipe_modules/pupr_local_uprev)
@@ -15304,12 +15304,12 @@ Verify that apply_retry_policy() runs the expected process.
 &mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/apply_retry_policy.py#50)(api: recipe_api.RecipeApi, properties: ApplyRetryPolicyProperties):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/create\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py)
 
-[DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#25): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#26): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Verify that create_uprev_cls() runs the expected process.
 
-&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#37)(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):**
+&mdash; **def [RunSteps](/recipe_modules/pupr_gerrit_interface/tests/create_uprev_cls.py#38)(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):**
 ### *recipes* / [pupr\_gerrit\_interface:tests/find\_open\_uprev\_cls](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py)
 
 [DEPS](/recipe_modules/pupr_gerrit_interface/tests/find_open_uprev_cls.py#22): [gerrit](#recipe_modules-gerrit), [pupr\_gerrit\_interface](#recipe_modules-pupr_gerrit_interface), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
