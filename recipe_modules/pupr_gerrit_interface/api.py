@@ -321,7 +321,7 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         if self.m.cros_infra_config.is_staging:
           labels.pop(Label.BOT_COMMIT, None)
         if labels:
-          self.m.gerrit.set_change_labels(change, labels)
+          self.m.gerrit.set_change_labels_remote(change, labels)
 
       if send_to_cq_policy == SUBMIT:
         with self.m.step.nest('submit CL'):

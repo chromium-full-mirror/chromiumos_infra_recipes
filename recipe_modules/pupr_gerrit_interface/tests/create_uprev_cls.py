@@ -58,6 +58,29 @@ def RunSteps(api: recipe_api.RecipeApi, properties: CreateUprevClsProperties):
 
 def GenTests(api: recipe_test_api.RecipeTestApi):
 
+  def check_label(cl_num: int, label: str, vote: int):
+    """Check that the test case gave a certain label vote on the given CL.
+
+    Args:
+      cl_num: The Gerrit CL number to check.
+      label: The name of the label, such as Commit-Queue.
+      vote: The number that should be voted for that label.
+    """
+    return api.post_check(post_process.LogContains,
+                          f'update CL labels.set labels on CL {cl_num}',
+                          'labels', [f'"{label}": {vote}'])
+
+  def check_no_label(cl_num: int, label: str):
+    """Check that the test case did not vote on the given label for the CL.
+
+    Args:
+      cl_num: The Gerrit CL number to check.
+      label: The name of the label, such as Commit-Queue.
+    """
+    return api.post_check(post_process.LogDoesNotContain,
+                          f'update CL labels.set labels on CL {cl_num}',
+                          'labels', [f'"{label}"'])
+
   yield api.test(
       'submit', api.properties(policy=SUBMIT, projects=1),
       api.gerrit.simulated_create_change(
@@ -66,12 +89,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Bot-Commit+1']),
-      api.post_check(post_process.LogDoesNotContain,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Commit-Queue']),
+      check_label(123, 'Bot-Commit', 1), check_no_label(123, 'Commit-Queue'),
       api.post_check(post_process.StepSuccess, 'update CL labels.submit CL'),
       api.post_process(post_process.DropExpectation))
 
@@ -83,12 +101,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Bot-Commit+1']),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Commit-Queue+1']),
+      check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 1),
       api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
       api.post_process(post_process.DropExpectation))
 
@@ -102,12 +115,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
-      api.post_check(post_process.LogDoesNotContain,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Bot-Commit+1']),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Commit-Queue+1']),
+      check_no_label(123, 'Bot-Commit'), check_label(123, 'Commit-Queue', 1),
       api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
       api.post_process(post_process.DropExpectation))
 
@@ -123,20 +131,10 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 123'),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Bot-Commit+1']),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 123', 'labels',
-                     ['Commit-Queue+2']),
+      check_label(123, 'Bot-Commit', 1), check_label(123, 'Commit-Queue', 2),
       api.post_check(post_process.StepSuccess,
                      'update CL labels.set labels on CL 456'),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 456', 'labels',
-                     ['Bot-Commit+1']),
-      api.post_check(post_process.LogContains,
-                     'update CL labels.set labels on CL 456', 'labels',
-                     ['Commit-Queue+2']),
+      check_label(456, 'Bot-Commit', 1), check_label(456, 'Commit-Queue', 2),
       api.post_check(post_process.DoesNotRun, 'update CL labels.submit CL'),
       api.post_process(post_process.DropExpectation))
 

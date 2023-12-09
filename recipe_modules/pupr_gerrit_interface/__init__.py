@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module to interface with Gerrit for PUpr (Parallel Uprevs)."""
+
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
