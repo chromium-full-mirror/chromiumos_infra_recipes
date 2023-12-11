@@ -693,5 +693,12 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
               test_return))
       testable_builders = sorted(self.m.step.active_result.stdout.split())
+
+      # Bazel builders should not be considered testable right now, and
+      # because the test planning works based on the build target rather than
+      # the builder name there's not a great way to implement that logic. For
+      # now we simply filter all builders containing `-bazel-` out of this list.
+      testable_builders = [b for b in testable_builders if not '-bazel-' in b]
+
       pres.logs['testable_builders'] = testable_builders
       return testable_builders
