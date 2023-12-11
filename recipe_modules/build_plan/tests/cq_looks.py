@@ -33,6 +33,11 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 INTERNAL_HOST_URL = 'chrome-internal.googlesource.com'
 EXTERNAL_HOST_URL = 'chromium.googlesource.com'
 
+INTERNAL_MANIFEST_PROJECT = 'chromeos/manifest-internal'
+EXTERNAL_MANIFEST_PROJECT = 'chromiumos/manifest'
+
+SNAPSHOT_REF = 'refs/heads/snapshot'
+
 ORIGINAL_INTERNAL_SHA = 'internalSHA'
 ORIGINAL_EXTERNAL_SHA = 'externalSHA'
 
