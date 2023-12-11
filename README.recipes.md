@@ -10112,6 +10112,14 @@ Module providing signing functionality.
 
 A module to encapsulate signing operations.
 
+&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#493)(self, presentation: StepPresentation, result_path: Path):**
+
+Add the CloudKMS logs to the given step presentation.
+
+Args:
+  presentation: The step presentation to add logs to.
+  result_path: The result_path passed to the signing call.
+
 &mdash; **def [always\_download](/recipe_modules/signing/api.py#342)(self):**
 
 Build artifacts which, if present, are always downloaded
@@ -10192,11 +10200,11 @@ Implementation for local signing flow.
 
 &emsp; **@property**<br>&mdash; **def [signing\_docker\_image](/recipe_modules/signing/api.py#118)(self):**
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#560)(self, response: SignImageResponse):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#578)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#511)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#529)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 
@@ -15634,12 +15642,12 @@ metadata.
 &mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
 ### *recipes* / [signing:tests/sign\_artifacts](/recipe_modules/signing/tests/sign_artifacts.py)
 
-[DEPS](/recipe_modules/signing/tests/sign_artifacts.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/signing/tests/sign_artifacts.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Tests for sign_artifacts.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/sign_artifacts.py#36)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/sign_artifacts.py#37)(api: RecipeApi):**
 ### *recipes* / [signing\_utils:tests/any\_empty](/recipe_modules/signing_utils/tests/any_empty.py)
 
 [DEPS](/recipe_modules/signing_utils/tests/any_empty.py#11): [signing\_utils](#recipe_modules-signing_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

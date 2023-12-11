@@ -21,6 +21,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/file',
     'recipe_engine/properties',
     'build_menu',
     'cros_build_api',
@@ -185,9 +186,23 @@ def GenTests(api: RecipeTestApi):
                       SigningProperties(local_signing=True,
                                         gs_upload_bucket='chromeos-releases'))
           }),
-      api.cros_build_api.set_api_return('sign artifacts',
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
                                         'ImageService/SignImage',
                                         MessageToJson(sample_response)),
+      api.step_data(
+          'sign artifacts.call BAPI.list [CLEANUP]/signing-dir_tmp_2/cloudkms-logs',
+          api.file.listdir([
+              '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log1',
+              '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log2',
+          ])),
+      api.step_data(
+          'sign artifacts.call BAPI.read log1',
+          api.file.read_text('this is log 1'),
+      ),
+      api.step_data(
+          'sign artifacts.call BAPI.read log2',
+          api.file.read_text('this is log 2'),
+      ),
       api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp',
@@ -224,8 +239,13 @@ def GenTests(api: RecipeTestApi):
           [
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz',
           ]),
-      api.post_check(post_process.MustRun,
-                     'sign artifacts.call chromite.api.ImageService/SignImage'),
+      api.post_check(
+          post_process.MustRun,
+          'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage'),
+      api.post_check(post_process.LogContains, 'sign artifacts.call BAPI',
+                     'log1', ['this is log 1']),
+      api.post_check(post_process.LogContains, 'sign artifacts.call BAPI',
+                     'log2', ['this is log 2']),
       api.post_check(
           post_process.DoesNotRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_UNSPECIFIED'
@@ -252,7 +272,7 @@ def GenTests(api: RecipeTestApi):
                       SigningProperties(local_signing=True,
                                         gs_upload_bucket='chromeos-releases'))
           }),
-      api.cros_build_api.set_api_return('sign artifacts',
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
                                         'ImageService/SignImage', '{}'),
       api.post_check(
           post_process.StepCommandContains,
@@ -260,8 +280,9 @@ def GenTests(api: RecipeTestApi):
           [
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-base-R99-1234.56.0-kukui.tar.xz'
           ]),
-      api.post_check(post_process.MustRun,
-                     'sign artifacts.call chromite.api.ImageService/SignImage'),
+      api.post_check(
+          post_process.MustRun,
+          'sign artifacts.call BAPI.call chromite.api.ImageService/SignImage'),
       api.post_check(
           post_process.StepTextEquals,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket',

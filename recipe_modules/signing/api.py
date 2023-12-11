@@ -12,8 +12,7 @@ import json
 import os
 import re
 from json import JSONDecodeError
-from pathlib import Path
-from typing import Any, Callable, Dict, List, NewType, Tuple, Union
+from typing import Any, Callable, Dict, List, NewType, Tuple
 
 from google.protobuf.text_format import Parse
 
@@ -25,6 +24,7 @@ from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.signing import BuildTargetSigningConfigs, BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import recipe_api
+from recipe_engine.config_types import Path
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import StepFailure
 
@@ -301,7 +301,7 @@ class SigningApi(recipe_api.RecipeApi):
   def setup_signing(
       self, sign_types: List['common_pb2.ImageType'],
       channels: List['common_pb2.Channel']
-  ) -> Tuple[BuildTargetSigningConfig, Union[str, Path]]:
+  ) -> Tuple[BuildTargetSigningConfig, Path]:
     """Set up the working dir for signing.
 
     Copies all necessary artifacts (based on signing config) from GS into a new
@@ -407,7 +407,7 @@ class SigningApi(recipe_api.RecipeApi):
 
   def download_release_artifacts(
       self, relevant_signing_configs: List[SigningConfig]
-  ) -> Tuple[List[SigningConfig], Union[str, Path]]:
+  ) -> Tuple[List[SigningConfig], Path]:
     """Download artifacts so we can support retries with conductor.
 
     As opposed to in situ builds with local artifacts already present.
@@ -475,17 +475,35 @@ class SigningApi(recipe_api.RecipeApi):
 
       self.upload_unsigned_artifacts(archive_dir, build_target_config, channels)
 
-      request = SignImageRequest(
-          signing_configs=config, archive_dir=str(archive_dir),
-          result_path=common_pb2.ResultPath(
-              path=common_pb2.Path(
-                  path=self.m.path.abspath(archive_dir),
-                  location=common_pb2.Path.Location.OUTSIDE,
-              )), docker_image=self.signing_docker_image)
-      response = self.m.cros_build_api.ImageService.SignImage(request)
+      with self.m.step.nest('call BAPI') as presentation:
+        request = SignImageRequest(
+            signing_configs=config, archive_dir=str(archive_dir),
+            result_path=common_pb2.ResultPath(
+                path=common_pb2.Path(
+                    path=self.m.path.abspath(archive_dir),
+                    location=common_pb2.Path.Location.OUTSIDE,
+                )), docker_image=self.signing_docker_image)
+        response = self.m.cros_build_api.ImageService.SignImage(request)
+        self.add_kms_logs_as_step_logs(presentation, archive_dir)
+
       self.upload_signed_artifacts(response)
 
       return self.m.signing_utils.signing_response_to_metadata(response)
+
+  def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
+                                result_path: Path):
+    """Add the CloudKMS logs to the given step presentation.
+
+    Args:
+      presentation: The step presentation to add logs to.
+      result_path: The result_path passed to the signing call.
+    """
+    kms_log_dir = result_path.join('cloudkms-logs')
+    kms_log_files = self.m.file.listdir(f'list {kms_log_dir}', kms_log_dir)
+    for log_file in kms_log_files:
+      filename = self.m.path.basename(log_file)
+      log_contents = self.m.file.read_text(f'read {filename}', log_file)
+      presentation.logs[filename] = log_contents
 
   def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
     """Get the gs path for the given channel.
