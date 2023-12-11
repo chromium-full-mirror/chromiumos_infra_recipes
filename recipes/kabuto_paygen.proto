@@ -35,4 +35,8 @@ message KabutoPaygenProperties {
   // specific branches.
   // Optional.
   int32 milestone = 7;
+
+  // Manual override for Kabuto config (kabuto.json)
+  // Optional
+  string kabuto_config_override = 8;
 }

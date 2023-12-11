@@ -114,6 +114,11 @@ def DoRunSteps(api: RecipeTestApi,
     # this will be changed to using deferred for prod.
     with api.failures.ignore_exceptions():
       kabuto_cmd = ['./tools/kabuto/kabuto', '--gcs', '--no-interactive']
+      # Override local Kabuto config if provided.
+      if properties.kabuto_config_override:
+        kabuto_cmd.append(
+            f"--kabuto-config-override='{properties.kabuto_config_override}'")
+      # Provide input-manifest-branch if relevant.
       if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
         kabuto_cmd.append(
             f'--input-manifest-branch={properties.manifest_branch}')
@@ -159,6 +164,15 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'basic',
       api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  props[
+      'kabuto_config_override'] = '{"build_shader_cache": {"soft_timeout_seconds": 3}}'
+  yield api.test(
+      'kabuto-config-override',
+      api.properties(**props),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()

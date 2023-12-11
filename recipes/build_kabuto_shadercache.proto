@@ -38,4 +38,8 @@ message BuildKabutoShadercacheProperties {
   // specific branches.
   // Optional.
   int32 milestone = 8;
+
+  // Manual override for Kabuto config (kabuto.json)
+  // Optional
+  string kabuto_config_override = 9;
 }

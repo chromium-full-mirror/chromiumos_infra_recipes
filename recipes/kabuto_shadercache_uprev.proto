@@ -23,4 +23,8 @@ message KabutoShadercacheUprevProperties {
   // specific branches.
   // Optional.
   int32 milestone = 4;
+
+  // Manual override for Kabuto config (kabuto.json)
+  // Optional
+  string kabuto_config_override = 5;
 }

@@ -106,6 +106,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
   gerrit_cl_ref = properties.gerrit_cl_ref
   # Default to 1 shard if number is not provided.
   shard_count = 1 if not properties.shard_count else properties.shard_count
+  # Default to no config override
+  kabuto_config_override = None if not properties.kabuto_config_override else properties.kabuto_config_override
   # Get individual build timeouts from properties or use reasonable default
   # An extra hour is added to each default to ensure the orchestrator waits
   # long enough for the child to launch and complete successfully.
@@ -134,6 +136,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
       paygen_input_props['milestone'] = milestone
     if gerrit_cl_ref and api.build_menu.is_staging:
       paygen_input_props['gerrit_cl_ref'] = gerrit_cl_ref
+    if kabuto_config_override:
+      paygen_input_props['kabuto_config_override'] = kabuto_config_override
     # Launch the Kabuto paygen builder.
     paygen_build = _launch_builders(api, bucket, 'kabuto_paygen',
                                     api.build_menu.is_staging, 1,
@@ -159,6 +163,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     shadercache_input_props['milestone'] = milestone
   if gerrit_cl_ref and api.build_menu.is_staging:
     shadercache_input_props['gerrit_cl_ref'] = gerrit_cl_ref
+  if kabuto_config_override:
+    shadercache_input_props['kabuto_config_override'] = kabuto_config_override
 
   ### Build Kabuto shadercaches on sandboxed builders
   shadercache_builds = _launch_builders(api, bucket, 'build_kabuto_shadercache',
@@ -184,6 +190,8 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     uprev_input_props['milestone'] = milestone
   if gerrit_cl_ref and api.build_menu.is_staging:
     uprev_input_props['gerrit_cl_ref'] = gerrit_cl_ref
+  if kabuto_config_override:
+    uprev_input_props['kabuto_config_override'] = kabuto_config_override
 
   ### Uprev the ebuilds with new shadercaches.
   _launch_builders(api, bucket, 'kabuto_shadercache_uprev',
@@ -221,6 +229,15 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'basic',
       api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  props[
+      'kabuto_config_override'] = '{"build_shader_cache": {"soft_timeout_seconds": 3}}'
+  yield api.test(
+      'kabuto-config-override',
+      api.properties(**props),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()

@@ -84,27 +84,29 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
         api.git.fetch(remote)
         api.git.fetch_ref(remote, properties.gerrit_cl_ref)
         api.git.checkout('FETCH_HEAD', force=True)
+    kabuto_cmd = ['./kabuto']
+    # Override local Kabuto config if provided.
+    if properties.kabuto_config_override:
+      kabuto_cmd.append(
+          f"--kabuto-config-override='{properties.kabuto_config_override}'")
+    # --input-manifest-branch is required in Kabuto from M122 onward to
+    # support Spanner metrics. Do not use this flag in earlier releases.
+    if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
+      kabuto_cmd.append(f'--input-manifest-branch={properties.manifest_branch}')
     # Build Mesa and fossilize tools.
     if properties.use_release_build_artifacts:
       # Use artifacts from a CrOS release build.
-      build_fossilize_tools_release_cmd = ['./kabuto']
-      # --input-manifest-branch is required in Kabuto from M122 onward to
-      # support Spanner metrics. Do not use this flag in earlier releases.
-      if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
-        build_fossilize_tools_release_cmd.append(
-            f'--input-manifest-branch={properties.manifest_branch}')
-      build_fossilize_tools_release_cmd.append('build-fossilize-tools-release')
+      kabuto_cmd.append('build-fossilize-tools-release')
       if properties.manifest_branch and properties.milestone < _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
-        build_fossilize_tools_release_cmd.append(
-            f'--manifest-branch={properties.manifest_branch}')
-      api.step('build fossilize-tools', build_fossilize_tools_release_cmd)
+        kabuto_cmd.append(f'--manifest-branch={properties.manifest_branch}')
     elif properties.use_postsubmit_build_artifacts:
       # Use artifacts from a CrOS postsubmit build.
-      api.step('build fossilize-tools',
-               ['./kabuto', 'build-fossilize-tools-postsubmit'])
+      kabuto_cmd.append('build-fossilize-tools-postsubmit')
     else:
       # Default build style, from source.
-      api.step('build fossilize-tools', ['./kabuto', 'build-fossilize-tools'])
+      kabuto_cmd.append('build-fossilize-tools')
+
+    api.step('build fossilize-tools', kabuto_cmd)
 
     # TODO(b/282030070): randomize this to avoid collisions.
     time_now_utc = api.time.utcnow()
@@ -135,6 +137,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'basic',
       api.properties(**good_props),
+  )
+
+  props = good_props.copy()
+  props[
+      'kabuto_config_override'] = '{"build_shader_cache": {"soft_timeout_seconds": 3}}'
+  yield api.test(
+      'kabuto-config-override',
+      api.properties(**props),
+      api.post_process(post_process.DropExpectation),
   )
 
   props = good_props.copy()
