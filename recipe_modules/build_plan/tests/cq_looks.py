@@ -20,12 +20,10 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'recipe_engine/step',
     'build_plan',
     'cros_infra_config',
     'gerrit',
     'git_footers',
-    'orch_menu',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -47,13 +45,12 @@ def RunSteps(api, properties):
   expected_external_sha = properties.expected_external_sha or ORIGINAL_EXTERNAL_SHA
   child_specs = api.cros_infra_config.get_builder_config(
       'cq-orchestrator').orchestrator.child_specs
-  with api.orch_menu.setup_orchestrator():
-    _, new_requests = api.build_plan.get_build_plan(
-        child_specs, True, api.cros_infra_config.gerrit_changes,
-        common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
-                                 host=INTERNAL_HOST_URL),
-        common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
-                                 host=EXTERNAL_HOST_URL))
+  _, new_requests = api.build_plan.get_build_plan(
+      child_specs, True, api.cros_infra_config.gerrit_changes,
+      common_pb2.GitilesCommit(id=ORIGINAL_INTERNAL_SHA,
+                               host=INTERNAL_HOST_URL),
+      common_pb2.GitilesCommit(id=ORIGINAL_EXTERNAL_SHA,
+                               host=EXTERNAL_HOST_URL))
 
   for request in new_requests:
     if request.gitiles_commit.host == INTERNAL_HOST_URL:
@@ -168,6 +165,10 @@ def GenTests(api):
 
   yield api.test(
       'change-incompatible-with-older-snap',
+      api.gerrit.simulated_changes_are_submittable(
+          submittable=False,
+          step_name_prefix='filter builds.looks for green.checking mergability'
+      ),
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
@@ -183,12 +184,6 @@ def GenTests(api):
           [],
           'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
       ),
-      api.step_data(
-          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
-          retcode=1),
-      api.step_data(
-          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git merge',
-          retcode=1),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
           step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
@@ -207,11 +202,10 @@ def GenTests(api):
       ),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.checking mergability.sync to gitiles commit.repo sync'
-      ),
+          'filter builds.looks for green.checking mergability.git checkout'),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
+          'filter builds.looks for green.checking mergability.resetting to original snapshot.git checkout'
       ),
       api.post_process(post_process.DropExpectation),
   )
