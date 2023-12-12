@@ -24,6 +24,7 @@ from PB.chromite.api import observability
 from PB.chromite.api import packages
 from PB.chromite.api import payload
 from PB.chromite.api import portage_explorer
+from PB.chromite.api import relevancy
 from PB.chromite.api import sdk
 from PB.chromite.api import sdk_subtools
 from PB.chromite.api import sysroot
@@ -171,6 +172,9 @@ def RunSteps(api):
       },
       'PortageExplorerService': {
           'RunSpiders': portage_explorer.RunSpidersResponse,
+      },
+      'RelevancyService': {
+          'GetRelevantBuildTargets': relevancy.GetRelevantBuildTargetsResponse,
       },
       'SdkService': {
           'Clean': sdk.CleanResponse,

@@ -613,6 +613,34 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def relevancy_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate responses for RelevancyService."""
+    responses = {}
+    responses['GetRelevantBuildTargets'] = jsonify(
+        build_targets=[
+            {
+                'build_target': {
+                    'name': 'amd64-generic',
+                    'profile': {
+                        'name': 'base',
+                    },
+                },
+                'reason': {
+                    'trigger': {
+                        'path': 'chromite/__init__.py'
+                    },
+                    'build_tool_affected': {
+                        'subtree': {
+                            'path': 'chromite'
+                        },
+                    },
+                },
+            },
+        ],
+    )
+    return responses
+
+  @property
   def sdk_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for SdkService."""
     responses = {}
@@ -798,6 +826,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'PackageService': self.package_service_responses,
         'PayloadService': self.payload_service_responses,
         'PortageExplorerService': self.portage_explorer_service_responses,
+        'RelevancyService': self.relevancy_service_responses,
         'SdkService': self.sdk_service_responses,
         'SdkSubtoolsService': self.sdk_subtools_service_responses,
         'SysrootService': self.sysroot_service_responses,

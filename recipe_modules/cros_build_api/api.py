@@ -186,6 +186,10 @@ class PortageExplorerService(Stub):
   """Stub for PortageExplorerService."""
 
 
+class RelevancyService(Stub):
+  """Stub for RelevancyService."""
+
+
 class SdkService(Stub):
   """Stub for SdkService."""
 
