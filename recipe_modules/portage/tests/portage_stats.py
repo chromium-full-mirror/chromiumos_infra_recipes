@@ -62,6 +62,15 @@ def GenTests(api):
   )
 
   yield api.test(
+      'info-run-parsing',
+      api.properties(
+          TestMetricsInputProperties(
+              step_name='test',
+              bapi_stdout=api.portage.EXAMPLE_INFO_RUN_PARSING,
+              expected=api.portage.EXAMPLE_INFO_RUN_PARSING_EXPECTED)),
+  )
+
+  yield api.test(
       'two-emerge-init-sdk',
       api.properties(
           TestMetricsInputProperties(

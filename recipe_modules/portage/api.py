@@ -7,6 +7,7 @@
 
 from collections import defaultdict
 from datetime import datetime, timedelta
+import os
 import re
 
 from recipe_engine import recipe_api
@@ -45,19 +46,25 @@ class PortageApi(recipe_api.RecipeApi):
     self._START_STATES = ['Emerging binary', 'Emerging']
     self._END_STATES = ['Completed', 'Failed to emerge']
 
-    self._TIME_PART = r'^>>> (?P<time>[\d:\.]+) '
+    self._TIME_PART = r'(?P<time>[\d:\.]+) '
     self._STATE_PART = r'(?P<state>({})) '.format('|'.join(self._START_STATES +
                                                            self._END_STATES))
     self._ORDER_PART = r'(\((?P<job>\d+) of (?P<total>\d+)\) )?'
     self._PACKAGE_PART = r'(?P<category>(\w|-|^\/)+)\/(?P<package>[\w][\w+-]*)-'
     self._VERSION_PART = r'(?P<version>(\d+)((\.\d+)*)([a-z]?)((_(pre|p|beta|alpha|rc)\d*)*)(-r(\d+))?)'
+    self._PORTAGE_PROGRESS_PREFIX = r'^>>> '
 
-    self._DURATION_REGEX = re.compile(self._TIME_PART + self._STATE_PART +
+    self._DURATION_REGEX = re.compile(self._PORTAGE_PROGRESS_PREFIX +
+                                      self._TIME_PART + self._STATE_PART +
                                       self._ORDER_PART + self._PACKAGE_PART +
                                       self._VERSION_PART)
     self._PORTAGE_EMERGE_TYPE_RE = re.compile(
         r'^\[(?P<emerge_type>\w+)[ NSUDrRFfIBb#*~]{1,12}\] ' +
         self._PACKAGE_PART + self._VERSION_PART)
+    self._INFO_RUN_START_RE = re.compile(
+        self._TIME_PART + r'INFO\s+: Running: (?P<command>[\/\w\.]*)')
+    self._INFO_RUN_END_RE = re.compile(
+        self._TIME_PART + r'INFO\s+: Elapsed time \((?P<command>.+)\)')
 
   def publish_emerge_stats(self, step_name: str, step_stdout: str,
                            set_output_prop: bool = False,
@@ -169,6 +176,47 @@ class PortageApi(recipe_api.RecipeApi):
               # can use the same key).
               ready.append(result)
               del seen[key]
+          elif self._INFO_RUN_START_RE.match(line):
+            group_dir = self._INFO_RUN_START_RE.search(line).groupdict()
+            cmd = os.path.basename(group_dir['command'])
+            if cmd == 'sudo':
+              continue
+            seen[cmd].append(group_dir)
+          elif self._INFO_RUN_END_RE.match(line):
+            group_dir = self._INFO_RUN_END_RE.search(line).groupdict()
+            cmd = os.path.basename(group_dir['command'])
+            if cmd not in seen:
+              continue
+            seen[cmd].append(group_dir)
+            if len(seen[cmd]) == 2:
+              similar_list = seen[cmd]
+              start_entry = similar_list[0]
+              end_entry = similar_list[1]
+              start = _parse_time(start_entry['time'])
+              end = _parse_time(end_entry['time'])
+              total_duration = end - start
+
+              result = similar_list[1]
+              result['job'] = '0'
+              result['total'] = '1'
+              result['category'] = 'info_run'
+              result['package'] = cmd
+              result['version'] = '1.0'
+              result['start'] = str(start)
+              result['end'] = str(end)
+              result['duration'] = int(total_duration /
+                                       timedelta(milliseconds=1))
+              result['insert_time'] = str(insert_time)
+              result['emerge_type'] = 'binary'
+              result['bbid'] = self.m.buildbucket.build.id
+              result['bucket'] = self.m.buildbucket.build.builder.bucket
+              result['builder'] = self.m.buildbucket.build.builder.builder
+              result['step_name'] = step_name
+              result.pop('time')
+              result.pop('command')
+              # Add completed result
+              ready.append(result)
+              del seen[cmd]
 
         if seen:
           # TODO(b/266749698): Catch packages that are not outputting emerge

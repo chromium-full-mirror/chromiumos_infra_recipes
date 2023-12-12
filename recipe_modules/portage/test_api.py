@@ -37,3 +37,7 @@ class PortageTestApi(recipe_test_api.RecipeTestApi):
       'example_ignored_emerge_packages.txt', __file__)
   EXAMPLE_IGNORED_EMERGE_PACKAGES_EXPECTED = read_test_file(
       'example_ignored_emerge_packages_expected.json', __file__)
+  EXAMPLE_INFO_RUN_PARSING = read_test_file('example_info_run_parsing.txt',
+                                            __file__)
+  EXAMPLE_INFO_RUN_PARSING_EXPECTED = read_test_file(
+      'example_info_run_parsing_expected.json', __file__)

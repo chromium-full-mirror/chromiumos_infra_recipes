@@ -9433,13 +9433,13 @@ Args:
 
 APIs for CrOS Portage.
 
-#### **class [PortageApi](/recipe_modules/portage/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PortageApi](/recipe_modules/portage/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS Portage steps.
 
-&mdash; **def [initialize](/recipe_modules/portage/api.py#18)(self):**
+&mdash; **def [initialize](/recipe_modules/portage/api.py#19)(self):**
 
-&mdash; **def [publish\_emerge\_stats](/recipe_modules/portage/api.py#62)(self, step_name: str, step_stdout: str, set_output_prop: bool=False, publish_to_bq: bool=False):**
+&mdash; **def [publish\_emerge\_stats](/recipe_modules/portage/api.py#69)(self, step_name: str, step_stdout: str, set_output_prop: bool=False, publish_to_bq: bool=False):**
 
 Reads portage stdout and tries to glean facts about emerge performance.
 

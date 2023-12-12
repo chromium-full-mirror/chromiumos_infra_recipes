@@ -1,0 +1,30 @@
+[
+  {
+    "cmd": [],
+    "name": "adding emerge metrics"
+  },
+  {
+    "cmd": [],
+    "name": "adding emerge metrics.set portage stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@portage_stats@{\"test\": [{\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"sys-apps\", \"duration\": 2053, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 17:40:23.506000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"1\", \"package\": \"baselayout\", \"start\": \"1900-01-01 17:40:21.453000\", \"step_name\": \"test\", \"total\": \"5\", \"version\": \"2.2-r1\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"dev-libs\", \"duration\": 3004, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 17:40:25.499000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"5\", \"package\": \"re2\", \"start\": \"1900-01-01 17:40:22.495000\", \"step_name\": \"test\", \"total\": \"5\", \"version\": \"0.2021.11.01\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"virtual\", \"duration\": 4389, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 17:40:25.852000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"2\", \"package\": \"pkgconfig\", \"start\": \"1900-01-01 17:40:21.463000\", \"step_name\": \"test\", \"total\": \"5\", \"version\": \"2\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"virtual\", \"duration\": 6966, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 17:40:28.438000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"3\", \"package\": \"rust-binaries\", \"start\": \"1900-01-01 17:40:21.472000\", \"step_name\": \"test\", \"total\": \"5\", \"version\": \"1-r6\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"dev-go\", \"duration\": 7950, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 17:40:29.832000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"4\", \"package\": \"go-sys\", \"start\": \"1900-01-01 17:40:21.882000\", \"step_name\": \"test\", \"total\": \"5\", \"version\": \"0.0.1-r6\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"info_run\", \"duration\": 250, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 01:18:41.909000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"0\", \"package\": \"cros_set_lsb_release\", \"start\": \"1900-01-01 01:18:41.659000\", \"step_name\": \"test\", \"total\": \"1\", \"version\": \"1.0\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"info_run\", \"duration\": 1772532, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 01:48:16.684000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"0\", \"package\": \"board_finalize_base_image\", \"start\": \"1900-01-01 01:18:44.152000\", \"step_name\": \"test\", \"total\": \"1\", \"version\": \"1.0\"}, {\"bbid\": 0, \"bucket\": \"\", \"builder\": \"\", \"category\": \"info_run\", \"duration\": 648, \"emerge_type\": \"binary\", \"end\": \"1900-01-01 15:07:38.973000\", \"insert_time\": \"2012-05-14 12:53:21.500000\", \"job\": \"0\", \"package\": \"create_legacy_bootloader_templates.sh\", \"start\": \"1900-01-01 15:07:38.325000\", \"step_name\": \"test\", \"total\": \"1\", \"version\": \"1.0\"}]}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bq",
+      "query",
+      "--use_legacy_sql=false"
+    ],
+    "name": "adding emerge metrics.insert to bq",
+    "stdin": "INSERT `chromeos-bot.portage_stats.prod` (job, total,\n    category, package, version, duration, start, `end`, insert_time, emerge_type,\n    bbid, bucket, builder, step_name)\n    SELECT * FROM UNNEST([(1,\n    5,\n    'sys-apps',\n    'baselayout',\n    '2.2-r1',\n    2053,\n    DATETIME('1900-01-01 17:40:21.453000'),\n    DATETIME('1900-01-01 17:40:23.506000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(5,\n    5,\n    'dev-libs',\n    're2',\n    '0.2021.11.01',\n    3004,\n    DATETIME('1900-01-01 17:40:22.495000'),\n    DATETIME('1900-01-01 17:40:25.499000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(2,\n    5,\n    'virtual',\n    'pkgconfig',\n    '2',\n    4389,\n    DATETIME('1900-01-01 17:40:21.463000'),\n    DATETIME('1900-01-01 17:40:25.852000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(3,\n    5,\n    'virtual',\n    'rust-binaries',\n    '1-r6',\n    6966,\n    DATETIME('1900-01-01 17:40:21.472000'),\n    DATETIME('1900-01-01 17:40:28.438000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(4,\n    5,\n    'dev-go',\n    'go-sys',\n    '0.0.1-r6',\n    7950,\n    DATETIME('1900-01-01 17:40:21.882000'),\n    DATETIME('1900-01-01 17:40:29.832000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(0,\n    1,\n    'info_run',\n    'cros_set_lsb_release',\n    '1.0',\n    250,\n    DATETIME('1900-01-01 01:18:41.659000'),\n    DATETIME('1900-01-01 01:18:41.909000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(0,\n    1,\n    'info_run',\n    'board_finalize_base_image',\n    '1.0',\n    1772532,\n    DATETIME('1900-01-01 01:18:44.152000'),\n    DATETIME('1900-01-01 01:48:16.684000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test'),\n(0,\n    1,\n    'info_run',\n    'create_legacy_bootloader_templates.sh',\n    '1.0',\n    648,\n    DATETIME('1900-01-01 15:07:38.325000'),\n    DATETIME('1900-01-01 15:07:38.973000'),\n    DATETIME('2012-05-14 12:53:21.500000'),\n    'binary',\n    '0',\n    '',\n    '',\n    'test')])",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
