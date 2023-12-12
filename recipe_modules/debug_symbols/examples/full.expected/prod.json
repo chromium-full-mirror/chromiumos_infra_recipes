@@ -160,6 +160,31 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "uploading splitdebug",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@upload logs@@@@",
+      "@@@STEP_LOG_END@upload logs@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
+      "upload",
+      "-gs-path",
+      "gs-test",
+      "-data-type=splitdebug",
+      "-worker-count 90",
+      "-retry-quota 90",
+      "-dry-run=false"
+    ],
+    "name": "uploading splitdebug.run upload_debug_symbols",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

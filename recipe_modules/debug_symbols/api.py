@@ -77,3 +77,25 @@ class DebugSymbols(recipe_api.RecipeApi):
                 stdout=self.m.raw_io.output_text(name='stdout',
                                                  add_output_log=True))
             pres.logs['upload logs'] = step_data.stdout
+
+    with self.m.failures.ignore_exceptions():
+      if not staging:
+        with self.m.step.nest('uploading splitdebug') as pres:
+          # CLI invocation of upload_debug_symbols golang binary.
+          cmd = list(
+              filter(None, [
+                  'upload',
+                  '-gs-path',
+                  gs_path,
+                  '-data-type=splitdebug',
+                  worker_count_param,
+                  retry_quota_param,
+                  staging_param,
+                  dryrun_param,
+              ]))
+          if not staging:
+            step_data = self.m.gobin.call(
+                'upload_debug_symbols', cmd,
+                stdout=self.m.raw_io.output_text(name='stdout',
+                                                 add_output_log=True))
+            pres.logs['upload logs'] = step_data.stdout
