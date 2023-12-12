@@ -16688,8 +16688,8 @@ Recipe for verifying Flexor's functionality. Only intended for use with ChromeOS
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/aa65be9856206448e066d630fe26e50109766649/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/aa65be9856206448e066d630fe26e50109766649/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/aa65be9856206448e066d630fe26e50109766649/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/30d0d5f1f2f78aa7ed067542e73f260fdf349954/recipes/README.recipes.md#recipe_modules-codesearch
-[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/30d0d5f1f2f78aa7ed067542e73f260fdf349954/recipes/README.recipes.md#recipe_modules-docker
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/101cd31593e436126f819062cbef8ec79c99b7b7/recipes/README.recipes.md#recipe_modules-codesearch
+[infra/recipe_modules/docker]: https://chromium.googlesource.com/infra/infra.git/+/101cd31593e436126f819062cbef8ec79c99b7b7/recipes/README.recipes.md#recipe_modules-docker
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8ab71176a60596b02333a695f7c5372f7b572acc/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8ab71176a60596b02333a695f7c5372f7b572acc/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/8ab71176a60596b02333a695f7c5372f7b572acc/README.recipes.md#recipe_modules-bcid_reporter
