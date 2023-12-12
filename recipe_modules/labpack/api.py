@@ -2,6 +2,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""This is the labpack API.
+
+It downloads the lapback CIPD executable to a shared area and manages access to it.
+"""
+
 from google.protobuf import json_format
 from google.protobuf import struct_pb2
 from recipe_engine import recipe_api
@@ -37,6 +42,7 @@ class LabpackCommand(recipe_api.RecipeApi):
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
+    self.run_count = 0
     self.cipd_label = properties.version.cipd_label or DEFAULT_CIPD_LABEL
     self.cipd_package = properties.version.cipd_package or DEFAULT_CIPD_PACKAGE
     self.downloaded_executable_path = None
@@ -97,7 +103,8 @@ class LabpackCommand(recipe_api.RecipeApi):
 
     return out
 
-  def run_labpack(self, labpack_input: LabpackInput, **kwargs) -> StepData:
+  def run_labpack(self, labpack_input: LabpackInput, only_run_once=False,
+                  **kwargs) -> StepData:
     """Run labpack command.
 
     The kwargs are sent along without modification to `easy.step.__call__`.
@@ -105,31 +112,41 @@ class LabpackCommand(recipe_api.RecipeApi):
 
     Args:
       labpack_input: a LabpackInput instance
-      kwargs: a dictionary of the rest of the output to be handed to easy.step.
+      only_run_once: whether to only run once or not
+      kwargs: a dictionary of the rest of the output to be handed to sub_build.
 
     Returns:
-      see step.__call__
+      see step.__call__ or None
     """
-    del labpack_input
+    attempted_run = False
+    try:
+      del labpack_input
 
-    assert 'cmd' not in kwargs, r'keyword argument "cmd" cannot be specified'
-    assert 'stdin_data' not in kwargs, r'keyword argument "stdin_data" cannot be specified'
+      if only_run_once and self.run_count > 0:
+        return None
 
-    if not self.has_downloaded_package():
-      self.ensure_labpack()
+      attempted_run = True
+      assert 'cmd' not in kwargs, r'keyword argument "cmd" cannot be specified'
+      assert 'stdin_data' not in kwargs, r'keyword argument "stdin_data" cannot be specified'
 
-    build = self.get_augmented_build()
+      if not self.has_downloaded_package():
+        self.ensure_labpack()
 
-    out = self.m.step.sub_build(
-        name=kwargs.get('name', 'labpack invocation'),
-        cmd=[self.downloaded_executable_path],
-        build=build,
-        raise_on_failure=False,
-    )
+      build = self.get_augmented_build()
 
-    assert isinstance(out, StepData), 'out unexpectedly has type {}'.format(
-        type(out))
-    return out
+      out = self.m.step.sub_build(
+          name=kwargs.get('name', 'labpack invocation'),
+          cmd=[self.downloaded_executable_path],
+          build=build,
+          raise_on_failure=False,
+      )
+
+      assert isinstance(out, StepData), 'out unexpectedly has type {}'.format(
+          type(out))
+      return out
+    finally:
+      if attempted_run:
+        self.run_count += 1
 
   @staticmethod
   def get_use_ile_de_france(models, common_config):

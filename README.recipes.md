@@ -84,7 +84,7 @@
   * [ipc](#recipe_modules-ipc)
   * [iterutils](#recipe_modules-iterutils)
   * [key_value_store](#recipe_modules-key_value_store) &mdash; Module to interact with key-value store files.
-  * [labpack](#recipe_modules-labpack)
+  * [labpack](#recipe_modules-labpack) &mdash; This is the labpack API.
   * [looks_for_green](#recipe_modules-looks_for_green) &mdash; Functions implementing looks for green.
   * [mass_deploy](#recipe_modules-mass_deploy) &mdash; An API for triggering the mass deploy builder.
   * [metadata](#recipe_modules-metadata) &mdash; API to support metadata generation and wrangling.
@@ -8332,7 +8332,11 @@ Raises:
 [DEPS](/recipe_modules/labpack/__init__.py#7): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [LabpackCommand](/recipe_modules/labpack/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+This is the labpack API.
+
+It downloads the lapback CIPD executable to a shared area and manages access to it.
+
+#### **class [LabpackCommand](/recipe_modules/labpack/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Labpack command is a singleton whose methods invoke the labpack CIPD executable
 
@@ -8342,11 +8346,11 @@ Labpack has the following public attributes:
 
 - downloaded_executable_path: config_types.Path
 
-&emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#48)(step_data, dut_state):**
+&emsp; **@staticmethod**<br>&mdash; **def [convert\_step\_data\_to\_status](/recipe_modules/labpack/api.py#54)(step_data, dut_state):**
 
 Utility method to convert step data into a status like "ready". 
 
-&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#75)(self):**
+&mdash; **def [ensure\_labpack](/recipe_modules/labpack/api.py#81)(self):**
 
 Ensure labpack ensures that labpack exists.
 
@@ -8358,7 +8362,7 @@ Args: No arguments
 
 Returns: Dictionary
 
-&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#161)(self, common_config, dut_state, models=None, hostnames=None):**
+&mdash; **def [execute\_ile\_de\_france](/recipe_modules/labpack/api.py#178)(self, common_config, dut_state, models=None, hostnames=None):**
 
 Whether to use Ile-de-France or not.
 
@@ -8371,29 +8375,29 @@ Args:
 Returns:
   * the outgoing dut_state
 
-&mdash; **def [get\_augmented\_build](/recipe_modules/labpack/api.py#218)(self):**
+&mdash; **def [get\_augmented\_build](/recipe_modules/labpack/api.py#235)(self):**
 
 return a build augmented with fields
 
-&mdash; **def [get\_build](/recipe_modules/labpack/api.py#204)(self):**
+&mdash; **def [get\_build](/recipe_modules/labpack/api.py#221)(self):**
 
 get_build gets a copy of the input build
 
-&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#67)(self):**
+&mdash; **def [get\_cipd\_executable\_name](/recipe_modules/labpack/api.py#73)(self):**
 
 get_cipd_executable_name gets the executable name from the CIPD path
 
-&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#71)(self):**
+&mdash; **def [get\_cipd\_path](/recipe_modules/labpack/api.py#77)(self):**
 
 Get the path of the cipd package.
 
-&mdash; **def [get\_dut\_name](/recipe_modules/labpack/api.py#210)(self):**
+&mdash; **def [get\_dut\_name](/recipe_modules/labpack/api.py#227)(self):**
 
 get the dut name from the swarming bot dimensions
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#44)():**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_ufs\_host](/recipe_modules/labpack/api.py#50)():**
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#134)(models, common_config):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_use\_ile\_de\_france](/recipe_modules/labpack/api.py#151)(models, common_config):**
 
 Whether to use ile de france or not
 
@@ -8404,9 +8408,9 @@ Args:
 Returns:
   bool, whether to use ile de france or not
 
-&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#64)(self):**
+&mdash; **def [has\_downloaded\_package](/recipe_modules/labpack/api.py#70)(self):**
 
-&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#100)(self, labpack_input: LabpackInput, \*\*kwargs):**
+&mdash; **def [run\_labpack](/recipe_modules/labpack/api.py#106)(self, labpack_input: LabpackInput, only_run_once=False, \*\*kwargs):**
 
 Run labpack command.
 
@@ -8415,10 +8419,11 @@ Note that the most important miscellaneous arg is "timeout".
 
 Args:
   labpack_input: a LabpackInput instance
-  kwargs: a dictionary of the rest of the output to be handed to easy.step.
+  only_run_once: whether to only run once or not
+  kwargs: a dictionary of the rest of the output to be handed to sub_build.
 
 Returns:
-  see step.__call__
+  see step.__call__ or None
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

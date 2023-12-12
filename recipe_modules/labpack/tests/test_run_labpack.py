@@ -49,6 +49,13 @@ def RunSteps(api):
                                return_value=build_pb2.Build()):
           _, exn = catch(api.labpack.get_augmented_build)
           assert exn is None, str(exn)
+    with api.step.nest('check running labpack multiple times'):
+      api.labpack.step_count = 0
+      _, _ = catch(api.labpack.run_labpack, LabpackInput(), only_run_once=True)
+      res, exn = catch(api.labpack.run_labpack, LabpackInput(),
+                       only_run_once=True)
+      assert res is None
+      assert exn is None
     test_suite.step_text = 'SUCCESS'
 
 
