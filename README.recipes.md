@@ -770,6 +770,7 @@
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [util:tests/proto_path_to_recipes_path](#recipes-util_tests_proto_path_to_recipes_path)
   * [validate_dirmd](#recipes-validate_dirmd) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
+  * [verify_flexor](#recipes-verify_flexor) &mdash; Recipe for verifying Flexor's functionality.
   * [vmlab:examples/full](#recipes-vmlab_examples_full)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
@@ -16639,6 +16640,14 @@ This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
 files in projects touched by the input CLs.
 
 &mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
+### *recipes* / [verify\_flexor](/recipes/verify_flexor.py)
+
+[DEPS](/recipes/verify_flexor.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for verifying Flexor's functionality. Only intended for use with ChromeOS Flex.
+
+&mdash; **def [RunSteps](/recipes/verify_flexor.py#15)(api):**
 ### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
 
 [DEPS](/recipe_modules/vmlab/examples/full.py#11): [vmlab](#recipe_modules-vmlab), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
