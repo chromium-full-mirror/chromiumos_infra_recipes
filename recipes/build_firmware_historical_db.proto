@@ -1,0 +1,14 @@
+// Copyright 2020 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_firmware_historical_db;
+
+import "chromiumos/common.proto";
+
+message BuildFirmwareHistoricalDbProperties {
+  // Firmware location.  See chromite.api.firmware.
+  chromiumos.FwLocation firmware_location = 1;
+}

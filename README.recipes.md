@@ -175,6 +175,7 @@
   * [build_cq](#recipes-build_cq) &mdash; Recipe for building a BuildTarget image for CQ.
   * [build_factory](#recipes-build_factory) &mdash; Recipe for generating artifacts for Factory builders.
   * [build_firmware](#recipes-build_firmware) &mdash; Recipe that builds and tests firmware.
+  * [build_firmware_historical_db](#recipes-build_firmware_historical_db) &mdash; Recipe that manages Zephyr EC firmware's historical token database.
   * [build_incremental](#recipes-build_incremental) &mdash; Recipe for building a BuildTarget incrementally.
   * [build_informational](#recipes-build_informational) &mdash; Recipe for generating artifacts for Informational builders.
   * [build_kabuto_shadercache](#recipes-build_kabuto_shadercache) &mdash; Recipe for building Borealis shadercache using Kabuto.
@@ -6937,7 +6938,7 @@ The path to the local version file.
 This is the path to the local version file that contains the image
 version that was used to create the local named cache.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [storage\_cp](/recipe_modules/gcloud/api.py#1325)(self, source: str, dest: str, step: str='gcloud storage cp', flags: Optional[List[str]]=None):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [storage\_cp](/recipe_modules/gcloud/api.py#1325)(self, source: str, dest: str, step: str='gcloud storage cp', flags: Optional[List[str]]=None, \*\*kwargs):**
 
 Do a gcloud storage cp.
 
@@ -6946,8 +6947,9 @@ Args:
   dest: destination location to copy.
   step: step name.
   flags: additional command line flags.
+  kwargs: additional arguments.
 
-&mdash; **def [storage\_ls](/recipe_modules/gcloud/api.py#1342)(self, path: str):**
+&mdash; **def [storage\_ls](/recipe_modules/gcloud/api.py#1343)(self, path: str):**
 
 Do a gcloud storage ls.
 
@@ -11796,6 +11798,31 @@ Create directories and files of artifacts needed by Ti50 Tast tests.
 &mdash; **def [RunSteps](/recipes/build_firmware.py#100)(api, properties):**
 
 &mdash; **def [UploadTestResults](/recipes/build_firmware.py#57)(api, location, builder_name):**
+### *recipes* / [build\_firmware\_historical\_db](/recipes/build_firmware_historical_db.py)
+
+[DEPS](/recipes/build_firmware_historical_db.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Recipe that manages Zephyr EC firmware's historical token database.
+
+This recipe builds firmware and merges its unified database with the
+historical database in GCS. This database maintenance runs on a
+24 hour cadence.
+
+&mdash; **def [RunSteps](/recipes/build_firmware_historical_db.py#54)(api, properties):**
+
+&mdash; **def [UpdateHistoricalTokenDatabase](/recipes/build_firmware_historical_db.py#84)(api: RecipeApi, location: common_pb2.FwLocation, uploaded_artifacts: UploadedArtifacts):**
+
+Updates Historical Token Database in GCS
+
+Updates the historical database in GCS using preconditions
+to avoid any race conditions between other builders.
+
+Args:
+  api: RecipesAPI object for dependencies.
+  location: The firmware location.
+  builder_name: Name of builder.
+  uploaded_artifacts: Artifacts uploaded.
 ### *recipes* / [build\_incremental](/recipes/build_incremental.py)
 
 [DEPS](/recipes/build_incremental.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [incremental](#recipe_modules-incremental), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

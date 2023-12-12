@@ -1324,7 +1324,7 @@ class GcloudApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))
   def storage_cp(self, source: str, dest: str, step: str = 'gcloud storage cp',
-                 flags: Optional[List[str]] = None):
+                 flags: Optional[List[str]] = None, **kwargs):
     """Do a gcloud storage cp.
 
     Args:
@@ -1332,12 +1332,13 @@ class GcloudApi(recipe_api.RecipeApi):
       dest: destination location to copy.
       step: step name.
       flags: additional command line flags.
+      kwargs: additional arguments.
     """
     args = ['gcloud', 'storage', 'cp']
     if flags is not None:
       args.extend(flags)
     args.extend([source, dest])
-    self.m.step(step, args)
+    return self.m.step(step, args, **kwargs)
 
   def storage_ls(self, path: str):
     """Do a gcloud storage ls.
