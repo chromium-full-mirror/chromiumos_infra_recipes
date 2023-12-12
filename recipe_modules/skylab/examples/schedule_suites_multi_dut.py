@@ -49,8 +49,10 @@ def GenTests(api):
       api.post_process(
           post_process.LogContains,
           'schedule suites.schedule skylab tests v2.buildbucket.schedule',
-          'request',
-          ['"gmsCorePackage": "latest_stable"', 'secondaryDevices', 'pixel7']),
+          'request', [
+              '"gmsCorePackage": "latest_stable"', 'secondaryDevices', 'pixel7',
+              '"runViaTrv2": true'
+          ]),
       # request should not contain empty values in the oneof list.
       api.post_process(
           post_process.LogDoesNotContain,

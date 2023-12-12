@@ -248,6 +248,8 @@ class SkylabApi(recipe_api.RecipeApi):
         comp_dev = req.params.secondary_devices.add()
         comp_dev.software_attributes.build_target.name = companion.board
         if companion.config.WhichOneof('config') == 'android':
+          # Android provision is only supported by Test Runner v2
+          req.params.run_via_trv2 = True
           if companion.config.android.android_image_version:
             cd_sw_dep_android = comp_dev.software_dependencies.add()
             cd_sw_dep_android.android_image_version = companion.config.android.android_image_version
@@ -342,7 +344,8 @@ class SkylabApi(recipe_api.RecipeApi):
                   "but no container metadata for build target '{}'".format(build_target)
                 continue
               request.params.run_via_cft = True
-              request.params.run_via_trv2 = uht.hw_test.run_via_trv2
+              # Use trv2 when it is required by android companion or configured
+              request.params.run_via_trv2 = request.params.run_via_trv2 or uht.hw_test.run_via_trv2
               request.params.trv2_steps_config.CopyFrom(
                   uht.hw_test.trv2_steps_config)
               request.test_plan.tag_criteria.CopyFrom(uht.hw_test.tag_criteria)

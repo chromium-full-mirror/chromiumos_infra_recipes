@@ -143,6 +143,29 @@ class CrosTestPlanTestApi(recipe_test_api.RecipeTestApi):
     )
 
   @property
+  def multi_dut_no_android_hw_test_unit(self,
+                                        suite_name='multi-dut-cros-suite'):
+    return HwTestUnit(
+        common=self.test_unit_common(),
+        hw_test_cfg=HwTestCfg(
+            hw_test=[
+                HwTestCfg.HwTest(
+                    common=TestSuiteCommon(
+                        display_name='htarget.hw.' + suite_name,
+                        critical={'value': True}),
+                    suite=suite_name,
+                    skylab_board='target',
+                    pool='my skylab pool',
+                    hw_test_suite_type=HwTestCfg.TAST,
+                    companions=[
+                        TestCompanion(board="companiontarget"),
+                    ],
+                ),
+            ],
+        ),
+    )
+
+  @property
   def direct_tast_vm_test_unit(self):
     return TastVmTestUnit(
         common=self.test_unit_common(),

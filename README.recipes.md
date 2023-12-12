@@ -702,6 +702,7 @@
   * [skylab:examples/direct_test_retry](#recipes-skylab_examples_direct_test_retry)
   * [skylab:examples/schedule_suites](#recipes-skylab_examples_schedule_suites)
   * [skylab:examples/schedule_suites_multi_dut](#recipes-skylab_examples_schedule_suites_multi_dut) &mdash; This module tests companions in test plans conversion into CTP request.
+  * [skylab:examples/schedule_suites_multi_dut_no_android](#recipes-skylab_examples_schedule_suites_multi_dut_no_android) &mdash; This module tests companions in test plans conversion into CTP request.
   * [skylab:examples/wait_on_suites](#recipes-skylab_examples_wait_on_suites)
   * [skylab:examples/wait_on_suites_empty_arg](#recipes-skylab_examples_wait_on_suites_empty_arg)
   * [skylab:tests/apply_qs_account_overrides](#recipes-skylab_tests_apply_qs_account_overrides)
@@ -10372,7 +10373,7 @@ Returns:
 
 Override the quota scheduler account at runtime.
 
-&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#488)(self, tasks, timeout):**
+&mdash; **def [wait\_on\_suites](/recipe_modules/skylab/api.py#491)(self, tasks, timeout):**
 
 Wait for the single Skylab multi-request to finish and return the result
 
@@ -15699,6 +15700,14 @@ Verify methods for signing versions.
 This module tests companions in test plans conversion into CTP request.
 
 &mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites_multi_dut.py#25)(api):**
+### *recipes* / [skylab:examples/schedule\_suites\_multi\_dut\_no\_android](/recipe_modules/skylab/examples/schedule_suites_multi_dut_no_android.py)
+
+[DEPS](/recipe_modules/skylab/examples/schedule_suites_multi_dut_no_android.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [metadata](#recipe_modules-metadata), [skylab](#recipe_modules-skylab), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+This module tests companions in test plans conversion into CTP request.
+
+&mdash; **def [RunSteps](/recipe_modules/skylab/examples/schedule_suites_multi_dut_no_android.py#25)(api):**
 ### *recipes* / [skylab:examples/wait\_on\_suites](/recipe_modules/skylab/examples/wait_on_suites.py)
 
 [DEPS](/recipe_modules/skylab/examples/wait_on_suites.py#14): [cros\_test\_plan](#recipe_modules-cros_test_plan), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
