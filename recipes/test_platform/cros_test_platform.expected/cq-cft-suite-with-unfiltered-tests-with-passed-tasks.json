@@ -74,7 +74,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:23Z\"}}"
+      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"2012-05-09T12:53:21Z\"}}"
     ],
     "infra_step": true,
     "name": "find matching builds.buildbucket.search",
@@ -528,7 +528,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@shard seed@{@@@",
-      "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000004@@@",
+      "@@@STEP_LOG_LINE@shard seed@  \"seed\": 1337000003@@@",
       "@@@STEP_LOG_LINE@shard seed@}@@@",
       "@@@STEP_LOG_END@shard seed@@@",
       "@@@STEP_LOG_LINE@foo-suite-shard-0@{@@@",
