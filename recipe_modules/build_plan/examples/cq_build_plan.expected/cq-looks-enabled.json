@@ -1275,7 +1275,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
-      "@@@STEP_LOG_LINE@cq looks log@Found footer to disable looks for green: True. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
@@ -1446,42 +1445,6 @@
   {
     "cmd": [],
     "name": "filter builds.looks for green.check should look for green.check if CL has related changes not included",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.looks for green.check disallow looks for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Found Disallow-Looks-For-Green. Disabling looks for green behavior.@@@",
-      "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: [':Disallow-Looks-For-Green', 'Change-Id: deadbeef', 'a quick description']@@@",
-      "@@@STEP_LOG_END@check disallow looks for green@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Disallow-Looks-For-Green"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.looks for green.check disallow looks for green.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
