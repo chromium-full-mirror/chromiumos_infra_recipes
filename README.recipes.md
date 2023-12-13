@@ -746,6 +746,7 @@
   * [tast_vm](#recipes-tast_vm) &mdash; An experimental recipe for running Tast VM tests without Chroot and ChromeOS checkout, resulting in much faster tests.
   * [test_bazel](#recipes-test_bazel) &mdash; Recipe that runs Bazel tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
+  * [test_flexor](#recipes-test_flexor) &mdash; Recipe for testing Flexor's functionality.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_new_sdk](#recipes-test_new_sdk) &mdash; Recipe that tests a newly built SDK.
   * [test_plan_filtering](#recipes-test_plan_filtering) &mdash; Updates test plan rules to reflect new risk-based rules.
@@ -771,7 +772,6 @@
   * [urls:examples/get_vm_test_link_map](#recipes-urls_examples_get_vm_test_link_map) &mdash; Basic tests for the urls recipe module.
   * [util:tests/proto_path_to_recipes_path](#recipes-util_tests_proto_path_to_recipes_path)
   * [validate_dirmd](#recipes-validate_dirmd) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
-  * [verify_flexor](#recipes-verify_flexor) &mdash; Recipe for verifying Flexor's functionality.
   * [vmlab:examples/full](#recipes-vmlab_examples_full)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
@@ -16031,6 +16031,14 @@ Recipe that tests chromite.
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 &mdash; **def [RunSteps](/recipes/test_chromite.py#27)(api: RecipeApi):**
+### *recipes* / [test\_flexor](/recipes/test_flexor.py)
+
+[DEPS](/recipes/test_flexor.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for testing Flexor's functionality. Only intended for use with ChromeOS Flex.
+
+&mdash; **def [RunSteps](/recipes/test_flexor.py#15)(api):**
 ### *recipes* / [test\_manifest](/recipes/test_manifest.py)
 
 [DEPS](/recipes/test_manifest.py#17): [cros\_branch](#recipe_modules-cros_branch), [cros\_source](#recipe_modules-cros_source), [deferrals](#recipe_modules-deferrals), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16662,14 +16670,6 @@ This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
 files in projects touched by the input CLs.
 
 &mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
-### *recipes* / [verify\_flexor](/recipes/verify_flexor.py)
-
-[DEPS](/recipes/verify_flexor.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-Recipe for verifying Flexor's functionality. Only intended for use with ChromeOS Flex.
-
-&mdash; **def [RunSteps](/recipes/verify_flexor.py#15)(api):**
 ### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
 
 [DEPS](/recipe_modules/vmlab/examples/full.py#11): [vmlab](#recipe_modules-vmlab), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

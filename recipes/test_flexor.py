@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for verifying Flexor's functionality. Only intended for use with ChromeOS Flex."""
+"""Recipe for testing Flexor's functionality. Only intended for use with ChromeOS Flex."""
 
 DEPS = [
     'recipe_engine/step',
