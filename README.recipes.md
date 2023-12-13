@@ -15025,16 +15025,16 @@ Tests for the add_child_build_info_to_output_property function.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/set_child_builds.py#23)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
-[DEPS](/recipes/orchestrator.py#32): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_try](#recipe_modules-cros_try), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/orchestrator.py#32): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [easy](#recipe_modules-easy), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Recipe that schedules child builders and watches for failures.
 
 All builders run against the same source tree.
 
-&mdash; **def [DoRunSteps](/recipes/orchestrator.py#77)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/orchestrator.py#73)(api: RecipeApi):**
 
-&mdash; **def [RunSteps](/recipes/orchestrator.py#59)(api: RecipeApi, properties: OrchestratorProperties):**
+&mdash; **def [RunSteps](/recipes/orchestrator.py#55)(api: RecipeApi, properties: OrchestratorProperties):**
 ### *recipes* / [os\_install\_vm](/recipes/os_install_vm.py)
 
 [DEPS](/recipes/os_install_vm.py#57): [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [tast\_exec](#recipe_modules-tast_exec), [tast\_results](#recipe_modules-tast_results), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -33,22 +33,18 @@ DEPS = [
     'build_menu',
     'checkpoint',
     'cros_artifacts',
-    'cros_infra_config',
     'cros_lkgm',
     'cros_release',
     'cros_source',
     'cros_tags',
-    'cros_test_plan_v2',
     'cros_try',
     'easy',
-    'exonerate',
     'orch_menu',
     'signing',
     'skylab',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
