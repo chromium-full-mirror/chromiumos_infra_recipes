@@ -209,8 +209,8 @@ def DoRunSteps(api: RecipeApi,
       kabuto_cmd = ['./kabuto']
       # Override local Kabuto config if provided.
       if properties.kabuto_config_override:
-        kabuto_cmd.append(
-            f"--kabuto-config-override='{properties.kabuto_config_override}'")
+        kabuto_cmd.append('--kabuto-config-override')
+        kabuto_cmd.append(properties.kabuto_config_override)
       # Provide input-manifest-branch if relevant.
       if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
         kabuto_cmd.append(
@@ -269,6 +269,17 @@ def GenTests(api: RecipeTestApi) -> None:
       'kabuto-config-override',
       api.cros_version.workspace_version('R122-12345.0.0'),
       api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'Upload and uprev',
+          [
+              './kabuto', '--kabuto-config-override',
+              '{"build_shader_cache": {"soft_timeout_seconds": 3}}',
+              '--input-manifest-branch=release-R122-12345.B',
+              'dlc-upload-and-uprev', '--updated-artifacts-path',
+              '[CLEANUP]/tmp_tmp_2'
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
   )
 

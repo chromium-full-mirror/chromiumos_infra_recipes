@@ -87,8 +87,8 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
     kabuto_cmd = ['./kabuto']
     # Override local Kabuto config if provided.
     if properties.kabuto_config_override:
-      kabuto_cmd.append(
-          f"--kabuto-config-override='{properties.kabuto_config_override}'")
+      kabuto_cmd.append('--kabuto-config-override')
+      kabuto_cmd.append(properties.kabuto_config_override)
     # --input-manifest-branch is required in Kabuto from M122 onward to
     # support Spanner metrics. Do not use this flag in earlier releases.
     if properties.manifest_branch and properties.milestone >= _MILESTONE_USES_INPUT_MANIFEST_BRANCH:
@@ -145,6 +145,15 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'kabuto-config-override',
       api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'build fossilize-tools',
+          [
+              './kabuto', '--kabuto-config-override',
+              '{"build_shader_cache": {"soft_timeout_seconds": 3}}',
+              'build-fossilize-tools'
+          ],
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
