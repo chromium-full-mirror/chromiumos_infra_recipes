@@ -585,11 +585,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   f'{suggested_external_id}')
             with self.m.step.nest('checking mergability'):
               try:
+                with self.m.context(cwd=self.m.cros_source.workspace_path):
+                  self.m.cros_source.sync_checkout(chosen_internal)
+                  # This step will throw a StepFailure if changes cannot be applied
+                  # to chosen snapshot.
+                  self.m.workspace_util.apply_changes()
+                # Manifest-internal needs to be sync'ed separately.
+                # It is used by testplannerv1. b/315475873
                 with self.m.context(cwd=internal_manifest.path):
                   self.m.git.checkout(chosen_internal.id, force=True)
-                if not self.m.gerrit.changes_submittable(gerrit_changes):
-                  raise recipe_api.StepFailure(
-                      'Merge conflict detected! Please rebase and retry.')
                 cq_looks_log.append(
                     f'Changes are submittable with internal snapshot {suggested_internal.commit_sha}, external snapshot {suggested_external_id}'
                 )
@@ -603,6 +607,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
                       f'{suggested_external_id}. Falling back to latest '
                       f'internal snapshot {original_internal_id}, external snapshot {original_external_id}'
                   )
+                  with self.m.context(cwd=self.m.cros_source.workspace_path):
+                    self.m.cros_source.sync_checkout(chosen_internal)
                   with self.m.context(cwd=internal_manifest.path):
                     self.m.git.checkout(chosen_internal.id, force=True)
         else:
