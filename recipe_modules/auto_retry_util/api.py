@@ -966,6 +966,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         pres.step_text = 'eligible: no auto-retries yet'
         return True
 
+      # Don't do a second retry if it is a fault-attributed candidate.
+      # TODO(b/307333381): Remove this workaround and configure multi-retry
+      # scenarios in a better way.
+      if EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES in self._experimental_retries[
+          cq_orch.id]:
+        pres.step_text = 'ineligible: experimental fault-attributed candidates not eligible for multi-retry'
+        return False
+
       # If using a constant backoff strategy, retry if it has been
       # constant_backoff_duration since the candidate finished.
       if self._multi_retry_config.HasField('constant_backoff_duration'):

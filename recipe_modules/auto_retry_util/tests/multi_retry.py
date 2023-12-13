@@ -25,6 +25,8 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   builds = [api.buildbucket.build]
+  api.auto_retry_util.experimental_retries[builds[0].id].update(
+      api.properties.get('experimental_retries', []))
   filtered_builds = api.auto_retry_util.filter_retry_candidates(builds)
   expected_filtered_builds = [] if api.properties['filtered_out'] else builds
   api.assertions.assertCountEqual(expected_filtered_builds, filtered_builds)
@@ -225,5 +227,37 @@ def GenTests(api):
           [],
           step_name='filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search'
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'dont-retry-attribution-experiment',
+      candidate_build().build,
+      api.time.seed(20),
+      api.time.step(0),
+      changes_mergeable_test_data,
+      api.properties(
+          filtered_out=True,
+          experimental_retries=['retry-attributed-failures'],
+          **{
+              '$chromeos/auto_retry_util': {
+                  'multi_retry_config': {
+                      'max_retries': 2,
+                      'constant_backoff_duration': '5s'
+                  }
+              }
+          },
+      ),
+      api.buildbucket.simulated_search_results([
+          candidate_build().message
+      ], step_name='filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search'
+                                              ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search',
+          [
+              '-predicate',
+              '{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}'
+          ]),
       api.post_process(post_process.DropExpectation),
   )
