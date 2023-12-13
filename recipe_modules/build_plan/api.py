@@ -331,7 +331,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
 
-        bucket = child_spec.bucket or self.m.buildbucket.build.builder.bucket
+        if child_spec.bucket:
+          bucket = child_spec.bucket
+        elif self.m.led.led_build:
+          bucket = self.m.led.shadowed_bucket
+        else:
+          bucket = self.m.buildbucket.build.builder.bucket
         parent_run_id = None
         can_outlive_parent = True
         if (child_spec.collect_handling !=

@@ -3,12 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Deps and properties for build planning functions."""
+
 from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
     'recipe_engine/cq',
+    'recipe_engine/led',
     'recipe_engine/step',
     'recipe_engine/swarming',
     'chrome',

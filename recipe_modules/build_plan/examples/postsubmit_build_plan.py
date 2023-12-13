@@ -12,6 +12,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'build_plan',
     'cros_infra_config',
 ]
@@ -35,3 +36,11 @@ def GenTests(api):
       'basic',
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='postsubmit-orchestrator'))
+
+  yield api.test(
+      'led-build',
+      api.buildbucket.ci_build(project='chromeos', bucket='staging.shadow',
+                               builder='staging-postsubmit-orchestrator'),
+      api.properties(**{'$recipe_engine/led': {
+          'shadowed_bucket': 'staging',
+      }}))
