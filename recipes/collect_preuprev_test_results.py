@@ -193,6 +193,9 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
     failed_builds = []
+
+    # Get the latest data since the data might be updated after sleep.
+    pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
     for builder in pre_uprev_builders:
       if builder.status == common_pb2.SUCCESS:
         successful_builds.append(
@@ -343,13 +346,19 @@ def GenTests(api: RecipeTestApi):
       build += api.post_check(post_process.DoesNotRun, PUPR_GENERATOR_STEP_NAME)
 
     PREUPREV_STEP_NAME = 'Find pre-uprev tests.buildbucket'
+    PREPARE_RESULT_STEP_NAME = 'Prepare the result message.buildbucket'
     if uprev_test_builds:
       build += api.buildbucket.simulated_search_results(
           uprev_test_builds,
           step_name=PREUPREV_STEP_NAME + '.search',
       )
+      build += api.buildbucket.simulated_search_results(
+          uprev_test_builds,
+          step_name=PREPARE_RESULT_STEP_NAME + '.search',
+      )
     else:
       build += api.post_check(post_process.DoesNotRun, PREUPREV_STEP_NAME)
+      build += api.post_check(post_process.DoesNotRun, PREPARE_RESULT_STEP_NAME)
 
     UPREV_GERRIT_CHANGE_STEP_NAME = 'Find the uprev CL on gerrit'
     if uprev_gerrit_change:

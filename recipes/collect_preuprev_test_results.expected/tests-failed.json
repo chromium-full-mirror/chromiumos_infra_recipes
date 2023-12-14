@@ -1187,6 +1187,41 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "cancellation_markdown,id,output,steps,summary_markdown",
+      "-predicate",
+      "{\"childOf\": \"102\"}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Prepare the result message.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"id\": \"203\", \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Find the uprev CL on gerrit",
     "~followup_annotations": [
