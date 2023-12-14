@@ -577,7 +577,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     if found:
       return {
           'ro_fwid': info.ro_fwid,
-          'rw_fwid': info.ro_fwid,
+          'rw_fwid': info.rw_fwid,
           'kernel_version': info.kernel_version,
           'gsc_ro': info.gsc_ro,
           'gsc_rw': info.gsc_rw
