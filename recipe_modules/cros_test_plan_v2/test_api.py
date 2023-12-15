@@ -67,18 +67,7 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
             host='chrome-internal.googlesource.com',
             project='chromeos/config-internal',
             path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
-        )
-    ])
-
-  # TODO(b/286278022): Remove after incremental rollout to prod is complete
-  @staticmethod
-  def legacy_default_vm_test_plan_betty_arc_r():
-    return SourceTestPlan(test_plan_starlark_files=[
-        TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/legacy_default_vm_betty_arc_r.star',
-        )
+        ),
     ])
 
   @staticmethod

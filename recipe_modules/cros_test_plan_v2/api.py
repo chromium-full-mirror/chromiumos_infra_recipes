@@ -43,29 +43,13 @@ LEGACY_DEFAULT_VM_TEST_PLAN = source_test_plan_pb2.SourceTestPlan.TestPlanStarla
     project='chromeos/config-internal',
     path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
 )
+
 FALLBACK_DEFAULT_SOURCE_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
     test_plan_starlark_files=[
         LEGACY_DEFAULT_TAST_HW_PLAN,
         LEGACY_DEFAULT_AUTOTEST_HW_PLAN,
         LEGACY_DEFAULT_VM_TEST_PLAN,
     ])
-LEGACY_DEFAULT_VM_TEST_PLAN_BETTY_ARC_R = source_test_plan_pb2.SourceTestPlan(
-    test_plan_starlark_files=[
-        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/legacy_default_vm_betty_arc_r.star',
-        )
-    ])
-VM_LAB_TEST_PLAN = source_test_plan_pb2.SourceTestPlan(
-    test_plan_starlark_files=[
-        source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/vmlab_hw.star',
-        )
-    ])
-
 
 @dataclass(frozen=True)
 class StarlarkPackage:
@@ -301,21 +285,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                 .format(host, project))
             if FALLBACK_DEFAULT_SOURCE_TEST_PLAN not in relevant_plans:
               relevant_plans.append(FALLBACK_DEFAULT_SOURCE_TEST_PLAN)
-      # TODO(b/286278022): Remove after incremental rollout to prod is complete
-      legacy_default_vm_test_plan_present = False
-      for p in relevant_plans:
-        for f in p.test_plan_starlark_files:
-          if f == LEGACY_DEFAULT_VM_TEST_PLAN:
-            legacy_default_vm_test_plan_present = True
-            break
-
-      add_vm_lab_test_plan_experiment_present = 'chromeos.build_cq.vmlab_cq' in self.m.cros_infra_config.experiments
-
-      if legacy_default_vm_test_plan_present:
-        if add_vm_lab_test_plan_experiment_present:
-          relevant_plans.append(VM_LAB_TEST_PLAN)
-        else:
-          relevant_plans.append(LEGACY_DEFAULT_VM_TEST_PLAN_BETTY_ARC_R)
       pres.logs['relevant_plans'] = '\n\n,'.join(
           json_format.MessageToJson(p) for p in relevant_plans)
       # De-dupe relevant plans before writing them to a property.
