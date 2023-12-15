@@ -67,16 +67,6 @@ class CrosTestPlanV2TestApi(recipe_test_api.RecipeTestApi):
             host='chrome-internal.googlesource.com',
             project='chromeos/config-internal',
             path='test/plans/v2/ctpv1_compatible/legacy_default_vm.star',
-        ),
-        TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/vmlab_hw.star',
-        ),
-        TestPlanStarlarkFile(
-            host='chrome-internal.googlesource.com',
-            project='chromeos/config-internal',
-            path='test/plans/v2/ctpv1_compatible/vmlab_hw_agnostic.star',
         )
     ])
 

@@ -45,6 +45,9 @@ def RunSteps(api):
       [
           api.cros_test_plan_v2.test_api.fallback_default_source_test_plan(),
           api.cros_test_plan_v2.test_api.fp_source_test_plan(),
+          # TODO(b/286278022): Remove after incremental rollout to prod is complete
+          api.cros_test_plan_v2.test_api
+          .legacy_default_vm_test_plan_betty_arc_r(),
       ],
   )
 
