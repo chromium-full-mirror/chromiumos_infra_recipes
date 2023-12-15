@@ -10,6 +10,7 @@ import contextlib
 from typing import Dict, Generator, List, Optional, Tuple
 import re
 
+from recipe_engine import post_process
 from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
@@ -117,7 +118,7 @@ SKIP_BUILDERS_FOOTER = 'Test-Recipes-Skip-Builder'
 
 @contextlib.contextmanager
 def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
-  """Yields a context where the cwd is the root of the recipes repo.
+  """Yield a context where the cwd is the root of the recipes repo.
 
   Args:
     api: See RunSteps documentation.
@@ -137,9 +138,9 @@ def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
       # won't cache.
       cfg = api.gclient.make_config(
           CACHE_DIR=api.path['cleanup'].join('gclient'))
-      soln = cfg.solutions.add()
-      soln.name = 'src'
-      soln.url = RECIPE_REPO_URL
+      solution = cfg.solutions.add()
+      solution.name = 'src'
+      solution.url = RECIPE_REPO_URL
 
       api.gclient.checkout(gclient_config=cfg)
 
@@ -149,7 +150,7 @@ def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
 
 
 def _apply_gerrit_changes(api: RecipeApi) -> None:
-  """Cherry-picks the gerrit changes for the build into the cwd.
+  """Cherry-pick the gerrit changes for the build into the cwd.
 
   Args:
     api: See RunSteps documentation.
@@ -166,14 +167,30 @@ def _apply_gerrit_changes(api: RecipeApi) -> None:
       api.git.cherry_pick(commit_id, infra_step=False)
 
 
+def _run_recipes_py_tests(api: RecipeApi) -> None:
+  """Make sure `./recipes.py test run` passes.
+
+  Must be run from inside the local recipes checkout.
+
+  Raises:
+    StepFailure: If `./recipes.py test run` fails.
+  """
+  api.step(
+      'run ./recipes.py tests',
+      ['./recipes.py', 'test', 'run'],
+  )
+
+
 def _get_last_successful_build(api: RecipeApi, builder: str) -> build_pb2.Build:
   """Find the most recent successful build for 'builder'.
 
   Args:
     api: See RunSteps documentation.
     builder: The name of the builder to search for.
+
   Returns:
     A Build proto.
+
   Raises:
     A StepFailure if no build is found.
   """
@@ -205,7 +222,7 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
 
   Args:
     api: See RunSteps documentation.
-    verifiers:VerifierRunInfo): Verifiers to consider.
+    verifiers: Verifiers to consider.
     head: The HEAD commit before applying patches.
 
   Returns:
@@ -379,7 +396,8 @@ def _update_skipped_verifiers(
     return verifiers
 
 
-def _analyze_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]):
+def _analyze_results(api: RecipeApi, verifiers: Dict[str,
+                                                     VerifierRunInfo]) -> None:
   """Raise a StepFailure if any led job was unsuccessful.
 
   Args:
@@ -387,7 +405,7 @@ def _analyze_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]):
     verifiers: The verifiers.
 
   Raises:
-    StepFailure
+    StepFailure: If any led job was unsuccessful.
   """
   with api.step.nest('analyze results') as presentation:
     fail_count = 0
@@ -416,7 +434,6 @@ def _analyze_results(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo]):
 
 
 def RunSteps(api: RecipeApi, properties: TestRecipesProperties) -> None:
-  api.step.nest('set up')
   verifier_list = properties.verifiers or DEFAULT_VERIFIERS
   verifiers = OrderedDict(((v.name, VerifierRunInfo(v)) for v in verifier_list))
 
@@ -434,6 +451,7 @@ def RunSteps(api: RecipeApi, properties: TestRecipesProperties) -> None:
   with _checkout_recipes_repo(api):
     head = api.git.head_commit()
     _apply_gerrit_changes(api)
+    _run_recipes_py_tests(api)
     _launch_verifiers(api, verifiers, head)
 
   if any(v.led_launch_result for v in verifiers.values()):
@@ -568,7 +586,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     ], 'collect results.buildbucket.collect')
 
   def try_build(project: str, bucket: str, builder: str) -> TestData:
-    """Return a tryb_build for the recipes repo.
+    """Return a try_build for the recipes repo.
 
     Returns:
       A TestData object.
@@ -849,5 +867,14 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'production-builder',
               'critical': True
           }])),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'recipes-py-test-failure',
+      try_build(project='chromeos', bucket='infra', builder='test-recipes'),
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.step_data('run ./recipes.py tests', retcode=1),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
