@@ -882,7 +882,7 @@ Returns:
   List of modified files.
 ### *recipe_modules* / [auto\_retry\_util](/recipe_modules/auto_retry_util)
 
-[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/auto_retry_util/__init__.py#9): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [exoneration\_util](#recipe_modules-exoneration_util), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [tast\_results](#recipe_modules-tast_results), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Utility function for CQ auto retry.
@@ -940,7 +940,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1517)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1522)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -954,7 +954,7 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1358)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
+&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1363)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
 
 Returns a list of suites that can have their failures attributed.
 
@@ -1001,7 +1001,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1589)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
+&mdash; **def [retry\_build](/recipe_modules/auto_retry_util/api.py#1594)(self, build: build_pb2.Build, retryable_builders: List[str], retryable_test_suites: List[str]):**
 
 Retries build by voting on all of its input changes.
 
@@ -1023,7 +1023,7 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#203)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1163)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1168)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 

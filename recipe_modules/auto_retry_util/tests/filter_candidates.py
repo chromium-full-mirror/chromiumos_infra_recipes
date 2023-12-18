@@ -160,6 +160,15 @@ def GenTests(api):
   )
 
   yield api.test(
+      'defer-error-on-mergeability-check',
+      retryable_build.build,
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats',
+                       _filtered_build_stats(non_mergeable=1)),
+      api.properties(filter_reasons=['non_mergeable']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'opt-out-via-footer',
       retryable_build.build,
       changes_mergeable_test_data,

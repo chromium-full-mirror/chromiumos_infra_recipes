@@ -1009,9 +1009,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         non_mergeable_ids = set()
         for c in cq_orchs:
           for change in c.input.gerrit_changes:
-            if not self.m.gerrit.get_change_mergeable(
-                change.change, change.host, change.patchset):
+            try:
+              if not self.m.gerrit.get_change_mergeable(
+                  change.change, change.host, change.patchset):
+                non_mergeable_ids.add(c.id)
+                break
+            except recipe_api.StepFailure as e:
               non_mergeable_ids.add(c.id)
+              self.m.deferrals.defer_exception(e)
               break
 
         cq_orchs = [c for c in cq_orchs if c.id not in non_mergeable_ids]

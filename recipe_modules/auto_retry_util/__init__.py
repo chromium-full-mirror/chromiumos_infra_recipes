@@ -16,6 +16,7 @@ DEPS = [
     'buildbucket_stats',
     'cros_infra_config',
     'cros_tags',
+    'deferrals',
     'easy',
     'exonerate',
     'exoneration_util',

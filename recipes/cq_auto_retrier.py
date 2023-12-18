@@ -496,6 +496,68 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ), status='FAILURE')
 
   yield api.test(
+      'two-retryable-runs-one-with-exception-during-mergeability-check',
+      api.auto_retry_util.enable_retries(),
+      api.gerrit.set_get_account_id(
+          gerrit_host='chromium-review.googlesource.com',
+          email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
+      api.buildbucket.simulated_search_results(
+          [retryable_build_orch, retryable_test_orch],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          f'performing retries.retry build {retryable_build_orch.id}',
+          gerrit_changes, eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_get_change_mergeable(
+          'filter candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=gerrit_changes[0].change,
+          revision=gerrit_changes[0].patchset,
+          value=True,
+      ),
+      api.step_data(
+          f'filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable',
+          retcode=22),
+      api.step_data(
+          f'filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable (2)',
+          retcode=22),
+      api.step_data(
+          f'filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable (3)',
+          retcode=22),
+      api.step_data(
+          f'filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable (4)',
+          retcode=22),
+      api.step_data(
+          f'filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable (5)',
+          retcode=22),
+      api.post_process(
+          post_process.DoesNotRun,
+          f'performing retries.retry build {retryable_test_orch.id}',
+      ), api.post_process(
+          post_process.MustRun,
+          'set run_properties',
+      ),
+      api.post_process(
+          post_process.StepTextEquals,
+          'performing retries',
+          '1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.',
+      ),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          f"Step('filter candidates.filter out merge conflicts.curl https://chromium-review.googlesource.com/changes/{gerrit_changes_2[0].change}/revisions/{gerrit_changes_2[0].patchset}/mergeable (5)') (retcode: 22)",
+      ), status='FAILURE')
+
+  yield api.test(
       'retryable-test', api.auto_retry_util.enable_retries(),
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
