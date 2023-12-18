@@ -424,6 +424,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
         test_location_base=config.get('test_location_base'),
         location_tags_file=config.get('location_tags_file'),
         sources_file=config.get('sources_file'),
+        sources=config.get('sources'),
         require_build_inv=True,
         exonerate_unexpected_pass=config.get('exonerate_unexpected_pass', True),
         include=config.get('include', False) or (realm != ''),

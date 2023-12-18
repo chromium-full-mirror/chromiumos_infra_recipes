@@ -1002,44 +1002,6 @@
   },
   {
     "cmd": [],
-    "name": "execution steps.original_test.Phosphorus: upload to resultdb.identify sources under test",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "gs://chromeos-image-archive/guybrush-release/R105-14989.97.0/metadata/sources.jsonpb",
-      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:test_runner"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:42",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "execution steps.original_test.Phosphorus: upload to resultdb.identify sources under test.gsutil download metadata/sources.jsonpb",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LINK@sources.jsonpb@https://storage.cloud.google.com/chromeos-image-archive/guybrush-release/R105-14989.97.0/metadata/sources.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "execution steps.original_test.Phosphorus: upload to resultdb.upload chromium test results to rdb",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1115,8 +1077,7 @@
       "@@@STEP_LOG_LINE@config@        \"test_suite\": \"lacros_all_tast_tests\"@@@",
       "@@@STEP_LOG_LINE@config@    },@@@",
       "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/autoserv_test/tast/results/streamed_results.jsonl\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
-      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\"@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
       "@@@STEP_LOG_LINE@config@}@@@",
       "@@@STEP_LOG_END@config@@@"
     ]
@@ -1210,8 +1171,6 @@
       "task_id:dummy-task-id0",
       "-coerce-negative-duration",
       "-exonerate-unexpected-pass",
-      "-sources-file",
-      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
       "--",
       "[START_DIR]/cipd/result_adapter/result_adapter",
       "tast",

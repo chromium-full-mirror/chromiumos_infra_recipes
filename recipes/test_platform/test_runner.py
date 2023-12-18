@@ -1120,12 +1120,6 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
             api, properties, test_metadata, autotest_keyval_file,
             sysinfo_keyvals, cft_is_enabled=False)
 
-      # Capture the code sources which were tested.
-      try:
-        config['sources_file'] = _prepare_resultdb_sources_file(api, properties)
-      except SourcesNotAvailableException:  # pragma: nocover
-        pass
-
       # Upload to rdb using extracted configs.
       api.cros_resultdb.upload(config,
                                step_name='upload chromium test results to rdb')
