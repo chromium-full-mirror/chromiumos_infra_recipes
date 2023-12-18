@@ -4,11 +4,6 @@
 
 """Verify methods for signing status."""
 
-from google.protobuf.json_format import ParseDict
-
-from PB.chromiumos.build_report import BuildReport
-from PB.chromiumos.common import CHANNEL_CANARY
-
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -21,50 +16,55 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-PASSED = BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
-FAILED = BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
+_PASSED = 'passed'
+_FAILED = 'failed'
+_TERMINAL_STATES = [_PASSED, _FAILED]
 
 
 def RunSteps(api: RecipeApi):
-  metadata = ParseDict(api.properties.thaw()['metadata'],
-                       message=BuildReport.SignedBuildMetadata)
-  expected_status = api.properties.thaw()['expected_status']
-
-  status = api.signing_utils.get_signing_status(metadata, local_signing=True)
+  instructions = api.properties['instructions']
+  status = api.signing_utils.get_status_from_instructions(instructions)
+  expected_status = api.properties['expected_status']
   api.assertions.assertEqual(expected_status, status)
-  if expected_status == PASSED:
-    api.assertions.assertTrue(
-        api.signing_utils.signing_succeeded(status, local_signing=True))
-  else:
-    api.assertions.assertFalse(
-        api.signing_utils.signing_succeeded(status, local_signing=True))
+  if expected_status == _PASSED:
+    api.assertions.assertTrue(api.signing_utils.signing_succeeded(instructions))
+    api.assertions.assertTrue(api.signing_utils.is_terminal_status(status))
+  elif expected_status == _FAILED:
+    api.assertions.assertTrue(api.signing_utils.signing_failed(instructions))
+    api.assertions.assertTrue(api.signing_utils.is_terminal_status(status))
 
 
 def GenTests(api: RecipeTestApi):
-  pass_metadata = BuildReport.SignedBuildMetadata(
-      release_directory='/archive_dir/',
-      status=PASSED,
-      board='kukui',
-      channel=CHANNEL_CANARY,
-      keyset='devkeys',
-  )
-
   yield api.test(
-      'passed',
-      api.properties(metadata=pass_metadata, expected_status=PASSED),
+      'empty-instructions',
+      api.properties(instructions={}, expected_status=None),
       api.post_process(post_process.DropExpectation),
   )
 
-  fail_metadata = BuildReport.SignedBuildMetadata(
-      release_directory='/archive_dir/',
-      status=FAILED,
-      board='kukui',
-      channel=CHANNEL_CANARY,
-      keyset='devkeys',
+  yield api.test(
+      'missing-status',
+      api.properties(instructions={'status': {}}, expected_status=None),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
-      'failed',
-      api.properties(metadata=fail_metadata, expected_status=FAILED),
+      'status-failed',
+      api.properties(
+          instructions={
+              'status': {
+                  'status': 'failed',
+                  'details': 'failed for reason foo',
+              }
+          }, expected_status=_FAILED),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'status-succeeded',
+      api.properties(
+          instructions={'status': {
+              'status': 'passed',
+              'details': '',
+          }}, expected_status=_PASSED),
       api.post_process(post_process.DropExpectation),
   )

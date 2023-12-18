@@ -2,18 +2,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Tests for publish_signed_build_metadata."""
-from google.protobuf.json_format import MessageToDict
+"""Tests for publish_signed_builds."""
 
 from PB.chromiumos import build_report as build_report_pb2
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import CHANNEL_CANARY, CHANNEL_DEV
-from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/properties',
     'build_reporting',
 ]
 
@@ -56,16 +53,12 @@ def RunSteps(api):
       )
   ]
 
-  api.build_reporting.publish_signed_build_metadata(signing_results)
+  api.build_reporting.publish_signed_builds(signing_results)
 
 
 def GenTests(api):
   yield api.test(
-      'publish-signed-build-metadata-local-signing',
-      api.properties(**{
-          '$chromeos/signing':
-              MessageToDict(SigningProperties(local_signing=True))
-      }),
+      'publish-signed-builds',
       # Successful signing result.
       api.post_check(post_process.LogContains, 'build status pubsub update (2)',
                      'message', ['CHANNEL_CANARY']),

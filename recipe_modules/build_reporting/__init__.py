@@ -22,7 +22,6 @@ DEPS = [
     'checkpoint',
     'cloud_pubsub',
     'easy',
-    'signing',
     'signing_utils',
     'cros_tags',
 ]
