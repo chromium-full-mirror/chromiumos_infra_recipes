@@ -75,6 +75,7 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
 GSUTIL_TIMEOUT_SECONDS = 30 * 60
 GSUTIL_MAX_RETRY_COUNT = 2
 
+STAGING_KEYSET = 'DevPreMPKeys'
 IMAGE_TYPE_TO_SUFFIX = {
     common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: '.tar.bz2',
     common_pb2.IMAGE_TYPE_BASE: '.tar.xz',
@@ -301,6 +302,11 @@ class SigningApi(recipe_api.RecipeApi):
       build_target = self.m.build_menu.build_target.name
       for config in signing_config.build_target_signing_configs:
         if config.build_target == build_target:
+          # If we're staging, override the keyset to be the staging keyset.
+          if self.m.cros_infra_config.is_staging:
+            for signing_config in config.signing_configs:
+              signing_config.keyset = STAGING_KEYSET
+
           self._signing_config = config
           return self._signing_config
       raise StepFailure(

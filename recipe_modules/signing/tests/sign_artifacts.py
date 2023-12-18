@@ -26,6 +26,7 @@ DEPS = [
     'recipe_engine/properties',
     'build_menu',
     'cros_build_api',
+    'cros_infra_config',
     'signing',
 ]
 
@@ -38,34 +39,35 @@ FAILED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
 def RunSteps(api: RecipeApi):
   # Fetch config.
   config = api.signing.get_config()
+  expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
   expected_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[
           SigningConfig(
               image_type=IMAGE_TYPE_UPDATE_PAYLOAD,
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FACTORY,
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
@@ -77,7 +79,7 @@ def RunSteps(api: RecipeApi):
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
   processed_config, _ = api.signing.setup_signing(sign_types, channels)
-  api.assertions.assertEqual(api.signing.get_paygen_keyset(), 'kukui-foo-bar')
+  api.assertions.assertEqual(api.signing.get_paygen_keyset(), expected_keyset)
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[
@@ -85,7 +87,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_CANARY,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='chromiumos_base_image.tar.xz',
@@ -94,7 +96,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_CANARY,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -103,7 +105,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_CANARY,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
@@ -112,7 +114,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_DEV,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='chromiumos_base_image.tar.xz',
@@ -121,7 +123,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_DEV,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -130,7 +132,7 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_DEV,
               version='1234.56.0',
-              keyset='kukui-foo-bar',
+              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
@@ -268,6 +270,25 @@ def GenTests(api: RecipeTestApi):
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
           ]), api.post_process(post_process.DropExpectation),
       build_target='kukui', builder='kukui-release-main', status='FAILURE')
+
+  yield api.build_menu.test(
+      'staging',
+      api.properties(
+          **{
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(
+                          local_signing=True,
+                          gs_upload_bucket='chromeos-throw-away-bucket'))
+          }),
+      api.cros_build_api.set_api_return('sign artifacts.call BAPI',
+                                        'ImageService/SignImage',
+                                        MessageToJson(sample_response)),
+      # Don't need to repeat the same checks as `basic`.
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='staging-kukui-release-main',
+      status='FAILURE')
 
   yield api.build_menu.test(
       'no-signed-artifacts',
