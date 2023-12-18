@@ -84,4 +84,8 @@ message PaygenOrchestratorProperties {
   // TODO(b/299105459): Remove when all active builders have been switched
   // over (won't be for a while, since we have long living stabilize branches).
   bool use_split_paygen = 19;
+
+  // The keyset to sign payloads with. If unspecified, will fall back to the
+  // legacy `update_signer` keyset.
+  string keyset = 20;
 }

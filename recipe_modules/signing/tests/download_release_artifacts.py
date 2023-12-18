@@ -38,6 +38,10 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(signing_configs, relevant_signing_configs)
   api.assertions.assertEqual(str(archive_dir), '[CLEANUP]/signing-dir_tmp_1')
 
+  # Nothing configured for IMAGE_TYPE_UPDATE_PAYLOAD.
+  with api.assertions.assertRaises(ValueError):
+    _ = api.signing.get_paygen_keyset()
+
 
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(

@@ -12,7 +12,8 @@ from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=un
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
-                                  IMAGE_TYPE_FIRMWARE)
+                                  IMAGE_TYPE_FIRMWARE,
+                                  IMAGE_TYPE_UPDATE_PAYLOAD)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -40,6 +41,10 @@ def RunSteps(api: RecipeApi):
   expected_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[
+          SigningConfig(
+              image_type=IMAGE_TYPE_UPDATE_PAYLOAD,
+              keyset='kukui-foo-bar',
+          ),
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               keyset='kukui-foo-bar',
@@ -72,6 +77,7 @@ def RunSteps(api: RecipeApi):
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
   processed_config, _ = api.signing.setup_signing(sign_types, channels)
+  api.assertions.assertEqual(api.signing.get_paygen_keyset(), 'kukui-foo-bar')
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
       signing_configs=[

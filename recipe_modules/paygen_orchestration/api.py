@@ -146,8 +146,8 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     return match_boards
 
   def get_n2n_requests(self, tgt_artifacts: List[Image], bucket: str,
-                       verify: bool, dryrun: bool,
-                       minios: bool = True) -> List[GenerationRequest]:
+                       verify: bool, dryrun: bool, minios: bool = True,
+                       keyset: str = None) -> List[GenerationRequest]:
     """Generate a N2N testing payloads.
 
     We will examine all the artifacts in tgt artifacts for unsigned
@@ -160,6 +160,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
       minios: Should we generate minios payloads.
+      keyset: The keyset to use for signing, or None.
 
     Returns:
       A list[GenerationRequest] or [].
@@ -176,6 +177,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 verify=verify,
                 dryrun=dryrun,
                 chroot=self.m.cros_sdk.chroot,
+                keyset=keyset,
             ))
         if minios:
           reqs.append(
@@ -187,13 +189,15 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
                   minios=True,
+                  keyset=keyset,
               ))
     return reqs
 
   def get_delta_requests(self, payload_def: PaygenConfig,
                          src_artifacts: List[Image], tgt_artifacts: List[Image],
                          bucket: str, verify: bool, dryrun: bool,
-                         minios: bool = True) -> List[GenerationRequest]:
+                         minios: bool = True,
+                         keyset: str = None) -> List[GenerationRequest]:
     """Examine def, source, and target and return list(GenerationRequests).
 
     If there isn't a matching source and target available, then return [].
@@ -208,6 +212,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
       minios: Should we generate minios payloads.
+      keyset: The keyset to use for signing, or None.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -245,6 +250,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   verify=verify,
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
+                  keyset=keyset,
               ))
           if minios:
             reqs.append(
@@ -256,6 +262,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                     dryrun=dryrun,
                     chroot=self.m.cros_sdk.chroot,
                     minios=True,
+                    keyset=keyset,
                 ))
         elif isinstance(src, UnsignedImage_pb2):
           # We don't create delta paygens for unsigned recovery images.
@@ -269,6 +276,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   verify=verify,
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
+                  keyset=keyset,
               ))
           if minios:
             reqs.append(
@@ -280,6 +288,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                     dryrun=dryrun,
                     chroot=self.m.cros_sdk.chroot,
                     minios=True,
+                    keyset=keyset,
                 ))
         elif isinstance(src, DLCImage_pb2):
           if not self.m.cros_storage.DLCImage.compatible(tgt, src):
@@ -292,12 +301,19 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   verify=verify,
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
+                  keyset=keyset,
               ))
     return reqs
 
-  def get_full_requests(self, tgt_artifacts: List[Image], bucket: str,
-                        verify: bool, dryrun: bool,
-                        minios: bool = True) -> List[GenerationRequest]:
+  def get_full_requests(
+      self,
+      tgt_artifacts: List[Image],
+      bucket: str,
+      verify: bool,
+      dryrun: bool,
+      minios: bool = True,
+      keyset: str = None,
+  ) -> List[GenerationRequest]:
     """Get the configured full requests for a set of artifacts.
 
     Args:
@@ -306,6 +322,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       verify: Should we run payload verification.
       dryrun: Should we not upload resulting artifacts.
       minios: Should we generate minios payloads.
+      keyset: The keyset to use for signing, or None.
 
     Returns:
       A completed list[GenerationRequest] or [].
@@ -321,6 +338,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 verify=verify,
                 dryrun=dryrun,
                 chroot=self.m.cros_sdk.chroot,
+                keyset=keyset,
             ))
         if minios:
           reqs.append(
@@ -332,6 +350,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
                   minios=True,
+                  keyset=keyset,
               ))
       elif isinstance(tgt, UnsignedImage_pb2):
         # We don't create full payloads for unsigned recovery images.
@@ -345,6 +364,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 verify=verify,
                 dryrun=dryrun,
                 chroot=self.m.cros_sdk.chroot,
+                keyset=keyset,
             ))
         if minios:
           reqs.append(
@@ -356,6 +376,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                   dryrun=dryrun,
                   chroot=self.m.cros_sdk.chroot,
                   minios=True,
+                  keyset=keyset,
               ))
       elif isinstance(tgt, DLCImage_pb2):
         reqs.append(
@@ -366,6 +387,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
                 verify=verify,
                 dryrun=dryrun,
                 chroot=self.m.cros_sdk.chroot,
+                keyset=keyset,
             ))
     return reqs
 

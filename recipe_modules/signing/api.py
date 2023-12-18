@@ -41,6 +41,10 @@ SIGNING_CONFIG_FILEPATH = 'board_config/generated/signing_config.textproto'
 SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
   build_target: "kukui"
   signing_configs {
+    image_type: IMAGE_TYPE_UPDATE_PAYLOAD
+    keyset: "kukui-foo-bar"
+  }
+  signing_configs {
     image_type: IMAGE_TYPE_BASE
     keyset: "kukui-foo-bar"
     ensure_no_password: true
@@ -97,6 +101,7 @@ class SigningApi(recipe_api.RecipeApi):
     self._signing_config = None
     self._signing_image = None
     self._gs_upload_bucket = properties.gs_upload_bucket or 'chromeos-throw-away-bucket'
+    self._paygen_keyset = None
 
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
@@ -122,6 +127,18 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def gs_upload_bucket(self) -> str:
     return self._gs_upload_bucket
+
+  def get_paygen_keyset(self) -> str:
+    """Return the keyset for use in paygen.
+
+    Can only be called after setup_signing.
+
+    Raises:
+      ValueError, if there is no keyset configured for paygen.
+    """
+    if not self._paygen_keyset:
+      raise ValueError('no paygen keyset configured')
+    return self._paygen_keyset
 
   # Methods to support the legacy signing fleet flow.
   def wait_for_signing(self, instructions_list: List[str]
@@ -320,6 +337,8 @@ class SigningApi(recipe_api.RecipeApi):
     for signing_config in build_target_config.signing_configs:
       if signing_config.image_type in sign_types:
         relevant_configs.append(signing_config)
+      if signing_config.image_type == common_pb2.IMAGE_TYPE_UPDATE_PAYLOAD:
+        self._paygen_keyset = signing_config.keyset
 
     relevant_configs, archive_dir = self.download_release_artifacts(
         relevant_configs)

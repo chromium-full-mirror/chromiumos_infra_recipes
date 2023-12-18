@@ -3808,7 +3808,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#572)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#573)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3816,7 +3816,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#508)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#509)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3829,7 +3829,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#536)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#537)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3841,7 +3841,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#588)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#589)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3876,11 +3876,11 @@ Args:
   override_qs_account: QS Account to use instead of whatever is configured.
   use_split_paygen: Whether to use the new split paygen flow.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#628)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#629)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#636)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#637)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
@@ -9066,7 +9066,7 @@ API for orchestrating payload generation. Used by paygen_orchestrator.
 
 A module for CrOS-specific paygen orchestration steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#372)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#394)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
 
 Determine which hardware tests need to be run for the given payload.
 
@@ -9116,7 +9116,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#193)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#196)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -9132,11 +9132,12 @@ Args:
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
   minios: Should we generate minios payloads.
+  keyset: The keyset to use for signing, or None.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#298)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
+&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#308)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -9146,11 +9147,12 @@ Args:
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
   minios: Should we generate minios payloads.
+  keyset: The keyset to use for signing, or None.
 
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#148)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#148)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Generate a N2N testing payloads.
 
@@ -9164,6 +9166,7 @@ Args:
   verify: Should we run payload verification.
   dryrun: Should we not upload resulting artifacts.
   minios: Should we generate minios payloads.
+  keyset: The keyset to use for signing, or None.
 
 Returns:
   A list[GenerationRequest] or [].
@@ -9181,7 +9184,7 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#423)(self, paygen_reqs: List[PaygenProperties.PaygenRequest], override_qs_account: Optional[str]=None, paygen_mpa: Optional[bool]=False, use_split_paygen: bool=False):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#445)(self, paygen_reqs: List[PaygenProperties.PaygenRequest], override_qs_account: Optional[str]=None, paygen_mpa: Optional[bool]=False, use_split_paygen: bool=False):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
@@ -10112,11 +10115,11 @@ Validate the caller's service version if they sent one.
 
 Module providing signing functionality.
 
-#### **class [SigningApi](/recipe_modules/signing/api.py#86)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SigningApi](/recipe_modules/signing/api.py#90)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to encapsulate signing operations.
 
-&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#493)(self, presentation: StepPresentation, result_path: Path):**
+&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#512)(self, presentation: StepPresentation, result_path: Path):**
 
 Add the CloudKMS logs to the given step presentation.
 
@@ -10124,7 +10127,7 @@ Args:
   presentation: The step presentation to add logs to.
   result_path: The result_path passed to the signing call.
 
-&mdash; **def [always\_download](/recipe_modules/signing/api.py#342)(self):**
+&mdash; **def [always\_download](/recipe_modules/signing/api.py#361)(self):**
 
 Build artifacts which, if present, are always downloaded
 
@@ -10135,11 +10138,11 @@ Returns:
   path for the archive. The function must take build_target and version
   (including milestone, e.g. 'R99-1234.0.0') as its two args.
 
-&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#372)(self, image_type: common_pb2.ImageType):**
+&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#391)(self, image_type: common_pb2.ImageType):**
 
 Mapping of image type to artifact name.
 
-&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#408)(self, relevant_signing_configs: List[SigningConfig]):**
+&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#427)(self, relevant_signing_configs: List[SigningConfig]):**
 
 Download artifacts so we can support retries with conductor.
 
@@ -10153,11 +10156,20 @@ Returns:
   - relevant_signing_configs with local artifact paths populated.
   - dir containing input artifacts
 
-&mdash; **def [get\_config](/recipe_modules/signing/api.py#268)(self):**
+&mdash; **def [get\_config](/recipe_modules/signing/api.py#285)(self):**
 
 Fetch signing config from the appropriate branch of config-internal.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#209)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
+&mdash; **def [get\_paygen\_keyset](/recipe_modules/signing/api.py#131)(self):**
+
+Return the keyset for use in paygen.
+
+Can only be called after setup_signing.
+
+Raises:
+  ValueError, if there is no keyset configured for paygen.
+
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#226)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
 
 Get the metadata of the signed build.
 
@@ -10170,21 +10182,21 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#389)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#408)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
 
 Download from Google Storage if present.
 
 Returns a list of skipped artifacts.
 
-&emsp; **@property**<br>&mdash; **def [gs\_upload\_bucket](/recipe_modules/signing/api.py#122)(self):**
+&emsp; **@property**<br>&mdash; **def [gs\_upload\_bucket](/recipe_modules/signing/api.py#127)(self):**
 
-&mdash; **def [initialize](/recipe_modules/signing/api.py#101)(self):**
+&mdash; **def [initialize](/recipe_modules/signing/api.py#106)(self):**
 
 Initialize method for setup that needs the modules instantiated.
 
-&emsp; **@property**<br>&mdash; **def [local\_signing](/recipe_modules/signing/api.py#114)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_signing](/recipe_modules/signing/api.py#119)(self):**
 
-&mdash; **def [setup\_signing](/recipe_modules/signing/api.py#301)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
+&mdash; **def [setup\_signing](/recipe_modules/signing/api.py#318)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
 
 Set up the working dir for signing.
 
@@ -10198,25 +10210,25 @@ Returns:
   - signing configs
   - dir containing input artifacts
 
-&mdash; **def [sign\_artifacts](/recipe_modules/signing/api.py#453)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
+&mdash; **def [sign\_artifacts](/recipe_modules/signing/api.py#472)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
 
 Implementation for local signing flow.
 
-&emsp; **@property**<br>&mdash; **def [signing\_docker\_image](/recipe_modules/signing/api.py#118)(self):**
+&emsp; **@property**<br>&mdash; **def [signing\_docker\_image](/recipe_modules/signing/api.py#123)(self):**
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#578)(self, response: SignImageResponse):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#597)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#529)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#548)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#233)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#250)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#127)(self, instructions_list: List[str]):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#144)(self, instructions_list: List[str]):**
 
 Wait for signing to complete for a set of instructions files.
 
@@ -13217,10 +13229,10 @@ Main test logic.
 &mdash; **def [RunSteps](/recipe_modules/cros_release/examples/buildspec.py#32)(api, properties):**
 ### *recipes* / [cros\_release:examples/full](/recipe_modules/cros_release/examples/full.py)
 
-[DEPS](/recipe_modules/cros_release/examples/full.py#20): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_release/examples/full.py#20): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_release](#recipe_modules-cros_release), [git](#recipe_modules-git), [signing](#recipe_modules-signing), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#34)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release/examples/full.py#35)(api):**
 ### *recipes* / [cros\_release:examples/set\_release\_qs\_account](/recipe_modules/cros_release/examples/set_release_qs_account.py)
 
 [DEPS](/recipe_modules/cros_release/examples/set_release_qs_account.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -15646,12 +15658,12 @@ metadata.
 &mdash; **def [RunSteps](/recipe_modules/signing/tests/sequence_error.py#22)(api: RecipeApi):**
 ### *recipes* / [signing:tests/sign\_artifacts](/recipe_modules/signing/tests/sign_artifacts.py)
 
-[DEPS](/recipe_modules/signing/tests/sign_artifacts.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/signing/tests/sign_artifacts.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [signing](#recipe_modules-signing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Tests for sign_artifacts.
 
-&mdash; **def [RunSteps](/recipe_modules/signing/tests/sign_artifacts.py#37)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/signing/tests/sign_artifacts.py#38)(api: RecipeApi):**
 ### *recipes* / [signing\_utils:tests/any\_empty](/recipe_modules/signing_utils/tests/any_empty.py)
 
 [DEPS](/recipe_modules/signing_utils/tests/any_empty.py#11): [signing\_utils](#recipe_modules-signing_utils), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -456,6 +456,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
       if self.m.signing.local_signing:
         paygen_properties['local_signing'] = True
         paygen_properties['docker_image'] = self.m.signing.signing_docker_image
+        paygen_properties['keyset'] = self.m.signing.get_paygen_keyset()
       request = self.m.buildbucket.schedule_request(
           builder=pg_orch_builder,
           bucket=bucket,

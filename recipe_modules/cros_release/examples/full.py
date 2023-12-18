@@ -25,6 +25,7 @@ DEPS = [
     'build_reporting',
     'cros_release',
     'git',
+    'signing',
     'test_util',
 ]
 
@@ -46,16 +47,22 @@ def RunSteps(api):
           )))
   sysroot = Sysroot(build_target=common_pb2.BuildTarget(name='kukui'))
 
-  # Test data for instruction files are defined in
-  # recipe_modules/cros_build_api/test_api.py.
-  _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
-  api.assertions.assertEqual(
-      instructions,
-      [
-          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
-          'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
-      ],
-  )
+  if api.signing.local_signing:
+    release_sign_types = api.cros_release.sign_types
+    channels = api.cros_release.channels
+    _ = api.signing.sign_artifacts(sign_types=release_sign_types,
+                                   channels=channels)
+  else:
+    # Test data for instruction files are defined in
+    # recipe_modules/cros_build_api/test_api.py.
+    _, instructions = api.cros_release.push_and_sign_images(config, sysroot)
+    api.assertions.assertEqual(
+        instructions,
+        [
+            'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-recovery-R100-14493.0.0-grunt.instructions',
+            'gs://chromeos-releases/beta-channel/grunt/14493.0.0/ChromeOS-base-R100-14493.0.0-grunt.instructions',
+        ],
+    )
 
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                      'build_target')
@@ -130,9 +137,6 @@ def GenTests(api):
                       'manifestGsPath':
                           'gs://chromiumos-manifest-versions/buildspecs/99/1234.56.0.xml'
                   }
-              },
-              '$chromeos/signing': {
-                  'local_signing': True,
               },
           }),
       api.post_check(
@@ -248,6 +252,9 @@ def GenTests(api):
               },
               '$chromeos/cros_release':
                   CrosReleaseProperties(paygen_mpa=True),
+              '$chromeos/signing': {
+                  'local_signing': True,
+              },
           }),
       api.buildbucket.simulated_collect_output(
           [successful_paygen_orch],
