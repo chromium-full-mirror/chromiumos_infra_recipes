@@ -426,8 +426,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     for test_unit in hw_test_units:
       filtered_hw_test = []
       for hw_test in test_unit.hw_test_cfg.hw_test:
-        if (hw_test.suite in self._snapshot_hw_test_allowlist and
-            hw_test.common.critical.value is True):
+        # We were also filtering non-critical tests here. But, we
+        # need to test VMLab requests to amd64-generic & reven-vmtest.
+        # TODO(b/314981982): Turn it back on after VMLab is launched on everything.
+        if hw_test.suite in self._snapshot_hw_test_allowlist:
           filtered_hw_test.append(hw_test)
 
       if filtered_hw_test:

@@ -123,6 +123,7 @@ def GenTests(api):
   expected_hw_test_names = [
       'htarget.hw.bvt-cq',
       'htarget.hw.bvt-inline',
+      'htarget.hw.some-suite',
   ]
   expected_tast_vm_test_names = [
       'ttarget.tast.sweet_shard_1_of_2',
