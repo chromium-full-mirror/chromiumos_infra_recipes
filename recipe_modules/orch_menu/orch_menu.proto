@@ -80,4 +80,11 @@ message OrchMenuProperties {
   // See b/293879623 for context.
   // Only used by release builders.
   repeated string retry_allowlist_build_target = 16;
+
+  // If set, only schedules children on the days they're configured to run
+  // as specified by the `run_on` field in the ChildSpec. Otherwise, default
+  // behavior applies.
+  // Primarily inteded for use by release orchestrators, see b/316171866 for
+  // context.
+  bool custom_build_cadence = 17;
 }

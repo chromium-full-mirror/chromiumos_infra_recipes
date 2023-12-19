@@ -27,6 +27,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'recipe_engine/time',
     'checkpoint',
     'cros_source',
     'cros_tags',
@@ -187,6 +188,49 @@ def GenTests(api):
       builder='release-main-orchestrator',
       collect_builds=api.orch_menu.orch_child_builds(
           'release-main-orchestrator', '-release-main')[0],
+      with_manifest_refs=True,
+      with_history=True,
+      sheriff_rotations=['chromeos'],
+      bot_size='medium',
+  )
+
+  # Test custom build cadence feature.
+  yield api.orch_menu.test(
+      'release-orchestrator-custom-build-cadence',
+      data.ctp_normal,
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0')),
+      ),
+      # Seed time to Tuesday, April 25, 2023 9:42:34 AM GMT-06:00.
+      # So the weekday should be '2'.
+      api.time.seed(1682437354),
+      # In test_builder_configs.json, eve-release-main is configured to run
+      # only on even days.
+      api.post_check(post_process.MustRun,
+                     'run builds.schedule new builds.eve-release-main'),
+      # In test_builder_configs.json, kukui-release-main is configured to run
+      # only on odd days.
+      api.post_check(
+          post_process.StepTextContains,
+          'run builds.schedule new builds.kukui-release-main',
+          ['kukui-release-main configured to run on days 1,3,5, today is 2']),
+      input_properties=orch_menu_properties(
+          update_manifest_refs={'test': 'refs/heads/test'},
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True,
+          retry_allowlist_qs_account=['release_high_prio'],
+          retry_allowlist_build_target=['atlas',
+                                        'zork'], custom_build_cadence=True),
+      builder='release-main-orchestrator',
+      collect_builds=[
+          build for build in api.orch_menu.orch_child_builds(
+              'release-main-orchestrator', '-release-main')[0]
+          if build.builder.builder == 'eve-release-main'
+      ],
       with_manifest_refs=True,
       with_history=True,
       sheriff_rotations=['chromeos'],

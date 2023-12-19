@@ -9662,7 +9662,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:24Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2012-05-09T12:53:26Z\"}, \"gerritChanges\": [{\"change\": \"123456\", \"host\": \"chromium-review.googlesource.com\", \"patchset\": \"7\", \"project\": \"project-a\"}]}"
     ],
     "infra_step": true,
     "luci_context": {

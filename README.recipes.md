@@ -8817,11 +8817,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1427)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1449)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1267)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1289)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -8836,7 +8836,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#175)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1469)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1491)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -8917,7 +8917,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1158)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1180)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -8956,11 +8956,11 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#211)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1052)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1074)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1059)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1081)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -14977,10 +14977,10 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/aggregate_metadata.py#30)(api, properties):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/full.py#21): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/orch_menu/examples/full.py#21): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#45)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#46)(api, properties):**
 ### *recipes* / [orch\_menu:examples/wait\_for\_images](/recipe_modules/orch_menu/examples/wait_for_images.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#15): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

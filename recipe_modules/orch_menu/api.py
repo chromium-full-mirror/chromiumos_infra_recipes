@@ -957,15 +957,37 @@ class OrchMenuApi(recipe_api.RecipeApi):
         # Spawn off the child builds in greenlets!
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
           futures = []
+
+          child_specs_dict = {cs.name: cs for cs in child_specs}
+
+          # With .strftime('%w'), Sunday is 0 and Saturday is 6.
+          today = int(self.m.time.utcnow().date().strftime('%w'))
+
           for new_build_request in new_build_requests:
+            builder_name = new_build_request.builder.builder
+
+            # If custom build cadence is enabled, schedule based on which
+            # day of the week it is.
+            if self._properties.custom_build_cadence:
+              child_spec = child_specs_dict[builder_name]
+              # If `run_on` is not set at all, default to daily cadence.
+              if child_spec.run_on and today not in child_spec.run_on:
+                step_text = (
+                    f'{builder_name} configured to run on days '
+                    f'{",".join([str(day) for day in child_spec.run_on])}, '
+                    f'today is {today}')
+                self.m.step.empty(builder_name, step_text=step_text)
+                continue
+
             # Request new builds and add to total existing.
             futures.append(
-                self.m.futures.spawn(
-                    self.m.buildbucket.schedule, [new_build_request],
-                    url_title_fn=self.m.naming.get_build_title,
-                    step_name=new_build_request.builder.builder))
+                self.m.futures.spawn(self.m.buildbucket.schedule,
+                                     [new_build_request],
+                                     url_title_fn=self.m.naming.get_build_title,
+                                     step_name=builder_name))
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
+
           for f in self.m.futures.iwait(futures):
             new_builds += f.result()
 
