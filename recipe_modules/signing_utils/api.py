@@ -45,6 +45,7 @@ InstructionsMetadata = NewType('InstructionsMetadata', Any)
 class SigningUtilsApi(recipe_api.RecipeApi):
   """A module to encapsulate helpers for signing operations."""
 
+  # TODO(b/315495109): Remove instructions methods with legacy signing.
   @staticmethod
   def signing_succeeded(metadata: Dict[str, InstructionsMetadata]) -> bool:
     """Whether the provided metadata contains a successful signing operation.

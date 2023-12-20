@@ -136,6 +136,7 @@ class SigningApi(recipe_api.RecipeApi):
       raise ValueError('no paygen keyset configured')
     return self._paygen_keyset
 
+  # TODO(b/315495109): Remove with legacy signing.
   # Methods to support the legacy signing fleet flow.
   def wait_for_signing(self, instructions_list: List[str]
                       ) -> Dict[str, InstructionsMetadata]:
@@ -243,6 +244,7 @@ class SigningApi(recipe_api.RecipeApi):
 
     return list(instructions_metadata.values())
 
+  # TODO(b/315495109): Remove with legacy signing.
   def verify_signing_success(
       self, instructions_metadata: Dict[str, InstructionsMetadata],
       pres: StepPresentation):

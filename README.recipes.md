@@ -201,7 +201,7 @@
   * [build_reporting:tests/full](#recipes-build_reporting_tests_full)
   * [build_reporting:tests/init_report_from_previous_build](#recipes-build_reporting_tests_init_report_from_previous_build) &mdash; Test init_report_from_previous_build.
   * [build_reporting:tests/publish_dlcs](#recipes-build_reporting_tests_publish_dlcs)
-  * [build_reporting:tests/publish_signing](#recipes-build_reporting_tests_publish_signing) &mdash; Tests for publish_signed_builds.
+  * [build_reporting:tests/publish_signing](#recipes-build_reporting_tests_publish_signing) &mdash; Tests for publish_signed_build_metadata.
   * [build_reporting:tests/publish_to_gs](#recipes-build_reporting_tests_publish_to_gs)
   * [build_reporting:tests/status_reporting](#recipes-build_reporting_tests_status_reporting)
   * [build_sdk](#recipes-build_sdk) &mdash; Recipe that builds a ChromiumOS SDK and cross-compilers.
@@ -1789,7 +1789,7 @@ Returns:
    The slim builder name.
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
-[DEPS](/recipe_modules/build_reporting/__init__.py#13): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [signing\_utils](#recipe_modules-signing_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/build_reporting/__init__.py#13): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [signing](#recipe_modules-signing), [signing\_utils](#recipe_modules-signing_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Contains functions for building and sending build status to a pub/sub topic.
@@ -1868,7 +1868,7 @@ Publish the build's branch.
 Args:
   branch: The branch.
 
-&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#600)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
+&mdash; **def [publish\_build\_artifacts](/recipe_modules/build_reporting/api.py#591)(self, uploaded_artifacts: UploadedArtifacts, artifact_dir: config_types.Path):**
 
 Publish metadata about the specified artifacts(s).
 
@@ -1893,23 +1893,19 @@ Publish the build's channels.
 Args:
   channels: The channels.
 
-&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#582)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
+&mdash; **def [publish\_dlc\_artifacts](/recipe_modules/build_reporting/api.py#573)(self, dlc_artifacts: Dict[(str, Dict[(str, str)])]):**
 
 Publish DLC artifacts to pubsub, including URL and hash.
 
 Args:
   dlc_artifacts: DLC locations in GS and file hashes.
 
-&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#490)(self, signed_build_metadata_list):**
+&mdash; **def [publish\_signed\_build\_metadata](/recipe_modules/build_reporting/api.py#489)(self, signed_build_metadata_list: List[Union[(dict, BuildReport.SignedBuildMetadata)]]):**
 
 Publish metadata about the signed build image(s).
 
 Args:
   signed_build_metadata_list (list[dict]): List of signed build metadata.
-
-&mdash; **def [publish\_signed\_builds](/recipe_modules/build_reporting/api.py#516)(self, signed_builds: List[BuildReport.SignedBuildMetadata]):**
-
-Publish metadata about the signed build(s)).
 
 &mdash; **def [publish\_status](/recipe_modules/build_reporting/api.py#257)(self, status):**
 
@@ -1925,7 +1921,7 @@ Args:
 Return:
   Handle which is used to publish to GS.
 
-&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#564)(self, toolchain_info):**
+&mdash; **def [publish\_toolchain\_info](/recipe_modules/build_reporting/api.py#555)(self, toolchain_info):**
 
 Publish metadata about SDK/toolchain usage.
 
@@ -10145,7 +10141,7 @@ Module providing signing functionality.
 
 A module to encapsulate signing operations.
 
-&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#514)(self, presentation: StepPresentation, result_path: Path):**
+&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#516)(self, presentation: StepPresentation, result_path: Path):**
 
 Add the CloudKMS logs to the given step presentation.
 
@@ -10153,7 +10149,7 @@ Args:
   presentation: The step presentation to add logs to.
   result_path: The result_path passed to the signing call.
 
-&mdash; **def [always\_download](/recipe_modules/signing/api.py#363)(self):**
+&mdash; **def [always\_download](/recipe_modules/signing/api.py#365)(self):**
 
 Build artifacts which, if present, are always downloaded
 
@@ -10164,11 +10160,11 @@ Returns:
   path for the archive. The function must take build_target and version
   (including milestone, e.g. 'R99-1234.0.0') as its two args.
 
-&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#393)(self, image_type: common_pb2.ImageType):**
+&mdash; **def [artifact\_name\_by\_image\_type](/recipe_modules/signing/api.py#395)(self, image_type: common_pb2.ImageType):**
 
 Mapping of image type to artifact name.
 
-&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#429)(self, relevant_signing_configs: List[SigningConfig]):**
+&mdash; **def [download\_release\_artifacts](/recipe_modules/signing/api.py#431)(self, relevant_signing_configs: List[SigningConfig]):**
 
 Download artifacts so we can support retries with conductor.
 
@@ -10182,7 +10178,7 @@ Returns:
   - relevant_signing_configs with local artifact paths populated.
   - dir containing input artifacts
 
-&mdash; **def [get\_config](/recipe_modules/signing/api.py#281)(self):**
+&mdash; **def [get\_config](/recipe_modules/signing/api.py#283)(self):**
 
 Fetch signing config from the appropriate branch of config-internal.
 
@@ -10195,7 +10191,7 @@ Can only be called after setup_signing.
 Raises:
   ValueError, if there is no keyset configured for paygen.
 
-&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#222)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
+&mdash; **def [get\_signed\_build\_metadata](/recipe_modules/signing/api.py#223)(self, instructions_metadata: Dict[(str, InstructionsMetadata)]):**
 
 Get the metadata of the signed build.
 
@@ -10208,7 +10204,7 @@ Args:
 Returns:
   List of signed build metadata dicts (one per signed build image).
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#410)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [gs\_download\_if\_present](/recipe_modules/signing/api.py#412)(self, gs_dir: str, local_dir: str, artifact_names: List[str]):**
 
 Download from Google Storage if present.
 
@@ -10222,7 +10218,7 @@ Initialize method for setup that needs the modules instantiated.
 
 &emsp; **@property**<br>&mdash; **def [local\_signing](/recipe_modules/signing/api.py#115)(self):**
 
-&mdash; **def [setup\_signing](/recipe_modules/signing/api.py#319)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
+&mdash; **def [setup\_signing](/recipe_modules/signing/api.py#321)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
 
 Set up the working dir for signing.
 
@@ -10236,25 +10232,25 @@ Returns:
   - signing configs
   - dir containing input artifacts
 
-&mdash; **def [sign\_artifacts](/recipe_modules/signing/api.py#474)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
+&mdash; **def [sign\_artifacts](/recipe_modules/signing/api.py#476)(self, sign_types: List['common_pb2.ImageType'], channels: List['common_pb2.Channel']):**
 
 Implementation for local signing flow.
 
 &emsp; **@property**<br>&mdash; **def [signing\_docker\_image](/recipe_modules/signing/api.py#119)(self):**
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#599)(self, response: SignImageResponse):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#601)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#550)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#552)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 
-&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#246)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
+&mdash; **def [verify\_signing\_success](/recipe_modules/signing/api.py#248)(self, instructions_metadata: Dict[(str, InstructionsMetadata)], pres: StepPresentation):**
 
 Verifies that the signing operation succeeded.
 
-&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#140)(self, instructions_list: List[str]):**
+&mdash; **def [wait\_for\_signing](/recipe_modules/signing/api.py#141)(self, instructions_list: List[str]):**
 
 Wait for signing to complete for a set of instructions files.
 
@@ -10281,7 +10277,7 @@ Module providing helpers for signing functionality.
 
 A module to encapsulate helpers for signing operations.
 
-&emsp; **@staticmethod**<br>&mdash; **def [any\_empty](/recipe_modules/signing_utils/api.py#107)(instructions_meta: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [any\_empty](/recipe_modules/signing_utils/api.py#108)(instructions_meta: Dict[(str, InstructionsMetadata)]):**
 
 Checks to see if any values in the provided dict are None.
 
@@ -10291,7 +10287,7 @@ Args:
 Returns:
   True if any are None, otherwise false.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing_utils/api.py#92)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_failure](/recipe_modules/signing_utils/api.py#93)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the failure of signing.
 
@@ -10301,13 +10297,13 @@ Args:
 Returns:
   The failure of the signing, or None if not available.
 
-&mdash; **def [get\_keyset\_version\_list](/recipe_modules/signing_utils/api.py#131)(self, archive: signing_pb2.ArchiveArtifacts):**
+&mdash; **def [get\_keyset\_version\_list](/recipe_modules/signing_utils/api.py#132)(self, archive: signing_pb2.ArchiveArtifacts):**
 
-&mdash; **def [get\_milestone\_version](/recipe_modules/signing_utils/api.py#127)(self):**
+&mdash; **def [get\_milestone\_version](/recipe_modules/signing_utils/api.py#128)(self):**
 
-&mdash; **def [get\_platform\_version](/recipe_modules/signing_utils/api.py#123)(self):**
+&mdash; **def [get\_platform\_version](/recipe_modules/signing_utils/api.py#124)(self):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing_utils/api.py#76)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_status\_from\_instructions](/recipe_modules/signing_utils/api.py#77)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Given an instructions file, pull out the status of the signing operation.
 
@@ -10317,9 +10313,9 @@ Args:
 Returns:
   The status of the signing, or None if not available.
 
-&emsp; **@staticmethod**<br>&mdash; **def [is\_terminal\_status](/recipe_modules/signing_utils/api.py#72)(status: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [is\_terminal\_status](/recipe_modules/signing_utils/api.py#73)(status: str):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing_utils/api.py#60)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_failed](/recipe_modules/signing_utils/api.py#61)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a failed signing operation.
 
@@ -10329,7 +10325,7 @@ Args:
 Returns:
   True/False whether the signing failed.
 
-&mdash; **def [signing\_response\_to\_metadata](/recipe_modules/signing_utils/api.py#144)(self, sign_image_response: SignImageResponse):**
+&mdash; **def [signing\_response\_to\_metadata](/recipe_modules/signing_utils/api.py#145)(self, sign_image_response: SignImageResponse):**
 
 Translate signing response to metadata of the signed build.
 
@@ -10341,7 +10337,7 @@ Args:
 Returns:
   List of signed builds (one per signed build image).
 
-&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing_utils/api.py#48)(metadata: Dict[(str, InstructionsMetadata)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [signing\_succeeded](/recipe_modules/signing_utils/api.py#49)(metadata: Dict[(str, InstructionsMetadata)]):**
 
 Whether the provided metadata contains a successful signing operation.
 
@@ -12053,12 +12049,12 @@ Test init_report_from_previous_build.
 &mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_dlcs.py#18)(api):**
 ### *recipes* / [build\_reporting:tests/publish\_signing](/recipe_modules/build_reporting/tests/publish_signing.py)
 
-[DEPS](/recipe_modules/build_reporting/tests/publish_signing.py#13): [build\_reporting](#recipe_modules-build_reporting)
+[DEPS](/recipe_modules/build_reporting/tests/publish_signing.py#15): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-Tests for publish_signed_builds.
+Tests for publish_signed_build_metadata.
 
-&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_signing.py#23)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_reporting/tests/publish_signing.py#26)(api):**
 ### *recipes* / [build\_reporting:tests/publish\_to\_gs](/recipe_modules/build_reporting/tests/publish_to_gs.py)
 
 [DEPS](/recipe_modules/build_reporting/tests/publish_to_gs.py#12): [build\_reporting](#recipe_modules-build_reporting), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
