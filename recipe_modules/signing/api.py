@@ -310,11 +310,9 @@ class SigningApi(recipe_api.RecipeApi):
           f'could not find signing config for build target "{build_target}"')
 
   def _set_fields_for_config(self, config: SigningConfig,
-                             channel: common_pb2.Channel,
-                             version: str) -> SigningConfig:
+                             channel: common_pb2.Channel) -> SigningConfig:
     config = copy.deepcopy(config)
     config.channel = channel
-    config.version = version
     return config
 
   # Public method so we can test it.
@@ -348,18 +346,16 @@ class SigningApi(recipe_api.RecipeApi):
 
     # Create a copy of config for each configured channel.
     channel_configs = []
-    version = self.m.cros_version.version.platform_version
     for channel in channels:
-      # TODO(b/317087812): Don't set `version` at the artifact level.
       channel_configs.extend([
-          self._set_fields_for_config(config, channel, version)
+          self._set_fields_for_config(config, channel)
           for config in relevant_configs
       ])
 
     build_target_config = BuildTargetSigningConfig(
         build_target=build_target_config.build_target,
         keyset=build_target_config.keyset,
-        version=version,
+        version=self.m.cros_version.version.platform_version,
         signing_configs=channel_configs,
     )
     return build_target_config, archive_dir

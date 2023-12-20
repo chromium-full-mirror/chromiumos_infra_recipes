@@ -83,7 +83,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_CANARY,
-              version='1234.56.0',
               keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
@@ -92,7 +91,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_CANARY,
-              version='1234.56.0',
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -100,7 +98,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_CANARY,
-              version='1234.56.0',
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
@@ -108,7 +105,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_DEV,
-              version='1234.56.0',
               keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
@@ -117,7 +113,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_DEV,
-              version='1234.56.0',
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -125,7 +120,6 @@ def RunSteps(api: RecipeApi):
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_DEV,
-              version='1234.56.0',
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
