@@ -40,10 +40,7 @@ CONFIG_INTERNAL_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/co
 SIGNING_CONFIG_FILEPATH = 'board_config/generated/signing_config.textproto'
 SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
   build_target: "kukui"
-  signing_configs {
-    image_type: IMAGE_TYPE_UPDATE_PAYLOAD
-    keyset: "kukui-foo-bar"
-  }
+  keyset: "kukui-foo-bar"
   signing_configs {
     image_type: IMAGE_TYPE_BASE
     keyset: "kukui-foo-bar"
@@ -52,19 +49,17 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
   }
   signing_configs {
     image_type: IMAGE_TYPE_FACTORY
-    keyset: "kukui-foo-bar"
+    keyset: "kukui-foo-bar-factory"
     ensure_no_password: true
     firmware_update: true
   }
   signing_configs {
     image_type: IMAGE_TYPE_FIRMWARE
-    keyset: "kukui-foo-bar"
     ensure_no_password: true
     firmware_update: true
   }
   signing_configs {
     image_type: IMAGE_TYPE_RECOVERY
-    keyset: "kukui-foo-bar"
     ensure_no_password: true
     firmware_update: true
   }
@@ -304,8 +299,10 @@ class SigningApi(recipe_api.RecipeApi):
         if config.build_target == build_target:
           # If we're staging, override the keyset to be the staging keyset.
           if self.m.cros_infra_config.is_staging:
+            config.keyset = STAGING_KEYSET
             for signing_config in config.signing_configs:
-              signing_config.keyset = STAGING_KEYSET
+              if signing_config.keyset:
+                signing_config.keyset = STAGING_KEYSET
 
           self._signing_config = config
           return self._signing_config
@@ -339,12 +336,12 @@ class SigningApi(recipe_api.RecipeApi):
     """
     build_target_config = self.get_config()
 
+    self._paygen_keyset = build_target_config.keyset
+
     relevant_configs = []
     for signing_config in build_target_config.signing_configs:
       if signing_config.image_type in sign_types:
         relevant_configs.append(signing_config)
-      if signing_config.image_type == common_pb2.IMAGE_TYPE_UPDATE_PAYLOAD:
-        self._paygen_keyset = signing_config.keyset
 
     relevant_configs, archive_dir = self.download_release_artifacts(
         relevant_configs)
@@ -353,6 +350,7 @@ class SigningApi(recipe_api.RecipeApi):
     channel_configs = []
     version = self.m.cros_version.version.platform_version
     for channel in channels:
+      # TODO(b/317087812): Don't set `version` at the artifact level.
       channel_configs.extend([
           self._set_fields_for_config(config, channel, version)
           for config in relevant_configs
@@ -360,6 +358,8 @@ class SigningApi(recipe_api.RecipeApi):
 
     build_target_config = BuildTargetSigningConfig(
         build_target=build_target_config.build_target,
+        keyset=build_target_config.keyset,
+        version=version,
         signing_configs=channel_configs,
     )
     return build_target_config, archive_dir

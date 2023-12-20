@@ -12,8 +12,7 @@ from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=un
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
-                                  IMAGE_TYPE_FIRMWARE,
-                                  IMAGE_TYPE_UPDATE_PAYLOAD)
+                                  IMAGE_TYPE_FIRMWARE)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -40,13 +39,11 @@ def RunSteps(api: RecipeApi):
   # Fetch config.
   config = api.signing.get_config()
   expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
+  expected_keyset_factory = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar-factory'
   expected_config = BuildTargetSigningConfig(
       build_target='kukui',
+      keyset=expected_keyset,
       signing_configs=[
-          SigningConfig(
-              image_type=IMAGE_TYPE_UPDATE_PAYLOAD,
-              keyset=expected_keyset,
-          ),
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               keyset=expected_keyset,
@@ -55,19 +52,17 @@ def RunSteps(api: RecipeApi):
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FACTORY,
-              keyset=expected_keyset,
+              keyset=expected_keyset_factory,
               ensure_no_password=True,
               firmware_update=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
           ),
@@ -82,6 +77,8 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(api.signing.get_paygen_keyset(), expected_keyset)
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
+      keyset=expected_keyset,
+      version='1234.56.0',
       signing_configs=[
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
@@ -96,7 +93,6 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_CANARY,
               version='1234.56.0',
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -105,7 +101,6 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_CANARY,
               version='1234.56.0',
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
@@ -123,7 +118,6 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_FIRMWARE,
               channel=CHANNEL_DEV,
               version='1234.56.0',
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
@@ -132,7 +126,6 @@ def RunSteps(api: RecipeApi):
               image_type=IMAGE_TYPE_RECOVERY,
               channel=CHANNEL_DEV,
               version='1234.56.0',
-              keyset=expected_keyset,
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
