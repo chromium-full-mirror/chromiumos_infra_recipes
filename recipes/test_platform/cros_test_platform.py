@@ -429,6 +429,11 @@ def _enumerate_cft_tests(api, requests):
       api.cros_tool_runner.create_file_with_container_metadata(
           r.params.execution_param.container_metadata)
 
+      # We will have to run under the assumption that each request in the
+      # CTP request will only have _either_ one test, or suite
+      # even though the proto allows for both.
+      args = _test_args_from_request(r)
+
       # TODO(b/242007010): Change back to use build_target.
       # See more details in the other comment about b/242007010 in this
       # file.
@@ -461,10 +466,10 @@ def _enumerate_cft_tests(api, requests):
             _upload_filtered_test_cases_async(api, r, removed_test_case_ids)
 
         autotest_invocations = _build_tast_invocations(api, r, test_suites,
-                                                       suite_name)
+                                                       suite_name, args)
       else:
         autotest_invocations = _build_autotest_invocations(
-            test_suites, suite_name)
+            test_suites, suite_name, args)
       if autotest_invocations:
         tagged_responses[t] = EnumerationResponse(
             autotest_invocations=autotest_invocations)
@@ -615,12 +620,14 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       return test_suites, []
 
 
-def _build_tast_invocations(api, request, test_suites, suite_name):
+def _build_tast_invocations(api, request, test_suites, suite_name, args):
   """Creates a list of EnumerationResponse.AutotestInvocation with logic for tast such as bucketing and sharding.
 
   Args:
+    * request: test_platform.Request
     * test_suites: List[test_suite].
     * suite_name: string.
+    * args: string.
 
   Returns: List[EnumerationResponse.AutotestInvocation].
   """
@@ -678,20 +685,23 @@ def _build_tast_invocations(api, request, test_suites, suite_name):
                 max_retries=1,
             ),
             result_keyvals={'suite': suite_name},
+            test_args=args,
         )
         autotest_invocations.append(autotest_invocation)
     return autotest_invocations
 
 
-def _build_autotest_invocations(test_suites, suite_name):
+def _build_autotest_invocations(test_suites, suite_name, args):
   """Creates a list of EnumerationResponse.AutotestInvocation with logic for autotest.
 
   Args:
     * test_suites: List[test_suite].
     * suite_name: string.
+    * args: string.
 
   Returns: List[EnumerationResponse.AutotestInvocation].
   """
+
   autotest_invocations = []
   for test_suite in test_suites:
     for test_case in test_suite.test_cases.test_cases:
@@ -708,7 +718,7 @@ def _build_autotest_invocations(test_suites, suite_name):
               max_retries=1,
           ),
           result_keyvals={'suite': suite_name},
-      )
+          test_args=args)
       autotest_invocations.append(autotest_invocation)
   return autotest_invocations
 
@@ -891,6 +901,26 @@ def _ctr_test_filter(test_suites, board, milestone, dryrun, cfg, bbid=None,
       milestone=milestone, default_enabled=True, bbid=bbid)
   return ctr.CrosToolRunnerPreTestRequest(request=formattedProto,
                                           container_metadata_key=board)
+
+
+def _test_args_from_request(request):
+  """Return the args to be used in the run, set in the request.
+
+  Args:
+    * request: test_platform.Request
+
+  Returns: string
+  """
+
+  # We will always 0 index.
+  # Mostly because the combination of every CTP request is always only 1 test
+  # or suite. Additionally; this is just for short-term support until CTPv2.
+  if request.test_plan.test:
+    if request.test_plan.test[0].autotest.test_args:
+      return request.test_plan.test[0].autotest.test_args  # pragma: nocover
+  elif request.test_plan.suite:
+    return request.test_plan.suite[0].test_args
+  return ''
 
 
 def _ctr_test_suite(request):
