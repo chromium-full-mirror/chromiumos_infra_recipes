@@ -195,9 +195,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     count_skip_for_source_rules = 0
     count_skip_since_already_passed = 0
-    count_skip_wait_on_other_run = 0
     count_skip_noncritical_on_rerun = 0
-    count_scheduled_slim_builds = 0
 
     builder_configs = [
         self.m.cros_infra_config.get_builder_config(b.name) for b in child_specs
@@ -352,9 +350,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         if force_relevant:
           properties.update({'force_relevant_build': True})
 
-        if child_spec.name.endswith('-slim-cq'):
-          count_scheduled_slim_builds += 1
-
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=child_build_snapshot, inherit_buildsets=False,
@@ -370,7 +365,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       # count for display, as they're mentioned in steps above.
       count_total_filtered_builds = (
           count_skip_for_source_rules + count_skip_since_already_passed +
-          count_skip_wait_on_other_run + count_skip_noncritical_on_rerun)
+          count_skip_noncritical_on_rerun)
       presentation.step_text = ('need {} new build{} (filtered {})'.format(
           len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
           count_total_filtered_builds))
@@ -401,11 +396,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
     self.m.easy.set_properties_step(
         build_plan_skip_for_source_rules=count_skip_for_source_rules,
         build_plan_skip_for_already_passed=count_skip_since_already_passed,
-        build_plan_skip_for_wait_on_other_run=count_skip_wait_on_other_run,
         build_plan_skip_for_noncritical_on_rerun=(
             count_skip_noncritical_on_rerun),
         build_plan_new_build_requests=len(new_build_requests),
-        count_scheduled_slim_builds=count_scheduled_slim_builds,
         slim_eligible_run=any(
             x.endswith('slim-cq') for x in necessary_builders))
 

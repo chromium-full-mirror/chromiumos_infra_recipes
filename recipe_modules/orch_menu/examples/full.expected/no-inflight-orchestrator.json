@@ -3187,8 +3187,6 @@
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_already_passed@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_noncritical_on_rerun@0@@@",
       "@@@SET_BUILD_PROPERTY@build_plan_skip_for_source_rules@0@@@",
-      "@@@SET_BUILD_PROPERTY@build_plan_skip_for_wait_on_other_run@0@@@",
-      "@@@SET_BUILD_PROPERTY@count_scheduled_slim_builds@0@@@",
       "@@@SET_BUILD_PROPERTY@slim_eligible_run@false@@@"
     ]
   },
