@@ -488,7 +488,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_build_api.ToolchainService.SetupToolchains(request)
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
-                                            snapshot_commit=None):
+                                            snapshot_commit=None,
+                                            sysroot_archive=None):
     """Setup the sysroot for the builder and determine build relevance.
 
     Args:
@@ -497,6 +498,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       snapshot_commit (GitilesCommit): The snapshot commit to use for getting
         prebuilts metadata, or None to use the commit the builder is
         configured with.
+      sysroot_archive (str): The gs path of a sysroot archive, used to replace
+        the whole sysroot folder.
 
     Returns:
       An object containing:
@@ -519,6 +522,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.sysroot_util.create_sysroot(
           self.build_target, profile, package_indexes=self._package_indexes,
           use_cq_prebuilts=artifacts.use_cq_prebuilts)
+      if sysroot_archive:
+        self.m.sysroot_archive.extract_sysroot_build(self.chroot,
+                                                     self.build_target,
+                                                     sysroot_archive)
 
       # Set the target_versions output property, and upload metatdata.
       # This requires a sysroot for at least the package versions.

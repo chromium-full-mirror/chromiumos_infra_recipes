@@ -1,0 +1,18 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.sysroot_archive.tests;
+
+import "chromiumos/common.proto";
+
+message FindBestArchiveTestProperties {
+  // Board name for sysroot archive.
+  string board_name = 1;
+  // Expected result for find_best_archive.
+  string expected_result = 2;
+  // True if expected result is None.
+  bool expected_none = 3;
+}

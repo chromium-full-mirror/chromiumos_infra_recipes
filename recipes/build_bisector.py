@@ -22,6 +22,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'bot_scaling',
     'build_menu',
     'cros_history',
@@ -48,9 +49,12 @@ def RunSteps(api: RecipeApi,
 
 def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                properties: BuildBisectorProperties) -> Optional[RawResult]:
+  sysroot_archive = api.sysroot_archive.find_best_archive(
+      api.build_menu.build_target)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance(
-      snapshot_commit=properties.snapshot_commit if properties
-      .HasField('snapshot_commit') else None)
+      sysroot_archive=sysroot_archive,
+      snapshot_commit=properties.snapshot_commit
+      if properties.HasField('snapshot_commit') else None)
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was not relevant.')
@@ -230,7 +234,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Enable sysroot archive.
   yield api.build_menu.test(
-      'enable-sysroot-archive',
+      'save-sysroot-archive',
       api.properties(
           **{
               '$chromeos/build_menu': {
@@ -253,7 +257,40 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                   }
               }
           }),
+      api.post_check(post_process.DoesNotRun, 'extract sysroot archive'),
       api.post_check(post_process.MustRun, 'archive sysroot'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      # By default, use Portage as the build orchestrator for all build steps.
+      api.build_menu.assert_step_uses_portage('install packages',
+                                              'SysrootService/InstallPackages'),
+      api.build_menu.assert_step_uses_portage('build images',
+                                              'ImageService/Create'),
+  )
+
+  # Use sysroot archive
+  yield api.build_menu.test(
+      'use-sysroot-archive',
+      api.sysroot_archive.get_gsutil_list_testdata(api),
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'board1'
+                  }
+              },
+              '$chromeos/sysroot_archive': {
+                  'sysroot_enabled': {
+                      'use_sysroot_archive': True,
+                      'gs_bucket': 'foo',
+                      'chromeos_start_version': 'R120-15650.0.0',
+                      'chromeos_end_version': 'R120-15651.0.0',
+                      'chromeos_cl_diff_counts': 310
+                  }
+              }
+          }),
+      api.post_check(post_process.MustRun, 'extract sysroot archive'),
+      api.post_check(post_process.DoesNotRun, 'archive sysroot'),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       # By default, use Portage as the build orchestrator for all build steps.

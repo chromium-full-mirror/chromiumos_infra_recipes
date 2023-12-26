@@ -36,6 +36,7 @@ DEPS = [
     'metadata_json',
     'observability_image_size',
     'src_state',
+    'sysroot_archive',
     'sysroot_util',
     'test_util',
     'urls',

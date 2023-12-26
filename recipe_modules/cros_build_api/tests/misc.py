@@ -196,6 +196,7 @@ def RunSteps(api):
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,
+          'ExtractArchive': sysroot.SysrootExtractArchiveResponse,
           'GenerateArchive': sysroot.SysrootGenerateArchiveResponse,
           'InstallToolchain': sysroot.InstallToolchainResponse,
           'InstallPackages': sysroot.InstallPackagesResponse,

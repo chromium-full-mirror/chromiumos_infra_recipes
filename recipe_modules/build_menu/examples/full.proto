@@ -48,4 +48,7 @@ message FullProperties {
 
   // Whether to call upload_host_prebuilts.
   bool upload_host_prebuilts = 13;
+
+  // GS path for sysroot archive to replace sysroot.
+  string sysroot_archive_gs_path = 14;
 }

@@ -1,0 +1,18 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.sysroot_archive.tests;
+
+import "chromiumos/common.proto";
+
+message ParseArchivePathTestProperties {
+  // Input path feed to parse_archive_path().
+  string input_path = 1;
+  // Expected result of chromeos_version field.
+  string expected_chromeos_version = 2;
+  // Expected result of cl_count field.
+  int32 expected_cl_count = 3;
+}

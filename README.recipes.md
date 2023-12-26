@@ -735,7 +735,10 @@
   * [support:examples/full](#recipes-support_examples_full)
   * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
   * [sync_key_value_store](#recipes-sync_key_value_store) &mdash; Sync values from a source-controlled key-value store to a GS:// file.
+  * [sysroot_archive:examples/extract_sysroot](#recipes-sysroot_archive_examples_extract_sysroot) &mdash; Tests to verify sysroot_archive.
   * [sysroot_archive:examples/full](#recipes-sysroot_archive_examples_full) &mdash; Test codes for sysroot archive API.
+  * [sysroot_archive:tests/find_best_archive](#recipes-sysroot_archive_tests_find_best_archive) &mdash; Tests to verify sysroot_archive.
+  * [sysroot_archive:tests/parse_archive_path](#recipes-sysroot_archive_tests_parse_archive_path) &mdash; Tests to verify sysroot_archive.
   * [sysroot_util:examples/create_sysroot](#recipes-sysroot_util_examples_create_sysroot)
   * [sysroot_util:examples/full](#recipes-sysroot_util_examples_full)
   * [sysroot_util:examples/update_for_artifact_build](#recipes-sysroot_util_examples_update_for_artifact_build)
@@ -1336,7 +1339,7 @@ Returns:
   A list[Path] of symbolicated files written.
 ### *recipe_modules* / [build\_menu](/recipe_modules/build_menu)
 
-[DEPS](/recipe_modules/build_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
+[DEPS](/recipe_modules/build_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [git\_footers](#recipe_modules-git_footers), [metadata](#recipe_modules-metadata), [metadata\_json](#recipe_modules-metadata_json), [observability\_image\_size](#recipe_modules-observability_image_size), [src\_state](#recipe_modules-src_state), [sysroot\_archive](#recipe_modules-sysroot_archive), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/uuid][recipe_engine/recipe_modules/uuid]
 
 
 API providing a menu for build steps
@@ -1350,7 +1353,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#93)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#872)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#879)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1359,14 +1362,14 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#886)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#893)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#614)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#621)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -1375,7 +1378,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#719)(self, config=None, include_version=False):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#726)(self, config=None, include_version=False):**
 
 Build the image and run ebuild tests.
 
@@ -1388,7 +1391,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#674)(self, config=None, include_version=False):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#681)(self, config=None, include_version=False):**
 
 Build the image.
 
@@ -1439,7 +1442,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1020)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1027)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1474,7 +1477,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#571)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#578)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1488,7 +1491,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#83)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#627)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#634)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
 
 Install packages as appropriate.
 
@@ -1513,7 +1516,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#195)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1315)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1322)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1523,7 +1526,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1295)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1302)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1544,7 +1547,7 @@ The GitilesCommit is either passed in by the parent via input property when
 the build was scheduled or can be derived for non-release builders after
 syncing the source.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#734)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#741)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1571,7 +1574,7 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#490)(self, with_sysroot=True, snapshot_commit=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#490)(self, with_sysroot=True, snapshot_commit=None, sysroot_archive=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1581,6 +1584,8 @@ Args:
   snapshot_commit (GitilesCommit): The snapshot commit to use for getting
     prebuilts metadata, or None to use the commit the builder is
     configured with.
+  sysroot_archive (str): The gs path of a sysroot archive, used to replace
+    the whole sysroot folder.
 
 Returns:
   An object containing:
@@ -1640,7 +1645,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#704)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#711)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1649,7 +1654,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#820)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#827)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Upload artifacts from the build.
 
@@ -1675,21 +1680,21 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1256)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1263)(self, config: Optional[BuilderConfig]=None):**
 
 Upload Chrome prebuilts from the build.
 
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1243)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1250)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1274)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1281)(self, config: Optional[BuilderConfig]=None):**
 
 Upload host prebuilts from the build.
 
@@ -1698,7 +1703,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1224)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1231)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1707,7 +1712,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1164)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1171)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
@@ -10731,11 +10736,11 @@ Args:
 
 Sysroot archive functions.
 
-#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#36)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with sysroot archive.
 
-&mdash; **def [archive\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#22)(self, chroot: common_pb2.Chroot, sysroot: Sysroot, build_target: common_pb2.BuildTarget):**
+&mdash; **def [archive\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#191)(self, chroot: common_pb2.Chroot, sysroot: Sysroot, build_target: common_pb2.BuildTarget):**
 
 Archives sysroot into gs bucket.
 
@@ -10746,6 +10751,50 @@ Args:
   chroot: The chroot to use.
   sysroot: The sysroot to use.
   build_target: The build target of the sysroot archive.
+
+&mdash; **def [extract\_best\_archive](/recipe_modules/sysroot_archive/api.py#180)(self, chroot: common_pb2.Chroot, build_target: common_pb2.BuildTarget):**
+
+Finds and extracts the sysroot archive closest to the given version.
+
+Args:
+  chroot: The chroot to use.
+  build_target: build target.
+
+&mdash; **def [extract\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#43)(self, chroot: common_pb2.Chroot, build_target: common_pb2.BuildTarget, sysroot_archive_gs_path: str=''):**
+
+Downloads the provided archive from GS and places it in the sysroot.
+
+Args:
+  chroot: The chroot to use.
+  build_target: The build target of the sysroot archive.
+  sysroot_archive_gs_path: Path of archive to be unarchived.
+
+Raises:
+  StepFailure: The archive does not exist.
+
+&mdash; **def [find\_best\_archive](/recipe_modules/sysroot_archive/api.py#129)(self, build_target: common_pb2.BuildTarget):**
+
+Returns the sysroot archive path closest to the given version.
+
+The function calculates the cl diff count between given CrOS version and
+sysroot archives. And returns an arbitrary sysroot archive with smallest
+cl diff count.
+
+Args:
+  build_target: The build target of the sysroot archive.
+
+Returns:
+  A string indicates the best gs archive path or None if not found.
+
+&mdash; **def [parse\_archive\_path](/recipe_modules/sysroot_archive/api.py#88)(self, gs_path: str):**
+
+Parses the ChromeOS version and cl count of GS archive path.
+
+Args:
+  gs_path: Path of the sysroot archive.
+
+Returns:
+  Parsed ChromeOS version and cl diff count.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
 [DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11786,14 +11835,14 @@ for example:
 &mdash; **def [RunSteps](/recipes/build_android_uprev.py#39)(api: RecipeApi, properties: AndroidUprevProperties):**
 ### *recipes* / [build\_bisector](/recipes/build_bisector.py)
 
-[DEPS](/recipes/build_bisector.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/build_bisector.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
 Recipe for building a BuildTarget image for Bisector.
 
-&mdash; **def [DoRunSteps](/recipes/build_bisector.py#49)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_bisector.py#50)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
 
-&mdash; **def [RunSteps](/recipes/build_bisector.py#37)(api: RecipeApi, properties: BuildBisectorProperties):**
+&mdash; **def [RunSteps](/recipes/build_bisector.py#38)(api: RecipeApi, properties: BuildBisectorProperties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -11976,11 +12025,11 @@ Recipe for modifying images for mass deployment. Intended for use with ChromeOS 
 
 &mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#38)(api, properties):**
 
-&mdash; **def [step\_data\_complete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#97)(api):**
+&mdash; **def [step\_data\_complete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#98)(api):**
 
-&mdash; **def [step\_data\_incomplete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#111)(api):**
+&mdash; **def [step\_data\_incomplete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#112)(api):**
 
-&mdash; **def [step\_data\_no\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#91)(api):**
+&mdash; **def [step\_data\_no\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#92)(api):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_staging.py#15): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -16073,6 +16122,14 @@ In short, this recipe will:
 3.  Prepare updated contents for the destination file.
 4.  Quit early if there are no updates to be made.
 5.  Upload the updated contents to the destination URI.
+### *recipes* / [sysroot\_archive:examples/extract\_sysroot](/recipe_modules/sysroot_archive/examples/extract_sysroot.py)
+
+[DEPS](/recipe_modules/sysroot_archive/examples/extract_sysroot.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_branch](#recipe_modules-cros_branch), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+
+Tests to verify sysroot_archive.extract_sysroot().
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/examples/extract_sysroot.py#25)(api, properties):**
 ### *recipes* / [sysroot\_archive:examples/full](/recipe_modules/sysroot_archive/examples/full.py)
 
 [DEPS](/recipe_modules/sysroot_archive/examples/full.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_branch](#recipe_modules-cros_branch), [cros\_build\_api](#recipe_modules-cros_build_api), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -16081,6 +16138,22 @@ In short, this recipe will:
 Test codes for sysroot archive API.
 
 &mdash; **def [RunSteps](/recipe_modules/sysroot_archive/examples/full.py#23)(api):**
+### *recipes* / [sysroot\_archive:tests/find\_best\_archive](/recipe_modules/sysroot_archive/tests/find_best_archive.py)
+
+[DEPS](/recipe_modules/sysroot_archive/tests/find_best_archive.py#12): [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+
+Tests to verify sysroot_archive.find_best_archive.
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/tests/find_best_archive.py#24)(api, properties):**
+### *recipes* / [sysroot\_archive:tests/parse\_archive\_path](/recipe_modules/sysroot_archive/tests/parse_archive_path.py)
+
+[DEPS](/recipe_modules/sysroot_archive/tests/parse_archive_path.py#12): [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests to verify sysroot_archive.parse_archive_path.
+
+&mdash; **def [RunSteps](/recipe_modules/sysroot_archive/tests/parse_archive_path.py#23)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/create\_sysroot](/recipe_modules/sysroot_util/examples/create_sysroot.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/create_sysroot.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

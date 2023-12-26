@@ -51,7 +51,8 @@ def DoRunSteps(api, config, properties):
   with api.build_menu.setup_workspace_and_chroot(
       cherry_pick_changes=cherry_pick_changes):
     env_info = api.build_menu.setup_sysroot_and_determine_relevance(
-        not properties.no_sysroot)
+        not properties.no_sysroot,
+        sysroot_archive=properties.sysroot_archive_gs_path or None)
     # pylint: disable=protected-access
     api.assertions.assertEqual(properties.forced_relevant,
                                api.build_menu._force_relevant_build)
@@ -745,4 +746,20 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       build_target='amd64-generic',
       cq=True,
+  )
+
+  yield api.build_menu.test(
+      'use-sysroot-archive',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='amd64-generic',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          )
+      ),
+      api.properties(
+          FullProperties(
+              sysroot_archive_gs_path='gs://foo/board1/R120-15650.0.0-abc/sysroot.tar.xz'
+          )),
+      api.post_check(post_process.MustRun, 'extract sysroot archive'),
   )
