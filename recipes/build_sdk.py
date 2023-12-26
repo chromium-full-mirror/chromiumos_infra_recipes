@@ -10,7 +10,7 @@ import dataclasses
 import functools
 import os
 import re
-from typing import Dict, Generator, List, Optional
+from typing import Any, Dict, Generator, Iterable, List, Optional
 
 from google.protobuf import json_format
 
@@ -64,10 +64,15 @@ SDK_ARCH = 'amd64'
 LLVM_NEXT_USE_FLAG = 'llvm-next'
 
 # Google storage buckets for uploads: i.e., what comes after 'gs://'.
-# Both of these are for the production builder. The staging builder uploads to
-# staging buckets, which are identical but with a 'staging-' prefix.
+# Both of these are for the production builder.
+# The staging builders and the llvm-next builders upload to staging buckets,
+# which are identical but with a 'staging-' prefix.
 SDK_BUCKET = 'chromiumos-sdk'
 PREBUILTS_BUCKET = 'chromeos-prebuilt'
+
+# DEFAULT_VERSION is a parsing of the buildbucket API's default start_time.
+# Unless overridden, test cases will create SDKs with this version.
+DEFAULT_VERSION = '1970.01.01.000000'
 
 
 def RunSteps(
@@ -420,13 +425,19 @@ class BuildSDKRun:
     The staging builder deliberately doesn't have write access to most buckets.
     Thus, the staging builder should upload to staging buckets instead.
 
+    Likewise, the llvm-next builder creates SDKs and prebuilts that provide a
+    useful signal for a short time, but shouldn't actually be used in
+    production. It should upload to the staging buckets too, to keep the prod
+    bucket clean and to take advantage of the staging buckets' shorter artifact
+    retention policy.
+
     Args:
       prod_bucket: The bucket to return if this is a prod builder.
 
     Returns:
       A bucket name (without the gs:// prefix).
     """
-    if self.m.build_menu.is_staging:
+    if self.m.build_menu.is_staging or self.properties.use_llvm_next:
       return f'staging-{prod_bucket}'
     return prod_bucket
 
@@ -550,14 +561,103 @@ class BuildSDKRun:
             f'cros-sdk-{self.version}.tar.xz')
 
 
-def GenTests(api: recipe_test_api.RecipeTestApi):
+def _assert_uploads_to_buckets(
+    api: recipe_test_api.RecipeTestApi,
+    *,
+    staging: bool,
+    sdk_version: str = DEFAULT_VERSION,
+    toolchain_architectures: Iterable[str] = ('foo', 'bar'),
+) -> List[recipe_test_api.TestData]:
+  """Assert that all upload steps use the right buckets (staging or prod).
+
+  Sample usage:
+    yield api.test(
+        'my-prod-builder',
+        *_asserts_uploads_to_buckets(staging=False),
+    )
+
+  Args:
+    api: The recipe test API passed into GenTests.
+    staging: True if the test case should upload to staging buckets. False if
+      it should upload to prod buckets.
+    sdk_version: The SDK version that the test is expected to create.
+    toolchain_architectures: The toolchain architectures that the builder is
+      expected to upload. Note: The default value of ("foo", "bar") comes from
+      the sample response for SdkService/BuildSdkToolchain, defined in
+      recipe_modules/cros_build_api/test_api.py.
+
+  Returns:
+    An list of test data that can be inserted into a test case.
+  """
+  prefix = 'staging-' if staging else ''
+  post_checks: List[recipe_test_api.TestData] = []
+  post_checks.append(
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload prebuilts.upload host prebuilts.gsutil upload', [
+              f'gs://{prefix}chromeos-prebuilt/host/amd64/amd64-host/chroot-{sdk_version}/packages'
+          ]))
+  post_checks.append(
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload prebuilts.upload target prebuilts.gsutil upload', [
+              f'gs://{prefix}chromeos-prebuilt/board/amd64-host/chroot-{sdk_version}/packages'
+          ]))
+  year, month, _ = sdk_version.split('.', 2)
+  for arch in toolchain_architectures:
+    post_checks.append(
+        api.post_check(
+            post_process.StepCommandContains,
+            f'upload prebuilts.upload sdk toolchain tarballs.upload {arch}.tar.xz.gsutil upload',
+            [
+                f'gs://{prefix}chromiumos-sdk/{year}/{month}/{arch}-{sdk_version}.tar.xz'
+            ]))
+  post_checks.append(
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
+          [f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.xz']))
+  post_checks.append(
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
+              f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.xz.Manifest'
+          ]))
+  post_checks.append(
+      api.post_check(
+          (post_process.StepCommandDoesNotContain
+           if staging else post_process.StepCommandContains),
+          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
+          ['-a']),
+  )
+  return post_checks
+
+
+def _assert_uploads_to_staging_buckets(
+    api: recipe_test_api.RecipeTestApi,
+    **kwargs: Any,
+) -> List[recipe_test_api.TestData]:
+  """Assert that all upload steps use the staging buckets."""
+  assert 'staging' not in kwargs
+  return _assert_uploads_to_buckets(api, staging=True, **kwargs)
+
+
+def _assert_uploads_to_prod_buckets(
+    api: recipe_test_api.RecipeTestApi,
+    **kwargs: Any,
+) -> List[recipe_test_api.TestData]:
+  """Assert that all upload steps use the prod buckets."""
+  assert 'staging' not in kwargs
+  return _assert_uploads_to_buckets(api, staging=False, **kwargs)
+
+
+def GenTests(
+    api: recipe_test_api.RecipeTestApi
+) -> Generator[recipe_test_api.TestData, None, None]:
   # RE_GSUTIL is a regex that looks for a path ending in 'gsutil.py'.
   # This is useful for post_process.StepCommandContains, since we don't really
   # care about the full path to gsutil.py.
   RE_GSUTIL = re.compile(r'gsutil\.py$')
-
-  # DEFAULT_VERSION is a parsing of the buildbucket API's default start_time.
-  DEFAULT_VERSION = '1970.01.01.000000'
 
   yield api.test(
       'basic',
@@ -596,15 +696,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload',
           [RE_GSUTIL]),
-      # For at least one of the gsutil upload commands (don't need all of them),
-      # check that we're not uploading to a staging/ path.
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload', [
-              RE_GSUTIL, '----', 'cp', '-a', 'public-read',
-              '[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz',
-              'gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz'
-          ]),
+      *_assert_uploads_to_prod_buckets(api),
       # Prod builder should run prod PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
@@ -620,6 +712,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.test(
       'llvm-next',
       api.properties(use_llvm_next=True),
+      *_assert_uploads_to_staging_buckets(api),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkToolchain'),
       api.post_check(post_process.LogContains,
@@ -633,38 +726,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
   yield api.build_menu.test(
       'staging',
       api.properties(launch_pupr=True),
-      # These steps should all upload to staging buckets.
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload prebuilts.upload host prebuilts.gsutil upload', [
-              'gs://staging-chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages'
-          ]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload prebuilts.upload target prebuilts.gsutil upload', [
-              'gs://staging-chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages'
-          ]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
-          ['gs://staging-chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz']),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload',
-          ['gs://staging-chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz']),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
-          ['gs://staging-chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz']),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
-              'gs://staging-chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest'
-          ]),
-      api.post_check(
-          post_process.StepCommandDoesNotContain,
-          'upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload',
-          ['-a']),
+      *_assert_uploads_to_staging_buckets(api),
       # Staging builder should launch the staging PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
