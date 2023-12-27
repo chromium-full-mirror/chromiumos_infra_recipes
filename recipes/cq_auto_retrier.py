@@ -154,21 +154,25 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.auto_retry_util.publish_per_build_stats()
 
   unthrottled_retry_n = len(retryable_runs)
-  with api.step.nest('check recent executions for throttle'):
+  with api.step.nest('check recent executions for throttle') as pres:
     retries_avail = api.auto_retry_util.unthrottled_retries_left()
     throttled_runs_n = max(unthrottled_retry_n - retries_avail, 0)
     run_properties['throttled_runs'] = throttled_runs_n
+    pres.step_text = f'{throttled_runs_n} runs are throttled'
 
-  # For now just slice the considered CL count somewhat arb (by query return
-  # order), however in the future we might consider different methods of
-  # prioritizing the cq runs to retry in a throttle constrained scenario.
-  retryable_runs = retryable_runs[:retries_avail]
-
-  unthrottled_retry_dry_run_n = len(
-      [r for _, r in retryable_runs if r.original_orch_was_dry_run])
-  summary = (f'{unthrottled_retry_n - unthrottled_retry_dry_run_n} CQ+2 run(s) '
-             f'to retry, {unthrottled_retry_dry_run_n} CQ+1 run(s) to retry, '
-             f'{throttled_runs_n} are throttled.')
+  if not retryable_runs:
+    summary = 'No runs to retry'
+  else:
+    # For now just slice the considered CL count somewhat arb (by query return
+    # order), however in the future we might consider different methods of
+    # prioritizing the cq runs to retry in a throttle constrained scenario.
+    retryable_runs = retryable_runs[:retries_avail]
+    unthrottled_retry_dry_run_n = len(
+        [r for _, r in retryable_runs if r.original_orch_was_dry_run])
+    summary = (
+        f'{unthrottled_retry_n - unthrottled_retry_dry_run_n} CQ+2 run(s) '
+        f'to retry, {unthrottled_retry_dry_run_n} CQ+1 run(s) to retry, '
+        f'{throttled_runs_n} are throttled.')
 
   with api.step.nest('performing retries') as pres:
     pres.step_text = summary
@@ -406,6 +410,18 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       return  # pragma: nocover
     retry_reason = retry_reasons[0]
     check(experiment in retry_reason['experimentalFeatures'])
+
+  yield api.test(
+      'no-candidates',
+      api.auto_retry_util.enable_retries(),
+      api.buildbucket.simulated_search_results(
+          [], 'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          'No runs to retry',
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
 
   yield api.test(
       'retryable-build', api.auto_retry_util.enable_retries(),

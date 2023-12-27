@@ -720,7 +720,10 @@
   },
   {
     "cmd": [],
-    "name": "check recent executions for throttle"
+    "name": "check recent executions for throttle",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@0 runs are throttled@@@"
+    ]
   },
   {
     "cmd": [
