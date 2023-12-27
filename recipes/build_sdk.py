@@ -128,22 +128,32 @@ class BuildSDKRun:
     return self.m.buildbucket.build.start_time.ToDatetime().strftime(
         '%Y.%m.%d.%H%M%S')
 
+  @property
+  def _sdk_bucket(self) -> str:
+    """Return the bucket to upload SDK artifacts to."""
+    return self._pick_bucket(SDK_BUCKET)
+
+  @property
+  def _prebuilts_bucket(self) -> str:
+    """Return the bucket to upload amd64-host prebuilts to."""
+    return self._pick_bucket(PREBUILTS_BUCKET)
+
   @functools.cached_property
   def _toolchain_tarball_dir(self) -> str:
-    """Return the remote dir for toolchain tarballs, relative to SDK_BUCKET.
+    """Return the remote dir for toolchain tarballs, relative to the SDK bucket.
 
     Typically toolchain tarballs go into a directory timestamped as 'YYYY/MM'.
     For example: gs://chromiumos-sdk/2023/03/, for a build from March 2023.
 
     Returns:
-      The Google Storage folder, relative to SDK_BUCKET, with a trailing slash.
-      For example, '2023/03/'.
+      The Google Storage folder, relative to the SDK bucket, with a trailing
+      slash. For example, '2023/03/'.
     """
     return self.m.buildbucket.build.start_time.ToDatetime().strftime('%Y/%m/')
 
   @functools.cached_property
   def _toolchain_tarball_template(self) -> str:
-    """Return the remote toolchain tarball template, relative to SDK_BUCKET.
+    """Return the remote toolchain tarball template, relative to the SDK bucket.
 
     This eventually gets sent into the source-controlled sdk_version.conf, as
     TC_PATH. Chromite consumes the value and %-formats it with the named string
@@ -151,8 +161,8 @@ class BuildSDKRun:
     include the string literal "%(target)s".
 
     Returns:
-      A template for toolchain tarballs, relative to SDK_BUCKET. FOr example,
-      '2023/03/%(target)s-2023.03.14.159265.tar.xz'.
+      A template for toolchain tarballs, relative to the SDK bucket. For
+      example, '2023/03/%(target)s-2023.03.14.159265.tar.xz'.
     """
     return os.path.join(self._toolchain_tarball_dir,
                         f'%(target)s-{self.version}.tar.xz')
@@ -280,7 +290,7 @@ class BuildSDKRun:
     """
     dest_path = os.path.join('host', SDK_ARCH, SDK_BUILD_TARGET,
                              f'chroot-{self.version}', 'packages')
-    return GSURI(self._pick_bucket(PREBUILTS_BUCKET), dest_path)
+    return GSURI(self._prebuilts_bucket, dest_path)
 
   def _upload_target_prebuilts(self) -> None:
     """Upload binaries for the amd64-host build target to GS://.
@@ -301,7 +311,7 @@ class BuildSDKRun:
     """
     dest_path = os.path.join('board', SDK_BUILD_TARGET,
                              f'chroot-{self.version}', 'packages')
-    return GSURI(self._pick_bucket(PREBUILTS_BUCKET), dest_path)
+    return GSURI(self._prebuilts_bucket, dest_path)
 
   def _upload_toolchain_prebuilts(self) -> None:
     """Upload toolchain prebuilt tarballs to Google Storage.
@@ -346,9 +356,8 @@ class BuildSDKRun:
     basename = self.m.path.basename(source_path)
     target_architecture, ext = basename.split('.', 1)
     dest_basename = f'{target_architecture}-{self.version}.{ext}'
-    return GSURI(
-        self._pick_bucket(SDK_BUCKET),
-        os.path.join(self._toolchain_tarball_dir, dest_basename))
+    return GSURI(self._sdk_bucket,
+                 os.path.join(self._toolchain_tarball_dir, dest_basename))
 
   def _upload_sdk_tarball_and_manifest(self) -> None:
     """Upload the SDK tarball, and corresponding manifest, to GS://.
@@ -378,8 +387,7 @@ class BuildSDKRun:
       gs://chromiumos-sdk/cros-sdk-${version}.tar.xz
     where ${version} is the SDK version.
     """
-    return GSURI(
-        self._pick_bucket(SDK_BUCKET), f'cros-sdk-{self.version}.tar.xz')
+    return GSURI(self._sdk_bucket, f'cros-sdk-{self.version}.tar.xz')
 
   def _upload_sdk_manifest(self) -> None:
     """Upload the SDK tarball to Google Storage.
@@ -516,6 +524,8 @@ class BuildSDKRun:
                     sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
                         sdk_version=self.version,
                         toolchain_template=self._toolchain_tarball_template,
+                        binhost_gs_bucket=f'gs://{self._prebuilts_bucket}',
+                        sdk_gs_bucket=f'gs://{self._sdk_bucket}',
                     ))),
         'triggers': [json_format.MessageToDict(pupr_trigger)],
     }
@@ -556,8 +566,7 @@ class BuildSDKRun:
 
   def _get_gs_link_to_sdk(self) -> str:
     """Return a https:// link to the built SDK tarball."""
-    bucket = self._pick_bucket(SDK_BUCKET)
-    return (f'https://storage.googleapis.com/{bucket}/'
+    return (f'https://storage.googleapis.com/{self._sdk_bucket}/'
             f'cros-sdk-{self.version}.tar.xz')
 
 
@@ -697,13 +706,15 @@ def GenTests(
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload',
           [RE_GSUTIL]),
       *_assert_uploads_to_prod_buckets(api),
-      # Prod builder should run prod PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
-          '"bucket": "pupr"', '"builder": "chromiumos-sdk-pupr-generator"',
+          '"bucket": "pupr"',
+          '"builder": "chromiumos-sdk-pupr-generator"',
           '"sdkVersion": "1970.01.01.000000"',
           '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
-          '"ref": "refs/heads/main'
+          '"binhostGsBucket": "gs://chromeos-prebuilt"',
+          '"sdkGsBucket": "gs://chromiumos-sdk"',
+          '"ref": "refs/heads/main',
       ]),
       api.post_check(post_process.LogDoesNotContain, 'schedule uprev',
                      'request', ['"branch_policies":']),
@@ -711,15 +722,22 @@ def GenTests(
 
   yield api.test(
       'llvm-next',
-      api.properties(use_llvm_next=True),
+      api.properties(use_llvm_next=True, launch_pupr=True),
       *_assert_uploads_to_staging_buckets(api),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkToolchain'),
       api.post_check(post_process.LogContains,
                      'call chromite.api.SdkService/BuildSdkToolchain',
                      'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
-      # llvm-next builder should not run PUpr.
-      api.post_check(post_process.DoesNotRun, 'schedule uprev'),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
+          '"bucket": "pupr"',
+          '"builder": "chromiumos-sdk-pupr-generator"',
+          '"sdkVersion": "1970.01.01.000000"',
+          '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
+          '"binhostGsBucket": "gs://staging-chromeos-prebuilt"',
+          '"sdkGsBucket": "gs://staging-chromiumos-sdk"',
+          '"ref": "refs/heads/main',
+      ]),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -729,9 +747,12 @@ def GenTests(
       *_assert_uploads_to_staging_buckets(api),
       # Staging builder should launch the staging PUpr.
       api.post_check(post_process.MustRun, 'schedule uprev'),
-      api.post_check(post_process.LogContains, 'schedule uprev', 'request',
-                     (r'"bucket": "staging"',
-                      r'"builder": "staging-chromiumos-sdk-pupr-generator"')),
+      api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
+          '"bucket": "staging"',
+          '"builder": "staging-chromiumos-sdk-pupr-generator"',
+          '"binhostGsBucket": "gs://staging-chromeos-prebuilt"',
+          '"sdkGsBucket": "gs://staging-chromiumos-sdk"',
+      ]),
       api.post_process(post_process.DropExpectation),
       builder='staging-chromiumos-sdk',
       bucket='staging',
