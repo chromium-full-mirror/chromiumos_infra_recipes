@@ -1640,6 +1640,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       if any(not ps.has_default_label_vote(Label.COMMIT_QUEUE.key)
              for ps in patch_sets):
         pres.step_text = 'Already retried by someone else.'
+        self.per_build_stats[build.id].filter_reasons.append('retried_by_user')
         return
 
       if not self._enable_retries:

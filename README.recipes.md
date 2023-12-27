@@ -11545,10 +11545,10 @@ Tests of multi-retry filtering.
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/multi_retry.py#26)(api):**
 ### *recipes* / [auto\_retry\_util:tests/retry\_build](/recipe_modules/auto_retry_util/tests/retry_build.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/retry_build.py#17): [auto\_retry\_util](#recipe_modules-auto_retry_util), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/retry_build.py#17): [auto\_retry\_util](#recipe_modules-auto_retry_util), [gerrit](#recipe_modules-gerrit), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/retry_build.py#28)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/retry_build.py#29)(api):**
 ### *recipes* / [auto\_retry\_util:tests/sdk\_failures](/recipe_modules/auto_retry_util/tests/sdk_failures.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/sdk_failures.py#18): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

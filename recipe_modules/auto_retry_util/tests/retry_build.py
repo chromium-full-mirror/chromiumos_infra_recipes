@@ -15,8 +15,9 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import post_process
 
 DEPS = [
-    'recipe_engine/properties',
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'auto_retry_util',
     'gerrit',
     'test_util',
@@ -38,6 +39,9 @@ def RunSteps(api):
       retryable_test_suites=api.properties.get('retryable_test_suites',
                                                ['suite1', 'suite2']),
   )
+  api.assertions.assertCountEqual(
+      api.auto_retry_util.per_build_stats[build.id].filter_reasons,
+      api.properties.get('expected_filter_reasons', []))
 
 
 def GenTests(api):
@@ -257,6 +261,7 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
   yield api.test(
       'already-retried',
       retryable_build.build,
+      api.properties(expected_filter_reasons=['retried_by_user']),
       api.auto_retry_util.enable_retries(),
       api.gerrit.set_gerrit_fetch_changes_response(
           f'retry build {retryable_build.message.id}', gerrit_changes,
@@ -271,6 +276,7 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
   yield api.test(
       'already-retried-dry-run',
       retryable_build.build,
+      api.properties(expected_filter_reasons=['retried_by_user']),
       api.auto_retry_util.enable_retries(),
       api.properties(
           runMode='DRY_RUN',
