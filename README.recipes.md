@@ -9625,7 +9625,7 @@ A module to create local uprevs for PUpr.
 
 Initialize the module's attributes.
 
-&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#376)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
+&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#378)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
 
 Create a new uprev patch (locally) for change_id.
 

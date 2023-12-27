@@ -19,6 +19,18 @@ message SdkUprevSpec {
   // SDK version file.
   // Example: "2023/03/%(target)s-2023.03.14.159265"
   string toolchain_template = 2;
+
+  // binhost_gs_bucket is the Google Storage bucket containing binhosts to
+  // uprev to.
+  // Example: "gs://chromeos-prebuilt/".
+  // If not given, a default will be assumed, likely "gs://chromeos-prebuilt".
+  string binhost_gs_bucket = 3;
+
+  // sdk_gs_bucket is the Google Storage bucket containing the SDK and
+  // redistributable toolchains.
+  // Example: "gs://chromiumos-sdk".
+  // If not given, a default will be assumed, likely gs://chromiumos-sdk.
+  string sdk_gs_bucket = 4;
 }
 
 message PuprLocalUprevProperties {

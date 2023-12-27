@@ -64,6 +64,31 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'commit_msg_tmp_2', [pupr_local_uprev_api.UPREV_VERSION_LABEL]))
 
   yield api.test(
+      'uprev-to-staging-buckets',
+      api.properties(
+          **{
+              '$chromeos/pupr_local_uprev':
+                  pupr_local_uprev_pb2.PuprLocalUprevProperties(
+                      sdk_uprev_spec=pupr_local_uprev_pb2.SdkUprevSpec(
+                          sdk_version='2023.03.14.159265',
+                          toolchain_template='2023/03/%(target)s-2023.03.14.159265.tar.xz',
+                          binhost_gs_bucket='gs://staging-chromeos-prebuilt',
+                          sdk_gs_bucket='gs://staging-chromiumos-sdk'),
+                  ),
+          }),
+      api.post_check(
+          post_process.LogContains,
+          'uprev sdk.call chromite.api.SdkService/Uprev',
+          'request',
+          [
+              '"binhostGsBucket": "gs://staging-chromeos-prebuilt"',
+              '"sdkGsBucket": "gs://staging-chromiumos-sdk"',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'no-sdk-version',
       api.properties(
           **{
