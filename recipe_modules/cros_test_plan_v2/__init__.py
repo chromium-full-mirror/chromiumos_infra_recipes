@@ -8,6 +8,7 @@ from PB.recipe_modules.chromeos.cros_test_plan_v2.cros_test_plan_v2 import CrosT
 
 DEPS = [
     'infra/docker',
+    'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -19,6 +20,7 @@ DEPS = [
     'cros_infra_config',
     'cros_test_plan',
     'easy',
+    'failures',
     'gerrit',
     'gobin',
     'src_state',

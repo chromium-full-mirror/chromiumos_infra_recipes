@@ -5148,16 +5148,16 @@ Returns:
     criticality.
 ### *recipe_modules* / [cros\_test\_plan\_v2](/recipe_modules/cros_test_plan_v2)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gobin](#recipe_modules-gobin), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/cros_test_plan_v2/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_test\_plan](#recipe_modules-cros_test_plan), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [gobin](#recipe_modules-gobin), [src\_state](#recipe_modules-src_state), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [infra/docker][infra/recipe_modules/docker], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Functions for end-to-end test planning.
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#89)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#90)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#295)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#297)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5167,18 +5167,24 @@ Args:
     doesn't already exist, and the schema will be updated if it doesn't
     match the DirBQRow schema.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#121)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#123)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#106)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#108)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#463)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#504)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the testplan Docker image to get HWTestPlans.
+
+b/243438779 is migrating the `generate` command to the `test_plan` Go infra
+binary, so we can get rid of the Docker container building requirement. As
+part of the migration, we will run the new flow and diff the results with
+the Docker image. This is gated by the
+`chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
 
 Args:
   * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
@@ -5193,9 +5199,15 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#595)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#672)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the testplan Docker image to get a list of testable builders.
+
+b/243438779 is migrating the `get-testable` command to the `test_plan` Go
+infra binary, so we can get rid of the Docker container building
+requirement. As part of the migration, we will run the new flow and diff the
+results with the Docker image. This is gated by the
+`chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
 
 Args:
   starlark_packages: Paths to Starlark files to evaluate to get testable
@@ -5208,9 +5220,9 @@ Args:
 Returns:
   A list of the names of the testable builders.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#96)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#97)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#219)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#221)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -5221,7 +5233,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#204)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#206)(self, directory: str):**
 
 Call test_plan validate on directory.
 
@@ -13659,10 +13671,10 @@ This module tests the utility method of multi-dut suite generation.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan/tests/test_plan_summary.py#17)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/ctpv1\_compatible](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#19): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#19): [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#30)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/ctpv1_compatible.py#32)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/dirmd\_update](/recipe_modules/cros_test_plan_v2/examples/dirmd_update.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/dirmd_update.py#10): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2)
@@ -13695,10 +13707,10 @@ This module tests the utility method of multi-dut suite generation.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/full.py#32)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/get\_testable\_builders](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#17): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#17): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#27)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/override\_refs](/recipe_modules/cros_test_plan_v2/examples/override_refs.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/override_refs.py#14): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -13707,10 +13719,10 @@ This module tests the utility method of multi-dut suite generation.
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/override_refs.py#23)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/template\_parameters](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py)
 
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#19): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#28)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#32)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#17): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

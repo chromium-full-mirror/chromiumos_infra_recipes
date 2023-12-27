@@ -16,6 +16,8 @@ TestCaseTagCriteria = TestSuite.TestCaseTagCriteria
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
     'cros_test_plan_v2',
 ]
 
@@ -108,5 +110,111 @@ def GenTests(api):
               '/input/dut_attributes.jsonproto',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-use-infra-go-bin-experiment',
+      api.buildbucket.try_build(
+          project='chromeos',
+          bucket='cq',
+          builder='cq-orchestrator',
+          experiments=['chromeos.cros_test_plan_v2.use_infra_gobin'],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'get testable builders.write builds.jsonl',
+          [
+              'copy',
+              ('{"builder": {"builder": "target1-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}\n'
+               '{"builder": {"builder": "target2-cq"},"input": {"properties": {"build_target": {"name": "target2"}}}}\n'
+               '{"builder": {"builder": "target1-bazel-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}'
+              ),
+              '[CLEANUP]/tmp_tmp_1/builds.jsonl',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'get testable builders.validate infra go bin.test_plan get-testable',
+          [
+              '[START_DIR]/cipd/test_plan/test_plan',
+              'get-testable',
+              '-plan',
+              'root1/example1.star',
+              '-plan',
+              'root2/example2.star',
+              '-templateparameter',
+              'root1/example1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
+              '-builds',
+              '[CLEANUP]/tmp_tmp_1/builds.jsonl',
+              '-builderconfigs',
+              '[CLEANUP]/tmp_tmp_1/builder_configs.binaryproto',
+              '-buildmetadata',
+              '[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto',
+              '-configbundlelist',
+              '[CLEANUP]/tmp_tmp_1/configs.jsonproto',
+              '-dutattributes',
+              '[CLEANUP]/tmp_tmp_1/dut_attributes.jsonproto',
+          ],
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'with-use-infra-go-bin-experiment-different-responses',
+      api.buildbucket.try_build(
+          project='chromeos',
+          bucket='cq',
+          builder='cq-orchestrator',
+          experiments=['chromeos.cros_test_plan_v2.use_infra_gobin'],
+      ),
+      api.override_step_data(
+          'get testable builders.validate infra go bin.test_plan get-testable',
+          api.raw_io.output(
+              'other-builder1 other-builder2',
+          ),
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'get testable builders.write builds.jsonl',
+          [
+              'copy',
+              ('{"builder": {"builder": "target1-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}\n'
+               '{"builder": {"builder": "target2-cq"},"input": {"properties": {"build_target": {"name": "target2"}}}}\n'
+               '{"builder": {"builder": "target1-bazel-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}'
+              ),
+              '[CLEANUP]/tmp_tmp_1/builds.jsonl',
+          ],
+      ),
+      api.post_process(
+          post_process.StepCommandContains,
+          'get testable builders.validate infra go bin.test_plan get-testable',
+          [
+              '[START_DIR]/cipd/test_plan/test_plan',
+              'get-testable',
+              '-plan',
+              'root1/example1.star',
+              '-plan',
+              'root2/example2.star',
+              '-templateparameter',
+              'root1/example1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
+              '-builds',
+              '[CLEANUP]/tmp_tmp_1/builds.jsonl',
+              '-builderconfigs',
+              '[CLEANUP]/tmp_tmp_1/builder_configs.binaryproto',
+              '-buildmetadata',
+              '[CLEANUP]/tmp_tmp_1/build_metadata.jsonproto',
+              '-configbundlelist',
+              '[CLEANUP]/tmp_tmp_1/configs.jsonproto',
+              '-dutattributes',
+              '[CLEANUP]/tmp_tmp_1/dut_attributes.jsonproto',
+          ],
+      ),
+      api.post_process(post_process.StepTextEquals,
+                       'get testable builders.validate infra go bin',
+                       'responses were different'),
+      api.post_process(post_process.PropertyEquals,
+                       'test_plan_infra_gobin_get_testable_responses_match',
+                       False),
       api.post_process(post_process.DropExpectation),
   )
