@@ -1245,6 +1245,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       pres.step_text = '%d previously exonerated, %d newly exonerated, %d outstanding' % (
           len(previously_exonerated_stats), len(newly_exonerated_stats),
           len(outstanding_failure_stats))
+      pres.logs['previously_exonerated_tests'] = sorted(
+          [x.test_id for x in previously_exonerated_stats])
+      pres.logs['newly_exonerated_tests'] = sorted(
+          [x.test_id for x in newly_exonerated_stats])
+      pres.logs['outstanding_failure_tests'] = sorted(
+          [x.test_id for x in outstanding_failure_stats])
 
       return (previously_exonerated_stats, newly_exonerated_stats,
               outstanding_failure_stats)
