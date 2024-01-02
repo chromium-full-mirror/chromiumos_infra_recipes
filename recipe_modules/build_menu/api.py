@@ -804,10 +804,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
                     path=str(self.m.path.mkdtemp()),
                     location=common_pb2.Path.OUTSIDE)),
         )
+        timeout = 3 * 60 * 60
+        # Code coverage is taking longer than standard unit tests
+        if self._test_with_code_coverage:
+          timeout = 4 * 60 * 60
         response = self.m.cros_build_api.TestService.BuildTargetUnitTest(
             request,
             # Asan builders take longer than 2.5 hrs. https://crbug.com/1170372.
-            timeout=3 * 60 * 60,
+            timeout=timeout,
             response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)

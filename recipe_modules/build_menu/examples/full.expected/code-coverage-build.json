@@ -5314,7 +5314,7 @@
       }
     },
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.call build API script",
-    "timeout": 10800,
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -5562,7 +5562,7 @@
       }
     },
     "name": "run ebuild tests (2).call chromite.api.TestService/BuildTargetUnitTest.call build API script",
-    "timeout": 10800,
+    "timeout": 14400,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
