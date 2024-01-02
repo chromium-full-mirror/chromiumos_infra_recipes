@@ -8,6 +8,9 @@
 from typing import Generator
 from typing import Optional
 
+from google.protobuf import json_format
+from google.protobuf import timestamp_pb2
+
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -122,8 +125,12 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
       # Set a property to indicate image artifacts are uploaded, so CQ
       # orchestrator can poll for this property.
       api.easy.set_properties_step(image_artifacts_uploaded=True)
+      image_artifacts_uploaded_time = timestamp_pb2.Timestamp()
+      image_artifacts_uploaded_time.FromDatetime(api.time.utcnow())
       api.easy.set_properties_step(
-          image_artifacts_uploaded_time=api.time.utcnow().strftime('%FT%T.%fZ'))
+          image_artifacts_uploaded_time=json_format.MessageToDict(
+              image_artifacts_uploaded_time))
+
       # We have no steps following unit_test_images, so we don't need to
       # check the return value.
       api.build_menu.unit_test_images(config)
