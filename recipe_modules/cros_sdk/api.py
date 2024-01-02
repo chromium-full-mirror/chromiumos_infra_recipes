@@ -12,6 +12,7 @@ from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.chromite.api import toolchain
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
@@ -546,6 +547,7 @@ class CrosSdkApi(RecipeApi):
         toolchain_cls = False
       if timeout_sec == 'DEFAULT':
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 180 * 60
+      use_snapshot_binhosts = self.m.cros_infra_config.config_or_default.id.type == BuilderConfig.Id.CQ
 
       request = UpdateSdkRequest(
           chroot=self.chroot, toolchain_targets=toolchain_targets,
@@ -554,7 +556,8 @@ class CrosSdkApi(RecipeApi):
           result_path=common.ResultPath(
               path=common.Path(
                   path=str(self.m.path.mkdtemp()),
-                  location=common.Path.OUTSIDE)))
+                  location=common.Path.OUTSIDE)),
+          use_snapshot_binhosts=use_snapshot_binhosts)
       try:
         response = self.m.cros_build_api.SdkService.Update(
             request, timeout=timeout_sec, test_output_data=test_data)
