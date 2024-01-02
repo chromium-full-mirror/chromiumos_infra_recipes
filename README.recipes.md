@@ -19,7 +19,7 @@
   * [chrome](#recipe_modules-chrome)
   * [chromite](#recipe_modules-chromite)
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
-  * [code_coverage](#recipe_modules-code_coverage)
+  * [code_coverage](#recipe_modules-code_coverage) &mdash; Recipe definition for code coverage recipe.
   * [conductor](#recipe_modules-conductor) &mdash; API wrapping the conductor tool.
   * [cq_fault_attribution](#recipe_modules-cq_fault_attribution)
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
@@ -246,6 +246,7 @@
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json)
+  * [code_coverage:examples/upload_e2e_coverage](#recipes-code_coverage_examples_upload_e2e_coverage) &mdash; Tests to test e2e coverage uploads.
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov)
   * [collect_preuprev_test_results](#recipes-collect_preuprev_test_results) &mdash; Recipe that retrieves the result of tests executed before Chrome Uprev to CrOS and warns on failure.
   * [conductor:examples/full](#recipes-conductor_examples_full)
@@ -265,7 +266,7 @@
   * [cq_fault_attribution:tests/set_test_failure_fault_attributes](#recipes-cq_fault_attribution_tests_set_test_failure_fault_attributes)
   * [cq_fault_attribution:tests/too_many_or_no_failed_tests](#recipes-cq_fault_attribution_tests_too_many_or_no_failed_tests)
   * [cq_orchestrator](#recipes-cq_orchestrator) &mdash; Recipe that schedules CQ verifiers.
-  * [cros_artifacts:examples/code_coverage_llvm_json](#recipes-cros_artifacts_examples_code_coverage_llvm_json)
+  * [cros_artifacts:examples/code_coverage](#recipes-cros_artifacts_examples_code_coverage)
   * [cros_artifacts:examples/download_artifacts](#recipes-cros_artifacts_examples_download_artifacts)
   * [cros_artifacts:examples/full](#recipes-cros_artifacts_examples_full)
   * [cros_artifacts:examples/prepare_for_build](#recipes-cros_artifacts_examples_prepare_for_build)
@@ -2458,17 +2459,19 @@ Raises:
 [DEPS](/recipe_modules/code_coverage/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#44)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Recipe definition for code coverage recipe.
+
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#72)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#77)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#127)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#139)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -2479,11 +2482,19 @@ Args:
   gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
   gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
   step_name (str): name for the step.
-  incremental_settings (CoverageFileSettings): settings for uploading coverage to gerrit.
-  absolute_cs_settings (CoverageFileSettings): settings for uploading coverage to code search.
-  absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage to chromium.
+  incremental_settings (CoverageFileSettings): incremental coverage settings.
+  absolute_cs_settings (CoverageFileSettings): absolute coverage settings.
+  absolute_chromium_settings (CoverageFileSettings): absolute chromium coverage settings.
 
-&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#103)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
+&mdash; **def [update\_e2e\_metadata](/recipe_modules/code_coverage/api.py#247)(self, gs_artifact_bucket: str, gs_artifact_path: str):**
+
+Uploads metadata needed for e2e coverage.
+
+Args:
+  gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+  gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+
+&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#108)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
 
 Uploads code coverage llvm json and golang.
 
@@ -2494,7 +2505,7 @@ Args:
   gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
   gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#86)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#91)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 
@@ -2597,7 +2608,7 @@ Returns:
   The formatted template.  Default: The GS path at which artifacts should
       be uploaded.
 
-&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#1035)(self, build_payload, artifact, name=None):**
+&mdash; **def [download\_artifact](/recipe_modules/cros_artifacts/api.py#1038)(self, build_payload, artifact, name=None):**
 
 Download the given artfiact from the given build payload.
 
@@ -2612,7 +2623,7 @@ Returns:
 Raises:
   ValueError: If the artifact is not found in the build payload.
 
-&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1069)(self, build_payload, artifact_types, name=None):**
+&mdash; **def [download\_artifacts](/recipe_modules/cros_artifacts/api.py#1072)(self, build_payload, artifact_types, name=None):**
 
 Download the given artifacts from the given build payload.
 
@@ -2641,14 +2652,14 @@ Args:
 Returns:
   Whether there are any output artifacts.
 
-&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#1012)(self, properties: List[UploadedArtifacts]):**
+&mdash; **def [merge\_artifacts\_properties](/recipe_modules/cros_artifacts/api.py#1015)(self, properties: List[UploadedArtifacts]):**
 
 Combine uploaded artifacts to produce a final value.
 
 Args:
   properties (list[UploadedArtifacts]): the values to merge.
 
-&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1089)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
+&mdash; **def [prepare\_for\_build](/recipe_modules/cros_artifacts/api.py#1092)(self, chroot, sysroot, artifacts_info, forced_build_relevance=False, test_data=None, name=None):**
 
 Prepare the build for the given artifacts.
 
@@ -2669,7 +2680,7 @@ Returns:
   is NEEDED (regardless of the cq relevance check), UNKNOWN (pointless
   build check applies), or POINTLESS (just exit now.)
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1258)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/cros_artifacts/api.py#1261)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -2682,7 +2693,7 @@ Args:
   gs_path (str): GS path to write to (relative to the bucket),
     e.g. eve-release.
 
-&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1226)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
+&mdash; **def [push\_image](/recipe_modules/cros_artifacts/api.py#1229)(self, chroot, gs_image_dir, sysroot, dryrun=False, profile=None, sign_types=None, dest_bucket=None, channels=None):**
 
 Call the PushImage build API endpoint.
 
@@ -2753,7 +2764,7 @@ Returns:
   (UploadedArtifacts) information about uploaded artifacts.
   (Path) path to local dir where artifacts are staged.
 
-&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#966)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
+&mdash; **def [upload\_metadata](/recipe_modules/cros_artifacts/api.py#969)(self, name, builder_name, target, gs_bucket, filename, message, template=None):**
 
 Materialize a protobuffer message as a jsonpb artifact in GCS.
 
@@ -12511,6 +12522,14 @@ Tests the case where a request is larger than the Pub/Sub limit.
 
 
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_code_coverage_llvm_json.py#21)(api):**
+### *recipes* / [code\_coverage:examples/upload\_e2e\_coverage](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py)
+
+[DEPS](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#10): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+
+
+Tests to test e2e coverage uploads.
+
+&mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#20)(api):**
 ### *recipes* / [code\_coverage:examples/upload\_firmware\_lcov](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py#11): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -12754,12 +12773,12 @@ Recipe that schedules CQ verifiers.
 &mdash; **def [DoRunSteps](/recipes/cq_orchestrator.py#67)(api: RecipeApi):**
 
 &mdash; **def [RunSteps](/recipes/cq_orchestrator.py#49)(api: RecipeApi, properties: OrchestratorProperties):**
-### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
+### *recipes* / [cros\_artifacts:examples/code\_coverage](/recipe_modules/cros_artifacts/examples/code_coverage.py)
 
-[DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/cros_artifacts/examples/code_coverage.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_artifacts/examples/code_coverage.py#22)(api):**
 ### *recipes* / [cros\_artifacts:examples/download\_artifacts](/recipe_modules/cros_artifacts/examples/download_artifacts.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/download_artifacts.py#11): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_test\_plan](#recipe_modules-cros_test_plan), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

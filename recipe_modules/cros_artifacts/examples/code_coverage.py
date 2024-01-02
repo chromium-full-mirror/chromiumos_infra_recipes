@@ -46,5 +46,32 @@ def GenTests(api):
                       }
                   }
               }, sort_keys=True)),
-      api.post_check(post_process.MustRun,
-                     'upload artifacts.upload code coverage data'), cq=True)
+      api.post_check(
+        post_process.MustRun,
+        'upload artifacts.upload code coverage data'),
+      cq=True
+    )
+
+  yield api.build_menu.test(
+      'e2e_coverage',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          json.dumps(
+              {
+                  'artifacts': {
+                      'test': {
+                          'artifacts': [{
+                              'artifactType':
+                                  54,
+                              'paths': [{
+                                  'path': '[START_DIR]/coverage.tbz2',
+                                  'location': 2
+                              }]
+                          },]
+                      }
+                  }
+              }, sort_keys=True)),
+      api.post_check(
+        post_process.MustRun,
+        'upload artifacts.upload e2e coverage metadata.add e2e coverage metadata')
+    )

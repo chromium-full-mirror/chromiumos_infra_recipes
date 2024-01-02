@@ -921,6 +921,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         with self.m.failures.ignore_exceptions():
           self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
+      for fname in files_by_artifact.get('CODE_COVERAGE_E2E', []):
+        self.m.code_coverage.update_e2e_metadata(gs_bucket, gs_path)
+
       if upload_coverage:
         cov_files = {}
         cov_files['LLVM'] = files_by_artifact.get('CODE_COVERAGE_LLVM_JSON', [])
