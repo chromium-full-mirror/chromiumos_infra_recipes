@@ -12697,14 +12697,14 @@ Recipe for analyzing and retrying failed CQ runs.
 &mdash; **def [RunSteps](/recipe_modules/cq_fault_attribution/tests/too_many_or_no_failed_tests.py#85)(api, properties):**
 ### *recipes* / [cq\_orchestrator](/recipes/cq_orchestrator.py)
 
-[DEPS](/recipes/cq_orchestrator.py#29): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [easy](#recipe_modules-easy), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/cq_orchestrator.py#27): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [easy](#recipe_modules-easy), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Recipe that schedules CQ verifiers.
 
-&mdash; **def [DoRunSteps](/recipes/cq_orchestrator.py#70)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/cq_orchestrator.py#66)(api: RecipeApi):**
 
-&mdash; **def [RunSteps](/recipes/cq_orchestrator.py#52)(api: RecipeApi, properties: OrchestratorProperties):**
+&mdash; **def [RunSteps](/recipes/cq_orchestrator.py#48)(api: RecipeApi, properties: OrchestratorProperties):**
 ### *recipes* / [cros\_artifacts:examples/code\_coverage\_llvm\_json](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/cros_artifacts/examples/code_coverage_llvm_json.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

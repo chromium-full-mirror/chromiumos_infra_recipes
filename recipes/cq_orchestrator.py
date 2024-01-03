@@ -13,9 +13,7 @@ from google.protobuf.json_format import MessageToDict
 
 from PB.chromiumos.checkpoint import RetryStep
 from PB.chromiumos.common import Channel
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.orchestrator import OrchestratorProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
@@ -29,8 +27,6 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'build_menu',
     'checkpoint',
-    'cros_artifacts',
-    'cros_lkgm',
     'cros_release',
     'cros_source',
     'cros_tags',
@@ -148,18 +144,6 @@ def DoRunSteps(api: RecipeApi):
               ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
           )
 
-  if api.orch_menu.is_release_orchestrator and api.cros_lkgm.has_public_build:
-    api.cros_lkgm.collect_public_build()
-
-    # Publish main-release so SuSch can figure out what ToT is.
-    # TODO(b/247451917): Remove when SuSch is gone.
-    if api.cros_source.is_tot:
-      gs_path = 'LATEST-staging' if api.build_menu.is_staging else 'main-release'
-      api.cros_artifacts.publish_latest_files('chromeos-image-archive', gs_path)
-
-    api.cros_lkgm.do_lkgm(api.orch_menu.builds_status.completed_builds,
-                          use_branch=not api.cros_source.is_tot)
-
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()
 
@@ -189,13 +173,6 @@ def GenTests(api: RecipeTestApi):
   yield api.orch_menu.test('basic', data.ctp_normal, with_history=True,
                            collect_builds=data.builds, with_manifest_refs=True)
 
-  def get_public_orch():
-    output = build_pb2.Build.Output()
-    child_build_ids = [str(8922054662172514001 + x) for x in range(3)]
-    output.properties.update({'child_builds': child_build_ids})
-    return build_pb2.Build(id=8922054662172514000, output=output,
-                           status=common_pb2.SUCCESS)
-
   yield api.orch_menu.test(
       'release-orchestrator',
       data.ctp_normal,
@@ -219,13 +196,8 @@ def GenTests(api: RecipeTestApi):
           }),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
-      api.buildbucket.simulated_collect_output(
-          [get_public_orch()], step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
-      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
-      api.post_check(post_process.StepCommandDoesNotContain,
-                     'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.post_check(post_process.MustRun, 'run tests'),
@@ -257,13 +229,8 @@ def GenTests(api: RecipeTestApi):
                   'ignore_already_exists_errors': True,
               }
           }),
-      api.buildbucket.simulated_collect_output(
-          [get_public_orch()], step_name='collect public orchestrator.collect'),
       # On ToT, shouldn't be getting branch.
       api.post_check(post_process.DoesNotRun, 'get chrome branch'),
-      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
-      api.post_check(post_process.StepCommandDoesNotContain,
-                     'call chrome_chromeos_lkgm', ['--branch']),
       api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       builder='release-main-orchestrator',
