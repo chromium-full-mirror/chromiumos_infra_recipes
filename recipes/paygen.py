@@ -60,9 +60,10 @@ DEPS = [
     'gitiles',
     'naming',
     'paygen_orchestration',
-    'test_util',
+    'repo',
     'signing',
     'src_state',
+    'test_util',
     'workspace_util',
 ]
 
@@ -312,10 +313,22 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
           branch=config_internal_branch, target_path=config_path, depth=1)
 
     if api.src_state.gerrit_changes and api.cros_infra_config.is_staging:
-      # We're _actually_ done manipulating the input source, so apply patch sets
-      # if you can.
-      for change in api.src_state.gerrit_changes:
-        api.workspace_util.checkout_change(change=change)
+      with api.step.nest('apply changes') as presentation:
+        skipped_changes = []
+        with api.context(cwd=api.cros_source.workspace_path):
+          project_names = {p.name for p in api.repo.project_infos()}
+          # We're _actually_ done manipulating the input source, so apply patch sets
+          # if you can.
+          for change in api.src_state.gerrit_changes:
+            # If the change is not associated with a project that is checked out
+            # (i.e. a project in the "paygen" manifest group), skip it.
+            # See b/315019776 for context.
+            if change.project not in project_names:
+              skipped_changes.append(MessageToJson(change))
+              continue
+            api.workspace_util.checkout_change(change=change)
+        if skipped_changes:
+          presentation.logs['irrelevant changes'] = skipped_changes
 
     # Create chroot, with retries!
     timeout = properties.init_sdk_timeout_secs or None
@@ -556,7 +569,9 @@ def GenTests(api: RecipeTestApi):
     return api.test_util.test_build(**kwargs).build
 
   changes = [
-      GerritChange(change=1, project='chromiumos/third_party/kernel',
+      GerritChange(change=123, project='chromiumos/third_party/kernel',
+                   host='chromium-review.googlesource.com', patchset=1),
+      GerritChange(change=234, project='chromiumos/non-paygen-change',
                    host='chromium-review.googlesource.com', patchset=1),
   ]
 
@@ -574,6 +589,11 @@ def GenTests(api: RecipeTestApi):
                   ]
               },
           ])),
+      api.step_data(
+          'initialization.apply changes.repo forall',
+          stdout=api.raw_io.output_text(
+              'chromiumos/third_party/kernel|src/third_party/kernel|cros|refs/heads/main|refs/heads/main'
+          )),
       generate_payload_response(
           api, versioned_artifacts=[{
               'local_path': '/tmp/aohiwdadoi/delta.bin',
@@ -582,8 +602,10 @@ def GenTests(api: RecipeTestApi):
                   'location': 2
               }
           }]),
+      api.post_check(post_process.LogContains, 'initialization.apply changes',
+                     'irrelevant changes', ['234']),
       api.post_check(post_process.MustRun,
-                     'initialization.checkout gerrit change'),
+                     'initialization.apply changes.checkout gerrit change'),
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
