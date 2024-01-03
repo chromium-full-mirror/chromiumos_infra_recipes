@@ -12872,6 +12872,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sign artifacts.call BAPI.read cloudkms logs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -12898,9 +12905,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sign artifacts.call BAPI.list [CLEANUP]/signing-dir_tmp_1/cloudkms-logs",
+    "name": "sign artifacts.call BAPI.read cloudkms logs.list [CLEANUP]/signing-dir_tmp_1/cloudkms-logs",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@listdir@@@"
     ]
   },

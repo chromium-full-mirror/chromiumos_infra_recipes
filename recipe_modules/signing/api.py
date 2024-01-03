@@ -521,12 +521,13 @@ class SigningApi(recipe_api.RecipeApi):
       presentation: The step presentation to add logs to.
       result_path: The result_path passed to the signing call.
     """
-    kms_log_dir = result_path.join('cloudkms-logs')
-    kms_log_files = self.m.file.listdir(f'list {kms_log_dir}', kms_log_dir)
-    for log_file in kms_log_files:
-      filename = self.m.path.basename(log_file)
-      log_contents = self.m.file.read_text(f'read {filename}', log_file)
-      presentation.logs[filename] = log_contents
+    with self.m.step.nest('read cloudkms logs'):
+      kms_log_dir = result_path.join('cloudkms-logs')
+      kms_log_files = self.m.file.listdir(f'list {kms_log_dir}', kms_log_dir)
+      for log_file in kms_log_files:
+        filename = self.m.path.basename(log_file)
+        log_contents = self.m.file.read_text(f'read {filename}', log_file)
+        presentation.logs[filename] = log_contents
 
   def _get_gs_path_for_channel(self, channel: common_pb2.Channel) -> str:
     """Get the gs path for the given channel.

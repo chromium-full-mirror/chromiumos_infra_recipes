@@ -185,17 +185,17 @@ def GenTests(api: RecipeTestApi):
                                         'ImageService/SignImage',
                                         MessageToJson(sample_response)),
       api.step_data(
-          'sign artifacts.call BAPI.list [CLEANUP]/signing-dir_tmp_2/cloudkms-logs',
+          'sign artifacts.call BAPI.read cloudkms logs.list [CLEANUP]/signing-dir_tmp_2/cloudkms-logs',
           api.file.listdir([
               '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log1',
               '[CLEANUP]/signing-dir_tmp_2/cloudkms-logs/log2',
           ])),
       api.step_data(
-          'sign artifacts.call BAPI.read log1',
+          'sign artifacts.call BAPI.read cloudkms logs.read log1',
           api.file.read_text('this is log 1'),
       ),
       api.step_data(
-          'sign artifacts.call BAPI.read log2',
+          'sign artifacts.call BAPI.read cloudkms logs.read log2',
           api.file.read_text('this is log 2'),
       ),
       api.post_check(
