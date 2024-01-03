@@ -17,4 +17,7 @@ message BuildMassDeployProperties {
 
   // Size of the output mass deployable image in GiB. Default is 29.
   optional int32 image_size_gib = 3;
+
+  // CrOS release milestone associated with mass deployable image, e.g. "114".
+  string milestone = 4;
 }

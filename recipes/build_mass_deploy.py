@@ -194,7 +194,10 @@ def RunSteps(api, properties):
   with api.context(cwd=working_dir):
     installer_image = _download_signed_image(api, properties.input_image)
 
-    output_dir = api.context.cwd.join('mass_deployable_image')
+    output_dir = 'mass_deployable_image'
+    if properties.milestone:
+      output_dir += '_R' + properties.milestone
+    output_dir = api.context.cwd.join(output_dir)
     api.step('create output dir', cmd=['mkdir', output_dir])
 
     with api.failures.ignore_exceptions():
@@ -221,7 +224,50 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'release', api.properties(**{
+      'release',
+      api.properties(**{
+          'input_image': 'foo/bar.zip',
+          'milestone': '140',
+      }),
+      api.post_check(post_process.StepCommandContains,
+                     'download signed image.gsutil download',
+                     ['gs://chromeos-releases/foo/bar.zip']),
+      api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess,
+                     'create mass deploy image.strip hybrid MBR'),
+      api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload mass deploy image.gsutil upload',
+          ['gs://chromeos-releases/foo/mass_deployable_image_R140.zip']),
+      api.post_check(post_process.MustRun,
+                     'upload mass deploy image.snoop: report_gcs'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'staging',
+      api.properties(**{
+          'input_image': 'foo/bar.zip',
+          'milestone': '140',
+      }), api.buildbucket.generic_build(bucket='staging'),
+      api.post_check(post_process.StepCommandContains,
+                     'download signed image.gsutil download',
+                     ['gs://chromeos-releases/foo/bar.zip']),
+      api.post_check(post_process.StepSuccess, 'create mass deploy image'),
+      api.post_check(post_process.StepSuccess,
+                     'create mass deploy image.strip hybrid MBR'),
+      api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload mass deploy image.gsutil upload', [
+              'gs://chromeos-throw-away-bucket/foo/mass_deployable_image_R140.zip'
+          ]),
+      api.post_check(post_process.DoesNotRun,
+                     'upload mass deploy image.snoop: report_gcs'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'no-milestone', api.properties(**{
           'input_image': 'foo/bar.zip',
       }),
       api.post_check(post_process.StepCommandContains,
@@ -238,32 +284,15 @@ def GenTests(api):
                      'upload mass deploy image.snoop: report_gcs'),
       api.post_process(post_process.DropExpectation))
 
-  yield api.test(
-      'staging', api.properties(**{
-          'input_image': 'foo/bar.zip',
-      }), api.buildbucket.generic_build(bucket='staging'),
-      api.post_check(post_process.StepCommandContains,
-                     'download signed image.gsutil download',
-                     ['gs://chromeos-releases/foo/bar.zip']),
-      api.post_check(post_process.StepSuccess, 'create mass deploy image'),
-      api.post_check(post_process.StepSuccess,
-                     'create mass deploy image.strip hybrid MBR'),
-      api.post_check(post_process.StepSuccess, 'compress mass deploy image'),
-      api.post_check(
-          post_process.StepCommandContains,
-          'upload mass deploy image.gsutil upload',
-          ['gs://chromeos-throw-away-bucket/foo/mass_deployable_image.zip']),
-      api.post_check(post_process.DoesNotRun,
-                     'upload mass deploy image.snoop: report_gcs'),
-      api.post_process(post_process.DropExpectation))
-
   yield api.test('no-input-image',
                  api.post_process(post_process.DropExpectation),
                  status='FAILURE')
 
   yield api.test(
-      'install-timeout', api.properties(**{
+      'install-timeout',
+      api.properties(**{
           'input_image': 'foo/bar.zip',
+          'milestone': '140',
       }),
       api.step_data(
           'create mass deploy image.boot input image to install to output image',

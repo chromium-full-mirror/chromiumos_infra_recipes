@@ -33,6 +33,11 @@ _METADATA_CANARY = {
                     {}
             },
             'release_directory': 'canary-channel/reven/15487.0.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
         }
 }
 
@@ -46,6 +51,11 @@ _METADATA_DEV = {
                 }
             },
             'release_directory': 'dev-channel/reven/15487.0.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
         }
 }
 
@@ -59,6 +69,11 @@ _METADATA_BETA = {
                     {}
             },
             'release_directory': 'beta-channel/reven/15437.42.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
         }
 }
 
@@ -73,6 +88,11 @@ _METADATA_STABLE = {
                     {}
             },
             'release_directory': 'stable-channel/reven/15437.42.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
         }
 }
 

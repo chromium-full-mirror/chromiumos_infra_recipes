@@ -46,9 +46,13 @@ class MassDeployApi(recipe_api.RecipeApi):
           return
 
       with self.m.step.nest('determine builder settings'):
+        release_milestone = stable_build_metadata['version']['milestone']
         release_directory = stable_build_metadata['release_directory']
         input_zip = self._select_zip(stable_build_metadata)
-        properties = {'input_image': f'{release_directory}/{input_zip}'}
+        properties = {
+            'input_image': f'{release_directory}/{input_zip}',
+            'milestone': release_milestone
+        }
 
         # Match names as constructed in infra/config/release/main.star.
         builder_prefix = 'staging-' if self.m.build_menu.is_staging else ''
