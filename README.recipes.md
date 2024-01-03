@@ -14707,13 +14707,13 @@ Recipe for generating a Kabuto payload.
 
 Recipe for uprev'ing shadercache DLC ebuilds
 
-&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#151)(api: RecipeApi):**
+&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#149)(api: RecipeApi):**
 
 Commit changes and create a Gerrit CL in the current directory.
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#189)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#187)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 
-&mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#52)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+&mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#50)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 ### *recipes* / [kernel\_checkconfig](/recipes/kernel_checkconfig.py)
 
 [DEPS](/recipes/kernel_checkconfig.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

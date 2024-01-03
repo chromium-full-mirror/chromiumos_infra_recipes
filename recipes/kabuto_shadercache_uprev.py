@@ -39,9 +39,7 @@ DEPS = [
 
 PROPERTIES = KabutoShadercacheUprevProperties
 GERRIT_CL_TOPIC = 'borealis-shadercache-dlc'
-GERRIT_CL_REVIEWERS = [
-    'davidriley@google.com', 'endlesspring@google.com', 'pobega@google.com'
-]
+GERRIT_CL_REVIEWERS = ['borealis-shaders-team+uprev@google.com']
 
 _MILESTONE_USES_KABUTO_UPREV = 118
 _MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122

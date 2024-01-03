@@ -2554,11 +2554,7 @@
       "--topic",
       "borealis-shadercache-dlc",
       "--reviewers",
-      "davidriley@google.com",
-      "--reviewers",
-      "endlesspring@google.com",
-      "--reviewers",
-      "pobega@google.com",
+      "borealis-shaders-team+uprev@google.com",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
