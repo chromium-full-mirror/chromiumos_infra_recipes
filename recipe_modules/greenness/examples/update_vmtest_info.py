@@ -21,6 +21,8 @@ def RunSteps(api):
       api.test_util.test_api.test_child_build(
           build_target_name='betty', output_properties={
               'greenness': '78'
+          }, input_properties={
+              'name': 'betty-arc-r-cq.tast_vm.direct_tast_vm_shard_3_of_5'
           }).message
   ]
   api.greenness.update_vmtest_info(builds)

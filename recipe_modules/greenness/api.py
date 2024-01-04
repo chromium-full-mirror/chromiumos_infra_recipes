@@ -44,6 +44,8 @@ class GreennessApi(recipe_api.RecipeApi):
     self._publish_property = properties.publish_property
     self._greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
+    self._builder_greenness_dict: OrderedDict[
+        str, GreennessTuple] = collections.OrderedDict()
     self._local_greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
     self._last_greenness_dict = None
@@ -51,6 +53,10 @@ class GreennessApi(recipe_api.RecipeApi):
   @property
   def greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
     return self._greenness_dict
+
+  @property
+  def builder_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
+    return self._builder_greenness_dict
 
   @property
   def local_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
@@ -118,8 +124,8 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     for build in builds:
       bt = str(self.m.cros_infra_config.get_build_target_name(build))
-      if self._is_excluded(build.builder.builder, EXCLUDE_VARIANTS):
-        continue
+      builder = build.builder.builder
+      variant_excluded = self._is_excluded(builder, EXCLUDE_VARIANTS)
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
       if self.m.cros_tags.has_entry('relevance', 'not relevant', build.tags):
@@ -131,13 +137,23 @@ class GreennessApi(recipe_api.RecipeApi):
           # If greenness dict is empty, it means the metric was 0 in the last run.
           score = int(last_greenness.get('metric', 0))
           build_score = int(last_greenness.get('buildMetric', 0))
-        self._greenness_dict[bt] = GreennessTuple(score=score,
-                                                  build_score=build_score,
-                                                  critical=critical,
-                                                  relevant=False)
+        self._builder_greenness_dict[builder] = GreennessTuple(
+            score=score, build_score=build_score, critical=critical,
+            relevant=False)
+        if not variant_excluded:
+          self._greenness_dict[bt] = GreennessTuple(score=score,
+                                                    build_score=build_score,
+                                                    critical=critical,
+                                                    relevant=False)
       else:
-        self._greenness_dict[bt] = GreennessTuple(green_metric, green_metric,
-                                                  critical, True)
+        self._builder_greenness_dict[builder] = GreennessTuple(
+            score=green_metric, build_score=green_metric, critical=critical,
+            relevant=True)
+        if not variant_excluded:
+          self._greenness_dict[bt] = GreennessTuple(score=green_metric,
+                                                    build_score=green_metric,
+                                                    critical=critical,
+                                                    relevant=True)
 
   def populate_local_build_info(self, builds: List[build_pb2.Build]) -> None:
     """Populate the local greenness dict with build information.
@@ -177,19 +193,24 @@ class GreennessApi(recipe_api.RecipeApi):
       # Only count if test suite was critical.
       if res.task.test.common.critical.value:
         bt = str(res.task.unit.common.build_target.name)
+        builder = str(res.task.unit.common.builder_name)
         test_cases = [
             r.state.verdict == TaskState.VERDICT_PASSED
             for r in res.child_results
         ]
-        prev_cases = hwtest_dict.get(bt, [])
-        hwtest_dict[bt] = prev_cases + test_cases
+        prev_cases = hwtest_dict.get((builder, bt), [])
+        hwtest_dict[(builder, bt)] = prev_cases + test_cases
 
-    for bt, test_cases in hwtest_dict.items():
+    for (builder, bt), test_cases in hwtest_dict.items():
       if test_cases:
         score = int(sum(test_cases) * 100 / len(test_cases))
         build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
         self._greenness_dict[bt] = GreennessTuple(score, build_score, True,
                                                   True)
+        builder_score = self._get_build_score_for_tests(
+            self._builder_greenness_dict, builder)
+        self._builder_greenness_dict[builder] = GreennessTuple(
+            score, builder_score, True, True)
         local_build_score = self._get_build_score_for_tests(
             self._local_greenness_dict, bt)
         self._local_greenness_dict[bt] = GreennessTuple(score,
@@ -205,10 +226,15 @@ class GreennessApi(recipe_api.RecipeApi):
     for res in results:
       bt = str(self.m.cros_infra_config.get_build_target_name(res))
       if 'greenness' in res.output.properties:
+        builder = str(res.input.properties['name']).split('.', maxsplit=1)[0]
         greenness = int(res.output.properties['greenness'])
         build_score = self._get_build_score_for_tests(self._greenness_dict, bt)
         self._greenness_dict[bt] = GreennessTuple(greenness, build_score, True,
                                                   True)
+        builder_score = self._get_build_score_for_tests(
+            self._builder_greenness_dict, builder)
+        self._builder_greenness_dict[builder] = GreennessTuple(
+            greenness, builder_score, True, True)
         local_build_score = self._get_build_score_for_tests(
             self._local_greenness_dict, bt)
         self._local_greenness_dict[bt] = GreennessTuple(greenness,
@@ -243,6 +269,7 @@ class GreennessApi(recipe_api.RecipeApi):
     """Print comprehensive greenness info in a step."""
     with self.m.step.nest('print greenness') as pres:
       pres.logs['greenness'] = str(self._greenness_dict)
+      pres.logs['builder_greenness'] = str(self.builder_greenness_dict)
       if self._publish_property:
         self.publish_step()
 
@@ -269,6 +296,14 @@ class GreennessApi(recipe_api.RecipeApi):
             critical_build_scores.append(green_tuple.build_score)
           if green_tuple.relevant:
             critical_scores.append(green_tuple.score)
+
+      for builder, green_tuple in self._builder_greenness_dict.items():
+        builder_greenness = agg_greenness.builder_greenness.add()
+        builder_greenness.builder = builder
+        builder_greenness.metric = green_tuple.score
+        builder_greenness.build_metric = green_tuple.build_score
+        if not green_tuple.relevant:
+          builder_greenness.context = AggregateGreenness.Greenness.IRRELEVANT
 
     if critical_scores:
       agg_greenness.aggregate_metric = int(

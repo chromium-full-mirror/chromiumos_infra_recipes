@@ -2770,7 +2770,9 @@
     "name": "print greenness",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -12508,7 +12510,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {

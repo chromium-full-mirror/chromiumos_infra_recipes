@@ -4802,7 +4802,9 @@
     "name": "print greenness",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -14979,7 +14981,9 @@
     "name": "print greenness (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('cave', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('coral', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('cave-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('coral-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -15045,7 +15049,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('cave', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('coral', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-pointless-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('atlas-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('cave-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('coral-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {

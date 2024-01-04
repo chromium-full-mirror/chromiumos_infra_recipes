@@ -5661,7 +5661,9 @@
     "name": "print greenness",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -5846,7 +5848,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {

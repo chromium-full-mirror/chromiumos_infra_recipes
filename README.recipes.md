@@ -8086,7 +8086,9 @@ API providing a menu for calculating greenness metric.
 
 A module to calculate greenness metric.
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#281)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#57)(self):**
+
+&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#316)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8105,7 +8107,7 @@ Args:
 Raises:
   StepFailure if snapshot_builder_names is empty.
 
-&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#59)(self, target: str):**
+&mdash; **def [get\_greenness](/recipe_modules/greenness/api.py#65)(self, target: str):**
 
 Get the greenness metric for a specific target.
 
@@ -8115,7 +8117,7 @@ Args:
 Returns: Metric of the target or None if the target wasn't
   launched.
 
-&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#70)(self, target: str):**
+&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#76)(self, target: str):**
 
 Get the targetGreenness from the last snapshot run for a given target.
 
@@ -8125,11 +8127,11 @@ Args:
 Returns: targetGreenness, or an empty OrderedDict if the target, its
   greenness, or the last snapshot wasn't found.
 
-&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#51)(self):**
+&emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#53)(self):**
 
-&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
+&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#61)(self):**
 
-&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#142)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#158)(self, builds: List[build_pb2.Build]):**
 
 Populate the local greenness dict with build information.
 
@@ -8140,29 +8142,29 @@ separately from amd64-generic).
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#242)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#268)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#249)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#276)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#113)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#119)(self, builds: List[build_pb2.Build]):**
 
 Update greenness with build information.
 
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#169)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#185)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#218)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
+&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#244)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
 
 Update scores in the greenness dict for irrelevant builds.
 
@@ -8170,7 +8172,7 @@ Args:
   builds: List of builds that have completed.
   greenness_dict: The greenness dict to update.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#199)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#220)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 

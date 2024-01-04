@@ -66,7 +66,9 @@
     "name": "print greenness",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve-kernelnext', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-kernelnext-not-relevant', GreennessTuple(score=0, build_score=98, critical=True, relevant=False))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-kernelnext-not-relevant-postsubmit', GreennessTuple(score=0, build_score=98, critical=True, relevant=False)), ('eve-asan-postsubmit', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -83,7 +85,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"99\", \"aggregateMetric\": \"100\", \"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"98\", \"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"99\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"98\", \"builder\": \"eve-kernelnext-not-relevant-postsubmit\", \"context\": \"IRRELEVANT\"}, {\"buildMetric\": \"100\", \"builder\": \"eve-asan-postsubmit\", \"metric\": \"100\"}], \"targetGreenness\": [{\"buildMetric\": \"100\", \"metric\": \"100\", \"target\": \"eve-kernelnext\"}, {\"buildMetric\": \"98\", \"context\": \"IRRELEVANT\", \"target\": \"eve-kernelnext-not-relevant\"}]}@@@"
     ]
   },
   {

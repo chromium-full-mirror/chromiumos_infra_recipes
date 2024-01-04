@@ -14573,7 +14573,9 @@
     "name": "print greenness",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('arm64-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('atlas-cq', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('arm-generic-pointless-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('cave-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('coral-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
@@ -19123,7 +19125,9 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@greenness@OrderedDict([('None', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@"
+      "@@@STEP_LOG_END@greenness@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('arm64-generic-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('atlas-cq', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('arm-generic-pointless-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('cave-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('coral-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('eve-cq', GreennessTuple(score=100, build_score=100, critical=False, relevant=True))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
   {
