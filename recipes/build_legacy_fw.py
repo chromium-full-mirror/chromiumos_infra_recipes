@@ -39,7 +39,6 @@ DEPS = [
     'cros_infra_config',
     'cros_release',
     'cros_sdk',
-    'cros_source',
     'cros_version',
     'easy',
     'failures',
@@ -80,6 +79,10 @@ _CHROMITE_HOST = 'https://chromium.googlesource.com'
 _CHROMITE_PROJECT = 'chromiumos/chromite'
 _CHROMITE_URL = '{}/{}'.format(_CHROMITE_HOST, _CHROMITE_PROJECT)
 
+# TODO(b/187787264): On old branches, chromite may still depend on the chroot
+# living within the source tree. On newer branches we need to use the
+# new out path.
+_MILESTONE_USE_OUT_DIR = 118
 
 class NoFilesToUploadFailure(recipe_api.StepFailure):
   """Error class for when there are no files to upload as a FirmwareArchive."""
@@ -128,7 +131,15 @@ class FirmwareBuilder():
         self.m.cros_build_api.log_level,
     ]
     if self.properties.chroot_outside:
-      command.extend(['--chroot', str(self._chroot)])
+      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+        command.extend([
+            '--chroot',
+            self.m.cros_sdk.chroot.path,
+            '--out-dir',
+            self.m.cros_sdk.chroot.out_path,
+        ])
+      else:
+        command.extend(['--chroot', str(self._chroot)])
     command += list(sdk_args)
     # Pass in any USE flags from the builder config.
     if cmd:
@@ -359,8 +370,17 @@ class FirmwareBuilder():
     with self.m.step.nest('create firmware archive'):
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
-      root = self._chroot.join(sysroot.path.strip('/'), 'firmware')
-      config_dir = self._chroot.join(
+
+      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+        # TODO(b/316429012): Update cros_sdk to expose out path as a Path,
+        # rather than only as a string.
+        dest_path = self.m.cros_sdk._out_path  # pylint: disable=protected-access
+        chroot_path = lambda x: x
+      else:
+        dest_path = self._chroot
+        chroot_path = lambda x: '/' + self.m.path.relpath(x, dest_path)
+      root = dest_path.join(sysroot.path.strip('/'), 'firmware')
+      config_dir = dest_path.join(
           sysroot.path.strip('/'), 'usr/share/chromeos-config/yaml')
 
       private_dirs = self.m.file.glob_paths(
@@ -377,7 +397,6 @@ class FirmwareBuilder():
       if not source_list:
         raise NoFilesToUploadFailure('No firmware files to bundle')
 
-      chroot_path = lambda x: '/' + self.m.path.relpath(x, self._chroot)
       tarball = out_path.join(_FIRMWARE_TARBALL_NAME)
       cmd = [
           'tar',
@@ -399,8 +418,15 @@ class FirmwareBuilder():
       ])
       # The list of files is generally too long for the command line.
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
-      self.sdk_call('create tarball', cmd=cmd,
+
+      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+        # When the out_path is outside of the chroot, run tar from outside the
+        # chroot as well.
+        self.m.step('create tarball', cmd=cmd,
                     stdin=self.m.raw_io.input(data=file_list))
+      else:
+        self.sdk_call('create tarball', cmd=cmd,
+                      stdin=self.m.raw_io.input(data=file_list))
       return tarball
 
   def _bundle_firmware(self, _chroot, sysroot, _artifacts_info, outpath,
@@ -416,30 +442,20 @@ class FirmwareBuilder():
     metadata = FirmwareArtifactInfo()
     metadata.bcs_version_info.version_string = str(self._bcs_version)
     target = sysroot.build_target.name
-    tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
-    tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
+
+    if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+      tmppath = outpath
+      tmpdir = outpath
+    else:
+      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
+      tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
+
     tarball = self._build_firmware_archive(sysroot, tmpdir)
     if tarball:
       dest_name = '{}/{}'.format(target, _FIRMWARE_TARBALL_NAME)
       self.m.file.ensure_directory('create {}'.format(target),
                                    outpath.join(target))
-
-      # TODO(b/299948529): Paths in the chroot have changed. If the old-style
-      # outside path for the tarball cannot be found, we'll try the new path
-      # format. We should replace this with a call to a BuildAPI endpoint that
-      # tells us where we should expect to find the tmp directory.
-      outside_tarball = tarball
-      # We don't have a good way to test when a path does not exist. See:
-      # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
-      if self.m.path.exists(tarball):  # pragma: nocover
-        outside_tarball = tarball
-      else:
-        outside_tarball = self.m.cros_source.workspace_path.join(
-            'out', 'tmp', self.m.path.basename(tmppath),
-            self.m.path.basename(tarball))
-
-      self.m.file.copy('bundle tarball', outside_tarball,
-                       outpath.join(dest_name))
+      self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
       ret['FIRMWARE_TARBALL'].append(dest_name)
 
       info = metadata.objects.add()
@@ -843,6 +859,18 @@ def GenTests(api):
           'name': 'board2'
       }],
       status='FAILURE',
+  )
+
+  yield test(
+      'new-chroot-firmware',
+      api.properties(chroot_outside=True),
+      suite_scheduling(False),
+      api.post_check(post_process.StepSuccess,
+                     'upload artifacts.create firmware archive'),
+      api.post_check(post_process.StepSuccess,
+                     'upload artifacts.bundle tarball'),
+      api.post_check(post_process.MustRun, 'push image'),
+      version='R122-15709.22.0',
   )
 
   yield test('chroot-exists', exists('chroot'))
