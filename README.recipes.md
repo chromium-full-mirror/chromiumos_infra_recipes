@@ -6181,6 +6181,10 @@ A module for util functions associated with factory builds.
 
 #### **class [FactoryUtilApi](/recipe_modules/factory_util/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
+&mdash; **def [compress\_test\_image](/recipe_modules/factory_util/api.py#75)(self, artifact_dir: str, images_path: Path, version_str: str):**
+
+Compress artifacts for chromiumos_test_image.tar.xz
+
 &mdash; **def [upload\_factory](/recipe_modules/factory_util/api.py#18)(self, config: BuilderConfig, artifact_dir: str):**
 
 Compress and upload factory artifacts.
@@ -6191,7 +6195,9 @@ Args:
   config - Which contains builder info used to construct GS path.
   artifact_dir - Local dir containing build artifacts.
 
-&mdash; **def [upload\_factory\_artifacts](/recipe_modules/factory_util/api.py#74)(self, config: BuilderConfig, artifact_dir: str):**
+&mdash; **def [upload\_factory\_artifacts](/recipe_modules/factory_util/api.py#96)(self, config: BuilderConfig, artifact_dir: str):**
+
+Upload factory.zip and chromiumos_test_image.tar.xz
 
 &mdash; **def [zip\_factory\_image](/recipe_modules/factory_util/api.py#42)(self, artifact_dir: str, images_path: Path, bundle_path: Path, version_str: str):**
 

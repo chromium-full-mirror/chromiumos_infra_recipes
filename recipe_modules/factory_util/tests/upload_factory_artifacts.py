@@ -30,16 +30,21 @@ def GenTests(api):
           post_process.StepCommandContains,
           'uploading factory artifacts for older branch.zip factory', [
               'zip', '-r', '/path/to/artifacts/factory_image.zip',
-              'R99-1234.56.0', '--include',
-              'R99-1234.56.0/*factory_install*.bin', '--include',
-              'R99-1234.56.0/*partition*', '--include',
-              'R99-1234.56.0/netboot/*'
+              'R99-1234.56.0-factory_shim', '--include',
+              'R99-1234.56.0-factory_shim/*factory_install*.bin', '--include',
+              'R99-1234.56.0-factory_shim/*partition*', '--include',
+              'R99-1234.56.0-factory_shim/netboot/*'
           ]),
       api.post_check(
           post_process.StepCommandContains,
           'uploading factory artifacts for older branch.zip factory symlinks',
           ['zip', '-r', '/path/to/artifacts/factory_image.zip', '-y', '.']),
-      # TODO(b/303844496): Ensure chromiumos_test_image.bin is compressed.
+      api.post_check(
+          post_process.StepCommandContains,
+          'uploading factory artifacts for older branch.tar test image', [
+              'tar', '-cJf', '/path/to/artifacts/chromiumos_test_image.tar.xz',
+              'chromiumos_test_image.bin'
+          ]),
       api.post_check(
           post_process.StepCommandContains,
           'uploading factory artifacts for older branch.gsutil cp', [
