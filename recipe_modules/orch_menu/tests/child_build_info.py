@@ -5,12 +5,11 @@
 
 """Tests for the add_child_build_info_to_output_property function."""
 
-import dataclasses
-
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
-from RECIPE_MODULES.chromeos.failures.api import PackageFailure
+from PB.chromiumos import common as common_pb2
+from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 
 from recipe_engine import post_process
 
@@ -64,8 +63,11 @@ def GenTests(api):
   )
 
   package_failures = [
-      dataclasses.asdict(
-          PackageFailure(name='test/package', phase='compilation'))
+      json_format.MessageToDict(
+          PackageFailure(
+              package=common_pb2.PackageInfo(category='foo',
+                                             package_name='bar'),
+              phase=PackageFailure.COMPILE))
   ]
   yield api.test(
       'package-failures',

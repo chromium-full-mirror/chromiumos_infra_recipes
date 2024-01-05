@@ -6611,7 +6611,7 @@
       "@@@STEP_LOG_END@list of failed packages@@@",
       "@@@STEP_LOG_LINE@foo&#x2f;bar log@test data for foo/bar log file@@@",
       "@@@STEP_LOG_END@foo&#x2f;bar log@@@",
-      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"foo/bar\", \"phase\": \"unit testing\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"foo\", \"packageName\": \"bar\", \"version\": \"1.0-r1\"}, \"phase\": \"TEST\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

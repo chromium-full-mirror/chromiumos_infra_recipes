@@ -8,13 +8,14 @@ from __future__ import annotations
 
 import collections
 import contextlib
-import dataclasses
 import datetime
 import operator
 import re
 
 from typing import Dict, List, Optional, Tuple
 from dataclasses import dataclass, field
+
+from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ImageType
@@ -23,22 +24,13 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFailureAttribute, FaultAttributedBuildTarget
+from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.engine_types import StepPresentation
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
-
-# TODO(b/304634762): Add information about whether the package was affected by
-# the changes included in the run.
-@dataclasses.dataclass
-class PackageFailure:
-  # The name of the failed package in the form of 'category/package-name'.
-  # It should not contain version information.
-  name: str
-  # The build phase during which the package failed to emerge.
-  phase: str
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -297,9 +289,9 @@ class FailuresApi(RecipeApi):
       failure_message = self._format_summary_markdown(summary_lines)
 
     package_failures = [
-      dataclasses.asdict(PackageFailure(
-        name=f'{p[0].category}/{p[0].package_name}',
-        phase='compilation' if compile_failure else 'unit testing'
+      json_format.MessageToDict(PackageFailure(
+        package=p[0],
+        phase=PackageFailure.COMPILE if compile_failure else PackageFailure.TEST
       )) for p in packages
     ]
     enclosing_step.presentation.properties['package_failures'] = package_failures

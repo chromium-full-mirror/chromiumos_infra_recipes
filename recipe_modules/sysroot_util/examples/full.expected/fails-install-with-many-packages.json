@@ -903,7 +903,7 @@
       "@@@STEP_LOG_END@chromeos-base&#x2f;thislongpackagenameomg log@@@",
       "@@@STEP_LOG_LINE@safari-base&#x2f;thisotherexceedinglylongpackage log@test data for safari-base/thisotherexceedinglylongpackage log file@@@",
       "@@@STEP_LOG_END@safari-base&#x2f;thisotherexceedinglylongpackage log@@@",
-      "@@@SET_BUILD_PROPERTY@package_failures@[{\"name\": \"edge-base/shortpackagename\", \"phase\": \"compilation\"}, {\"name\": \"chromeos-base/thislongpackagenameomg\", \"phase\": \"compilation\"}, {\"name\": \"safari-base/thisotherexceedinglylongpackage\", \"phase\": \"compilation\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"edge-base\", \"packageName\": \"shortpackagename\", \"version\": \"0.0.1-r197\"}, \"phase\": \"COMPILE\"}, {\"package\": {\"category\": \"chromeos-base\", \"packageName\": \"thislongpackagenameomg\", \"version\": \"0.0.1-r199\"}, \"phase\": \"COMPILE\"}, {\"package\": {\"category\": \"safari-base\", \"packageName\": \"thisotherexceedinglylongpackage\", \"version\": \"0.0.1-r129\"}, \"phase\": \"COMPILE\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
