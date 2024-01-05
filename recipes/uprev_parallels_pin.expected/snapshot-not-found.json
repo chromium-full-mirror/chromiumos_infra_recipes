@@ -75,7 +75,7 @@
       "-fields",
       "builder,id,input,status",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-11T23:50:17Z\"}, \"status\": \"SUCCESS\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2018-05-11T23:50:17Z\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -99,7 +99,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "unable to find builds for amd64-generic-postsubmit"
+      "humanReason": "unable to find builds for amd64-generic-snapshot"
     },
     "name": "$result"
   }

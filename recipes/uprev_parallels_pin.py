@@ -445,7 +445,7 @@ def get_latest_green_snapshot_commit(api: RecipeApi,
             builder=builder_common_pb2.BuilderID(
                 project=api.buildbucket.build.builder.project,
                 bucket='postsubmit',
-                builder='{}-postsubmit'.format(build_target),
+                builder='{}-snapshot'.format(build_target),
             ), create_time=common_pb2.TimeRange(
                 start_time=timestamp_pb2.Timestamp(
                     seconds=api.buildbucket.build.create_time.ToSeconds() -
@@ -454,7 +454,7 @@ def get_latest_green_snapshot_commit(api: RecipeApi,
 
     if not builds:
       raise StepFailure(
-          'unable to find builds for {}-postsubmit'.format(build_target))
+          'unable to find builds for {}-snapshot'.format(build_target))
 
     presentation.links['latest green snapshot'] = api.buildbucket.build_url(
         build_id=builds[0].id)
