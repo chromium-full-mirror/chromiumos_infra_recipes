@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """An API for providing release related operations (e.g. paygen, signing)."""
+import datetime
 import json
 from typing import List
 
@@ -225,9 +226,15 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     def commit_to_remote(checkout, filename, commit_message, branch):
       self.m.git.add([filename])
       self.m.git.commit(commit_message)
-      change = self.m.gerrit.create_change(
-          str(checkout), ref=self.m.git.get_branch_ref(branch),
-          project_path=checkout)
+
+      @self.m.time.exponential_retry(retries=2,
+                                     delay=datetime.timedelta(seconds=120))
+      def create_change():
+        return self.m.gerrit.create_change(
+            str(checkout), ref=self.m.git.get_branch_ref(branch),
+            project_path=checkout)
+
+      change = create_change()
       labels = {
           Label.BOT_COMMIT: 1,
           Label.VERIFIED: 1,

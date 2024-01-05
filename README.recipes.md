@@ -3773,15 +3773,15 @@ Args:
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#84)(self, buildspec: ManifestLocation):**
+&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#85)(self, buildspec: ManifestLocation):**
 
-&emsp; **@property**<br>&mdash; **def [channels](/recipe_modules/cros_release/api.py#136)(self):**
+&emsp; **@property**<br>&mdash; **def [channels](/recipe_modules/cros_release/api.py#137)(self):**
 
 Return the channels as passed into input properties.
 
-&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#141)(self, fatal: bool=False):**
+&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#142)(self, fatal: bool=False):**
 
 Checks that the build was given a buildspec and that there doesn't
   already exist a build for this buildspec (and this build is not a retry).
@@ -3789,9 +3789,9 @@ Checks that the build was given a buildspec and that there doesn't
 Args:
   fatal: Whether or not to kill the build if the build already ran.
 
-&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#121)(self):**
+&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#122)(self):**
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#202)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#203)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -3807,7 +3807,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#573)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#580)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3815,7 +3815,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#509)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#516)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3828,7 +3828,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#537)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#544)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3840,7 +3840,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#589)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#596)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3859,11 +3859,11 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#88)(self):**
+&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#89)(self):**
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#414)(self, override_qs_account: str=None, use_split_paygen: bool=False):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#421)(self, override_qs_account: str=None, use_split_paygen: bool=False):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3875,18 +3875,18 @@ Args:
   override_qs_account: QS Account to use instead of whatever is configured.
   use_split_paygen: Whether to use the new split paygen flow.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#629)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#636)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#637)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#644)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
 If the schedule cannot be fetched or is malformatted, reasonable defaults
 will be used. See go/dynamic-rc-prio for more context.
 
-&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#93)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
+&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#94)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
 
 Set the gitiles commit used for ResultDB.
 
@@ -3897,11 +3897,11 @@ Args:
   branch: Branch where commit was fetched.
   position: Used to define a total order of commits on the ref.
 
-&emsp; **@property**<br>&mdash; **def [sign\_types](/recipe_modules/cros_release/api.py#131)(self):**
+&emsp; **@property**<br>&mdash; **def [sign\_types](/recipe_modules/cros_release/api.py#132)(self):**
 
 Return the sign types as passed into input properties.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#54)(self):**
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#55)(self):**
 
 Checks whether the configured sign types are valid for signing.
 
