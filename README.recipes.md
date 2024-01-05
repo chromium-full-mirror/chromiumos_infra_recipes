@@ -11813,7 +11813,7 @@ historical database in GCS. This database maintenance runs on a
 
 &mdash; **def [RunSteps](/recipes/build_firmware_historical_db.py#54)(api, properties):**
 
-&mdash; **def [UpdateHistoricalTokenDatabase](/recipes/build_firmware_historical_db.py#84)(api: RecipeApi, location: common_pb2.FwLocation, uploaded_artifacts: UploadedArtifacts):**
+&mdash; **def [UpdateHistoricalTokenDatabase](/recipes/build_firmware_historical_db.py#86)(api: RecipeApi, location: common_pb2.FwLocation, uploaded_artifacts: UploadedArtifacts):**
 
 Updates Historical Token Database in GCS
 

@@ -54,6 +54,8 @@ PRECONDITION_FAILURE = 412
 def RunSteps(api, properties):
   with api.build_menu.configure_builder(
   ) as config, api.build_menu.setup_workspace():
+    api.build_menu.setup_chroot()
+
     service = api.cros_build_api.FirmwareService
     chroot = api.cros_sdk.chroot
     location = (
