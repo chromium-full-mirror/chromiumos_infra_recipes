@@ -57,22 +57,25 @@ SKIP_SIGNING_RE = re.compile(r'^(host_emulation|opentitan)-')
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
-    test_results = cros_src_path.join(
-        'src/platform/ec/twister-out-llvm/twister.json')
-
     with api.step.nest('Upload EC Firmware test results') as pres:
-      try:
-        rdb_cmd = [
-            'vpython3',
-            cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
-            '--result=' + str(test_results), '--upload=True'
-        ]
-        base_variant = {'builder_name': builder_name}
-        api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
+      for test_results in api.file.glob_paths(
+          'twister dirs', cros_src_path,
+          'src/platform/ec/twister-out*/twister.json', test_data=[
+              'src/platform/ec/twister-out-host/twister.json',
+              'src/platform/ec/twister-out-llvm/twister.json'
+          ]):
+        try:
+          rdb_cmd = [
+              'vpython3',
+              cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
+              '--result=' + str(test_results), '--upload=True'
+          ]
+          base_variant = {'builder_name': builder_name}
+          api.step('run', api.resultdb.wrap(rdb_cmd, base_variant=base_variant))
 
-      except StepFailure:
-        pres.status = api.step.FAILURE
-        pres.step_text = 'Failed to upload test results'
+        except StepFailure:
+          pres.status = api.step.FAILURE
+          pres.step_text = 'Failed to upload test results'
 
 
 def CreateContainers(api, config):

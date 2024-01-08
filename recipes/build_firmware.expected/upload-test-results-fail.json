@@ -4118,6 +4118,70 @@
   },
   {
     "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "glob",
+      "[CLEANUP]/chromiumos_workspace",
+      "src/platform/ec/twister-out*/twister.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Upload EC Firmware test results.twister dirs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out-host/twister.json@@@",
+      "@@@STEP_LOG_LINE@glob@[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out-llvm/twister.json@@@",
+      "@@@STEP_LOG_END@glob@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "builder_name:fw-ec-postsubmit",
+      "--",
+      "vpython3",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
+      "--result=[CLEANUP]/chromiumos_workspace/src/platform/ec/twister-out-host/twister.json",
+      "--upload=True"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Upload EC Firmware test results.run",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
       "rdb",
       "stream",
       "-var",
@@ -4141,10 +4205,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Upload EC Firmware test results.run",
+    "name": "Upload EC Firmware test results.run (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -11811,13 +11811,13 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 This recipe should only be used for ToT firmware builds and build_legacy_fw
 (which is not deprecated) should be used for branch firmware builds.
 
-&mdash; **def [CreateContainers](/recipes/build_firmware.py#78)(api, config):**
+&mdash; **def [CreateContainers](/recipes/build_firmware.py#81)(api, config):**
 
-&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#196)(api, location, config):**
+&mdash; **def [CreateTi50TastArtifacts](/recipes/build_firmware.py#199)(api, location, config):**
 
 Create directories and files of artifacts needed by Ti50 Tast tests.
 
-&mdash; **def [RunSteps](/recipes/build_firmware.py#100)(api, properties):**
+&mdash; **def [RunSteps](/recipes/build_firmware.py#103)(api, properties):**
 
 &mdash; **def [UploadTestResults](/recipes/build_firmware.py#57)(api, location, builder_name):**
 ### *recipes* / [build\_firmware\_historical\_db](/recipes/build_firmware_historical_db.py)
