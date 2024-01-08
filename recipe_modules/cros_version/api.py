@@ -144,27 +144,31 @@ class CrosVersionApi(RecipeApi):
 
       overlay_path = self.m.src_state.workspace_path.join(
           CHROMIUMOS_OVERLAY_REPO)
+      # We're going to checkout to the branch we want to modify
+      # (necessary because sometimes we're synced to `snapshot`),
+      # make sure we check out the original branch when we're done.
+      with self.m.context(cwd=overlay_path), self.m.git.head_context():
 
-      # By default, we push to the manifest branch.
-      push_branch = self.m.cros_source.manifest_push
+        # By default, we push to the manifest branch.
+        push_branch = self.m.cros_source.manifest_push
+        self.m.git.checkout(push_branch)
 
-      cmd = [
-          'bump-version',
-          '--chromiumos_overlay_repo',
-          overlay_path,
-          '--bump_from_branch_name',
-          self.m.cros_source.manifest_push,
-      ]
-      self.m.gobin.call('version_bumper', cmd)
+        cmd = [
+            'bump-version',
+            '--chromiumos_overlay_repo',
+            overlay_path,
+            '--bump_from_branch_name',
+            self.m.cros_source.manifest_push,
+        ]
+        self.m.gobin.call('version_bumper', cmd)
 
-      # Update the version in output properties.
-      new_version = self.read_workspace_version(name='read updated version')
-      self.m.easy.set_properties_step(
-          chromeos_version=str(new_version),
-          full_version=new_version.legacy_version)
+        # Update the version in output properties.
+        new_version = self.read_workspace_version(name='read updated version')
+        self.m.easy.set_properties_step(
+            chromeos_version=str(new_version),
+            full_version=new_version.legacy_version)
 
-      # Stage, commit, and push changes.
-      with self.m.context(cwd=overlay_path):
+        # Stage, commit, and push changes.
         commit_lines = [
             'Increment to version {}'.format(str(new_version)),
             '',

@@ -2429,6 +2429,57 @@
     "name": "bump version"
   },
   {
+    "cmd": [
+      "git",
+      "symbolic-ref",
+      "--short",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.git symbolic-ref",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@branch@main@@@",
+      "@@@STEP_LOG_END@branch@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "firmware-board-9999.B"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "bump version.ensure version_bumper",
     "~followup_annotations": [
@@ -2454,7 +2505,7 @@
       "-json-output",
       "[CLEANUP]/cipd.json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2483,7 +2534,7 @@
       "[CLEANUP]/cipd.json",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2523,7 +2574,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2561,7 +2612,7 @@
       "--bump_from_branch_name",
       "firmware-board-9999.B"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
       "realm": {
         "name": "chromeos:firmware"
@@ -2597,7 +2648,7 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3454,6 +3505,30 @@
     "name": "bump version.commit chromeos/config/chromeos_version.sh.check version change reflected on remote.read remote version.read snapshot.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:firmware"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "bump version.git checkout (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
