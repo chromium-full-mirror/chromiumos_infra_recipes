@@ -59,7 +59,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
       # api.build_menu.upload_prebuilts(config)
       # api.build_menu.upload_host_prebuilts(config)
       api.build_menu.create_containers(config)
-      api.build_menu.build_and_test_images(config)
+      api.build_menu.build_images(config)
       api.build_menu.publish_image_size_data(config)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
@@ -95,7 +95,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
       # api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       # By default, use Portage as the build orchestrator for all build steps.
@@ -103,8 +102,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                               'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_portage('build images',
                                               'ImageService/Create'),
-      api.build_menu.assert_step_uses_portage(
-          'run ebuild tests', 'TestService/BuildTargetUnitTest'),
   )
 
   # Pointless postsubmit build.
@@ -123,7 +120,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.DoesNotRun,
@@ -142,7 +138,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.MustRun, 'build images'),
-      api.post_check(post_process.MustRun, 'run ebuild tests'),
       # api.post_check(post_process.MustRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return(
@@ -159,7 +154,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.set_build_api_return('install packages',
@@ -198,7 +192,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
@@ -212,7 +205,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'force_postsubmit_relevance': True
           }}),
       api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       build_target='grunt',
@@ -225,8 +217,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                             'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_bazel('build images',
                                             'ImageService/Create'),
-      api.build_menu.assert_step_uses_bazel('run ebuild tests',
-                                            'TestService/BuildTargetUnitTest'),
       builder_name='amd64-generic-bazel-postsubmit',
   )
 
@@ -263,6 +253,4 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                               'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_portage('build images',
                                               'ImageService/Create'),
-      api.build_menu.assert_step_uses_portage(
-          'run ebuild tests', 'TestService/BuildTargetUnitTest'),
   )
