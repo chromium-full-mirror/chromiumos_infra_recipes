@@ -10,6 +10,7 @@ from typing import Optional
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
+from PB.recipes.chromeos.build_bisector import BuildBisectorProperties
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -30,8 +31,11 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = BuildBisectorProperties
 
-def RunSteps(api: RecipeApi) -> Optional[RawResult]:
+
+def RunSteps(api: RecipeApi,
+             properties: BuildBisectorProperties) -> Optional[RawResult]:
 
   if api.cros_infra_config.is_staging:
     api.bot_scaling.drop_cpu_cores(min_cpus_left=4,
@@ -39,11 +43,14 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config)
+    return DoRunSteps(api, config, properties)
 
 
-def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
-  env_info = api.build_menu.setup_sysroot_and_determine_relevance()
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               properties: BuildBisectorProperties) -> Optional[RawResult]:
+  env_info = api.build_menu.setup_sysroot_and_determine_relevance(
+      snapshot_commit=properties.snapshot_commit if properties
+      .HasField('snapshot_commit') else None)
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was not relevant.')
@@ -249,6 +256,35 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       # By default, use Portage as the build orchestrator for all build steps.
+      api.build_menu.assert_step_uses_portage('install packages',
+                                              'SysrootService/InstallPackages'),
+      api.build_menu.assert_step_uses_portage('build images',
+                                              'ImageService/Create'),
+  )
+
+  yield api.build_menu.test(
+      'custom-snapshot-commit',
+      api.properties(
+          **{
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'elm'
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}'
+              },
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              },
+              'snapshot_commit': {
+                  'host': 'test_host',
+                  'project': 'test_project',
+                  'ref': 'test_ref',
+                  'id': 'test_id'
+              }
+          }),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
       api.build_menu.assert_step_uses_portage('install packages',
                                               'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_portage('build images',

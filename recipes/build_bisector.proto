@@ -1,0 +1,15 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_bisector;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message BuildBisectorProperties {
+  // Used to specify a snapshot manifest commit closest to the Chrome OS
+  // version.
+  buildbucket.v2.GitilesCommit snapshot_commit = 1;
+}
