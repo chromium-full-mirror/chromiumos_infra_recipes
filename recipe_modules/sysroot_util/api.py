@@ -190,6 +190,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     packages = packages or []
     package_indexes = package_indexes or []
     install_packages = config.build.install_packages
+    skip_clean_package_dirs = install_packages.skip_clean_package_dirs
+
     bazel_build = (
         install_packages.install_packages_orchestrator ==
         builder_config_pb2.BuilderConfig.BAZEL)
@@ -227,7 +229,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 compile_source=install_packages.compile_source,
                 use_goma=self.m.cros_sdk.has_goma_config(),
                 toolchain_changed=toolchain_cls, dryrun=dryrun,
-                bazel=bazel_build),
+                bazel=bazel_build,
+                skip_clean_package_dirs=skip_clean_package_dirs),
             use_flags=config.build.use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             remoteexec_config=remoteexec_config,
