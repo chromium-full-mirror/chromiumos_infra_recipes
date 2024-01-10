@@ -33,6 +33,9 @@ def RunSteps(api, properties):
   if properties.manifest_branch:
     api.cros_source.test_api.manifest_branch = properties.manifest_branch
 
+  api.assertions.assertEqual(api.cros_release.uprev_packages(),
+                             not properties.expect_uprev_packages_failure)
+
   api.cros_release.create_buildspec()
   api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
@@ -52,6 +55,32 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.orch_menu.test(
       'basic', api.git.diff_check(True),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     ('src/overlay\nsrc/private-overlay')),
+      api.post_check(
+          post_process.MustRun,
+          'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main'
+      ),
+      api.post_check(post_process.DoesNotRun,
+                     'create buildspec.commit buildspec as snapshot'),
+      builder='release-main-orchestrator')
+
+  yield api.orch_menu.test(
+      'uprev-fail',
+      api.properties(
+          BuildspecProperties(
+              expect_uprev_packages_failure=True,
+          ),
+      ), api.git.diff_check(True),
+      api.step_data(
+          ('push uprevs.push to src/private-overlay.git push src/private-overlay'
+          ),
+          retcode=1,
+      ),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+                     ('src/overlay')),
+      api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
+                     ('src/private-overlay')),
       api.post_check(
           post_process.MustRun,
           'create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main'
@@ -97,7 +126,7 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.write commit message',
-          'commit_msg_tmp_2',
+          'commit_msg_tmp_4',
           ['Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}']),
       builder='release-main-orchestrator')
 
@@ -120,7 +149,7 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.write commit message',
-          'commit_msg_tmp_2',
+          'commit_msg_tmp_4',
           ['Cr-Commit-Position: refs/heads/main-release-snapshot@{#102}']),
       builder='release-main-orchestrator')
 
@@ -151,7 +180,7 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.write commit message',
-          'commit_msg_tmp_2', [
+          'commit_msg_tmp_4', [
               'Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#102}',
               'Cr-Branched-From: 12345abcde-refs/heads/main-release-snapshot@{#65}',
           ]),
@@ -179,7 +208,7 @@ def GenTests(api):
       api.post_check(
           post_process.LogContains,
           'create buildspec.commit buildspec as snapshot.commit to release-R108-15183.B-snapshot.write commit message',
-          'commit_msg_tmp_2', [
+          'commit_msg_tmp_4', [
               'Cr-Commit-Position: refs/heads/release-R108-15183.B-snapshot@{#1}',
               'Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main-release-snapshot@{#101}',
           ]),

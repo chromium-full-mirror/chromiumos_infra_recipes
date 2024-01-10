@@ -3784,15 +3784,15 @@ Args:
 
 An API for providing release related operations (e.g. paygen, signing).
 
-#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseApi](/recipe_modules/cros_release/api.py#51)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#85)(self, buildspec: ManifestLocation):**
+&emsp; **@buildspec.setter**<br>&mdash; **def [buildspec](/recipe_modules/cros_release/api.py#87)(self, buildspec: ManifestLocation):**
 
-&emsp; **@property**<br>&mdash; **def [channels](/recipe_modules/cros_release/api.py#137)(self):**
+&emsp; **@property**<br>&mdash; **def [channels](/recipe_modules/cros_release/api.py#139)(self):**
 
 Return the channels as passed into input properties.
 
-&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#142)(self, fatal: bool=False):**
+&mdash; **def [check\_buildspec](/recipe_modules/cros_release/api.py#144)(self, fatal: bool=False):**
 
 Checks that the build was given a buildspec and that there doesn't
   already exist a build for this buildspec (and this build is not a retry).
@@ -3800,9 +3800,9 @@ Checks that the build was given a buildspec and that there doesn't
 Args:
   fatal: Whether or not to kill the build if the build already ran.
 
-&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#122)(self):**
+&mdash; **def [check\_channel\_override](/recipe_modules/cros_release/api.py#124)(self):**
 
-&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#203)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
+&mdash; **def [create\_buildspec](/recipe_modules/cros_release/api.py#233)(self, specs_dir='buildspecs', step_name='create buildspec', dry_run=False, gs_location=None):**
 
 Create a pinned manifest and upload to manifest-versions and/or GS.
 
@@ -3818,7 +3818,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#580)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#610)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3826,7 +3826,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#516)(self, fsi=False):**
+&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#546)(self, fsi=False):**
 
 Determine which models are configured to run autoupdate tests.
 
@@ -3839,7 +3839,7 @@ Args:
 Returns:
   List[str]: The names of each model that should run paygen tests.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#544)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#574)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3851,7 +3851,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#596)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#626)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3870,11 +3870,11 @@ Return:
     instructions_uris is a list of URIs to instructions files for the
       pushed images.
 
-&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#89)(self):**
+&emsp; **@property**<br>&mdash; **def [resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#91)(self):**
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#421)(self, override_qs_account: str=None, use_split_paygen: bool=False):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#451)(self, override_qs_account: str=None, use_split_paygen: bool=False):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3886,18 +3886,18 @@ Args:
   override_qs_account: QS Account to use instead of whatever is configured.
   use_split_paygen: Whether to use the new split paygen flow.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#636)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#666)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#644)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#674)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
 If the schedule cannot be fetched or is malformatted, reasonable defaults
 will be used. See go/dynamic-rc-prio for more context.
 
-&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#94)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
+&mdash; **def [set\_resultdb\_gitiles\_commit](/recipe_modules/cros_release/api.py#96)(self, repo_url: str, repo_host: str, project: str, branch: str, position: int):**
 
 Set the gitiles commit used for ResultDB.
 
@@ -3908,11 +3908,20 @@ Args:
   branch: Branch where commit was fetched.
   position: Used to define a total order of commits on the ref.
 
-&emsp; **@property**<br>&mdash; **def [sign\_types](/recipe_modules/cros_release/api.py#132)(self):**
+&emsp; **@property**<br>&mdash; **def [sign\_types](/recipe_modules/cros_release/api.py#134)(self):**
 
 Return the sign types as passed into input properties.
 
-&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#55)(self):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_release/api.py#205)(self):**
+
+Uprev any packages that contain differences.
+
+Intended to be run by non-ToT release orchestrators.
+
+Return:
+  all_uprevs_passed(bool): True if all uprevs succeed, False if ANY failed.
+
+&mdash; **def [validate\_sign\_types](/recipe_modules/cros_release/api.py#57)(self):**
 
 Checks whether the configured sign types are valid for signing.
 
@@ -4862,7 +4871,7 @@ Returns:
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1559)(self, uprev_response, dry_run, commit_only=False, is_staging=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1559)(self, uprev_response, dry_run, commit_only=False, is_staging=False, discard_unpushed_changes=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4871,12 +4880,16 @@ Args:
     modified ebuild and associated message subject.
   dry_run (bool): Dry run git push or not.
   commit_only (bool): Whether to skip the push step.
+  is_staging (bool): Whether the builder is a staging builder.
+  discard_unpushed_changes (bool): Whether to discard unpushed commits when
+    commit_only is True, necessary for release builders where we need
+    buildspecs to contain valid commits.
 
 Return:
   all_uprevs_passed (bool): True if all uprevs succeeded,
                             False if ANY failed.
 
-&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1755)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
+&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1763)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
 
 Based on what is already included, figure out which related changes are implicitly depended on by gerrit_changes.
 
@@ -8872,11 +8885,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1449)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1457)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1289)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1297)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -8891,7 +8904,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#175)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1491)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1499)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -8909,14 +8922,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#155)(self):**
 
-&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#827)(self, build: build_pb2.Build):**
+&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#835)(self, build: build_pb2.Build):**
 
 Whether the CQ child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#369)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#377)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
 
 Create the correct return value for RunSteps.
 
@@ -8954,11 +8967,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#199)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/orch_menu/api.py#806)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/orch_menu/api.py#814)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#713)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#721)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -8972,7 +8985,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1180)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1188)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -8990,7 +9003,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#673)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#681)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -9002,7 +9015,7 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#814)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#822)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
@@ -9011,11 +9024,11 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#211)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1074)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1082)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1081)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1089)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 

@@ -5,6 +5,835 @@
   },
   {
     "cmd": [],
+    "name": "uprev packages"
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"overlayType\": 1@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"modified_ebuilds\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": \"1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"overlayType\": 1\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/Uprev"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.call build API script",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"uprev packages|uprev packages|call chromite.api.PackageService/Uprev|call build API script\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"overlayType\": \"OVERLAYTYPE_BOTH\"@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"uprevPackagesResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"modifiedEbuilds\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ],@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"1.2.3\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJadXByZXYgcGFja2FnZXN8dXByZXYgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support.read infrainfra golang version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
+      "@@@STEP_LOG_END@infrainfra-golang.version@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/support/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
+      "@@@STEP_LOG_END@cipd instance@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "search",
+      "chromiumos/infra/support/${platform}",
+      "-tag",
+      "git_revision:deadbeef",
+      "-json-output",
+      "[CLEANUP]/cipd.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@7@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/cipd.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@7@@@",
+      "@@@STEP_LOG_LINE@cipd.json@{@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    \"result\": [@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        {@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"package\": \"chromiumos/infra/support/${platform}\",@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"instance_id\": \"wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC\"@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        }@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    ]@@@",
+      "@@@STEP_LOG_LINE@cipd.json@}@@@",
+      "@@@STEP_LOG_END@cipd.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/support",
+      "-ensure-file",
+      "chromiumos/infra/support/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.ensure support.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-wzCA5zCcIkg0uYro\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "uprev packages.uprev packages.call chromite.api.PackageService/Uprev.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJadXByZXYgcGFja2FnZXN8dXByZXYgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuUGFja2FnZVNlcnZpY2UvVXByZXZ8Y2FsbCBidWlsZCBBUEkgc2NyaXB04gICGAHqAoEBCjcKNVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvb3ZlcmxheS9mb28uZWJ1aWxkCj8KPVtDTEVBTlVQXS9jaHJvbWl1bW9zX3dvcmtzcGFjZS9zcmMvcHJpdmF0ZS1vdmVybGF5L2Jhci5lYnVpbGQSBTEuMi4z\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "uprev packages.set compressed_uprev_response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_uprev_response@\"eJzjMucyjXb2cXX0Cw2I1U/OKMrPzSzNzS+OL88vyi4uSExO1S8uStbPL0stykms1E/Lz9dLTSrNzEnhsueyJUJjQVFmWWJJqi7MgKTEIqgBQqyGekZ6xgCJkS11\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@Passed Uprevs@src/overlay@@@",
+      "@@@STEP_LOG_LINE@Passed Uprevs@src/private-overlay@@@",
+      "@@@STEP_LOG_END@Passed Uprevs@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.retrieve project information",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.retrieve project information.repo for src/overlay/foo.ebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "--show-toplevel"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.retrieve project information.repo for src/private-overlay/bar.ebuild",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.commit uprevs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild@@@",
+      "@@@STEP_LOG_END@ebuilds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_source/push_uprevs\n",
+      "[CLEANUP]/commit_msg_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_source/push_uprevs@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_1",
+      "--",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/overlay.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@ebuilds@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild@@@",
+      "@@@STEP_LOG_END@ebuilds@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git add",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Marking set of ebuilds as stable\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_source/push_uprevs\n",
+      "[CLEANUP]/commit_msg_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.write commit message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Marking set of ebuilds as stable@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_source/push_uprevs@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "commit",
+      "--file",
+      "[CLEANUP]/commit_msg_tmp_2",
+      "--",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.commit uprevs.commit uprev changes in src/private-overlay.git commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.push to src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo@[CLEANUP]/chromiumos_workspace/src/overlay@@@",
+      "@@@STEP_LOG_END@repo@@@",
+      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
+      "@@@STEP_LOG_END@projects@@@",
+      "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
+      "@@@STEP_LOG_END@project chosen@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.push to src/overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|src/[CLEANUP]/chromiumos_workspace/src/overlay/foo.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.push to src/overlay.git push src/overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "push uprevs.push to src/private-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo@[CLEANUP]/chromiumos_workspace/src/private-overlay@@@",
+      "@@@STEP_LOG_END@repo@@@",
+      "@@@STEP_LOG_LINE@projects@[ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')]@@@",
+      "@@@STEP_LOG_END@projects@@@",
+      "@@@STEP_LOG_LINE@project chosen@ProjectInfo(name='[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', path='src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild', remote='cros', branch='refs/heads/main', rrev='refs/heads/main')@@@",
+      "@@@STEP_LOG_END@project chosen@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.push to src/private-overlay.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|src/[CLEANUP]/chromiumos_workspace/src/private-overlay/bar.ebuild|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "--porcelain",
+      "cros",
+      "HEAD:refs/heads/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push uprevs.push to src/private-overlay.git push src/private-overlay",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "create buildspec"
   },
   {
@@ -310,7 +1139,7 @@
       "/path/to/tmp/json",
       "copy",
       "Add buildspecs/99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\n",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -329,13 +1158,13 @@
     "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Add buildspecs/99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Add buildspecs/99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
     ]
   },
   {
@@ -343,7 +1172,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_1"
+      "[CLEANUP]/commit_msg_tmp_3"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_1",
     "infra_step": true,
@@ -370,6 +1199,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.check if project [CLEANUP]/manifest-versions_tmp_1 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-versions_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.check if project [CLEANUP]/manifest-versions_tmp_1 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-versions_tmp_1",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-versions_tmp_1|src/[CLEANUP]/manifest-versions_tmp_1|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -929,7 +1837,7 @@
       "/path/to/tmp/json",
       "copy",
       "Update snapshot.xml to 99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Commit-Position: refs/heads/main-release-snapshot@{#1}\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\nCr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}\n",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_4"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_1",
     "infra_step": true,
@@ -948,15 +1856,15 @@
     "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Update snapshot.xml to 99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Update snapshot.xml to 99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
     ]
   },
   {
@@ -964,7 +1872,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_2"
+      "[CLEANUP]/commit_msg_tmp_4"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_1",
     "infra_step": true,
@@ -991,6 +1899,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.check if project [CLEANUP]/manifest-internal-snapshot_tmp_1 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.check if project [CLEANUP]/manifest-internal-snapshot_tmp_1 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_1",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec.commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_1.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-internal-snapshot_tmp_1|src/[CLEANUP]/manifest-internal-snapshot_tmp_1|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -1549,7 +2536,7 @@
       "/path/to/tmp/json",
       "copy",
       "Add buildspecs/99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\n",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_5"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -1568,13 +2555,13 @@
     "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Add buildspecs/99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Add buildspecs/99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_5@@@"
     ]
   },
   {
@@ -1582,7 +2569,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_5"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_2",
     "infra_step": true,
@@ -1609,6 +2596,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.check if project [CLEANUP]/manifest-versions_tmp_2 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-versions_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.check if project [CLEANUP]/manifest-versions_tmp_2 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-versions_tmp_2",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (2).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_2.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-versions_tmp_2|src/[CLEANUP]/manifest-versions_tmp_2|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2168,7 +3234,7 @@
       "/path/to/tmp/json",
       "copy",
       "Update snapshot.xml to 99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Commit-Position: refs/heads/main-release-snapshot@{#1}\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\nCr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}\n",
-      "[CLEANUP]/commit_msg_tmp_4"
+      "[CLEANUP]/commit_msg_tmp_6"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_2",
     "infra_step": true,
@@ -2187,15 +3253,15 @@
     "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Update snapshot.xml to 99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_4@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_4@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Update snapshot.xml to 99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_6@@@"
     ]
   },
   {
@@ -2203,7 +3269,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_4"
+      "[CLEANUP]/commit_msg_tmp_6"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_2",
     "infra_step": true,
@@ -2230,6 +3296,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.check if project [CLEANUP]/manifest-internal-snapshot_tmp_2 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.check if project [CLEANUP]/manifest-internal-snapshot_tmp_2 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_2",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (2).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_2.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-internal-snapshot_tmp_2|src/[CLEANUP]/manifest-internal-snapshot_tmp_2|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -2641,38 +3786,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/manifest-versions_tmp_2",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create buildspec (2).ensure manifest_doctor.read infrainfra golang version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
-      "@@@STEP_LOG_END@infrainfra-golang.version@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "create buildspec (2).ensure manifest_doctor.find cipd instance for manifest_doctor for infra/infra commit deadbeef",
     "~followup_annotations": [
@@ -3012,7 +4125,7 @@
       "/path/to/tmp/json",
       "copy",
       "Add buildspecs/99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\n",
-      "[CLEANUP]/commit_msg_tmp_5"
+      "[CLEANUP]/commit_msg_tmp_7"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -3031,13 +4144,13 @@
     "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Add buildspecs/99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_5@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_5@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Add buildspecs/99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_7@@@"
     ]
   },
   {
@@ -3045,7 +4158,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_5"
+      "[CLEANUP]/commit_msg_tmp_7"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_3",
     "infra_step": true,
@@ -3072,6 +4185,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.check if project [CLEANUP]/manifest-versions_tmp_3 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-versions_tmp_3"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.check if project [CLEANUP]/manifest-versions_tmp_3 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-versions_tmp_3",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (3).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_3.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-versions_tmp_3|src/[CLEANUP]/manifest-versions_tmp_3|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -3631,7 +4823,7 @@
       "/path/to/tmp/json",
       "copy",
       "Update snapshot.xml to 99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Commit-Position: refs/heads/main-release-snapshot@{#1}\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\nCr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}\n",
-      "[CLEANUP]/commit_msg_tmp_6"
+      "[CLEANUP]/commit_msg_tmp_8"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_3",
     "infra_step": true,
@@ -3650,15 +4842,15 @@
     "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Update snapshot.xml to 99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_6@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_6@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Update snapshot.xml to 99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_8@@@"
     ]
   },
   {
@@ -3666,7 +4858,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_6"
+      "[CLEANUP]/commit_msg_tmp_8"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_3",
     "infra_step": true,
@@ -3693,6 +4885,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.check if project [CLEANUP]/manifest-internal-snapshot_tmp_3 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_3"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.check if project [CLEANUP]/manifest-internal-snapshot_tmp_3 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_3",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (3).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_3.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-internal-snapshot_tmp_3|src/[CLEANUP]/manifest-internal-snapshot_tmp_3|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -4316,7 +5587,7 @@
       "/path/to/tmp/json",
       "copy",
       "Add buildspecs/99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\n",
-      "[CLEANUP]/commit_msg_tmp_7"
+      "[CLEANUP]/commit_msg_tmp_9"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -4335,13 +5606,13 @@
     "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Add buildspecs/99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_7@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_7@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@Add buildspecs/99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_9@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_9@@@"
     ]
   },
   {
@@ -4349,7 +5620,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_7"
+      "[CLEANUP]/commit_msg_tmp_9"
     ],
     "cwd": "[CLEANUP]/manifest-versions_tmp_4",
     "infra_step": true,
@@ -4376,6 +5647,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.check if project [CLEANUP]/manifest-versions_tmp_4 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-versions_tmp_4"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.check if project [CLEANUP]/manifest-versions_tmp_4 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-versions_tmp_4",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (4).commit buildspec.commit buildspecs/99/1234.56.0.xml to main.create gerrit change for [CLEANUP]/manifest-versions_tmp_4.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-versions_tmp_4|src/[CLEANUP]/manifest-versions_tmp_4|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
@@ -4935,7 +6285,7 @@
       "/path/to/tmp/json",
       "copy",
       "Update snapshot.xml to 99/1234.56.0.xml\n\nGenerated by Rubik.\n\nCr-Commit-Position: refs/heads/main-release-snapshot@{#1}\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_release/create_buildspec\nCr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}\n",
-      "[CLEANUP]/commit_msg_tmp_8"
+      "[CLEANUP]/commit_msg_tmp_10"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_4",
     "infra_step": true,
@@ -4954,15 +6304,15 @@
     "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Update snapshot.xml to 99/1234.56.0.xml@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Generated by Rubik.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Automation-Id: cros_release/create_buildspec@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_8@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_8@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Update snapshot.xml to 99/1234.56.0.xml@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Generated by Rubik.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Cr-Commit-Position: refs/heads/main-release-snapshot@{#1}@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Cr-Automation-Id: cros_release/create_buildspec@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_10@Cr-Branched-From: deadbeefdeadbeefdeadbeefdeadbeefdeadbeef-refs/heads/main@{#101}@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_10@@@"
     ]
   },
   {
@@ -4970,7 +6320,7 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_8"
+      "[CLEANUP]/commit_msg_tmp_10"
     ],
     "cwd": "[CLEANUP]/manifest-internal-snapshot_tmp_4",
     "infra_step": true,
@@ -4997,6 +6347,85 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.check if project [CLEANUP]/manifest-internal-snapshot_tmp_4 exists",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_4"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.check if project [CLEANUP]/manifest-internal-snapshot_tmp_4 exists.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "[CLEANUP]/manifest-internal-snapshot_tmp_4",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create buildspec (4).commit buildspec as snapshot.commit to main-release-snapshot.create gerrit change for [CLEANUP]/manifest-internal-snapshot_tmp_4.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/manifest-internal-snapshot_tmp_4|src/[CLEANUP]/manifest-internal-snapshot_tmp_4|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {

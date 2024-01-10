@@ -1322,7 +1322,7 @@ class CrosSourceApi(RecipeApi):
           self.m.git.merge(commit, 'merge gerrit changes', infra_step=False)
         except StepFailure:
           self.m.git.merge_abort()
-          raise StepFailure('merge %s failed. Aborting.' % commit)
+          raise StepFailure('merge %s failed. Aborting.' % commit)  # pylint: disable=raise-missing-from
       self.m.easy.set_properties_step(
           cros_source_git_strategy=self.git_strategy)
       self._applied_patches[patch.display_id].append(patch)
@@ -1557,7 +1557,7 @@ class CrosSourceApi(RecipeApi):
           timeout=timeout_sec)
 
   def push_uprev(self, uprev_response, dry_run, commit_only=False,
-                 is_staging=False):
+                 is_staging=False, discard_unpushed_changes=False):
     """Commit and push any upreved packages to its remote.
 
     Args:
@@ -1565,6 +1565,10 @@ class CrosSourceApi(RecipeApi):
         modified ebuild and associated message subject.
       dry_run (bool): Dry run git push or not.
       commit_only (bool): Whether to skip the push step.
+      is_staging (bool): Whether the builder is a staging builder.
+      discard_unpushed_changes (bool): Whether to discard unpushed commits when
+        commit_only is True, necessary for release builders where we need
+        buildspecs to contain valid commits.
 
     Return:
       all_uprevs_passed (bool): True if all uprevs succeeded,
@@ -1614,6 +1618,10 @@ class CrosSourceApi(RecipeApi):
               ]) + '\n'
               self.m.git.commit(message, files=requests.modified_files)
               commit_pres.logs['ebuilds'] = requests.modified_files
+
+            if commit_only and discard_unpushed_changes:
+              self.m.step('discard unpushed uncommitted uprev commit',
+                          ['git', 'reset', '--hard', 'HEAD~'])
 
       # If we do not want to push, return that the call has passed.
       if commit_only:

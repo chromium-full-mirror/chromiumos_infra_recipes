@@ -280,11 +280,18 @@ class OrchMenuApi(recipe_api.RecipeApi):
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
+
           with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
             if run_step:
               with self.m.workspace_util.sync_to_commit(staging=is_staging):
                 # If we're syncing to a specific manifest, don't bump the version.
                 if not self.m.cros_source.sync_to_manifest:
+                  # If we're not on ToT, we need to uprev packages since we don't
+                  # have annealing.
+                  if not self.m.cros_source.is_tot:
+                    if not self.m.cros_release.uprev_packages():
+                      raise StepFailure('Failed to uprev all changes')
+
                   bump_version = self._properties.bump_version and not is_staging
                   # Release orchestrators may build for a pinned manifest that is
                   # behind tip-of-branch and need to create a version bump CL
@@ -292,6 +299,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
                   use_local_diff = self.is_release_orchestrator
                   self.m.cros_version.bump_version(
                       dry_run=not bump_version, use_local_diff=use_local_diff)
+
                   self.m.cros_release.create_buildspec(
                       dry_run=is_staging,
                       gs_location=self._properties.buildspec_gs_path)

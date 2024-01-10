@@ -55,6 +55,7 @@ def RunSteps(api, properties):
       True,
       commit_only=properties.commit_only,
       is_staging=properties.is_staging,
+      discard_unpushed_changes=properties.discard_unpushed_changes,
   )
 
 
@@ -68,6 +69,23 @@ def GenTests(api):
       api.post_check(post_process.MustRunRE,
                      r'.*commit uprevs.commit uprev changes in.*'),
       api.post_check(post_process.MustRunRE, r'.*git commit$'),
+  )
+
+  yield api.cros_source.test(
+      'commit-only-blow-away-changes',
+      manifest_branch,
+      api.properties(
+          PushUprevsArgs(commit_only=True, is_staging=True,
+                         discard_unpushed_changes=True)),
+      api.post_check(post_process.MustRun, 'push uprevs.commit uprevs'),
+      api.post_check(post_process.MustRunRE,
+                     r'.*commit uprevs.commit uprev changes in.*'),
+      api.post_check(post_process.MustRunRE, r'.*git commit$'),
+      api.post_check(
+          post_process.MustRun,
+          'push uprevs.commit uprevs.discard unpushed uncommitted uprev commit'
+      ),
+      api.post_process(post_process.DropExpectation),
   )
 
   yield api.cros_source.test(

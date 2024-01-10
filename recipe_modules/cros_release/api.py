@@ -4,9 +4,11 @@
 # found in the LICENSE file.
 
 """An API for providing release related operations (e.g. paygen, signing)."""
+import base64
 import datetime
 import json
 from typing import List
+import zlib
 
 from google.protobuf import json_format
 
@@ -199,6 +201,34 @@ class CrosReleaseApi(recipe_api.RecipeApi):
               presentation.step_text = err
               presentation.status = self.m.step.FAILURE
               raise StepFailure(err)
+
+  def uprev_packages(self):
+    """Uprev any packages that contain differences.
+
+    Intended to be run by non-ToT release orchestrators.
+
+    Return:
+      all_uprevs_passed(bool): True if all uprevs succeed, False if ANY failed.
+    """
+    uprev_info = []
+    with self.m.step.nest('uprev packages'):
+      response = self.m.cros_source.uprev_packages(
+          workspace_path=self.m.src_state.workspace_path)
+      compressed_response = base64.b64encode(
+          zlib.compress(response.SerializeToString()))
+      self.m.easy.set_properties_step(
+          compressed_uprev_response=compressed_response)
+
+      for ebuild in response.modified_ebuilds:
+        uprev_info.append(
+            self.m.cros_source.PushUprevRequest(
+                [ebuild.path], 'Marking set of ebuilds as stable'))
+
+    # Push the uprevs to the remote.
+    return self.m.cros_source.push_uprev(
+        uprev_info, False, is_staging=self.m.build_menu.is_staging,
+        discard_unpushed_changes=True)
+
 
   def create_buildspec(self, specs_dir='buildspecs',
                        step_name='create buildspec', dry_run=False,

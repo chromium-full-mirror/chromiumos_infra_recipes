@@ -165,6 +165,11 @@ def GenTests(api):
                      'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
+      # Uprev logic should not run on ToT.
+      api.post_check(post_process.DoesNotRun,
+                     'set up orchestrator.uprev packages'),
+      api.post_check(post_process.DoesNotRun,
+                     'set up orchestrator.push uprevs'),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
@@ -517,6 +522,71 @@ def GenTests(api):
       with_manifest_refs=True,
       with_history=True,
       bot_size='medium',
+  )
+
+  # The `release-orchestrator-branched` and
+  # `release-orchestrator-branched-failure` tests exist to test uprev
+  # functionality (which doesn't happen on ToT), we can discard many of the
+  # checks from `release-orchestrator`.
+  yield api.orch_menu.test(
+      'release-orchestrator-branched',
+      data.ctp_normal,
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0')),
+      ),
+      api.post_check(post_process.MustRun,
+                     'update manifest ref refs/heads/test.git push'),
+      api.post_check(post_process.StepTextEquals,
+                     'set up orchestrator.bump version', ''),
+      api.post_check(post_process.StepSuccess,
+                     'set up orchestrator.uprev packages'),
+      api.post_check(post_process.StepSuccess,
+                     'set up orchestrator.push uprevs'),
+      api.post_process(post_process.DropExpectation),
+      input_properties=orch_menu_properties(
+          update_manifest_refs={'test': 'refs/heads/test'},
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='main', skip_paygen=True,
+          schedule_public_build=True,
+          retry_allowlist_qs_account=['release_high_prio'],
+          retry_allowlist_build_target=['atlas', 'zork']),
+      builder='release-stabilize-15185.B-orchestrator',
+      collect_builds=api.orch_menu.orch_child_builds(
+          'release-stabilize-15185.B-orchestrator', '-release-main')[0],
+      with_manifest_refs=True,
+      with_history=True,
+      sheriff_rotations=['chromeos'],
+      bot_size='medium',
+  )
+
+  yield api.orch_menu.test(
+      'release-orchestrator-branched-failure',
+      api.properties(
+          FullProperties(
+              is_release_orchestrator=True, use_extra_props=True,
+              skip_paygen=True, expected_recipe_result=RawResult(
+                  status=common_pb2.SUCCESS,
+                  summary_markdown='Full version: R99-1234.56.0')),
+      ),
+      api.step_data(
+          ('set up orchestrator.push uprevs.push to src/private-overlay.git push src/private-overlay'
+          ),
+          retcode=1,
+      ),
+      api.post_check(post_process.StepException,
+                     'set up orchestrator.push uprevs'),
+      api.post_check(post_process.StepFailure, 'set up orchestrator'),
+      api.post_process(post_process.DropExpectation),
+      builder='release-stabilize-15185.B-orchestrator',
+      with_manifest_refs=True,
+      with_history=True,
+      sheriff_rotations=['chromeos'],
+      bot_size='medium',
+      status='FAILURE',
   )
 
   yield api.orch_menu.test(

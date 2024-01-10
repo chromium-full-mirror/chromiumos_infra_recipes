@@ -9,4 +9,7 @@ package recipe_modules.chromeos.cros_release.examples;
 message BuildspecProperties {
   // Manifest Branch to use.
   string manifest_branch = 1;
+
+  // Whether to expect failures from uprev_packages.
+  bool expect_uprev_packages_failure = 2;
 }

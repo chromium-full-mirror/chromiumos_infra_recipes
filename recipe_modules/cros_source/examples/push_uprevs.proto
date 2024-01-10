@@ -11,4 +11,6 @@ message PushUprevsArgs {
   bool commit_only = 1;
   // Describes is the uprev is being pushed to staging or prod.
   bool is_staging = 2;
+  // Whether to pass `discard_unpushed_changes` to the `push_uprev` call.
+  bool discard_unpushed_changes = 3;
 }
