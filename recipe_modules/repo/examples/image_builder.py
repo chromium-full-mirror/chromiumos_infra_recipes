@@ -84,25 +84,22 @@ def WithArgsTest(api, state_name, state, local_manifest):
       'with-args-{}'.format(state_name),
       api.properties(
           ImageBuilderProperties(
-              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
-              init_opts=common.InitOpts(
-                  manifest_name='snapshot.xml',
-                  reference='/preload/chromeos',
-                  groups=['group1', 'group2'],
-                  depth=10,
-                  repo_url='http://repo_url',
-                  repo_branch='next',
-                  local_manifest=local_manifest,
-                  verbose=True,
-              ),
-              sync_opts=common.SyncOpts(force_sync=True, detach=True,
-                                        current_branch=True, jobs=99,
-                                        manifest_name='snapshot.xml',
-                                        no_tags=True, optimized_fetch=True,
-                                        cache_dir='/tmp/cache', retry_fetches=8,
-                                        verbose=True, no_manifest_update=True,
-                                        force_remove_dirty=True, prune=True))),
-      api.repo.repo_current_state(state))
+              projects=['chromiumos/config', 'chromeos/project/puff/duffy'
+                       ], init_opts=common.InitOpts(
+                           manifest_name='snapshot.xml',
+                           reference='/preload/chromeos',
+                           groups=['group1', 'group2'],
+                           depth=10,
+                           repo_url='http://repo_url',
+                           repo_branch='next',
+                           local_manifest=local_manifest,
+                           verbose=True,
+                       ), sync_opts=common.SyncOpts(
+                           force_sync=True, detach=True, current_branch=True,
+                           jobs=99, manifest_name='snapshot.xml', no_tags=True,
+                           optimized_fetch=True, retry_fetches=8, verbose=True,
+                           no_manifest_update=True, force_remove_dirty=True,
+                           prune=True))), api.repo.repo_current_state(state))
 
 
 def WithretryTest(api, state_name, state, local_manifest):
@@ -110,25 +107,22 @@ def WithretryTest(api, state_name, state, local_manifest):
       'with-retry-{}'.format(state_name),
       api.properties(
           ImageBuilderProperties(
-              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
-              init_opts=common.InitOpts(
-                  manifest_name='snapshot.xml',
-                  reference='/preload/chromeos',
-                  groups=['group1', 'group2'],
-                  depth=10,
-                  repo_url='http://repo_url',
-                  repo_branch='next',
-                  local_manifest=local_manifest,
-                  verbose=True,
-              ),
-              sync_opts=common.SyncOpts(force_sync=True, detach=True,
-                                        current_branch=True, jobs=99,
-                                        manifest_name='snapshot.xml',
-                                        no_tags=True, optimized_fetch=True,
-                                        cache_dir='/tmp/cache', retry_fetches=8,
-                                        verbose=True, no_manifest_update=True,
-                                        force_remove_dirty=True, prune=True))),
-      api.repo.repo_current_state(state))
+              projects=['chromiumos/config', 'chromeos/project/puff/duffy'
+                       ], init_opts=common.InitOpts(
+                           manifest_name='snapshot.xml',
+                           reference='/preload/chromeos',
+                           groups=['group1', 'group2'],
+                           depth=10,
+                           repo_url='http://repo_url',
+                           repo_branch='next',
+                           local_manifest=local_manifest,
+                           verbose=True,
+                       ), sync_opts=common.SyncOpts(
+                           force_sync=True, detach=True, current_branch=True,
+                           jobs=99, manifest_name='snapshot.xml', no_tags=True,
+                           optimized_fetch=True, retry_fetches=8, verbose=True,
+                           no_manifest_update=True, force_remove_dirty=True,
+                           prune=True))), api.repo.repo_current_state(state))
 
 
 def WithNonePruneTest(api, state_name, state):
@@ -136,24 +130,21 @@ def WithNonePruneTest(api, state_name, state):
       'with-none-prune-{}'.format(state_name),
       api.properties(
           ImageBuilderProperties(
-              projects=['chromiumos/config', 'chromeos/project/puff/duffy'],
-              init_opts=common.InitOpts(
-                  manifest_name='snapshot.xml',
-                  reference='/preload/chromeos',
-                  groups=['group1', 'group2'],
-                  depth=10,
-                  repo_url='http://repo_url',
-                  repo_branch='next',
-                  verbose=True,
-              ),
-              sync_opts=common.SyncOpts(force_sync=True, detach=True,
-                                        current_branch=True, jobs=99,
-                                        manifest_name='snapshot.xml',
-                                        no_tags=True, optimized_fetch=True,
-                                        cache_dir='/tmp/cache', retry_fetches=8,
-                                        verbose=True, no_manifest_update=True,
-                                        force_remove_dirty=True, prune=None))),
-      api.repo.repo_current_state(state))
+              projects=['chromiumos/config', 'chromeos/project/puff/duffy'
+                       ], init_opts=common.InitOpts(
+                           manifest_name='snapshot.xml',
+                           reference='/preload/chromeos',
+                           groups=['group1', 'group2'],
+                           depth=10,
+                           repo_url='http://repo_url',
+                           repo_branch='next',
+                           verbose=True,
+                       ), sync_opts=common.SyncOpts(
+                           force_sync=True, detach=True, current_branch=True,
+                           jobs=99, manifest_name='snapshot.xml', no_tags=True,
+                           optimized_fetch=True, retry_fetches=8, verbose=True,
+                           no_manifest_update=True, force_remove_dirty=True,
+                           prune=None))), api.repo.repo_current_state(state))
 
 
 def GenTests(api):

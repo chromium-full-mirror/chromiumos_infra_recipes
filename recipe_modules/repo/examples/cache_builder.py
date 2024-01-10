@@ -53,7 +53,6 @@ def GenTests(api):
       api.properties(
           sync_opts=common.SyncOpts(
               force_sync=True, detach=True, current_branch=True, jobs=20,
-              no_tags=True, optimized_fetch=True, cache_dir='/tmp/cache',
-              retry_fetches=8, verbose=True, no_manifest_update=True,
-              force_remove_dirty=True, prune=False)),
+              no_tags=True, optimized_fetch=True, retry_fetches=8, verbose=True,
+              no_manifest_update=True, force_remove_dirty=True, prune=False)),
   )

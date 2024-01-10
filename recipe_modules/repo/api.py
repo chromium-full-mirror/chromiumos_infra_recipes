@@ -272,8 +272,8 @@ class RepoApi(recipe_api.RecipeApi):
   def sync(self, *, force_sync: bool = False, detach: bool = False,
            current_branch: bool = False, jobs: Optional[int] = None,
            manifest_name: Optional[Path] = None, no_tags: bool = False,
-           optimized_fetch: bool = False, cache_dir: Optional[Path] = None,
-           timeout: Optional[int] = None, retry_fetches: Optional[int] = None,
+           optimized_fetch: bool = False, timeout: Optional[int] = None,
+           retry_fetches: Optional[int] = None,
            projects: Optional[List[str]] = None, verbose: bool = True,
            no_manifest_update: bool = False, force_remove_dirty: bool = False,
            prune: bool = None, repo_event_log: bool = True,
@@ -289,7 +289,6 @@ class RepoApi(recipe_api.RecipeApi):
       manifest_name: Temporary manifest to use for this sync.
       no_tags: Don't fetch tags.
       optimized_fetch: Only fetch projects if revision doesn't exist.
-      cache_dir: Use git-cache with this cache directory.
       timeout: Number of seconds before the recipe engine should kill the step.
       retry_fetches: The number of times to retry retryable fetches.
       projects: Projects to limit the sync to, or None to sync all projects.
@@ -318,8 +317,6 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--no-tags')
     if optimized_fetch:
       cmd.append('--optimized-fetch')
-    if cache_dir:
-      cmd.extend(['--cache-dir', cache_dir])
     if retry_fetches:
       cmd.extend(['--retry-fetches', str(retry_fetches)])
     if verbose:

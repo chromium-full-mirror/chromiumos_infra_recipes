@@ -291,8 +291,6 @@
       "20",
       "--no-tags",
       "--optimized-fetch",
-      "--cache-dir",
-      "/tmp/cache",
       "--retry-fetches",
       "8",
       "--verbose",
