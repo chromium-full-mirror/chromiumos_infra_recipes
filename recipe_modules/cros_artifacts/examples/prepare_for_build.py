@@ -17,7 +17,6 @@ DEPS = [
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
-    'cros_version',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -136,24 +135,13 @@ def GenTests(api):
     for resp in 'UNKNOWN', 'POINTLESS', 'NEEDED':
       yield api.test(
           '%s_%s' % (resp.lower(), state),
-          api.cros_version.workspace_version('R112-12345.0.0'),
           api.properties(
               TestInputProperties(
                   api_response='{"build_relevance": "%s"}' % resp,
                   relevance=BuildSetupResponse.BuildRelevance.Value(resp),
-                  kernel_afdo_relevance=BuildSetupResponse.POINTLESS,
+                  kernel_afdo_relevance=(
+                      BuildSetupResponse.UNKNOWN if state == 'no-setup' else
+                      BuildSetupResponse.BuildRelevance.Value(resp)),
               )),
           api.cros_build_api.remove_endpoints(
               ['ArtifactsService/BuildSetup'] if state == 'no-setup' else []))
-
-  for resp in 'UNKNOWN', 'POINTLESS', 'NEEDED':
-    yield api.test(
-        'amd64_kernel_5-15_relevant_%s' % resp.lower(),
-        api.cros_version.workspace_version('R113-45678.0.0'),
-        api.properties(
-            TestInputProperties(
-                api_response='{"build_relevance": "%s"}' % resp,
-                relevance=BuildSetupResponse.BuildRelevance.Value(resp),
-                kernel_afdo_relevance=BuildSetupResponse.BuildRelevance.Value(
-                    resp),
-            )))

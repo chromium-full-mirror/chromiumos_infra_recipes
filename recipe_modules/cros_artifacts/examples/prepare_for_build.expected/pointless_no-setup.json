@@ -8,79 +8,6 @@
   },
   {
     "cmd": [],
-    "name": "prepare artifacts.read chromeos version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R112-12345.0.0-101@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "prepare artifacts.read chromeos version.read chromeos_version.sh",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "prepare artifacts.read chromeos version.read snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      ":"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "prepare artifacts.read chromeos version.read snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "prepare artifacts.read chromeos version.read snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "",
-      "--position-num"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "prepare artifacts.read chromeos version.read snapshot.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "prepare artifacts.call prepare funcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -348,7 +275,7 @@
     "cmd": [],
     "name": "prepare artifacts (3)",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Build is POINTLESS@@@"
+      "@@@STEP_TEXT@Build need is UNKNOWN@@@"
     ]
   },
   {
@@ -356,7 +283,7 @@
     "name": "prepare artifacts (3).set artifact_prep",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"POINTLESS\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_prep@{\"buildRelevance\": \"UNKNOWN\"}@@@"
     ]
   },
   {

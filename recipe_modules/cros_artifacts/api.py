@@ -1175,14 +1175,6 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # correct message type.
       for in_art in getattr(service, 'input_artifacts', []):
         for atype in in_art.artifact_types:
-          # TODO(b/275625143): Remove in M-115+.
-          # Don't run the 5.15 kernel amd64 afdo builder if the chromeos
-          # version is below 113.
-          if (self.m.cros_version.version.milestone < 113 and
-              atype == BuilderConfig.Artifacts.VERIFIED_KERNEL_CWP_AFDO_FILE and
-              any('amd64/5.15' in gs_location
-                  for gs_location in in_art.gs_locations)):
-            return POINTLESS
           input_artifacts.append(
               BuilderConfig.Artifacts.InputArtifactInfo(
                   input_artifact_type=atype,
