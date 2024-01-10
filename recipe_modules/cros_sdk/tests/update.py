@@ -32,6 +32,13 @@ def GenTests(api):
   )
 
   yield api.test(
+      'without_use_flags',
+      api.cros_build_api.set_api_return('update sdk',
+                                        endpoint='SdkService/Update', data='{}',
+                                        retcode=0),
+  )
+
+  yield api.test(
       'non-pkg-failure',
       api.cros_build_api.set_api_return('update sdk',
                                         endpoint='SdkService/Update', data='{}',

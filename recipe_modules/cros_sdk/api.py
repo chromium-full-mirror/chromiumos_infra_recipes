@@ -549,8 +549,10 @@ class CrosSdkApi(RecipeApi):
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 180 * 60
       use_snapshot_binhosts = self.m.cros_infra_config.config_or_default.id.type == BuilderConfig.Id.CQ
 
+      chroot_without_use_flags = self.chroot
+      chroot_without_use_flags.env.ClearField('use_flags')
       request = UpdateSdkRequest(
-          chroot=self.chroot, toolchain_targets=toolchain_targets,
+          chroot=chroot_without_use_flags, toolchain_targets=toolchain_targets,
           flags=UpdateSdkRequest.Flags(build_source=build_source,
                                        toolchain_changed=toolchain_cls),
           result_path=common.ResultPath(

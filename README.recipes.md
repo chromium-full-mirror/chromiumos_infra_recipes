@@ -4376,7 +4376,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#640)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#642)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -4394,7 +4394,7 @@ the Build API, where inputs and outputs are represented in proto messages,
 and the API layer does any translation or copying of artifacts in and out
 of the chroot.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#576)(self, checkout_path=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cleanup\_context](/recipe_modules/cros_sdk/api.py#578)(self, checkout_path=None):**
 
 Returns a context that cleans the SDK chroot named cache.
 
@@ -4405,7 +4405,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#610)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#612)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#55)(self, chroot_parent_path):**
 
@@ -4461,7 +4461,7 @@ Returns a Path to the cros_sdk script.
 
 Return whether we are forcing toolchain_cls off for testing.
 
-&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#692)(self, build_target):**
+&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#694)(self, build_target):**
 
 Retrieve metadata about SDK/toolchain usage.
 
@@ -4499,7 +4499,7 @@ This boolean is sticky.
 
 &emsp; **@property**<br>&mdash; **def [remoteexec\_config](/recipe_modules/cros_sdk/api.py#244)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#649)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#651)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -4548,12 +4548,12 @@ Set the remoteexec config.
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#248)(self, use_flags):**
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#631)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#633)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#615)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#617)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
