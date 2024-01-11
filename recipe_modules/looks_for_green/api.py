@@ -30,7 +30,7 @@ Snapshot = namedtuple('Snapshot', [
     'end_time',
     'agg_green',
     'approx_snap_age_hours',
-    'target_greenness',
+    'builder_greenness',
     'local_greenness',
 ])
 
@@ -233,10 +233,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     except ValueError:
       agg_green = -1
     try:
-      target_greenness = self.m.buildbucket_stats.reformat_target_dict(
-          out_props['greenness']['targetGreenness'])
+      builder_greenness = self.m.buildbucket_stats.reformat_greenness_dict(
+          out_props['greenness']['builderGreenness'])
     except ValueError:
-      target_greenness = []
+      builder_greenness = {}
     local_greenness = self.m.buildbucket_stats.parse_local_greenness(out_props)
     approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
     return Snapshot(
@@ -246,7 +246,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         end_time=end_time,
         agg_green=agg_green,
         approx_snap_age_hours=approx_snap_age_hours,
-        target_greenness=target_greenness,
+        builder_greenness=builder_greenness,
         local_greenness=local_greenness,
     )
 

@@ -27,15 +27,15 @@ BUILD_OUTPUT = build_pb2.Build.Output()
 BUILD_OUTPUT.properties['greenness'] = {
     'aggregateMetric':
         98,
-    'targetGreenness': [
+    'builderGreenness': [
         {
             'buildMetric': '98',
             'metric': '78',
-            'target': 'eve-kernelnext-not-relevant'
+            'builder': 'eve-postsubmit'
         },
         {
             'context': 'IRRELEVANT',
-            'target': 'eve-kernelnext'
+            'builder': 'eve-kernelnext-postsubmit'
         },
     ]
 }
@@ -46,30 +46,27 @@ LAST_SNAPSHOT = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
 def RunSteps(api):
   builds = [
       api.test_util.test_api.test_child_build(
+          builder='eve-kernelnext-postsubmit',
           build_target_name='eve-kernelnext', critical='YES', status='SUCCESS',
           tags=api.cros_tags.tags(**{
               'relevance': 'relevant',
           })).message,
       api.test_util.test_api.test_child_build(
-          build_target_name='eve-kernelnext-not-relevant', critical='YES',
+          builder='eve-postsubmit', build_target_name='eve', critical='YES',
           status='SUCCESS', tags=api.cros_tags.tags(**{
               'relevance': 'not relevant',
-          })).message,
-      api.test_util.test_api.test_child_build(
-          builder='eve-asan-postsubmit', build_target_name='eve',
-          status='SUCCESS', tags=api.cros_tags.tags(**{
-              'relevance': 'relevant',
-          })).message,
+          })).message
   ]
   api.greenness.update_build_info(builds)
   api.assertions.assertEqual(
-      api.greenness.greenness_dict['eve-kernelnext'].score, 100)
-  api.assertions.assertEqual(api.greenness.get_greenness('eve'), None)
+      api.greenness.builder_greenness_dict['eve-kernelnext-postsubmit'].score,
+      100)
   if api.properties['propagated_irrelevant_scores']:
     api.assertions.assertEqual(
-        api.greenness.greenness_dict['eve-kernelnext-not-relevant'].build_score,
-        98)
+        api.greenness.builder_greenness_dict['eve-postsubmit'].build_score, 98)
   api.greenness.print_step()
+  api.assertions.assertEqual(
+      api.greenness.get_greenness('eve-kernelnext').build_score, 100)
 
 
 def GenTests(api):

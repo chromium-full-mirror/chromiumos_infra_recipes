@@ -18,7 +18,7 @@ message FindGreenSnapshotProperties {
   int32 expected_bbid = 2;
   int32 expected_greenness = 3;
   string expected_commit_sha = 4;
-  string expected_target_greenness = 5;
+  string expected_builder_greenness = 5;
   string latest_start = 6;
 }
 

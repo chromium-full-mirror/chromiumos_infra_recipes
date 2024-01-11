@@ -2026,7 +2026,7 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#168)(self, commit: str, pres: StepPresentation, bucket: Optional[str]=None, builder: Optional[str]=None, end_bbid: Optional[int]=None, retries: int=9, use_local_greenness: bool=False):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#167)(self, commit: str, pres: StepPresentation, bucket: Optional[str]=None, builder: Optional[str]=None, end_bbid: Optional[int]=None, retries: int=9, use_local_greenness: bool=False):**
 
 Returns greeneness for the specified commit, if found.
 
@@ -2051,9 +2051,8 @@ Args:
     instead of the 'greenness' output property.
 
 Returns:
-  An ordered dict mapping target -> Greenness message as a dict. If
-    use_local_greenness is true, the keys are the builder name instead of
-    target, and the values are the Greenness tuple defined in
+  An ordered dict mapping builder -> Greenness message as a dict. If
+    use_local_greenness is true, the values are the Greenness tuple defined in
     greenness/api.py instead of the Greenness message. Dict will be empty if
     no greenness is found.
 
@@ -2073,11 +2072,11 @@ Returns:
   An OrderedDict mapping from builder name to GreennessTuple. If the
     local_greenness output property isn't found, the dict is empty.
 
-&mdash; **def [reformat\_target\_dict](/recipe_modules/buildbucket_stats/api.py#234)(self, list_value: struct_pb2.ListValue):**
+&mdash; **def [reformat\_greenness\_dict](/recipe_modules/buildbucket_stats/api.py#232)(self, list_value: struct_pb2.ListValue):**
 
-Reformat ListValue to a dictionary, using target as key.
+Reformat ListValue to a dictionary, using builder as key.
 
-This makes buildbucket properties like targetGreenness easier to work with.
+This makes buildbucket properties like builderGreenness easier to work with.
 ### *recipe_modules* / [builder\_metadata](/recipe_modules/builder_metadata)
 
 [DEPS](/recipe_modules/builder_metadata/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -8131,7 +8130,7 @@ A module to calculate greenness metric.
 
 &emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#57)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#316)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#317)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8160,14 +8159,14 @@ Args:
 Returns: Metric of the target or None if the target wasn't
   launched.
 
-&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#76)(self, target: str):**
+&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#76)(self, builder: str):**
 
-Get the targetGreenness from the last snapshot run for a given target.
+Get the builderGreenness from the last snapshot run for a given builder.
 
 Args:
-  target: Name of the build target.
+  builder: Name of the builder.
 
-Returns: targetGreenness, or an empty OrderedDict if the target, its
+Returns: builderGreenness, or an empty OrderedDict if the builder, its
   greenness, or the last snapshot wasn't found.
 
 &emsp; **@property**<br>&mdash; **def [greenness\_dict](/recipe_modules/greenness/api.py#53)(self):**
@@ -12221,7 +12220,7 @@ Builds and uploads the CrOS toolchain.
 [DEPS](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#14): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#48)(api):**
+&mdash; **def [RunSteps](/recipe_modules/buildbucket_stats/tests/get_snapshot_greenness.py#49)(api):**
 ### *recipes* / [builder\_metadata:tests/get\_models](/recipe_modules/builder_metadata/tests/get_models.py)
 
 [DEPS](/recipe_modules/builder_metadata/tests/get_models.py#10): [build\_menu](#recipe_modules-build_menu), [builder\_metadata](#recipe_modules-builder_metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14943,7 +14942,7 @@ Runs the presubmit for a project with checkout per local manifest.
 [DEPS](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#19): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#90)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#104)(api, properties):**
 ### *recipes* / [looks\_for\_green:tests/get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#19): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]

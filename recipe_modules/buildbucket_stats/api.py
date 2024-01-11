@@ -126,9 +126,8 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         instead of the 'greenness' output property.
 
     Returns:
-      An ordered dict mapping target -> Greenness message as a dict. If
-        use_local_greenness is true, the keys are the builder name instead of
-        target, and the values are the Greenness tuple defined in
+      An ordered dict mapping builder -> Greenness message as a dict. If
+        use_local_greenness is true, the values are the Greenness tuple defined in
         greenness/api.py instead of the Greenness message. Dict will be empty if
         no greenness is found.
     """
@@ -146,11 +145,11 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
           snapshot_greenness = self.parse_local_greenness(output_props)
           if snapshot_greenness:
             return snapshot_greenness
-        elif 'greenness' in output_props.fields and 'targetGreenness' in output_props[
+        elif 'greenness' in output_props.fields and 'builderGreenness' in output_props[
             'greenness'].fields:
           snapshot_greenness = OrderedDict(
-              self.reformat_target_dict(
-                  output_props['greenness']['targetGreenness']))
+              self.reformat_greenness_dict(
+                  output_props['greenness']['builderGreenness']))
           # Remove metric, since we only wait for build to finish, not tests.
           for v in snapshot_greenness.values():
             if 'metric' in v:
@@ -198,9 +197,8 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         instead of the 'greenness' output property.
 
     Returns:
-      An ordered dict mapping target -> Greenness message as a dict. If
-        use_local_greenness is true, the keys are the builder name instead of
-        target, and the values are the Greenness tuple defined in
+      An ordered dict mapping builder -> Greenness message as a dict. If
+        use_local_greenness is true, the values are the Greenness tuple defined in
         greenness/api.py instead of the Greenness message. Dict will be empty if
         no greenness is found.
     """
@@ -231,20 +229,20 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
 
     return greenness
 
-  def reformat_target_dict(
+  def reformat_greenness_dict(
       self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:
-    """Reformat ListValue to a dictionary, using target as key.
+    """Reformat ListValue to a dictionary, using builder as key.
 
-    This makes buildbucket properties like targetGreenness easier to work with.
+    This makes buildbucket properties like builderGreenness easier to work with.
     """
-    target_dict = {}
-    for target in list_value:
-      # Use build target as key.
-      if 'target' in target:
-        build_target = target['target']
-        target_dict[build_target] = {}
+    greenness_dict = {}
+    for builder_dict in list_value:
+      # Use builder as key.
+      if 'builder' in builder_dict:
+        builder = builder_dict['builder']
+        greenness_dict[builder] = {}
         # Add other values.
-        for k, v in target.items():
-          if k != 'target':
-            target_dict[build_target][k] = v
-    return target_dict
+        for k, v in builder_dict.items():
+          if k != 'builder':
+            greenness_dict[builder][k] = v
+    return greenness_dict

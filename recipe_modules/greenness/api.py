@@ -74,13 +74,13 @@ class GreennessApi(recipe_api.RecipeApi):
     return self._greenness_dict.get(target, None)
 
   def get_last_greenness(self,
-                         target: str) -> Union[GreennessTuple, OrderedDict]:
-    """Get the targetGreenness from the last snapshot run for a given target.
+                         builder: str) -> Union[GreennessTuple, OrderedDict]:
+    """Get the builderGreenness from the last snapshot run for a given builder.
 
     Args:
-      target: Name of the build target.
+      builder: Name of the builder.
 
-    Returns: targetGreenness, or an empty OrderedDict if the target, its
+    Returns: builderGreenness, or an empty OrderedDict if the builder, its
       greenness, or the last snapshot wasn't found.
     """
     if self._last_greenness_dict is None:
@@ -95,7 +95,7 @@ class GreennessApi(recipe_api.RecipeApi):
           self._last_greenness_dict = self.m.buildbucket_stats.get_snapshot_greenness(
               commit=last_snapshot, pres=pres,
               end_bbid=self.m.buildbucket.build.id)
-    return self._last_greenness_dict.get(target, collections.OrderedDict())
+    return self._last_greenness_dict.get(builder, collections.OrderedDict())
 
   def _is_excluded(self, builder_name: str, exclude_list: List[str]) -> bool:
     """Determine if the builder is an excluded variant."""
@@ -108,10 +108,10 @@ class GreennessApi(recipe_api.RecipeApi):
   def _get_build_score_for_tests(self,
                                  greenness_dict: OrderedDict[str,
                                                              GreennessTuple],
-                                 build_target: str) -> int:
+                                 key: str) -> int:
     """Get the build score when updating tests info."""
     try:
-      return greenness_dict[build_target].build_score
+      return greenness_dict[key].build_score
     except KeyError:
       # If build_score isn't populated, assume 100 since we made it to tests.
       return 100
@@ -132,8 +132,8 @@ class GreennessApi(recipe_api.RecipeApi):
         score, build_score = 0, 0
         # Failure here should not be fatal to the build.
         with self.m.failures.ignore_exceptions():
-          # For irrelevant targets, carry forward greenness from last run.
-          last_greenness = self.get_last_greenness(bt)
+          # For irrelevant builders, carry forward greenness from last run.
+          last_greenness = self.get_last_greenness(builder)
           # If greenness dict is empty, it means the metric was 0 in the last run.
           score = int(last_greenness.get('metric', 0))
           build_score = int(last_greenness.get('buildMetric', 0))
@@ -278,7 +278,7 @@ class GreennessApi(recipe_api.RecipeApi):
     agg_greenness = AggregateGreenness()
     critical_build_scores = []
     critical_scores = []
-    with self.m.step.nest('logging irrelevant build target greenness') as pres:
+    with self.m.step.nest('logging irrelevant builder greenness') as pres:
       for bt, green_tuple in self._greenness_dict.items():
         target_greenness = agg_greenness.target_greenness.add()
         target_greenness.target = bt
@@ -290,12 +290,6 @@ class GreennessApi(recipe_api.RecipeApi):
           if not green_tuple.relevant:
             pres.logs[
                 bt] = f'Score: {green_tuple.score}, Build score: {green_tuple.build_score}'
-        if green_tuple.critical:
-          # Irrelevant build scores are propagated forward; -1 if not found.
-          if green_tuple.relevant or green_tuple.build_score != -1:
-            critical_build_scores.append(green_tuple.build_score)
-          if green_tuple.relevant:
-            critical_scores.append(green_tuple.score)
 
       for builder, green_tuple in self._builder_greenness_dict.items():
         builder_greenness = agg_greenness.builder_greenness.add()
@@ -304,6 +298,13 @@ class GreennessApi(recipe_api.RecipeApi):
         builder_greenness.build_metric = green_tuple.build_score
         if not green_tuple.relevant:
           builder_greenness.context = AggregateGreenness.Greenness.IRRELEVANT
+        if green_tuple.critical:
+          # Irrelevant build scores are propagated forward;
+          # -1 if not found, skip.
+          if green_tuple.build_score != -1:
+            critical_build_scores.append(green_tuple.build_score)
+          if green_tuple.score != -1:
+            critical_scores.append(green_tuple.score)
 
     if critical_scores:
       agg_greenness.aggregate_metric = int(

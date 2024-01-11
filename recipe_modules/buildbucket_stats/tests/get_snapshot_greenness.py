@@ -22,7 +22,7 @@ DEPS = [
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test data.
-TARGET_GREENNESS = {'eve': {'buildMetric': '100'}}
+BUILDER_GREENNESS = {'eve-postsubmit': {'buildMetric': '100'}}
 TARGET_LOCAL_GREENNESS = {
     'eve':
         GreennessTuple(score=90, build_score=95, critical=True, relevant=True)
@@ -31,11 +31,12 @@ BUILD_INPUT = build_pb2.Build.Input()
 BUILD_INPUT.gitiles_commit.id = 'bababa'
 BUILD_OUTPUT = build_pb2.Build.Output()
 BUILD_OUTPUT.properties['greenness'] = {
-    'aggregateBuildMetric': 98,
-    'targetGreenness': [{
+    'aggregateBuildMetric':
+        98,
+    'builderGreenness': [{
         'buildMetric': '100',
         'metric': '98',
-        'target': 'eve'
+        'builder': 'eve-postsubmit'
     }]
 }
 BUILD_OUTPUT.properties['local_greenness'] = {
@@ -48,20 +49,20 @@ BUILD_OUTPUT.properties['local_greenness'] = {
 def RunSteps(api):
   with api.step.nest('get snapshot greenness') as pres:
     test_end_bbid = api.properties.get('end_bbid')
-    target_greenness = api.buildbucket_stats.get_snapshot_greenness(
+    builder_greenness = api.buildbucket_stats.get_snapshot_greenness(
         'bababa',
         pres,
         end_bbid=test_end_bbid,
         use_local_greenness=api.properties.get('use_local_greenness'),
     )
-    expected_target_greenness = api.properties['expected_target_greenness']
-    api.assertions.assertEqual(expected_target_greenness, target_greenness)
+    expected_builder_greenness = api.properties['expected_builder_greenness']
+    api.assertions.assertEqual(expected_builder_greenness, builder_greenness)
 
 
 def GenTests(api):
   yield api.test(
       'found',
-      api.properties(expected_target_greenness=TARGET_GREENNESS),
+      api.properties(expected_builder_greenness=BUILDER_GREENNESS),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
@@ -71,7 +72,7 @@ def GenTests(api):
 
   yield api.test(
       'found-after-2-sleeps',
-      api.properties(expected_target_greenness=TARGET_GREENNESS),
+      api.properties(expected_builder_greenness=BUILDER_GREENNESS),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, output=build_pb2.Build.Output(),
                           input=BUILD_INPUT),
@@ -87,7 +88,7 @@ def GenTests(api):
 
   yield api.test(
       'greenness-not-found',
-      api.properties(expected_target_greenness=OrderedDict()),
+      api.properties(expected_builder_greenness=OrderedDict()),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS, input=BUILD_INPUT),
       ], 'get snapshot greenness.buildbucket.search (10)'),
@@ -96,13 +97,14 @@ def GenTests(api):
 
   yield api.test(
       'no-results',
-      api.properties(expected_target_greenness=OrderedDict()),
+      api.properties(expected_builder_greenness=OrderedDict()),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'with-end-bbid',
-      api.properties(expected_target_greenness=TARGET_GREENNESS, end_bbid=100),
+      api.properties(expected_builder_greenness=BUILDER_GREENNESS,
+                     end_bbid=100),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
@@ -112,7 +114,7 @@ def GenTests(api):
 
   yield api.test(
       'with-local-greenness',
-      api.properties(expected_target_greenness=TARGET_LOCAL_GREENNESS,
+      api.properties(expected_builder_greenness=TARGET_LOCAL_GREENNESS,
                      use_local_greenness=True),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
