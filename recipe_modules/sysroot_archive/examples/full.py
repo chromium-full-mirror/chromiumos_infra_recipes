@@ -5,15 +5,15 @@
 
 """Test codes for sysroot archive API."""
 
-from collections import namedtuple
-from PB.chromite.api import depgraph
+from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common as common_pb2
 from PB.recipe_modules.chromeos.sysroot_archive.sysroot_archive import SysrootArchiveApiProperties
 
 DEPS = [
-    'recipe_engine/properties',
     'build_menu',
     'cros_branch',
+    'cros_build_api',
+    'recipe_engine/properties',
     'sysroot_archive',
 ]
 
@@ -21,29 +21,38 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  api.sysroot_archive.archive_sysroot_build(
-      common_pb2.BuildTarget(name='foo'), [])
+  api.sysroot_archive.archive_sysroot_build(common_pb2.Chroot(), Sysroot(),
+                                            common_pb2.BuildTarget(name='foo'))
 
-  api.sysroot_archive.archive_sysroot_build(common_pb2.BuildTarget(name='foo'))
-  # return without doing anything
-  api.sysroot_archive.archive_sysroot_build(None, [])
-
-  DepGraph = namedtuple('DepGraph', 'target')
-  # pylint: disable=protected-access
-  api.build_menu._dep_graph = DepGraph(
-      target=depgraph.DepGraph(package_deps=[
-          depgraph.PackageDepInfo(
-              package_info=common_pb2.PackageInfo(
-                  package_name='target-chrome-os-test', category='virtual',
-                  version='foo'))
-      ]))
-  api.sysroot_archive.archive_sysroot_build(
-      common_pb2.BuildTarget(name='foo'), [])
+  api.sysroot_archive.archive_sysroot_build(common_pb2.Chroot(), Sysroot(),
+                                            common_pb2.BuildTarget(name='foo'))
 
 
 def GenTests(api):
+  mock_output = '''
+{
+  "artifacts": {
+    "sysroot": {
+      "artifacts": [
+        {
+          "artifactType": 50,
+          "paths": [
+            {
+              "location": 2,
+              "path": "/path/to/archive/sysroot.tar.zst"
+            }
+          ]
+        }
+      ]
+    }
+  }
+}'''
+
   yield api.test(
-      'basic_cl0',
+      'basic-cl0',
+      api.cros_build_api.set_api_return('archive sysroot',
+                                        'ArtifactsService/Get',
+                                        data=(mock_output)),
       api.properties(
           **{
               '$chromeos/sysroot_archive':
@@ -60,7 +69,10 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'basic_cl1',
+      'basic-cl1',
+      api.cros_build_api.set_api_return('archive sysroot',
+                                        'ArtifactsService/Get',
+                                        data=(mock_output)),
       api.properties(
           **{
               '$chromeos/sysroot_archive':
@@ -77,7 +89,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'no save',
+      'no-save',
       api.properties(
           **{
               '$chromeos/sysroot_archive':

@@ -10720,16 +10720,26 @@ Args:
   limit (int): Number of tasks to return.
 ### *recipe_modules* / [sysroot\_archive](/recipe_modules/sysroot_archive)
 
-[DEPS](/recipe_modules/sysroot_archive/__init__.py#9): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_archive/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Sysroot archive functions.
 
-#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SysrootArchiveApi](/recipe_modules/sysroot_archive/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for interacting with sysroot archive.
 
-&mdash; **def [archive\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#21)(self, build_target=None, packages=None):**
+&mdash; **def [archive\_sysroot\_build](/recipe_modules/sysroot_archive/api.py#22)(self, chroot: common_pb2.Chroot, sysroot: Sysroot, build_target: common_pb2.BuildTarget):**
+
+Archives sysroot into gs bucket.
+
+The gs path format of the archive should be:
+  gs://bucket/board/chromeos_version~cl_diff_count-build_id/archive_name.
+
+Args:
+  chroot: The chroot to use.
+  sysroot: The sysroot to use.
+  build_target: The build target of the sysroot archive.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
 [DEPS](/recipe_modules/sysroot_util/__init__.py#8): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16051,7 +16061,7 @@ In short, this recipe will:
 5.  Upload the updated contents to the destination URI.
 ### *recipes* / [sysroot\_archive:examples/full](/recipe_modules/sysroot_archive/examples/full.py)
 
-[DEPS](/recipe_modules/sysroot_archive/examples/full.py#13): [build\_menu](#recipe_modules-build_menu), [cros\_branch](#recipe_modules-cros_branch), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/sysroot_archive/examples/full.py#12): [build\_menu](#recipe_modules-build_menu), [cros\_branch](#recipe_modules-cros_branch), [cros\_build\_api](#recipe_modules-cros_build_api), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Test codes for sysroot archive API.

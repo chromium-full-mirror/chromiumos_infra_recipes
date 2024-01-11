@@ -1,0 +1,283 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot"
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot.call chromite.api.ArtifactsService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            50@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifactType\": 50,@@@",
+      "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"/path/to/archive/sysroot.tar.zst\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {},\n  \"sysroot\": {},\n  \"artifactInfo\": {\n    \"sysroot\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            50\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "archive sysroot.call chromite.api.ArtifactsService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ArtifactsService/Get"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "archive sysroot.call chromite.api.ArtifactsService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "archive sysroot.call chromite.api.ArtifactsService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot.call chromite.api.ArtifactsService/Get.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "/path/to/archive/sysroot.tar.zst",
+      "gs://foo/foo/R120-15650.0.0-/sysroot.tar.zst"
+    ],
+    "infra_step": true,
+    "name": "archive sysroot.gsutil upload",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/foo/foo/R120-15650.0.0-/sysroot.tar.zst@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot (2)"
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot (2).call chromite.api.ArtifactsService/Get",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"artifactInfo\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"outputArtifacts\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@            50@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_2\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"legacy\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifact_type\": \"EBUILD_LOGS\",@@@",
+      "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifact_type\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\",@@@",
+      "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {},\n  \"sysroot\": {},\n  \"artifactInfo\": {\n    \"sysroot\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            50\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_2\",\n      \"location\": 2\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "archive sysroot (2).call chromite.api.ArtifactsService/Get.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ArtifactsService/Get"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "archive sysroot (2).call chromite.api.ArtifactsService/Get.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "archive sysroot (2).call chromite.api.ArtifactsService/Get.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "archive sysroot (2).call chromite.api.ArtifactsService/Get.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

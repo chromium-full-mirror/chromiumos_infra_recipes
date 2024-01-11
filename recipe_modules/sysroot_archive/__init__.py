@@ -8,7 +8,6 @@ from PB.recipe_modules.chromeos.sysroot_archive.sysroot_archive import SysrootAr
 
 DEPS = [
     'cros_build_api',
-    'build_menu',
     'depot_tools/gsutil',
     'recipe_engine/archive',
     'recipe_engine/buildbucket',

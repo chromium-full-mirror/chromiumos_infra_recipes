@@ -60,8 +60,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   try:
     api.build_menu.bootstrap_sysroot(config)
     if api.build_menu.install_packages(config, packages):
-      api.sysroot_archive.archive_sysroot_build(api.build_menu.build_target,
-                                                packages)
+      api.sysroot_archive.archive_sysroot_build(api.build_menu.chroot,
+                                                api.build_menu.sysroot,
+                                                api.build_menu.build_target)
       # Ignore upload prebuilt steps to speedup for bisector builder.
       # api.build_menu.upload_prebuilts(config)
       # api.build_menu.upload_host_prebuilts(config)
