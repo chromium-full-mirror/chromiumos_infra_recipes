@@ -760,6 +760,7 @@
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
   * [test_platform/result_flow](#recipes-test_platform_result_flow)
   * [test_platform/suite_manager](#recipes-test_platform_suite_manager) &mdash; Recipe for the ChromeOS TSE SuiteManager builder.
+  * [test_platform/suite_scheduler](#recipes-test_platform_suite_scheduler) &mdash; Recipe for the ChromeOS TSE SuiteManager builder.
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
   * [test_recipes](#recipes-test_recipes) &mdash; Tests a recipe CL by running ChromeOS builders.
   * [test_sdk](#recipes-test_sdk) &mdash; Recipe that runs SDK package unit tests.
@@ -16303,6 +16304,23 @@ Recipe that triggers cros_test_platform runs.
 Recipe for the ChromeOS TSE SuiteManager builder.
 
 &mdash; **def [RunSteps](/recipes/test_platform/suite_manager.py#19)(api, properties):**
+
+Builder Entry Point
+
+Args:
+  api: a RecipeScriptApi instance
+  properties: default recipe properties
+
+Returns:
+  None
+### *recipes* / [test\_platform/suite\_scheduler](/recipes/test_platform/suite_scheduler.py)
+
+[DEPS](/recipes/test_platform/suite_scheduler.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for the ChromeOS TSE SuiteManager builder.
+
+&mdash; **def [RunSteps](/recipes/test_platform/suite_scheduler.py#20)(api, properties):**
 
 Builder Entry Point
 

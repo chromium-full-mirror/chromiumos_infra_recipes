@@ -1,0 +1,57 @@
+[
+  {
+    "cmd": [],
+    "name": "Ensure Suite Scheduler V1.5"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/suite_scheduler",
+      "-ensure-file",
+      "chromiumos/infra/suite_scheduler/${platform} ",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "name": "Ensure Suite Scheduler V1.5.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"40-chars-fake-of-the-package-instance_id\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/suite_scheduler/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Execute commands"
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/suite_scheduler/suite_scheduler",
+      "help",
+      "configs"
+    ],
+    "cwd": "[START_DIR]/cipd/suite_scheduler",
+    "infra_step": true,
+    "name": "Execute commands.launch susch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -1,0 +1,12 @@
+// Copyright 2023 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.test_platform.suite_scheduler;
+
+message SuiteSchedulerProperties {
+  string cipd_label = 1;
+  bool dry_run = 2;
+}
