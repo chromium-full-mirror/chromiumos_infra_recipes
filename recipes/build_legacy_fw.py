@@ -82,7 +82,7 @@ _CHROMITE_URL = '{}/{}'.format(_CHROMITE_HOST, _CHROMITE_PROJECT)
 # TODO(b/187787264): On old branches, chromite may still depend on the chroot
 # living within the source tree. On newer branches we need to use the
 # new out path.
-_MILESTONE_USE_OUT_DIR = 118
+_BUILD_VERSION_USE_OUT_DIR = 15613
 
 class NoFilesToUploadFailure(recipe_api.StepFailure):
   """Error class for when there are no files to upload as a FirmwareArchive."""
@@ -131,7 +131,7 @@ class FirmwareBuilder():
         self.m.cros_build_api.log_level,
     ]
     if self.properties.chroot_outside:
-      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
         command.extend([
             '--chroot',
             self.m.cros_sdk.chroot.path,
@@ -371,7 +371,7 @@ class FirmwareBuilder():
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
 
-      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
         # TODO(b/316429012): Update cros_sdk to expose out path as a Path,
         # rather than only as a string.
         dest_path = self.m.cros_sdk._out_path  # pylint: disable=protected-access
@@ -419,7 +419,7 @@ class FirmwareBuilder():
       # The list of files is generally too long for the command line.
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
 
-      if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
         # When the out_path is outside of the chroot, run tar from outside the
         # chroot as well.
         self.m.step('create tarball', cmd=cmd,
@@ -443,7 +443,7 @@ class FirmwareBuilder():
     metadata.bcs_version_info.version_string = str(self._bcs_version)
     target = sysroot.build_target.name
 
-    if self.m.cros_version.version.milestone >= _MILESTONE_USE_OUT_DIR:
+    if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
       tmppath = outpath
       tmpdir = outpath
     else:
