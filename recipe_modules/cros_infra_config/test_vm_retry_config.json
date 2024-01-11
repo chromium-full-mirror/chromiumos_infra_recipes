@@ -1,23 +1,23 @@
 {
-  "testSuite": "tast_vm",
   "reasonScenarios": [
     {
       "reason": "Lost SSH connection",
-      "verdict": "VERDICT_FAILED",
-      "requires_restart": false
+      "requires_restart": false,
+      "verdict": "VERDICT_FAILED"
     }
   ],
   "suiteScenarios": [
     {
-      "testName": "arc.Boot",
       "reason": "Lost SSH connection",
-      "verdict": "VERDICT_FAILED",
-      "requires_restart": true
+      "requires_restart": true,
+      "testName": "arc.Boot",
+      "verdict": "VERDICT_FAILED"
     },
     {
-      "testName": "arc.Boot",
       "reason": "Test did not finish",
+      "testName": "arc.Boot",
       "verdict": "VERDICT_FAILED"
     }
-  ]
+  ],
+  "testSuite": "tast_vm"
 }

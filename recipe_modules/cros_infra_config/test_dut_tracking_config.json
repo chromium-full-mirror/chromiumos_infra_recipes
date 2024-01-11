@@ -1,18 +1,18 @@
 {
   "policies": [
     {
-      "name": "atlas",
       "dimensions": [
         {
           "name": "label-board",
           "value": "atlas"
         }
       ],
+      "lookbackHours": -24,
       "modes": [
         "TASK_BOT_COUNT",
         "MAX_PEND_TIME"
       ],
-      "lookbackHours": -24,
+      "name": "atlas",
       "swarmingInstance": "chromeos-swarming.appspot.com"
     }
   ]

@@ -1,29 +1,31 @@
 {
   "botPolicies": [
     {
+      "application": "chromeos",
       "botGroup": "cq1",
       "botType": {
         "botSize": "large",
         "coresPerBot": 32,
         "memoryGb": 64
       },
-      "scalingRestriction": {
-        "stepSize": 5,
-        "botCeiling": 100,
-        "botFloor": 5
-			},
+      "policyMode": 2,
       "regionRestrictions": [
         {
-          "region": "us-central1-b",
           "prefix": "prefix-first",
+          "region": "us-central1-b",
           "weight": 0.5
         },
         {
-          "region": "us-central2-d",
           "prefix": "prefix-second",
+          "region": "us-central2-d",
           "weight": 0.5
         }
       ],
+      "scalingRestriction": {
+        "botCeiling": 100,
+        "botFloor": 5,
+        "stepSize": 5
+      },
       "swarmingDimensions": [
         {
           "name": "role",
@@ -41,35 +43,35 @@
           ]
         }
       ],
-      "policyMode": 2,
-      "swarmingInstance": "chromeos-swarming.appspot.com",
-      "application": "chromeos"
+      "swarmingInstance": "chromeos-swarming.appspot.com"
     },
     {
+      "application": "chromeos",
       "botGroup": "cq2",
       "botType": {
         "botSize": "large",
         "coresPerBot": 32,
         "memoryGb": 64
       },
-      "scalingRestriction": {
-        "stepSize": 5,
-        "botCeiling": 100,
-        "botFloor": 5,
-        "botFallback": 100
-			},
+      "policyMode": 2,
       "regionRestrictions": [
         {
-          "region": "us-east1-d",
           "prefix": "prefix-third",
+          "region": "us-east1-d",
           "weight": 0.5
         },
         {
-          "region": "us-west1-b",
           "prefix": "prefix-fourth",
+          "region": "us-west1-b",
           "weight": 0.5
         }
       ],
+      "scalingRestriction": {
+        "botCeiling": 100,
+        "botFallback": 100,
+        "botFloor": 5,
+        "stepSize": 5
+      },
       "swarmingDimensions": [
         {
           "name": "role",
@@ -87,9 +89,7 @@
           ]
         }
       ],
-      "policyMode": 2,
-      "swarmingInstance": "chromeos-swarming.appspot.com",
-      "application": "chromeos"
+      "swarmingInstance": "chromeos-swarming.appspot.com"
     }
   ]
 }

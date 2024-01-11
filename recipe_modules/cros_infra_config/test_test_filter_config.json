@@ -1,16 +1,16 @@
 {
-	"filterCfg": [
-		{
-			"passRatePolicy": {
-				"passRate": 96,
-				"minRuns": 20,
-				"numOfMilestones": 1,
-				"passRateRecent": 98,
-				"minRunsRecent": 50
-			},
-			"testSuites": [
-				"*"
-			]
-		}
-	]
+  "filterCfg": [
+    {
+      "passRatePolicy": {
+        "minRuns": 20,
+        "minRunsRecent": 50,
+        "numOfMilestones": 1,
+        "passRate": 96,
+        "passRateRecent": 98
+      },
+      "testSuites": [
+        "*"
+      ]
+    }
+  ]
 }

@@ -1,50 +1,8 @@
 {
   "builderConfigs": [
     {
-      "id": {
-        "name": "amd64-generic-asan",
-        "type": "INFORMATIONAL",
-        "bucket": "informational"
-      },
-      "general": {
-        "manifest": "PUBLIC"
-      },
-      "build": {
-        "portageProfile": {
-          "profile": "asan"
-        },
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_TEST_VM",
-            "IMAGE_TYPE_BASE"
-          ]
-        }
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
-        "prebuiltsGsBucket": "chromeos-prebuilt",
         "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP",
-                  "AUTOTEST_FILES",
-                  "TAST_FILES",
-                  "PINNED_GUEST_IMAGES",
-                  "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS"
-                ],
-                "gsLocations": []
-              }
-            ]
-          },
           "image": {
             "outputArtifacts": [
               {
@@ -62,35 +20,69 @@
                 ]
               }
             ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ],
+                "gsLocations": []
+              }
+            ]
           }
         },
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt",
         "useCqPrebuilts": true
       },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "portageProfile": {
+          "profile": "asan"
+        }
+      },
+      "general": {
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "informational",
+        "name": "amd64-generic-asan",
+        "type": "INFORMATIONAL"
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-fuzzer",
-        "bucket": "informational"
-      },
-      "general": {
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "portageProfile": {
-          "profile": "fuzzer"
-        },
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      },
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsInfo": {
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -110,168 +102,167 @@
                 ]
               }
             ]
-          },
-          "infra": {
+          }
+        },
+        "prebuilts": "NONE",
+        "useCqPrebuilts": true
+      },
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "portageProfile": {
+          "profile": "fuzzer"
+        }
+      },
+      "general": {
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "informational",
+        "name": "amd64-generic-fuzzer"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "image": {
             "outputArtifacts": [
               {
                 "artifactTypes": [
-                  "BUILD_MANIFEST"
+                  "DLC_IMAGE"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "LICENSE_CREDITS"
+                ]
+              }
+            ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "FPMCU_UNITTESTS"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "ignoreBreakpadSymbolGenerationErrors": true,
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
                 ]
               }
             ]
           }
         },
-        "useCqPrebuilts": true
+        "prebuilts": "NONE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "disableRootfsVerification": true,
+          "diskLayout": "16gb-rootfs",
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ],
+          "verifyImageSizeDelta": true
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "portageProfile": {
+          "profile": "asan"
+        },
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "RUN"
+        }
+      },
+      "chrome": {},
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PUBLIC",
+        "runWhen": {
+          "filePatterns": [
+            "manifest-internal/_kernel_upstream.xml",
+            "src/overlays/overlay-amd64-host/prebuilt.conf",
+            "src/platform/ap-daemons/**",
+            "src/platform/ap/**",
+            "src/platform/cr50/**",
+            "src/platform/crosvm-upstream/**",
+            "src/platform/dev/src/chromiumos/**",
+            "src/platform/ec/**",
+            "src/platform/gdisp/**",
+            "src/platform/graphics/src/vm_perf_eval/**",
+            "src/platform/ish/**",
+            "src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/common/firmware/ti50/**",
+            "src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/bundles/cros/gscdevboard/**",
+            "src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/firmware/ti50/**",
+            "src/platform/tremplin/**",
+            "src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-dlc/**",
+            "src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-host-tools/**",
+            "src/third_party/autotest/files/**",
+            "src/third_party/chromiumos-overlay/chromeos-base/test-server/**",
+            "src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
+            "src/third_party/chromiumos-overlay/dev-util/cros-provision/**",
+            "src/third_party/chromiumos-overlay/dev-util/dut-server/**",
+            "src/third_party/chromiumos-overlay/dev-util/test-exec-server/**",
+            "src/third_party/chromiumos-overlay/dev-util/test-plan/**",
+            "src/third_party/coreboot/amd_blobs/**",
+            "src/third_party/hdctools/**",
+            "src/third_party/toolchain-utils/**",
+            "src/third_party/zephyr/**"
+          ],
+          "mode": "NO_RUN_ON_FILE_MATCH"
+        },
+        "sdkCacheVersion": 1
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-asan-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-			"id": {
-				"name": "amd64-generic-asan-cq",
-				"type": "CQ",
-				"bucket": "cq"
-			},
-			"general": {
-				"critical": true,
-				"environment": "PRODUCTION",
-				"runWhen": {
-					"mode": "NO_RUN_ON_FILE_MATCH",
-					"filePatterns": [
-						"manifest-internal/_kernel_upstream.xml",
-						"src/overlays/overlay-amd64-host/prebuilt.conf",
-						"src/platform/ap-daemons/**",
-						"src/platform/ap/**",
-						"src/platform/cr50/**",
-						"src/platform/crosvm-upstream/**",
-						"src/platform/dev/src/chromiumos/**",
-						"src/platform/ec/**",
-						"src/platform/gdisp/**",
-						"src/platform/graphics/src/vm_perf_eval/**",
-						"src/platform/ish/**",
-						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/common/firmware/ti50/**",
-						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/bundles/cros/gscdevboard/**",
-						"src/platform/tast-tests/src/go.chromium.org/tast-tests/cros/remote/firmware/ti50/**",
-						"src/platform/tremplin/**",
-						"src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-dlc/**",
-						"src/private-overlays/chromeos-partner-overlay/chromeos-base/borealis-host-tools/**",
-						"src/third_party/autotest/files/**",
-						"src/third_party/chromiumos-overlay/chromeos-base/test-server/**",
-						"src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf",
-						"src/third_party/chromiumos-overlay/dev-util/cros-provision/**",
-						"src/third_party/chromiumos-overlay/dev-util/dut-server/**",
-						"src/third_party/chromiumos-overlay/dev-util/test-exec-server/**",
-						"src/third_party/chromiumos-overlay/dev-util/test-plan/**",
-						"src/third_party/coreboot/amd_blobs/**",
-						"src/third_party/hdctools/**",
-						"src/third_party/toolchain-utils/**",
-						"src/third_party/zephyr/**"
-					]
-				},
-				"sdkCacheVersion": 1,
-				"manifest": "PUBLIC"
-			},
-			"artifacts": {
-				"prebuilts": "NONE",
-				"prebuiltsGsBucket": "chromeos-prebuilt",
-				"artifactsGsBucket": "chromeos-image-archive",
-				"artifactsInfo": {
-					"legacy": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"IMAGE_ZIP",
-									"AUTOTEST_FILES",
-									"TAST_FILES",
-									"PINNED_GUEST_IMAGES",
-									"EBUILD_LOGS",
-									"FPMCU_UNITTESTS"
-								]
-							}
-						]
-					},
-					"toolchain": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"CLANG_CRASH_DIAGNOSES"
-								],
-								"gsLocations": [
-									"chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
-								]
-							}
-						]
-					},
-					"image": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"DLC_IMAGE"
-								]
-							},
-							{
-								"artifactTypes": [
-									"LICENSE_CREDITS"
-								]
-							}
-						]
-					},
-					"sysroot": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"DEBUG_SYMBOLS"
-								]
-							},
-							{
-								"artifactTypes": [
-									"BREAKPAD_DEBUG_SYMBOLS"
-								]
-							}
-						],
-						"ignoreBreakpadSymbolGenerationErrors": true
-					}
-				}
-			},
-			"chrome": {},
-			"build": {
-				"portageProfile": {
-					"profile": "asan"
-				},
-				"applyGerritChanges": true,
-				"sdkUpdate": {
-					"sdkUpdateRunSpec": "RUN"
-				},
-				"installPackages": {
-					"runSpec": "RUN",
-					"dependencies": "ALL_DEPENDENCIES"
-				},
-				"buildImages": {
-					"imageTypes": [
-						"IMAGE_TYPE_TEST",
-						"IMAGE_TYPE_TEST_VM",
-						"IMAGE_TYPE_BASE"
-					],
-					"disableRootfsVerification": true,
-					"diskLayout": "16gb-rootfs",
-					"verifyImageSizeDelta": true
-				}
-			},
-			"unitTests": {
-				"ebuildsRunSpec": "RUN",
-				"dependencies": "CL_AFFECTED_DEPENDENCIES"
-			}
-		},
-    {
-      "id": {
-        "name": "amd64-generic-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -283,11 +274,8 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "PUBLIC",
         "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "buildImages": {
@@ -297,62 +285,8 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ]
-      },
-      "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-bazel-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
-      "artifacts": {
-        "prebuilts": "PUBLIC",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        },
-        "artifactsGsBucket": "chromeos-image-archive",
-        "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ],
-          "buildImagesOrchestrator": "BAZEL"
-        },
-        "installPackages": {
-          "runSpec": "RUN",
           "dependencies": "ALL_DEPENDENCIES",
-          "installPackagesOrchestrator": "BAZEL"
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -360,25 +294,27 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-postsubmit",
+        "type": "POSTSUBMIT"
+      },
       "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES",
-        "unitTestsOrchestrator": "BAZEL"
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": []
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-bazel-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -390,80 +326,21 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
-        "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ],
-          "buildImagesOrchestrator": "BAZEL"
-        },
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "installPackagesOrchestrator": "BAZEL"
-        },
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ]
-      },
-      "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES",
-        "unitTestsOrchestrator": "BAZEL"
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-bazel-lite-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
-      "artifacts": {
         "prebuilts": "PUBLIC",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        },
-        "artifactsGsBucket": "chromeos-image-archive",
         "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "buildImages": {
+          "buildImagesOrchestrator": "BAZEL",
           "imageTypes": [
             "IMAGE_TYPE_BASE",
             "IMAGE_TYPE_TEST"
-          ],
-          "buildImagesOrchestrator": "BAZEL"
+          ]
         },
         "installPackages": {
-          "runSpec": "RUN",
           "dependencies": "ALL_DEPENDENCIES",
           "installPackagesOrchestrator": "BAZEL",
-          "bazelTargets": "LITE"
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -471,25 +348,28 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-bazel-postsubmit",
+        "type": "POSTSUBMIT"
+      },
       "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [],
         "unitTestsOrchestrator": "BAZEL"
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-postsubmit-remoteexec",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -501,23 +381,21 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "PUBLIC",
         "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "buildImages": {
+          "buildImagesOrchestrator": "BAZEL",
           "imageTypes": [
             "IMAGE_TYPE_BASE",
             "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
           "dependencies": "ALL_DEPENDENCIES",
-	  "use_remoteexec": true
+          "installPackagesOrchestrator": "BAZEL",
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -525,25 +403,28 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-bazel-snapshot",
+        "type": "SNAPSHOT"
+      },
       "unitTests": {
-        "packageBlocklist": [],
+        "dependencies": "ALL_DEPENDENCIES",
         "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "packageBlocklist": [],
+        "unitTestsOrchestrator": "BAZEL"
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-postsubmit-publish-img-sizes",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC",
-        "publish_image_sizes": true
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -555,22 +436,22 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "PUBLIC",
         "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "buildImages": {
+          "buildImagesOrchestrator": "BAZEL",
           "imageTypes": [
             "IMAGE_TYPE_BASE",
             "IMAGE_TYPE_TEST"
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "bazelTargets": "LITE",
+          "dependencies": "ALL_DEPENDENCIES",
+          "installPackagesOrchestrator": "BAZEL",
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -578,25 +459,28 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-bazel-lite-snapshot",
+        "type": "SNAPSHOT"
+      },
       "unitTests": {
-        "packageBlocklist": [],
+        "dependencies": "ALL_DEPENDENCIES",
         "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "packageBlocklist": [],
+        "unitTestsOrchestrator": "BAZEL"
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-snapshot-publish-img-sizes",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC",
-        "publish_image_sizes": true
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -608,11 +492,8 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "PUBLIC",
         "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "buildImages": {
@@ -622,8 +503,9 @@
           ]
         },
         "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
           "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "use_remoteexec": true
         },
         "useFlags": [
           {
@@ -631,26 +513,133 @@
           }
         ]
       },
-      "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-cq",
-        "type": "CQ",
-        "bucket": "cq"
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
         "manifest": "PUBLIC"
       },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-postsubmit-remoteexec",
+        "type": "POSTSUBMIT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": []
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC",
+        "publish_image_sizes": true
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-postsubmit-publish-img-sizes",
+        "type": "POSTSUBMIT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": []
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC",
+        "publish_image_sizes": true
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-snapshot-publish-img-sizes",
+        "type": "SNAPSHOT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": []
+      }
+    },
+    {
       "artifacts": {
         "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
-        "prebuilts_gs_bucket": "prebuilts_gs_bucket",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -661,16 +650,15 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket"
       },
       "build": {
         "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -678,30 +666,32 @@
           }
         ]
       },
-      "unitTests": {
-        "packageBlocklist": [
-          {
-            "packageName": "chromite",
-            "category": "chromeos-base",
-            "version": ""
-          }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-slim-cq",
-        "type": "CQ",
-        "bucket": "cq"
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
         "manifest": "PUBLIC"
       },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
+          {
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
+          }
+        ]
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -712,16 +702,14 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "CL_AFFECTED_DEPENDENCIES"
+          "dependencies": "CL_AFFECTED_DEPENDENCIES",
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -729,83 +717,86 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-slim-cq",
+        "type": "CQ"
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN_EXIT"
       }
     },
     {
-      "id": {
-        "name": "staging-amd64-generic-cq",
-        "type": "CQ",
-        "bucket": "cq"
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": false,
         "environment": "STAGING",
-        "sdkCacheVersion": "2",
-        "manifest": "PUBLIC"
+        "manifest": "PUBLIC",
+        "sdkCacheVersion": "2"
       },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        },
-        "artifactsGsBucket": "chromeos-image-archive"
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
-        },
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+      "id": {
+        "bucket": "cq",
+        "name": "staging-amd64-generic-cq",
+        "type": "CQ"
       },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
+            "packageName": "chromite",
             "version": ""
           }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        ]
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-snapshot",
-        "type": "POSTSUBMIT",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -822,41 +813,41 @@
             ]
           }
         },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "installToolchain": {
+          "compileSource": false
+        }
       },
       "chrome": {
         "internal": false
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "installToolchain": {
-          "compileSource": false
-        },
-        "applyGerritChanges": true
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-snapshot",
+        "type": "POSTSUBMIT"
       },
       "unitTests": {
-        "packageBlocklist": [],
-        "ebuildsRunSpec": "RUN",
         "dependencies": "ALL_DEPENDENCIES",
-        "emptySysroot": false
+        "ebuildsRunSpec": "RUN",
+        "emptySysroot": false,
+        "packageBlocklist": []
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-build-exit-after-unittests",
-        "type": "POSTSUBMIT",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
-        "prebuilts": "PUBLIC",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -868,16 +859,10 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "PUBLIC",
         "prebuiltsGsBucket": "chromeos-prebuilt"
       },
-      "chrome": {
-        "internal": true
-      },
       "build": {
-        "portageProfile": {
-          "profile": "generic_build"
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_BASE",
@@ -885,8 +870,11 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "portageProfile": {
+          "profile": "generic_build"
         },
         "useFlags": [
           {
@@ -894,58 +882,60 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-build-exit-after-unittests",
+        "type": "POSTSUBMIT"
+      },
       "unitTests": {
-        "packageBlocklist": [],
+        "dependencies": "ALL_DEPENDENCIES",
         "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "ALL_DEPENDENCIES"
+        "packageBlocklist": []
       }
     },
     {
-      "id": {
-        "name": "arm-generic-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
         "prebuilts": "NONE"
+      },
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "chrome": {
         "internal": true
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      },
-      "unitTests": {
-        "packageBlocklist": [
-          {
-            "packageName": "chromite",
-            "category": "chromeos-base",
-            "version": ""
-          }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "arm-generic-slim-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
       "general": {
         "critical": false,
         "manifest": "PUBLIC"
       },
+      "id": {
+        "bucket": "cq",
+        "name": "arm-generic-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
+          {
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
+          }
+        ]
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -956,145 +946,134 @@
               }
             ]
           }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "installPackages": {
+          "dependencies": "CL_AFFECTED_DEPENDENCIES",
+          "runSpec": "RUN"
         }
       },
       "chrome": {
         "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "CL_AFFECTED_DEPENDENCIES"
-        }
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "arm-generic-pointless-cq",
-        "type": "CQ",
-        "bucket": "cq"
       },
       "general": {
         "critical": false,
         "manifest": "PUBLIC"
       },
+      "id": {
+        "bucket": "cq",
+        "name": "arm-generic-slim-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN_EXIT"
+      }
+    },
+    {
       "artifacts": {
         "prebuilts": "NONE"
+      },
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "chrome": {
         "internal": true
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "arm-generic-pointless-cq",
+        "type": "CQ"
       },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
+            "packageName": "chromite",
             "version": ""
           }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        ]
       }
     },
     {
-      "id": {
-        "name": "staging-arm-generic-cq",
-        "type": "CQ",
-        "bucket": "cq"
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": false,
         "environment": "STAGING",
         "manifest": "PUBLIC"
       },
-      "artifacts": {
-        "prebuilts": "NONE"
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+      "id": {
+        "bucket": "cq",
+        "name": "staging-arm-generic-cq",
+        "type": "CQ"
       },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
+            "packageName": "chromite",
             "version": ""
           }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        ]
       }
     },
     {
-      "id": {
-        "name": "arm64-generic-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z",
-        "manifest": "PUBLIC"
-      },
       "artifacts": {
         "prebuilts": "NONE"
-      },
-      "chrome": {
-        "internal": true
       },
       "build": {
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         }
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "bisecting-orchestrator",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "prebuilts": "NONE"
       },
       "chrome": {
         "internal": true
       },
+      "general": {
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "arm64-generic-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "artifacts": {
+        "prebuilts": "NONE"
+      },
       "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_TEST",
@@ -1102,286 +1081,192 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
         }
       },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "bisecting-orchestrator",
+        "type": "POSTSUBMIT"
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "amd64-generic-bisect",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN_EXIT"
+        }
+      },
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
         "manifest": "PUBLIC"
       },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN_EXIT",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
+      "id": {
+        "bucket": "postsubmit",
+        "name": "amd64-generic-bisect",
+        "type": "POSTSUBMIT"
       }
     },
     {
-      "id": {
-        "name": "sarien-bisect",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN_EXIT"
+        }
+      },
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true
       },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN_EXIT",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
+      "id": {
+        "bucket": "postsubmit",
+        "name": "sarien-bisect",
+        "type": "POSTSUBMIT"
       }
     },
     {
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
       "id": {
+        "bucket": "postsubmit",
         "name": "arm-generic-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
+      "build": {
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "general": {
         "critical": false,
         "manifest": "PUBLIC"
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      }
-    },
-    {
       "id": {
+        "bucket": "postsubmit",
         "name": "arm-generic-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+        "type": "SNAPSHOT"
       }
     },
     {
-      "id": {
-        "name": "arm-generic-v42-buildtest-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
       "build": {
         "installPackages": {
-          "runSpec": "RUN_EXIT",
           "dependencies": "ALL_DEPENDENCIES",
           "packages": [
             {
-              "packageName": "chromeos-kernel",
               "category": "syskernel",
+              "packageName": "chromeos-kernel",
               "version": "4.19"
             }
-          ]
+          ],
+          "runSpec": "RUN_EXIT"
         }
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "arm-generic-v42-buildtest-postsubmit",
+        "type": "POSTSUBMIT"
       }
     },
     {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "staging",
         "name": "staging-atlas-cq",
-        "type": "CQ",
-        "bucket": "staging"
-      },
-      "general": {
-        "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z",
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": true,
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
-        }
+        "type": "CQ"
       },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
-            "version": ""
-          }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "atlas-cq",
-        "type": "CQ",
-        "bucket": "atlas"
-      },
-      "general": {
-        "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z",
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": true,
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
-        }
-      },
-      "unitTests": {
-        "packageBlocklist": [
-          {
             "packageName": "chromite",
-            "category": "chromeos-base",
             "version": ""
-          }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "atlas-slim-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z",
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "CL_AFFECTED_DEPENDENCIES"
-        },
-        "applyGerritChanges": true
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES",
-        "packages": [
-          {
-            "packageName": "bash",
-            "category": "app-shells"
-          },
-          {
-            "packageName": "chrome-icu",
-            "category": "chromeos-base"
           }
         ]
       }
     },
     {
-      "id": {
-        "name": "coral-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PRIVATE"
-      },
       "artifacts": {
         "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -1392,10 +1277,8 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
@@ -1406,8 +1289,113 @@
           ]
         },
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "atlas",
+        "name": "atlas-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
+          {
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
+          }
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "dependencies": "CL_AFFECTED_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "atlas-slim-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN_EXIT",
+        "packages": [
+          {
+            "category": "app-shells",
+            "packageName": "bash"
+          },
+          {
+            "category": "chromeos-base",
+            "packageName": "chrome-icu"
+          }
+        ]
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         },
         "useFlags": [
           {
@@ -1415,137 +1403,138 @@
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "coral-cq",
+        "type": "CQ"
+      },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
+            "packageName": "chromite",
             "version": ""
           }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        ]
       }
     },
-		{
-			"id": {
-				"name": "eve-android-uprev",
-				"type": "POSTSUBMIT",
-				"bucket": "pupr"
-			},
-			"general": {
-				"critical": true,
-				"environment": "PRODUCTION",
-				"runWhen": {
-					"mode": "ALWAYS_RUN"
-				},
-				"sdkCacheVersion": 1,
-				"manifest": "PRIVATE",
-				"publishImageSizes": true
-			},
-			"artifacts": {
-				"prebuilts": "PRIVATE",
-				"prebuiltsGsBucket": "chromeos-prebuilt",
-				"artifactsGsBucket": "chromeos-image-archive",
-				"artifactsInfo": {
-					"legacy": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"IMAGE_ZIP",
-									"AUTOTEST_FILES",
-									"TAST_FILES",
-									"PINNED_GUEST_IMAGES",
-									"EBUILD_LOGS",
-									"TEST_UPDATE_PAYLOAD",
-									"FPMCU_UNITTESTS"
-								]
-							}
-						]
-					},
-					"toolchain": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"CLANG_CRASH_DIAGNOSES"
-								],
-								"gsLocations": [
-									"chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
-								]
-							}
-						]
-					},
-					"image": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"DLC_IMAGE"
-								]
-							},
-							{
-								"artifactTypes": [
-									"LICENSE_CREDITS"
-								]
-							}
-						]
-					},
-					"sysroot": {
-						"outputArtifacts": [
-							{
-								"artifactTypes": [
-									"DEBUG_SYMBOLS"
-								]
-							},
-							{
-								"artifactTypes": [
-									"BREAKPAD_DEBUG_SYMBOLS"
-								]
-							}
-						]
-					}
-				},
-				"useCqPrebuilts": true
-			},
-			"chrome": {
-				"internal": true
-			},
-			"build": {
-				"useFlags": [
-					{
-						"flag": "chrome_internal"
-					}
-				],
-				"sdkUpdate": {
-					"sdkUpdateRunSpec": "RUN"
-				},
-				"installPackages": {
-					"runSpec": "RUN",
-					"dependencies": "ALL_DEPENDENCIES"
-				},
-				"buildImages": {
-					"imageTypes": [
-						"IMAGE_TYPE_TEST"
-					]
-				}
-			},
-			"unitTests": {
-				"ebuildsRunSpec": "NO_RUN",
-				"dependencies": "ALL_DEPENDENCIES"
-			}
-		},
     {
-      "id": {
-        "name": "eve-cq",
-        "type": "CQ",
-        "bucket": "cq"
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "LICENSE_CREDITS"
+                ]
+              }
+            ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "FPMCU_UNITTESTS"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS"
+                ]
+              },
+              {
+                "artifactTypes": [
+                  "BREAKPAD_DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          },
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt",
+        "useCqPrebuilts": true
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
-        "brokenBefore": "2019-11-01T00:00:00Z",
-        "manifest": "PRIVATE"
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "publishImageSizes": true,
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1
       },
+      "id": {
+        "bucket": "pupr",
+        "name": "eve-android-uprev",
+        "type": "POSTSUBMIT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -1556,167 +1545,233 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
         "applyGerritChanges": true,
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_BASE",
             "IMAGE_TYPE_TEST"
           ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         }
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "brokenBefore": "2019-11-01T00:00:00Z",
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "eve-cq",
+        "type": "CQ"
+      },
       "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
         "packageBlocklist": [
           {
-            "packageName": "chromite",
             "category": "chromeos-base",
+            "packageName": "chromite",
             "version": ""
           }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        ]
       }
     },
     {
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "general": {
+        "critical": false,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "cq",
         "name": "target-baseline",
-        "type": "CQ",
-        "bucket": "cq"
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "general": {
         "critical": false,
         "manifest": "PRIVATE"
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
       "id": {
+        "bucket": "postsubmit",
         "name": "grunt-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
+        "type": "POSTSUBMIT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "general": {
         "critical": false,
         "manifest": "PRIVATE"
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
       "id": {
+        "bucket": "postsubmit",
         "name": "grunt-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
+        "type": "SNAPSHOT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
       },
       "general": {
         "critical": false,
         "manifest": "PRIVATE"
       },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
       "id": {
+        "bucket": "postsubmit",
         "name": "grunt-unittest-only-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": false
+        "type": "POSTSUBMIT"
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN_EXIT",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN_EXIT"
       }
     },
     {
-      "id": {
-        "name": "toolchain-orchestrator",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "toolchain",
+        "name": "toolchain-orchestrator",
+        "type": "TOOLCHAIN"
+      },
       "orchestrator": {
         "child_specs": [],
+        "gerritChanges": [
+          {
+            "change": 1394249,
+            "host": "chromium-review.googlesource.com",
+            "patchset": -1,
+            "project": "chromiumos/overlays/chromiumos-overlay"
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/snapshot"
+        }
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "EBUILD_LOGS"
+                ]
+              }
+            ]
+          }
         },
-        "gerritChanges": [
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "disableGoma": true,
+          "packages": [
+            {
+              "category": "chromeos-base",
+              "packageName": "chromeos-chrome"
+            }
+          ],
+          "runSpec": "RUN"
+        },
+        "useFlags": [
           {
-            "host": "chromium-review.googlesource.com",
-            "project": "chromiumos/overlays/chromiumos-overlay",
-            "change": 1394249,
-            "patchset": -1
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "strict_toolchain_checks"
+          },
+          {
+            "flag": "-afdo_use"
+          },
+          {
+            "flag": "thinlto"
           }
         ]
-      }
-    },
-    {
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
       "id": {
+        "bucket": "toolchain",
         "name": "generic-toolchain-bot",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
+        "type": "TOOLCHAIN"
       },
-      "general": {
-        "critical": false,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
-      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
@@ -1728,13 +1783,23 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "disableGoma": true,
+          "packages": [
+            {
+              "category": "chromeos-base",
+              "packageName": "chromeos-chrome"
+            }
+          ],
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
@@ -1751,103 +1816,38 @@
           {
             "flag": "thinlto"
           }
-        ],
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "compileSource": true,
-          "packages": [
-            {
-              "packageName": "chromeos-chrome",
-              "category": "chromeos-base"
-            }
-          ],
-          "disableGoma": true
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
         }
       },
-      "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
       "id": {
+        "bucket": "toolchain",
         "name": "staging-generic-toolchain-bot",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
-      },
-      "general": {
-        "critical": false,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsGsBucket": "chromeos-image-archive",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "EBUILD_LOGS"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          },
-          {
-            "flag": "strict_toolchain_checks"
-          },
-          {
-            "flag": "-afdo_use"
-          },
-          {
-            "flag": "thinlto"
-          }
-        ],
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "compileSource": true,
-          "packages": [
-            {
-              "packageName": "chromeos-chrome",
-              "category": "chromeos-base"
-            }
-          ],
-          "disableGoma": true
-        }
+        "type": "TOOLCHAIN"
       },
       "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
       }
     },
     {
-      "id": {
-        "name": "artifact-generate-orchestrator",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "toolchain",
+        "name": "artifact-generate-orchestrator",
+        "type": "TOOLCHAIN"
       },
       "orchestrator": {
         "child_specs": [
@@ -1856,42 +1856,33 @@
           }
         ],
         "followOnOrchestrator": {
-          "name": "artifact-verify-orchestrator",
-          "awaitCompletion": true
+          "awaitCompletion": true,
+          "name": "artifact-verify-orchestrator"
         },
+        "gerritChanges": [
+          {
+            "change": 1394249,
+            "host": "chromium-review.googlesource.com",
+            "patchset": -1,
+            "project": "chromiumos/overlays/chromiumos-overlay"
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/snapshot"
-        },
-        "gerritChanges": [
-          {
-            "host": "chromium-review.googlesource.com",
-            "project": "chromiumos/overlays/chromiumos-overlay",
-            "change": 1394249,
-            "patchset": -1
-          }
-        ]
+        }
       }
     },
     {
-      "id": {
-        "name": "benchmark-afdo-process",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
-      },
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
+          "profileInfo": {
+            "afdoRelease": {
+              "chromeCwpProfile": "silvermont"
+            }
+          },
           "toolchain": {
             "inputArtifacts": [
               {
@@ -1915,68 +1906,78 @@
             ],
             "outputArtifacts": [
               {
+                "aclName": "public-read",
                 "artifactTypes": [
                   "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
                   "chromeos-toolchain-artifacts/afdo/unvetted/benchmark",
                   "chromeos-prebuilt/afdo-job/llvm"
-                ],
-                "aclName": "public-read"
+                ]
               }
             ]
-          },
-          "profileInfo": {
-            "afdoRelease": {
-              "chromeCwpProfile": "silvermont"
-            }
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
           }
-        ],
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "atlas-llvm-next",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsGsBucket": "chromeos-image-archive"
+        ]
       },
       "chrome": {
         "internal": true
       },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        }
+      },
+      "id": {
+        "bucket": "toolchain",
+        "name": "benchmark-afdo-process",
+        "type": "TOOLCHAIN"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "prebuilts": "NONE"
+      },
       "build": {
         "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "installToolchain": {
+          "compileSource": true
+        },
+        "sdkUpdate": {
+          "compileSource": true
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
@@ -1993,46 +1994,31 @@
           {
             "flag": "thinlto"
           }
-        ],
-        "sdkUpdate": {
-          "compileSource": true
-        },
-        "installToolchain": {
-          "compileSource": true
-        },
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "compileSource": true
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_BASE"
-          ]
-        }
+        ]
       },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "artifact-generate-toolchain",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
         "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
+        }
       },
+      "id": {
+        "bucket": "toolchain",
+        "name": "atlas-llvm-next",
+        "type": "TOOLCHAIN"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
@@ -2043,6 +2029,9 @@
                 ]
               }
             ]
+          },
+          "profileInfo": {
+            "chromeCwpProfile": "silvermont"
           },
           "toolchain": {
             "inputArtifacts": [
@@ -2067,56 +2056,53 @@
                 ]
               }
             ]
-          },
-          "profileInfo": {
-            "chromeCwpProfile": "silvermont"
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
-        "useFlags": [],
         "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "packages": [
+            {
+              "category": "chromeos-base",
+              "packageName": "chromeos-chrome"
+            }
+          ],
+          "runSpec": "RUN"
+        },
         "prepareForBuild": {
           "additionalArgs": {
             "chromeCwpProfile": "silvermont"
           }
         },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "packages": [
-            {
-              "packageName": "chromeos-chrome",
-              "category": "chromeos-base"
-            }
-          ]
-        }
+        "useFlags": []
       },
-      "unitTests": {
-        "ebuildsRunSpec": "NO_RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "artifact-verify-toolchain",
-        "type": "TOOLCHAIN",
-        "bucket": "toolchain"
+      "chrome": {
+        "internal": true
       },
       "general": {
         "critical": true,
         "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
         "runWhen": {
           "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE"
+        }
       },
+      "id": {
+        "bucket": "toolchain",
+        "name": "artifact-generate-toolchain",
+        "type": "TOOLCHAIN"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "NO_RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
@@ -2127,6 +2113,9 @@
                 ]
               }
             ]
+          },
+          "profileInfo": {
+            "chromeCwpProfile": "silvermont"
           },
           "toolchain": {
             "inputArtifacts": [
@@ -2151,18 +2140,39 @@
             ],
             "outputArtifacts": [
               {
+                "aclName": "public-read",
                 "artifactTypes": [
                   "VERIFIED_CHROME_BENCHMARK_AFDO_FILE"
                 ],
                 "gsLocations": [
                   "chromeos-toolchain-artifacts/afdo/vetted",
                   "chromeos-prebuilt/afdo-job/afdo/vetted"
-                ],
-                "aclName": "public-read"
+                ]
               }
             ]
-          },
-          "profileInfo": {
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "packages": [
+            {
+              "category": "app-shells",
+              "packageName": "bash"
+            },
+            {
+              "category": "chromeos-base",
+              "packageName": "chromeos-chrome"
+            }
+          ],
+          "runSpec": "RUN"
+        },
+        "prepareForBuild": {
+          "additionalArgs": {
             "chromeCwpProfile": "silvermont"
           }
         }
@@ -2170,43 +2180,33 @@
       "chrome": {
         "internal": true
       },
-      "build": {
-        "applyGerritChanges": true,
-        "prepareForBuild": {
-          "additionalArgs": {
-            "chromeCwpProfile": "silvermont"
-          }
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES",
-          "packages": [
-            {
-              "packageName": "bash",
-              "category": "app-shells"
-            },
-            {
-              "packageName": "chromeos-chrome",
-              "category": "chromeos-base"
-            }
-          ]
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
         }
       },
+      "id": {
+        "bucket": "toolchain",
+        "name": "artifact-verify-toolchain",
+        "type": "TOOLCHAIN"
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "postsubmit-orchestrator",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "postsubmit-orchestrator",
+        "type": "POSTSUBMIT"
       },
       "orchestrator": {
         "child_specs": [
@@ -2214,110 +2214,119 @@
             "name": "amd64-generic-postsubmit"
           },
           {
-            "name": "arm-generic-postsubmit",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-postsubmit"
           },
           {
-            "name": "grunt-postsubmit",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "grunt-postsubmit"
           }
         ]
       }
     },
     {
-      "id": {
-        "name": "snapshot-orchestrator",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "snapshot-orchestrator",
+        "type": "SNAPSHOT"
       },
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-snapshot",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "amd64-generic-snapshot"
           },
           {
-            "name": "arm-generic-snapshot",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-snapshot"
           },
           {
-            "name": "grunt-snapshot",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "grunt-snapshot"
           }
         ]
       }
     },
     {
-      "id": {
-        "name": "release-main-orchestrator",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "release",
+        "name": "release-main-orchestrator",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [
+          {
+            "collectHandling": "COLLECT",
+            "name": "eve-release-main",
+            "runOn": [
+              0,
+              2,
+              4,
+              6
+            ]
+          },
+          {
+            "collectHandling": "COLLECT",
+            "name": "kukui-release-main",
+            "runOn": [
+              1,
+              3,
+              5
+            ]
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": [
-          {
-            "name": "eve-release-main",
-            "collectHandling": "COLLECT",
-            "runOn": [0, 2, 4, 6]
-          },
-          {
-            "name": "kukui-release-main",
-            "collectHandling": "COLLECT",
-            "runOn": [1, 3, 5]
-          }
-        ]
+        }
       }
     },
     {
-      "id": {
-        "name": "release-stabilize-15185.B-orchestrator",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "release",
+        "name": "release-stabilize-15185.B-orchestrator",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [
+          {
+            "collectHandling": "COLLECT",
+            "name": "eve-release-main"
+          },
+          {
+            "collectHandling": "COLLECT",
+            "name": "kukui-release-main"
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/stabilize-15185.B"
-        },
-        "child_specs": [
-          {
-            "name": "eve-release-main",
-            "collectHandling": "COLLECT"
-          },
-          {
-            "name": "kukui-release-main",
-            "collectHandling": "COLLECT"
-          }
-        ]
+        }
       }
     },
     {
-      "id": {
-        "name": "release-R108-15183.B-orchestrator",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "release-R108-15183.B-orchestrator",
+        "type": "RELEASE"
       },
       "orchestrator": {
         "gitilesCommit": {
@@ -2328,62 +2337,44 @@
       }
     },
     {
-      "id": {
-        "name": "eve-release-main",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "release",
+        "name": "eve-release-main",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        }
       }
     },
     {
-      "id": {
-        "name": "eve-kernelnext-release-main",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": false,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "release",
+        "name": "eve-kernelnext-release-main",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        }
       }
     },
     {
-      "id": {
-        "name": "eve-release-publish-img-pkg-sizes",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE",
-        "publish_image_sizes": true
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": []
-      },
       "build": {
         "buildImages": {
           "imageTypes": [
@@ -2391,23 +2382,29 @@
             "IMAGE_TYPE_TEST"
           ]
         }
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-cq-img-pkg-sizes",
-        "type": "CQ",
-        "bucket": "cq"
       },
       "general": {
         "critical": true,
-        "manifest": "PUBLIC",
+        "manifest": "PRIVATE",
         "publish_image_sizes": true
       },
+      "id": {
+        "bucket": "release",
+        "name": "eve-release-publish-img-pkg-sizes",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      }
+    },
+    {
       "artifacts": {
         "artifactsGsBucket": "chromeos-throwaway",
-        "prebuilts": "NONE",
-        "prebuilts_gs_bucket": "prebuilts_gs_bucket",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -2418,218 +2415,75 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket"
       },
       "build": {
         "applyGerritChanges": true,
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_BASE",
             "IMAGE_TYPE_TEST"
           ]
-        }
-      },
-      "unitTests": {
-        "packageBlocklist": [
-          {
-            "packageName": "chromite",
-            "category": "chromeos-base",
-            "version": ""
-          }
-        ],
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "kukui-release-main",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
         },
-        "child_specs": []
-      },
-      "build": {
-        "applyGerritChanges": true,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
           }
-        ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_RECOVERY"
-          ]
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsGsBucket": "chromeos-releases-test",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP",
-                  "AUTOTEST_FILES",
-                  "TAST_FILES",
-                  "PINNED_GUEST_IMAGES",
-                  "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS",
-                  "IMAGE_ARCHIVES"
-                ],
-                "gsLocations": [
-                  "chromeos-releases-test/{target}-release/{version}"
-                ]
-              }
-            ]
-          },
-          "sysroot": {
-            "output_artifacts": [
-              {
-                "artifactTypes": [
-                  "DEBUG_SYMBOLS",
-                  "BREAKPAD_DEBUG_SYMBOLS",
-                  "SIMPLE_CHROME_SYSROOT",
-                  "CHROME_EBUILD_ENV"
-                ],
-                "gsLocations": [
-                  "chromeos-releases-test/{target}-release/{version}"
-                ]
-              }
-
-            ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE"
-                ]
-              }
-            ]
-          },
-          "infra": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "BUILD_MANIFEST"
-                ]
-              }
-            ]
-          }
-        },
-        "attestationEligible": true
+        ]
       },
       "chrome": {
         "internal": true
       },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "release-R111-12345.B-orchestrator",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
-        "manifest": "PRIVATE"
+        "manifest": "PUBLIC",
+        "publish_image_sizes": true
       },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/release-R111-12345.B"
-        },
-        "child_specs": [
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-cq-img-pkg-sizes",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
           {
-            "name": "kukui-release-R111-12345.B",
-            "collectHandling": "COLLECT"
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
           }
         ]
       }
     },
     {
-      "id": {
-        "name": "kukui-release-R111-12345.B",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/release-R111-12345.B"
-        }
-      },
-      "build": {
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          }
-        ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_RECOVERY"
-          ]
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
-      },
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -2662,9 +2516,88 @@
                   "chromeos-releases-test/{target}-release/{version}"
                 ]
               }
-
             ]
+          }
+        },
+        "attestationEligible": true,
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
           },
+          {
+            "flag": "-cros-debug"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "kukui-release-main",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "release-R111-12345.B-orchestrator",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [
+          {
+            "collectHandling": "COLLECT",
+            "name": "kukui-release-R111-12345.B"
+          }
+        ],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R111-12345.B"
+        }
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-releases-test",
+        "artifactsInfo": {
           "image": {
             "outputArtifacts": [
               {
@@ -2682,46 +2615,47 @@
                 ]
               }
             ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS",
+                  "IMAGE_ARCHIVES"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
+          },
+          "sysroot": {
+            "output_artifacts": [
+              {
+                "artifactTypes": [
+                  "DEBUG_SYMBOLS",
+                  "BREAKPAD_DEBUG_SYMBOLS",
+                  "SIMPLE_CHROME_SYSROOT",
+                  "CHROME_EBUILD_ENV"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
           }
         },
-        "attestationEligible": true
-      },
-      "chrome": {
-        "internal": true
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "betty-arc-r-release-main",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        "attestationEligible": true,
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          }
-        ],
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_BASE",
@@ -2731,14 +2665,64 @@
         },
         "installPackages": {
           "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "kukui-release-R111-12345.B",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R111-12345.B"
         }
       },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -2757,82 +2741,62 @@
                 ]
               }
             ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE"
-                ]
-              }
-            ]
-          },
-          "infra": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "BUILD_MANIFEST"
-                ]
-              }
-            ]
           }
         },
-        "attestationEligible": true
-      },
-      "chrome": {
-        "internal": true
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "cloudready-release-R90-13816.B-release",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/release-R90-13816.B"
-        },
-        "child_specs": []
+        "attestationEligible": true,
+        "prebuilts": "NONE"
       },
       "build": {
         "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
           },
           {
             "flag": "-cros-debug"
-          },
-          {
-            "flag": "-postscript"
           }
-        ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_TEST"
-          ]
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "betty-arc-r-release-main",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
         }
       },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
-        "devinstallPrebuiltsGsBucket": "chromeos-dev-installer",
         "artifactsInfo": {
           "legacy": {
             "outputArtifacts": [
@@ -2852,58 +2816,164 @@
               }
             ]
           }
-        }
+        },
+        "devinstallPrebuiltsGsBucket": "chromeos-dev-installer",
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "-postscript"
+          }
+        ]
       },
       "chrome": {
         "internal": true
       },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "release",
+        "name": "cloudready-release-R90-13816.B-release",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/release-R90-13816.B"
+        }
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "staging-release-main-orchestrator",
-        "type": "RELEASE",
-        "bucket": "release"
-      },
       "general": {
         "critical": true,
         "environment": "STAGING",
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "release",
+        "name": "staging-release-main-orchestrator",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        }
       }
     },
     {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-releases-test",
+        "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS",
+                  "IMAGE_ARCHIVES"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true,
+        "prebuilts": "NONE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "staging",
         "name": "staging-eve-release-main",
-        "type": "RELEASE",
-        "bucket": "staging"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "RELEASE"
       },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
-      },
+        }
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -2922,196 +2992,113 @@
                 ]
               }
             ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE"
-                ]
-              }
-            ]
-          },
-          "infra": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "BUILD_MANIFEST"
-                ]
-              }
-            ]
           }
         },
-        "attestationEligible": true
-      }
-    },
-    {
+        "attestationEligible": true,
+        "prebuilts": "NONE"
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "staging",
         "name": "staging-kukui-release-main",
-        "type": "RELEASE",
-        "bucket": "staging"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "RELEASE"
       },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsGsBucket": "chromeos-releases-test",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP",
-                  "AUTOTEST_FILES",
-                  "TAST_FILES",
-                  "PINNED_GUEST_IMAGES",
-                  "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS",
-                  "IMAGE_ARCHIVES"
-                ],
-                "gsLocations": [
-                  "chromeos-releases-test/{target}-release/{version}"
-                ]
-              }
-            ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE"
-                ]
-              }
-            ]
-          },
-          "infra": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "BUILD_MANIFEST"
-                ]
-              }
-            ]
-          }
-        },
-        "attestationEligible": true
+        }
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "staging",
         "name": "staging-cq-orchestrator",
-        "type": "CQ",
-        "bucket": "staging"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "CQ"
       },
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "amd64-generic-cq"
           },
           {
-            "name": "arm-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-cq"
           },
           {
-            "name": "arm64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm64-generic-cq"
           },
           {
-            "name": "arm-generic-pointless-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-pointless-cq"
           },
           {
-            "name": "atlas-cq",
-            "bucket": "atlas"
+            "bucket": "atlas",
+            "name": "atlas-cq"
           },
           {
-            "name": "cave-cq",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "cave-cq"
           }
         ]
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "chromiumos",
         "name": "public-main-orchestrator",
-        "type": "PUBLIC",
-        "bucket": "chromiumos"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "PUBLIC"
       },
       "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
         "child_specs": [
           {
-            "name": "eve-main-public",
-            "collectHandling": "COLLECT"
-          }
-        ]
-      }
-    },
-    {
-      "id": {
-        "name": "eve-main-public",
-        "type": "PUBLIC",
-        "bucket": "chromiumos"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": []
-      },
-      "build": {
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "-chrome_internal"
+            "collectHandling": "COLLECT",
+            "name": "eve-main-public"
           }
         ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_RECOVERY"
-          ]
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
         }
-      },
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE"
+                ]
+              }
+            ]
+          },
+          "infra": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "BUILD_MANIFEST"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -3127,180 +3114,255 @@
                 "gsLocations": []
               }
             ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE"
-                ]
-              }
-            ]
-          },
-          "infra": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "BUILD_MANIFEST"
-                ]
-              }
-            ]
           }
-        }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "-chrome_internal"
+          }
+        ]
       },
       "chrome": {
         "internal": true
       },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "chromiumos",
+        "name": "eve-main-public",
+        "type": "PUBLIC"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "cq",
         "name": "cq-orchestrator",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "CQ"
       },
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "amd64-generic-cq"
           },
           {
-            "name": "arm-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-cq"
           },
           {
-            "name": "arm64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm64-generic-cq"
           },
           {
-            "name": "arm-generic-pointless-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-pointless-cq"
           },
           {
-            "name": "atlas-cq",
-            "bucket": "atlas"
+            "bucket": "atlas",
+            "name": "atlas-cq"
           },
           {
-            "name": "cave-cq",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "cave-cq"
           },
           {
-            "name": "coral-cq",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "coral-cq"
           },
           {
-            "name": "eve-cq",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "eve-cq"
           }
         ]
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "cq",
         "name": "release-R90-13816.B-cq-orchestrator",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "CQ"
       },
       "orchestrator": {
         "child_specs": [
           {
-            "name": "amd64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "amd64-generic-cq"
           },
           {
-            "name": "arm-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-cq"
           },
           {
-            "name": "arm64-generic-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm64-generic-cq"
           },
           {
-            "name": "arm-generic-pointless-cq",
-            "collectHandling": "COLLECT"
+            "collectHandling": "COLLECT",
+            "name": "arm-generic-pointless-cq"
           },
           {
-            "name": "atlas-cq",
-            "bucket": "atlas"
+            "bucket": "atlas",
+            "name": "atlas-cq"
           },
           {
-            "name": "cave-cq",
-            "collectHandling": "COLLECT_AFTER_HW_TEST"
+            "collectHandling": "COLLECT_AFTER_HW_TEST",
+            "name": "cave-cq"
           }
         ]
       }
     },
     {
+      "build": {
+        "applyGerritChanges": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "cq",
         "name": "chromite-cq",
-        "type": "CQ",
-        "bucket": "cq"
+        "type": "CQ"
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": true
       },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
-      "build": {
-        "applyGerritChanges": true
-      }
-    },
-    {
       "id": {
+        "bucket": "cq",
         "name": "host-packages-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "applyGerritChanges": true
+        "type": "CQ"
       }
     },
     {
-      "id": {
-        "name": "bazel-test-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
+      "build": {
+        "applyGerritChanges": false
       },
       "general": {
         "critical": false,
         "manifest": "PRIVATE"
       },
-      "build": {
-        "applyGerritChanges": false
+      "id": {
+        "bucket": "postsubmit",
+        "name": "bazel-test-snapshot",
+        "type": "SNAPSHOT"
       }
     },
     {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "packages": [
+            {
+              "category": "virtual",
+              "packageName": "linux-sources"
+            }
+          ],
+          "runSpec": "RUN_EXIT"
+        },
+        "portageProfile": {
+          "profile": "kernel-5_4-buildtest"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1
+      },
       "id": {
+        "bucket": "postsubmit",
         "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
+        "type": "POSTSUBMIT"
       },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE",
-        "sdkCacheVersion": 1
-      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {
@@ -3318,149 +3380,71 @@
               }
             ]
           }
-        }
-      },
-      "chrome": {
-        "internal": true
+        },
+        "prebuilts": "NONE"
       },
       "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
-        "portageProfile": {
-          "profile": "kernel-5_4-buildtest"
-        },
-        "installPackages": {
-          "runSpec": "RUN_EXIT",
-          "dependencies": "ALL_DEPENDENCIES",
-          "packages": [
-            {
-              "packageName": "linux-sources",
-              "category": "virtual"
-            }
-          ]
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_TEST",
             "IMAGE_TYPE_BASE"
           ]
-        }
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "packages": [
+            {
+              "category": "virtual",
+              "packageName": "linux-sources"
+            }
+          ],
+          "runSpec": "RUN_EXIT"
+        },
+        "portageProfile": {
+          "profile": "kernel-5_4-buildtest"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
       },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdkCacheVersion": 1
+      },
       "id": {
+        "bucket": "postsubmit",
         "name": "arm64-generic-kernel-v5_4-buildtest-snapshot",
-        "type": "SNAPSHOT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ALWAYS_RUN"
-        },
-        "manifest": "PRIVATE",
-        "sdkCacheVersion": 1
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsGsBucket": "chromeos-image-archive",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP",
-                  "AUTOTEST_FILES",
-                  "TAST_FILES",
-                  "PINNED_GUEST_IMAGES",
-                  "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS"
-                ]
-              }
-            ]
-          }
-        }
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
-        "portageProfile": {
-          "profile": "kernel-5_4-buildtest"
-        },
-        "installPackages": {
-          "runSpec": "RUN_EXIT",
-          "dependencies": "ALL_DEPENDENCIES",
-          "packages": [
-            {
-              "packageName": "linux-sources",
-              "category": "virtual"
-            }
-          ]
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_BASE"
-          ]
-        }
+        "type": "SNAPSHOT"
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "sarien-code-coverage-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": false
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ]
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "packages": [
-          {
-            "packageName": "diagnostics",
-            "category": "chromeos-base",
-            "version": ""
-          }
-        ]
-      },
       "artifacts": {
-        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "DLC_IMAGE",
+                  "LICENSE_CREDITS"
+                ]
+              }
+            ]
+          },
           "test": {
             "outputArtifacts": [
               {
@@ -3481,246 +3465,144 @@
                 ]
               }
             ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "DLC_IMAGE",
-                  "LICENSE_CREDITS"
-                ]
-              }
-            ]
           }
         },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
-      "id": {
-        "name": "sarien-code-coverage-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": false
-      },
-      "chrome": {
-        "internal": true
+        "prebuilts": "NONE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
       },
       "build": {
+        "applyGerritChanges": true,
         "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         },
-        "applyGerritChanges": false,
         "useFlags": [
           {
             "flag": "chrome_internal"
           }
         ]
       },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "sarien-code-coverage-cq",
+        "type": "CQ"
+      },
       "unitTests": {
         "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES",
         "packages": [
           {
-            "packageName": "diagnostics",
             "category": "chromeos-base",
+            "packageName": "diagnostics",
             "version": ""
           }
         ]
       }
     },
     {
-      "id": {
-        "name": "cave-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "chrome": {
-        "internal": true
-      },
       "build": {
+        "applyGerritChanges": false,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
           }
-        ],
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": false
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "sarien-code-coverage-postsubmit",
+        "type": "POSTSUBMIT"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packages": [
+          {
+            "category": "chromeos-base",
+            "packageName": "diagnostics",
+            "version": ""
+          }
+        ]
+      }
+    },
+    {
+      "build": {
         "applyGerritChanges": true,
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_TEST",
             "IMAGE_TYPE_BASE"
           ]
-        }
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "cave-slim-cq",
-        "type": "CQ",
-        "bucket": "cave"
-      },
-      "chrome": {
-        "internal": true
-      },
-      "build": {
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
           }
-        ],
-        "applyGerritChanges": true,
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "CL_AFFECTED_DEPENDENCIES"
-        },
-        "buildImages": {
-          "imageTypes": [
-          ]
-        }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "cave-cq",
+        "type": "CQ"
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "fw-ec-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_EC"
-      },
       "build": {
-        "applyGerritChanges": true
-      },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": []
         },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
+        "installPackages": {
+          "dependencies": "CL_AFFECTED_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "id": {
+        "bucket": "cave",
+        "name": "cave-slim-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "fw-ec-postsubmit",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_EC"
-      },
       "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
-      "id": {
-        "name": "fw-zephyr-informational",
-        "type": "INFORMATIONAL",
-        "bucket": "informational"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_ZEPHYR"
-      },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO",
-                  "FIRMWARE_TOKEN_DATABASE"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
-      "id": {
-        "name": "firmware-ti50-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_TI50"
-      },
-      "build": {
-        "applyGerritChanges": true
-      },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
-      "id": {
-        "name": "firmware-ti50-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_TI50"
-      },
-      "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "firmware": {
@@ -3734,17 +3616,191 @@
             ]
           }
         },
-        "attestationEligible": true
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "fw-ec-cq",
+        "type": "CQ"
       }
     },
     {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
       "id": {
+        "bucket": "cq",
+        "name": "fw-ec-postsubmit",
+        "type": "CQ"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "informational",
+        "name": "fw-zephyr-informational",
+        "type": "INFORMATIONAL"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_TI50"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "firmware-ti50-cq",
+        "type": "CQ"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true,
+        "prebuilts": "NONE"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_TI50"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "firmware-ti50-postsubmit",
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          },
+          {
+            "flag": "chromeless_tty"
+          }
+        ]
+      },
+      "general": {
+        "critical": true
+      },
+      "id": {
+        "bucket": "cq",
         "name": "firmware-board-5555-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true
+        "type": "CQ"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "staging-chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "staging-chromeos-prebuilt"
       },
       "build": {
         "applyGerritChanges": true,
@@ -3760,32 +3816,32 @@
           }
         ]
       },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
+      "general": {
+        "critical": true
+      },
       "id": {
+        "bucket": "cq",
         "name": "staging-firmware-board-5555-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "critical": true
+        "type": "CQ"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
       },
       "build": {
         "applyGerritChanges": true,
@@ -3801,92 +3857,18 @@
           }
         ]
       },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "staging-chromeos-prebuilt",
-        "artifactsGsBucket": "staging-chromeos-image-archive"
-      }
-    },
-    {
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
       "id": {
+        "bucket": "cq",
         "name": "fw-atlas-cq",
-        "type": "CQ",
-        "bucket": "cq"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_EC"
-      },
-      "build": {
-        "applyGerritChanges": true,
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          },
-          {
-            "flag": "chromeless_tty"
-          }
-        ]
-      },
-      "artifacts": {
-        "prebuilts": "PRIVATE",
-        "artifactsInfo": {
-          "firmware": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FIRMWARE_TARBALL",
-                  "FIRMWARE_TARBALL_INFO"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
+        "type": "CQ"
       }
     },
     {
-      "id": {
-        "name": "fw-atlas-postsubmit",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "firmwareLocation": "PLATFORM_EC"
-      },
-      "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          },
-          {
-            "flag": "-cros-debug"
-          },
-          {
-            "flag": "chromeless_tty"
-          }
-        ],
-        "installPackages": {
-          "compileSource": true
-        }
-      },
       "artifacts": {
-        "prebuilts": "PRIVATE",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "firmware": {
             "outputArtifacts": [
@@ -3902,73 +3884,38 @@
             ]
           }
         },
-        "prebuiltsGsBucket": "chromeos-prebuilt",
-        "artifactsGsBucket": "chromeos-image-archive"
-      }
-    },
-    {
-      "id": {
-        "name": "kukui-public-main",
-        "type": "RELEASE",
-        "bucket": "chromiumos"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "orchestrator": {
-        "gitilesCommit": {
-          "host": "chrome-internal.googlesource.com",
-          "project": "chromeos/manifest-internal",
-          "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
       },
       "build": {
-        "applyGerritChanges": true,
+        "installPackages": {
+          "compileSource": true
+        },
         "useFlags": [
           {
             "flag": "chrome_internal"
           },
           {
             "flag": "-cros-debug"
+          },
+          {
+            "flag": "chromeless_tty"
           }
-        ],
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_RECOVERY"
-          ]
-        },
-        "installPackages": {
-          "compileSource": true,
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+        ]
       },
+      "general": {
+        "firmwareLocation": "PLATFORM_EC"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "fw-atlas-postsubmit",
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-releases-test",
         "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP",
-                  "AUTOTEST_FILES",
-                  "TAST_FILES",
-                  "PINNED_GUEST_IMAGES",
-                  "EBUILD_LOGS",
-                  "TEST_UPDATE_PAYLOAD",
-                  "DEBUG_SYMBOLS"
-                ],
-                "gsLocations": [
-                  "chromeos-releases-test/{target}-release/{version}"
-                ]
-              }
-            ]
-          },
           "image": {
             "outputArtifacts": [
               {
@@ -3986,100 +3933,147 @@
                 ]
               }
             ]
+          },
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD",
+                  "DEBUG_SYMBOLS"
+                ],
+                "gsLocations": [
+                  "chromeos-releases-test/{target}-release/{version}"
+                ]
+              }
+            ]
           }
-        }
+        },
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_RECOVERY"
+          ]
+        },
+        "installPackages": {
+          "compileSource": true,
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          },
+          {
+            "flag": "-cros-debug"
+          }
+        ]
       },
       "chrome": {
         "internal": true
-      },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "staging-eve-public-main",
-        "type": "RELEASE",
-        "bucket": "staging"
       },
       "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
+      "id": {
+        "bucket": "chromiumos",
+        "name": "kukui-public-main",
+        "type": "RELEASE"
+      },
       "orchestrator": {
+        "child_specs": [],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": []
+        }
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
-        "name": "chromeos-sdk-cq",
-        "type": "CQ",
-        "bucket": "cq"
+        "bucket": "staging",
+        "name": "staging-eve-public-main",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": true
       },
       "general": {
         "critical": false,
         "environment": "PRODUCTION",
         "manifest": "PRIVATE"
       },
-      "build": {
-        "applyGerritChanges": true
+      "id": {
+        "bucket": "cq",
+        "name": "chromeos-sdk-cq",
+        "type": "CQ"
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "factory",
         "name": "factory-corsola-15197.B-orchestrator",
-        "type": "FACTORY",
-        "bucket": "factory"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "FACTORY"
       },
       "orchestrator": {
+        "child_specs": [
+          {
+            "collectHandling": "COLLECT",
+            "name": "factory-corsola-15197.B-corsola"
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": [
-          {
-            "name": "factory-corsola-15197.B-corsola",
-            "collectHandling": "COLLECT"
-          }
-        ]
+        }
       }
     },
     {
-      "id": {
-        "name": "factory-corsola-15197.B-corsola",
-        "bucket": "factory"
-      },
-      "general": {
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_FACTORY",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_TEST_VM",
-            "IMAGE_TYPE_BASE"
-          ]
-        }
-      },
       "artifacts": {
-        "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FACTORY_IMAGE"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -4089,15 +4083,6 @@
                   "IMAGE_ARCHIVES"
                 ],
                 "gsLocations": []
-              }
-            ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FACTORY_IMAGE"
-                ]
               }
             ]
           },
@@ -4116,64 +4101,70 @@
             ]
           }
         },
-        "artifactsGsBucket": "chromeos-image-archive"
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        }
+      },
+      "general": {
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "factory",
+        "name": "factory-corsola-15197.B-corsola"
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
       "id": {
+        "bucket": "staging",
         "name": "staging-factory-corsola-15197.B-orchestrator",
-        "type": "FACTORY",
-        "bucket": "staging"
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
+        "type": "FACTORY"
       },
       "orchestrator": {
+        "child_specs": [
+          {
+            "collectHandling": "COLLECT",
+            "name": "staging-factory-corsola-15197.B-corsola"
+          }
+        ],
         "gitilesCommit": {
           "host": "chrome-internal.googlesource.com",
           "project": "chromeos/manifest-internal",
           "ref": "refs/heads/main"
-        },
-        "child_specs": [
-          {
-            "name": "staging-factory-corsola-15197.B-corsola",
-            "collectHandling": "COLLECT"
-          }
-        ]
+        }
       }
     },
     {
-      "id": {
-        "name": "staging-factory-corsola-15197.B-corsola",
-        "type": "FACTORY",
-        "bucket": "staging"
-      },
-      "general": {
-        "manifest": "PRIVATE"
-      },
-      "build": {
-        "installPackages": {
-          "runSpec": "RUN",
-          "dependencies": "ALL_DEPENDENCIES"
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_FACTORY",
-            "IMAGE_TYPE_TEST",
-            "IMAGE_TYPE_TEST_VM",
-            "IMAGE_TYPE_BASE"
-          ]
-        }
-      },
       "artifacts": {
-        "prebuilts": "NONE",
-        "artifacts_gs_bucket": "chromeos-image-archive",
         "artifactsInfo": {
+          "image": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FACTORY_IMAGE"
+                ]
+              }
+            ]
+          },
           "legacy": {
             "outputArtifacts": [
               {
@@ -4183,15 +4174,6 @@
                   "IMAGE_ARCHIVES"
                 ],
                 "gsLocations": []
-              }
-            ]
-          },
-          "image": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "FACTORY_IMAGE"
-                ]
               }
             ]
           },
@@ -4209,45 +4191,51 @@
               }
             ]
           }
+        },
+        "artifacts_gs_bucket": "chromeos-image-archive",
+        "prebuilts": "NONE"
+      },
+      "build": {
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
         }
       },
-      "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "ALL_DEPENDENCIES"
-      }
-    },
-    {
-      "id": {
-        "name": "generic-staging-builder",
-        "bucket": "staging"
-      }
-    },
-    {
-      "id": {
-        "name": "generic-staging-builder",
-        "bucket": "try-dev"
-      }
-    },
-    {
-      "id": {
-        "name": "amd64-generic-codesearch",
-        "type": "PUBLIC",
-        "bucket": "codesearch"
-      },
       "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "run_when": {
-          "mode": "ALWAYS_RUN"
-        },
-        "sdk_cache_version": "1",
-        "manifest": "PUBLIC"
+        "manifest": "PRIVATE"
       },
-      "chrome": {},
+      "id": {
+        "bucket": "staging",
+        "name": "staging-factory-corsola-15197.B-corsola",
+        "type": "FACTORY"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "bucket": "staging",
+        "name": "generic-staging-builder"
+      }
+    },
+    {
+      "id": {
+        "bucket": "try-dev",
+        "name": "generic-staging-builder"
+      }
+    },
+    {
       "build": {
-        "sdk_update": {
-          "sdk_update_run_spec": "RUN"
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_FACTORY",
@@ -4258,35 +4246,35 @@
         },
         "install_packages": {
           "compile_source": true,
-          "run_spec": "RUN",
           "dependencies": "ALL_DEPENDENCIES",
+          "run_spec": "RUN",
           "skip_clean_package_dirs": true
+        },
+        "sdk_update": {
+          "sdk_update_run_spec": "RUN"
         }
+      },
+      "chrome": {},
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PUBLIC",
+        "run_when": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdk_cache_version": "1"
+      },
+      "id": {
+        "bucket": "codesearch",
+        "name": "amd64-generic-codesearch",
+        "type": "PUBLIC"
       },
       "update_chroot": {
         "run_spec": "RUN"
       }
     },
     {
-      "id": {
-        "name": "arm64-generic-codesearch",
-        "type": "PUBLIC",
-        "bucket": "codesearch"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "run_when": {
-          "mode": "ALWAYS_RUN"
-        },
-        "sdk_cache_version": "1",
-        "manifest": "PUBLIC"
-      },
-      "chrome": {},
       "build": {
-        "sdk_update": {
-          "sdk_update_run_spec": "RUN"
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_FACTORY",
@@ -4297,10 +4285,28 @@
         },
         "install_packages": {
           "compile_source": true,
-          "run_spec": "RUN",
           "dependencies": "ALL_DEPENDENCIES",
+          "run_spec": "RUN",
           "skip_clean_package_dirs": true
+        },
+        "sdk_update": {
+          "sdk_update_run_spec": "RUN"
         }
+      },
+      "chrome": {},
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PUBLIC",
+        "run_when": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdk_cache_version": "1"
+      },
+      "id": {
+        "bucket": "codesearch",
+        "name": "arm64-generic-codesearch",
+        "type": "PUBLIC"
       },
       "update_chroot": {
         "run_spec": "RUN"
