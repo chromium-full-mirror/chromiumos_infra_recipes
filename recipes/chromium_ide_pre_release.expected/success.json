@@ -5,6 +5,91 @@
   },
   {
     "cmd": [],
+    "name": "setup nodejs environment"
+  },
+  {
+    "cmd": [],
+    "name": "setup nodejs environment.install nvm",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://github.com/nvm-sh/nvm.git",
+      "[CLEANUP]/nvm_tmp_1"
+    ],
+    "infra_step": true,
+    "name": "setup nodejs environment.install nvm.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "v0.39.7"
+    ],
+    "cwd": "[CLEANUP]/nvm_tmp_1",
+    "env": {
+      "NVM_DIR": "[CLEANUP]/nvm_tmp_1"
+    },
+    "infra_step": true,
+    "name": "setup nodejs environment.install nvm.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sh",
+      "-c",
+      ". ./nvm.sh && nvm install 18"
+    ],
+    "cwd": "[CLEANUP]/nvm_tmp_1",
+    "env": {
+      "NVM_DIR": "[CLEANUP]/nvm_tmp_1"
+    },
+    "name": "setup nodejs environment.install nvm.install node",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ls",
+      "[CLEANUP]/nvm_tmp_1/versions/node"
+    ],
+    "name": "setup nodejs environment.install nvm.locating node version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "node",
+      "-v"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "name": "verify node installation"
+  },
+  {
+    "cmd": [
+      "npm",
+      "version"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "name": "verify npm installation"
+  },
+  {
+    "cmd": [],
     "name": "configure builder"
   },
   {
@@ -41,6 +126,9 @@
       "--format",
       "text"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
@@ -66,6 +154,9 @@
       "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
       "/path/to/tmp/"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.read infrainfra golang version",
     "~followup_annotations": [
@@ -93,6 +184,9 @@
       "-json-output",
       "[CLEANUP]/cipd.json"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
@@ -110,6 +204,9 @@
       "[CLEANUP]/cipd.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
@@ -138,6 +235,9 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.ensure_installed",
     "~followup_annotations": [
@@ -159,6 +259,9 @@
     "cmd": [
       "[START_DIR]/cipd/support/gitiles-fetch-ref"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
@@ -226,6 +329,7 @@
       "chromeos-bot"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "name": "set gcloud project"
@@ -266,6 +370,9 @@
       "cat",
       "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
     "~followup_annotations": [
@@ -290,6 +397,9 @@
       "--filter",
       "name="
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
     "~followup_annotations": [
@@ -322,6 +432,9 @@
       "--filter",
       "name=initial-chromeos-source-snapshot"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot",
     "~followup_annotations": [
@@ -354,6 +467,9 @@
       "--filter",
       "name=initial-chromeos-source-snapshot-fallback"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot-fallback",
     "~followup_annotations": [
@@ -394,6 +510,9 @@
       "--format",
       "json(name)"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
     "~followup_annotations": [
@@ -418,6 +537,7 @@
       "/snapshot_mounts/chromeos"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -436,6 +556,7 @@
       "/snapshot_mounts/chromeos"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -455,6 +576,7 @@
       "/dev/sds"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "name": "source cache.determine UUID",
@@ -470,6 +592,7 @@
       "/etc/fstab"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -490,6 +613,9 @@
       "main",
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.write overlayfs branch file",
     "~followup_annotations": [
@@ -510,6 +636,7 @@
       "--zone=us-central1-b"
     ],
     "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -529,6 +656,9 @@
       "initial-chromeos-source-snapshot",
       "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.write version file",
     "~followup_annotations": [
@@ -555,6 +685,9 @@
       "[CACHE]/infra_versions/overlay_branch.txt",
       "/path/to/tmp/"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
     "~followup_annotations": [
@@ -587,6 +720,9 @@
       "0o777",
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "mount overlay chromeos.create upperdir",
     "~followup_annotations": [
@@ -605,6 +741,9 @@
       "0o777",
       "[CACHE]/chromeos/workdir/chromeos"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "mount overlay chromeos.create workdir",
     "~followup_annotations": [
@@ -623,6 +762,9 @@
       "0o777",
       "[CACHE]/chromeos"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "mount overlay chromeos.create mount path",
     "~followup_annotations": [
@@ -641,6 +783,9 @@
       "overlay",
       "[CACHE]/chromeos"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "mount overlay chromeos.mount",
     "~followup_annotations": [
@@ -659,15 +804,952 @@
       "0o777",
       "[CACHE]/cros_chroot/chroot"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "ensure chroot directory"
   },
   {
     "cmd": [
-      "npm",
+      "git",
+      "config",
+      "--global",
+      "gc.auto",
+      "0"
+    ],
+    "cwd": "[CLEANUP]",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "git config"
+  },
+  {
+    "cmd": [
+      "git",
+      "config",
+      "--global",
+      "gc.packRefs",
+      "false"
+    ],
+    "cwd": "[CLEANUP]",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "git config (2)"
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory"
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.set initial_repo_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "[CACHE]/chromeos/.recipes_state.json"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CACHE]/chromeos"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--manifest-branch",
+      "main",
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--verbose"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CACHE]/chromeos/.repo/repo",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "reset",
+      "--hard"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-x",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.ensure clean checkout.repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "--event-log=[CLEANUP]/event_log__tmp_1",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose",
+      "--force-remove-dirty",
+      "--prune"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@repo-event-log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/event_log__tmp_1",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo stats.event-log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@event_log__tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo stats.set repo_retries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 5}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo stats.set slowest_repos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"2\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}, \"3\": {\"name\": \"infra/chromite-HEAD\", \"project\": \"chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.20728754997253418, \"try\": 1}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync cached directory.ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "[CACHE]/chromeos/.recipes_state.json"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[CACHE]/chromeos/manifest-internal",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync cached directory.sync chromeos/manifest-internal branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "mount overlay workspace"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "mount overlay workspace.create upperdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/overlayfs/workspace/workdir/workspace"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "mount overlay workspace.create workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "mount overlay workspace.create mount path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "-n",
+      "mount",
+      "-t",
+      "overlay",
+      "--options",
+      "lowerdir=[CACHE]/chromeos,upperdir=[CLEANUP]/overlayfs/workspace/upperdir/workspace,workdir=[CLEANUP]/overlayfs/workspace/workdir/workspace,x-chromeos-overlay.name=workspace",
+      "overlay",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "mount overlay workspace.mount",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml",
+      "--format",
+      "text",
+      "--accept-statuses",
+      "200,404"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "<manifest></manifest>",
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.write manifest",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--manifest-name",
+      "../tmp_manifest",
+      "--manifest-depth",
+      "0",
+      "--verbose"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "--event-log=[CLEANUP]/event_log__tmp_2",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo sync",
+    "timeout": 10800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@repo-event-log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/event_log__tmp_2",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo stats.event-log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@event_log__tmp_2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo stats.set repo_retries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 10}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo stats.set slowest_repos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "sync to gitiles commit.ensure manifest is pinned",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "sync to gitiles commit.ensure manifest is pinned.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "main-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "main-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set chromeos_version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R99-1234.56.0-101\"@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/nvm_tmp_1/versions/node/bin/npm",
       "ci"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "name": "npm ci"
   },
   {
@@ -678,19 +1760,22 @@
       "--extra-message",
       "\"Generated by: https://cr-buildbucket.appspot.com/build/0\""
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "name": "release update"
   },
   {
     "cmd": [],
-    "name": "create gerrit change for chromiumos/chromite",
+    "name": "create gerrit change for chromiumos/infra/ide",
     "~followup_annotations": [
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/123@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "create gerrit change for chromiumos/chromite.check if project chromiumos/chromite exists",
+    "name": "create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -699,9 +1784,12 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
-      "chromiumos/chromite"
+      "chromiumos/infra/ide"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -711,7 +1799,7 @@
       ]
     },
     "infra_step": true,
-    "name": "create gerrit change for chromiumos/chromite.check if project chromiumos/chromite exists.repo info",
+    "name": "create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -722,11 +1810,14 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "chromiumos/chromite",
+      "chromiumos/infra/ide",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -736,10 +1827,10 @@
       ]
     },
     "infra_step": true,
-    "name": "create gerrit change for chromiumos/chromite.repo forall",
+    "name": "create gerrit change for chromiumos/infra/ide.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/chromite|src/chromiumos/chromite|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -756,7 +1847,10 @@
       "oka@chromium.org",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -765,7 +1859,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create gerrit change for chromiumos/chromite.git_cl upload",
+    "name": "create gerrit change for chromiumos/infra/ide.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -779,7 +1873,10 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/chromite",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -788,7 +1885,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "create gerrit change for chromiumos/chromite.git_cl status",
+    "name": "create gerrit change for chromiumos/infra/ide.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -802,10 +1899,13 @@
   },
   {
     "cmd": [
-      "npm",
+      "[CLEANUP]/nvm_tmp_1/versions/node/bin/npm",
       "t"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "name": "verify update.npm t",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -818,7 +1918,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@labels@{\"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/123@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
     ]
   },
   {
@@ -837,7 +1937,10 @@
       "-json-output",
       "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "name": "verify update.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -854,7 +1957,10 @@
       "Authorization: Bearer TEST_TOKEN",
       "[CLEANUP]/service_account_auth_token_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "verify update.set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
@@ -875,7 +1981,10 @@
       "{\"labels\": {\"Verified\": 1}}",
       "https://chromium-review.googlesource.com/changes/123/revisions/current/review"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/chromite/ide_tooling/chromiumide/src",
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "name": "verify update.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -919,6 +2028,9 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.write input file",
     "~followup_annotations": [
@@ -936,6 +2048,9 @@
       "debug",
       "chromite.api.SdkService/Delete"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -957,6 +2072,9 @@
       "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -981,7 +2099,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}}@@@"
     ]
   },
   {
@@ -993,6 +2111,9 @@
       "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
       "[CACHE]/chromeos"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay chromeos",
     "~followup_annotations": [
@@ -1006,8 +2127,41 @@
       "-rf",
       "[CACHE]/chromeos/workdir"
     ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
     "infra_step": true,
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[chromeos]/recipe_scripts/umount_path.sh",
+      "[CLEANUP]/chromiumos_workspace"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.unmount overlay workspace",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "sudo",
+      "rm",
+      "-rf",
+      "[CACHE]/workspace/workdir"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "clean up overlayfs mounts.cleanup overlayfs workdir (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

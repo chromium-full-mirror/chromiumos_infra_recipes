@@ -12382,12 +12382,12 @@ Return the kwargs as a json string.
 &mdash; **def [RunSteps](/recipe_modules/chromite/examples/full.py#24)(api):**
 ### *recipes* / [chromium\_ide\_pre\_release](/recipes/chromium_ide_pre_release.py)
 
-[DEPS](/recipes/chromium_ide_pre_release.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/chromium_ide_pre_release.py#15): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for creating pre-release CL for ChromiumIDE.
 
-&mdash; **def [RunSteps](/recipes/chromium_ide_pre_release.py#31)(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):**
+&mdash; **def [RunSteps](/recipes/chromium_ide_pre_release.py#32)(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):**
 ### *recipes* / [chromiumos\_codesearch](/recipes/chromiumos_codesearch.py)
 
 [DEPS](/recipes/chromiumos_codesearch.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
