@@ -12,7 +12,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
 from recipe_engine.engine_types import freeze
-from recipe_engine.post_process import DropExpectation
 from recipe_engine.post_process import PropertyEquals
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -117,13 +116,8 @@ def RunSteps(api, properties):
     workspace = api.cros_source.workspace_path
     with api.context(cwd=workspace):
       # package_index_cros requires chromite/ in a parent directory.
-      chromiumos_scripts_dir = workspace.join('src', 'scripts')
-      package_index_cros_dir = chromiumos_scripts_dir.join('package_index_cros')
-      api.step('copy package_index_cros to chromiumos/src/scripts', [
-          'cp', '-r',
-          cache_dir.join('infra', 'go', 'src', 'infra', 'cmd',
-                         'package_index_cros'), chromiumos_scripts_dir
-      ])
+      chromite_contrib = workspace.join('chromite', 'contrib')
+      package_index_cros_dir = chromite_contrib.join('package_index_cros')
 
       # This hook causes package_index_cros to fail. See
       # https://crbug.com/1484258#c12.
@@ -134,17 +128,15 @@ def RunSteps(api, properties):
       # Generate KZIP.
       build_dir = workspace.join('src', 'out', board)
       with api.context(
-          cwd=chromiumos_scripts_dir, env={
+          cwd=package_index_cros_dir, env={
               'PATH':
                   api.path.pathsep.join(
                       [str(workspace.join('chromite', 'bin')), '%(PATH)s'])
           }):
         api.step('run package_index_cros', [
-            'python3',
             package_index_cros_dir.join('main.py'),
             '--verbose',
             '--with-tests',
-            '--keep-going',
             '--board',
             board,
             '--chroot',
@@ -220,8 +212,6 @@ def GenTests(api):
         api.properties(codesearch_mirror_revision='a' * 40,
                        codesearch_mirror_revision_timestamp='1531887759',
                        manifest_hash='d3adb33f'),
-        # TODO (b/275363240): audit this test.
-        status='FAILURE',
     )
 
   yield api.test(
@@ -237,7 +227,4 @@ def GenTests(api):
   "id": "d3adb33f",
   "ref": "refs/heads/snapshot"
 }'''),
-      api.post_process(DropExpectation),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
   )

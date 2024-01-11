@@ -4227,6 +4227,84 @@
         "name": "generic-staging-builder",
         "bucket": "try-dev"
       }
+    },
+    {
+      "id": {
+        "name": "amd64-generic-codesearch",
+        "type": "PUBLIC",
+        "bucket": "codesearch"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "run_when": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdk_cache_version": "1",
+        "manifest": "PUBLIC"
+      },
+      "chrome": {},
+      "build": {
+        "sdk_update": {
+          "sdk_update_run_spec": "RUN"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "install_packages": {
+          "compile_source": true,
+          "run_spec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+          "skip_clean_package_dirs": true
+        }
+      },
+      "update_chroot": {
+        "run_spec": "RUN"
+      }
+    },
+    {
+      "id": {
+        "name": "arm64-generic-codesearch",
+        "type": "PUBLIC",
+        "bucket": "codesearch"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "run_when": {
+          "mode": "ALWAYS_RUN"
+        },
+        "sdk_cache_version": "1",
+        "manifest": "PUBLIC"
+      },
+      "chrome": {},
+      "build": {
+        "sdk_update": {
+          "sdk_update_run_spec": "RUN"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_FACTORY",
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_TEST_VM",
+            "IMAGE_TYPE_BASE"
+          ]
+        },
+        "install_packages": {
+          "compile_source": true,
+          "run_spec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
+          "skip_clean_package_dirs": true
+        }
+      },
+      "update_chroot": {
+        "run_spec": "RUN"
+      }
     }
   ]
 }
