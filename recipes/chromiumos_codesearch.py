@@ -134,7 +134,7 @@ def RunSteps(api, properties):
                       [str(workspace.join('chromite', 'bin')), '%(PATH)s'])
           }):
         api.step('run package_index_cros', [
-            package_index_cros_dir.join('main.py'),
+            package_index_cros_dir.join('main'),
             '--verbose',
             '--with-tests',
             '--board',

@@ -5148,7 +5148,7 @@
   },
   {
     "cmd": [
-      "[CLEANUP]/chromiumos_workspace/chromite/contrib/package_index_cros/main.py",
+      "[CLEANUP]/chromiumos_workspace/chromite/contrib/package_index_cros/main",
       "--verbose",
       "--with-tests",
       "--board",
