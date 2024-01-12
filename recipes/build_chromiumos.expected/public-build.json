@@ -6335,6 +6335,13 @@
   },
   {
     "cmd": [],
+    "name": "try creating test service containers",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@status: 'id {\n  name: \"kukui-public-main\"\n  type: RELEASE\n  bucket: \"chromiumos\"\n}\ngeneral {\n  critical {\n    value: true\n  }\n  manifest: PRIVATE\n}\norchestrator {\n  gitiles_commit {\n    host: \"chrome-internal.googlesource.com\"\n    project: \"chromeos/manifest-internal\"\n    ref: \"refs/heads/main\"\n  }\n}\nartifacts {\n  prebuilts: NONE\n  artifacts_gs_bucket: \"chromeos-releases-test\"\n  artifacts_info {\n    legacy {\n      output_artifacts {\n        artifact_types: IMAGE_ZIP\n        artifact_types: AUTOTEST_FILES\n        artifact_types: TAST_FILES\n        artifact_types: PINNED_GUEST_IMAGES\n        artifact_types: EBUILD_LOGS\n        artifact_types: TEST_UPDATE_PAYLOAD\n        artifact_types: DEBUG_SYMBOLS\n        gs_locations: \"chromeos-releases-test/{target}-release/{version}\"\n      }\n    }\n    image {\n      output_artifacts {\n        artifact_types: DLC_IMAGE\n      }\n    }\n    infra {\n      output_artifacts {\n        artifact_types: BUILD_MANIFEST\n      }\n    }\n  }\n}\nchrome {\n  internal: true\n}\nbuild {\n  use_flags {\n    flag: \"chrome_internal\"\n  }\n  use_flags {\n    flag: \"-cros-debug\"\n  }\n  apply_gerrit_changes: true\n  build_images {\n    image_types: IMAGE_TYPE_BASE\n    image_types: IMAGE_TYPE_TEST\n    image_types: IMAGE_TYPE_RECOVERY\n  }\n  install_packages {\n    compile_source: true\n    run_spec: RUN\n    dependencies: ALL_DEPENDENCIES\n  }\n}\nunit_tests {\n  ebuilds_run_spec: RUN\n  dependencies: ALL_DEPENDENCIES\n}\n'@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "build status pubsub update (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@message@{@@@",

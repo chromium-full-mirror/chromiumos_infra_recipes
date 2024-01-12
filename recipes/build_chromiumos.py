@@ -78,6 +78,15 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
         api.build_reporting.publish_build_target_and_model_metadata(
             api.cros_source.manifest_branch, builder_metadata)
 
+      with api.step.nest('try creating test service containers') as step:
+        try:
+          api.build_menu.create_containers(config)
+          step.step_summary_text = "status: '{}'".format(config)
+        except StepFailure:
+          # For now only mark the step as failed. Do not fail the build.
+          step.status = api.step.FAILURE
+          step.step_summary_text = 'One or more test service containers failed to build.'
+
       with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
         api.build_menu.build_and_test_images(config, include_version=True)
   except StepFailure as sf:
@@ -175,6 +184,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                           sync_to_manifest=ManifestLocation(
                               manifest_gs_path='gs://chromeos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
           }),
       api.post_check(post_process.StepFailure, 'check buildspec property'),
       api.post_check(post_process.DoesNotRun, 'build images'),
@@ -196,6 +212,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                           sync_to_manifest=ManifestLocation(
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
           }),
       build_target='staging-eve',
       builder='staging-eve-public-main',
@@ -213,6 +236,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                           sync_to_manifest=ManifestLocation(
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -239,6 +269,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                           sync_to_manifest=ManifestLocation(
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
           }),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
@@ -262,6 +299,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                           sync_to_manifest=ManifestLocation(
                               manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
                           ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
           }),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -276,4 +320,54 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       builder='kukui-public-main',
       build_target='kukui',
       status='FAILURE',
+  )
+
+  # Public build with container creation failure.
+  yield api.build_menu.test(
+      'container-creation-failed',
+      api.properties(
+          **{
+              'latest_files_gs_bucket':
+                  'chromiumos-image-archive',
+              'latest_files_gs_path':
+                  '{target}-public',
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_gs_path='gs://chromiumos-manifest-versions/buildspecs/91/13818.0.0.xml'
+                          ))),
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'kukui',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-public-release.{cros-version}',
+              },
+          }),
+      api.build_menu.set_build_api_return(
+          'try creating test service containers.create test service containers',
+          'TestService/BuildTestServiceContainers', retcode=1),
+      api.post_check(post_process.MustRun, 'sync to specified manifest'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromiumos-image-archive/kukui-public/LATEST-1234.56.0'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write LATEST-main.gsutil write gs://chromiumos-image-archive/kukui-public/LATEST-main'
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'upload build report to GS.gsutil write build_report.json to GS',
+          [
+              'gs://chromeos-releases-test/kukui-public-main/R99-1234.56.0-101-8945511751514863184/build_report.json'
+          ],
+      ),
+      build_target='kukui',
+      builder='kukui-public-main',
+      bucket='release',
   )
