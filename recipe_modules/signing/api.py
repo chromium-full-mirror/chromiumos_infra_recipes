@@ -599,8 +599,6 @@ class SigningApi(recipe_api.RecipeApi):
                   os.path.join(gs_dir, upload_name),
               ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
-  @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
-                     delay=datetime.timedelta(seconds=1))
   def upload_signed_artifacts(self, response: SignImageResponse) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""
     with self.m.step.nest(
@@ -629,9 +627,17 @@ class SigningApi(recipe_api.RecipeApi):
         presentation.step_text = 'no signed artifacts'
         return
 
+      @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
+                         delay=datetime.timedelta(seconds=1))
+      def _gs_upload(self, local_path: str, gs_dir: str):
+        # -n so we don't clobber existing destination artifacts.
+        self.m.gsutil(['cp', '-n', local_path, gs_dir], multithreaded=True,
+                      timeout=GSUTIL_TIMEOUT_SECONDS)
+
       # Upload the artifacts for each channel.
       for channel, artifacts in to_upload_by_channel.items():
         gs_dir = self._get_gs_path_for_channel(channel)
+
         with self.m.step.nest(
             f'upload signed artifacts for {common_pb2.Channel.Name(channel)}'
         ) as pres:
@@ -640,11 +646,8 @@ class SigningApi(recipe_api.RecipeApi):
               gs_dir[len('gs://'):])
 
           for artifact in artifacts:
-            # -n so we don't clobber existing destination artifacts.
-            self.m.gsutil([
-                'cp', '-n',
-                os.path.join(response.output_archive_dir, artifact), gs_dir
-            ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+            _gs_upload(self, os.path.join(response.output_archive_dir,
+                                          artifact), gs_dir)
 
       if ex:
         raise ex

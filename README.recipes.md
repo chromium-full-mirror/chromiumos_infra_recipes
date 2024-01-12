@@ -10287,7 +10287,7 @@ Implementation for local signing flow.
 
 &emsp; **@property**<br>&mdash; **def [signing\_docker\_image](/recipe_modules/signing/api.py#119)(self):**
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#602)(self, response: SignImageResponse):**
+&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#602)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
