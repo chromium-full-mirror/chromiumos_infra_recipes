@@ -168,57 +168,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "check for merge conflicts",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/git-test-submit"
-    ],
-    "infra_step": true,
-    "name": "check for merge conflicts.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check for merge conflicts (2)",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@unable to cherry-pick changes@@@",
-      "@@@STEP_LOG_LINE@cherry-pick-failures@some cherry pick error line 1@@@",
-      "@@@STEP_LOG_LINE@cherry-pick-failures@line2@@@",
-      "@@@STEP_LOG_END@cherry-pick-failures@@@",
-      "@@@SET_BUILD_PROPERTY@merge_conflict@true@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/git-test-submit"
-    ],
-    "infra_step": true,
-    "name": "check for merge conflicts (2).git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 91827, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"errors\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"some cherry pick error line 1\\nline2\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  ]@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
     "cmd": [
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],

@@ -1874,14 +1874,11 @@
   },
   {
     "cmd": [],
-    "name": "check for merge conflicts",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
-    ]
+    "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
-      "[START_DIR]/cipd/support/git-test-submit"
+      "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1896,14 +1893,219 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "check for merge conflicts.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 1394249, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": -1}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 1394249, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": -1}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
+    "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1394249,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1394249,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromiumos/overlays/chromiumos-overlay\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": -1,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": -1,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/49/1394249/-1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/49/1394249/-1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 1394249, \"patch_set\": -1}], \"include_files\": true, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromiumos/overlays/chromiumos-overlay",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/overlays/chromiumos-overlay|src/chromiumos/overlays/chromiumos-overlay|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/overlays/chromiumos-overlay",
+      "refs/changes/49/1394249/-1:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/overlays/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/overlays/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/overlays/chromiumos-overlay",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/overlays/chromiumos-overlay",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:toolchain"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
     ]
   },
   {

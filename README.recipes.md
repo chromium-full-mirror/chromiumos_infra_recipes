@@ -524,7 +524,6 @@
   * [generator](#recipes-generator) &mdash; Recipe for the PUpr generator.
   * [gerrit:examples/abandon_change](#recipes-gerrit_examples_abandon_change)
   * [gerrit:examples/add_change_comment](#recipes-gerrit_examples_add_change_comment)
-  * [gerrit:examples/changes_are_submittable](#recipes-gerrit_examples_changes_are_submittable)
   * [gerrit:examples/create_change](#recipes-gerrit_examples_create_change)
   * [gerrit:examples/fetch_patch_sets](#recipes-gerrit_examples_fetch_patch_sets)
   * [gerrit:examples/get_change_description](#recipes-gerrit_examples_get_change_description)
@@ -4638,7 +4637,7 @@ API for working with CrOS source.
 
 A module for CrOS-specific source steps.
 
-&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#880)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
+&mdash; **def [apply\_gerrit\_changes](/recipe_modules/cros_source/api.py#884)(self, gerrit_changes, include_files=False, include_commit_info=False, ignore_missing_projects=False, test_output_data=None):**
 
 Apply GerritChanges to the workspace.
 
@@ -4654,7 +4653,7 @@ Args:
 Returns:
   List[PatchSet]: A list of commits from cherry-picked patch sets.
 
-&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1294)(self, patch, project_path, is_abs_path=False):**
+&mdash; **def [apply\_patch\_set](/recipe_modules/cros_source/api.py#1298)(self, patch, project_path, is_abs_path=False):**
 
 Apply a PatchSet to the git repo in ${CWD}.
 
@@ -4676,7 +4675,7 @@ This is the cached version of source (the internal manifest checkout),
 usually updated once at the beginning of a build and then mounted into the
 workspace path.
 
-&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#710)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
+&mdash; **def [checkout\_branch](/recipe_modules/cros_source/api.py#714)(self, manifest_url, manifest_branch, projects=None, init_opts=None, sync_opts=None, step_name=None):**
 
 Check out a branch of the current manifest.
 
@@ -4693,7 +4692,7 @@ Args:
   * sync_opts (dict): Extra keyword arguments to pass to 'repo.sync'.
   * step_name (str): Name for the step, or None for default.
 
-&mdash; **def [checkout\_external\_manifest](/recipe_modules/cros_source/api.py#581)(self, commit_id: str, force: bool=True):**
+&mdash; **def [checkout\_external\_manifest](/recipe_modules/cros_source/api.py#585)(self, commit_id: str, force: bool=True):**
 
 Checkout the external manifest at the given commit.
 
@@ -4701,7 +4700,7 @@ Args:
   commit_id: The commit of the external manifest to checkout.
   force: If true, throw away any local changes.
 
-&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#911)(self, change):**
+&mdash; **def [checkout\_gerrit\_change](/recipe_modules/cros_source/api.py#915)(self, change):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -4713,7 +4712,7 @@ Args:
   change (GerritChange): Change to check out.
   name (string): Step name.  Default: "checkout gerrit change".
 
-&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#594)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
+&mdash; **def [checkout\_manifests](/recipe_modules/cros_source/api.py#598)(self, commit=None, is_staging=False, checkout_internal=True, checkout_external=False):**
 
 Check out the manifest projects.
 
@@ -4740,7 +4739,7 @@ Args:
 Returns:
   (GitilesCommit) The GitilesCommit to use for the external manifest.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#825)(self, mount_cache=True, disk_type='pd-ssd'):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [checkout\_overlays\_context](/recipe_modules/cros_source/api.py#829)(self, mount_cache=True, disk_type='pd-ssd'):**
 
 Returns a context where overlays can be mounted.
 
@@ -4748,11 +4747,11 @@ Args:
   mount_cache (bool): Whether to mount the chromiumos cache.  Default: True.
   disk_type (str): GCE disk type to use.  Default: pd-ssd
 
-&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#756)(self):**
+&mdash; **def [checkout\_tip\_of\_tree](/recipe_modules/cros_source/api.py#760)(self):**
 
 Check out the tip-of-tree in the workspace.
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#237)(self, commit: Optional[bb_common_pb2.GitilesCommit]=None, changes: Optional[List[bb_common_pb2.GerritChange]]=None, default_main: bool=False, name: str='configure builder', lookup_config_with_bucket=False):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_source/api.py#241)(self, commit: Optional[bb_common_pb2.GitilesCommit]=None, changes: Optional[List[bb_common_pb2.GerritChange]]=None, default_main: bool=False, name: str='configure builder', lookup_config_with_bucket=False):**
 
 Configure the builder.
 
@@ -4778,7 +4777,7 @@ Returns:
   BuilderConfig for the active build, or None if the active build does not
   have a BuilderConfig.
 
-&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#415)(self, manifest_url: Optional[str]=None, init_opts: Optional[Dict[(str, Any)]]=None, sync_opts: Optional[Dict[(str, Any)]]=None, cache_path_override: Optional[Path]=None, is_staging: bool=False, projects: Optional[List[str]]=None, gitiles_commit: Optional[bb_common_pb2.GitilesCommit]=None, manifest_branch_override: Optional[str]=None):**
+&mdash; **def [ensure\_synced\_cache](/recipe_modules/cros_source/api.py#419)(self, manifest_url: Optional[str]=None, init_opts: Optional[Dict[(str, Any)]]=None, sync_opts: Optional[Dict[(str, Any)]]=None, cache_path_override: Optional[Path]=None, is_staging: bool=False, projects: Optional[List[str]]=None, gitiles_commit: Optional[bb_common_pb2.GitilesCommit]=None, manifest_branch_override: Optional[str]=None):**
 
 Ensure the configured repo cache exists and is synced.
 
@@ -4795,7 +4794,7 @@ Args:
     in init_opts. Otherwise, use the value returned from
     configure_builder().
 
-&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#764)(self, count: int=((7 \* 24) \* 2), snapshot: Optional[bb_common_pb2.GitilesCommit]=None):**
+&mdash; **def [fetch\_snapshot\_shas](/recipe_modules/cros_source/api.py#768)(self, count: int=((7 \* 24) \* 2), snapshot: Optional[bb_common_pb2.GitilesCommit]=None):**
 
 Return snapshot SHAs for the manifest.
 
@@ -4810,7 +4809,7 @@ Args:
 Returns:
   The list of snapshot SHAs.
 
-&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#852)(self, project, branch, empty_ok=False):**
+&mdash; **def [find\_project\_paths](/recipe_modules/cros_source/api.py#856)(self, project, branch, empty_ok=False):**
 
 Find the source paths for a given project in the workspace.
 
@@ -4826,7 +4825,7 @@ Args:
 Returns:
   list(str), The path values for the found project.
 
-&mdash; **def [get\_external\_snapshot\_commit](/recipe_modules/cros_source/api.py#549)(self, internal_manifest_path: Path, snapshot_commit_id: str):**
+&mdash; **def [get\_external\_snapshot\_commit](/recipe_modules/cros_source/api.py#553)(self, internal_manifest_path: Path, snapshot_commit_id: str):**
 
 Return the Cr-External-Snapshot for the given internal snapshot commit.
 
@@ -4888,7 +4887,7 @@ Returns:
 
 Return the pinned manifest for this build.
 
-&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1559)(self, uprev_response, dry_run, commit_only=False, is_staging=False, discard_unpushed_changes=False):**
+&mdash; **def [push\_uprev](/recipe_modules/cros_source/api.py#1564)(self, uprev_response, dry_run, commit_only=False, is_staging=False, discard_unpushed_changes=False):**
 
 Commit and push any upreved packages to its remote.
 
@@ -4906,7 +4905,7 @@ Return:
   all_uprevs_passed (bool): True if all uprevs succeeded,
                             False if ANY failed.
 
-&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1763)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
+&mdash; **def [related\_changes\_to\_apply](/recipe_modules/cros_source/api.py#1768)(self, gerrit_changes: List[bb_common_pb2.GerritChange], all_related_changes: OrderedDict_type[(str, Dict[(str, Any)])]):**
 
 Based on what is already included, figure out which related changes are implicitly depended on by gerrit_changes.
 
@@ -4927,7 +4926,7 @@ Returns:
 
 Returns the snapshot digest in use or None.
 
-&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1332)(self, commit=None, manifest_url=None, \*\*kwargs):**
+&mdash; **def [sync\_checkout](/recipe_modules/cros_source/api.py#1336)(self, commit=None, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the appropriate manifest.
 
@@ -4939,7 +4938,7 @@ Args:
     saved in cros_infra_config.configure_builder().
   manifest_url: URL of manifest repo.  Default: internal manifest
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1434)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_gitiles\_commit](/recipe_modules/cros_source/api.py#1439)(self, gitiles_commit, manifest_url=None, \*\*kwargs):**
 
 Sync a checkout to the specified gitiles commit.
 
@@ -4958,7 +4957,7 @@ Uses the `sync_to_manifest` property.
 
 Returns: ManifestLocation, or None.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1354)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=retry_timeouts)**<br>&mdash; **def [sync\_to\_pinned\_manifest](/recipe_modules/cros_source/api.py#1359)(self, manifest_url='', manifest_branch='', manifest_path='', manifest_gs_path='', \*\*kwargs):**
 
 Sync a checkout to the specified [pinned] manifest.
 
@@ -4975,7 +4974,7 @@ Args:
     gs://chromeos-manifest-versions/release/91/13818.0.0.xml.
     Takes precendence over manifest_url/branch/path.
 
-&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1538)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
+&mdash; **def [uprev\_packages](/recipe_modules/cros_source/api.py#1543)(self, workspace_path=None, build_targets=None, timeout_sec=(10 \* 60), name='uprev packages'):**
 
 Uprev packages.
 
@@ -7087,7 +7086,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#920)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#885)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
 
 Abandon the given change.
 
@@ -7095,7 +7094,7 @@ Args:
   gerrit_change: The change to abandon.
   message: Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#843)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#808)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -7105,7 +7104,7 @@ Args:
   project_path: If set, will use this as the project path rather than any
     value inferred from the gerrit_change.
 
-&mdash; **def [add\_change\_comment\_remote](/recipe_modules/gerrit/api.py#729)(self, gerrit_change: GerritChange, comment: str):**
+&mdash; **def [add\_change\_comment\_remote](/recipe_modules/gerrit/api.py#694)(self, gerrit_change: GerritChange, comment: str):**
 
 Add comment to gerrit_change.
 
@@ -7115,15 +7114,7 @@ Args:
   gerrit_change: The change to comment on.
   comment: The comment to leave.
 
-&mdash; **def [changes\_submittable](/recipe_modules/gerrit/api.py#584)(self, gerrit_changes: List[GerritChange], test_output_data: Union[(Callable, Dict, List, None)]=None):**
-
-Check whether the given changes can be merged onto their Git branches.
-
-Args:
-  gerrit_changes: The changes to check.
-  test_output_data: Mock response for the git-test-submit support tool.
-
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#619)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#584)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -7183,7 +7174,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1110)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1075)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -7192,11 +7183,11 @@ Uses the gerrit_related_changes CIPD package.
 Returns:
   The JSON for 'related' outputted by gerrit_related_changes.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#1006)(self, email: str, gerrit_host: str):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#971)(self, email: str, gerrit_host: str):**
 
 Get the Gerrit account id for the given email on the given host.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#861)(self, gerrit_change: GerritChange, memoize: bool=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#826)(self, gerrit_change: GerritChange, memoize: bool=False):**
 
 Get the description of the given Gerrit change.
 
@@ -7208,7 +7199,7 @@ Args:
 Returns:
   The change description.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#1034)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#999)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -7220,7 +7211,7 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1070)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1035)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Returns whether the given change list contains a merge commit.
 
@@ -7257,7 +7248,7 @@ Return a Gerrit change URL, parsed from a GerritChange proto.
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#972)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#937)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -7269,7 +7260,7 @@ Args:
   label_constraints: Constraints on the changes' labels, to be used as a
       filter before returning.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#891)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#856)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
 
 Set the description of the given Gerrit change.
 
@@ -7282,7 +7273,7 @@ Args:
   project_path: If set, use this as the project path rather than any value
     inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#797)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#762)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -7298,7 +7289,7 @@ Args:
 Returns:
   The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#702)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#667)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
 
 Set the given labels for the given Gerrit change.
 
@@ -7312,7 +7303,7 @@ Args:
 Returns:
   The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#935)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#900)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
 
 Submit the given change.
 
@@ -8912,11 +8903,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1457)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1459)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1297)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1299)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -8931,7 +8922,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#175)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1499)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1501)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -8949,14 +8940,14 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#155)(self):**
 
-&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#835)(self, build: build_pb2.Build):**
+&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#837)(self, build: build_pb2.Build):**
 
 Whether the CQ child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#377)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#379)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
 
 Create the correct return value for RunSteps.
 
@@ -8994,11 +8985,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#199)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/orch_menu/api.py#814)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/orch_menu/api.py#816)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#721)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#723)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -9012,7 +9003,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1188)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1190)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -9030,7 +9021,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#681)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#683)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -9042,7 +9033,7 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#822)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/orch_menu/api.py#824)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
@@ -9051,11 +9042,11 @@ Args:
 
 &emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#211)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1082)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#1084)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1089)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#1091)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -9082,7 +9073,7 @@ needs to have when it runs, for cleanup to happen properly.
 If appropriate, any inflight orchestrator has finished before we return.
 
 Raises:
-  StepFailure if no config is found.
+  StepFailure if no config is found or if the change(s) are not submittable.
 
 Returns:
   BuilderConfig or None, with an active context.
@@ -11427,8 +11418,10 @@ Args:
     includes changes to repos this builder is not allowed to read (e.g.
     because of Cq-Depend grouping); the changes will be discarded instead
     of failing during application.
+Raises:
+  StepFailure: If change(s) has a merge conflict with the source tree.
 
-&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#149)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
+&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#151)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -11440,7 +11433,7 @@ Args:
   change: Change to check out.
   name: Step name.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#167)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#169)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
 
 Check for toolchain changes.
 
@@ -11487,7 +11480,7 @@ Args:
 Yields:
   A context manager which syncs the workspace path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#222)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#224)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
 
 Return a context with manifest groups checked out to cwd.
 
@@ -14499,12 +14492,6 @@ instructions.
 
 
 &mdash; **def [RunSteps](/recipe_modules/gerrit/examples/add_change_comment.py#18)(api):**
-### *recipes* / [gerrit:examples/changes\_are\_submittable](/recipe_modules/gerrit/examples/changes_are_submittable.py)
-
-[DEPS](/recipe_modules/gerrit/examples/changes_are_submittable.py#11): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/gerrit/examples/changes_are_submittable.py#20)(api):**
 ### *recipes* / [gerrit:examples/create\_change](/recipe_modules/gerrit/examples/create_change.py)
 
 [DEPS](/recipe_modules/gerrit/examples/create_change.py#11): [gerrit](#recipe_modules-gerrit), [git\_cl](#recipe_modules-git_cl), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

@@ -37,9 +37,6 @@ def RunSteps(api):
   api.assertions.assertEqual(
       patch.display_url, 'https://chromium-review.googlesource.com/c/91827')
   api.assertions.assertIn('my/fake/file', patch.file_infos)
-  api.gerrit.changes_submittable([change])
-  # Not submittable
-  api.assertions.assertFalse(api.gerrit.changes_submittable([change]))
 
   # Missing FetchInfo.
   del patch._rev_info['fetch']  # pylint: disable=protected-access
@@ -146,7 +143,4 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test(
-      'basic',
-      api.gerrit.simulated_changes_are_submittable(submittable=False,
-                                                   iteration=2))
+  yield api.test('basic')
