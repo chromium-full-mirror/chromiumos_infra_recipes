@@ -35,7 +35,11 @@
   },
   {
     "cmd": [],
-    "name": "Execute commands"
+    "name": "Execute",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@run_id: test123@@@",
+      "@@@SET_BUILD_PROPERTY@susch-run@\"test123\"@@@"
+    ]
   },
   {
     "cmd": [
@@ -45,7 +49,7 @@
     ],
     "cwd": "[START_DIR]/cipd/suite_scheduler",
     "infra_step": true,
-    "name": "Execute commands.launch susch",
+    "name": "Execute.launch susch",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"

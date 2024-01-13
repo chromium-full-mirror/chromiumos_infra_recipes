@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """Recipe for the ChromeOS TSE SuiteManager builder."""
+import uuid
 
 from PB.recipes.chromeos.test_platform.suite_scheduler import SuiteSchedulerProperties
 
@@ -11,6 +12,7 @@ DEPS = [
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
 ]
@@ -40,13 +42,27 @@ def RunSteps(api, properties):
                        properties.cipd_label)
       api.cipd.ensure(cipd_dir, pkgs)
 
-  with api.step.nest('Execute commands'):
+  with api.step.nest('Execute') as step_presentation:
+
+    # Generate a RFC 4122 compliant random UUID
+    run_uuid = str(uuid.uuid4())
+
+    # Since uuids are unique, recipe expectations break when logging the id.
+    if properties.is_recipe_test:
+      run_uuid = 'test123'
+
+    # Log UUID for susch run
+    step_presentation.step_summary_text = 'run_id: %s' % (run_uuid)
+    step_presentation.properties['susch-run'] = run_uuid
+
     cmd = cipd_dir.join('suite_scheduler')
     with api.context(cwd=cipd_dir, infra_steps=True):
+      #  TODO(b/317084435): pass in run_uuid as a cli argument
       api.step(
           'launch susch', [cmd, 'help', 'configs'],
           stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic',
+                 api.properties(SuiteSchedulerProperties(is_recipe_test=True)))

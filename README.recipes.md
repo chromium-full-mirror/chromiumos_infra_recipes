@@ -16315,12 +16315,12 @@ Returns:
   None
 ### *recipes* / [test\_platform/suite\_scheduler](/recipes/test_platform/suite_scheduler.py)
 
-[DEPS](/recipes/test_platform/suite_scheduler.py#10): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/test_platform/suite_scheduler.py#11): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for the ChromeOS TSE SuiteManager builder.
 
-&mdash; **def [RunSteps](/recipes/test_platform/suite_scheduler.py#20)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/suite_scheduler.py#22)(api, properties):**
 
 Builder Entry Point
 
