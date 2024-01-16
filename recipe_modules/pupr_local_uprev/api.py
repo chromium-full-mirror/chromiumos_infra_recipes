@@ -38,6 +38,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self.properties = properties
     self._additional_commit_message = ''
+    self._additional_commit_footer = ''
     self._allow_partial_uprev = False
     self.packages: List[common_pb2.PackageInfo] = []
     self._build_targets: List[common_pb2.BuildTarget] = []
@@ -49,13 +50,15 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
 
   def set_generator_attributes(
       self, additional_commit_message: str = '',
-      allow_partial_uprev: bool = False,
+      additional_commit_footer: str = '', allow_partial_uprev: bool = False,
       packages: Optional[List[common_pb2.PackageInfo]] = None,
       build_targets: Optional[List[common_pb2.BuildTarget]] = None) -> None:
     """Set attributes whose values are determined in Generator.
 
     Args:
       additional_commit_message: Additional text to be added in the commit
+        description.
+      additional_commit_footer: Additional footer to be added in the commit
         description.
       allow_partial_uprev: Whether to generate CLs when either of the packages
         had no modified file.
@@ -67,6 +70,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
     generator.proto to pupr_local_uprev.proto.
     """
     self._additional_commit_message = additional_commit_message
+    self._additional_commit_footer = additional_commit_footer
     self._allow_partial_uprev = allow_partial_uprev
     self.packages = packages if packages is not None else []
     self._build_targets = build_targets if build_targets is not None else []
@@ -300,6 +304,8 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
         host = change.host.split('.', 1)[0].replace('-review', '')
         depends.append(f'{host}:{change.change}')
       footers.append(f'Cq-Depend: {",".join(depends)}')
+    if self._additional_commit_footer:
+      footers.append(self._additional_commit_footer)
     if change_id:
       footers.append('Change-Id: ' + change_id)
     if footers:

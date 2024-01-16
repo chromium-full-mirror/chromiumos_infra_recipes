@@ -9671,7 +9671,7 @@ A module to create local uprevs for PUpr.
 
 Initialize the module's attributes.
 
-&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#378)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
+&mdash; **def [rebase\_cl](/recipe_modules/pupr_local_uprev/api.py#384)(self, open_changes: List[bb_common_pb2.GerritChange], topic: str, change_num: int):**
 
 Create a new uprev patch (locally) for change_id.
 
@@ -9685,12 +9685,14 @@ Raises:
     only uprevs some packages and allow_partial_uprev is False, or if the
     uprev requires a multi-repo commit.
 
-&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_local_uprev/api.py#50)(self, additional_commit_message: str='', allow_partial_uprev: bool=False, packages: Optional[List[common_pb2.PackageInfo]]=None, build_targets: Optional[List[common_pb2.BuildTarget]]=None):**
+&mdash; **def [set\_generator\_attributes](/recipe_modules/pupr_local_uprev/api.py#51)(self, additional_commit_message: str='', additional_commit_footer: str='', allow_partial_uprev: bool=False, packages: Optional[List[common_pb2.PackageInfo]]=None, build_targets: Optional[List[common_pb2.BuildTarget]]=None):**
 
 Set attributes whose values are determined in Generator.
 
 Args:
   additional_commit_message: Additional text to be added in the commit
+    description.
+  additional_commit_footer: Additional footer to be added in the commit
     description.
   allow_partial_uprev: Whether to generate CLs when either of the packages
     had no modified file.
@@ -9701,7 +9703,7 @@ Args:
 TODO(b/262302698): All of these attributes should be moved from
 generator.proto to pupr_local_uprev.proto.
 
-&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#74)(self, versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef], topic: str, change_id: str=''):**
+&mdash; **def [uprev\_packages](/recipe_modules/pupr_local_uprev/api.py#78)(self, versions: List[packages_pb2.UprevVersionedPackageRequest.GitRef], topic: str, change_id: str=''):**
 
 Try to uprev the specified packages. If successful, commit the uprev.
 
@@ -9718,7 +9720,7 @@ Returns:
   If not all packages are uprevved and allow_partial_uprev==False, return
     None. This signifies that the PUpr run should terminate immediately.
 
-&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#310)(self, topic: str):**
+&mdash; **def [uprev\_sdk](/recipe_modules/pupr_local_uprev/api.py#316)(self, topic: str):**
 
 Uprev the SDK on the local filesystem, and commit the uprev.
 
@@ -9728,7 +9730,7 @@ Args:
 Returns:
   A list of repo projects with modified code.
 
-&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_local_uprev/api.py#45)(self):**
+&emsp; **@property**<br>&mdash; **def [workspace\_path](/recipe_modules/pupr_local_uprev/api.py#46)(self):**
 
 Return the checkout path where the build is processed.
 ### *recipe_modules* / [rdb\_util](/recipe_modules/rdb_util)

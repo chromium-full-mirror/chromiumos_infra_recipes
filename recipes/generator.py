@@ -228,6 +228,7 @@ class GeneratorRun:
     self._validate_triggers()
     self.m.pupr_local_uprev.set_generator_attributes(
         additional_commit_message=self.properties.additional_commit_message,
+        additional_commit_footer=self.properties.additional_commit_footer,
         allow_partial_uprev=self.properties.allow_partial_uprev,
         build_targets=self.properties.build_targets,
         packages=self.properties.packages,

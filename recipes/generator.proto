@@ -198,6 +198,9 @@ message GeneratorProperties {
   // Additional text to be added in the commit description.
   string additional_commit_message = 18;
 
+  // Additional footer to be added in the commit description.
+  string additional_commit_footer = 21;
+
   // Whether to generate CLs when at least one package had no modified file.
   bool allow_partial_uprev = 17;
 

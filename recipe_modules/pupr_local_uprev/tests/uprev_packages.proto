@@ -8,6 +8,7 @@ package recipe_modules.chromeos.pupr_local_uprev.tests;
 
 message UprevPackagesProperties {
   string additional_commit_message = 1;
+  string additional_commit_footer = 4;
   bool allow_partial_uprev = 2;
   bool expect_none_response = 3;
 }

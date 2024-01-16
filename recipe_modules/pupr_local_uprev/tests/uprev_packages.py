@@ -46,6 +46,7 @@ def RunSteps(api: RecipeApi, properties: UprevPackagesProperties):
   # Arrange
   api.pupr_local_uprev.set_generator_attributes(
       additional_commit_message=properties.additional_commit_message,
+      additional_commit_footer=properties.additional_commit_footer,
       allow_partial_uprev=properties.allow_partial_uprev,
       packages=PACKAGES,
       build_targets=BUILD_TARGETS,
@@ -162,6 +163,22 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.StepCommandRE,
           'commit uprev.commit in overlay.write commit message',
           ['.*', '.*', '.*', '.*', '.*', '.*', r'(?s).*\n\nTEST\n.*', '.*']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield _with_repo_infos(
+      'additional-commit-footer',
+      api.properties(
+          additional_commit_footer='Cq-Footer: TEST',
+      ),
+      api.git.diff_check(True),
+      api.post_check(post_process.MustRun, 'commit uprev'),
+      api.post_check(
+          post_process.StepCommandRE,
+          'commit uprev.commit in overlay.write commit message', [
+              '.*', '.*', '.*', '.*', '.*', '.*',
+              r'(?s).*\nCq-Cl-Tag: pupr:cool_topic\nCq-Footer: TEST\n$', '.*'
+          ]),
       api.post_process(post_process.DropExpectation),
   )
 
