@@ -32,18 +32,12 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.orch_menu.setup_orchestrator():
     # Run the child builders.
-    extra_child_props = {}
-
-    if api.orch_menu.chromium_src_ref_cl_tag:
-      # Added for debugging b/288286812. Remove after.
-      api.easy.set_properties_step(
-          set_chromium_src_ref=api.orch_menu.chromium_src_ref_cl_tag)
-      extra_child_props[
-          '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props()
-
-    extra_child_props['$chromeos/metadata'] = {
-        'sources_gitiles_commit_override':
-            json_format.MessageToDict(api.build_menu.resultdb_gitiles_commit)
+    extra_child_props = {
+        '$chromeos/metadata': {
+            'sources_gitiles_commit_override':
+                json_format.MessageToDict(api.build_menu.resultdb_gitiles_commit
+                                         )
+        }
     }
 
     testable_builds = api.orch_menu.plan_and_wait_for_images(
@@ -100,16 +94,6 @@ def GenTests(api: RecipeTestApi):
       _cq_schedule_and_collect_builds_test_data(collect_builds,
                                                 collect_after_builds),
       data.ctp_normal, cq=True, with_history=True, git_footers=[])
-
-  yield api.orch_menu.test(
-      'chromium-src-ref-cq-cl-tag',
-      data.ctp_normal,
-      api.buildbucket.ci_build(
-          project='chromeos', bucket='cq', builder='cq-orchestrator',
-          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
-      _cq_schedule_and_collect_builds_test_data(collect_builds,
-                                                collect_after_builds),
-  )
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
