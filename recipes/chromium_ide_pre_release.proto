@@ -9,4 +9,6 @@ package recipes.chromeos.chromium_ide_pre_release;
 message ChromiumIDEPreReleaseProperties {
   // Email address to send the update release version CL to for review.
   repeated string reviewers = 1;
+  // Add oncall shift as reviewers.
+  repeated string reviewer_oncalls = 2;
 }

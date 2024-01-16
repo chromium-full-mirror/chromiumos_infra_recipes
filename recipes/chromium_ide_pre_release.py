@@ -19,6 +19,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'recipe_engine/url',
     'build_menu',
     'cros_source',
     'src_state',
@@ -79,9 +80,18 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
 
             pres.properties['test_passed'] = test_passed
 
+          reviewers = []
+          for reviewer in properties.reviewers:
+            reviewers.append(reviewer)
+          for oncall in properties.reviewer_oncalls:
+            rotation = api.url.get_json(
+                'https://chrome-ops-rotation-proxy.appspot.com/current/%s' %
+                (oncall), step_name='Get oncaller of %s' % (oncall)).output
+            reviewers = reviewers + rotation['emails']
+
           with api.step.nest('upload change') as pres:
             change = api.gerrit.create_change(
-                'chromiumos/infra/ide', reviewers=properties.reviewers,
+                'chromiumos/infra/ide', reviewers=reviewers,
                 topic='chromium-ide-pre-release-update')
             pres.properties[
                 'applied labels'] = api.gerrit.set_change_labels_remote(
@@ -92,11 +102,15 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'success',
       api.properties(
-          ChromiumIDEPreReleaseProperties(reviewers=['oka@chromium.org'])),
+          ChromiumIDEPreReleaseProperties(
+              reviewers=['oka@chromium.org'],
+              reviewer_oncalls=['oncallator:ide_onduty'])),
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
       api.step_data('verify update.npm t', retcode=0),
+      api.url.json('Get oncaller of oncallator:ide_onduty',
+                   {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
           'upload change.create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'

@@ -1838,6 +1838,24 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://chrome-ops-rotation-proxy.appspot.com/current/oncallator:ide_onduty",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "/path/to/tmp/json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "name": "Get oncaller of oncallator:ide_onduty"
+  },
+  {
     "cmd": [],
     "name": "upload change",
     "~followup_annotations": [
@@ -1924,6 +1942,8 @@
       "chromium-ide-pre-release-update",
       "--reviewers",
       "oka@chromium.org",
+      "--reviewers",
+      "fqj@google.com",
       "--send-mail"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
