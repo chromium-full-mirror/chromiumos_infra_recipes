@@ -82,7 +82,8 @@ _CHROMITE_URL = '{}/{}'.format(_CHROMITE_HOST, _CHROMITE_PROJECT)
 # TODO(b/187787264): On old branches, chromite may still depend on the chroot
 # living within the source tree. On newer branches we need to use the
 # new out path.
-_BUILD_VERSION_USE_OUT_DIR = 15613
+_BUILD_VERSION_BUILD_DIR_MOVED = 15613
+_BUILD_VERSION_TMP_DIR_MOVED = 15457
 
 class NoFilesToUploadFailure(recipe_api.StepFailure):
   """Error class for when there are no files to upload as a FirmwareArchive."""
@@ -131,7 +132,9 @@ class FirmwareBuilder():
         self.m.cros_build_api.log_level,
     ]
     if self.properties.chroot_outside:
-      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
+      # After _BUILD_VERSION_TMP_DIR_MOVED, pass an out dir since we'll be
+      # using it for out/tmp (and out/build, after _BUILD_VERSION_BUILD_DIR_MOVED)
+      if self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
         command.extend([
             '--chroot',
             self.m.cros_sdk.chroot.path,
@@ -371,11 +374,18 @@ class FirmwareBuilder():
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
       self.m.file.ensure_directory('create tempdir', out_path)
 
-      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
+      # After _BUILD_VERSION_BUILD_DIR_MOVED, chroot/build was migrated to
+      # out/build.
+      if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
         # TODO(b/316429012): Update cros_sdk to expose out path as a Path,
         # rather than only as a string.
         dest_path = self.m.cros_sdk._out_path  # pylint: disable=protected-access
         chroot_path = lambda x: x
+      # We use a different chroot path for versions above
+      # _BUILD_VERSION_TMP_DIR_MOVED, see the sdk_call function.
+      elif self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
+        dest_path = self.m.path.abs_to_path(self.m.cros_sdk.chroot.path)
+        chroot_path = lambda x: '/' + self.m.path.relpath(x, dest_path)
       else:
         dest_path = self._chroot
         chroot_path = lambda x: '/' + self.m.path.relpath(x, dest_path)
@@ -398,10 +408,19 @@ class FirmwareBuilder():
         raise NoFilesToUploadFailure('No firmware files to bundle')
 
       tarball = out_path.join(_FIRMWARE_TARBALL_NAME)
+      chroot_tarball = chroot_path(tarball)
+      # After /tmp's been migrated but before /build's been migrated we're
+      # still executing in the chroot. The outpath given to us in this function
+      # is for the /out dir outside the chroot. But inside the chroot,
+      # /out/tmp is mounted to /tmp so we want to trim away the `/../out`
+      # prefix (/.. because chroot/ is in the same dir as out/).
+      if (self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED and
+          self.m.cros_version.version.build < _BUILD_VERSION_BUILD_DIR_MOVED):
+        chroot_tarball = chroot_tarball.removeprefix('/../out')
       cmd = [
           'tar',
           'cvjf',
-          chroot_path(tarball),
+          chroot_tarball,
       ]
       if self.m.path.exists(config_dir):
         cmd.extend([
@@ -419,11 +438,14 @@ class FirmwareBuilder():
       # The list of files is generally too long for the command line.
       file_list = '\0'.join(self.m.path.relpath(x, root) for x in source_list)
 
-      if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
-        # When the out_path is outside of the chroot, run tar from outside the
-        # chroot as well.
+      # After _BUILD_VERSION_BUILD_DIR_MOVED, chroot/build and chroot/tmp have
+      # both been migrated to out/build and out/tmp respectively. So we
+      # can run outside of the chroot.
+      if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
         self.m.step('create tarball', cmd=cmd,
                     stdin=self.m.raw_io.input(data=file_list))
+      # Otherwise we need to run inside the chroot. sdk_call has additional
+      # branching to cover when /tmp had been migrated but /build had not.
       else:
         self.sdk_call('create tarball', cmd=cmd,
                       stdin=self.m.raw_io.input(data=file_list))
@@ -443,9 +465,18 @@ class FirmwareBuilder():
     metadata.bcs_version_info.version_string = str(self._bcs_version)
     target = sysroot.build_target.name
 
-    if self.m.cros_version.version.build >= _BUILD_VERSION_USE_OUT_DIR:
+    # After _BUILD_VERSION_BUILD_DIR_MOVED, everything here is done outside of
+    # the chroot.
+    if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
       tmppath = outpath
       tmpdir = outpath
+    # After _BUILD_VERSION_TMP_DIR_MOVED, we still created the artifact inside
+    # the chroot because  chroot/build hasn't yet been migrated to out/build
+    # (though chroot/tmp has been migrated to out/tmp).
+    elif self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
+      tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
+      tmpdir = self.m.cros_sdk._out_path.join(  # pylint: disable=protected-access
+          'tmp', self.m.path.basename(tmppath))
     else:
       tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
       tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
@@ -871,6 +902,18 @@ def GenTests(api):
                      'upload artifacts.bundle tarball'),
       api.post_check(post_process.MustRun, 'push image'),
       version='R122-15709.22.0',
+  )
+
+  yield test(
+      'new-chroot-tmp-dir-firmware',
+      api.properties(chroot_outside=True),
+      suite_scheduling(False),
+      api.post_check(post_process.StepSuccess,
+                     'upload artifacts.create firmware archive'),
+      api.post_check(post_process.StepSuccess,
+                     'upload artifacts.bundle tarball'),
+      api.post_check(post_process.MustRun, 'push image'),
+      version='R115-15460.22.0',
   )
 
   yield test('chroot-exists', exists('chroot'))
