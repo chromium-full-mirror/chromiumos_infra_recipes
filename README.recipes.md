@@ -5476,50 +5476,50 @@ Create a temp file with provided container metadata.
 Args:
   container_metadata: (ContainerMetadata) container metadata.
 
-&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#217)(self):**
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#218)(self):**
 
 Ensure the CrosToolRunner CLI is installed.
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#132)(self, request):**
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#133)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [post\_process](/recipe_modules/cros_tool_runner/api.py#160)(self, request):**
+&mdash; **def [post\_process](/recipe_modules/cros_tool_runner/api.py#161)(self, request):**
 
 Run post process via `post_process` subcommand.
 
 Args:
   request: a CrosToolRunnerPostTestRequest.
 
-&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#142)(self, request):**
+&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#143)(self, request):**
 
 Pre process commands via `pre-process` subcommand.
 
 Args:
   request: a CrosToolRunnerPreTestRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#123)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#124)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#253)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#254)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#151)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#152)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#170)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#171)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.
