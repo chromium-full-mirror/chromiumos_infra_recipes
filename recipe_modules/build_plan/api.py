@@ -8,6 +8,7 @@
 from datetime import datetime
 from typing import List, Optional, Tuple
 
+from PB.chromite.api import relevancy as relevancy_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto \
@@ -75,6 +76,26 @@ class BuildPlanApi(recipe_api.RecipeApi):
               'Detected at least one project that is not in the manifest! '
               'Please add following projects {} to manifest file and retry.'
               .format(not_in_manifest))
+
+  def get_relevant_builder_configs(self, builder_configs: List[BuilderConfig],
+                                   gerrit_changes: List[GerritChange]):
+    """Returns BuilderConfigs deemed relevant by the RelevancyService."""
+    req = relevancy_pb2.GetRelevantBuildTargetsRequest(
+        build_targets=[bc.build_target for bc in builder_configs])
+
+    patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes,
+                                                include_files=True)
+    affected_paths = self.m.cros_relevance.get_affected_paths(patch_sets)
+    for p in affected_paths:
+      path = req.affected_paths.add()
+      path.path = p
+
+    resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(req)
+    relevant_build_targets = [bt.build_target for bt in resp.build_targets]
+    return [
+        bc for bc in builder_configs
+        if bc.build_target in relevant_build_targets
+    ]
 
   def _get_necessary_cq_child_specs(
       self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
