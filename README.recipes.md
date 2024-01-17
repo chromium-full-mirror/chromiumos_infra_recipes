@@ -593,6 +593,7 @@
   * [ipc:examples/full](#recipes-ipc_examples_full)
   * [ipc:examples/no_attrs](#recipes-ipc_examples_no_attrs)
   * [iterutils:examples/full](#recipes-iterutils_examples_full)
+  * [kabuto_export_dlc_info](#recipes-kabuto_export_dlc_info) &mdash; Recipe for running Kabuto's export_dlc_info script.
   * [kabuto_orchestrator](#recipes-kabuto_orchestrator) &mdash; Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
   * [kabuto_paygen](#recipes-kabuto_paygen) &mdash; Recipe for generating a Kabuto payload.
   * [kabuto_shadercache_uprev](#recipes-kabuto_shadercache_uprev) &mdash; Recipe for uprev'ing shadercache DLC ebuilds.
@@ -15205,6 +15206,14 @@ Recipe for testing the incremental recipe_module.
 
 
 &mdash; **def [RunSteps](/recipe_modules/iterutils/examples/full.py#16)(api):**
+### *recipes* / [kabuto\_export\_dlc\_info](/recipes/kabuto_export_dlc_info.py)
+
+[DEPS](/recipes/kabuto_export_dlc_info.py#14): [git](#recipe_modules-git), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for running Kabuto's export_dlc_info script.
+
+&mdash; **def [RunSteps](/recipes/kabuto_export_dlc_info.py#27)(api: RecipeApi, properties: KabutoExportDlcInfoProperties):**
 ### *recipes* / [kabuto\_orchestrator](/recipes/kabuto_orchestrator.py)
 
 [DEPS](/recipes/kabuto_orchestrator.py#20): [build\_menu](#recipe_modules-build_menu), [failures](#recipe_modules-failures), [git](#recipe_modules-git), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

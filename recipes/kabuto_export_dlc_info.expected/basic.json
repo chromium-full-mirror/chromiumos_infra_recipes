@@ -1,0 +1,34 @@
+[
+  {
+    "cmd": [],
+    "name": "clone kabuto"
+  },
+  {
+    "cmd": [
+      "git",
+      "clone",
+      "https://chrome-internal.googlesource.com/chromeos/platform/borealis",
+      "."
+    ],
+    "cwd": "[CLEANUP]/borealis_tmp_1",
+    "infra_step": true,
+    "name": "clone kabuto.git clone",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "./tools/kabuto_production_utils/export_dlc_info/export_dlc_info.sh",
+      "--mesa-version-hash-tmp-dir",
+      "[CLEANUP]/mesa_tmp_1",
+      "--ebuild-log-tmp-dir",
+      "[CLEANUP]/ebuild_tmp_1"
+    ],
+    "cwd": "[CLEANUP]/borealis_tmp_1",
+    "name": "run export_dlc_info"
+  },
+  {
+    "name": "$result"
+  }
+]
