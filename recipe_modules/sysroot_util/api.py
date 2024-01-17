@@ -25,6 +25,7 @@ from PB.chromite.api.sysroot import SysrootCreateRequest
 from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos import common as common_pb2
+from PB.chromiumos import prebuilts_cloud as prebuilts_cloud_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from recipe_engine import recipe_api
@@ -220,11 +221,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
               log_dir=common_pb2.SyncedDir(
                   dir=str(self.m.path.mkdtemp(prefix='remoteexec-logs-'))))
 
+        snapshot_shas = self.m.cros_source.fetch_snapshot_shas(count=5)
+        is_private = config.artifacts.prebuilts == builder_config_pb2.BuilderConfig.Artifacts.PRIVATE
+
         return InstallPackagesRequest(
-            chroot=self.m.cros_sdk.chroot,
-            sysroot=self.sysroot,
-            packages=packages,
-            package_indexes=package_indexes,
+            chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
+            packages=packages, package_indexes=package_indexes,
             flags=InstallPackagesRequest.Flags(
                 compile_source=install_packages.compile_source,
                 use_goma=self.m.cros_sdk.has_goma_config(),
@@ -239,7 +241,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                     path=str(self.m.path.mkdtemp()),
                     location=common_pb2.Path.OUTSIDE)),
             bazel_targets=bazel_targets,
-        )
+            binhost_lookup_service_data=prebuilts_cloud_pb2
+            .BinhostLookupServiceData(snapshot_shas=snapshot_shas,
+                                      private=is_private))
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:

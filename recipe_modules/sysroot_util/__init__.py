@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Init for sysroot_util module."""
+
 from PB.recipe_modules.chromeos.sysroot_util.sysroot_util import SysrootUtilProperties
 
 DEPS = [
@@ -17,6 +19,7 @@ DEPS = [
     'cros_build_api',
     'cros_infra_config',
     'cros_sdk',
+    'cros_source',
     'cros_artifacts',
     'easy',
     'failures',
