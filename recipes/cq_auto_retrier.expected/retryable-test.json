@@ -773,8 +773,7 @@
     "cmd": [],
     "name": "performing retries",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.@@@",
-      "@@@STEP_LINK@2222@https://cr-buildbucket.appspot.com/build/2222@@@"
+      "@@@STEP_TEXT@1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.@@@"
     ]
   },
   {
@@ -1015,6 +1014,14 @@
     "name": "performing retries.retry build 2222.add comment on CL 234567.curl https://chromium-review.googlesource.com/changes/234567/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "performing retries.set filtered_build_stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@filtered_build_stats@{\"already_retried\": 0, \"failed_gerrit_fetch\": 0, \"negative_labels\": 0, \"non_latest_patch_set\": 0, \"non_mergeable\": 0, \"non_multi_retry_eligible\": 0, \"non_new\": 0, \"non_submittable\": 0, \"opt_out\": 0, \"removed_label\": 0, \"total_with_retryable_statuses\": 1, \"unresolved_comments\": 0, \"unsupported_failure_mode\": 0, \"wip\": 0}@@@"
     ]
   },
   {

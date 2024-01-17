@@ -11,6 +11,7 @@ from typing import Dict
 import json
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import RetryDetails
 
 from recipe_engine import post_process
 
@@ -32,13 +33,21 @@ def RunSteps(api):
       'runMode': api.properties.get('runMode', 'FULL_RUN')
   }
 
-  api.auto_retry_util.retry_build(
-      build,
-      retryable_builders=api.properties.get('retryable_builders',
-                                            ['builderA', 'builderB']),
-      retryable_test_suites=api.properties.get('retryable_test_suites',
-                                               ['suite1', 'suite2']),
-  )
+  retryable_builds = [
+      (build,
+       RetryDetails(
+           retryable_builders=api.properties.get('retryable_builders',
+                                                 ['builderA', 'builderB']),
+           retryable_test_suites=api.properties.get('retryable_test_suites',
+                                                    ['suite1', 'suite2']),
+       ))
+  ]
+
+  _, exceptions = api.auto_retry_util.retry_builds(retryable_builds)
+  expected_exceptions = api.properties.get('expected_exceptions', [])
+  api.assertions.assertEqual(len(expected_exceptions), len(exceptions))
+  for exp_e, e in zip(expected_exceptions, exceptions):
+    api.assertions.assertIsInstance(e, exp_e)
   api.assertions.assertCountEqual(
       api.auto_retry_util.per_build_stats[build.id].filter_reasons,
       api.properties.get('expected_filter_reasons', []))
@@ -177,6 +186,8 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
       check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 2}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
       check_comment(build_id=123, change_id=789, comment=expected_comment),
+      api.post_process(post_process.StepSuccess,
+                       f'retry build {retryable_build.message.id}'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -196,6 +207,8 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
       check_labels(build_id=123, change_id=789, labels={'Commit-Queue': 1}),
       check_comment(build_id=123, change_id=456, comment=expected_comment),
       check_comment(build_id=123, change_id=789, comment=expected_comment),
+      api.post_process(post_process.StepSuccess,
+                       f'retry build {retryable_build.message.id}'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -212,6 +225,8 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
       api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
+      api.post_process(post_process.StepSuccess,
+                       f'retry build {retryable_build.message.id} (dry_run)'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -269,6 +284,9 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
       api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats', {
+          'already_retried': 1,
+      }),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -287,6 +305,9 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
           step_name=f'fetch changes for {retryable_build.message.id}'),
       api.post_process(post_process.DoesNotRunRE, '.*add comment on CL.*'),
       api.post_process(post_process.DoesNotRunRE, '.*set labels on CL.*'),
+      api.post_process(post_process.PropertyEquals, 'filtered_build_stats', {
+          'already_retried': 1,
+      }),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -320,7 +341,7 @@ Did you notice a bug or UX issue with this retry? Please provide feedback: go/cr
       api.properties(
           retryable_builders=[],
           retryable_test_suites=[],
+          expected_exceptions=[ValueError],
       ),
-      api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
   )

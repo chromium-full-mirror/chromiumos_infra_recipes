@@ -22,6 +22,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
+from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import RetryDetails
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution import CqTestFailureFaultAttributionStats, CqFailureAttribute
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
@@ -1597,12 +1598,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     comment += '\nDid you notice a bug or UX issue with this retry? Please provide feedback: go/cros-auto-retry-bug.\n'
     return comment
 
-  def retry_build(
+  def _retry_build(
       self,
       build: build_pb2.Build,
       retryable_builders: List[str],
       retryable_test_suites: List[str],
-  ):
+  ) -> bool:
     """Retries build by voting on all of its input changes.
 
     Sets Commit-Queue+1 or 2 (depending on whether build was a dry run)
@@ -1620,8 +1621,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       build: The build to retry.
       retryable_builders: Names of the child builders that are now retryable.
       retryable_test_suites: Names of the test suites that are now retryable.
+
+    Returns:
+      Whether the retry actually happened.
     """
-    if not retryable_builders and not retryable_test_suites:
+    if not any(x for x in retryable_builders) and not any(
+        x for x in retryable_test_suites):
       raise ValueError(
           'At least one builder or test suite must be given as a retry reason '
           f'for build {build.id}')
@@ -1647,15 +1652,55 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
              for ps in patch_sets):
         pres.step_text = 'Already retried by someone else.'
         self.per_build_stats[build.id].filter_reasons.append('retried_by_user')
-        return
+        return False
 
       if not self._enable_retries:
         pres.step_text = f'would have set labels { {str(k): v for k, v in labels.items()} }'
-        return
+        return False
 
       for gc in build.input.gerrit_changes:
         self.m.gerrit.set_change_labels_remote(gc, labels)
         self.m.gerrit.add_change_comment_remote(gc, comment)
+
+      return True
+
+  def retry_builds(
+      self, retryable_runs: List[Tuple[build_pb2.Build, RetryDetails]]
+  ) -> Tuple[List[build_pb2.Build], List[Exception]]:
+    """Performs retry on retryable builds.
+
+    Args:
+      retryable_runs: List of tuples with failed build and retry details.
+
+    Returns:
+      A tuple with a retried (old) builds and a list with exceptions.
+    """
+    retried_runs = []
+    already_retried = []
+    exceptions = []
+    for b, details in retryable_runs:
+      # There should be at least one retryable builder or test suite at this
+      # point, because cq_retry_candidates only returns builds with at least one
+      # fatal failure, and there are no more outstanding failures for the build.
+      try:
+        if self._retry_build(b, details.retryable_builders,
+                             details.retryable_test_suites):
+          retried_runs.append(b)
+        elif self._enable_retries:
+          already_retried.append(b)
+      except ValueError as e:
+        exceptions.append(e)
+
+      details.retry_age_seconds = int(
+          self.m.time.ms_since_epoch() / 1000) - b.end_time.seconds
+
+    self._filtered_build_stats.update({
+        'already_retried': len(already_retried),
+    })
+    self.m.easy.set_properties_step(
+        filtered_build_stats=self._filtered_build_stats)
+
+    return retried_runs, exceptions
 
   def _was_cv_active(self, build_id: int, patch_sets: List[PatchSet]) -> bool:
     """Check if the CV was active when the given build failed.

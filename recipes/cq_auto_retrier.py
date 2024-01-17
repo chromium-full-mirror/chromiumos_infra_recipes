@@ -160,36 +160,28 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
     run_properties['throttled_runs'] = throttled_runs_n
     pres.step_text = f'{throttled_runs_n} runs are throttled'
 
-  if not retryable_runs:
-    summary = 'No runs to retry'
-  else:
-    # For now just slice the considered CL count somewhat arb (by query return
-    # order), however in the future we might consider different methods of
-    # prioritizing the cq runs to retry in a throttle constrained scenario.
-    retryable_runs = retryable_runs[:retries_avail]
-    unthrottled_retry_dry_run_n = len(
-        [r for _, r in retryable_runs if r.original_orch_was_dry_run])
-    summary = (
-        f'{unthrottled_retry_n - unthrottled_retry_dry_run_n} CQ+2 run(s) '
-        f'to retry, {unthrottled_retry_dry_run_n} CQ+1 run(s) to retry, '
-        f'{throttled_runs_n} are throttled.')
+  # For now just slice the considered CL count somewhat arb (by query return
+  # order), however in the future we might consider different methods of
+  # prioritizing the cq runs to retry in a throttle constrained scenario.
+  retryable_runs = retryable_runs[:retries_avail]
 
   with api.step.nest('performing retries') as pres:
-    pres.step_text = summary
-    for b, details in retryable_runs:
-      pres.links[f'{b.id}'] = api.buildbucket.build_url(build_id=b.id)
-      # There should be at least one retryable builder or test suite at this
-      # point, because cq_retry_candidates only returns builds with at least one
-      # fatal failure, and there are no more outstanding failures for the build.
-      api.auto_retry_util.retry_build(
-          b,
-          retryable_builders=details.retryable_builders,
-          retryable_test_suites=details.retryable_test_suites,
-      )
-      details.retry_age_seconds = int(
-          api.time.ms_since_epoch() / 1000) - b.end_time.seconds
+    new_builds, exceptions = api.auto_retry_util.retry_builds(retryable_runs)
+    for e in exceptions:
+      api.deferrals.defer_exception(e)
 
-  _set_len_prop(retries_made=retryable_runs)
+    if not new_builds:
+      summary = 'No runs to retry'
+    else:
+      new_dry_run_builds = [
+          b for b in new_builds if api.auto_retry_util.build_was_dry_run(b)
+      ]
+      summary = (f'{len(new_builds) - len(new_dry_run_builds)} CQ+2 run(s) '
+                 f'to retry, {len(new_dry_run_builds)} CQ+1 run(s) to retry, '
+                 f'{throttled_runs_n} are throttled.')
+    pres.step_text = summary
+    run_properties['retries_made'] = len(new_builds)
+
   run_properties['retry_reasons'] = [
       json_format.MessageToDict(y) for x, y in retryable_runs
   ]
@@ -233,6 +225,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   retryable_build_orch_dry_run.CopyFrom(retryable_build_orch)
   retryable_build_orch_dry_run.input.properties['$recipe_engine/cq'][
       'runMode'] = 'DRY_RUN'
+
+  no_builds_or_tests_orch = build_pb2.Build()
+  no_builds_or_tests_orch.CopyFrom(retryable_build_orch)
+  no_builds_or_tests_orch.output.properties['child_build_info'][0]['builder'][
+      'builder'] = ''
 
   gerrit_changes = [
       common.GerritChange(change=123456,
@@ -460,6 +457,36 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           post_process.SummaryMarkdown,
           '1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.',
       ))
+
+  yield api.test(
+      'no-builds-or-tests-or-empty', api.auto_retry_util.enable_retries(),
+      api.gerrit.set_get_account_id(
+          gerrit_host='chromium-review.googlesource.com',
+          email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
+          parent_step_name='filter candidates.filter out unmet CL requirements'
+      ),
+      api.buildbucket.simulated_search_results(
+          [no_builds_or_tests_orch],
+          'find candidates.query for cq-orchestrators.buildbucket.search'),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'filter candidates.filter out unmet CL requirements', gerrit_changes,
+          eligible_value_dict,
+          step_name=f'fetch changes for {retryable_build_orch.id}'),
+      api.gerrit.set_get_change_mergeable(
+          'filter candidates.filter out merge conflicts',
+          gerrit_host='chromium-review.googlesource.com',
+          change_num=123456,
+          revision=7,
+          value=True,
+      ),
+      api.post_process(
+          post_process.DoesNotRun,
+          f'performing retries.retry build {retryable_build_orch.id}',
+      ),
+      api.post_process(
+          post_process.SummaryMarkdown,
+          f"Uncaught Exception: ValueError('At least one builder or test suite must be given as a retry reason for build {retryable_build_orch.id}')",
+      ), api.expect_exception('ValueError'), status='INFRA_FAILURE')
 
   yield api.test(
       'two-retryable-runs-one-with-exception-during-analyzing',
