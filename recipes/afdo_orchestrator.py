@@ -46,8 +46,13 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
   if api.orch_menu.is_dry_run:
     return
 
+  # Aggregate any metadata produced by the child builds into our own GS bucket.
+  container_metadata = api.orch_menu.aggregate_metadata(
+      api.orch_menu.builds_status.testable_builds)
+
   # Run any HW tests.
-  builds_status = api.orch_menu.plan_and_run_tests()
+  builds_status = api.orch_menu.plan_and_run_tests(
+      container_metadata=container_metadata)
 
   if not builds_status.fatal_failures and properties.process_child:
     # Create InputArtifactInfo for the CHROME_DEBUG_BINARY from the creating
