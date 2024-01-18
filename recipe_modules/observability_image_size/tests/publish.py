@@ -145,16 +145,46 @@ def GenTests(api):
       'basic', test_build(),
       api.properties(PublishTestProperties(
           skip_publish_image_sizes=True,
-      )),
+      )), api.properties(image_types=[common_pb2.IMAGE_TYPE_BASE]),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(rootfs_pkgs=[
+              pkg_data('cat', 'foo', major=0, minor=0, patch=1, revision=1234,
+                       apparent=1, disk_utilization=4096),
+              pkg_data('cat', 'bar', major=1, apparent=2,
+                       disk_utilization=4096),
+              pkg_data('virtual', 'baz', major=2, minor=1),
+          ])), api.post_check(post_process.MustRun, 'collect image size data'),
+      api.post_check(
+          post_process.MustRun,
+          'collect image size data.add image size data to output properties'),
+      api.post_check(post_process.DoesNotRun,
+                     'collect image size data.publish image size data'),
       api.post_check(post_process.StepTextEquals, 'collect image size data',
                      'Skipped: Image size publishing disabled.'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
       'cq-build', test_build(cq=True),
-      api.properties(PublishTestProperties(
-          builder_name='amd64-generic-cq',
-      )),
+      api.properties(
+          PublishTestProperties(builder_name='amd64-generic-cq',
+                                image_types=[common_pb2.IMAGE_TYPE_BASE])),
+      api.cros_build_api.set_api_return(
+          'collect image size data.add data from images',
+          'ObservabilityService/GetImageSizeData',
+          image_size_data(rootfs_pkgs=[
+              pkg_data('cat', 'foo', major=0, minor=0, patch=1, revision=1234,
+                       apparent=1, disk_utilization=4096),
+              pkg_data('cat', 'bar', major=1, apparent=2,
+                       disk_utilization=4096),
+              pkg_data('virtual', 'baz', major=2, minor=1),
+          ])), api.post_check(post_process.MustRun, 'collect image size data'),
+      api.post_check(
+          post_process.MustRun,
+          'collect image size data.add image size data to output properties'),
+      api.post_check(post_process.DoesNotRun,
+                     'collect image size data.publish image size data'),
       api.post_check(post_process.StepTextEquals, 'collect image size data',
                      'Skipped: Image size publishing disabled.'),
       api.post_process(post_process.DropExpectation))

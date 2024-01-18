@@ -92,7 +92,7 @@
   * [metadata](#recipe_modules-metadata) &mdash; API to support metadata generation and wrangling.
   * [metadata_json](#recipe_modules-metadata_json)
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
-  * [observability_image_size](#recipe_modules-observability_image_size)
+  * [observability_image_size](#recipe_modules-observability_image_size) &mdash; API for retrieving image and package size data.
   * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [paygen_orchestration](#recipe_modules-paygen_orchestration) &mdash; API for orchestrating payload generation.
@@ -8880,14 +8880,16 @@ Returns:
   A string describing the VM test.
 ### *recipe_modules* / [observability\_image\_size](/recipe_modules/observability_image_size)
 
-[DEPS](/recipe_modules/observability_image_size/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/observability_image_size/__init__.py#9): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [ObservabilityImageSizeApi](/recipe_modules/observability_image_size/api.py#16)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+API for retrieving image and package size data.
+
+#### **class [ObservabilityImageSizeApi](/recipe_modules/observability_image_size/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Collect image size data.
 
-&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#88)(self, config, build_target, target_versions, built_images, chroot):**
+&mdash; **def [publish](/recipe_modules/observability_image_size/api.py#120)(self, config, build_target, target_versions, built_images, chroot):**
 
 Collect and publish the image size data.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)

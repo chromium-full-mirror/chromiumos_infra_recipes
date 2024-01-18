@@ -5063,7 +5063,22 @@
     "cmd": [],
     "name": "collect image size data",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Skipped: Image size publishing disabled.@@@"
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ignored exception",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@StepFailure('No images provided.')@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set caught_exceptions",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"StepFailure('No images provided.')\"}@@@"
     ]
   },
   {

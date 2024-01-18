@@ -8203,6 +8203,21 @@
   },
   {
     "cmd": [],
+    "name": "collect image size data.add image size data to output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "collect image size data.add image size data to output properties.set binary_sizes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@binary_sizes@{\"1.rootfs\": 8192}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "collect image size data.add version data",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

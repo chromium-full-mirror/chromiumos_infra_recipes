@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Deps and properties for observability-image-size functions."""
+
 from PB.recipe_modules.chromeos.observability_image_size.observability_image_size import ObservabilityImageSizeProperties
 
 DEPS = [
@@ -11,6 +13,7 @@ DEPS = [
     'cros_build_api',
     'cros_infra_config',
     'cros_version',
+    'easy',
     'src_state',
 ]
 
