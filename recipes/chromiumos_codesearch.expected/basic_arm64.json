@@ -5149,7 +5149,7 @@
   {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/contrib/package_index_cros/main",
-      "--verbose",
+      "--debug",
       "--with-tests",
       "--board",
       "arm64-generic",

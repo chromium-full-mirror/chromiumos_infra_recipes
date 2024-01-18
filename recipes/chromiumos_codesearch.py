@@ -135,7 +135,7 @@ def RunSteps(api, properties):
           }):
         api.step('run package_index_cros', [
             package_index_cros_dir.join('main'),
-            '--verbose',
+            '--debug',
             '--with-tests',
             '--board',
             board,
