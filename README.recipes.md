@@ -12463,7 +12463,7 @@ Recipe for creating pre-release CL for ChromiumIDE.
 &mdash; **def [RunSteps](/recipes/chromium_ide_pre_release.py#34)(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):**
 ### *recipes* / [chromiumos\_codesearch](/recipes/chromiumos_codesearch.py)
 
-[DEPS](/recipes/chromiumos_codesearch.py#19): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/chromiumos_codesearch.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_source](#recipe_modules-cros_source), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for enabling cross-references in code search for ChromiumOS.
@@ -12471,7 +12471,7 @@ Recipe for enabling cross-references in code search for ChromiumOS.
 Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 
-&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#76)(api, properties):**
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#36)(api, properties):**
 ### *recipes* / [chromiumos\_codesearch\_initiator](/recipes/chromiumos_codesearch_initiator.py)
 
 [DEPS](/recipes/chromiumos_codesearch_initiator.py#13): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]

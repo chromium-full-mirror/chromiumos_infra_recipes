@@ -11,7 +11,6 @@ package_index, and generates then uploads a KZIP to GS.
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
-from recipe_engine.engine_types import freeze
 from recipe_engine.post_process import PropertyEquals
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -31,63 +30,20 @@ DEPS = [
     'recipe_engine/time',
 ]
 
-# TODO(crbug/1284439): Add build_config.
-# TODO(crbug/1317852): Move properties outside of recipe.
-SPEC = freeze({
-    # The builders have the following parameters:
-    # - board: the compile targets.
-    # - corpus: Kythe corpus to specify in the kzip.
-    # - packages: The platform for which the code is compiled.
-    # - sync_generated_files: Whether to sync generated files into a git repo.
-    # - experimental: Whether to mark Kythe uploads as experimental.
-    'builders': {
-        'amd64-generic-codesearch': {
-            'board': 'amd64-generic',
-            'corpus': 'chromium.googlesource.com/chromiumos/codesearch//main',
-            'packages': [
-                'virtual/target-chromium-os',
-                'virtual/target-chromium-os-dev',
-                'virtual/target-chromium-os-factory',
-                'virtual/target-chromium-os-factory-shim',
-                'virtual/target-chromium-os-test',
-            ],
-            'sync_generated_files': True,
-            'experimental': False,
-        },
-        'arm64-generic-codesearch': {
-            'board': 'arm64-generic',
-            'corpus': 'chromium.googlesource.com/chromiumos/codesearch//main',
-            'packages': [
-                'virtual/target-chromium-os',
-                'virtual/target-chromium-os-dev',
-                'virtual/target-chromium-os-factory',
-                'virtual/target-chromium-os-factory-shim',
-                'virtual/target-chromium-os-test',
-            ],
-            'sync_generated_files': True,
-            'experimental': False,
-        },
-    },
-})
-
 PROPERTIES = ChromiumosCodesearchProperties
 
 
 def RunSteps(api, properties):
+
+  # Shorthand common variables.
   codesearch_mirror_revision = properties.codesearch_mirror_revision
   codesearch_mirror_revision_timestamp = properties.codesearch_mirror_revision_timestamp
   manifest_hash = properties.manifest_hash
-
-  builder = api.buildbucket.build.builder.builder
-  bot_config = SPEC.get('builders', {}).get(builder)
-  assert bot_config is not None, ('Could not find builder %s in SPEC' % builder)
-
-  board = bot_config.get('board', 'amd64-generic')
-  corpus = bot_config.get(
-      'corpus', 'chromium.googlesource.com/chromiumos/codesearch//main')
-  packages = bot_config.get('packages', ['virtual/target-chromium-os'])
-  sync_generated_files = bot_config.get('sync_generated_files', False)
-  experimental = bot_config.get('experimental', False)
+  build_target = api.build_menu.build_target.name
+  corpus = properties.corpus
+  packages = properties.packages
+  sync_generated_files = properties.sync_generated_files
+  experimental = properties.experimental
 
   # Get infra/infra.
   cache_dir = api.path['cache'].join('builder')
@@ -126,7 +82,7 @@ def RunSteps(api, properties):
       api.file.remove('remove deps hook', hook_path)
 
       # Generate KZIP.
-      build_dir = workspace.join('src', 'out', board)
+      build_dir = workspace.join('src', 'out', build_target)
       with api.context(
           cwd=package_index_cros_dir, env={
               'PATH':
@@ -138,7 +94,7 @@ def RunSteps(api, properties):
             '--debug',
             '--with-tests',
             '--board',
-            board,
+            build_target,
             '--chroot',
             api.build_menu.chroot.path,
             '--chroot-out',
@@ -153,7 +109,7 @@ def RunSteps(api, properties):
           'chromiumos',
           PROJECT='chromiumos',
           CHECKOUT_PATH=chromiumos_src_dir,
-          PLATFORM=board,
+          PLATFORM=build_target,
           EXPERIMENTAL=experimental,
           SYNC_GENERATED_FILES=sync_generated_files,
           CORPUS=corpus,
@@ -184,8 +140,8 @@ def RunSteps(api, properties):
       # Check out the generated files repo and sync the generated files
       # into this checkout.
       copy_config = {
-          # ~/chromiumos/src/out/${board};src/out/${board}
-          build_dir: api.path.join('src', 'out', board),
+          # ~/chromiumos/src/out/${build_target};src/out/${build_target}
+          build_dir: api.path.join('src', 'out', build_target),
 
           # ~/cros_chroot/chroot;chroot
           api.build_menu.chroot.path: 'chroot',
@@ -205,21 +161,36 @@ def RunSteps(api, properties):
 
 # TODO(crbug/1284439): Add more tests.
 def GenTests(api):
-  for b in ('amd64', 'arm64'):
-    yield api.test(
-        'basic_%s' % b,
-        api.buildbucket.generic_build(builder='%s-generic-codesearch' % b),
-        api.properties(codesearch_mirror_revision='a' * 40,
-                       codesearch_mirror_revision_timestamp='1531887759',
-                       manifest_hash='d3adb33f'),
-    )
+  yield api.build_menu.test(
+      'basic',
+      api.buildbucket.generic_build(builder='amd64-generic-codesearch'),
+      api.properties(
+          codesearch_mirror_revision='a' * 40,
+          codesearch_mirror_revision_timestamp='1531887759',
+          manifest_hash='d3adb33f',
+          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
+          packages=[
+              'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
+          ],
+          sync_generated_files=True,
+          experimental=False,
+      ),
+  )
 
-  yield api.test(
+  yield api.build_menu.test(
       'repo sync to manifest_hash',
       api.buildbucket.generic_build(builder='amd64-generic-codesearch'),
-      api.properties(codesearch_mirror_revision='a' * 40,
-                     codesearch_mirror_revision_timestamp='1531887759',
-                     manifest_hash='d3adb33f'),
+      api.properties(
+          codesearch_mirror_revision='a' * 40,
+          codesearch_mirror_revision_timestamp='1531887759',
+          manifest_hash='d3adb33f',
+          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
+          packages=[
+              'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
+          ],
+          sync_generated_files=True,
+          experimental=False,
+      ),
       api.post_process(
           PropertyEquals, 'commit', '''{
   "host": "chromium.googlesource.com",

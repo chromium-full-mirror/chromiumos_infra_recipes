@@ -7,11 +7,26 @@ syntax = "proto3";
 package recipes.chromeos.chromiumos_codesearch;
 
 message ChromiumosCodesearchProperties {
+
   // The revision for codesearch to use for kythe references.
   string codesearch_mirror_revision = 1;
+
   // The commit timestamp of the revision for codesearch to use,
   // in seconds since the UNIX epoch.
   string codesearch_mirror_revision_timestamp = 2;
+
   // The snapshot revision to sync to.
   string manifest_hash = 3;
+
+  // Which codesearch corpus is the target.
+  string corpus = 4;
+
+  // Which packages to build and generate compilation databases for.
+  repeated string packages = 5;
+
+  // Should the builder sync generated files.
+  bool sync_generated_files = 6;
+
+  // Should the builder upload real artifacts.
+  bool experimental = 7;
 }
