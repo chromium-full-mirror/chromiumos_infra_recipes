@@ -37,6 +37,7 @@ def RunSteps(api: RecipeApi):
                   build_target='kukui',
                   channel=CHANNEL_DEV,
                   keyset='devkeys',
+                  keyset_is_mp=False,
                   keyset_versions=signing_pb2.KeysetVersions(
                       firmware_key_version=11,
                       firmware_version=22,
@@ -56,7 +57,8 @@ def RunSteps(api: RecipeApi):
               signing_pb2.ArchiveArtifacts(
                   build_target='kukui',
                   channel=CHANNEL_CANARY,
-                  keyset='devkeys',
+                  keyset='notdevkeys',
+                  keyset_is_mp=True,
                   keyset_versions=signing_pb2.KeysetVersions(
                       firmware_key_version=11,
                       firmware_version=22,
@@ -74,6 +76,7 @@ def RunSteps(api: RecipeApi):
                   build_target='kukui',
                   # no channel, gets skipped.
                   keyset='devkeys',
+                  keyset_is_mp=False,
                   keyset_versions=signing_pb2.KeysetVersions(
                       firmware_key_version=11,
                       firmware_version=22,
@@ -119,6 +122,7 @@ def RunSteps(api: RecipeApi):
           board='kukui',
           channel=CHANNEL_DEV,
           keyset='devkeys',
+          keyset_is_mp=False,
           files=[
               BuildReport.SignedBuildMetadata.FileWithHashes(
                   filename='foo.bin', size=111),
@@ -132,7 +136,8 @@ def RunSteps(api: RecipeApi):
           status=PASSED,
           board='kukui',
           channel=CHANNEL_CANARY,
-          keyset='devkeys',
+          keyset='notdevkeys',
+          keyset_is_mp=True,
           files=[
               BuildReport.SignedBuildMetadata.FileWithHashes(
                   filename='bar.bin', size=111)

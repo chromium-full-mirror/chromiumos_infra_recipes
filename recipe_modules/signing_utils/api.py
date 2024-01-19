@@ -167,7 +167,7 @@ class SigningUtilsApi(recipe_api.RecipeApi):
         signed_build.channel = archive.channel
         signed_build.type = archive.image_type
         signed_build.keyset = archive.keyset
-        # TODO(b/312237673): Pass through keyset_is_mp from signing.
+        signed_build.keyset_is_mp = archive.keyset_is_mp
         signed_build.release_directory = local_artifact_dir
         signed_build.status = archive.signing_status
 
