@@ -12,7 +12,7 @@ import json
 import os
 import re
 from json import JSONDecodeError
-from typing import Any, Callable, Dict, List, NewType, Tuple
+from typing import Any, Dict, List, NewType, Tuple
 
 from google.protobuf.text_format import Parse
 
@@ -362,36 +362,6 @@ class SigningApi(recipe_api.RecipeApi):
     )
     return build_target_config, archive_dir
 
-  def always_download(self) -> Dict[str, Callable[[str, str], str]]:
-    """Build artifacts which, if present, are always downloaded
-
-    Regardless of requested signing types.
-
-    Returns:
-      Map between archives to download and a function to generate the upload
-      path for the archive. The function must take build_target and version
-      (including milestone, e.g. 'R99-1234.0.0') as its two args.
-    """
-
-    def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType'):
-      return lambda build_target, version: self._get_gs_artifact_name(
-          build_target, version, image_type)
-
-    files_to_download = {
-        'recovery_image.tar.xz':
-            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_RECOVERY),
-        'image.zip':
-            lambda build_target, version:
-            f'ChromeOS-{version}-{build_target}.zip',
-        'debug.tgz':
-            lambda build_target, _: f'debug-{build_target}.tgz',
-        # Required for paygen -- the unsigned test image is used in n2n
-        # payloads.
-        'chromiumos_test_image.tar.xz':
-            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_TEST),
-    }
-    return files_to_download
-
   def artifact_name_by_image_type(self,
                                   image_type: common_pb2.ImageType) -> str:
     """Mapping of image type to artifact name."""
@@ -437,7 +407,7 @@ class SigningApi(recipe_api.RecipeApi):
     # Otherwise, only the image types specified in |sign_types| are marked for
     # signing.
     with self.m.step.nest('download release artifacts') as pres:
-      to_download = set(self.always_download().keys())
+      to_download = set()
       signing_configured_artifacts = []
 
       for signing_config in relevant_signing_configs:
@@ -460,6 +430,44 @@ class SigningApi(recipe_api.RecipeApi):
                 ','.join(signing_configured_artifacts))
 
       return relevant_signing_configs, local_dir
+
+  def stage_paygen_artifacts(self,
+                             build_target_config: BuildTargetSigningConfig,
+                             channels: List['common_pb2.Channel']) -> None:
+    """Copy the artifacts needed for paygen into the appropriate GS locations."""
+    src_gs_dir = self.m.build_menu.artifacts_gs_path()
+    version = self.m.cros_version.version.legacy_version
+
+    def _get_gs_artifact_name_wrapper(image_type: 'common_pb2.ImageType'):
+      return lambda build_target, version: self._get_gs_artifact_name(
+          build_target, version, image_type)
+
+    files_to_copy = {
+        # Required for paygen -- the unsigned test image is used in n2n
+        # payloads.
+        'chromiumos_test_image.tar.xz':
+            _get_gs_artifact_name_wrapper(common_pb2.IMAGE_TYPE_TEST),
+    }
+
+    # Otherwise, only the image types specified in |sign_types| are marked for
+    # signing.
+    with self.m.step.nest('stage paygen artifacts'):
+      for channel in channels:
+        with self.m.step.nest(
+            f'for channel {common_pb2.Channel.Name(channel)}'):
+          dest_gs_dir = self._get_gs_path_for_channel(channel)
+          for src_file, upload_path in files_to_copy.items():
+
+            artifact_upload_name = upload_path(build_target_config.build_target,
+                                               version)
+            # -n so we don't clobber existing destination artifacts.
+            self.m.gsutil([
+                'cp',
+                '-n',
+                os.path.join(src_gs_dir, src_file),
+                os.path.join(dest_gs_dir, artifact_upload_name),
+            ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+
 
   def sign_artifacts(
       self, sign_types: List['common_pb2.ImageType'],
@@ -484,6 +492,7 @@ class SigningApi(recipe_api.RecipeApi):
           self.signing_docker_image,
       ])
 
+      self.stage_paygen_artifacts(build_target_config, channels)
       self.upload_unsigned_artifacts(archive_dir, build_target_config, channels)
 
       with self.m.step.nest('call BAPI') as presentation:
@@ -573,19 +582,6 @@ class SigningApi(recipe_api.RecipeApi):
                 os.path.join(gs_dir, artifact_upload_name),
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
-          for archive_path, upload_path in self.always_download().items():
-            if archive_path not in uploaded:
-              uploaded.add(archive_path)
-
-              upload_name = upload_path(build_target_config.build_target,
-                                        version)
-              # -n so we don't clobber existing destination artifacts.
-              self.m.gsutil([
-                  'cp',
-                  '-n',
-                  os.path.join(str(archive_dir), archive_path),
-                  os.path.join(gs_dir, upload_name),
-              ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
 
   def upload_signed_artifacts(self, response: SignImageResponse) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""

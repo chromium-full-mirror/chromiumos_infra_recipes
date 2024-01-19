@@ -218,20 +218,16 @@ def GenTests(api: RecipeTestApi):
           ]),
       api.post_check(
           post_process.StepCommandContains,
-          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (7)',
+          'sign artifacts.stage paygen artifacts.for channel CHANNEL_CANARY.gsutil cp',
           [
-              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-R99-1234.56.0-kukui.zip',
+              'gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_test_image.tar.xz',
+              'gs://chromeos-releases/canary-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz',
           ]),
       api.post_check(
           post_process.StepCommandContains,
-          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (8)',
+          'sign artifacts.stage paygen artifacts.for channel CHANNEL_DEV.gsutil cp',
           [
-              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/debug-kukui.tgz',
-          ]),
-      api.post_check(
-          post_process.StepCommandContains,
-          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (9)',
-          [
+              'gs://chromeos-releases-test/kukui-release-main/R99-1234.56.0-101-8945511751514863184/chromiumos_test_image.tar.xz',
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-test-R99-1234.56.0-kukui.tar.xz',
           ]),
       api.post_check(
