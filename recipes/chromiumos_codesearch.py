@@ -8,6 +8,7 @@ Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 """
 
+from PB.chromiumos.common import UseFlag
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
@@ -60,9 +61,11 @@ def RunSteps(api, properties):
                          project='chromiumos/manifest')
 
   # Set up and build ChromiumOS.
-  # TODO(gavinmak): Fix tests and remove "no cover".
   with api.build_menu.configure_builder(commit=commit) as config, \
-      api.build_menu.setup_workspace_and_chroot(replace=True):  # pragma: no cover
+      api.build_menu.setup_workspace_and_chroot(replace=True):
+
+    config.build.use_flags.append(UseFlag(flag='compilation_database'))
+
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
     api.build_menu.bootstrap_sysroot(config)
     api.build_menu.install_packages(config=config, packages=env_info.packages,
