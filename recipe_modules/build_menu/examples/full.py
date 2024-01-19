@@ -689,6 +689,13 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'skip_unit_tests',
+      api.properties(**api.test_util.build_menu_properties(
+          build_target_name='sarien-code-coverage',
+          skip_unit_tests=True,
+      )), api.post_check(post_process.DoesNotRun, 'run ebuild tests'))
+
+  yield api.build_menu.test(
     'golang-code-coverage-builder',
     api.properties(
       **api.test_util.build_menu_properties(

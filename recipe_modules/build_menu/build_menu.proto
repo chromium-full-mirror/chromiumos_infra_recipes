@@ -37,7 +37,7 @@ message BuildMenuProperties {
   //   * Must be at most 128 characters
   //
   // The format string is taken as-is and any fields delimited by {} are
-  // replaced with their respective value.  Supported fields:
+  // replaced with their respective value. Supported fields:
   //   * {build-target}  The build target for the board (eg: amd64-generic)
   //   * {cros-version}  The current chromeos version string (eg: R86-1.2.3)
   //   * {bbid}          The buildbucket Id of the current builder.
@@ -57,4 +57,7 @@ message BuildMenuProperties {
   // value is not PREBUILTS_UNSPECIFIED, it overrides the original value. This
   // field is for testing.
   chromiumos.BuilderConfig.Artifacts.Prebuilts override_prebuilts_config = 8;
+
+  // Whether we want to skip the unit tests step.
+  bool skip_unit_tests = 9;
 }

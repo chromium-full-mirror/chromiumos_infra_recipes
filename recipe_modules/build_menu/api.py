@@ -65,6 +65,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._build_target = props.build_target
     self._force_relevant_build = props.force_relevant_build
     self._artifact_build = props.artifact_build
+    self._skip_unit_tests = props.skip_unit_tests
     self._test_with_code_coverage = props.test_with_code_coverage
     self._test_with_rust_code_coverage = props.test_with_rust_code_coverage
     self._override_prebuilts_config = props.override_prebuilts_config
@@ -744,6 +745,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       config (BuilderConfig): The Builder Config for the build, or None.
     """
+    if self._skip_unit_tests:
+      return
 
     def _has_toolchain_changes(presentation):
       if not self.m.cros_relevance.toolchain_cls_applied:
