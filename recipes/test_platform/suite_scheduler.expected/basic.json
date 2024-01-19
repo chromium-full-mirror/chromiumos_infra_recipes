@@ -44,8 +44,9 @@
   {
     "cmd": [
       "[START_DIR]/cipd/suite_scheduler/suite_scheduler",
-      "help",
-      "configs"
+      "configs",
+      "-new-build",
+      "-names-only"
     ],
     "cwd": "[START_DIR]/cipd/suite_scheduler",
     "infra_step": true,

@@ -59,7 +59,7 @@ def RunSteps(api, properties):
     with api.context(cwd=cipd_dir, infra_steps=True):
       #  TODO(b/317084435): pass in run_uuid as a cli argument
       api.step(
-          'launch susch', [cmd, 'help', 'configs'],
+          'launch susch', [cmd, 'configs', '-new-build', '-names-only'],
           stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
 
 
