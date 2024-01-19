@@ -4810,10 +4810,7 @@
   },
   {
     "cmd": [],
-    "name": "try creating test service containers",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@status: 'id {\n  name: \"staging-eve-public-main\"\n  type: RELEASE\n  bucket: \"staging\"\n}\ngeneral {\n  critical {\n    value: true\n  }\n  manifest: PRIVATE\n}\norchestrator {\n  gitiles_commit {\n    host: \"chrome-internal.googlesource.com\"\n    project: \"chromeos/manifest-internal\"\n    ref: \"refs/heads/main\"\n  }\n}\n'@@@"
-    ]
+    "name": "try creating test service containers"
   },
   {
     "cmd": [],

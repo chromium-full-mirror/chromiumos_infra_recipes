@@ -81,7 +81,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       with api.step.nest('try creating test service containers') as step:
         try:
           api.build_menu.create_containers(config)
-          step.step_summary_text = "status: '{}'".format(config)
         except StepFailure:
           # For now only mark the step as failed. Do not fail the build.
           step.status = api.step.FAILURE
