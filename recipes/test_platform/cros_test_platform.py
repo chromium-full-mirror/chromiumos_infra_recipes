@@ -515,6 +515,14 @@ def _enumerate_cft_tests(api, properties, requests):
           request=_test_finder_request(r), container_metadata_key=build_target)
       test_finder_result = api.cros_tool_runner.find_tests(
           ctr_test_finder_request)
+
+      # Autotest sharding to be skipped for for tast  tests running with autotest wrapper
+      skip_autotest_sharding = False
+      for test_suite in test_finder_result.test_suites:
+        for test_case in test_suite.test_cases.test_cases:
+          if test_case.id.value.startswith('tauto.tast'):
+            skip_autotest_sharding = True  # pragma: no cover
+
       suite_name = ''
       if r.test_plan.suite:
         suite_name = r.test_plan.suite[0].name
@@ -541,6 +549,10 @@ def _enumerate_cft_tests(api, properties, requests):
         autotest_invocations = _build_tast_invocations(api, properties, r,
                                                        test_suites, suite_name,
                                                        args)
+      elif not skip_autotest_sharding and r.test_plan.enable_autotest_sharding:
+        autotest_invocations = _build_tast_invocations(api, properties, r,
+                                                       test_suites, suite_name,
+                                                       args)  # pragma: no cover
       else:
         autotest_invocations = _build_autotest_invocations(
             test_suites, suite_name, args)
