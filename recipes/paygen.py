@@ -25,7 +25,6 @@ from PB.chromite.api.payload import (GenerationResponse, GenerationRequest,
                                      GenerateUnsignedPayloadRequest,
                                      GenerateUnsignedPayloadResponse,
                                      FinalizePayloadRequest)
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 from recipe_engine import post_process
 from recipe_engine.post_process_inputs import Step
@@ -49,7 +48,6 @@ DEPS = [
     'bot_scaling',
     'cros_build_api',
     'cros_infra_config',
-    'paygen_testing',
     'cros_sdk',
     'cros_source',
     'cros_storage',
@@ -60,6 +58,7 @@ DEPS = [
     'gitiles',
     'naming',
     'paygen_orchestration',
+    'paygen_testing',
     'repo',
     'signing',
     'src_state',
@@ -92,10 +91,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
   # Set up builder state.
   initialize_directories(api, properties)
   # Set up holder objects.
-  paygen_test_configs, payloads = [], []
-
-  if properties.override_qs_account:
-    api.paygen_testing.override_qs_account(properties.override_qs_account)
+  payloads = []
 
   with api.step.nest('doing paygen') as presentation:
     with api.failures.ignore_exceptions():
@@ -255,11 +251,6 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
           if report_payload:
             payloads.append(report_payload)
 
-        test_configs = api.paygen_testing.set_up_paygen_test_configs(
-            request, artifacts)
-        if test_configs:
-          paygen_test_configs.extend(test_configs)
-
     api.easy.set_properties_step(
         payloads=[MessageToDict(payload) for payload in payloads])
     api.easy.set_properties_step(paygen_retries=total_retries)
@@ -274,10 +265,6 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
       ])))
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('upload-complete')
-  if paygen_test_configs:
-    # Test all paygens.
-    with api.step.nest('testing paygen'):
-      api.paygen_testing.schedule_au_tests(paygen_test_configs)
 
 
 def initialize_directories(api: RecipeApi, properties: PaygenProperties):
@@ -537,11 +524,7 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax']),
-              ],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           }])),
       generate_payload_response(
           api, versioned_artifacts=[{
@@ -554,9 +537,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -582,11 +562,7 @@ def GenTests(api: RecipeTestApi):
           PaygenProperties(requests=[
               {
                   'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ]
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               },
           ])),
       api.step_data(
@@ -609,9 +585,6 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -622,11 +595,7 @@ def GenTests(api: RecipeTestApi):
           PaygenProperties(requests=[
               {
                   'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ]
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               },
           ])),
       generate_legacy_payload_response(api,
@@ -634,10 +603,16 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun, 'doing paygen'),
       api.post_check(post_process.MustRun,
                      'initialization.clone config-internal from main branch'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
+  )
+
+  EXAMPLE_GEN_REQUEST_FULL_UNSIGNED = GenerationRequest(
+      full_update=True,
+      tgt_unsigned_image=api.paygen_orchestration.UNSIGNED_TGT,
+      bucket='b',
+      verify=True,
+      dryrun=True,
+      chroot=api.cros_sdk.chroot(),
   )
 
   yield api.test(
@@ -646,19 +621,10 @@ def GenTests(api: RecipeTestApi):
           PaygenProperties(requests=[
               {
                   'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ]
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
               },
               {
-                  'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED[0],
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax'])
-                  ]
+                  'generation_request': EXAMPLE_GEN_REQUEST_FULL_UNSIGNED,
               },
           ])),
       generate_payload_response(
@@ -706,9 +672,6 @@ def GenTests(api: RecipeTestApi):
           StepTextEquals,
           'doing paygen.running paygen operations in parallel.making single payload (2)',
           'Unsigned IMAGE_TYPE_TEST stable-channel | Full (13425.90.0)'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -727,10 +690,6 @@ def GenTests(api: RecipeTestApi):
                       use_local_signing=True,
                       docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
                   ),
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax']),
-              ],
           }]),
       ),
       generate_payload_response(
@@ -755,19 +714,13 @@ def GenTests(api: RecipeTestApi):
               requests=[
                   {
                       'generation_request':
-                          api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                      'autoupdate_test_configs': [
-                          AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                               applicable_models=['woomax'])
-                      ]
+                          api.paygen_orchestration
+                          .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                   },
                   {
                       'generation_request':
-                          api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-                      'autoupdate_test_configs': [
-                          AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                               applicable_models=['woomax'])
-                      ]
+                          api.paygen_orchestration
+                          .EXAMPLE_GEN_REQUEST_FULL_DLC[0],
                   },
               ], max_concurrent_requests=1)),
       generate_payload_response(
@@ -789,9 +742,6 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'doing paygen.running paygen operations in parallel.making single payload (2)'
       ),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
       # api.post_process(post_process.DropExpectation),
   )
 
@@ -800,14 +750,13 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
           }])),
       # Our current set of failure reasons are all non-fatal minios exceptions,
       # pass bogus non-zero failure_reason for coverage.
       generate_payload_response(api, is_success=False, retcode=2,
                                 failure_reason=3),
       api.post_check(post_process.StepFailure, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
           'failure_reason': 'UNSPECIFIED',
           'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
@@ -821,14 +770,13 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
           }])),
       generate_payload_response(api, is_success=False, retcode=3,
                                 failure_reason=2),
       generate_payload_response(api, is_success=False, retcode=3,
                                 failure_reason=2, retry=1),
       api.post_check(post_process.StepFailure, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
       # api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -838,13 +786,12 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
           }])),
       generate_payload_response(
           api, is_success=False, retcode=2,
           failure_reason=GenerationResponse.NOT_MINIOS_COMPATIBLE),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
           'failure_reason': 'NOT_MINIOS_COMPATIBLE',
           'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
@@ -857,13 +804,12 @@ def GenTests(api: RecipeTestApi):
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
           }])),
       generate_payload_response(
           api, is_success=False, retcode=2,
           failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
           'failure_reason': 'MINIOS_COUNT_MISMATCH',
           'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
@@ -872,171 +818,12 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'no-testing',
-      api.properties(
-          PaygenProperties(requests=[{
-              'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0]
-          }])),
-      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
-                    stdout=api.raw_io.output(payload_json_data)),
-      api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
-      # api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'testing-not-model-specific',
-      api.gitiles.get_file(
-          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
-      api.properties(
-          PaygenProperties(
-              override_qs_account='custom_qs_account', requests=[{
-                  'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(src_version='123',
-                                           src_channel='canary-channel',
-                                           delta_type=common_pb2.OMAHA,
-                                           applicable_models=[]),
-                  ],
-              }])),
-      api.cros_storage.test_listing(
-          'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
-          full_payload_uri,
-      ),
-      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
-                    stdout=api.raw_io.output(payload_json_data)),
-      api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.MustRun,
-                     'testing paygen.buildbucket.schedule'),
-      api.post_check(
-          post_process.LogContains, 'testing paygen.buildbucket.schedule',
-          'request',
-          ['"key": "quota_account",', '"value": "custom_qs_account"']),
-      api.post_check(post_process.LogContains,
-                     'testing paygen.buildbucket.schedule', 'request',
-                     ['"key": "label-model",', '"value": "no-model-found"']),
-  )
-
-  yield api.test(
-      'with-testing',
-      api.gitiles.get_file(
-          api.paygen_testing.TEST_TARGET_TEST_REQUIREMENTS_DATA),
-      api.properties(
-          PaygenProperties(
-              override_qs_account='custom_qs_account', requests=[
-                  {
-                      'generation_request':
-                          api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-                      'autoupdate_test_configs': [
-                          AutoupdateTestConfig(src_version='123',
-                                               src_channel='canary-channel',
-                                               delta_type=common_pb2.OMAHA,
-                                               applicable_models=['woomax']),
-                          AutoupdateTestConfig(src_version='123',
-                                               src_channel='canary-channel',
-                                               delta_type=common_pb2.FSI,
-                                               applicable_models=['woomax']),
-                          AutoupdateTestConfig(src_version='123',
-                                               src_channel='canary-channel',
-                                               delta_type=common_pb2.OMAHA,
-                                               applicable_models=['other']),
-                      ]
-                  },
-              ])),
-      api.cros_storage.test_listing(
-          'doing paygen.setting up paygen test config.discover gs artifacts.gsutil list',
-          full_payload_uri,
-      ),
-      api.cros_storage.test_listing(
-          'doing paygen.setting up paygen test config.discover gs artifacts (2).gsutil list',
-          full_payload_uri,
-      ),
-      api.cros_storage.test_listing(
-          'doing paygen.setting up paygen test config.discover gs artifacts (3).gsutil list',
-          full_payload_uri,
-      ),
-      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
-                    stdout=api.raw_io.output(payload_json_data)),
-      api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.MustRun,
-                     'testing paygen.buildbucket.schedule'),
-      api.post_check(post_process.MustRun,
-                     'testing paygen.buildbucket.schedule (2)'),
-      # Checking for a third test request ensures we collapse by model,
-      # since there are two woomax test requests.
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule (3)'),
-      api.post_check(
-          post_process.LogContains, 'testing paygen.buildbucket.schedule',
-          'request',
-          ['"key": "quota_account",', '"value": "custom_qs_account"']),
-      api.post_check(
-          post_process.LogContains, 'testing paygen.buildbucket.schedule (2)',
-          'request',
-          ['"key": "quota_account",', '"value": "custom_qs_account"']),
-      api.post_check(post_process.LogContains,
-                     'testing paygen.buildbucket.schedule', 'request',
-                     ['"key": "label-model",', '"value": "other"']),
-      api.post_check(post_process.LogContains,
-                     'testing paygen.buildbucket.schedule (2)', 'request',
-                     ['"key": "label-model",', '"value": "woomax"']),
-      # api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'mismatched-payload-and-testing-config',
-      api.properties(
-          PaygenProperties(requests=[{
-              'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUESTS_DELTA_N2N[0],
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax'])
-              ]
-          }])),
-      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
-                    stdout=api.raw_io.output(payload_json_data)),
-      api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
-      # api.post_process(post_process.DropExpectation),
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'mistmatch-non-test-payload-with-testing-config',
-      api.properties(
-          PaygenProperties(requests=[{
-              'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_DELTA_DLC[0],
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax'])
-              ]
-          }])),
-      api.step_data('doing paygen.gsutil cat {}.json'.format(full_payload_uri),
-                    stdout=api.raw_io.output(payload_json_data)),
-      api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun,
-                     'testing paygen.buildbucket.schedule'),
-      # api.post_process(post_process.DropExpectation),
-      status='FAILURE',
-  )
-
-  yield api.test(
       'fail-attest-path-inside-chroot',
       api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
       api.properties(
           PaygenProperties(requests=[{
               'generation_request':
-                  api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
-              'autoupdate_test_configs': [
-                  AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                       applicable_models=['woomax']),
-              ],
+                  api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0],
           }])),
       generate_payload_response(
           api, versioned_artifacts=[{
@@ -1100,10 +887,6 @@ def GenTests(api: RecipeTestApi):
                           verify=True,
                           dryrun=True,
                       ),
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax']),
-                  ],
               }], use_split_paygen=True),
       ),
       *generate_split_payload_response(
@@ -1139,13 +922,12 @@ def GenTests(api: RecipeTestApi):
           PaygenProperties(
               requests=[{
                   'generation_request':
-                      api.paygen_testing.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+                      api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
               }], use_split_paygen=True)),
       *generate_split_payload_response(
           api, retcode=2,
           failure_reason=GenerationResponse.MINIOS_COUNT_MISMATCH),
       api.post_check(post_process.MustRun, 'doing paygen'),
-      api.post_check(post_process.DoesNotRun, 'testing paygen'),
       api.post_check(post_process.PropertyEquals, 'failure_reasons', [{
           'failure_reason': 'MINIOS_COUNT_MISMATCH',
           'payload': 'DLC (termina-dlc) stable-channel | Full (13425.90.0)'
@@ -1169,10 +951,6 @@ def GenTests(api: RecipeTestApi):
                           use_local_signing=True,
                           docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
                       ),
-                  'autoupdate_test_configs': [
-                      AutoupdateTestConfig(delta_type=common_pb2.OMAHA,
-                                           applicable_models=['woomax']),
-                  ],
               }], use_split_paygen=True),
       ),
       *generate_split_payload_response(

@@ -96,7 +96,7 @@
   * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
   * [overlayfs](#recipe_modules-overlayfs) &mdash; API for working with OverlayFS mounts (the Linux 'overlay' filesystem).
   * [paygen_orchestration](#recipe_modules-paygen_orchestration) &mdash; API for orchestrating payload generation.
-  * [paygen_testing](#recipe_modules-paygen_testing) &mdash; API for working with Paygen testing.
+  * [paygen_testing](#recipe_modules-paygen_testing) &mdash; API for working with Paygen.
   * [phosphorus](#recipe_modules-phosphorus)
   * [portage](#recipe_modules-portage) &mdash; APIs for CrOS Portage.
   * [pupr](#recipe_modules-pupr) &mdash; APIs for PUpr.
@@ -360,7 +360,6 @@
   * [cros_release:examples/full](#recipes-cros_release_examples_full)
   * [cros_release:examples/set_release_qs_account](#recipes-cros_release_examples_set_release_qs_account)
   * [cros_release:tests/check_buildspec](#recipes-cros_release_tests_check_buildspec)
-  * [cros_release:tests/get_au_testing_models](#recipes-cros_release_tests_get_au_testing_models)
   * [cros_release:tests/override_channels](#recipes-cros_release_tests_override_channels)
   * [cros_release:tests/util](#recipes-cros_release_tests_util)
   * [cros_release_config:examples/full](#recipes-cros_release_config_examples_full)
@@ -638,13 +637,9 @@
   * [paygen_orchestration:examples/get_n2n_requests](#recipes-paygen_orchestration_examples_get_n2n_requests)
   * [paygen_orchestration:examples/run_paygen_builders](#recipes-paygen_orchestration_examples_run_paygen_builders)
   * [paygen_orchestration:tests/batch_paygen_request_dicts_batching](#recipes-paygen_orchestration_tests_batch_paygen_request_dicts_batching)
-  * [paygen_orchestration:tests/create_au_test_configs](#recipes-paygen_orchestration_tests_create_au_test_configs)
   * [paygen_orchestration:tests/verify_paygen_timeout](#recipes-paygen_orchestration_tests_verify_paygen_timeout)
   * [paygen_orchestrator](#recipes-paygen_orchestrator) &mdash; Recipe for orchestrating ChromeOS payloads (AU deltas etc).
   * [paygen_testing:examples/create_paygen_build_report](#recipes-paygen_testing_examples_create_paygen_build_report)
-  * [paygen_testing:examples/schedule_au_tests](#recipes-paygen_testing_examples_schedule_au_tests)
-  * [paygen_testing:examples/test_config](#recipes-paygen_testing_examples_test_config)
-  * [paygen_testing:tests/set_up_paygen_test_configs](#recipes-paygen_testing_tests_set_up_paygen_test_configs) &mdash; Tests to verify paygen_testing.
   * [phosphorus:examples/build_parallels_image](#recipes-phosphorus_examples_build_parallels_image)
   * [phosphorus:examples/full](#recipes-phosphorus_examples_full)
   * [portage:tests/portage_stats](#recipes-portage_tests_portage_stats)
@@ -3837,7 +3832,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#610)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#574)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3845,20 +3840,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_au\_testing\_models](/recipe_modules/cros_release/api.py#546)(self, fsi=False):**
-
-Determine which models are configured to run autoupdate tests.
-
-TODO(b/223252953): Filter down to models that are available in the lab.
-
-Args:
-  fsi (bool): If True, then return all models which should run autoupdate
-    tests for FSI images, which require broader testing than non-FSI.
-
-Returns:
-  List[str]: The names of each model that should run paygen tests.
-
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#574)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#538)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3870,7 +3852,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#626)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#590)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3893,7 +3875,7 @@ Return:
 
 Return the gitiles commit used for ResultDB as created by this module, or None.
 
-&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#451)(self, override_qs_account: str=None, use_split_paygen: bool=False):**
+&mdash; **def [run\_payload\_generation](/recipe_modules/cros_release/api.py#451)(self, use_split_paygen: bool=False):**
 
 Run the generation of release payloads using the context of a build.
 
@@ -3902,14 +3884,13 @@ finish. This function assumes that it is run after a new release image has
 been built.
 
 Args:
-  override_qs_account: QS Account to use instead of whatever is configured.
   use_split_paygen: Whether to use the new split paygen flow.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#666)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#630)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#674)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#638)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 
@@ -5136,7 +5117,7 @@ Functions for end-to-end test planning.
 
 A module for generating and parsing test plans.
 
-&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#136)(self, builds, gerrit_changes, manifest_commit, name=None):**
+&mdash; **def [generate](/recipe_modules/cros_test_plan/api.py#94)(self, builds, gerrit_changes, manifest_commit, name=None):**
 
 Generate test plan.
 
@@ -5150,7 +5131,7 @@ Args:
 Returns:
   GenerateTestPlanResponse of test plan.
 
-&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#77)(self, builders=None, paygen=False):**
+&mdash; **def [generate\_target\_test\_requirements\_config](/recipe_modules/cros_test_plan/api.py#42)(self, builders=None):**
 
 Generate target test requirements config in config-internal using
   ./board_config/generate_test_config. Assumes config-internal is
@@ -5161,25 +5142,11 @@ Args:
     e.g. coral-release-main or staging-kevin-release-main. If not specified,
     either the invoking builder or its children (if the invoking builder name
     contains 'orchestrator') will be used.
-  paygen (bool): If true, generate paygen testing requirements instead of
-    standard per-build-target test requirements.
 
 Returns:
   JSON structure of target test requirements or None.
 
-&mdash; **def [get\_target\_test\_requirements](/recipe_modules/cros_test_plan/api.py#42)(self, builders=None):**
-
-Fetch target test requirements config.
-
-Args:
-  builders (list[str]): optional list of builder names to generate config for,
-    e.g. coral-release-main or staging-kevin-release-main. If not specified,
-    either the invoking builder or its children (if the invoking builder name
-    contains 'orchestrator') will be used.
-Returns:
-  JSON structure of target test requirements.
-
-&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#225)(self, test_plan):**
+&mdash; **def [get\_test\_plan\_summary](/recipe_modules/cros_test_plan/api.py#183)(self, test_plan):**
 
 Return a mapping of display name to criticality.
 
@@ -9153,28 +9120,13 @@ Args:
 
 API for orchestrating payload generation. Used by paygen_orchestrator.
 
-#### **class [PaygenOrchestrationApi](/recipe_modules/paygen_orchestration/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PaygenOrchestrationApi](/recipe_modules/paygen_orchestration/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen orchestration steps.
 
-&mdash; **def [create\_au\_test\_configs](/recipe_modules/paygen_orchestration/api.py#394)(self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig], au_testing_models: List[str], au_fsi_testing_models: List[str], delta_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG, full_test_override: PaygenOrchestratorProperties.PayloadTestsOverride=PaygenOrchestratorProperties.RESPECT_CONFIG):**
+&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#102)(self):**
 
-Determine which hardware tests need to be run for the given payload.
-
-Args:
-  gen_req: Proto defining the payload-to-be for which to find tests.
-  configured_payloads: Configs for the payloads we are generating and testing.
-  au_testing_models: The au testing models configured.
-  au_fsi_testing_models: The au fsi testing models configured.
-  delta_test_override: Option to override the configured delta payload testing policy.
-  full_test_override: Option to override the configured full payload testing policy.
-
-Returns:
-  Test configs that should be run for the requested payload.
-
-&emsp; **@property**<br>&mdash; **def [default\_delta\_types](/recipe_modules/paygen_orchestration/api.py#103)(self):**
-
-&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#107)(self, builder_name: str, \*\*kwargs):**
+&mdash; **def [get\_builder\_configs](/recipe_modules/paygen_orchestration/api.py#106)(self, builder_name: str, \*\*kwargs):**
 
 Return the configs matching the query or [].
 
@@ -9207,7 +9159,7 @@ Returns:
    {...}
   ]
 
-&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#196)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
+&mdash; **def [get\_delta\_requests](/recipe_modules/paygen_orchestration/api.py#195)(self, payload_def: PaygenConfig, src_artifacts: List[Image], tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Examine def, source, and target and return list(GenerationRequests).
 
@@ -9228,7 +9180,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#308)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
+&mdash; **def [get\_full\_requests](/recipe_modules/paygen_orchestration/api.py#307)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Get the configured full requests for a set of artifacts.
 
@@ -9243,7 +9195,7 @@ Args:
 Returns:
   A completed list[GenerationRequest] or [].
 
-&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#148)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
+&mdash; **def [get\_n2n\_requests](/recipe_modules/paygen_orchestration/api.py#147)(self, tgt_artifacts: List[Image], bucket: str, verify: bool, dryrun: bool, minios: bool=True, keyset: str=None):**
 
 Generate a N2N testing payloads.
 
@@ -9262,11 +9214,11 @@ Args:
 Returns:
   A list[GenerationRequest] or [].
 
-&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#54)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_children\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#53)(self):**
 
 Get the currently configured paygen timeout in seconds.
 
-&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#59)(self):**
+&emsp; **@property**<br>&mdash; **def [paygen\_orchestrator\_timeout\_sec](/recipe_modules/paygen_orchestration/api.py#58)(self):**
 
 Get the currently configured paygen orchestrator timeout in seconds.
 
@@ -9275,13 +9227,12 @@ This contains the duration expected for paygen children.
 Returns
   The int max number of seconds the paygen orchestrator should take.
 
-&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#445)(self, paygen_reqs: List[PaygenProperties.PaygenRequest], override_qs_account: Optional[str]=None, paygen_mpa: Optional[bool]=False, use_split_paygen: bool=False):**
+&mdash; **def [run\_paygen\_builders](/recipe_modules/paygen_orchestration/api.py#393)(self, paygen_reqs: List[PaygenProperties.PaygenRequest], paygen_mpa: Optional[bool]=False, use_split_paygen: bool=False):**
 
 Launch paygen builders to generate payloads and run configured tests.
 
 Args:
   paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
-  override_qs_account: QS Account to use instead of whatever is configured.
   paygen_mpa: Use the MPA bot pool builder.
   use_split_paygen: Whether to use the new split paygen flow.
 
@@ -9289,22 +9240,16 @@ Returns:
   A list of completed builds.
 ### *recipe_modules* / [paygen\_testing](/recipe_modules/paygen_testing)
 
-[DEPS](/recipe_modules/paygen_testing/__init__.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/paygen_testing/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_version](#recipe_modules-cros_version), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [util](#recipe_modules-util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-API for working with Paygen testing. Used by paygen.py.
+API for working with Paygen. Used by paygen.py.
 
-#### **class [PaygenTestingApi](/recipe_modules/paygen_testing/api.py#326)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [PaygenTestingApi](/recipe_modules/paygen_testing/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for CrOS-specific paygen testing steps.
 
-&mdash; **def [create\_au\_test\_tagged\_requests](/recipe_modules/paygen_testing/api.py#626)(self, paygen_test_configs: List[PaygenTestConfig]):**
-
-Takes in paygen test configs and creates au test requests.
-
-This is its own method mainly for testing.
-
-&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#380)(self, req: PaygenProperties.PaygenRequest, payload_uri: str, recovery_key_version: Optional[int]=None):**
+&mdash; **def [create\_paygen\_build\_report\_payload](/recipe_modules/paygen_testing/api.py#51)(self, req: PaygenProperties.PaygenRequest, payload_uri: str, recovery_key_version: Optional[int]=None):**
 
 Prepare payload information for the release pubsub.
 
@@ -9316,67 +9261,6 @@ Args:
 
 Returns:
   A Payload containing payload information for the pubsub.
-
-&mdash; **def [create\_paygen\_test\_config](/recipe_modules/paygen_testing/api.py#461)(self, tgt_payload: Payload, delta_type: common_pb2.DeltaType, src_version: str=None, src_channel: str=None, applicable_models: List[str]=None, src_bucket: str=None):**
-
-Create a PaygenTestConfig for a test FullPayload or DeltaPayload.
-
-Args:
-  tgt_payload: The payload to be tested.
-  delta_type: The type of update we are doing with this payload.
-  src_version: The version of the image to test updating from
-    (e.g. '13373.0.0'). Required if the payload is a FullPayload, required
-    to be None if it's a DeltaPayload.
-  src_channel: The channel of the image to test updating from
-    (e.g. 'canary-channel'). Required if the payload is a FullPayload,
-    required to be None if it's a DeltaPayload.
-  applicable_models: A list of models that a paygen test should
-    run against.
-  src_bucket: A bucket to use as src_image bucket instead of pulling
-    bucket from the tgt. This is useful in environments where the bucket
-    being written to doesn't contain older images (i.e. in staging).
-
-Returns:
-  A PaygenTestConfig or None if no source payload exists or unsupported
-  Payload provided.
-
-&mdash; **def [override\_qs\_account](/recipe_modules/paygen_testing/api.py#351)(self, qs_account):**
-
-Overrides whatever QS account was set via properties
-
-&emsp; **@property**<br>&mdash; **def [qs\_account](/recipe_modules/paygen_testing/api.py#346)(self):**
-
-Returns the configured QS account.
-
-&mdash; **def [schedule\_au\_tests](/recipe_modules/paygen_testing/api.py#660)(self, paygen_test_configs: List[PaygenTestConfig]):**
-
-Schedule Paygen autoupdate (AU) tests.
-
-Create a cros_test_platform build request to launch AU tests. This
-schedules the ctp request per model. The reason to do this is because
-the full requests can be greater than the buildbucket input property
-size which is currently 1MB, see crbug.com/1336469.
-
-Args:
-  paygen_test_configs: A list of PaygenTestConfigs for which to schedule au_tests.
-
-Returns:
-  The scheduled buildbucket builds.
-
-&mdash; **def [set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/api.py#568)(self, request: PaygenProperties.PaygenRequest, artifacts: List[GenerationResponse.VersionedArtifact]):**
-
-Set up test configs for a paygen response, if applicable.
-
-Given a PaygenRequest and a GenerationResponse, determine if this payload
-should have testing applied and if so set up and return the test configs
-to be scheduled.
-
-Args:
-  request: request object to introspect.
-  artifacts: artifacts from payload generation.
-
-Returns:
-  List of paygen test configs to schedule.
 ### *recipe_modules* / [phosphorus](/recipe_modules/phosphorus)
 
 [DEPS](/recipe_modules/phosphorus/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -12168,7 +12052,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#134)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#133)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#74)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -13445,12 +13329,6 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_release/tests/check_buildspec.py#21)(api):**
-### *recipes* / [cros\_release:tests/get\_au\_testing\_models](/recipe_modules/cros_release/tests/get_au_testing_models.py)
-
-[DEPS](/recipe_modules/cros_release/tests/get_au_testing_models.py#13): [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
-
-
-&mdash; **def [RunSteps](/recipe_modules/cros_release/tests/get_au_testing_models.py#28)(api, properties):**
 ### *recipes* / [cros\_release:tests/override\_channels](/recipe_modules/cros_release/tests/override_channels.py)
 
 [DEPS](/recipe_modules/cros_release/tests/override_channels.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15324,22 +15202,22 @@ installer, shrink the ROOT-B partition down to a single block.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#19)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#39): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/paygen.py#38): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [DoRunSteps](/recipes/paygen.py#91)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#90)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [RunSteps](/recipes/paygen.py#76)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [RunSteps](/recipes/paygen.py#75)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_failure\_reason](/recipes/paygen.py#393)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
+&mdash; **def [get\_failure\_reason](/recipes/paygen.py#380)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
 
 Get the failure reason from the given response, if any.
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#404)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#391)(resp: GenerationResponse):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#283)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#270)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
@@ -15347,9 +15225,9 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#418)(api: RecipeApi, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#405)(api: RecipeApi, resp: GenerationResponse):**
 
-&mdash; **def [split\_generation\_request](/recipes/paygen.py#356)(req: GenerationRequest):**
+&mdash; **def [split\_generation\_request](/recipes/paygen.py#343)(req: GenerationRequest):**
 
 Split a GenerationRequest into the corresponding split paygen requests.
 
@@ -15399,12 +15277,6 @@ Returns:
 
 
 &mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/batch_paygen_request_dicts_batching.py#25)(api: RecipeApi):**
-### *recipes* / [paygen\_orchestration:tests/create\_au\_test\_configs](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py)
-
-[DEPS](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#20): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/create_au_test_configs.py#30)(api: RecipeApi):**
 ### *recipes* / [paygen\_orchestration:tests/verify\_paygen\_timeout](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py)
 
 [DEPS](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#13): [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -15425,26 +15297,6 @@ Recipe for orchestrating ChromeOS payloads (AU deltas etc).
 
 
 &mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py#30)(api: RecipeApi):**
-### *recipes* / [paygen\_testing:examples/schedule\_au\_tests](/recipe_modules/paygen_testing/examples/schedule_au_tests.py)
-
-[DEPS](/recipe_modules/paygen_testing/examples/schedule_au_tests.py#19): [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/schedule_au_tests.py#27)(api: RecipeApi):**
-### *recipes* / [paygen\_testing:examples/test\_config](/recipe_modules/paygen_testing/examples/test_config.py)
-
-[DEPS](/recipe_modules/paygen_testing/examples/test_config.py#18): [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/paygen_testing/examples/test_config.py#33)(api: RecipeApi, properties: TestPaygenProperties):**
-### *recipes* / [paygen\_testing:tests/set\_up\_paygen\_test\_configs](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py)
-
-[DEPS](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py#14): [cros\_storage](#recipe_modules-cros_storage), [gitiles](#recipe_modules-gitiles), [paygen\_testing](#recipe_modules-paygen_testing), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-Tests to verify paygen_testing.set_up_paygen_test_configs.
-
-&mdash; **def [RunSteps](/recipe_modules/paygen_testing/tests/set_up_paygen_test_configs.py#39)(api: RecipeApi, properties: SetUpPaygenTestRequest):**
 ### *recipes* / [phosphorus:examples/build\_parallels\_image](/recipe_modules/phosphorus/examples/build_parallels_image.py)
 
 [DEPS](/recipe_modules/phosphorus/examples/build_parallels_image.py#9): [phosphorus](#recipe_modules-phosphorus), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

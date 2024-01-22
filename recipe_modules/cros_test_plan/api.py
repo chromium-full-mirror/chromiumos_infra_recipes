@@ -39,43 +39,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._properties = properties
 
-  def get_target_test_requirements(self, builders=None):
-    """Fetch target test requirements config.
-
-    Args:
-      builders (list[str]): optional list of builder names to generate config for,
-        e.g. coral-release-main or staging-kevin-release-main. If not specified,
-        either the invoking builder or its children (if the invoking builder name
-        contains 'orchestrator') will be used.
-    Returns:
-      JSON structure of target test requirements.
-    """
-    if self._properties.generate_target_test_requirements_from_source:
-      return self.generate_target_test_requirements_config(builders=builders)
-    # TODO(b/209487309): Remove this logic -- we know all callers of this
-    # function (just paygen) and we'd like to switch to generation anyways.
-    with self.m.step.nest('fetch target test requirements file'):
-      source_gitiles_repo = (
-          str(self._properties.source_gitiles_repo)
-          if self._properties.source_gitiles_repo else 'chromeos/infra/config')
-      source_gitiles_branch = (
-          str(self._properties.source_gitiles_branch)
-          if self._properties.source_gitiles_branch else 'main')
-      target_test_requirements_path = (
-          str(self._properties.target_test_requirements_path)
-          if self._properties.target_test_requirements_path else
-          'testingconfig/generated/target_test_requirements.binaryproto')
-
-      data = self.m.gitiles.get_file(
-          'chrome-internal.googlesource.com', source_gitiles_repo,
-          target_test_requirements_path,
-          ref=self.m.git.get_branch_ref(source_gitiles_branch), public=False)
-      if data:
-        return json.loads(data)
-      return None
-
-  def generate_target_test_requirements_config(self, builders=None,
-                                               paygen=False):
+  def generate_target_test_requirements_config(self, builders=None):
     """Generate target test requirements config in config-internal using
       ./board_config/generate_test_config. Assumes config-internal is
       checked out at `src_state.workspace_path/CONFIG_INTERNAL_CHECKOUT`.
@@ -85,8 +49,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         e.g. coral-release-main or staging-kevin-release-main. If not specified,
         either the invoking builder or its children (if the invoking builder name
         contains 'orchestrator') will be used.
-      paygen (bool): If true, generate paygen testing requirements instead of
-        standard per-build-target test requirements.
 
     Returns:
       JSON structure of target test requirements or None.
@@ -108,8 +70,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         with self.m.context(
             cwd=self.m.src_state.workspace_path.join(CONFIG_INTERNAL_CHECKOUT)):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]
-          if paygen:
-            cmd.append('--paygen')
 
           # If --branch is supported on this branch, use it.
           # TODO(b/262388770): Maybe in many years we can do this
@@ -125,8 +85,6 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
               cmd.extend(['--branch', branch[len('refs/heads/'):]])
 
           def test_stdout():
-            if paygen:
-              return json.dumps({builder: {} for builder in builders})
             return ''
 
           data = self.m.easy.stdout_step('generate_test_config', cmd,

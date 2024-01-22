@@ -22,7 +22,6 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import ScheduleBuildRequest
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from PB.recipes.chromeos.paygen import PaygenProperties
 from PB.recipes.chromeos.paygen_orchestrator import PaygenOrchestratorProperties
 from RECIPE_MODULES.chromeos.cros_storage.api import Image
@@ -391,61 +390,9 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             ))
     return reqs
 
-  def create_au_test_configs(
-      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
-      au_testing_models: List[str], au_fsi_testing_models: List[str],
-      delta_test_override: PaygenOrchestratorProperties
-      .PayloadTestsOverride = PaygenOrchestratorProperties.RESPECT_CONFIG,
-      full_test_override: PaygenOrchestratorProperties
-      .PayloadTestsOverride = PaygenOrchestratorProperties.RESPECT_CONFIG
-  ) -> List[AutoupdateTestConfig]:
-    """Determine which hardware tests need to be run for the given payload.
-
-    Args:
-      gen_req: Proto defining the payload-to-be for which to find tests.
-      configured_payloads: Configs for the payloads we are generating and testing.
-      au_testing_models: The au testing models configured.
-      au_fsi_testing_models: The au fsi testing models configured.
-      delta_test_override: Option to override the configured delta payload testing policy.
-      full_test_override: Option to override the configured full payload testing policy.
-
-    Returns:
-      Test configs that should be run for the requested payload.
-    """
-    # Skip testing entirely for minios.
-    if gen_req.minios:
-      return []
-    # Skip testing for images that aren't unsigned.
-    if gen_req.WhichOneof('tgt_image_oneof') != 'tgt_unsigned_image':
-      return []
-    # Skip testing for images that aren't test images.
-    if gen_req.tgt_unsigned_image.image_type != common_pb2.IMAGE_TYPE_TEST:
-      return []
-
-    if gen_req.full_update:
-      if full_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-        return []
-      force_tests = full_test_override == \
-          PaygenOrchestratorProperties.FORCE_TESTS
-      return self._get_au_test_configs_for_full_payload(gen_req,
-                                                        configured_payloads,
-                                                        au_testing_models,
-                                                        au_fsi_testing_models,
-                                                        force_tests=force_tests)
-    if delta_test_override == PaygenOrchestratorProperties.FORCE_NO_TESTS:
-      return []
-    force_tests = delta_test_override == \
-        PaygenOrchestratorProperties.FORCE_TESTS
-    return self._get_au_test_configs_for_delta_payload(gen_req,
-                                                       configured_payloads,
-                                                       au_testing_models,
-                                                       au_fsi_testing_models,
-                                                       force_tests=force_tests)
-
   def run_paygen_builders(
       self,
       paygen_reqs: List[PaygenProperties.PaygenRequest],
-      override_qs_account: Optional[str] = None,
       paygen_mpa: Optional[bool] = False,
       use_split_paygen: bool = False,
   ) -> List[Build]:
@@ -453,7 +400,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
 
     Args:
       paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
-      override_qs_account: QS Account to use instead of whatever is configured.
       paygen_mpa: Use the MPA bot pool builder.
       use_split_paygen: Whether to use the new split paygen flow.
 
@@ -461,15 +407,13 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       A list of completed builds.
     """
     paygen_request_dicts = [
-        self._create_paygen_request_dict(paygen_req.generation_request,
-                                         paygen_req.autoupdate_test_configs)
+        self._create_paygen_request_dict(paygen_req.generation_request)
         for paygen_req in paygen_reqs
     ]
     batches = self._batch_paygen_request_dicts(paygen_request_dicts)
     schedule_requests = [
-        self._create_bb_schedule_request(
-            batch, override_qs_account=override_qs_account,
-            paygen_mpa=paygen_mpa, use_split_paygen=use_split_paygen)
+        self._create_bb_schedule_request(batch, paygen_mpa=paygen_mpa,
+                                         use_split_paygen=use_split_paygen)
         for batch in batches
     ]
 
@@ -540,128 +484,21 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       for (key, value) in title_to_url_dict.items():
         presentation.links[key] = value
 
-  def _get_au_test_configs_for_full_payload(
-      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
-      au_testing_models: List[str], au_fsi_testing_models: List[str],
-      force_tests: bool = False) -> List[AutoupdateTestConfig]:
-    """Create AutoupdateTestConfigs for a test-image's full paygen request.
-
-    Args:
-      gen_req: The delta test payload GenerationRequest for which to find tests and schedule.
-      configured_payloads: Configs for the payloads we aregenerating and testing.
-      au_testing_models: The au testing models configured.
-      au_fsi_testing_models: The au fsi testing models configured.
-      force_tests: Whether to override the configured full payload testing policy.
-
-    Returns:
-      List[AutoupdateTestConfig] corresponding to the GenerationRequest.
-    """
-    # Get N2N test.
-    test_configs = [
-        AutoupdateTestConfig(
-            src_version=gen_req.tgt_unsigned_image.build.version,
-            src_channel=gen_req.tgt_unsigned_image.build.channel,
-            delta_type=common_pb2.N2N, applicable_models=au_testing_models)
-    ]
-    # Get tests from matched configured payloads.
-    matching_cfgs = self._match_gen_req_to_configured_payloads(
-        gen_req, configured_payloads)
-    for cfg in matching_cfgs:
-      if cfg.get('full_payload_tests', False) or force_tests:
-        fsi = cfg.get('delta_type', '') == 'FSI'
-        applicable_models = au_fsi_testing_models if fsi else au_testing_models
-        test_configs.append(
-            AutoupdateTestConfig(
-                src_version=cfg['chrome_os_version'],
-                src_channel=cfg['channel'] + '-channel',
-                delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
-                applicable_models=applicable_models))
-    return test_configs
-
-  def _get_au_test_configs_for_delta_payload(
-      self, gen_req: GenerationRequest, configured_payloads: List[PaygenConfig],
-      au_testing_models: List[str], au_fsi_testing_models: List[str],
-      force_tests: bool = False) -> List[AutoupdateTestConfig]:
-    """Create AutoupdateTestConfigs for a test-image's delta paygen request.
-
-    Args:
-      gen_req: The full test payload GenerationRequest for which to find tests and schedule.
-      configured_payloads: Configs for the payloads we are generating and testing.
-      au_testing_models: The au testing models configured.
-      au_fsi_testing_models: The au fsi testing models configured.
-      force_tests: Whether to override the configured full payload testing policy.
-
-    Returns:
-      List[AutoupdateTestConfig] corresponding to the GenerationRequest.
-    """
-    test_configs = []
-    # Get N2N test.
-    if gen_req.tgt_unsigned_image == gen_req.src_unsigned_image:
-      test_configs.append(
-          AutoupdateTestConfig(delta_type=common_pb2.N2N,
-                               applicable_models=au_testing_models))
-    # Get tests from matched configured payloads.
-    matching_cfgs = self._match_gen_req_to_configured_payloads(
-        gen_req, configured_payloads)
-    for cfg in matching_cfgs:
-      if cfg['delta_payload_tests'] or force_tests:
-        fsi = cfg.get('delta_type', '') == 'FSI'
-        applicable_models = au_fsi_testing_models if fsi else au_testing_models
-        test_configs.append(
-            AutoupdateTestConfig(
-                delta_type=common_pb2.DeltaType.Value(cfg['delta_type']),
-                applicable_models=applicable_models))
-    return test_configs
-
-  def _match_gen_req_to_configured_payloads(
-      self, gen_req: GenerationRequest,
-      configured_payloads: List[PaygenConfig]) -> List[PaygenConfig]:
-    """Determine which paygen configs correlate with the GenerationRequest.
-
-    Match on channel and (for delta payloads) source image version.
-
-    Args:
-      gen_req: The test payload GenerationRequest for which to find tests and schedule.
-      configured_payloads: Configs for the payloads we are generating and testing.
-
-    Returns:
-      Configs matching the GenerationRequest.
-    """
-    tgt_img = getattr(gen_req, gen_req.WhichOneof('tgt_image_oneof'))
-    src_img = getattr(gen_req, gen_req.WhichOneof('src_image_oneof'))
-    cfgs = [
-        cfg for cfg in configured_payloads
-        if self.m.cros_release_util.match_channels(cfg['channel'],
-                                                   tgt_img.build.channel)
-    ]
-    if not gen_req.full_update:
-      cfgs = [
-          cfg for cfg in cfgs
-          if cfg['chrome_os_version'] == src_img.build.version
-      ]
-    return cfgs
-
   @staticmethod
   def _create_paygen_request_dict(
-      generation_request: GenerationRequest,
-      test_requests: List[AutoupdateTestConfig] = None) -> Dict[str, dict]:
+      generation_request: GenerationRequest) -> Dict[str, dict]:
     """Create a dict of a PaygenRequest for a Paygen builder.
 
     Args:
       generation_request: Request to generate the desired payload.
-      test_requests: A list of tests to perform with the generated payload.
 
     Returns:
       A dict of the PaygenRequest for a Paygen builder of the provided
       generation request.
     """
-    test_requests = test_requests or []
     return {
         'generation_request':
             MessageToDict(generation_request),
-        'autoupdate_test_configs': [
-            MessageToDict(x) for x in test_requests or {}
-        ]
     }
 
   def _batch_paygen_request_dicts(
@@ -762,7 +599,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
   def _create_bb_schedule_request(
       self,
       paygen_requests: List[PaygenProperties.PaygenRequest],
-      override_qs_account: Optional[str] = None,
       paygen_mpa: Optional[bool] = False,
       use_split_paygen: Optional[bool] = False,
   ) -> ScheduleBuildRequest:
@@ -770,7 +606,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
 
     Args:
       paygen_requests: Requests to generate the desired payload.
-      override_qs_account: QS Account to use instead of whatever is configured.
       paygen_mpa: Use the MPA bot pool builder.
       use_split_paygen: Whether to use the new split paygen flow.
 
@@ -788,8 +623,6 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
     if paygen_mpa:
       builder = 'staging-paygen-mpa' if is_staging else 'paygen-mpa'
     props = {'requests': paygen_requests}
-    if override_qs_account:
-      props['override_qs_account'] = override_qs_account
     if use_split_paygen:
       props['use_split_paygen'] = use_split_paygen
     return self.m.buildbucket.schedule_request(

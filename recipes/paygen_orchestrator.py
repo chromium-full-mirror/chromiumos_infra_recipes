@@ -53,8 +53,6 @@ PROPERTIES = PaygenOrchestratorProperties
 def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Parse all properties, defaulting the values if not set.
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
-  au_testing_models = properties.au_testing_models or []
-  au_fsi_testing_models = properties.au_fsi_testing_models or []
   paygen_mpa = properties.paygen_mpa or False
   minios = properties.minios
   keyset = properties.keyset
@@ -171,18 +169,13 @@ def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Determine hardware tests to run for each payload.
   paygen_reqs = []
   for gen_req in gen_reqs:
-    au_test_configs = api.paygen_orchestration.create_au_test_configs(
-        gen_req, configured_payloads, au_testing_models, au_fsi_testing_models,
-        delta_test_override=properties.delta_payload_test_override,
-        full_test_override=properties.full_payload_test_override)
     paygen_reqs.append(
-        PaygenProperties.PaygenRequest(generation_request=gen_req,
-                                       autoupdate_test_configs=au_test_configs))
+        PaygenProperties.PaygenRequest(generation_request=gen_req))
 
   # Schedule child builders, and wait for them to finish.
   res = api.paygen_orchestration.run_paygen_builders(
-      paygen_reqs, override_qs_account=properties.override_qs_account,
-      paygen_mpa=paygen_mpa, use_split_paygen=properties.use_split_paygen)
+      paygen_reqs, paygen_mpa=paygen_mpa,
+      use_split_paygen=properties.use_split_paygen)
 
   # Present results.
   with api.step.nest('results') as pres:
@@ -541,28 +534,6 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_collect_output(
           [paygen_child_data(x) for x in range(23)],
           'running children.collect'),
-  )
-
-  yield api.test(
-      'override-qs-account',
-      get_props(override_qs_account='custom_qs_account'),
-      good_paygen_cfg,
-      api.buildbucket.build(build_message),
-      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
-                                    'discover gs artifacts.gsutil list'),
-      api.cros_storage.test_listing('examining beta-channel.source artifacts.'
-                                    'discover gs artifacts (2).gsutil list'),
-      api.cros_storage.test_listing(
-          'examining beta-channel.target artifacts.'
-          'discover gs artifacts.gsutil list',
-          test_data=api.cros_storage.TEST_TGT_LS_OUTPUT_TEXT),
-      api.post_check(post_process.MustRun, 'pairing artifacts'),
-      api.post_check(post_process.MustRun, 'results'),
-      api.buildbucket.simulated_collect_output(
-          [paygen_child_data(x) for x in range(23)],
-          'running children.collect'),
-      api.post_check(post_process.LogContains, 'running children.schedule',
-                     'request', ['"override_qs_account": "custom_qs_account"']),
   )
 
   yield api.test(

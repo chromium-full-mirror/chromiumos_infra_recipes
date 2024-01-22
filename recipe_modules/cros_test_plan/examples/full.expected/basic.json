@@ -5,71 +5,6 @@
   },
   {
     "cmd": [],
-    "name": "fetch target test requirements file"
-  },
-  {
-    "cmd": [],
-    "name": "fetch target test requirements file.fetch gitiles file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@data@{@@@",
-      "@@@STEP_LOG_LINE@data@    \"perTargetTestRequirements\": [@@@",
-      "@@@STEP_LOG_LINE@data@        {@@@",
-      "@@@STEP_LOG_LINE@data@            \"targetCriteria\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"buildTarget\": \"atlas-kernelnext\",@@@",
-      "@@@STEP_LOG_LINE@data@                \"builderName\": \"atlas-kernelnext-release-main\"@@@",
-      "@@@STEP_LOG_LINE@data@            },@@@",
-      "@@@STEP_LOG_LINE@data@            \"hwTestCfg\": {@@@",
-      "@@@STEP_LOG_LINE@data@                \"hwTest\": [@@@",
-      "@@@STEP_LOG_LINE@data@                    {@@@",
-      "@@@STEP_LOG_LINE@data@                        \"common\": {@@@",
-      "@@@STEP_LOG_LINE@data@                            \"displayName\": \"atlas-kernelnext-release-main.hw.bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                            \"critical\": false,@@@",
-      "@@@STEP_LOG_LINE@data@                            \"testSuiteGroups\": [@@@",
-      "@@@STEP_LOG_LINE@data@                                {@@@",
-      "@@@STEP_LOG_LINE@data@                                    \"testSuiteGroup\": \"default-tast-suites\"@@@",
-      "@@@STEP_LOG_LINE@data@                                }@@@",
-      "@@@STEP_LOG_LINE@data@                            ]@@@",
-      "@@@STEP_LOG_LINE@data@                        },@@@",
-      "@@@STEP_LOG_LINE@data@                        \"suite\": \"bvt-tast-cq\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"skylabBoard\": \"atlas\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"hwTestSuiteType\": \"TAST\",@@@",
-      "@@@STEP_LOG_LINE@data@                        \"pool\": \"DUT_POOL_QUOTA\"@@@",
-      "@@@STEP_LOG_LINE@data@                    }@@@",
-      "@@@STEP_LOG_LINE@data@                 ]@@@",
-      "@@@STEP_LOG_LINE@data@            }@@@",
-      "@@@STEP_LOG_LINE@data@        }@@@",
-      "@@@STEP_LOG_LINE@data@    ]@@@",
-      "@@@STEP_LOG_LINE@data@}@@@",
-      "@@@STEP_LOG_END@data@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-b",
-      "[HOME]/.git-credential-cache/cookie",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "fetch target test requirements file.fetch gitiles file.curl https://chrome-internal.googlesource.com/chromeos/infra/config/+/refs/heads/main/testingconfig/generated/target_test_requirements.binaryproto?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "generate target test requirements"
   },
   {
@@ -137,8 +72,7 @@
   {
     "cmd": [
       "./board_config/generate_test_config",
-      "amd64-generic-cq,arm-generic-cq,arm64-generic-cq,arm-generic-pointless-cq,atlas-cq,cave-cq",
-      "--paygen"
+      "amd64-generic-cq,arm-generic-cq,arm64-generic-cq,arm-generic-pointless-cq,atlas-cq,cave-cq"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {

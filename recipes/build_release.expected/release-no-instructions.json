@@ -4286,7 +4286,6 @@
     "cmd": [
       "./board_config/generate_test_config",
       "kukui-release-main",
-      "--paygen",
       "--branch",
       "main"
     ],

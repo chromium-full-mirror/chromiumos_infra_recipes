@@ -22,7 +22,6 @@ from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
 from PB.recipe_modules.chromeos.paygen_orchestration.examples.test import GetRequestTestInputProperties
-from PB.recipes.chromeos.paygen import AutoupdateTestConfig
 from recipe_engine import recipe_test_api
 from recipe_engine.recipe_test_api import TestData
 
@@ -226,29 +225,6 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
     return ret
 
   @property
-  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_RECOVERY(self
-                                                 ) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            full_update=True,
-            tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=True,
-            chroot=self.m.cros_sdk.chroot(),
-        ),
-        GenerationRequest(
-            full_update=True,
-            tgt_unsigned_image=self.UNSIGNED_RECOVERY_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=True,
-            chroot=self.m.cros_sdk.chroot(),
-            minios=True,
-        )
-    ]
-
-  @property
   def EXAMPLE_GEN_REQUEST_FULL_DLC(self) -> List[GenerationRequest]:
     return [
         GenerationRequest(
@@ -306,43 +282,6 @@ class PaygenOrchestrationTestApi(recipe_test_api.RecipeTestApi):
       'blacktip360', 'blacktiplte', 'babymega', 'robo', 'nasher', 'blacktip',
       'robo360', 'rabbid', 'babytiger', 'epaulette'
   ]
-
-  # Sample list of models that might be configured in GoldenEye for AU testing.
-  # Compared to ALL_EXPORTED_MODELS, excludes the following:
-  # babymega, blacktip360, blacktiplte, bruce, lava, nasher, robo360, whitetip.
-  AU_TESTING_MODELS = [
-      'astronaut', 'nasher360', 'blue', 'santa', 'robo', 'blacktip', 'rabbid',
-      'babytiger', 'epaulette'
-  ]
-
-  EXAMPLE_TEST_REQUEST_DELTA_OMAHA = AutoupdateTestConfig(
-      delta_type='OMAHA',
-      applicable_models=AU_TESTING_MODELS,
-  )
-
-  EXAMPLE_TEST_REQUEST_DELTA_FSI = AutoupdateTestConfig(
-      delta_type='FSI',
-      applicable_models=ALL_EXPORTED_MODELS,
-  )
-
-  EXAMPLE_TEST_REQUEST_FULL_N2N = AutoupdateTestConfig(
-      src_version=UNSIGNED_TGT.build.version,
-      src_channel=UNSIGNED_TGT.build.channel,
-      delta_type='N2N',
-      applicable_models=AU_TESTING_MODELS,
-  )
-
-  EXAMPLE_TEST_REQUEST_FULL_OMAHA = AutoupdateTestConfig(
-      src_version='13421.89.0',
-      src_channel='stable-channel',
-      delta_type='OMAHA',
-      applicable_models=AU_TESTING_MODELS,
-  )
-
-  EXAMPLE_TEST_REQUEST_DELTA_N2N = AutoupdateTestConfig(
-      delta_type='N2N',
-      applicable_models=AU_TESTING_MODELS,
-  )
 
   BASIC_TEST_PROPS = {
       'payload_cfg': EXAMPLE_SINGLE_PAYGEN_CONFIG,

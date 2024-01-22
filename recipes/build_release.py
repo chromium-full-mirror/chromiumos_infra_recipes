@@ -121,8 +121,7 @@ def RunSteps(api, properties):
 
             with api.step.nest('check that test config exists'):
               try:
-                api.cros_test_plan.generate_target_test_requirements_config(
-                    paygen=True)
+                api.cros_test_plan.generate_target_test_requirements_config()
               except Exception as e:
                 raise StepFailure(
                     "testing config doesn't exist for this build target, see go/onboard-to-rubik"
@@ -352,7 +351,6 @@ def DoRunSteps(api, config, properties):
         if not properties.skip_paygen and (instructions or
                                            api.signing.local_signing):
           api.cros_release.run_payload_generation(
-              override_qs_account=properties.override_qs_account,
               use_split_paygen=properties.use_split_paygen)
         else:
           with api.step.nest('skipping payloads') as pres:
@@ -467,9 +465,6 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
                      'determine build and model metadata'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      api.post_check(post_process.LogContains,
-                     'generate payloads.running paygen orchestrator.schedule',
-                     'request', ['"override_qs_account": "release_high_prio"']),
       api.post_check(
           post_process.MustRun,
           'write LATEST files.write LATEST-1234.56.0.gsutil write gs://chromeos-image-archive/kukui-release/LATEST-1234.56.0'

@@ -4286,7 +4286,6 @@
     "cmd": [
       "./board_config/generate_test_config",
       "kukui-release-main",
-      "--paygen",
       "--branch",
       "main"
     ],
@@ -13464,144 +13463,6 @@
   },
   {
     "cmd": [],
-    "name": "generate payloads.determine au testing models",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine au testing models.generate target test requirements",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "-h"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine au testing models.generate target test requirements.get supported flags",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "kukui-release-main",
-      "--paygen",
-      "--branch",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine au testing models.generate target test requirements.generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine fsi testing models",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate payloads.determine fsi testing models.generate target test requirements",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "-h"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine fsi testing models.generate target test requirements.get supported flags",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "kukui-release-main",
-      "--paygen",
-      "--branch",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "env": {
-      "CHROMEOS_OFFICIAL": "1"
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:release"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate payloads.determine fsi testing models.generate target test requirements.generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "generate payloads.running paygen orchestrator",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -13632,7 +13493,7 @@
       }
     },
     "name": "generate payloads.running paygen orchestrator.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"au_fsi_testing_models\": [], \"au_testing_models\": [], \"builder_name\": \"kukui\", \"channels\": [], \"delta_payload_test_override\": \"RESPECT_CONFIG\", \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"full_payload_test_override\": \"RESPECT_CONFIG\", \"minios\": true, \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"paygen-orchestrator\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"builder_name\": \"kukui\", \"channels\": [], \"delta_types\": [], \"dest_bucket\": \"\", \"dryrun\": false, \"minios\": true, \"src_bucket\": \"\", \"target_chromeos_version\": \"1234.56.0\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -13674,15 +13535,11 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"au_fsi_testing_models\": [],@@@",
-      "@@@STEP_LOG_LINE@request@          \"au_testing_models\": [],@@@",
       "@@@STEP_LOG_LINE@request@          \"builder_name\": \"kukui\",@@@",
       "@@@STEP_LOG_LINE@request@          \"channels\": [],@@@",
-      "@@@STEP_LOG_LINE@request@          \"delta_payload_test_override\": \"RESPECT_CONFIG\",@@@",
       "@@@STEP_LOG_LINE@request@          \"delta_types\": [],@@@",
       "@@@STEP_LOG_LINE@request@          \"dest_bucket\": \"\",@@@",
       "@@@STEP_LOG_LINE@request@          \"dryrun\": false,@@@",
-      "@@@STEP_LOG_LINE@request@          \"full_payload_test_override\": \"RESPECT_CONFIG\",@@@",
       "@@@STEP_LOG_LINE@request@          \"minios\": true,@@@",
       "@@@STEP_LOG_LINE@request@          \"src_bucket\": \"\",@@@",
       "@@@STEP_LOG_LINE@request@          \"target_chromeos_version\": \"1234.56.0\"@@@",

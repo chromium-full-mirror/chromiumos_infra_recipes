@@ -1861,14 +1861,6 @@
   },
   {
     "cmd": [],
-    "name": "doing paygen.setting up paygen test config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@dry run, skip testing@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "doing paygen.set payloads",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

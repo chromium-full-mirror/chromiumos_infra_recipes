@@ -96,59 +96,6 @@
   },
   {
     "cmd": [],
-    "name": "generate target test requirements (2)"
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "-h"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate target test requirements (2).get supported flags",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "./board_config/generate_test_config",
-      "eve-release-main",
-      "--paygen",
-      "--branch",
-      "main"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:staging"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate target test requirements (2).generate_test_config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "generate test plan",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@planner_input@{@@@",

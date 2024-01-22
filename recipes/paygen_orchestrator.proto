@@ -33,28 +33,7 @@ message PaygenOrchestratorProperties {
   // Should we not upload any generated artifacts or make other mutations.
   bool dryrun = 7;
 
-  // Enumeration on whether or not to override the configured defaults.
-  enum PayloadTestsOverride {
-    RESPECT_CONFIG = 0;
-    FORCE_TESTS = 1;
-    FORCE_NO_TESTS = 2;
-  }
-
-  // Should we override the configured delta testing policy?
-  PayloadTestsOverride delta_payload_test_override = 8;
-
-  // Should we override the configured full testing policy?
-  PayloadTestsOverride full_payload_test_override = 9;
-
-  // The models for which we've enabled AU testing.
-  // If empty (or if there is no overlap with applicable_models), then one test
-  // request will be sent, with no model specified, meaning that the test can be
-  // run on any model.
-  repeated string au_testing_models = 10;
-
-  // The models which should run AU testing for FSI payloads.
-  // If empty, behavior will be the same as for empty au_testing_models.
-  repeated string au_fsi_testing_models = 11;
+  reserved 8 to 11;
 
   // Whether or not to publish a payload update to the pubsub topic. Defaults to
   // False because when called via a release builder, the release builder owns
@@ -64,9 +43,7 @@ message PaygenOrchestratorProperties {
   // Whether to generate minios payloads.
   bool minios = 14;
 
-  // QS Account to use instead of whatever is configured. Passed to individual
-  // paygen builds.
-  string override_qs_account = 15;
+  reserved 15;
 
   // If set, will use the local signing flow (currently a prototype).
   bool local_signing = 16;

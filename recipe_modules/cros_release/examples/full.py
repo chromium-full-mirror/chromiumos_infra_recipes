@@ -69,8 +69,7 @@ def RunSteps(api):
   api.cros_release.check_buildspec()
 
   api.cros_release.set_output_properties()
-  api.cros_release.run_payload_generation(
-      override_qs_account='custom_qs_account', use_split_paygen=True)
+  api.cros_release.run_payload_generation(use_split_paygen=True)
 
 
 def GenTests(api):
@@ -105,9 +104,6 @@ def GenTests(api):
           post_process.LogContains,
           'push images.call chromite.api.ImageService/PushImage', 'request',
           ['gs://chromeos-image-archive/kukui-release/R99-1234.56.0']),
-      api.post_check(post_process.LogContains,
-                     'generate payloads.running paygen orchestrator.schedule',
-                     'request', ['"override_qs_account": "custom_qs_account"']),
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'request', ['"use_split_paygen": true']),

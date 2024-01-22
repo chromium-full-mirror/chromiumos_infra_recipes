@@ -8,12 +8,10 @@
 This module provides helpers to make testing CrOS recipes simpler and more
 consistent.
 """
-from typing import List
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import Build as Build_pb2
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
-from PB.chromite.api.payload import GenerationRequest
 from PB.chromite.api.payload import SignedImage as SignedImage_pb2
 from PB.chromite.api.payload import UnsignedImage as UnsignedImage_pb2
 from PB.chromiumos.common import BuildTarget as BuildTarget_pb2
@@ -118,109 +116,3 @@ class PaygenTestingTestApi(recipe_test_api.RecipeTestApi):
       dlc_package='package',
       dlc_image='dlc.img',
   )
-
-  @property
-  def EXAMPLE_GEN_REQUEST_DELTA_DLC(self) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            src_dlc_image=self.DLC_SRC,
-            tgt_dlc_image=self.DLC_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-        )
-    ]
-
-  @property
-  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED(self) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            full_update=True,
-            tgt_unsigned_image=self.UNSIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=True,
-            chroot=self.m.cros_sdk.chroot(),
-        ),
-        GenerationRequest(
-            full_update=True,
-            tgt_unsigned_image=self.UNSIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=True,
-            chroot=self.m.cros_sdk.chroot(),
-            minios=True,
-        )
-    ]
-
-  @property
-  def EXAMPLE_GEN_REQUESTS_FULL_UNSIGNED_NO_DRYRUN(self
-                                                  ) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            full_update=True,
-            tgt_unsigned_image=self.UNSIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-        )
-    ]
-
-  @property
-  def EXAMPLE_GEN_REQUEST_FULL_DLC(self) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            full_update=True,
-            tgt_dlc_image=self.DLC_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=True,
-            chroot=self.m.cros_sdk.chroot(),
-        )
-    ]
-
-  @property
-  def EXAMPLE_GEN_REQUESTS_DELTA_N2N(self) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            src_unsigned_image=self.UNSIGNED_TGT,
-            tgt_unsigned_image=self.UNSIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-        ),
-        GenerationRequest(
-            src_unsigned_image=self.UNSIGNED_TGT,
-            tgt_unsigned_image=self.UNSIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-            minios=True,
-        )
-    ]
-
-  @property
-  def EXAMPLE_GEN_REQUESTS_DELTA_SIGNED(self) -> List[GenerationRequest]:
-    return [
-        GenerationRequest(
-            src_signed_image=self.SIGNED_SRC,
-            tgt_signed_image=self.SIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-        ),
-        GenerationRequest(
-            src_signed_image=self.SIGNED_SRC,
-            tgt_signed_image=self.SIGNED_TGT,
-            bucket='b',
-            verify=True,
-            dryrun=False,
-            chroot=self.m.cros_sdk.chroot(),
-            minios=True,
-        )
-    ]

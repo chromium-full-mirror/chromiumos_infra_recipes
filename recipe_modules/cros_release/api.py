@@ -448,8 +448,7 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           manifest_file=manifest_file, manifest_gs_path=manifest_gs_path)
       self.m.easy.set_properties_step(buildspec_gs_uri=manifest_gs_path)
 
-  def run_payload_generation(self, override_qs_account: str = None,
-                             use_split_paygen: bool = False):
+  def run_payload_generation(self, use_split_paygen: bool = False):
     """Run the generation of release payloads using the context of a build.
 
     This is blocking: it will launch the paygen orchestrator, and wait for it to
@@ -457,7 +456,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     been built.
 
     Args:
-      override_qs_account: QS Account to use instead of whatever is configured.
       use_split_paygen: Whether to use the new split paygen flow.
     """
     pg_orch_builder = ('staging-paygen-orchestrator' if
@@ -471,13 +469,9 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           'target_chromeos_version': version.platform_version,
           'delta_types': [],
           'channels': [Channel.Name(x) for x in self._channels],
-          'au_testing_models': self.get_au_testing_models(),
-          'au_fsi_testing_models': self.get_au_testing_models(fsi=True),
           'src_bucket': self._src_paygen_bucket or self._release_bucket,
           'dest_bucket': self._release_bucket,
           'dryrun': self._paygen_dryrun,
-          'delta_payload_test_override': 'RESPECT_CONFIG',
-          'full_payload_test_override': 'RESPECT_CONFIG',
           'minios': not self._minios_unsupported,
       }
       # TODO(b/305046854): Temporarily allow MPA bot pool overrides.
@@ -486,8 +480,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         pg_orch_builder = ('staging-paygen-orchestrator-mpa'
                            if self.m.build_menu.is_staging else
                            'paygen-orchestrator-mpa')
-      if override_qs_account:
-        paygen_properties['override_qs_account'] = override_qs_account
       if use_split_paygen:
         paygen_properties['use_split_paygen'] = use_split_paygen
       if self.m.signing.local_signing:
@@ -542,34 +534,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         ]
         self.m.build_reporting.publish(
             BuildReport(payloads=payload_information))
-
-  def get_au_testing_models(self, fsi=False):
-    """Determine which models are configured to run autoupdate tests.
-
-    TODO(b/223252953): Filter down to models that are available in the lab.
-
-    Args:
-      fsi (bool): If True, then return all models which should run autoupdate
-        tests for FSI images, which require broader testing than non-FSI.
-
-    Returns:
-      List[str]: The names of each model that should run paygen tests.
-    """
-    with self.m.step.nest('determine %s testing models' %
-                          ('fsi' if fsi else 'au')):
-      config = self.m.cros_test_plan.generate_target_test_requirements_config(
-          paygen=True)
-      if config is None:
-        raise StepFailure('No response from generate_test_config')
-      builder = self.m.buildbucket.build.builder.builder
-      if builder not in config:
-        raise StepFailure('Builder %s not found in paygen test config: %s' %
-                          (builder, json.dumps(config)))
-      model_config = config[builder]
-      if fsi:
-        return sorted(list(model_config.keys()))
-      return sorted(
-          [model for (model, suites) in model_config.items() if 'au' in suites])
 
   def get_image_dir(self, config, sysroot, step) -> str:
     """Determine the image directory unsigned artifacts are uploaded in.

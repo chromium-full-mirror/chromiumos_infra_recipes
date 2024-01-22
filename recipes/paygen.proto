@@ -11,32 +11,13 @@ import "recipes/chromeos/paygen_orchestrator.proto";
 import "chromite/api/payload.proto";
 import "chromiumos/common.proto";
 
-message AutoupdateTestConfig {
-  // The source image version (e.g. '13373.0.0'). Required if generating a full
-  // payload. Required to be empty if generating a delta payload.
-  string src_version = 1;
-
-  // The channel of the target payload (e.g. 'canary-channel'). Required if
-  // generating a full payload. Required to be empty if generating a delta
-  // payload.
-  string src_channel = 2;
-
-  // The delta types to generate for.
-  chromiumos.DeltaType delta_type = 3;
-
-  // A list of models that this config should run against. Each listed model
-  // should run the test. None indicates it can run on any build target.
-  repeated string applicable_models = 4;
-}
-
 message PaygenProperties {
 
   message PaygenRequest {
     // The paygen definition as destined for the build api.
     chromite.api.GenerationRequest generation_request = 1;
 
-    // Which autoupdate tests to run with the generated payload.
-    repeated AutoupdateTestConfig autoupdate_test_configs = 2;
+    reserved 2;
   }
 
   // The list of paygen requests to kick off.
@@ -52,8 +33,7 @@ message PaygenProperties {
   // Time to wait between SDK initialization retries. Defaults to 300.
   uint32 sdk_retry_delay = 4;
 
-  // QS Account to use instead of whatever is configured.
-  string override_qs_account = 5;
+  reserved 5;
 
   // If set, will use new GenerateUnsignedPayload and FinalizePayload
   // BAPI endpoints.

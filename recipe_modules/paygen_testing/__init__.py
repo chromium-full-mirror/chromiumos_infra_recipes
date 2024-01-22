@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-from PB.recipe_modules.chromeos.paygen_testing.paygen_testing import (
-    PaygenTestingProperties)
+"""API for working with Paygen. Used by paygen.py."""
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -28,5 +27,3 @@ DEPS = [
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
-
-PROPERTIES = PaygenTestingProperties

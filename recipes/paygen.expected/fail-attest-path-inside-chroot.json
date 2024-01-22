@@ -2687,15 +2687,7 @@
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"autoupdateTestConfigs\": [@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"deltaType\": \"OMAHA\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"applicableModels\": [@@@",
-      "@@@STEP_LOG_LINE@request@        \"woomax\"@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
@@ -2902,14 +2894,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"doing paygen.running paygen operations in parallel.ignored exception\": \"StepFailure('Artifact file_path must have Path.Location.OUTSIDE, file_path: path: \\\"/path/to/cros_chroot/out/tmp/delta.bin\\\"\\\\nlocation: INSIDE\\\\n')\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "doing paygen.setting up paygen test config",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@dry run, skip testing@@@"
     ]
   },
   {

@@ -35,9 +35,9 @@ def RunSteps(api: RecipeApi):
   ]
 
   paygen_mpa = api.properties.thaw()['paygen_mpa']
-  api.paygen_orchestration.run_paygen_builders(
-      paygen_requests, override_qs_account='custom_qs_account',
-      paygen_mpa=paygen_mpa, use_split_paygen=True)
+  api.paygen_orchestration.run_paygen_builders(paygen_requests,
+                                               paygen_mpa=paygen_mpa,
+                                               use_split_paygen=True)
 
 
 test_bbids = [str(8922054662172514000 + i) for i in range(805)]
@@ -47,8 +47,6 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'basic', api.properties(paygen_mpa=False),
-      api.post_check(post_process.LogContains, 'running children.schedule',
-                     'request', ['"override_qs_account": "custom_qs_account"']),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'request', ['"use_split_paygen": true']),
       api.buildbucket.build(
@@ -60,8 +58,6 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'basic-try-build', api.properties(paygen_mpa=False),
-      api.post_check(post_process.LogContains, 'running children.schedule',
-                     'request', ['"override_qs_account": "custom_qs_account"']),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos', bucket='try-dev',
                                            builder='paygen-orchestrator')),
