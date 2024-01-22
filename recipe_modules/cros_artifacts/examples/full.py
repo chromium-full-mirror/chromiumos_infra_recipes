@@ -14,6 +14,7 @@ from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifac
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/raw_io',
@@ -26,6 +27,10 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
+  api.assertions.assertEqual(
+      api.cros_artifacts.artifacts_by_image_type[common.IMAGE_TYPE_RECOVERY],
+      'recovery_image.tar.xz',
+  )
 
   target = common.BuildTarget()
   target.name = 'target'

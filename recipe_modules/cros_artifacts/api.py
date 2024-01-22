@@ -23,10 +23,17 @@ from recipe_engine import config_types
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
-# The base image tar filename, used for generating provenance.
-BASE_IMAGE_TAR = 'chromiumos_base_image.tar.xz'
-# The recovery image tar filename, used for generating provenance.
-RECOVERY_IMAGE_TAR = 'recovery_image.tar.xz'
+ARTIFACTS_BY_IMAGE_TYPE = {
+    common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_ACCESSORY_USBPD: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
+    common_pb2.IMAGE_TYPE_FACTORY: 'factory_image.zip',
+    common_pb2.IMAGE_TYPE_FIRMWARE: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_GSC_FIRMWARE: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_HPS_FIRMWARE: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',
+    common_pb2.IMAGE_TYPE_TEST: 'chromiumos_test_image.tar.xz',
+}
 
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
 # the appropriate services.
@@ -116,6 +123,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
   def skip_publish(self):
     """Return whether to skip publish, if set in properties."""
     return self._skip_publish or False
+
+  @property
+  def artifacts_by_image_type(self):
+    """Return a map from image type to artifact name."""
+    return ARTIFACTS_BY_IMAGE_TYPE
 
   def _get_legacy_endpoint(self, artifact):
     """Return the callable endpoint in ArtifactsService for this artifact.
@@ -867,7 +879,10 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # The artifact to generate provenance for.
         # This list will be expanded as more artifacts are enrolled in
         # provenance generation.
-        artifacts_to_report = [BASE_IMAGE_TAR, RECOVERY_IMAGE_TAR]
+        artifacts_to_report = [
+            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_BASE],
+            ARTIFACTS_BY_IMAGE_TYPE[common_pb2.IMAGE_TYPE_RECOVERY],
+        ]
 
         paths_to_hash = {
             self.m.path.join(outpath, i): i

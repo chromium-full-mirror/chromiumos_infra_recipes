@@ -395,19 +395,7 @@ class SigningApi(recipe_api.RecipeApi):
   def artifact_name_by_image_type(self,
                                   image_type: common_pb2.ImageType) -> str:
     """Mapping of image type to artifact name."""
-    # TODO(b/299160925): Dedupe artifact names with cros_artifacts.
-    artifact_by_image_type = {
-        common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: 'firmware_from_source.tar.bz2',
-        common_pb2.IMAGE_TYPE_ACCESSORY_USBPD: 'firmware_from_source.tar.bz2',
-        common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
-        common_pb2.IMAGE_TYPE_FACTORY: 'factory_image.zip',
-        common_pb2.IMAGE_TYPE_FIRMWARE: 'firmware_from_source.tar.bz2',
-        common_pb2.IMAGE_TYPE_GSC_FIRMWARE: 'firmware_from_source.tar.bz2',
-        common_pb2.IMAGE_TYPE_HPS_FIRMWARE: 'firmware_from_source.tar.bz2',
-        common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',
-        common_pb2.IMAGE_TYPE_TEST: 'chromiumos_test_image.tar.xz',
-    }
-    return artifact_by_image_type.get(image_type, None)
+    return self.m.cros_artifacts.artifacts_by_image_type.get(image_type, None)
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
