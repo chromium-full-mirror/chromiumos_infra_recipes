@@ -111,7 +111,7 @@ def GenTests(api):
               'expected_no_collect_builders': ['target2-env'],
           }),
       api.step_data(
-          'categorize builds by collect handling.get testable builders.docker run',
+          'categorize builds by collect handling.get testable builders.test_plan get-testable',
           stdout=api.raw_io.output_text('target3-env target2-env')),
       api.post_check(
           post_process.MustRun,
@@ -150,7 +150,7 @@ def GenTests(api):
       ], 'categorize builds by collect handling.get additional testable builders',
                                             2),
       api.step_data(
-          'categorize builds by collect handling.get testable builders.docker run',
+          'categorize builds by collect handling.get testable builders.test_plan get-testable',
           stdout=api.raw_io.output_text('target3-env target2-env')),
       api.post_check(
           post_process.MustRun,
@@ -180,7 +180,7 @@ def GenTests(api):
               'expected_no_collect_builders': ['target2-env'],
           }),
       api.step_data(
-          'categorize builds by collect handling.get testable builders.docker run',
+          'categorize builds by collect handling.get testable builders.test_plan get-testable',
           retcode=1),
       api.post_check(
           post_process.MustRun,

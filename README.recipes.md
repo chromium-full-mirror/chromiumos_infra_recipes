@@ -421,7 +421,6 @@
   * [cros_test_plan_v2:examples/fallback_to_default](#recipes-cros_test_plan_v2_examples_fallback_to_default)
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
   * [cros_test_plan_v2:examples/get_testable_builders](#recipes-cros_test_plan_v2_examples_get_testable_builders)
-  * [cros_test_plan_v2:examples/override_refs](#recipes-cros_test_plan_v2_examples_override_refs)
   * [cros_test_plan_v2:examples/template_parameters](#recipes-cros_test_plan_v2_examples_template_parameters)
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
@@ -5167,7 +5166,7 @@ Functions for end-to-end test planning.
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#297)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#296)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5177,24 +5176,18 @@ Args:
     doesn't already exist, and the schema will be updated if it doesn't
     match the DirBQRow schema.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#123)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#122)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#108)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#107)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#504)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#430)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
-Runs the testplan Docker image to get HWTestPlans.
-
-b/243438779 is migrating the `generate` command to the `test_plan` Go infra
-binary, so we can get rid of the Docker container building requirement. As
-part of the migration, we will run the new flow and diff the results with
-the Docker image. This is gated by the
-`chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
+Runs the test_plan Go infra binary to get HWTestPlans.
 
 Args:
   * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
@@ -5209,15 +5202,9 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#672)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#534)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
-Runs the testplan Docker image to get a list of testable builders.
-
-b/243438779 is migrating the `get-testable` command to the `test_plan` Go
-infra binary, so we can get rid of the Docker container building
-requirement. As part of the migration, we will run the new flow and diff the
-results with the Docker image. This is gated by the
-`chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
+Runs the test_plan Go infra binary to get a list of testable builders.
 
 Args:
   starlark_packages: Paths to Starlark files to evaluate to get testable
@@ -5232,7 +5219,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#97)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#221)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#220)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -5243,7 +5230,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#206)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#205)(self, directory: str):**
 
 Call test_plan validate on directory.
 
@@ -13707,12 +13694,6 @@ This module tests the utility method of multi-dut suite generation.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/get_testable_builders.py#27)(api):**
-### *recipes* / [cros\_test\_plan\_v2:examples/override\_refs](/recipe_modules/cros_test_plan_v2/examples/override_refs.py)
-
-[DEPS](/recipe_modules/cros_test_plan_v2/examples/override_refs.py#14): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/override_refs.py#23)(api):**
 ### *recipes* / [cros\_test\_plan\_v2:examples/template\_parameters](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py)
 
 [DEPS](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#19): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

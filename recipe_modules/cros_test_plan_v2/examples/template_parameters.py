@@ -124,59 +124,7 @@ def GenTests(api):
       # and 1 -templateparameter.
       api.post_process(
           post_process.StepCommandContains,
-          'generate hw test plans.docker run',
-          [
-              '-plan',
-              '/input/root/templatedplan1.star',
-              '-templateparameter',
-              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
-          ],
-      ),
-      # Second call passes the same file with two different TemplateParameters,
-      # expect 1 -plan and 2 -templateparameter.
-      api.post_process(
-          post_process.StepCommandContains,
-          'generate hw test plans (2).docker run',
-          [
-              '-plan', '/input/root/templatedplan1.star', '-templateparameter',
-              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
-              '-templateparameter',
-              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catB"],"tagExcludes": ["informational"]},"suiteName": "catB"}\''
-          ],
-      ),
-      # Third call passes two different files with the same TemplateParameters,
-      # expect 2 -plan and 2 -templateparameter.
-      api.post_process(
-          post_process.StepCommandContains,
-          'generate hw test plans (3).docker run',
-          [
-              '-plan', '/input/root/templatedplan1.star', '-plan',
-              '/input/root/templatedplan2.star', '-templateparameter',
-              '/input/root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
-              '-templateparameter',
-              '/input/root/templatedplan2.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\''
-          ],
-      ),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'with-use-infra-go-bin-experiment',
-      api.buildbucket.try_build(
-          project='chromeos',
-          bucket='cq',
-          builder='cq-orchestrator',
-          experiments=['chromeos.cros_test_plan_v2.use_infra_gobin'],
-      ),
-      api.properties(
-          **{'$chromeos/cros_test_plan_v2': {
-              'generate_ctpv1_format': True
-          }}),
-      # First call passes a single file and TemplateParameters, expect 1 -plan
-      # and 1 -templateparameter.
-      api.post_process(
-          post_process.StepCommandContains,
-          'generate hw test plans.validate infra go bin.test_plan generate',
+          'generate hw test plans.test_plan generate',
           [
               '-plan',
               'root/templatedplan1.star',
@@ -188,7 +136,7 @@ def GenTests(api):
       # expect 1 -plan and 2 -templateparameter.
       api.post_process(
           post_process.StepCommandContains,
-          'generate hw test plans (2).validate infra go bin.test_plan generate',
+          'generate hw test plans (2).test_plan generate',
           [
               '-plan', 'root/templatedplan1.star', '-templateparameter',
               'root/templatedplan1.star:\'{"tagCriteria": {"tags": ["group:catA"],"tagExcludes": ["informational"]},"suiteName": "catA"}\'',
@@ -200,7 +148,7 @@ def GenTests(api):
       # expect 2 -plan and 2 -templateparameter.
       api.post_process(
           post_process.StepCommandContains,
-          'generate hw test plans (3).validate infra go bin.test_plan generate',
+          'generate hw test plans (3).test_plan generate',
           [
               '-plan', 'root/templatedplan1.star', '-plan',
               'root/templatedplan2.star', '-templateparameter',

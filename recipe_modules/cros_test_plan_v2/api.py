@@ -9,7 +9,7 @@ import datetime
 import itertools
 import re
 from collections import defaultdict
-from typing import Iterable, List, Optional, Tuple, Union
+from typing import Iterable, List, Optional, Union
 from dataclasses import dataclass
 
 from google.protobuf import json_format
@@ -103,7 +103,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     self._docker_image = '{}:{}'.format(docker_image_name, docker_tag)
     self._migration_configs = self._properties.migration_configs
     self._test_plan_path = None
-    self._use_infra_gobin = 'chromeos.cros_test_plan_v2.use_infra_gobin' in self.m.buildbucket.build.input.experiments
 
   @property
   def generate_ctpv1_format(self):
@@ -389,20 +388,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         test_output_message=self.test_api.board_priority_list(),
     )
 
-  def _ensure_docker_image(self):
-    """Logs in and pulls the testplan docker image."""
-    with self.m.step.nest('ensure docker image') as presentation:
-      self.m.docker.ensure_installed()
-
-      version = self.m.docker.get_version()
-      if version:
-        presentation.logs['docker version'] = version
-
-      self.m.docker.login(server='us-docker.pkg.dev',
-                          project='cros-registry/test-services')
-      self.m.docker.pull(self._docker_image)
-
-  def _get_gobin_args_for_starlark_pkgs(
+  def _get_args_for_starlark_pkgs(
       self, starlark_pkgs: List[StarlarkPackage]) -> Iterable[str]:
     """Compute the -plan and -templateparameter args for starlark_pkgs.
 
@@ -441,78 +427,12 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                                          [['-templateparameter', a]
                                           for a in template_parameters_args])
 
-  def _copy_test_plans(
-      self, host_dir: Path, container_path: str,
-      starlark_pkgs: List[StarlarkPackage]) -> Tuple[List[str], List[str]]:
-    """Copy starlark_pkgs to host_dir, return paths and templateparameters for the container.
-
-    This function is a helper to get Starlark files ready to be mounted to the
-    container. The Starlark files are copied to a dir on the host, and paths to
-    the files on the container are returned, so that the returned paths can be
-    used as arguments when the host dir is mounted. If starlark_pkgs has any
-    non-empty TemplateParameters, this function also computes -templateparameter
-    args for use in the container.
-
-    Args:
-      host_dir: Path on the host to copy Starlark files to.
-      container_path: Path on the container that host_dir will
-        be mounted to.
-      starlark_pkgs: StarlarkPackage to copy to host_dir.
-
-    Returns:
-      A list of paths on the container pointing to starlark_pkgs and a list of
-        -templateparameter args.
-    """
-    plan_paths = []
-    template_parameters_args = []
-
-    # Starlark packages may share the same root, because they are in the same
-    # repo. Keep track of which roots have been visited, and don't copy them
-    # twice.
-    visited_roots = set()
-
-    # Note that starlark_pkgs may contain duplicates, in this case each
-    # unique package is only added to the args once.
-    for package in sorted(list(set(starlark_pkgs))):
-      basename = self.m.path.basename(package.root)
-
-      if package.root not in visited_roots:
-        dest = self.m.path.join(host_dir, basename)
-        # Some repos contain symlinks to parent directories, leave symlinks as
-        # symlinks instead of following them, to avoid infinite recursion.
-        self.m.file.copytree('copy ' + basename, package.root, dest,
-                             symlinks=True)
-        visited_roots.add(package.root)
-
-      # Plan paths may be duplicated if a StarlarkPackage has different
-      # TemplateParameters for the same file.
-      plan_path = '{}/{}/{}'.format(container_path, basename, package.main)
-      if plan_path not in plan_paths:
-        plan_paths.append(plan_path)
-
-      # If template_parameters is non-empty form an arg
-      # "<plan>:'<template parameters jsonpb>'"
-      if package.template_parameters != source_test_plan_pb2.SourceTestPlan.TestPlanStarlarkFile.TemplateParameters(
-      ):
-        template_parameter_json = json_format.MessageToJson(
-            package.template_parameters, indent=0).replace('\n', '')
-        template_parameters_args.append(
-            f"{plan_path}:'{template_parameter_json}'")
-
-    return (plan_paths, template_parameters_args)
-
   def generate_hw_test_plans(
       self,
       starlark_packages: List[StarlarkPackage],
       generate_test_plan_request: Optional[GenerateTestPlanRequest] = None,
   ) -> Union[List[GenerateTestPlanResponse], List[plan_pb2.HWTestPlan]]:
-    """Runs the testplan Docker image to get HWTestPlans.
-
-    b/243438779 is migrating the `generate` command to the `test_plan` Go infra
-    binary, so we can get rid of the Docker container building requirement. As
-    part of the migration, we will run the new flow and diff the results with
-    the Docker image. This is gated by the
-    `chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
+    """Runs the test_plan Go infra binary to get HWTestPlans.
 
     Args:
       * starlark_packages (list[StarlarkPackage]): Paths to Starlark files to
@@ -534,56 +454,43 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
             'generate_test_plan_request should be set iff the generate_ctpv1_format property is set'
         )
 
-      self._ensure_docker_image()
-
-      # The testplan executable requires files for some input args. Write the
-      # files under a tempdir on the host, and then mount this dir to the
-      # container so testplan can read them.
-      host_input_path = self.m.path.mkdtemp()
-      container_input_path = '/input'
+      input_path = self.m.path.mkdtemp()
 
       with self.m.step.nest('write input files'):
         # TODO(b/182898188): Read BuildMetadataList specific to the build when
         # available. For now, just read the global one from config-internal.
-        build_metadata_list_path = self._download_build_metadata(
-            host_input_path)
-        config_bundle_list_path = self._download_config_bundle_list(
-            host_input_path)
-        dut_attribute_list_path = self._download_dut_attributes(host_input_path)
+        build_metadata_list_path = self._download_build_metadata(input_path)
+        config_bundle_list_path = self._download_config_bundle_list(input_path)
+        dut_attribute_list_path = self._download_dut_attributes(input_path)
 
       out_path = (
-          self.m.path.join(host_input_path, 'generatetestplanresp.binaryproto')
+          self.m.path.join(input_path, 'generatetestplanresp.binaryproto')
           if self.generate_ctpv1_format else self.m.path.join(
-              host_input_path, 'hw_test_plans.jsonproto'))
+              input_path, 'hw_test_plans.jsonproto'))
 
-      # A map from input flag for testplan to the path to the input file on the
-      # host.
-      #
-      # Note that the same mechanism is used for the output of testplan.
-      arg_to_host_path = {
-          '-dutattributes': dut_attribute_list_path,
-          '-buildmetadata': build_metadata_list_path,
-          '-configbundlelist': config_bundle_list_path,
-          '-out': out_path,
-      }
-
-      # Build a list of args to pass to docker run. For each (flag, host path)
-      # tuple in arg_to_host_path, add args [<flag>, <container path>]
-      args = ['generate', '-alsologtostderr', '-v', '2']
-      # Build a separate list of args to pass to the infra gobin.
-      # TODO(b/243438779): Remove the use of Docker once the infra gobin has
-      # been validated.
-      gobin_args = ['generate', '-loglevel', 'debug']
+      args = [
+          'generate',
+          '-loglevel',
+          'debug',
+          '-dutattributes',
+          dut_attribute_list_path,
+          '-buildmetadata',
+          build_metadata_list_path,
+          '-configbundlelist',
+          config_bundle_list_path,
+          '-out',
+          out_path,
+      ]
 
       if self.generate_ctpv1_format:
         board_priority_list_path = self._download_board_priority_list(
-            host_input_path)
-        arg_to_host_path['-boardprioritylist'] = board_priority_list_path
+            input_path)
+        args.extend(['-boardprioritylist', board_priority_list_path])
 
-        builder_configs_path = self._download_build_configs(host_input_path)
-        arg_to_host_path['-builderconfigs'] = builder_configs_path
+        builder_configs_path = self._download_build_configs(input_path)
+        args.extend(['-builderconfigs', builder_configs_path])
 
-        req_path = host_input_path.join('generatetestplanreq.binaryproto')
+        req_path = input_path.join('generatetestplanreq.binaryproto')
         self.m.file.write_raw(
             'write generatetestplanreq binaryproto', req_path,
             generate_test_plan_request.SerializeToString(deterministic=True))
@@ -592,34 +499,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
                 deterministic=True)
 
         args.append('-ctpv1')
-        gobin_args.append('-ctpv1')
-        arg_to_host_path['-generatetestplanreq'] = req_path
+        args.extend(['-generatetestplanreq', req_path])
 
-      for arg, host_path in sorted(arg_to_host_path.items()):
-        args.extend([
-            arg, '{}/{}'.format(container_input_path,
-                                self.m.path.basename(host_path))
-        ])
-        gobin_args.extend([arg, host_path])
+      args.extend(self._get_args_for_starlark_pkgs(starlark_packages))
 
-      plan_paths, template_parameters_args = self._copy_test_plans(
-          host_input_path, container_input_path, starlark_packages)
-      for plan in plan_paths:
-        args.extend(['-plan', plan])
-
-      for arg in template_parameters_args:
-        args.extend(['-templateparameter', arg])
-
-      gobin_args.extend(
-          self._get_gobin_args_for_starlark_pkgs(starlark_packages))
-
-      # Run the docker image. The directory with the input files is mounted to
-      # the container.
-      self.m.docker.run(
-          self._docker_image,
-          cmd_args=args,
-          dir_mapping=[(host_input_path, container_input_path)],
-      )
+      self.m.gobin.call('test_plan', args, step_name='test_plan generate')
 
       if self.generate_ctpv1_format:
         output = self.m.file.read_raw(
@@ -631,30 +515,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         resp = GenerateTestPlanResponse.FromString(output)
         pres.logs['v1-compatible response'] = str(resp)
 
-        if self._use_infra_gobin:
-          with self.m.failures.ignore_exceptions(), self.m.step.nest(
-              'validate infra go bin') as pres:
-
-            self.m.gobin.call('test_plan', gobin_args,
-                              step_name='test_plan generate')
-
-            gobin_output = self.m.file.read_raw(
-                'read output ' + out_path,
-                out_path,
-                test_data=self.test_api.generate_test_plan_response()
-                .SerializeToString(deterministic=True),
-            )
-            gobin_resp = GenerateTestPlanResponse.FromString(gobin_output)
-            pres.logs['gobin v1-compatible response'] = str(gobin_resp)
-            responses_match = resp == gobin_resp
-            pres.step_text = 'responses were identical' if responses_match else 'responses were different'
-            pres.properties[
-                'test_plan_infra_gobin_generate_responses_match'] = responses_match
-
         return resp
 
-      # Read the output HWTestPlans, which are readable on the host because
-      # of the mounted directory.
       hw_test_plans = []
       output = self.m.file.read_raw(
           'read output ' + out_path, out_path, test_data='\n'.join(
@@ -671,13 +533,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
   def get_testable_builders(self, starlark_packages: List[StarlarkPackage],
                             builds: List[Build]) -> List[str]:
-    """Runs the testplan Docker image to get a list of testable builders.
-
-    b/243438779 is migrating the `get-testable` command to the `test_plan` Go
-    infra binary, so we can get rid of the Docker container building
-    requirement. As part of the migration, we will run the new flow and diff the
-    results with the Docker image. This is gated by the
-    `chromeos.cros_test_plan_v2.use_infra_gobin` experiment.
+    """Runs the test_plan Go infra binary to get a list of testable builders.
 
     Args:
       starlark_packages: Paths to Starlark files to evaluate to get testable
@@ -691,29 +547,23 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       A list of the names of the testable builders.
     """
     with self.m.step.nest('get testable builders') as pres:
-      self._ensure_docker_image()
+      input_path = self.m.path.mkdtemp()
 
-      # The testplan executable requires files for some input args. Write the
-      # files under a tempdir on the host, and then mount this dir to the
-      # container so testplan can read them.
-      host_input_path = self.m.path.mkdtemp()
-      container_input_path = '/input'
+      args = [
+          'get-testable',
+          '-dutattributes',
+          self._download_dut_attributes(input_path),
+          '-buildmetadata',
+          self._download_build_metadata(input_path),
+          '-configbundlelist',
+          self._download_config_bundle_list(input_path),
+          '-builderconfigs',
+          self._download_build_configs(input_path),
+      ]
 
-      args = ['get-testable']
-      gobin_args = ['get-testable']
-      plan_paths, template_parameters_args = self._copy_test_plans(
-          host_input_path, container_input_path, starlark_packages)
+      args.extend(self._get_args_for_starlark_pkgs(starlark_packages))
 
-      for plan in plan_paths:
-        args.extend(['-plan', plan])
-
-      for arg in template_parameters_args:
-        args.extend(['-templateparameter', arg])
-
-      gobin_args.extend(
-          self._get_gobin_args_for_starlark_pkgs(starlark_packages))
-
-      builds_input_path = host_input_path.join('builds.jsonl')
+      builds_input_path = input_path.join('builds.jsonl')
       builds_jsonl = '\n'.join([
           json_format.MessageToJson(b, indent=0).replace('\n', '')
           for b in builds
@@ -722,32 +572,13 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       self.m.file.write_text('write builds.jsonl', builds_input_path,
                              builds_jsonl, include_log=True)
-      args.extend(['-builds', f'{container_input_path}/builds.jsonl'])
-      gobin_args.extend(['-builds', builds_input_path])
-
-      arg_to_host_path = {
-          '-dutattributes':
-              self._download_dut_attributes(host_input_path),
-          '-buildmetadata':
-              self._download_build_metadata(host_input_path),
-          '-configbundlelist':
-              self._download_config_bundle_list(host_input_path),
-          '-builderconfigs':
-              self._download_build_configs(host_input_path),
-      }
-      for arg, host_path in sorted(arg_to_host_path.items()):
-        args.extend([
-            arg, '{}/{}'.format(container_input_path,
-                                self.m.path.basename(host_path))
-        ])
-        gobin_args.extend([arg, host_path])
+      args.extend(['-builds', builds_input_path])
 
       test_return = ' '.join([b.builder.builder for b in builds])
       test_return += '\n'
-      self.m.docker.run(
-          self._docker_image, cmd_args=args, dir_mapping=[
-              (host_input_path, container_input_path)
-          ], stdout=self.m.raw_io.output_text(add_output_log=True),
+      self.m.gobin.call(
+          'test_plan', args, step_name='test_plan get-testable',
+          stdout=self.m.raw_io.output_text(add_output_log=True),
           step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
               test_return))
 
@@ -760,26 +591,5 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
       testable_builders = [b for b in testable_builders if not '-bazel-' in b]
 
       pres.logs['testable_builders'] = testable_builders
-
-      if self._use_infra_gobin:
-        with self.m.failures.ignore_exceptions(), self.m.step.nest(
-            'validate infra go bin') as inner_pres:
-          self.m.gobin.call(
-              'test_plan', gobin_args, step_name='test_plan get-testable',
-              stdout=self.m.raw_io.output_text(add_output_log=True),
-              step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
-                  test_return))
-          gobin_testable_builders = sorted(
-              self.m.step.active_result.stdout.split())
-          # Filter the testable builders returned by the gobin for the same
-          # reasons testable_builders gets filtered above.
-          gobin_testable_builders = [
-              b for b in gobin_testable_builders if not '-bazel-' in b
-          ]
-          pres.logs['gobin_testable_builders'] = gobin_testable_builders
-          responses_match = testable_builders == gobin_testable_builders
-          inner_pres.step_text = 'responses were identical' if responses_match else 'responses were different'
-          inner_pres.properties[
-              'test_plan_infra_gobin_get_testable_responses_match'] = responses_match
 
       return testable_builders
