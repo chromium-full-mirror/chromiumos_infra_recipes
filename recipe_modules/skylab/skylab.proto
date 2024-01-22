@@ -29,4 +29,12 @@ message SkylabProperties {
 
   // Projects which are blocklisted from direct Tast testing.
   repeated string direct_tast_testing_blocklist_projects = 12;
+
+  // If set, build targets in `custom_qs_build_target_allowlist` will be
+  // scheduled using this QS account instead of `skylab_qs_account`.
+  // Used to deprioritize variant boards, see b/321723795 for context.
+  string custom_qs_account = 13;
+
+  // Build targets to schedule with the `custom_qs_account` qs account.
+  repeated string custom_qs_account_build_target_allowlist = 14;
 }

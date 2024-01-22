@@ -41,6 +41,9 @@ class SkylabApi(recipe_api.RecipeApi):
     self._exclude_sub_invs = properties.exclude_sub_invs
     self._last_run_tast_first_class_tests = None
 
+    self._custom_qs_account = properties.custom_qs_account or None
+    self._custom_qs_account_build_target_allowlist = properties.custom_qs_account_build_target_allowlist
+
   # A Git footer that can be included in commit messages to tell the CQ run to
   # enable an experiment.
   CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
@@ -186,12 +189,16 @@ class SkylabApi(recipe_api.RecipeApi):
         [bb_request], include_sub_invs=not self._exclude_sub_invs)[0]
 
   def schedule_suites(
-      self, unit_hw_tests: List[UnitHwTest], timeout: Duration,
-      name: str = None, async_suite_run: bool = False,
+      self,
+      unit_hw_tests: List[UnitHwTest],
+      timeout: Duration,
+      name: str = None,
+      async_suite_run: bool = False,
       container_metadata: ContainerMetadata = None,
       require_stable_devices: bool = False,
       previous_results: Dict[str, ExecuteResponse] = None,
-      build_target_critical_allowlist: List[str] = None) -> List[SkylabTask]:
+      build_target_critical_allowlist: List[str] = None,
+  ) -> List[SkylabTask]:
     """Schedule HW test suites by invoking the cros_test_platform recipe.
 
     Args:
@@ -241,7 +248,14 @@ class SkylabApi(recipe_api.RecipeApi):
       sw_dep.chromeos_build = image_path
       sw_dep_gsc_bucket = req.params.software_dependencies.add()
       sw_dep_gsc_bucket.chromeos_build_gcs_bucket = image_bucket
-      req.params.scheduling.qs_account = self._qs_account
+
+      build_target = uht.unit.common.build_target.name
+
+      qs_account = self._qs_account
+      if self._custom_qs_account and build_target in self._custom_qs_account_build_target_allowlist:
+        qs_account = self._custom_qs_account
+
+      req.params.scheduling.qs_account = qs_account
       # Check companions
       primary_dut_board = uht.hw_test.skylab_board
       for companion in uht.hw_test.companions:
@@ -268,7 +282,7 @@ class SkylabApi(recipe_api.RecipeApi):
           cd_sw_dep_gcs_bucket.chromeos_build_gcs_bucket = image_bucket
 
       allow_critical = True
-      if build_target_critical_allowlist is not None and uht.unit.common.build_target.name not in build_target_critical_allowlist:
+      if build_target_critical_allowlist is not None and build_target not in build_target_critical_allowlist:
         allow_critical = False
 
       if uht.hw_test.common.critical.value and allow_critical:
@@ -287,9 +301,9 @@ class SkylabApi(recipe_api.RecipeApi):
 
       req.params.decorations.tags.extend(request_tags)
 
-      if re.search(self.QS_UNMANAGED_PATTERN, self._qs_account):
-        req.params.decorations.tags.append('label-quota-account:{}'.format(
-            self._qs_account))
+      if re.search(self.QS_UNMANAGED_PATTERN, qs_account):
+        req.params.decorations.tags.append(
+            'label-quota-account:{}'.format(qs_account))
 
       release_autotest_keyvals = self._get_release_autotest_keyvals(uht)
       if release_autotest_keyvals:
