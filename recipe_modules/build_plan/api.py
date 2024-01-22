@@ -279,7 +279,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           orch_config = self.m.cros_infra_config.config_or_default
           is_retry = (
               orch_config.id.type == BuilderConfig.Id.CQ and
-              self.m.cros_history.is_retry())
+              self.m.cros_history.is_retry)
           completed_builds = self.get_completed_builds(child_specs,
                                                        forced_rebuilds)
           presentation.step_text = ('found {} build{} to recycle'.format(

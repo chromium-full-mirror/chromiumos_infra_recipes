@@ -16,7 +16,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):
-  api.assertions.assertEqual(api.cros_history.is_retry(),
+  api.assertions.assertEqual(api.cros_history.is_retry,
                              api.properties['is_retry'])
 
 

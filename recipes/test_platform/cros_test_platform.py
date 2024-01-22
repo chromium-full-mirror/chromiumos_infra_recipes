@@ -1168,7 +1168,7 @@ def RunSteps(api, properties):
     return
   _top_level_export_to_bigquery(api, properties.force_export)
   if api.cq.active:
-    api.easy.set_properties_step(is_retry=api.cros_history.is_retry())
+    api.easy.set_properties_step(is_retry=api.cros_history.is_retry)
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
   # build is about to run.

@@ -217,7 +217,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         previously_failed_now_exonerable_vm_builds = []
         is_retry = False
         if enable_history and gerrit_changes:
-          is_retry = (self.m.cq.active and self.m.cros_history.is_retry())
+          is_retry = (self.m.cq.active and self.m.cros_history.is_retry)
           previously_passed_tests = self.m.cros_history.get_passed_tests()
           previously_failed_now_exonerable_vm_builds, previously_failed_now_exonerable_hw_results = self.m.exonerate.get_prev_failed_now_exonerable_test_results(
               test_plan, self._dry_run_exonerate_retried_suites)

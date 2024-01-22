@@ -30,7 +30,7 @@
   * [cros_cq_depends](#recipe_modules-cros_cq_depends) &mdash; APIs for interacting with Cq-Depends.
   * [cros_debug](#recipe_modules-cros_debug) &mdash; Various methods for debugging recipes builds.
   * [cros_dupit](#recipe_modules-cros_dupit) &mdash; API for DupIt script.
-  * [cros_history](#recipe_modules-cros_history)
+  * [cros_history](#recipe_modules-cros_history) &mdash; A module to use build history to avoid redundant builds.
   * [cros_infra_config](#recipe_modules-cros_infra_config) &mdash; Module providing builder config.
   * [cros_lkgm](#recipe_modules-cros_lkgm)
   * [cros_lvfs_mirror](#recipe_modules-cros_lvfs_mirror) &mdash; API for LvfsMirror script.
@@ -3241,11 +3241,13 @@ Args:
 [DEPS](/recipe_modules/cros_history/__init__.py#9): [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+A module to use build history to avoid redundant builds.
+
+#### **class [CrosHistoryApi](/recipe_modules/cros_history/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to use build history to avoid redundant builds.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#57)(self, snapshot_id: str):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=30))**<br>&mdash; **def [get\_annealing\_from\_snapshot](/recipe_modules/cros_history/api.py#60)(self, snapshot_id: str):**
 
 Find the annealing build that created snapshot with given ID.
 
@@ -3256,7 +3258,7 @@ Returns:
   If an Annealing build is found, then a proto message of that build.
   Otherwise, None.
 
-&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#319)(self, build: build_pb2.Build, statuses: Optional[List['bb_common_pb2.Status']]=None, start_build_id: Optional[int]=None, limit: Optional[int]=None):**
+&mdash; **def [get\_matching\_builds](/recipe_modules/cros_history/api.py#322)(self, build: build_pb2.Build, statuses: Optional[List['bb_common_pb2.Status']]=None, start_build_id: Optional[int]=None, limit: Optional[int]=None):**
 
 Get builds with the matching builder and gerrit_changes.
 
@@ -3269,7 +3271,7 @@ Args:
 Returns:
   List of builds which meet the conditions ordered from latest to oldest.
 
-&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#100)(self, tags: Optional[List[bb_common_pb2.StringPair]]=None):**
+&mdash; **def [get\_passed\_builds](/recipe_modules/cros_history/api.py#103)(self, tags: Optional[List[bb_common_pb2.StringPair]]=None):**
 
 Retrieve passed builds with the same patches as current build.
 
@@ -3279,14 +3281,14 @@ Args:
 Returns:
   Passed builds with the most recent build per builder.
 
-&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#172)(self):**
+&mdash; **def [get\_passed\_tests](/recipe_modules/cros_history/api.py#175)(self):**
 
 Find all tests that have passed with the given patches.
 
 Returns:
   Names of passed tests, if any.
 
-&mdash; **def [get\_previous\_test\_results](/recipe_modules/cros_history/api.py#231)(self, test_plan: GenerateTestPlanResponse):**
+&mdash; **def [get\_previous\_test\_results](/recipe_modules/cros_history/api.py#234)(self, test_plan: GenerateTestPlanResponse):**
 
 Get the tests from the previous run.
 
@@ -3298,7 +3300,7 @@ Returns:
   A tuple containing the list of the previous VM test builds and the list
   of the previous HW test results.
 
-&mdash; **def [get\_previous\_test\_task\_ids](/recipe_modules/cros_history/api.py#200)(self):**
+&mdash; **def [get\_previous\_test\_task\_ids](/recipe_modules/cros_history/api.py#203)(self):**
 
 Get the task ids of the latest test invocations.
 
@@ -3309,7 +3311,7 @@ Returns:
   * hw_build_ids is a list of buildbucket IDs for all Skylab tests for the
     latest invocation of this builder with the same set of Gerrit changes.
 
-&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#276)(self, snapshot: bb_common_pb2.GitilesCommit, builder_list: Optional[Set[str]]=None, statuses: Optional[List['bb_common_pb2.Status']]=None, patches: Optional[List[chromiumos_common_pb2.GerritChange]]=None):**
+&mdash; **def [get\_snapshot\_builds](/recipe_modules/cros_history/api.py#279)(self, snapshot: bb_common_pb2.GitilesCommit, builder_list: Optional[Set[str]]=None, statuses: Optional[List['bb_common_pb2.Status']]=None, patches: Optional[List[chromiumos_common_pb2.GerritChange]]=None):**
 
 Get builds ran at given snapshot and additional optional filtering.
 
@@ -3325,14 +3327,14 @@ Args:
 Returns:
   Builds with the same snapshot and additional filtering.
 
-&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#142)(self):**
+&mdash; **def [get\_test\_failure\_builders](/recipe_modules/cros_history/api.py#145)(self):**
 
 Get builders with the given patches that failed tests in the last run.
 
 Returns:
   Names of builders with HW or VM testing failures, if any.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#82)(annealing_build: build_pb2.Build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_upreved\_pkgs](/recipe_modules/cros_history/api.py#85)(annealing_build: build_pb2.Build):**
 
 Retrieve the packages upreved by the annealing build.
 
@@ -3342,14 +3344,14 @@ Args:
 Returns:
   List of upreved packages.
 
-&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#349)(self):**
+&emsp; **@functools.cached_property**<br>&mdash; **def [is\_retry](/recipe_modules/cros_history/api.py#352)(self):**
 
 Determine if this build is being retried.
 
 Returns:
   Boolean indicating if it is a retry.
 
-&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#264)(self, tests: Iterable[str]):**
+&mdash; **def [set\_passed\_tests](/recipe_modules/cros_history/api.py#267)(self, tests: Iterable[str]):**
 
 Record the tests that passed in the current run.
 
@@ -3359,7 +3361,7 @@ passed and which have not.
 Args:
   tests: Unique names of the tests that passed.
 
-&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [start\_time\_in\_seconds](/recipe_modules/cros_history/api.py#55)(self):**
 
 Generate start time in seconds.
 ### *recipe_modules* / [cros\_infra\_config](/recipe_modules/cros_infra_config)

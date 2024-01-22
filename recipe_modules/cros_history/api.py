@@ -4,8 +4,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""A module to use build history to avoid redundant builds."""
+
 import base64
 import datetime
+import functools
 from typing import List, Iterable, Optional, Set, Tuple
 import zlib
 
@@ -346,6 +349,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       ]
       return builds
 
+  @functools.cached_property
   def is_retry(self) -> bool:
     """Determine if this build is being retried.
 
