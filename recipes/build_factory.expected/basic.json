@@ -5934,7 +5934,7 @@
       }
     },
     "name": "build images.call chromite.api.ImageService/Create.call build API script",
-    "timeout": 7200,
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

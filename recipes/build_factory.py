@@ -14,6 +14,7 @@ from recipe_engine import post_process
 from PB.chromiumos.build_report import BuildReport
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
+from PB.recipes.chromeos.build_factory import BuildFactoryProperties
 
 DEPS = [
     'recipe_engine/file',
@@ -33,10 +34,12 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
+PROPERTIES = BuildFactoryProperties
+
 StepDetails = BuildReport.StepDetails
 
 
-def RunSteps(api):
+def RunSteps(api, properties: BuildFactoryProperties):
   api.cros_release.check_buildspec(fatal=not api.cros_infra_config.is_staging)
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FACTORY,
                                      api.build_menu.build_target.name)
@@ -60,7 +63,9 @@ def RunSteps(api):
           api.build_menu.bootstrap_sysroot(config)
           api.build_menu.install_packages(config, env_info.packages,
                                           timeout_sec=60 * 60 * 12)
-          api.build_menu.build_and_test_images(config, include_version=True)
+          api.build_menu.build_and_test_images(
+              config, include_version=True,
+              build_images_timeout_sec=properties.build_images_timeout_sec)
 
           (
               uploaded_artifacts,
@@ -100,7 +105,7 @@ def GenTests(api):
   yield api.build_menu.test(
       'basic',
       api.properties(
-          **{
+          BuildFactoryProperties(build_images_timeout_sec=3 * 60 * 60), **{
               '$chromeos/cros_source':
                   MessageToDict(
                       CrosSourceProperties(

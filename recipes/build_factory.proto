@@ -17,4 +17,7 @@ message BuildFactoryProperties {
 
   // Whether to bump the version.
   bool bump_version = 3;
+
+  // Timeout for build images step in seconds.
+  int32 build_images_timeout_sec = 4;
 }

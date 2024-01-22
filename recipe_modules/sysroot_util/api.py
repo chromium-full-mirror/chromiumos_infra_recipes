@@ -352,7 +352,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                    builder_path: str, disable_rootfs_verification: bool,
                    disk_layout: str, base_is_recovery: bool = False,
                    version: Optional[str] = None,
-                   timeout_sec: int = 2 * 60 * 60,
+                   timeout_sec: Optional[int] = None,
                    build_test_data: Optional[str] = None,
                    test_test_data: Optional[str] = None,
                    name: Optional[str] = None, skip_image_tests: bool = False,
@@ -367,7 +367,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       disk_layout: disk_layout to set, or empty for default.
       base_is_recovery: copy the base image to recovery_image.bin.
       version: version string to pass to build API, or None.
-      timeout_sec: Step timeout (in seconds).
+      timeout_sec: Step timeout (in seconds), None uses default timeout.
       build_test_data: test response (JSON) from the ImageService/Create call,
         call, or None.
       test_test_data: test response (JSON) from the ImageService/Test call, or
@@ -407,6 +407,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                     build_target=self.sysroot.build_target) for x in image_types
             ]))
     with self.m.step.nest(name or 'build images') as pres:
+      # Use default timeout if none specified.
+      if not timeout_sec:
+        timeout_sec = 2 * 60 * 60
       request = CreateImageRequest(
           build_target=self.sysroot.build_target,
           chroot=self.m.cros_sdk.chroot,
