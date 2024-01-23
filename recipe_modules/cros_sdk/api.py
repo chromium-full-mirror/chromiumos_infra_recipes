@@ -5,8 +5,9 @@
 
 """API for interacting with cros_sdk, the interface to the CrOS SDK."""
 
-from collections import namedtuple
 import contextlib
+import dataclasses
+from typing import Dict, List
 
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -31,6 +32,22 @@ _SDK_VERSION_CONF_TEST_DATA = 'SDK_LATEST_VERSION="foo"\nTC_PATH="bar"\n'
 # living within the source tree. We provide a symlink only for checkouts before
 # this milestone. Remove when old milestones are no longer supported.
 _MILESTONE_NEEDS_CHROOT_SYMLINK = 118
+
+
+@dataclasses.dataclass
+class ToolchainInfo:
+  """Dataclass to hold info about the toolchain and SDK.
+
+  Attributes:
+    sdk_version: The SDK version used by the current build.
+    sdk_bucket: The Google Storage bucket containing the above SDK.
+    toolchain_url: The URL template for toolchains used by the current build.
+    toolchains: A list of toolchains used.
+  """
+  sdk_version: str
+  sdk_bucket: str
+  toolchain_url: str
+  toolchains: List[str]
 
 
 class CrosSdkApi(RecipeApi):
@@ -668,11 +685,11 @@ class CrosSdkApi(RecipeApi):
     args += ['--'] + cmd
     return self(name, args, **kwargs)
 
-  def _parse_sdk_version(self):
+  def _parse_sdk_version(self) -> Dict[str, str]:
     """Parse information from the sdk_version.conf file.
 
     Returns:
-      (dict) mapping between fields and values found in the file.
+      A dict representing fields and values found in the file.
     """
     filepath = self.m.cros_source.workspace_path.join(_SDK_VERSION_PROJECT_PATH)
     lines = self.m.file.read_text(
@@ -688,22 +705,20 @@ class CrosSdkApi(RecipeApi):
         vals[toks[0]] = toks[1].strip('"')
     return vals
 
-  ToolchainInfo = namedtuple('ToolchainInfo',
-                             ['sdk_version', 'toolchain_url', 'toolchains'])
-
-  def get_toolchain_info(self, build_target):
+  def get_toolchain_info(self, build_target: str) -> ToolchainInfo:
     """Retrieve metadata about SDK/toolchain usage.
 
     Args:
-      build_target (str): Name of the build target.
+      build_target: Name of the build target.
 
     Returns:
-      (ToolchainInfo) information about sdk/toolchain usage.
+      Information about sdk/toolchain usage.
     """
     with self.m.step.nest('get toolchain info'):
 
       sdk_info = self._parse_sdk_version()
       sdk_version = sdk_info.get('SDK_LATEST_VERSION', None)
+      sdk_bucket = sdk_info.get('SDK_BUCKET', '')
       toolchain_url = sdk_info.get('TC_PATH', None)
 
       if sdk_version is None or toolchain_url is None:
@@ -715,4 +730,5 @@ class CrosSdkApi(RecipeApi):
       toolchains = (
           list(resp.default_toolchains) + list(resp.nondefault_toolchains))
 
-      return self.ToolchainInfo(sdk_version, toolchain_url, toolchains)
+      return ToolchainInfo(sdk_version=sdk_version, sdk_bucket=sdk_bucket,
+                           toolchain_url=toolchain_url, toolchains=toolchains)

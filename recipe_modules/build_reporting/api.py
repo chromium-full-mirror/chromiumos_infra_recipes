@@ -24,9 +24,6 @@ import base64
 import contextlib
 from typing import Dict, List, Union
 
-from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
-from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
-
 from google.protobuf import json_format
 from google.protobuf.json_format import MessageToJson
 
@@ -34,11 +31,14 @@ from google.protobuf.json_format import MessageToJson
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.build_report import BuildReport, URI
-
+from RECIPE_MODULES.chromeos.build_reporting import build_report_proto_helpers as helpers
+from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
+from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
 from recipe_engine import config_types
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import StepFailure
+
 
 
 # TODO(b/200713946): Lookup the builder region and use that endpoint
@@ -552,21 +552,22 @@ class BuildReportingApi(recipe_api.RecipeApi):
           removeprefix(gs_path, 'gs://'))
       self.m.easy.set_properties_step(build_report_uri=gs_full_path)
 
-  def publish_toolchain_info(self, toolchain_info):
+  def publish_toolchain_info(
+      self, toolchain_info: cros_sdk_api.ToolchainInfo) -> None:
     """Publish metadata about SDK/toolchain usage.
 
     Args:
-      toolchain_info (cros_sdk.ToolchainInfo): Information about sdk/toolchain
-        usage.
+      toolchain_info: Information about sdk/toolchain usage.
     """
     if self._build_report.toolchains:
       raise StepFailure(
           '`toolchains` already published in pub/sub, invalid retry?')
 
     build_report = BuildReport()
-    build_report.sdk_version = getattr(toolchain_info, 'sdk_version')
-    build_report.toolchain_url = getattr(toolchain_info, 'toolchain_url')
-    build_report.toolchains.extend(getattr(toolchain_info, 'toolchains'))
+    build_report.sdk_version = toolchain_info.sdk_version
+    build_report.sdk_bucket = toolchain_info.sdk_bucket
+    build_report.toolchain_url = toolchain_info.toolchain_url
+    build_report.toolchains.extend(toolchain_info.toolchains)
 
     self.publish(build_report)
 

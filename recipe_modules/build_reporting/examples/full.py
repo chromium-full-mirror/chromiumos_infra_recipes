@@ -3,10 +3,10 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Exercise all the functionality of the build_reporting module."""
 
-from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
+from RECIPE_MODULES.chromeos.cros_artifacts import api as cros_artifacts_api
+from RECIPE_MODULES.chromeos.cros_sdk import api as cros_sdk_api
 
 from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromiumos.build_report import BuildReport, URI
@@ -20,7 +20,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/time',
     'build_reporting',
-    'cros_sdk',
 ]
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
@@ -60,7 +59,7 @@ def RunSteps(api):
   step_info.publish()
 
   api.build_reporting.publish_build_artifacts(
-      UploadedArtifacts(
+      cros_artifacts_api.UploadedArtifacts(
           'chromeos-image-archive',
           'build_target-release/R12-12345.0.0',
           {
@@ -84,8 +83,8 @@ def RunSteps(api):
   # No additional calls allowed.
   with api.assertions.assertRaises(StepFailure):
     api.build_reporting.publish_build_artifacts(
-        UploadedArtifacts('chromeos-image-archive',
-                          'build_target-release/R12-12345.0.0', {}),
+        cros_artifacts_api.UploadedArtifacts(
+            'chromeos-image-archive', 'build_target-release/R12-12345.0.0', {}),
         '/path/to/artifacts')
 
   # Publish the branch.
@@ -107,21 +106,24 @@ def RunSteps(api):
 
   # Publish SDK/toolchain metadata.
   sdk_version = '2022.06.26.170938'
+  sdk_bucket = 'chromiumos-sdk'
   toolchain_url = '2022/06/%(target)s-2022.06.26.170938.tar.xz'
   toolchains = ['x86_64-cros-linux-gnu', 'i686-cros-linux-gnu']
   api.build_reporting.publish_toolchain_info(
-      api.cros_sdk.ToolchainInfo(
-          sdk_version,
-          toolchain_url,
-          toolchains,
+      cros_sdk_api.ToolchainInfo(
+          sdk_version=sdk_version,
+          sdk_bucket=sdk_bucket,
+          toolchain_url=toolchain_url,
+          toolchains=toolchains,
       ))
   # No additional calls allowed.
   with api.assertions.assertRaises(StepFailure):
     api.build_reporting.publish_toolchain_info(
-        api.cros_sdk.ToolchainInfo(
-            sdk_version,
-            toolchain_url,
-            toolchains,
+        cros_sdk_api.ToolchainInfo(
+            sdk_version=sdk_version,
+            sdk_bucket=sdk_bucket,
+            toolchain_url=toolchain_url,
+            toolchains=toolchains,
         ))
 
   # ...
