@@ -120,6 +120,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           config.artifacts.prebuilts_gs_bucket,
           snapshot=current_commit if current_commit_hash else None)
 
+      # b/321760005: toolchain files like `package.provided` may need to be
+      # updated.
+      api.build_menu.bootstrap_sysroot(config=config)
       api.build_menu.install_packages(config=config, packages=relevant_pkgs,
                                       package_indexes=package_indexes)
     except StepFailure as sf:
@@ -154,6 +157,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'Disable cros clean-outdated-pkgs'),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
+      api.post_check(post_process.MustRun, 'install toolchain (2)'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
       api.post_check(post_process.MustRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (4)'),
