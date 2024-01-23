@@ -413,6 +413,34 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Set child output ids if any
       self.add_child_info_to_output_property()
 
+      # TODO(b/316010599): Remove after the experiment.
+      with self.m.failures.ignore_exceptions():
+        builder_configs = [
+            self.m.cros_infra_config.get_builder_config(cs.name) for cs in
+            self.m.cros_infra_config.config_or_default.orchestrator.child_specs
+        ]
+        # In order to simplify things, we are going to start with only first CQ
+        # attempts which do not configure additional builders via footer.
+        if (self._is_cq_orchestrator and not self.m.cros_history.is_retry and
+            not self.m.cros_relevance.check_force_relevance_footer(
+                self.gerrit_changes, builder_configs)):
+          cros_query_relevant_builders = {
+              b.id.name for b in self.m.build_plan.get_relevant_builder_configs(
+                  builder_configs, self.gerrit_changes)
+          }
+
+          actual_relevant_child_builders = set(
+              self._relevant_child_builder_names)
+          cros_query_false_positives = (
+              cros_query_relevant_builders - actual_relevant_child_builders)
+          cros_query_false_negatives = (
+              actual_relevant_child_builders - cros_query_relevant_builders)
+          self.m.easy.set_properties_step(
+              cros_query_response_was_identical=cros_query_relevant_builders ==
+              actual_relevant_child_builders,
+              cros_query_false_positives=sorted(cros_query_false_positives),
+              cros_query_false_negatives=sorted(cros_query_false_negatives))
+
     if self.is_cq_orchestrator:
       successes = {
           'build':
