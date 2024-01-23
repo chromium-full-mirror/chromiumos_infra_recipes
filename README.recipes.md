@@ -12373,7 +12373,7 @@ package_index, and generates then uploads a KZIP to GS.
 &mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#36)(api, properties):**
 ### *recipes* / [chromiumos\_codesearch\_initiator](/recipes/chromiumos_codesearch_initiator.py)
 
-[DEPS](/recipes/chromiumos_codesearch_initiator.py#13): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
+[DEPS](/recipes/chromiumos_codesearch_initiator.py#15): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
 
 
 Initialize ChromiumOS codesearch builders to create kzips.
@@ -12381,9 +12381,9 @@ Initialize ChromiumOS codesearch builders to create kzips.
 Checks out chromiumos manifest repo and uses the latest snapshot commit hash
 to initialize chromiumos codesearch builders.
 
-&mdash; **def [RunSteps](/recipes/chromiumos_codesearch_initiator.py#54)(api):**
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch_initiator.py#53)(api, properties: ChromiumosCodesearchInitiatorProperties):**
 
-&mdash; **def [latestRefInfo](/recipes/chromiumos_codesearch_initiator.py#36)(api, clone_dir, repo, branch):**
+&mdash; **def [latestRefInfo](/recipes/chromiumos_codesearch_initiator.py#35)(api, clone_dir, repo, branch):**
 
 Return the hash and timestamp of the latest commit on a branch.
 ### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)

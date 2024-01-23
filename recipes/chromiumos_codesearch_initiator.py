@@ -1,4 +1,4 @@
-# Copyright 2022 The Chromium Authors. All rights reserved.
+# Copyright 2022 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -9,6 +9,8 @@ to initialize chromiumos codesearch builders.
 """
 
 from recipe_engine.post_process import LogContains
+from PB.recipes.chromeos.chromiumos_codesearch_initiator import (
+    ChromiumosCodesearchInitiatorProperties)
 
 DEPS = [
     'depot_tools/git',
@@ -24,10 +26,7 @@ DEPS = [
     'recipe_engine/url',
 ]
 
-BUILDERS = [
-    'amd64-generic-codesearch',
-    'arm64-generic-codesearch',
-]
+PROPERTIES = ChromiumosCodesearchInitiatorProperties
 
 CODESEARCH_REPO = 'https://chromium.googlesource.com/chromiumos/codesearch'
 MANIFEST_REPO = 'https://chromium.googlesource.com/chromiumos/manifest'
@@ -51,7 +50,7 @@ def latestRefInfo(api, clone_dir, repo, branch):
     return commit_hash, timestamp
 
 
-def RunSteps(api):
+def RunSteps(api, properties: ChromiumosCodesearchInitiatorProperties) -> None:
   mirror_hash, mirror_unix_timestamp = latestRefInfo(api,
                                                      'chromiumos_codesearch',
                                                      CODESEARCH_REPO, 'main')
@@ -59,22 +58,33 @@ def RunSteps(api):
                                    'snapshot')
 
   # Trigger the chromiumos_codesearch builders.
-  properties = {
+  child_properties = {
       'codesearch_mirror_revision': mirror_hash,
       'codesearch_mirror_revision_timestamp': mirror_unix_timestamp,
       'manifest_hash': manifest_hash,
   }
 
   api.scheduler.emit_trigger(
-      api.scheduler.BuildbucketTrigger(properties=properties),
-      project='chromeos', jobs=BUILDERS)
+      api.scheduler.BuildbucketTrigger(properties=child_properties),
+      project='chromeos', jobs=properties.child_jobs)
 
 
 # TODO(crbug/1284439): Add more tests.
 def GenTests(api):
   yield api.test(
       'basic',
+      api.properties(
+          ChromiumosCodesearchInitiatorProperties(
+              child_jobs=[
+                  'amd64-generic-codesearch',
+                  'arm64-generic-codesearch',
+              ],
+          ),
+      ),
       api.step_data('fetch hash',
                     api.raw_io.stream_output_text('d3adb33f', stream='stdout')),
-      api.post_process(LogContains, 'luci-scheduler.EmitTriggers', 'input',
-                       ['d3adb33f']))
+      api.post_process(LogContains, 'luci-scheduler.EmitTriggers', 'input', [
+          '"codesearch_mirror_revision": "d3adb33f"',
+          '"job": "amd64-generic-codesearch"',
+          '"job": "arm64-generic-codesearch"',
+      ]))
