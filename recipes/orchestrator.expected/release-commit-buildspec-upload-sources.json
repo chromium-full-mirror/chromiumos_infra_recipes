@@ -5194,7 +5194,8 @@
     "cmd": [],
     "name": "run builds.filter builds.looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
   {

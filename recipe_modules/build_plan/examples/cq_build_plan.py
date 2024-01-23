@@ -551,7 +551,7 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.properties(
           **{'$chromeos/looks_for_green': {

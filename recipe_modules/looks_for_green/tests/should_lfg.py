@@ -67,7 +67,9 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check if CL uses Cq-Depend'),
+          [],
+          'check should look for green.check if all Cq-Depend CLs are included'
+      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -101,7 +103,7 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  # TODO(b/276363760): Remove when Cq-Depended changes are supported.
+  # TODO(b/276363760): Remove when not included Cq-Depended changes are supported.
   yield api.test(
       'cq-depend',
       api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
@@ -114,8 +116,9 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
-      api.git_footers.simulated_get_footers(
-          ['123456'], 'check should look for green.check if CL uses Cq-Depend'),
+      api.git_footers.simulated_get_footers([
+          'chromium:123456'
+      ], 'check should look for green.check if all Cq-Depend CLs are included'),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND),
       api.post_process(post_process.DropExpectation),
@@ -146,7 +149,9 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check if CL uses Cq-Depend'),
+          [],
+          'check should look for green.check if all Cq-Depend CLs are included'
+      ),
       api.post_check(LooksStatusEquals,
                      LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES),
       api.post_process(post_process.DropExpectation),

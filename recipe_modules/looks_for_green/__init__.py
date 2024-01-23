@@ -21,6 +21,7 @@ DEPS = [
     'gerrit',
     'git_footers',
     'greenness',
+    'lfg_util',
     'src_state',
 ]
 

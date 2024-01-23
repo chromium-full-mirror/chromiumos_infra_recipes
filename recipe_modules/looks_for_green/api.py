@@ -122,6 +122,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         with self.m.step.nest('check should look for green') as pres:
           # Don't perform extra checks if LFG is not enabled.
           if not self.m.looks_for_green.enable_looks_for_green:
+            pres.step_text = 'Looks for green not enabled'
             self._should_lfg = False
             return self._should_lfg
 
@@ -141,17 +142,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           self._should_lfg = (not disallow and not has_merge_commit)
           should_lfg_log = (f'Found disallow footer: {disallow}, Found has'
                             f' merge commit: {has_merge_commit}')
-          # TODO(b/276363760): Don't LFG with Cq-Depend until supported.
           if self._should_lfg:
-            with self.m.step.nest('check if CL uses Cq-Depend'):
-              if self.m.git_footers.get_footer_values(gerrit_changes,
-                                                      'Cq-Depend'):
-                self._should_lfg = False
-                self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
-                should_lfg_log += '. Found Cq-Depend footer'
-                pres.logs['Cq-Depend footer'] = (
-                    'Found Cq-Depend footer. Skipping'
-                    ' looks for green.')
+            # TODO(b/276363760): Don't LFG if all Cq-Depend CLs are being tested in the run.
+            if not self.m.lfg_util.cq_depends_included(gerrit_changes):
+              self._should_lfg = False
+              self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
           # TODO(b/276363760): Don't LFG with stacked changes that aren't
           # included.
           if self._should_lfg:

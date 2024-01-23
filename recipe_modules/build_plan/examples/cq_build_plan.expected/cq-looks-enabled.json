@@ -1413,9 +1413,12 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend",
+    "name": "filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@all depended CLs are included@@@",
+      "@@@STEP_LOG_LINE@bad_footers@@@@",
+      "@@@STEP_LOG_END@bad_footers@@@"
     ]
   },
   {
@@ -1438,7 +1441,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.check if CL uses Cq-Depend.read git footers",
+    "name": "filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"

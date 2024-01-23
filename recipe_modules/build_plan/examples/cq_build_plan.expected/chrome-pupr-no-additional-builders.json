@@ -1290,7 +1290,8 @@
     "cmd": [],
     "name": "filter builds.looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
   {

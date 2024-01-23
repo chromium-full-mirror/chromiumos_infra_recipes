@@ -113,7 +113,7 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
@@ -152,7 +152,7 @@ def GenTests(api):
       api.git_footers.simulated_get_footers([], 'filter builds.looks for green.check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
@@ -186,7 +186,7 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.step_data(
           'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
@@ -275,7 +275,7 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if CL uses Cq-Depend'
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
