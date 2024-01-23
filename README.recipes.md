@@ -8632,8 +8632,8 @@ Args:
 
 Returns:
   A TestCaseMetadataList containing the metadata of all tests, or None
-  if the ArtifactsService/FetchMetadata endpoint is unavailable or
-  if any of the expected metadata files are not found.
+  if the ArtifactsService/FetchMetadata endpoint is unavailable or all
+  metadata files are empty.
 
 &mdash; **def [gspath](/recipe_modules/metadata/api.py#70)(self, metadata_info, gs_bucket=None, gs_path=None):**
 

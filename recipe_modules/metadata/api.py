@@ -113,8 +113,8 @@ class MetadataApi(recipe_api.RecipeApi):
 
     Returns:
       A TestCaseMetadataList containing the metadata of all tests, or None
-      if the ArtifactsService/FetchMetadata endpoint is unavailable or
-      if any of the expected metadata files are not found.
+      if the ArtifactsService/FetchMetadata endpoint is unavailable or all
+      metadata files are empty.
     """
     if not self.m.cros_build_api.has_endpoint(
         self.m.cros_build_api.ArtifactsService, 'FetchMetadata'):
@@ -129,14 +129,14 @@ class MetadataApi(recipe_api.RecipeApi):
           proto_path=result_path.path)
       if mock_metadata_file:
         self.m.path.mock_add_file(recipes_path)
-      if not self.m.path.exists(recipes_path):
-        # If an expected file is missing, return nothing.
-        return None
-      contents = self.m.file.read_raw(
-          name=f'read {recipes_path}',
-          source=recipes_path,
-          test_data=self.EXAMPLE_TEST_METADATA_LIST.SerializeToString(),
-      )
-      test_metadata.MergeFromString(contents)
+      if self.m.path.exists(recipes_path):
+        contents = self.m.file.read_raw(
+            name=f'read {recipes_path}',
+            source=recipes_path,
+            test_data=self.EXAMPLE_TEST_METADATA_LIST.SerializeToString(),
+        )
+        test_metadata.MergeFromString(contents)
+    if len(test_metadata.values) == 0:
+      return None
 
     return test_metadata
