@@ -4398,7 +4398,7 @@
       "-root",
       "[START_DIR]/code_coverage",
       "-ensure-file",
-      "experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage incremental_code_coverage:353038870\nexperimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage absolute_code_coverage:362552734",
+      "experimental/chromiumos/infra/code_coverage/manual/incremental_code_coverage incremental_code_coverage:cl600915087\nexperimental/chromiumos/infra/code_coverage/manual/absolute_code_coverage absolute_code_coverage:cl600915087",
       "-max-threads",
       "0",
       "-json-output",

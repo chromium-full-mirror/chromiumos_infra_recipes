@@ -34,11 +34,11 @@ DEFAULT_COVERAGE_ENV = 'prod'
 # TODO(b/189356506): Remove experimental path after auto deploy is implemented.
 PACKAGE_ROOT = 'experimental/chromiumos/infra/code_coverage/manual'
 INCREMENTAL_COVERAGE_CIPD_PACKAGE = f'{PACKAGE_ROOT}/incremental_code_coverage'
-INCREMENTAL_COVERAGE_CIPD_VERSION = 'incremental_code_coverage:353038870'
+INCREMENTAL_COVERAGE_CIPD_VERSION = 'incremental_code_coverage:cl600915087'
 INCREMENTAL_COVERAGE_CIPD_FILE = 'incremental_code_coverage'
 
 ABSOLUTE_COVERAGE_CIPD_PACKAGE = f'{PACKAGE_ROOT}/absolute_code_coverage'
-ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:362552734'
+ABSOLUTE_COVERAGE_CIPD_VERSION = 'absolute_code_coverage:cl600915087'
 ABSOLUTE_COVERAGE_CIPD_FILE = 'absolute_code_coverage'
 
 # Number of file coverage entries per chunk
