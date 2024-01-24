@@ -224,10 +224,6 @@ class CrosSourceApi(RecipeApi):
     """Returns whether the builder is configured to use the external cache."""
     return self._use_external_source_cache
 
-  def _clear_applied_patches_list(self):
-    """Empty out the stored list of applied patches."""
-    self._applied_patches = defaultdict(list)
-
   def _determine_sync_jobs(self):
     """Determines the number of jobs to use for sync based on CPUs."""
     if self._test_data.enabled:
@@ -1344,7 +1340,6 @@ class CrosSourceApi(RecipeApi):
           saved in cros_infra_config.configure_builder().
         manifest_url: URL of manifest repo.  Default: internal manifest
     """
-    self._clear_applied_patches_list()
     if self._sync_to_manifest and self._sync_to_manifest.manifest_gs_path:
       self.m.cros_source.sync_to_pinned_manifest(
           manifest_gs_path=self._sync_to_manifest.manifest_gs_path, **kwargs)

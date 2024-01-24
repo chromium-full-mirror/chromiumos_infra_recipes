@@ -581,6 +581,41 @@ class GerritApi(RecipeApi):
         host = host[len(prefix):]
     return 'https://' + host
 
+  def changes_submittable(
+      self, gerrit_changes: List[GerritChange],
+      test_output_data: Union[Callable, Dict, List, None] = None) -> bool:
+    """Check whether the given changes can be merged onto their Git branches.
+
+    Args:
+      gerrit_changes: The changes to check.
+      test_output_data: Mock response for the git-test-submit support tool.
+    """
+    with self.m.step.nest('check for merge conflicts') as presentation:
+      changes = []
+      for gc in gerrit_changes:
+        changes.append({
+            'host': gc.host,
+            'change_number': int(gc.change),
+            'patch_set': int(gc.patchset),
+        })
+      req = {
+          'gerrit_changes': changes,
+          'temp_dir': self.m.path['cleanup'].join('submittable_check'),
+      }
+      if test_output_data is None:
+        test_output_data = self.test_api.test_changes_are_submittable
+      result = self.m.support.call('git-test-submit', req,
+                                   test_output_data=test_output_data)
+      if result['errors']:
+        presentation.step_text = 'unable to cherry-pick changes'
+        presentation.logs['cherry-pick-failures'] = result['errors']
+        presentation.status = 'FAILURE'
+        presentation.properties['merge_conflict'] = True
+        return False
+
+      presentation.step_text = 'confirmed no merge conflicts'
+      return True
+
   def create_change(
       self, project: Union[str, Path], reviewers: Optional[List[str]] = None,
       ccs: Optional[List[str]] = None, topic: Optional[str] = None,

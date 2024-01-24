@@ -131,8 +131,6 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
         includes changes to repos this builder is not allowed to read (e.g.
         because of Cq-Depend grouping); the changes will be discarded instead
         of failing during application.
-    Raises:
-      StepFailure: If change(s) has a merge conflict with the source tree.
     """
     changes = self.m.src_state.gerrit_changes if changes is None else changes
     if not changes:
