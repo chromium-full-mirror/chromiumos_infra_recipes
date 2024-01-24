@@ -23,6 +23,7 @@ from PB.chromiumos.test.api import cros_tool_runner_cli as ctr
 from PB.chromiumos.test.api import test_case as ctr_test_case
 from PB.chromiumos.test.api import test_suite as ctr_test_suite
 from PB.chromiumos.test.api import pre_test_service as pre_request
+from PB.chromiumos.test.api import cros_test_finder_cli as ctf
 
 from PB.go.chromium.org.luci.resultdb.proto.v1 import (
     invocation as invocation_pb2,)
@@ -93,6 +94,7 @@ PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
 MAX_IN_SHARD = 70
+CENTRALIZED_SUITE_PREFIX = 'centralizedsuite:'
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -509,9 +511,10 @@ def _enumerate_cft_tests(api, properties, requests):
       # file.
       # build_target = r.params.software_attributes.build_target.name
       build_target = _reconstruct_build_target(r)
-      test_finder_request = ctr.CrosToolRunnerTestFinderRequest(
-          test_suites=[_ctr_test_suite(r)], container_metadata_key=build_target)
-      test_finder_result = api.cros_tool_runner.find_tests(test_finder_request)
+      ctr_test_finder_request = ctr.CrosToolRunnerTestFinderRequest(
+          request=_test_finder_request(r), container_metadata_key=build_target)
+      test_finder_result = api.cros_tool_runner.find_tests(
+          ctr_test_finder_request)
       suite_name = ''
       if r.test_plan.suite:
         suite_name = r.test_plan.suite[0].name
@@ -1003,6 +1006,23 @@ def _test_args_from_request(request):
   elif request.test_plan.suite:
     return request.test_plan.suite[0].test_args
   return ''
+
+
+def _test_finder_request(request):  # pragma: nocover
+  """Generates a test finder request that resolves suites in the CTP request."""
+  if _is_centralized_suite(request):
+    raw_suite = request.test_plan.suite[0].name
+    centralized_suite = raw_suite.removeprefix(CENTRALIZED_SUITE_PREFIX)
+    return ctf.CrosTestFinderRequest(centralized_suite=centralized_suite)
+
+  return ctf.CrosTestFinderRequest(test_suites=[_ctr_test_suite(request)])
+
+
+def _is_centralized_suite(request):  # pragma: nocover
+  """Returns True if the request contains a centralized suite, else False."""
+  suite_list = request.test_plan.suite
+  return suite_list and len(suite_list) == 1 and \
+    suite_list[0].name.startswith(CENTRALIZED_SUITE_PREFIX)
 
 
 def _ctr_test_suite(request):
