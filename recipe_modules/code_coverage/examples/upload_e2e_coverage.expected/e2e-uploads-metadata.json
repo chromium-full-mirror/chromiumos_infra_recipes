@@ -6381,7 +6381,7 @@
       "----",
       "cp",
       "[CLEANUP]/code-coverage_tmp_1",
-      "gs://code-coverage-merger-dev/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json"
+      "gs://e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6400,8 +6400,8 @@
     "name": "upload e2e coverage metadata.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/code-coverage-merger-dev/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@",
-      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/code-coverage-merger-dev/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@",
+      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@"
     ]
   },
   {

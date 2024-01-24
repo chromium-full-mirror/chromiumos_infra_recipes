@@ -27,7 +27,7 @@ DEFAULT_CODE_BRANCH = 'refs/heads/main'
 PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
-E2E_COVERAGE_BUCKET_NAME = 'code-coverage-merger-dev'
+E2E_COVERAGE_BUCKET_NAME = 'e2e-coverage-artifacts'
 # TODO(b/222328534): Use autopush as default value instead.
 DEFAULT_COVERAGE_ENV = 'prod'
 
