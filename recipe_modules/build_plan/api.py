@@ -92,9 +92,21 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(req)
     relevant_build_targets = [bt.build_target for bt in resp.build_targets]
+
+    # Bazel builders need to be forced relevant for changes to the
+    # 'chromiumos/bazel' repo.
+    relevant_bazel_builder_configs = []
+    if any(gc.project == 'chromiumos/bazel' for gc in gerrit_changes):
+      relevant_bazel_builder_configs = [
+          bc for bc in builder_configs
+          if bc.build.build_images.build_images_orchestrator ==
+          BuilderConfig.BuildOrchestrator.BAZEL
+      ]
+
     return [
         bc for bc in builder_configs
-        if bc.build_target in relevant_build_targets
+        if bc.build_target in relevant_build_targets or
+        bc in relevant_bazel_builder_configs
     ]
 
   def _get_necessary_cq_child_specs(

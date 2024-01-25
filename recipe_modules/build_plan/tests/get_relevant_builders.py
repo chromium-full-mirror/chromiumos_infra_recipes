@@ -27,9 +27,13 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 def RunSteps(api):
   gerrit_changes = [
+      json_format.Parse(gc, bb_common_pb2.GerritChange())
+      for gc in api.properties.get('input_changes', [])
+  ] or [
       bb_common_pb2.GerritChange(host='chromium-review.googlesource.com',
                                  change=1234)
   ]
+
   input_builder_configs = [
       json_format.Parse(bc, builder_config_pb2.BuilderConfig())
       for bc in api.properties.get('input_builder_configs', [])
@@ -152,6 +156,29 @@ def GenTests(api):
           ], expected_builder_configs=[
               json_format.MessageToJson(target_a_builder_config),
               json_format.MessageToJson(target_a_bazel_builder_config),
+          ]),
+      api.cros_build_api.set_api_return(
+          parent_step_name='',
+          endpoint='RelevancyService/GetRelevantBuildTargets',
+          data=build_api_return_val),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  build_api_return_val = json_format.MessageToJson(
+      relevancy_pb2.GetRelevantBuildTargetsResponse(build_targets=[]))
+  yield api.test(
+      'src-bazel-change',
+      api.properties(
+          input_builder_configs=[
+              json_format.MessageToJson(target_a_builder_config),
+              json_format.MessageToJson(target_a_other_profile_builder_config),
+              json_format.MessageToJson(target_a_bazel_builder_config),
+              json_format.MessageToJson(target_b_builder_config)
+          ], expected_builder_configs=[
+              json_format.MessageToJson(target_a_bazel_builder_config),
+          ], input_changes=[
+              json_format.MessageToJson(
+                  bb_common_pb2.GerritChange(project='chromiumos/bazel'))
           ]),
       api.cros_build_api.set_api_return(
           parent_step_name='',
