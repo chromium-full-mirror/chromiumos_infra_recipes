@@ -3835,7 +3835,7 @@ Args:
   dry_run (bool): Whether the git push is --dry-run.
   gs_location (string): If set, will also upload the pinned manifest to GS.
 
-&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#574)(self, build_target, step):**
+&mdash; **def [emit\_release\_buckets](/recipe_modules/cros_release/api.py#577)(self, build_target, step):**
 
 Emit the release buckets for the configured channels in step logs.
 
@@ -3843,7 +3843,7 @@ Args:
   build_target (str): build target to include in the path.
   step (StepPresentation): step to log into.
 
-&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#538)(self, config, sysroot, step):**
+&mdash; **def [get\_image\_dir](/recipe_modules/cros_release/api.py#541)(self, config, sysroot, step):**
 
 Determine the image directory unsigned artifacts are uploaded in.
 
@@ -3855,7 +3855,7 @@ Args:
 Returns:
   GS image directory as a gs:// uri.
 
-&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#590)(self, config, sysroot):**
+&mdash; **def [push\_and\_sign\_images](/recipe_modules/cros_release/api.py#593)(self, config, sysroot):**
 
 Call the Push Image Build API endpoint for the build.
 
@@ -3889,11 +3889,11 @@ been built.
 Args:
   use_split_paygen: Whether to use the new split paygen flow.
 
-&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#630)(self):**
+&mdash; **def [set\_output\_properties](/recipe_modules/cros_release/api.py#633)(self):**
 
 Set release-related output properties for the build.
 
-&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#638)(self):**
+&mdash; **def [set\_release\_qs\_account](/recipe_modules/cros_release/api.py#641)(self):**
 
 Fetches the RC schedule and determines which QS account to use.
 

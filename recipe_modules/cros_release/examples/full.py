@@ -154,6 +154,16 @@ def GenTests(api):
       api.test_util.test_child_build('kukui', builder_name='kukui-release-main',
                                      bucket='try-preprod').build)
 
+  paygen_partial_failure = build_pb2.Build(
+      id=8922054662172514000, status='FAILURE',
+      summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
+  )
+  paygen_partial_failure.output.properties['payloads'] = [
+      MessageToJson(
+          BuildReport.Payload(size=1337),
+      )
+  ]
+
   yield api.build_menu.test(
       'paygen-failure',
       api.properties(
@@ -178,12 +188,11 @@ def GenTests(api):
       api.post_check(post_process.LogContains,
                      'generate payloads.running paygen orchestrator.schedule',
                      'json.output', ['"bucket": "release"']),
-      api.buildbucket.simulated_collect_output([
-          build_pb2.Build(
-              id=8922054662172514000, status='FAILURE',
-              summary_markdown='1 of 2 passed\n\nhttps://cr-buildbucket.appspot.com/build/8812345678901234567'
-          )
-      ], 'generate payloads.running paygen orchestrator.collect'),
+      api.buildbucket.simulated_collect_output(
+          [paygen_partial_failure],
+          'generate payloads.running paygen orchestrator.collect'),
+      api.post_check(post_process.MustRun,
+                     'generate payloads.build status pubsub update'),
       api.post_check(post_process.StepFailure, 'generate payloads'),
       api.post_check(post_process.StepFailure,
                      'generate payloads.inspect failure'),

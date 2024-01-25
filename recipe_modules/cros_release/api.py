@@ -524,7 +524,6 @@ class CrosReleaseApi(recipe_api.RecipeApi):
           else:
             presentation.status = self.m.step.FAILURE
             failure = StepFailure
-        raise failure('paygen orchestrator failed\n{}'.format(build_url))
 
       if 'payloads' in paygen_orch_build.output.properties:
         payload_information = paygen_orch_build.output.properties['payloads']
@@ -534,6 +533,10 @@ class CrosReleaseApi(recipe_api.RecipeApi):
         ]
         self.m.build_reporting.publish(
             BuildReport(payloads=payload_information))
+
+      # Raise paygen failure after publishing any successful payloads to pubsub.
+      if paygen_orch_build.status != common_pb2.SUCCESS:
+        raise failure('paygen orchestrator failed\n{}'.format(build_url))
 
   def get_image_dir(self, config, sysroot, step) -> str:
     """Determine the image directory unsigned artifacts are uploaded in.
