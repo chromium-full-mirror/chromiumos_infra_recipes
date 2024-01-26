@@ -477,8 +477,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       InfraFailure: If the endpoint is not available.
     """
     build_targets = self._build_targets_for_toolchain_setup
-    if not build_targets:
-      return
     with self.m.step.nest('setup toolchains'):
       if not self.m.cros_build_api.has_endpoint(
           self.m.cros_build_api.ToolchainService, 'SetupToolchains'):

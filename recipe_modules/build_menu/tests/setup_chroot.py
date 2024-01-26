@@ -136,7 +136,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield _sdk_update_test_case(
       'skip-update-sdk-but-no-toolchain-build-targets',
       False,
-      expect_setup_toolchains=False,
+      expect_setup_toolchains=True,
       sdk_update_run_spec=BuilderConfig.RunSpec.NO_RUN,
   )
   yield _sdk_update_test_case(

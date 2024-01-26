@@ -1353,7 +1353,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#94)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#887)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#885)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1362,14 +1362,14 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#901)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#899)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#622)(self, config=None):**
+&mdash; **def [bootstrap\_sysroot](/recipe_modules/build_menu/api.py#620)(self, config=None):**
 
 Bootstrap the sysroot by installing the toolchain.
 
@@ -1378,7 +1378,7 @@ Args:
     attempt to get the BuilderConfig whose id.name matches the specified
     Buildbucket builder from HEAD.
 
-&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#729)(self, config=None, include_version=False, build_images_timeout_sec: Optional[int]=None):**
+&mdash; **def [build\_and\_test\_images](/recipe_modules/build_menu/api.py#727)(self, config=None, include_version=False, build_images_timeout_sec: Optional[int]=None):**
 
 Build the image and run ebuild tests.
 
@@ -1392,7 +1392,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#682)(self, config=None, include_version=False, timeout_sec: Optional[int]=None):**
+&mdash; **def [build\_images](/recipe_modules/build_menu/api.py#680)(self, config=None, include_version=False, timeout_sec: Optional[int]=None):**
 
 Build the image.
 
@@ -1444,7 +1444,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1035)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1033)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1479,7 +1479,7 @@ Args:
 Returns:
   (List[PackageInfo]): A list of packages affected by the CLs.
 
-&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#579)(self):**
+&mdash; **def [get\_dep\_graph\_and\_validate\_sdk\_reuse](/recipe_modules/build_menu/api.py#577)(self):**
 
 Fetch the dependency graph, and validate the SDK for reuse.
 
@@ -1493,7 +1493,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/build_menu/api.py#84)(self):**
 
-&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#635)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
+&mdash; **def [install\_packages](/recipe_modules/build_menu/api.py#633)(self, config=None, packages=None, timeout_sec='DEFAULT', name=None, force_all_deps=False, include_rev_deps=False, dryrun=False, package_indexes=None):**
 
 Install packages as appropriate.
 
@@ -1518,7 +1518,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#196)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1330)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1328)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1528,7 +1528,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1310)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1308)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1549,7 +1549,7 @@ The GitilesCommit is either passed in by the parent via input property when
 the build was scheduled or can be derived for non-release builders after
 syncing the source.
 
-&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#747)(self, config=None):**
+&mdash; **def [run\_unittests](/recipe_modules/build_menu/api.py#745)(self, config=None):**
 
 run ebuild tests as specified by config.
 
@@ -1576,7 +1576,7 @@ Args:
 Returns:
   Whether the build is relevant.
 
-&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#491)(self, with_sysroot=True, snapshot_commit=None, sysroot_archive=None):**
+&mdash; **def [setup\_sysroot\_and\_determine\_relevance](/recipe_modules/build_menu/api.py#489)(self, with_sysroot=True, snapshot_commit=None, sysroot_archive=None):**
 
 Setup the sysroot for the builder and determine build relevance.
 
@@ -1647,7 +1647,7 @@ Only set after setup_sysroot_and_determine_relevance().
 Returns:
   (GetTargetVersionsResponse): A GetTargetVersionsRequest or None.
 
-&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#714)(self, config=None):**
+&mdash; **def [unit\_test\_images](/recipe_modules/build_menu/api.py#712)(self, config=None):**
 
 Run ebuild tests.
 
@@ -1656,7 +1656,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#835)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#833)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Upload artifacts from the build.
 
@@ -1682,21 +1682,21 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1271)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1269)(self, config: Optional[BuilderConfig]=None):**
 
 Upload Chrome prebuilts from the build.
 
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1258)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1256)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1289)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1287)(self, config: Optional[BuilderConfig]=None):**
 
 Upload host prebuilts from the build.
 
@@ -1705,7 +1705,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1239)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1237)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1714,7 +1714,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1179)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1177)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
