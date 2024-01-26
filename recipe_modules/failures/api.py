@@ -61,6 +61,11 @@ class FailuresApi(RecipeApi):
     self._exoneration_markdown = None
     self._caught_exceptions = {}
     self._test_variant_to_fault_attribute = collections.defaultdict(lambda: None)
+    self._package_failures = []
+
+  @property
+  def package_failures(self):
+    return self._package_failures
 
   @dataclass
   class Results():
@@ -292,12 +297,14 @@ class FailuresApi(RecipeApi):
       failure_message = self._format_summary_markdown(summary_lines)
 
     package_failures = [
-      json_format.MessageToDict(PackageFailure(
-        package=p[0],
-        phase=PackageFailure.COMPILE if compile_failure else PackageFailure.TEST
-      )) for p in packages
+        PackageFailure(
+            package=p[0], phase=PackageFailure.COMPILE
+            if compile_failure else PackageFailure.TEST) for p in packages
     ]
-    enclosing_step.presentation.properties['package_failures'] = package_failures
+    self._package_failures.extend(package_failures)
+    enclosing_step.presentation.properties['package_failures'] = [
+        json_format.MessageToDict(p) for p in package_failures
+    ]
     enclosing_step.presentation.status = self.m.step.FAILURE
     enclosing_step.presentation.step_text = step_text
     raise StepFailure(failure_message)
