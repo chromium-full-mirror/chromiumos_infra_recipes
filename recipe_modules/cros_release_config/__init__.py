@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the cros_release_config module."""
+
 from PB.recipe_modules.chromeos.cros_release_config.cros_release_config import CrosReleaseConfigProperties
 
 DEPS = [
@@ -11,11 +13,8 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/step',
     'recipe_engine/time',
-    'build_menu',
-    'cros_artifacts',
     'cros_schedule',
     'cros_source',
-    'cros_version',
     'gerrit',
     'git',
     'repo',

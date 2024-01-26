@@ -5,7 +5,6 @@
 """API for interacting with Go binaries built from infra/infra."""
 
 DEPS = [
-    'depot_tools/depot_tools',
     'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/file',
@@ -14,4 +13,3 @@ DEPS = [
     'recipe_engine/step',
     'git',
 ]
-

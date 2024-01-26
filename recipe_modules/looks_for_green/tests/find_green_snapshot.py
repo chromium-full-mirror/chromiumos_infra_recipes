@@ -141,7 +141,7 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:30Z"}}'
+              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:28Z"}}'
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -200,7 +200,7 @@ def GenTests(api):
           'find green snapshot.buildbucket.search',
           [
               '-predicate',
-              '{"builder": {"bucket": "staging", "builder": "staging-snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:30Z"}}'
+              '{"builder": {"bucket": "staging", "builder": "staging-snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:28Z"}}'
           ],
       ),
       api.post_process(post_process.DropExpectation),

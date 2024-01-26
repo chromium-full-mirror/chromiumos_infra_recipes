@@ -1,10 +1,6 @@
 [
   {
     "cmd": [],
-    "name": "configure chroot path"
-  },
-  {
-    "cmd": [],
     "name": "validate properties",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"

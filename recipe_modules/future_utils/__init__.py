@@ -3,8 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the future_utils module."""
+
 DEPS = [
     'recipe_engine/futures',
-    'recipe_engine/step',
 ]
-

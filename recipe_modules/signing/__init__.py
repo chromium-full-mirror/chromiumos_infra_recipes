@@ -24,7 +24,6 @@ DEPS = [
     'cros_release_util',
     'cros_version',
     'easy',
-    'failures',
     'signing_utils',
 ]
 

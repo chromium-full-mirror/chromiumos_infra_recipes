@@ -9,7 +9,6 @@ from PB.recipe_modules.chromeos.cros_test_plan.cros_test_plan import CrosTestPla
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
@@ -17,10 +16,7 @@ DEPS = [
     'cros_infra_config',
     'cros_source',
     'easy',
-    'git',
-    'gitiles',
     'gobin',
-    'repo',
     'src_state',
 ]
 

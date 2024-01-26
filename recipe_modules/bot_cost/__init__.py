@@ -9,7 +9,6 @@ DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
     'recipe_engine/led',
-    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',

@@ -3,8 +3,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the swarming_cli module."""
+
 DEPS = [
-    'depot_tools/git',
     'easy',
     'recipe_engine/cipd',
     'recipe_engine/context',
@@ -12,4 +13,3 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
 ]
-

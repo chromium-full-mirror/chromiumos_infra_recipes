@@ -2,12 +2,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the cros_test_proctor module."""
+
 from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
-    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
     'recipe_engine/swarming',
@@ -21,8 +22,6 @@ DEPS = [
     'easy',
     'exonerate',
     'git',
-    'gitiles',
-    'gerrit',
     'git_footers',
     'greenness',
     'failures',

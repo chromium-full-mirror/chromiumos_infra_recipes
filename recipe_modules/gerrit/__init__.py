@@ -7,10 +7,7 @@
 
 DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
-    'buildbucket': 'recipe_engine/buildbucket',
-    'cipd': 'recipe_engine/cipd',
     'context': 'recipe_engine/context',
-    'cros_infra_config': 'cros_infra_config',
     'easy': 'easy',
     'file': 'recipe_engine/file',
     'json': 'recipe_engine/json',
@@ -19,11 +16,9 @@ DEPS = {
     'step': 'recipe_engine/step',
     'time': 'recipe_engine/time',
     'git': 'git',
-    'gitiles': 'gitiles',
     'git_cl': 'git_cl',
     'gobin': 'gobin',
     'repo': 'repo',
     'src_state': 'src_state',
     'support': 'support',
 }
-

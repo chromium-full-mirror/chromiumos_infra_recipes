@@ -10,7 +10,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
     'recipe_engine/properties',
-    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'buildbucket_stats',
@@ -22,12 +21,10 @@ DEPS = [
     'exoneration_util',
     'gerrit',
     'git_footers',
-    'greenness',
     'looks_for_green',
     'naming',
     'skylab_results',
     'tast_results',
-    'test_util',
 ]
 
 

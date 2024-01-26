@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the pupr_local_uprev module."""
+
 from PB.recipe_modules.chromeos.pupr_local_uprev.pupr_local_uprev import (
     PuprLocalUprevProperties)
 
@@ -18,7 +20,6 @@ DEPS = [
     'naming',
     'repo',
     'src_state',
-    'util',
 ]
 
 

@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'cros_history',
     'cros_infra_config',
     'easy',
     'gce_provider',

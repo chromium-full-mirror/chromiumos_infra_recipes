@@ -3,20 +3,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API providing a menu for orchestrator steps"""
+"""API providing a menu for orchestrator steps."""
 
 from PB.recipe_modules.chromeos.snapshot_orch_menu.snapshot_orch_menu import SnapshotOrchMenuProperties
 
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
-    'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/cq',
     'recipe_engine/futures',
     'recipe_engine/path',
     'recipe_engine/raw_io',
-    'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
     'bot_cost',

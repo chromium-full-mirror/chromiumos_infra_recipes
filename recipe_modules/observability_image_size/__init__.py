@@ -11,7 +11,6 @@ DEPS = [
     'recipe_engine/step',
     'cloud_pubsub',
     'cros_build_api',
-    'cros_infra_config',
     'cros_version',
     'easy',
     'src_state',

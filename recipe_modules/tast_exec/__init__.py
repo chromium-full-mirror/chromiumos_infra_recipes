@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the tast_exec module."""
+
 from PB.recipe_modules.chromeos.tast_exec.tast_exec import (TastExecProperties)
 
 DEPS = [
@@ -18,7 +20,6 @@ DEPS = [
     'gcloud',
     'git',
     'tast_results',
-    'util',
 ]
 
 

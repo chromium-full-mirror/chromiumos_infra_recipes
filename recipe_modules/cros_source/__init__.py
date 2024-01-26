@@ -2,10 +2,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the cros_source module."""
+
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 
 DEPS = {
-    'archive': 'recipe_engine/archive',
     'buildbucket': 'recipe_engine/buildbucket',
     'cas': 'recipe_engine/cas',
     'context': 'recipe_engine/context',
@@ -30,7 +31,6 @@ DEPS = {
     'repo': 'repo',
     'src_state': 'src_state',
     'test_util': 'test_util',
-    'util': 'util',
 }
 
 

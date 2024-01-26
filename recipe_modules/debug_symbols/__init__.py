@@ -8,12 +8,9 @@ from PB.recipe_modules.chromeos.debug_symbols.debug_symbols import \
   DebugSymbolsProperties
 
 DEPS = [
-    'recipe_engine/context',
-    'recipe_engine/path',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_infra_config',
-    'easy',
     'failures',
     'gobin',
 ]

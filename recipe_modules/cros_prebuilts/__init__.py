@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the cros_prebuilts module."""
+
 from PB.recipe_modules.chromeos.cros_prebuilts.cros_prebuilts import (
     CrosPrebuiltsProperties)
 
@@ -12,8 +14,6 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
-    'recipe_engine/properties',
-    'recipe_engine/runtime',
     'recipe_engine/step',
     'recipe_engine/time',
     'recipe_engine/swarming',

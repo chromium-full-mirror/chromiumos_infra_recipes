@@ -10,13 +10,10 @@ from PB.recipe_modules.chromeos.cros_version.cros_version import CrosVersionProp
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cq',
-    'recipe_engine/cipd',
     'recipe_engine/context',
     'recipe_engine/file',
-    'recipe_engine/path',
     'recipe_engine/step',
     'recipe_engine/time',
-    'cros_infra_config',
     'cros_source',
     'easy',
     'gerrit',

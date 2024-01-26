@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Setup for the tast_results module."""
+
 from PB.recipe_modules.chromeos.tast_results.tast_results import TastResultsProperties
 
 DEPS = [
@@ -18,10 +20,7 @@ DEPS = [
     'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
-    'easy',
     'failures',
-    'rdb_util',
-    'util',
 ]
 
 
