@@ -48,6 +48,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       name: str,
       expect_update_sdk: bool,
       *args: TestData,
+      expect_replace: bool = False,
       expect_setup_toolchains: bool = False,
       force_no_chroot_upgrade: SetupChrootProperties.OptionalBool = (
           SetupChrootProperties.OptionalBool.NONE),
@@ -74,6 +75,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       name: The name of the test case.
       expect_update_sdk: Whether the test case should run the `update sdk` step.
       *args: Other stuff to add into the test case.
+      expect_replace: True if SDK replace is expected, false otherwise.
       expect_setup_toolchains: Whether the test case should run the `setup
         toolchains` step.
       force_no_chroot_upgrade: What should be passed to force_no_chroot_upgrade
@@ -100,14 +102,20 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'amd64-generic'
           }
       }
+    check_replace = api.post_check(
+        post_process.LogDoesNotContain,
+        'init sdk.call chromite.api.SdkService/Create',
+        'request',
+        ['"noReplace": true'] if expect_replace else [],
+    )
     check_update_sdk = api.post_check(
         _get_run_checker(expect_update_sdk), 'update sdk')
     check_setup_toolchains = api.post_check(
         _get_run_checker(expect_setup_toolchains), 'setup toolchains')
 
     return api.test(name, use_custom_builder_config,
-                    api.properties(**properties), check_update_sdk,
-                    check_setup_toolchains, *args,
+                    api.properties(**properties), check_replace,
+                    check_update_sdk, check_setup_toolchains, *args,
                     api.post_process(post_process.DropExpectation),
                     status=status)
 
@@ -120,6 +128,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       False,
       expect_setup_toolchains=True,
       sdk_update_run_spec=BuilderConfig.RunSpec.NO_RUN,
+      expect_replace=True,
       build_target='amd64-generic',
   )
 
@@ -129,6 +138,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       False,
       force_no_chroot_upgrade=SetupChrootProperties.OptionalBool.TRUE,
       sdk_update_run_spec=BuilderConfig.RUN,
+      expect_replace=True,
       expect_setup_toolchains=True,
       build_target='amd64-generic',
   )
@@ -138,6 +148,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       False,
       expect_setup_toolchains=True,
       sdk_update_run_spec=BuilderConfig.RunSpec.NO_RUN,
+      expect_replace=True,
   )
   yield _sdk_update_test_case(
       'skip-update-sdk-but-no-setup-toolchains-endpoint',
@@ -145,6 +156,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.cros_build_api.remove_endpoints(['ToolchainService/SetupToolchains']),
       api.post_check(post_process.StepException, 'setup toolchains'),
       sdk_update_run_spec=BuilderConfig.RunSpec.NO_RUN,
+      expect_replace=True,
       expect_setup_toolchains=True,
       build_target='amd64-generic',
       status='INFRA_FAILURE',

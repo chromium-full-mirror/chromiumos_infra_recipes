@@ -438,6 +438,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
           in self.m.cros_infra_config.experiments):
         self.m.chrome.sync_chrome_async(config, self.build_target)
 
+      # If skipping chroot upgrade is requested, always replace the chroot.
+      # This is a fast operation (~1 minute), and it prevents us from using a
+      # chroot which may have already been updated.
+      if not self._should_update_chroot() or force_no_chroot_upgrade:
+        replace = True
+
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
