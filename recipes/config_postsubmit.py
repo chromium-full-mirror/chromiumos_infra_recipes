@@ -99,143 +99,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
   return [CommitInfo(public_repo_path, message, [])]
 
 
-def _flatten_configs(api, properties, project_infos, dry_run):
-  del dry_run
-
-  flatten_script = api.context.cwd.join(
-      'src/config/payload_utils/flatten_config_payload.py')
-
-  allowed_projects = [
-      project.repo_name for project in properties.allowed_projects
-  ]
-
-  allowed_programs = [
-      program.repo_name for program in properties.allowed_programs
-  ]
-
-  cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  vpython_spec = cwd.join('src/config/.vpython')
-  program_join_script = cwd.join('src/config/payload_utils/join_programs.py')
-
-  joined_config = 'generated/joined.jsonproto'
-  config_bundle = 'generated/config.jsonproto'
-  flat_config = 'generated/flattened.jsonproto'
-  binary_flat_config = 'generated/flattened.binaryproto'
-
-  # Get paths of all generated program payloads
-  files = []
-  for project_info in project_infos:
-    if not project_info.name in allowed_programs:
-      continue
-
-    path = cwd.join(project_info.path, 'generated/config.jsonproto')
-    if api.path.exists(path):
-      files.append(path)
-
-  program_configs_path = api.path.mkstemp()
-  # yapf: disable
-  api.step('aggregating program configs', [
-    'vpython3', '-vpython-spec', vpython_spec,
-    merge_script,
-    '-m', 'chromiumos.config.payload.ConfigBundle',
-    '-a', 'chromiumos.config.payload.ConfigBundleList',
-    '-o', program_configs_path] + files)
-  # yapf:enable
-
-  flat_files = []
-
-  # generated a temporary flattened.jsonproto in each project
-  empty_flatten_payload = []
-  for project_info in project_infos:
-    if not project_info.name.startswith('chromeos/project'):
-      continue
-
-    with api.step.nest('processing %s' % project_info.name) as presentation,\
-         api.context(api.context.cwd.join(project_info.path)):
-
-      if not project_info.name in allowed_projects:
-        presentation.step_summary_text = 'skipping, not in allowed projects'
-        continue
-
-      # if no joined configuration (not backfilled), use the ConfigBundle
-      input_config = joined_config
-      if not api.path.exists(api.context.cwd.join(input_config)):
-        input_config = config_bundle
-      presentation.step_text = input_config
-
-      full_input = api.context.cwd.join(input_config)
-      if not api.path.exists(full_input):
-        presentation.step_summary_text = '(does not exist)'
-        continue
-
-      # have input selected and we know it exists, generate a flattened file
-      cmd = [
-          flatten_script,
-          '--input',
-          input_config,
-          '--output',
-          flat_config,
-      ]
-
-      result = api.step(
-          'generate flat payload',
-          ['vpython3', '-vpython-spec', vpython_spec] + cmd,
-          stdout=api.raw_io.output_text(),
-      )
-
-      # note if we had no flattened entries for project
-      nflat = int(result.stdout.strip())
-      if nflat == 0:
-        program, project = project_info.name.split('/')[2:4]
-        empty_flatten_payload.append([program, project])
-
-      flat_files.append(api.context.cwd.join(flat_config))
-
-  # store empty flattened payloads into the output properties
-  api.easy.set_properties_step(empty_flatten_payload=empty_flatten_payload)
-
-  # now merge and import into config-internal
-  cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  vpython_spec = cwd.join('src/config/.vpython')
-  config_internal = cwd.join('src/config-internal')
-  output_path = config_internal.join('hw_design', flat_config)
-  binary_output_path = config_internal.join('hw_design', binary_flat_config)
-
-  with api.context(config_internal),\
-       api.step.nest('aggregating flattened configs') as presentation:
-    project_configs_path = api.path.mkstemp()
-
-    # Merge all the flattened projet configs together into a single payload
-    # yapf: disable
-    cmd = [
-        merge_script,
-        '-m', 'chromiumos.config.payload.FlatConfigList',
-        '-a', 'chromiumos.config.payload.FlatConfigList',
-        '-o', project_configs_path,
-    ] + flat_files
-    # yapf: enable
-
-    api.step('generate flattened configs',
-             ['vpython3', '-vpython-spec', vpython_spec] + cmd)
-
-    # join with program definitions
-    # yapf: disable
-    api.step('joining program and project configs', [
-      'vpython3', '-vpython-spec', vpython_spec,
-      program_join_script,
-      '-l', 'debug',
-      '-o', output_path,
-      '-b', binary_output_path,
-      '-i', project_configs_path,
-      '-p', program_configs_path
-    ])
-    # yapf: enable
-
-    return []
-
-
 def _aggregate_configs(api, properties, repo_project_infos, dry_run):
   """Aggregate ConfigBundle messages and copy them to multiple locations.
 
@@ -322,7 +185,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
   ufs_env = properties.ufs_env or 'prod'
 
-  # only need to upload for not flattened configs; need to determine condition
   with api.context(config_internal),\
        api.step.nest('upload configs to ufs'):
 
@@ -426,7 +288,6 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
 #         Flatten_configs must be ran before _aggregate_configs.
 _ACTIONS = OrderedDict([
     (PROPERTIES.REPLICATE_PUBLIC_CONFIG, _replicate_public_config),
-    (PROPERTIES.FLATTEN_CONFIGS, _flatten_configs),
     (PROPERTIES.COPY_TO_INTERNAL, _aggregate_configs),
     (PROPERTIES.REGENERATE_SUITE_SCHEDULER,
      _regenerate_suite_scheduler_configs),
@@ -646,8 +507,6 @@ def GenTests(api):
       status='FAILURE',
   )
 
-  # flattening stage tests
-
   def mock_project_payloads(fname):
     return api.path.exists(
         api.src_state.workspace_path.join(
@@ -658,101 +517,6 @@ def GenTests(api):
         api.src_state.workspace_path.join(
             'src/program/galaxy/generated/config.jsonproto'))
 
-  def flatten_step_data(value):
-    """Returns StepData for the call to flatten_config_payload.py call."""
-    data = api.step_data(
-        'Do flatten_configs and create CL'               \
-          '.processing chromeos/project/galaxy/milkyway' \
-          '.generate flat payload',
-        stdout=api.raw_io.output_text(str(value) + '\n'),
-    )
-    return data
-
-  yield api.test(
-      'flattening-basic',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      api.git.diff_check(True),
-      flatten_step_data(1),
-      api.post_process(
-          post_process.MustRun,
-          'Do flatten_configs and create CL'                 \
-              '.processing chromeos/project/galaxy/milkyway' \
-              '.generate flat payload'
-      ),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'        \
-              '.processing chromeos/program/galaxy' \
-              '.generate flat payload'
-      ),
-  )
-
-  yield api.test(
-      'flattening-not-allowed-project',
-      default_properties(allowed_projects=[]),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.git.diff_check(True),
-      api.post_process(
-          post_process.StepSummaryEquals,
-          'Do flatten_configs and create CL' \
-              '.processing chromeos/project/galaxy/milkyway',
-          'skipping, not in allowed projects'),
-  )
-
-  yield api.test(
-      'flattening-no-entries',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      api.git.diff_check(True),
-      flatten_step_data(0),
-      api.post_process(
-          post_process.PropertyEquals,
-          'empty_flatten_payload',
-          [['galaxy', 'milkyway']],
-      ),
-  )
-
-  yield api.test(
-      'no-flattening-changes',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('joined.jsonproto'),
-      api.git.diff_check(False),
-      flatten_step_data(1),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'   \
-              '.aggregating flattened configs' \
-              '.update ref.git transaction.git push'
-      ),
-      api.post_process(
-          post_process.DoesNotRun,
-          'Do flatten_configs and create CL'   \
-              '.aggregating flattened configs' \
-              '.update ref.git transaction.git push'
-      ),
-  )
-
-  yield api.test(
-      'no-input-files',
-      default_properties(),
-      config_repos_step_data(api),
-      config_dlm_step_data(api),
-      api.post_process(
-          post_process.StepSummaryEquals,
-          'Do flatten_configs and create CL' \
-              '.processing chromeos/project/galaxy/milkyway',
-          '(does not exist)'),
-  )
-
   # import to internal config stage tests
   yield api.test(
       'aggregate_configs-basic',
@@ -760,7 +524,6 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       mock_program_payloads(),
       api.git.diff_check(True),
       api.post_process(
@@ -785,7 +548,6 @@ def GenTests(api):
       config_dlm_step_data(api),
       mock_program_payloads(),
       mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(False),
       api.post_process(
           post_process.StepSummaryEquals, 'Do aggregate_configs and create CL'
@@ -807,7 +569,6 @@ def GenTests(api):
       config_dlm_step_data(api),
       mock_program_payloads(),
       mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do aggregate_configs and create CL'
@@ -824,7 +585,6 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_suite_scheduler_configs and create CL' \
@@ -847,7 +607,6 @@ def GenTests(api):
       config_repos_step_data(api),
       config_dlm_step_data(api),
       mock_project_payloads('config.jsonproto'),
-      mock_project_payloads('flattened.jsonproto'),
       api.git.diff_check(True),
       api.step_data(
           'Do regenerate_test_plan and create CL' \
