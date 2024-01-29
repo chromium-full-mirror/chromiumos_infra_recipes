@@ -4,14 +4,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""A module for util functions associated with cq test exoneration."""
+
 from collections import defaultdict
 from typing import List, Tuple
-from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
-    TestVariantFailureRateAnalysis
-from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
-from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+  TestVariantFailureRateAnalysis, TestStabilityCriteria, \
+  TestVariantStabilityAnalysis
+from PB.recipe_modules.chromeos.exonerate.exonerate import \
+  FailedTestStats, OverallTestStats
+from recipe_engine import recipe_api
 
 RPC_BATCH_SIZE = 100
 
@@ -48,6 +51,33 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
               test_variant_list[i:i + RPC_BATCH_SIZE], project='chromeos'))
 
     return failure_rates
+
+  def query_stability(
+      self, test_variant_position_list: List[dict], fake_data=None
+  ) -> (List[TestVariantStabilityAnalysis], TestStabilityCriteria):
+    """Query stability from luci_analysis. Batched client.
+
+    Args:
+      test_variant_position_list list(TestVariantPosition): List of dicts
+        containing testId, variant and source position
+      fake_data: Fake data to be returned for unit testing.
+
+    Returns:
+      List of TestVariantStabilityAnalysis.
+      TestStabilityCriteria configured in Luci analysis.
+    """
+    if fake_data:
+      return fake_data
+    stability = []
+    criteria = None
+    # Break up the input into chunks of RPC_BATCH_SIZE and query LUCI analysis.
+    for i in range(0, len(test_variant_position_list), RPC_BATCH_SIZE):
+      batch, criteria = self.m.luci_analysis.query_stability(
+          test_variant_position_list[i:i + RPC_BATCH_SIZE], project='chromeos')
+      stability.extend(batch)
+
+    return stability, criteria
+
 
   def override_calculation(
       self, test_stats: List[FailedTestStats], overall_limit: int,

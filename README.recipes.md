@@ -66,7 +66,7 @@
   * [dut_interface](#recipe_modules-dut_interface)
   * [easy](#recipe_modules-easy) &mdash; APIs for easy steps.
   * [exonerate](#recipe_modules-exonerate) &mdash; Functions for exonerating test failures.
-  * [exoneration_util](#recipe_modules-exoneration_util)
+  * [exoneration_util](#recipe_modules-exoneration_util) &mdash; A module for util functions associated with cq test exoneration.
   * [factory_util](#recipe_modules-factory_util) &mdash; A module for util functions associated with factory builds.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [future_utils](#recipe_modules-future_utils)
@@ -486,6 +486,7 @@
   * [exoneration_util:examples/override_calculation](#recipes-exoneration_util_examples_override_calculation)
   * [exoneration_util:examples/per_target_limit](#recipes-exoneration_util_examples_per_target_limit)
   * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate)
+  * [exoneration_util:examples/query_stability](#recipes-exoneration_util_examples_query_stability) &mdash; Unit test query_stability API.
   * [factory_util:tests/upload_factory_artifacts](#recipes-factory_util_tests_upload_factory_artifacts) &mdash; Tests for factory util methods.
   * [failures:examples/additional_test_not_run_critical_cq](#recipes-failures_examples_additional_test_not_run_critical_cq)
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
@@ -6133,11 +6134,13 @@ Args:
 [DEPS](/recipe_modules/exoneration_util/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [ExonerationUtilApi](/recipe_modules/exoneration_util/api.py#19)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+A module for util functions associated with cq test exoneration.
+
+#### **class [ExonerationUtilApi](/recipe_modules/exoneration_util/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with exoneration.
 
-&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#100)(self, test_stats: List[FailedTestStats], overall_limit: int):**
+&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#130)(self, test_stats: List[FailedTestStats], overall_limit: int):**
 
 Check if automated exoneration exceeded overall limit.
 
@@ -6148,7 +6151,7 @@ Args:
 Returns:
   Boolean indicating if number of exonerations has exceeded overall_limit.
 
-&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#77)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
+&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#107)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
 
 Check if automated exoneration exceeded per target limit.
 
@@ -6160,11 +6163,11 @@ Returns:
   Tuple of boolean indicating if per-target exonerations have exceeded per_target_limit
   and offending build_target. If multiple targets have exceeded, return any one.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exoneration_util/api.py#26)(self, test_name):**
+&mdash; **def [get\_tastless\_name](/recipe_modules/exoneration_util/api.py#29)(self, test_name):**
 
 Return test_name without the tast prefix.
 
-&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#117)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
+&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#147)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
 
 Update exoneration configs dict based on autoex analysis.
 
@@ -6175,7 +6178,7 @@ Args:
 Returns:
   A map of the same format as manual_configs but is updated to include autoex tests.
 
-&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#52)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
+&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#82)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
 
 Populate and return OverrideInfo based on stats of auto exoneration.
 
@@ -6186,7 +6189,7 @@ Args:
 
 Returns: OverrideInfo based on auto exoneration statistics.
 
-&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#32)(self, test_variant_list: List[dict]):**
+&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#35)(self, test_variant_list: List[dict]):**
 
 Query failure rate from luci_analysis.
 
@@ -6195,6 +6198,19 @@ Args:
 
 Returns:
   List of TestVariantFailureRateAnalysis for each input.
+
+&mdash; **def [query\_stability](/recipe_modules/exoneration_util/api.py#55)(self, test_variant_position_list: List[dict], fake_data=None):**
+
+Query stability from luci_analysis. Batched client.
+
+Args:
+  test_variant_position_list list(TestVariantPosition): List of dicts
+    containing testId, variant and source position
+  fake_data: Fake data to be returned for unit testing.
+
+Returns:
+  List of TestVariantStabilityAnalysis.
+  TestStabilityCriteria configured in Luci analysis.
 ### *recipe_modules* / [factory\_util](/recipe_modules/factory_util)
 
 [DEPS](/recipe_modules/factory_util/__init__.py#7): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_source](#recipe_modules-cros_source), [cros\_version](#recipe_modules-cros_version), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14129,6 +14145,14 @@ json files.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/query_failure_rate.py#19)(api):**
+### *recipes* / [exoneration\_util:examples/query\_stability](/recipe_modules/exoneration_util/examples/query_stability.py)
+
+[DEPS](/recipe_modules/exoneration_util/examples/query_stability.py#11): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+
+
+Unit test query_stability API
+
+&mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/query_stability.py#22)(api):**
 ### *recipes* / [factory\_util:tests/upload\_factory\_artifacts](/recipe_modules/factory_util/tests/upload_factory_artifacts.py)
 
 [DEPS](/recipe_modules/factory_util/tests/upload_factory_artifacts.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [factory\_util](#recipe_modules-factory_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
