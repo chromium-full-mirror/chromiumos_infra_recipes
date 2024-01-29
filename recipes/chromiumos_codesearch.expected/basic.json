@@ -5902,7 +5902,8 @@
       "--kzip-prune",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromiumos_amd64-generic.kzip",
       "--ignore",
-      "[CACHE]/cros_chroot/chroot/home"
+      "[CACHE]/cros_chroot/chroot/home",
+      "--nokeycheck"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
