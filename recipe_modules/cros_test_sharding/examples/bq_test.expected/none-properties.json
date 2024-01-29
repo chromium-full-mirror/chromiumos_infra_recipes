@@ -6,7 +6,7 @@
       "@@@STEP_LOG_LINE@StepLog@Test Timing Query:@@@",
       "@@@STEP_LOG_LINE@StepLog@Performing query SELECT  test, avg_duration FROM@@@",
       "@@@STEP_LOG_LINE@StepLog@  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like @@@",
-      "@@@STEP_LOG_LINE@StepLog@  'any'  and t.suite like 'bvt-generic' @@@",
+      "@@@STEP_LOG_LINE@StepLog@  'drallion'  and t.suite like 'bvt-tast-cq' @@@",
       "@@@STEP_LOG_LINE@StepLog@Using cmd: bq query --format=csv --max_rows=10000 --project_id chromeos-test-platform-data --dataset_id analytics --nouse_legacy_sql@@@",
       "@@@STEP_LOG_LINE@StepLog@test_timing_rows:@@@",
       "@@@STEP_LOG_END@StepLog@@@"
@@ -25,7 +25,7 @@
       "--nouse_legacy_sql"
     ],
     "name": "Updating test timing information.Query for test timing information",
-    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'any'  and t.suite like 'bvt-generic' ",
+    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'drallion'  and t.suite like 'bvt-tast-cq' ",
     "timeout": 70,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

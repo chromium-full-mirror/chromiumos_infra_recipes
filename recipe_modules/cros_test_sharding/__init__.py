@@ -4,4 +4,7 @@
 
 """init cros_test_sharding recipe module"""
 
-DEPS = []
+DEPS = [
+    'recipe_engine/step',
+    'recipe_engine/raw_io',
+]

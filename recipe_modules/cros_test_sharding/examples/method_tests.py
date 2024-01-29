@@ -10,6 +10,7 @@ from recipe_engine.recipe_api import Property
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_test_sharding',
 ]
@@ -38,7 +39,7 @@ def RunSteps(api, shard_count, expected_shard_count, test_suite_token):
   #  Directly test some methods.
   # tests_to_bucket = list(test_suite.test_cases.test_cases)
   shards = api.cros_test_sharding.optimized_shard_allocation(  # pylint: disable=protected-access
-      test_suite, shard_count)
+      test_suite, test_suite.name, 'any', shard_count)
   api.assertions.assertEqual(len(shards), expected_shard_count)
 
 
@@ -101,7 +102,8 @@ class TestCases:
 
 class TestSuite:
 
-  def __init__(self, tests):
+  def __init__(self, name, tests):
+    self.name = name
     self.test_cases = TestCases(tests)
 
 
@@ -117,7 +119,7 @@ def _gen_generic_test_suites():
       'tast.security.Pass',
       'tast.security.Fail',
   ]
-  return TestSuite(test_cases)
+  return TestSuite('bvt-generic', test_cases)
 
 
 def _gen_security_test_suites():
@@ -125,4 +127,4 @@ def _gen_security_test_suites():
       'tast.security.Pass',
       'tast.security.Fail',
   ]
-  return TestSuite(test_cases)
+  return TestSuite('bvt-generic-security', test_cases)

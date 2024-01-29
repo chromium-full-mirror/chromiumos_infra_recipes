@@ -474,6 +474,51 @@
   },
   {
     "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@metadata@suite_name:bvt-tast-cq@@@",
+      "@@@STEP_LOG_LINE@metadata@build_target/board:foo-build-target@@@",
+      "@@@STEP_LOG_LINE@metadata@total_shards:5@@@",
+      "@@@STEP_LOG_END@metadata@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment.Updating test timing information",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@StepLog@Test Timing Query:@@@",
+      "@@@STEP_LOG_LINE@StepLog@Performing query SELECT  test, avg_duration FROM@@@",
+      "@@@STEP_LOG_LINE@StepLog@  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like @@@",
+      "@@@STEP_LOG_LINE@StepLog@  'foo-build-target'  and t.suite like 'bvt-tast-cq' @@@",
+      "@@@STEP_LOG_LINE@StepLog@Using cmd: bq query --format=csv --max_rows=10000 --project_id chromeos-test-platform-data --dataset_id analytics --nouse_legacy_sql@@@",
+      "@@@STEP_LOG_LINE@StepLog@test_timing_rows:@@@",
+      "@@@STEP_LOG_END@StepLog@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bq",
+      "query",
+      "--format=csv",
+      "--max_rows=10000",
+      "--project_id",
+      "chromeos-test-platform-data",
+      "--dataset_id",
+      "analytics",
+      "--nouse_legacy_sql"
+    ],
+    "infra_step": true,
+    "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment.Updating test timing information.Query for test timing information",
+    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'foo-build-target'  and t.suite like 'bvt-tast-cq' ",
+    "timeout": 70,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "execute"
   },
   {

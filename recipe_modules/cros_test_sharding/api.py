@@ -6,6 +6,7 @@
 
 Provides optimization algorithm for distributing tests among shards
 """
+import csv
 import math
 from typing import List
 from itertools import filterfalse
@@ -465,10 +466,62 @@ class Shard:
 
 
 class CrosTestShardingAPI(recipe_api.RecipeApi):
+  TestCase = TestCase
   _MAX_SHARDS = 15
+  _TEST_TIMING_DICT_QUERY = '''SELECT  test, avg_duration FROM
+  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like 
+  '{_BOARD}'  and t.suite like '{_SUITE}' '''
 
-  @staticmethod
-  def optimized_shard_allocation(test_suite, total_shards):
+  def _get_test_timing_information(self, suite_name, board):
+    #  build the query
+    test_timing_query = CrosTestShardingAPI._TEST_TIMING_DICT_QUERY.format(
+        _SUITE=suite_name, _BOARD=board)
+    #  execute the query
+    with self.m.step.nest('Updating test timing information') as step:
+      cmd = [
+          'bq', 'query', '--format=csv', '--max_rows=10000', '--project_id',
+          'chromeos-test-platform-data', '--dataset_id', 'analytics',
+          '--nouse_legacy_sql'
+      ]
+      step_log = 'Test Timing Query:\n'
+      step_log += f'Performing query {test_timing_query}\n'
+      step_log += f'Using cmd: {" ".join(cmd)}\n'
+      try:
+        result = self.m.step(name='Query for test timing information', cmd=cmd,
+                             stdin=self.m.raw_io.input_text(test_timing_query),
+                             stdout=self.m.raw_io.output_text(),
+                             stderr=self.m.raw_io.output_text(), timeout=70,
+                             raise_on_failure=False)
+        if result.retcode != 0:
+          raise recipe_api.StepFailure(
+              f'BQ Command failed with retcode: {result.retcode}')
+        step_log += 'test_timing_rows:\n'
+        test_timing_rows = result.stdout.strip().split('\n')
+        step_log += '\n\t'.join(test_timing_rows)
+        queried_test_timings = {}
+        reader = csv.reader(test_timing_rows, delimiter=',')
+        next(reader, None)
+        for row in reader:
+          _test_name, _timing = row
+          queried_test_timings[_test_name] = int(_timing)
+        if len(queried_test_timings):
+          TestCase.test_times = queried_test_timings
+          step_log += '\nUpdated test timings with bq results\n'
+      except (csv.Error, recipe_api.StepFailure, IndexError, TypeError,
+              ValueError) as te:
+        self.m.step.active_result.presentation.status = self.m.step.WARNING
+        self.m.step.active_result.presentation.step_text = f'Failed to update timing information for suite_name:{suite_name}, board:{board}\n'
+        step.presentation.logs[
+            'bQuery Exception'] = self.m.step.active_result.presentation.step_text + f': {te}'
+        step_log += f'bq cmd IO Results:\nresult.stdout: {result.stdout} \n result.stderr: {result.stderr.strip()}'
+      step.presentation.logs['StepLog'] = step_log
+    return TestCase.test_times
+
+  def optimized_shard_allocation(self, test_suite, suite_name, board,
+                                 total_shards):
+    # Update TestCase.test_times
+    self._get_test_timing_information(suite_name, board)
+
     if total_shards == 0:
       total_shards = CrosTestShardingAPI._MAX_SHARDS
     other_makespans = [0, 2700]
@@ -492,7 +545,6 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
                                                     max(other_makespans + [0]))
     if security_bucket:
       shards += security_bucket
-
     return shards
 
   @staticmethod

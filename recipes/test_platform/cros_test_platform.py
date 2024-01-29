@@ -278,7 +278,6 @@ def enumerate_tests(api, properties, requests, error_in_requests):
 
   non_cft_enums = _enumerate_non_cft_tests(api, non_cft_requests)
   cft_enums = _enumerate_cft_tests(api, properties, cft_requests)
-
   all_enums = {}
   for k, v in non_cft_enums.items():
     all_enums[k] = v
@@ -466,10 +465,11 @@ def _enumerate_non_cft_tests(api, requests):
   with api.step.nest('enumerate tests') as step:
     enum_requests = EnumerationRequests(
         tagged_requests={
-            t: EnumerationRequest(
-                metadata=r.params.metadata,
-                test_plan=r.test_plan,
-            ) for t, r in requests.items()
+            t:
+                EnumerationRequest(
+                    metadata=r.params.metadata,
+                    test_plan=r.test_plan,
+                ) for t, r in requests.items()
         })
 
     enum_responses = api.cros_test_platform.enumerate(enum_requests)
@@ -869,8 +869,12 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
            api.cros_infra_config.experiments or
            CrosTestPlatformProperties.OPTIMIZED_SHARDING in
            properties.experiments):
-        shards = api.cros_test_sharding.optimized_shard_allocation(
-            test_suite, total_shards)
+        with api.m.step.nest('Optimized Sharding Experiment') as optimized_step:
+          build_target = _reconstruct_build_target(request)
+          optimized_step.presentation.logs[
+              'metadata'] = f'suite_name:{suite_name}\nbuild_target/board:{build_target}\ntotal_shards:{total_shards}'
+          shards = api.cros_test_sharding.optimized_shard_allocation(
+              test_suite, suite_name, build_target, total_shards)
       else:
         test_buckets = _bucket_by_dependencies(
             list(test_suite.test_cases.test_cases), suite_name)
@@ -1263,8 +1267,9 @@ def _execute_requests(api, requests, enumerations, config, error_in_requests):
   _limit_tests_retry(api, requests)
   return ExecuteRequests(
       tagged_requests={
-          t: ExecuteRequest(request_params=r.params,
-                            enumeration=enumerations[t], config=config)
+          t:
+              ExecuteRequest(request_params=r.params,
+                             enumeration=enumerations[t], config=config)
           for t, r in requests.items()
           if t not in error_in_requests
       },
@@ -1583,6 +1588,7 @@ def _get_dut_use_flags(api, use_flag_gs_url):
       return None
     step.presentation.logs['tast use flags list'] = res
   return res
+
 
 def _build_has_ancestor(api):
   """Determine whether the current build has any ancestor."""
@@ -2381,7 +2387,6 @@ def _generic_cft_enumerate_response(api):
 # }'''))
 
 
-
 def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
   values = ',\n'.join([
       '''{
@@ -2445,6 +2450,7 @@ def _generic_passing_execute_response(api):
 
 
 def GenTests(api):
+
   def _set_build(bid=None, tags=None, experiments=None,
                  ancestor_buildbucket_ids=None):
     # tags is a dict, convert that into [StringPair].

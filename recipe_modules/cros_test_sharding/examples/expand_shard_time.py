@@ -10,6 +10,7 @@ from recipe_engine.recipe_api import Property
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_test_sharding',
 ]
@@ -26,9 +27,10 @@ def RunSteps(api, shard_count):
   total_shards = shard_count
   #  Define some example tests
   test_suite = _gen_generic_test_suites()
+  board = 'drallion'
   #  Generate the shards
   shards = api.cros_test_sharding.optimized_shard_allocation(
-      test_suite, total_shards)
+      test_suite, test_suite.name, board, total_shards)
 
   api.assertions.assertEqual(len(shards), 4)
 
@@ -86,7 +88,8 @@ class TestCases:
 
 class TestSuite:
 
-  def __init__(self, tests):
+  def __init__(self, name, tests):
+    self.name = name
     self.test_cases = TestCases(tests)
 
 
@@ -95,4 +98,4 @@ def _gen_generic_test_suites():
       'tauto.stub_Pass', 'tast.example.Fail', 'tast.example.Pass',
       'tast.security.Pass', 'tast.security.Fail'
   ]
-  return TestSuite(test_cases)
+  return TestSuite('bvt-generic', test_cases)
