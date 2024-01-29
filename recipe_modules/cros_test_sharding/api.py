@@ -491,7 +491,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
     # Remove once long term solution is implemented.
     security_tests, tests_to_bucket = CrosTestShardingAPI._filter_security_tests(
         tests_to_bucket)
-    if len(security_tests) > 0:
+    if len(security_tests) > 0 and total_shards > 1:
       security_bucket = CrosTestShardingAPI._bucket_together(security_tests)
       security_bucket_makespan = CrosTestShardingAPI._get_bucket_execution_time(
           security_tests)
