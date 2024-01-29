@@ -37,7 +37,6 @@ class DebugSymbols(recipe_api.RecipeApi):
     staging_param = '-staging' if staging else None
     dryrun_param = '-dry-run=false' if not self._dryrun else None
     gs_debug_image_location = '%s/debug_breakpad.tar.xz' % (gs_path)
-    gs_vmlinux_image_location = '%s/vmlinuz.tar.xz' % (gs_path)
 
     # The crash symbol collector service only returns information about
     # breakpad symbols that have been uploaded. Upload splitdebug first so that
@@ -82,25 +81,3 @@ class DebugSymbols(recipe_api.RecipeApi):
           'upload_debug_symbols', cmd,
           stdout=self.m.raw_io.output_text(name='stdout', add_output_log=True))
       pres.logs['upload logs'] = step_data.stdout
-
-    with self.m.failures.ignore_exceptions():
-      if not staging:
-        with self.m.step.nest('uploading vmlinux') as pres:
-          # CLI invocation of upload_debug_symbols golang binary.
-          cmd = list(
-              filter(None, [
-                  'upload',
-                  '-gs-path',
-                  gs_vmlinux_image_location,
-                  '-data-type=vmlinux',
-                  worker_count_param,
-                  retry_quota_param,
-                  staging_param,
-                  dryrun_param,
-              ]))
-          if not staging:
-            step_data = self.m.gobin.call(
-                'upload_debug_symbols', cmd,
-                stdout=self.m.raw_io.output_text(name='stdout',
-                                                 add_output_log=True))
-            pres.logs['upload logs'] = step_data.stdout
