@@ -3,14 +3,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for publishing events to the Analysis Service."""
+
 import base64
-from typing import Optional, Tuple, Union
+from typing import Optional, Tuple, Union, Iterable
 
 from google.protobuf import json_format
 from google.protobuf.message import Message
+from google.protobuf.descriptor import FieldDescriptor
 from google.protobuf.timestamp_pb2 import Timestamp
 
 from PB.analysis_service.analysis_service import AnalysisServiceEvent
+import PB.chromiumos.common as common_pb2
 from PB.recipe_modules.chromeos.analysis_service.analysis_service import AnalysisServiceProperties
 from recipe_engine import recipe_api
 from recipe_engine.step_data import StepData
@@ -85,6 +89,51 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     self._pubsub_project_id = properties.pubsub_project_id or 'chromeos-bot'
     self._pubsub_topic_id = (
         properties.pubsub_topic_id or 'analysis-service-events')
+
+  def _logging_optional(self, field_desc: FieldDescriptor) -> bool:
+    if self._test_data.enabled:
+      return field_desc.full_name == self._test_data.get(
+          'optional_field_name', '')
+    return field_desc.GetOptions().Extensions[
+        common_pb2.logging_optional]  # pragma: nocover
+
+  def _process_field(self, field_desc: FieldDescriptor, field: Message) -> bool:
+    found_optional = False
+    if self._logging_optional(field_desc):
+      if isinstance(field, Iterable):
+        del field[:]
+      else:
+        field.Clear()
+      found_optional = True
+
+    field_set = field_desc.message_type.fields if field_desc.message_type else []
+    for f in field_set:
+      if isinstance(field, Iterable):
+        for m in field:
+          found_optional |= self._process_field(f, getattr(m, f.name))
+      else:
+        found_optional |= self._process_field(f, getattr(field, f.name))
+    return found_optional
+
+  def _clear_logging_optional(self, message: Message) -> bool:
+    found_optional = False
+    for f in message.DESCRIPTOR.fields:
+      found_optional |= self._process_field(f, getattr(message, f.name))
+    return found_optional
+
+  def _filter_payload(self, analysis_service_event: AnalysisServiceEvent):
+    """Remove proto fields that are marked as logging_optional.
+
+    Args:
+      analysis_service_event: The proto that will be processed
+    """
+    found_optional = False
+    step = self.m.step.active_result
+    response_type = analysis_service_event.WhichOneof('response')
+    response_message = getattr(analysis_service_event, response_type)
+    found_optional = self._clear_logging_optional(response_message)
+    step.presentation.logs['payload_truncation'] = 'Payload %s filtered' % (
+        'was' if found_optional else 'not')
 
   @staticmethod
   def _set_oneof_by_matching_type(analysis_service_event: AnalysisServiceEvent,
@@ -242,6 +291,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
 
       analysis_service_event.request_time.CopyFrom(request_time)
       analysis_service_event.response_time.CopyFrom(response_time)
+      # For special cases, reduce the amount of data in the payload
+      self._filter_payload(analysis_service_event)
 
       presentation.logs['published event'] = json_format.MessageToJson(
           analysis_service_event)

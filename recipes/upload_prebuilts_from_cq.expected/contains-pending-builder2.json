@@ -2712,6 +2712,8 @@
     "name": "set BINHOSTs.Public binhosts.update amd64-generic.call chromite.api.BinhostService/SetBinhost.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:27.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:29Z\",@@@",
@@ -3692,6 +3694,8 @@
     "name": "set BINHOSTs (3).Private binhosts.update atlas.call chromite.api.BinhostService/SetBinhost.publish event",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:33.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:35Z\",@@@",

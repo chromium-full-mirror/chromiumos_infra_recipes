@@ -3,7 +3,7 @@
 ## Table of Contents
 
 **[Recipe Modules](#Recipe-Modules)**
-  * [analysis_service](#recipe_modules-analysis_service)
+  * [analysis_service](#recipe_modules-analysis_service) &mdash; API for publishing events to the Analysis Service.
   * [android](#recipe_modules-android)
   * [auto_retry_util](#recipe_modules-auto_retry_util) &mdash; Utility function for CQ auto retry.
   * [binhost_lookup_service](#recipe_modules-binhost_lookup_service) &mdash; APIs to interact with the binhost lookup service.
@@ -132,6 +132,7 @@
   * [afdo_orchestrator](#recipes-afdo_orchestrator) &mdash; Recipe that generates artifacts using HW Test results.
   * [afdo_process](#recipes-afdo_process) &mdash; Recipe for building an AFDO benchmark profile.
   * [analysis_service:examples/full](#recipes-analysis_service_examples_full)
+  * [analysis_service:tests/publish_events_filter_payload](#recipes-analysis_service_tests_publish_events_filter_payload)
   * [android:examples/full](#recipes-android_examples_full)
   * [android:examples/misc](#recipes-android_examples_misc)
   * [android:examples/uprev](#recipes-android_examples_uprev)
@@ -806,9 +807,11 @@
 [DEPS](/recipe_modules/analysis_service/__init__.py#7): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#81)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+API for publishing events to the Analysis Service.
 
-&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#169)(request: Message, response: Message):**
+#### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#85)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#218)(request: Message, response: Message):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -829,7 +832,7 @@ Args:
 Return:
   Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#193)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None, max_stdout_stderr_bytes: int=_MAX_STDOUT_STDERR_BYTES):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#242)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None, max_stdout_stderr_bytes: int=_MAX_STDOUT_STDERR_BYTES):**
 
 Publish request and response on Cloud Pub/Sub.
 
@@ -11694,6 +11697,12 @@ Recipe for building an AFDO benchmark profile.
 
 
 &mdash; **def [RunSteps](/recipe_modules/analysis_service/examples/full.py#55)(api: RecipeApi, properties: FullProperties):**
+### *recipes* / [analysis\_service:tests/publish\_events\_filter\_payload](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py)
+
+[DEPS](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py#15): [analysis\_service](#recipe_modules-analysis_service), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py#25)(api):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
 [DEPS](/recipe_modules/android/examples/full.py#20): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -244,6 +244,18 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 }],
             }],
         },
+        sdk_dep_graph={
+            'package_deps': [{
+                'dependency_packages': [{
+                    'category': 'virtual',
+                    'package_name': 'target-sdk-post-cross',
+                    'version': '1-r3'
+                }],
+                'dependency_source_paths': [{
+                    'path': 'some/sdk/source/dir',
+                }],
+            }],
+        },
     )
     responses['GetToolchainPaths'] = jsonify(
         paths=[

@@ -124,6 +124,8 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@stdout_truncation@Full step output is 31 bytes, no truncation@@@",
       "@@@STEP_LOG_END@stdout_truncation@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:21.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:23Z\",@@@",
