@@ -525,6 +525,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return futures
 
+  # Note that TestHaus has a dependency on artifact naming (see b/322343675).
+  # Release artifacts should contain 'release' and staging release artifacts
+  # should contain 'staging'.
   def _artifacts_gs_path_dict(self, builder_name, target, kind):
     """Returns the dictionary tokens for expanding location templates.
 
