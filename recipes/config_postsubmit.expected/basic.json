@@ -2182,6 +2182,16 @@
     ]
   },
   {
+    "cmd": [
+      "nproc"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "name": "Do flatten_configs and create CL.count online CPUs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Do flatten_configs and create CL.processing chromeos/project/galaxy/milkyway",
     "~followup_annotations": [

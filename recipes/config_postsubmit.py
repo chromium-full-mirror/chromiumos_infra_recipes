@@ -34,9 +34,11 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'bot_scaling',
     'cros_source',
     'easy',
     'failures',
+    'future_utils',
     'gerrit',
     'git',
     'git_txn',
@@ -147,16 +149,18 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
   # generated a temporary flattened.jsonproto in each project
   empty_flatten_payload = []
-  for project_info in project_infos:
+
+  # To be ran in parallel later.
+  def _individual_project_runner(project_info, _tries):
     if not project_info.name.startswith('chromeos/project'):
-      continue
+      return
 
     with api.step.nest('processing %s' % project_info.name) as presentation,\
          api.context(api.context.cwd.join(project_info.path)):
 
       if not project_info.name in allowed_projects:
         presentation.step_summary_text = 'skipping, not in allowed projects'
-        continue
+        return
 
       # if no joined configuration (not backfilled), use the ConfigBundle
       input_config = joined_config
@@ -167,7 +171,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
       full_input = api.context.cwd.join(input_config)
       if not api.path.exists(full_input):
         presentation.step_summary_text = '(does not exist)'
-        continue
+        return
 
       # have input selected and we know it exists, generate a flattened file
       cmd = [
@@ -192,6 +196,20 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
       flat_files.append(api.context.cwd.join(flat_config))
 
+  n_ts = api.bot_scaling.get_num_cores()
+  parallel_runners = api.future_utils.create_parallel_runner(
+      max_concurrent_requests=n_ts)
+
+  for project_info in project_infos:
+    parallel_runners.run_function_async(
+        _individual_project_runner, project_info,
+        error_handler=lambda e: result_pb2.RawResult(
+            summary_markdown=f'Failed flattening individual config: {e}',
+            status=common_pb2.FAILURE,
+        ))
+
+  parallel_runners.wait_for_and_throw()
+
   # store empty flattened payloads into the output properties
   api.easy.set_properties_step(empty_flatten_payload=empty_flatten_payload)
 
@@ -204,7 +222,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   binary_output_path = config_internal.join('hw_design', binary_flat_config)
 
   with api.context(config_internal),\
-       api.step.nest('aggregating flattened configs') as presentation:
+       api.step.nest('aggregating flattened configs'):
     project_configs_path = api.path.mkstemp()
 
     # Merge all the flattened projet configs together into a single payload
