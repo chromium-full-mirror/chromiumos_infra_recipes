@@ -1222,6 +1222,19 @@ def DoRunSteps(api, properties):
     # Use ctpv2 binary rather than the normal ctpv1 workflow.
     api.ctpv2.execute_luciexe()
     return
+
+  # Check for any requests that qualify for
+  # ctpv2 translation.
+  v2_request_count = len(api.ctpv2.filter_legacy_requests(properties.requests))
+  if v2_request_count > 0:
+    try:
+      api.ctpv2.execute_luciexe(use_legacy=True)
+    # pylint: disable=broad-except
+    except Exception:
+      pass
+    if v2_request_count == len(properties.requests):
+      return
+
   _top_level_export_to_bigquery(api, properties.force_export)
   if api.cq.active:
     api.easy.set_properties_step(is_retry=api.cros_history.is_retry)
@@ -1596,7 +1609,7 @@ def _get_requests_from_properties(api, properties):
     raise api.step.StepFailure(
         'Must set "requests" in input properties (found %s)' %
         properties.requests)
-  return properties.requests
+  return api.ctpv2.filter_legacy_requests(properties.requests, reverse=True)
 
 
 def _top_level_export_to_bigquery(api, force_export):
@@ -1839,12 +1852,15 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
                   total_shards=0, suite_name=None,
-                  enable_autotest_sharding=False):
+                  enable_autotest_sharding=False, swarming_tags=[]):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
               name=build_target,
           )),
+      decorations=Request.Params.Decorations(
+          tags=swarming_tags,
+      ),
       hardware_attributes=Request.Params.HardwareAttributes(model='%s-model' %
                                                             request_name_tag),
       metadata=Request.Params.Metadata(
@@ -1885,14 +1901,15 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
                       total_shards=0, suite_name=None,
-                      enable_autotest_sharding=False):
+                      enable_autotest_sharding=False, swarming_tags=[]):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
                            individual_test_name=individual_test_name,
                            tag_criteria=tag_criteria, seed=seed,
                            software_deps=software_deps, retries=retries,
                            total_shards=total_shards, suite_name=suite_name,
-                           enable_autotest_sharding=enable_autotest_sharding)
+                           enable_autotest_sharding=enable_autotest_sharding,
+                           swarming_tags=swarming_tags)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -3164,6 +3181,26 @@ def GenTests(api):
       _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'cft-translate-to-v2',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
+                          total_shards=5,
+                          swarming_tags=['label-pool:schedukeTest'])
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
   )
 
   yield api.test(

@@ -56,7 +56,7 @@
   * [cros_tool_runner](#recipe_modules-cros_tool_runner) &mdash; API for cros_tool_runner interface.
   * [cros_try](#recipe_modules-cros_try) &mdash; API for working with `cros try`-initiated jobs.
   * [cros_version](#recipe_modules-cros_version) &mdash; API for working with CrOS version numbers.
-  * [ctpv2](#recipe_modules-ctpv2)
+  * [ctpv2](#recipe_modules-ctpv2) &mdash; API to call into the CTPv2 binary.
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
   * [deferrals](#recipe_modules-deferrals) &mdash; API for deferring things (mainly failures).
@@ -5594,23 +5594,39 @@ The Version of the workspace checkout.
 [DEPS](/recipe_modules/ctpv2/__init__.py#8): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [Ctpv2Command](/recipe_modules/ctpv2/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+API to call into the CTPv2 binary
+
+#### **class [Ctpv2Command](/recipe_modules/ctpv2/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for issuing ctpv2 commands
 
-&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#55)(self):**
+&mdash; **def [allowed\_pools](/recipe_modules/ctpv2/api.py#66)(self):**
+
+Return the CTPv2 allowed pools.
+
+&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#62)(self):**
 
 Return the CTPv2 CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#40)(self):**
+&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#47)(self):**
 
 Ensure the ctpv2 CLI is installed.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#28)(self):**
+&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#31)(self, use_legacy=False):**
 
 Execute work via ctpv2 luciexe binary.
 
-&mdash; **def [is\_enabled](/recipe_modules/ctpv2/api.py#21)(self):**
+&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#70)(self, requests, reverse=False):**
+
+Filter out the legacy requests based on allowed pools.
+
+Args:
+  * requests: Dict of legacy v1 requests.
+  * reverse: boolean to flip the filter result.
+
+Returns dict of filtered legacy v1 requests.
+
+&mdash; **def [is\_enabled](/recipe_modules/ctpv2/api.py#24)(self):**
 
 Checks if ctpv2 is enabled for use.
 
@@ -16579,7 +16595,7 @@ Recipe for the ChromeOS Test Frontend.
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1210)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1326)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1339)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -16613,7 +16629,7 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1422)(api, requests, responses, skip_postprocess=True):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1435)(api, requests, responses, skip_postprocess=True):**
 
 &mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1113)(api, config, should_poll_for_completion=False):**
 
@@ -16624,13 +16640,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1617)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1630)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1695)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1708)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1525)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1538)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#119)(api, properties):**
 
