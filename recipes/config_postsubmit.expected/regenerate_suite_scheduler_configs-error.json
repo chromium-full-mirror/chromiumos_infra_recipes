@@ -2446,10 +2446,10 @@
   },
   {
     "cmd": [
-      "./regenerate_configs.py"
+      "./regenerate_configs.sh"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
-    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.py",
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_FAILURE@@@"
@@ -2852,7 +2852,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 step failed:\n\n\n- Step('Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.py') (retcode: 1)\n"
+      "humanReason": "1 step failed:\n\n\n- Step('Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.run regenerate_configs.sh') (retcode: 1)\n"
     },
     "name": "$result"
   }
