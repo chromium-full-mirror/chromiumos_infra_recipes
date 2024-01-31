@@ -17,6 +17,7 @@ from PB.chromite.api.sdk import BuildSdkToolchainRequest
 from PB.chromite.api.sdk import CreateBinhostCLsRequest
 from PB.chromite.api.sdk import CreateManifestFromSdkRequest
 from PB.chromite.api.sdk import UploadPrebuiltPackagesRequest
+from PB.chromite.api.toolchain import SetupToolchainsRequest
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.build_toolchain import BuildToolchainProperties
@@ -235,6 +236,13 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
               chroot=api.cros_sdk.chroot,
               result_path=api.cros_build_api.new_result_path()))
       redistributable_toolchains = response.generated_files
+
+    with api.step.nest('install toolchains'):
+      api.cros_build_api.ToolchainService.SetupToolchains(
+          SetupToolchainsRequest(
+              chroot=api.cros_sdk.chroot,
+              targets=[SetupToolchainsRequest.ToolchainTarget(target='all')],
+              sysroot_path=f'/build/{SDK_BUILD_TARGET}'))
 
     with api.step.nest('package SDK as tarball'):
       request = BuildSdkTarballRequest(
@@ -649,6 +657,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
       api.post_check(post_process.MustRun, 'create redistributable toolchains'),
+      api.post_check(post_process.MustRun, 'install toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
@@ -670,6 +679,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'tag key CL'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
       api.post_check(post_process.MustRun, 'create redistributable toolchains'),
+      api.post_check(post_process.MustRun, 'install toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
@@ -693,6 +703,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
       api.post_check(post_process.MustRun, 'create redistributable toolchains'),
+      api.post_check(post_process.MustRun, 'install toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.MustRun, 'create manifest from SDK'),
       api.post_check(post_process.MustRun, 'upload SDK tarball'),
@@ -718,6 +729,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
+      api.post_check(post_process.DoesNotRun, 'install toolchains'),
       api.post_check(post_process.DoesNotRun, 'package SDK as tarball'),
       api.post_check(post_process.DoesNotRun, 'create manifest from SDK'),
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
@@ -748,6 +760,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
       api.post_check(post_process.DoesNotRun,
                      'upload redistributable toolchains'),
+      api.post_check(post_process.DoesNotRun, 'install toolchains'),
       api.post_check(post_process.DoesNotRun, 'upload prebuilt packages'),
       api.post_check(post_process.DoesNotRun, 'create binhost CLs'),
       api.post_check(post_process.DoesNotRun, 'cq-depend on binhost CLs'),
@@ -770,6 +783,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'check properties'),
       api.post_check(post_process.MustRun, 'identify key CLs'),
       api.post_check(post_process.MustRun, 'build SDK packages'),
+      api.post_check(post_process.MustRun, 'install toolchains'),
       api.post_check(post_process.MustRun, 'package SDK as tarball'),
       api.post_check(post_process.DoesNotRun, 'create manifest from SDK'),
       api.post_check(post_process.DoesNotRun, 'upload SDK tarball'),
