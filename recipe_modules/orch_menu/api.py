@@ -824,7 +824,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     # Use looks for green to determine if we should update the refs.
     # These steps are only run on snapshot-orchestrator.
-    if self._update_manifest_refs:
+    if self._update_manifest_refs and self._properties.update_manifest_refs.build:
       with self.m.failures.ignore_exceptions():
         with self.m.step.nest('update local greenness') as pres:
           should_update = self.m.looks_for_green.is_green_for_local()
