@@ -13,4 +13,3 @@ DEPS = [
     'util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

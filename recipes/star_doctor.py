@@ -54,7 +54,6 @@ DEPS = [
     'gitiles',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 CI_PROD_SERVICE_ACCOUNT = 'chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com'
 INTERNAL_HOST_DOMAIN = 'chrome-internal.googlesource.com'

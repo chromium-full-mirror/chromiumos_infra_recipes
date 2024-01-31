@@ -44,7 +44,6 @@ GERRIT_CL_REVIEWERS = ['borealis-shaders-team+uprev@google.com']
 _MILESTONE_USES_KABUTO_UPREV = 118
 _MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi,

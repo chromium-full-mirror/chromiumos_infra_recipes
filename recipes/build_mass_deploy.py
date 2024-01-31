@@ -24,7 +24,6 @@ DEPS = [
     'failures',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildMassDeployProperties
 

@@ -40,7 +40,6 @@ DEPS = {
 
 PROPERTIES = CopProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def _run_script(api: RecipeApi, script: str, data_input: Dict,

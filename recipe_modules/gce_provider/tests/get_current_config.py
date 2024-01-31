@@ -18,7 +18,6 @@ DEPS = [
     'gce_provider',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = GetCurrentConfigProperties
 

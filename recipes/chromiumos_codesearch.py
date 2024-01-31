@@ -14,7 +14,6 @@ from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
 from recipe_engine.post_process import PropertyEquals
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'infra/codesearch',

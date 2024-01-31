@@ -41,7 +41,6 @@ DEPS = [
     'recipe_engine/properties',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = OrchestratorProperties
 

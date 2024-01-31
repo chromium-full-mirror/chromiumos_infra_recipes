@@ -26,7 +26,6 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 CHROMIUM_OBJECTS_CACHE = 'chrome_cache/chromium.googlesource.com-chromium-src/objects'
 
 

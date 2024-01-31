@@ -25,7 +25,6 @@ from recipe_engine import recipe_api
 
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # SourceTestPlan pointing to the legacy_default Starlark files, will be used
 # when MigrationConfigs set fallback_to_default and no relevant plans are found.

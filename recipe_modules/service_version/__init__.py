@@ -10,6 +10,5 @@ DEPS = [
     'recipe_engine/step',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = ServiceVersionProperties

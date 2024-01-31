@@ -23,7 +23,6 @@ DEPS = [
     'git',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
 INTERNAL_REVIEW_HOST = 'chrome-internal-review.googlesource.com'

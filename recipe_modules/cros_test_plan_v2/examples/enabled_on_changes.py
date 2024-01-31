@@ -17,7 +17,6 @@ DEPS = [
     'gerrit',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 gerrit_changes = [
     GerritChange(

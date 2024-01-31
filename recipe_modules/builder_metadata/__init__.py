@@ -11,4 +11,3 @@ DEPS = [
     'recipe_engine/raw_io',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

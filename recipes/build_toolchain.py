@@ -45,7 +45,6 @@ DEPS = [
 
 PROPERTIES = BuildToolchainProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # The 'board' that represents the host platform the SDK will be run on.
 SDK_BUILD_TARGET = 'amd64-host'

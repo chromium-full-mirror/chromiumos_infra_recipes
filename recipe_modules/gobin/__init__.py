@@ -15,4 +15,3 @@ DEPS = [
     'git',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

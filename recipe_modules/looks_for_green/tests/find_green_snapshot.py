@@ -26,7 +26,6 @@ DEPS = [
 
 PROPERTIES = FindGreenSnapshotProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Default values used in testing
 TEST_SEED_TIME_SECONDS = 1613779827

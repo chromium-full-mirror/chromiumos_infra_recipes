@@ -18,7 +18,6 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test data.
 BUILD_INPUT = build_pb2.Build.Input()

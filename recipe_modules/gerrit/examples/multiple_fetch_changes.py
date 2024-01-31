@@ -15,7 +15,6 @@ DEPS = [
     'src_state',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 changes = [
     GerritChange(host='chromium-review.googlesource.com', change=1,

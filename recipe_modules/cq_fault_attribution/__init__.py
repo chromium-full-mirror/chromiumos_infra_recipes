@@ -17,6 +17,5 @@ DEPS = [
     'looks_for_green',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CqFaultAttributionApiProperties

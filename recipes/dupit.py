@@ -21,7 +21,6 @@ DEPS = [
     'cros_dupit',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = DupitProperties
 

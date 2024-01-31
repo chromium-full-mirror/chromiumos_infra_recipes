@@ -7,7 +7,6 @@
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'cros_lvfs_mirror',

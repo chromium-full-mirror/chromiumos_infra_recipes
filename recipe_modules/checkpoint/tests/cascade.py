@@ -19,7 +19,6 @@ DEPS = [
 ]
 
 PROPERTIES = TestProperties
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TESTS = [
     # Test that CREATE_BUILDSPEC forces all other orchestrator steps.

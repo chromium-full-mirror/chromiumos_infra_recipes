@@ -11,6 +11,5 @@ DEPS = [
     'cros_infra_config'
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = binhost_lookup_service_pb2.BinhostLookupServiceProperties

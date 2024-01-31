@@ -22,7 +22,6 @@ DEPS = [
     'deferrals',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = cipd_uprev.Properties
 

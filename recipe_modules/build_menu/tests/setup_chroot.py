@@ -25,7 +25,6 @@ DEPS = [
 
 PROPERTIES = SetupChrootProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 UPDATE_DICT = {
     SetupChrootProperties.OptionalBool.NONE: None,

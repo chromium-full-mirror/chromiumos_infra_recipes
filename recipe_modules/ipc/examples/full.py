@@ -13,7 +13,6 @@ from recipe_engine.recipe_test_api import RecipeTestApi, TestData
 
 DEPS = ['ipc']
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):

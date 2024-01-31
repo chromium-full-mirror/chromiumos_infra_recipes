@@ -23,7 +23,6 @@ DEPS = [
 GERRIT_HOST = 'gerrit.host.test'
 CHANGE_NUM = 12345
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

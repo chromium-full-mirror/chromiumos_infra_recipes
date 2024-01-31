@@ -27,6 +27,5 @@ DEPS = [
     'cros_tags',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildReportingProperties

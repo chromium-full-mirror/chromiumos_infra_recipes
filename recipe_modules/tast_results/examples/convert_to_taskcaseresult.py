@@ -16,7 +16,6 @@ DEPS = [
     'tast_results',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

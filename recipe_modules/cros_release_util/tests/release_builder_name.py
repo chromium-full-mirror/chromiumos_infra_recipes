@@ -17,7 +17,6 @@ DEPS = [
     'cros_source',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = ReleaseBuilderNameProperties
 

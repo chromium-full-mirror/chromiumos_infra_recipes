@@ -68,7 +68,6 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = generator_pb2.GeneratorProperties
 

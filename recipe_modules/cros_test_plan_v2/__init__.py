@@ -27,6 +27,5 @@ DEPS = [
     'depot_tools/gitiles',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosTestPlanV2Properties

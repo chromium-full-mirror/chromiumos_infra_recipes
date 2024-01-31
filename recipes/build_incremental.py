@@ -37,7 +37,6 @@ DEPS = [
     'src_state',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_SYNC_JOBS = 64
 
 PROPERTIES = IncrementalProperties

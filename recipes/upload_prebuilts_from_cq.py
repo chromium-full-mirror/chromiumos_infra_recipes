@@ -55,7 +55,6 @@ DEPS = {
     'workspace_util': 'workspace_util',
 }
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = UploadPrebuiltsFromCqProperties
 

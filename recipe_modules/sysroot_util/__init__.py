@@ -29,6 +29,5 @@ DEPS = [
     'workspace_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = SysrootUtilProperties

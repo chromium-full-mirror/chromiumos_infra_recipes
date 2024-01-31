@@ -16,7 +16,6 @@ DEPS = [
     'urls',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def vm_build(**kwargs):

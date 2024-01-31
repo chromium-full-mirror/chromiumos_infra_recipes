@@ -13,7 +13,6 @@ DEPS = [
     'cros_cq_depends',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

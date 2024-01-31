@@ -13,7 +13,6 @@ DEPS = [
     'git_footers',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DESCRIPTION_EXISTING = '''
 This is a change where the footer in question already exists.

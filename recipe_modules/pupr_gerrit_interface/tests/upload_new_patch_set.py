@@ -11,7 +11,6 @@ from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'pupr_gerrit_interface',

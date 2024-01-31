@@ -29,6 +29,5 @@ DEPS = [
     'metadata',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosArtifactsProperties

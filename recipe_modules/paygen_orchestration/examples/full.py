@@ -18,7 +18,6 @@ DEPS = [
     'paygen_orchestration',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestPaygenProperties
 

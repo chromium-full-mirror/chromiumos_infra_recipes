@@ -20,7 +20,6 @@ DEPS = [
     'cros_history',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 

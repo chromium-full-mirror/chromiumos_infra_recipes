@@ -31,7 +31,6 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = UprevBorealisDepsProperties
 GERRIT_CL_TOPIC = 'borealis-deps'

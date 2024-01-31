@@ -31,7 +31,6 @@ DEPS = [
     'build_menu',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = AndroidUprevProperties
 

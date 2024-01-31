@@ -34,7 +34,6 @@ DEPS = [
     'gerrit',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestInputProperties
 

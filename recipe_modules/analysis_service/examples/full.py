@@ -24,7 +24,6 @@ DEPS = [
     'analysis_service',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = FullProperties
 

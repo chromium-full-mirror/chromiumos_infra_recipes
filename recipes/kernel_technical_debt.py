@@ -23,7 +23,6 @@ DEPS = {
     'test_util': 'test_util',
 }
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TECH_DEBT_MSG_TAG = 'This patch is not fully upstream. Please open a tracking bug here: go/cros-kernel-technical-debt-bug and add a label UPSTREAM-TASK=b:XXXX referencing it and add cros-kernel-upstream-debt-review@google.com as reviewer. A member of the review committee will review the CL. Thank you.'
 TAG_MISSING_MSG = 'The subject of this patch does not include a valid tag. Please check: https://chromium.googlesource.com/chromiumos/docs/+/HEAD/kernel_development.md. If you\'d like to silence this warning for a work-in-progress change, prefix your subject with "WIP:" or "DO-NOT-SUBMIT:"'

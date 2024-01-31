@@ -7,4 +7,3 @@ DEPS = [
     'recipe_engine/cq',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

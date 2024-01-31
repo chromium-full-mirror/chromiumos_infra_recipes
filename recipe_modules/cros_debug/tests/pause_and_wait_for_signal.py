@@ -20,7 +20,6 @@ DEPS = [
     'cros_debug',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = PauseAndWaitForSignalProperties
 

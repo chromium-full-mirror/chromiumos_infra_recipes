@@ -22,7 +22,6 @@ DEPS = [
 
 PROPERTIES = CalcApproxSnapAgeHoursProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Default values used in testing - '2021-02-19T00:00:00'
 TEST_SEED_TIME_SECONDS = 1613692800

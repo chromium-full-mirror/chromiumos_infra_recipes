@@ -41,7 +41,6 @@ DEPS = [
     'skylab_results',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BUILD_INVOCATION_ID_REGEX = 'build-(?P<build_id>.*)'
 

@@ -22,7 +22,6 @@ DEPS = [
     'tast_exec',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TastVmProperties
 

@@ -54,7 +54,6 @@ DEPS = [
     'git_txn',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Scripts
 FIND_TESTS_PATH = \

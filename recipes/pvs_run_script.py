@@ -13,7 +13,6 @@ DEPS = [
     'recipe_engine/step',
 ]
 PROPERTIES = PVSRunScriptProperties
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api, properties):

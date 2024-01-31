@@ -27,7 +27,6 @@ DEPS = {
     'repo': 'repo',
 }
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # TODO(phajdan.jr): provide coverage (http://crbug.com/693058).
 DISABLE_STRICT_COVERAGE = True

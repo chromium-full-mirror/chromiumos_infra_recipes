@@ -17,7 +17,6 @@ DEPS = [
     'cros_sdk',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _TEST_SDK_VERSION_FILE = '''# The last version of the sdk that we built & tested.
 SDK_LATEST_VERSION="2022.06.26.170938"

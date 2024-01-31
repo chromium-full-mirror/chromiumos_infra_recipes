@@ -28,7 +28,6 @@ DEPS = [
     'orch_menu',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 INTERNAL_HOST_URL = 'chrome-internal.googlesource.com'
 EXTERNAL_HOST_URL = 'chromium.googlesource.com'

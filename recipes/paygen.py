@@ -33,7 +33,6 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/bcid_reporter',

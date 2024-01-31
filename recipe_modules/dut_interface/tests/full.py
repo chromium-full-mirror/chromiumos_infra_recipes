@@ -18,7 +18,6 @@ DEPS = [
     'recipe_engine/time', 'recipe_engine/uuid', 'dut_interface', 'phosphorus'
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestRunnerProperties
 

@@ -27,7 +27,6 @@ DEPS = [
 
 PROPERTIES = TestProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 external_git_repo = 'https://chromium.googlesource.com/chromiumos/manifest'
 internal_git_repo = 'https://chrome-internal.googlesource.com/chromeos/manifest-internal'

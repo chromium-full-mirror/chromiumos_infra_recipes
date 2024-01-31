@@ -4,7 +4,6 @@
 
 from recipe_engine import recipe_api
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 class DirmdApi(recipe_api.RecipeApi):

@@ -27,7 +27,6 @@ DEPS = [
     'skylab_results',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 LFG_COMMIT_SHA = 'lfgcommitsha'
 ORCH_SNAPSHOT_COMMIT_SHA = 'orchsnapshotcommitsha'

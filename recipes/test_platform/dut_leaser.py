@@ -21,7 +21,6 @@ DEPS = [
     'service_version',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = DutLeaserProperties
 

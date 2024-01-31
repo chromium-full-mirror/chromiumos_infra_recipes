@@ -12,7 +12,6 @@ DEPS = [
     'cros_som',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

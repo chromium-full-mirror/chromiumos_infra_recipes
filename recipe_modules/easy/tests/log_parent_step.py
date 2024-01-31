@@ -19,7 +19,6 @@ DEPS = [
     'easy',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BUILD_WITH_PARENT_ID = build_pb2.Build()
 

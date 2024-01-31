@@ -19,7 +19,6 @@ DEPS = [
     'cros_history',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: recipe_api.RecipeApi) -> None:

@@ -21,7 +21,6 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 GERRIT_HOST = 'gerrit.host.test'
 INTERNAL_GERRIT_HOST = 'chrome-internal-review.googlesource.com'

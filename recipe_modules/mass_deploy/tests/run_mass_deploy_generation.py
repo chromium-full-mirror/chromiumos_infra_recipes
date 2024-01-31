@@ -16,7 +16,6 @@ DEPS = [
     'mass_deploy',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Reduced versions of the signing metadata from these two builds:
 # https://logs.chromium.org/logs/chromeos/buildbucket/cr-buildbucket/8779438015707186865/+/u/get_signed_build_metadata/parse_metadata/signed_build_metadata

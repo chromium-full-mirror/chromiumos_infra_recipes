@@ -80,7 +80,6 @@ DEPS = [
     'urls',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 MINUTE = 60
 HOUR = 60 * MINUTE
 

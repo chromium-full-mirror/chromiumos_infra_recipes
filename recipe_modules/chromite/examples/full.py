@@ -18,7 +18,6 @@ DEPS = [
     'recipe_engine/swarming',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

@@ -42,7 +42,6 @@ DEPS = [
     'recipe_analyze',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestRecipesProperties
 

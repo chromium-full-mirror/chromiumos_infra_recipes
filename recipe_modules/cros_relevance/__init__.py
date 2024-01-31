@@ -27,6 +27,5 @@ DEPS = [
     'src_state',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosRelevanceProperties

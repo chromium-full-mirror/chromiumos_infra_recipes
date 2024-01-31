@@ -30,7 +30,6 @@ chromeos-base/chromeos-chrome/chromeos-chrome-106.0.5204.0_rc-r1.ebuild
 chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild
 '''
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 class CrosLkgmApi(recipe_api.RecipeApi):

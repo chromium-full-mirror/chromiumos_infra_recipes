@@ -20,7 +20,6 @@ DEPS = [
     'cros_infra_config',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api):

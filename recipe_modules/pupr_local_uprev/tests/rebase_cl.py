@@ -23,7 +23,6 @@ DEPS = [
     'pupr_local_uprev',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BUILD_TARGETS = [BuildTarget(name='build-target')]
 CHANGE_1234 = GerritChange(host='chromium-review.googlesource.com', change=1234)

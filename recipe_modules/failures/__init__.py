@@ -17,4 +17,3 @@ DEPS = [
     'urls',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

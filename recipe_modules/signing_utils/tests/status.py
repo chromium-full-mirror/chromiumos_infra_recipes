@@ -14,7 +14,6 @@ DEPS = [
     'signing_utils',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 _PASSED = 'passed'
 _FAILED = 'failed'

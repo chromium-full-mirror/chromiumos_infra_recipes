@@ -14,7 +14,6 @@ DEPS = [
     'cros_test_sharding',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = {
     'shard_count': Property(

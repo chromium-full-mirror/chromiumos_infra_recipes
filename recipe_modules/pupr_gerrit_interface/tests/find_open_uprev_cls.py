@@ -26,7 +26,6 @@ DEPS = [
     'pupr_gerrit_interface',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = FindOpenUprevCLsProperties
 

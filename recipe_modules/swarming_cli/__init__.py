@@ -13,4 +13,3 @@ DEPS = [
     'recipe_engine/time',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

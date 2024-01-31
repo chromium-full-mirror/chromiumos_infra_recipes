@@ -22,7 +22,6 @@ DEPS = [
 
 PROPERTIES = IsGreenForLocalProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Mock build input values.
 build_input = build_pb2.Build.Input()

@@ -45,7 +45,6 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildFirmwareHistoricalDbProperties
 PRECONDITION_FAILURE = 412

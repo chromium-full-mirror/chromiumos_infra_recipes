@@ -16,7 +16,6 @@ DEPS = [
     'recipe_engine/raw_io',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TEST_RESULT_PATH = 'gs://chromeos-autotest-results/swarming-1234'
 

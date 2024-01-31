@@ -22,7 +22,6 @@ DEPS = [
     'signing_utils',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PASSED = BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 FAILED = BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED

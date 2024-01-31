@@ -8,4 +8,3 @@ DEPS = [
     'gerrit',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

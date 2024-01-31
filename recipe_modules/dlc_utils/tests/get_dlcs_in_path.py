@@ -18,7 +18,6 @@ DEPS = [
     'dlc_utils',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = DlcUtilsTestProperties
 

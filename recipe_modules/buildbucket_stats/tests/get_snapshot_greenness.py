@@ -19,7 +19,6 @@ DEPS = [
     'buildbucket_stats',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 # Test data.
 BUILDER_GREENNESS = {'eve-postsubmit': {'buildMetric': '100'}}

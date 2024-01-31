@@ -18,7 +18,6 @@ DEPS = [
     'key_value_store',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = UpdateOneValueProperties
 

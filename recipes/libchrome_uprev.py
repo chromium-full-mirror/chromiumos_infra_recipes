@@ -29,7 +29,6 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 UPREV_COMMIT_SUBJECT_RE = re.compile(
     r'Automated commit: libchrome r([0-9]+) uprev')

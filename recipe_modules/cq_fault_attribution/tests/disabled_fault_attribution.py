@@ -40,7 +40,6 @@ DEPS = [
 
 PROPERTIES = DisabledFaultAttributionProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 ORCH_SNAPSHOT_COMMIT_SHA = 'orchsnapshotcommitsha'
 

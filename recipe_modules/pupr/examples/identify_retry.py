@@ -22,7 +22,6 @@ DEPS = [
     'pupr',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def _patch_set_from_dict(changes):

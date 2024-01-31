@@ -961,7 +961,7 @@
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/recipe_deps.py\", in run_steps",
       "    recipe_result = self.global_symbols['RunSteps'](*args)",
       "                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 49, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 48, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(properties.build_target,",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 672, in upload_target_prebuilts",
       "    binhost_key = self._binhost_key(kind)",

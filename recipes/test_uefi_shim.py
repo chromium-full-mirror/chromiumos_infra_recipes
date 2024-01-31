@@ -24,7 +24,6 @@ DEPS = [
     'git',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 REPO_URL = 'https://chromium.googlesource.com/chromiumos/shim-review'
 

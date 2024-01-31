@@ -24,7 +24,6 @@ DEPS = [
     'checkpoint',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 BuildStatus = BuildReport.BuildStatus
 

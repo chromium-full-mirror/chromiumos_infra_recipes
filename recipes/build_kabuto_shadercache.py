@@ -31,7 +31,6 @@ PROPERTIES = BuildKabutoShadercacheProperties
 
 _MILESTONE_USES_INPUT_MANIFEST_BRANCH = 122
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 GS_BUCKET = 'kabuto_cache'
 LOCAL_PAYLOAD_FILENAME = 'kabuto_payload.tar.gz'

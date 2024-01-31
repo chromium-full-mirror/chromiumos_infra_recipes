@@ -22,7 +22,6 @@ DEPS = [
     'metadata',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi) -> None:

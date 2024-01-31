@@ -40,7 +40,6 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 GERRIT_HOST = 'chromium-review.googlesource.com'
 CHANGE_NUM = 123456

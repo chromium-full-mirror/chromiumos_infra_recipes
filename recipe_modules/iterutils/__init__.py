@@ -4,4 +4,3 @@
 # found in the LICENSE file.
 DEPS = []
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

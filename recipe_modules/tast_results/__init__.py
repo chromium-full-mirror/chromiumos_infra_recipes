@@ -24,6 +24,5 @@ DEPS = [
     'util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TastResultsProperties

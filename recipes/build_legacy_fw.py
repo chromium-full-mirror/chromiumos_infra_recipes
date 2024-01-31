@@ -49,7 +49,6 @@ DEPS = [
     'test_util',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = BuildLegacyFwProperties
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'

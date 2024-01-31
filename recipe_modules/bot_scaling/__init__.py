@@ -16,4 +16,3 @@ DEPS = [
     'swarming_cli',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'

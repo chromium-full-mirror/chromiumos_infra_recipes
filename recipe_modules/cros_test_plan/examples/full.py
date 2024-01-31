@@ -12,7 +12,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 from recipe_engine import post_process
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/assertions',
@@ -25,7 +24,6 @@ DEPS = [
     'repo',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 TEST_TARGET_TEST_REQUIREMENTS_DATA = b'''{
     "perTargetTestRequirements": [

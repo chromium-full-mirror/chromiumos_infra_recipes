@@ -14,7 +14,6 @@ DEPS = [
     'gerrit',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 ALREADY_MERGED_STDERR = '''
 [W2023-04-14 08:55:56,903 21912 140092904916864 gerrit_util.py] A transient error occurred while querying chrome-internal-review.googlesource.com:

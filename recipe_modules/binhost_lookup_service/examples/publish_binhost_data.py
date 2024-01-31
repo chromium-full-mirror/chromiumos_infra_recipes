@@ -15,7 +15,6 @@ DEPS = [
     'recipe_engine/step', 'binhost_lookup_service'
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 def RunSteps(api: RecipeApi):

@@ -14,7 +14,6 @@ DEPS = [
     'deferrals',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 
 class SpecialException(Exception):

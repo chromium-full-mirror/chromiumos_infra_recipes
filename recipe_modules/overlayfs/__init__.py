@@ -14,6 +14,5 @@ DEPS = [
     'easy',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = OverlayfsProperties

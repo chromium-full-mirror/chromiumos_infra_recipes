@@ -23,7 +23,6 @@ DEPS = [
     'gcloud',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestInputProperties
 

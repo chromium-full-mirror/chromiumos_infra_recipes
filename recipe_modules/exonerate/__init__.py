@@ -22,6 +22,5 @@ DEPS = [
     'urls',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = ExonerateProperties

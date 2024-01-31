@@ -15,7 +15,6 @@ DEPS = [
     'cros_schedule',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = TestInputProperties
 

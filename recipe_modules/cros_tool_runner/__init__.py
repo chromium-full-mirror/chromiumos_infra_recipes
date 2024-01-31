@@ -19,7 +19,6 @@ DEPS = [
     'easy',
 ]
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 PROPERTIES = CrosToolRunnerProperties
 ENV_PROPERTIES = CrosToolRunnerEnvProperties

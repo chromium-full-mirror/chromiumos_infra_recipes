@@ -820,7 +820,7 @@
       "  File \"RECIPE_REPO[recipe_engine]/recipe_engine/internal/property_invoker.py\", in _invoke_with_properties",
       "    return callable_obj(*props, **additional_args)",
       "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-      "  File \"RECIPE_REPO[chromeos]/recipes/cq_auto_retrier.py\", line 190, in RunSteps",
+      "  File \"RECIPE_REPO[chromeos]/recipes/cq_auto_retrier.py\", line 189, in RunSteps",
       "    api.deferrals.raise_exceptions()",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/deferrals/api.py\", line 141, in raise_exceptions",
       "    raise deferred[0]",

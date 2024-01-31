@@ -14,7 +14,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties
 from recipe_engine.recipe_api import RecipeApi
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 REPO_SYNC_JOBS = 64
 
 

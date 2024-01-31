@@ -6,7 +6,6 @@
 
 from PB.recipe_modules.chromeos.metadata.metadata import MetadataProperties
 
-PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
 DEPS = [
     'recipe_engine/file',
