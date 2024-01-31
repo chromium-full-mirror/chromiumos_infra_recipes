@@ -9,18 +9,20 @@
 from collections import defaultdict
 from collections import namedtuple
 from typing import Dict, List, Optional, Tuple
-from google.protobuf import json_format
-from recipe_engine import recipe_api
+from typing import Set
 
-from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from google.protobuf import json_format
+
+from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
-    TestVariantFailureRateAnalysis
-from PB.chromiumos.test_disablement import TestDisablementCfg
-from PB.chromiumos.test_disablement import ExcludeCfg
-from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateStats
-from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
-from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+  TestVariantStabilityAnalysis
+from PB.go.chromium.org.luci.buildbucket.proto import \
+  build as build_pb2, common as common_pb2
+from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
+  TestVariantFailureRateAnalysis
+from PB.chromiumos.test_disablement import ExcludeCfg, TestDisablementCfg
+from PB.recipe_modules.chromeos.exonerate.exonerate import \
+  ExonerateStats, FailedTestStats, OverallTestStats
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -88,6 +90,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     if not self._configs_loaded:
       self.load_configs()
     return self._manual_exoneration_configs
+
+  @property
+  def auto_exoneration_v2_enabled(self) -> bool:
+    return 'chromeos.cq.auto.exoneration.v2.enabled' in self.m.buildbucket.build.input.experiments
 
   def enable_excludes(self):
     """enable excludes config's use."""
@@ -660,6 +666,8 @@ class ExonerateApi(recipe_api.RecipeApi):
       if not self._failed_tests:
         pres.step_text = 'no failed tests'
         return False
+      # Dry run v2: source-position-based analysis
+      self.auto_exoneration_analysis_v2()
       try:
         # Convert failed tests into the format LUCI Analysis wants.
         test_variant_list = []
@@ -911,3 +919,82 @@ class ExonerateApi(recipe_api.RecipeApi):
         self.m.naming.get_skylab_result_title(result) not in passed_tests
     ]
     return exonerable_hw_results
+
+  def auto_exoneration_analysis_v2(self, failed_tests: Set[FailedTest] = None,
+                                   fake_data=None) -> None:
+    """Analyze failed tests to see if they can be exonerated.
+
+    Args:
+      failed_tests: Optional override of tests to be analyzed.
+        Default use self._failed_tests.
+      fake_data: Mocked LUCI Analysis response data to be used for tests.
+        Tuple of (List[TestVariantStabilityAnalysis], TestStabilityCriteria).
+    """
+
+    def transform_stats(
+        stability: List[TestVariantStabilityAnalysis]) -> List[FailedTestStats]:
+      """Convert LUCI Analaysis model to FailedTestStats."""
+      if not self._configs_loaded:
+        self.load_configs()
+      all_stats = []
+      for item in stability:
+        stat = FailedTestStats()
+        stat.test_id = item.test_id
+        stat.build_target = self.m.rdb_util.get_build_target_from_variant(
+            item.variant)
+        stat.board = self.m.rdb_util.get_board_from_variant(item.variant)
+        stat.model = self.m.rdb_util.get_model_from_variant(item.variant)
+        stat.consistent_failure_count = item.failure_rate.consecutive_unexpected_test_runs
+        stat.flaky_verdict_percent = 0 if item.flake_rate.total_verdicts == 0 else round(
+            100 * item.flake_rate.run_flaky_verdicts /
+            item.flake_rate.total_verdicts)
+        consistently_failing = item.failure_rate.is_met
+        was_flaky = item.flake_rate.is_met
+        stat.automatically_exonerated = consistently_failing or was_flaky
+        # Manual exoneration's configs remove the tast prefix from test names.
+        tastless_name = self.m.exoneration_util.get_tastless_name(stat.test_id)
+        stat.manually_exonerated = self._is_test_name_exonerable(
+            tastless_name, stat.build_target)
+        all_stats.append(stat)
+      return all_stats
+
+    if self.auto_exoneration_v2_enabled:
+      with self.m.step.nest('Auto exoneration v2 dry run') as pres:
+        try:
+          if not failed_tests:
+            failed_tests = self._failed_tests
+          # Convert request
+          test_variant_position_list = []
+          for test in failed_tests:
+            test_variant = self.get_test_variant_dict(
+                test_id=test.name, board=test.board,
+                build_target=test.build_target, model=test.model)
+            test_variant['sources'] = {
+                'gitiles_commit':
+                    json_format.MessageToDict(self.m.src_state.gitiles_commit)
+            }
+            test_variant_position_list.append(test_variant)
+            test_variant_position_list.sort(key=lambda x: x['testId'])
+
+          # Make call to LUCI Analysis
+          stability, criteria = self.m.exoneration_util.query_stability(
+              test_variant_position_list, fake_data=fake_data)
+          pres.logs['stability'] = str(
+              sorted(stability, key=lambda x: x.test_id))
+          pres.logs['criteria'] = str(criteria)
+
+          # Transform response to consumable stats
+          all_stats = transform_stats(stability)
+
+          # Apply override (guardrail)
+          override_info = self.m.exoneration_util.override_calculation(
+              all_stats, self.overall_autoex_limit,
+              self.per_target_autoex_limit)
+          overall_stats = OverallTestStats(
+              failed_tests=sorted(all_stats, key=lambda x: x.test_id),
+              override_info=override_info)
+          pres.logs['all_stats'] = str(overall_stats)
+          self.m.easy.set_properties_step(failed_test_stats_v2=overall_stats)
+        except self.m.step.StepFailure as f:
+          pres.step_text = f.reason_message()
+          pres.status = self.m.step.WARNING

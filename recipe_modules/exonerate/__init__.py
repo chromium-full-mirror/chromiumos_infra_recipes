@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""A module for cq exoneration."""
+
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 
 DEPS = [
@@ -16,6 +18,7 @@ DEPS = [
     'exoneration_util',
     'naming',
     'rdb_util',
+    'src_state',
     'urls',
 ]
 

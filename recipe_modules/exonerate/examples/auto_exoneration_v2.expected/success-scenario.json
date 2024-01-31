@@ -1,0 +1,152 @@
+[
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@stability@[test_id: \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"@@@",
+      "@@@STEP_LOG_LINE@stability@variant {@@@",
+      "@@@STEP_LOG_LINE@stability@  def {@@@",
+      "@@@STEP_LOG_LINE@stability@    key: \"board\"@@@",
+      "@@@STEP_LOG_LINE@stability@    value: \"hana\"@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@  def {@@@",
+      "@@@STEP_LOG_LINE@stability@    key: \"build_target\"@@@",
+      "@@@STEP_LOG_LINE@stability@    value: \"hana\"@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@}@@@",
+      "@@@STEP_LOG_LINE@stability@failure_rate {@@@",
+      "@@@STEP_LOG_LINE@stability@  is_met: true@@@",
+      "@@@STEP_LOG_LINE@stability@  unexpected_test_runs: 10@@@",
+      "@@@STEP_LOG_LINE@stability@  consecutive_unexpected_test_runs: 10@@@",
+      "@@@STEP_LOG_LINE@stability@  recent_verdicts {@@@",
+      "@@@STEP_LOG_LINE@stability@    position: 93211@@@",
+      "@@@STEP_LOG_LINE@stability@    invocations: \"build-8759159713660408161\"@@@",
+      "@@@STEP_LOG_LINE@stability@    unexpected_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@    total_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@  recent_verdicts {@@@",
+      "@@@STEP_LOG_LINE@stability@    position: 93210@@@",
+      "@@@STEP_LOG_LINE@stability@    invocations: \"build-8759161637520826273\"@@@",
+      "@@@STEP_LOG_LINE@stability@    unexpected_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@    total_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@  recent_verdicts {@@@",
+      "@@@STEP_LOG_LINE@stability@    position: 93208@@@",
+      "@@@STEP_LOG_LINE@stability@    invocations: \"build-8759165807629055393\"@@@",
+      "@@@STEP_LOG_LINE@stability@    unexpected_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@    total_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@  recent_verdicts {@@@",
+      "@@@STEP_LOG_LINE@stability@    position: 93207@@@",
+      "@@@STEP_LOG_LINE@stability@    invocations: \"build-8759167441766272785\"@@@",
+      "@@@STEP_LOG_LINE@stability@    unexpected_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@    total_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@  recent_verdicts {@@@",
+      "@@@STEP_LOG_LINE@stability@    position: 93206@@@",
+      "@@@STEP_LOG_LINE@stability@    invocations: \"build-8759169052502629345\"@@@",
+      "@@@STEP_LOG_LINE@stability@    unexpected_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@    total_runs: 2@@@",
+      "@@@STEP_LOG_LINE@stability@  }@@@",
+      "@@@STEP_LOG_LINE@stability@}@@@",
+      "@@@STEP_LOG_LINE@stability@flake_rate {@@@",
+      "@@@STEP_LOG_LINE@stability@  total_verdicts: 134@@@",
+      "@@@STEP_LOG_LINE@stability@  start_position: 93206@@@",
+      "@@@STEP_LOG_LINE@stability@  end_position: 93552@@@",
+      "@@@STEP_LOG_LINE@stability@}@@@",
+      "@@@STEP_LOG_LINE@stability@]@@@",
+      "@@@STEP_LOG_END@stability@@@",
+      "@@@STEP_LOG_LINE@criteria@failure_rate {@@@",
+      "@@@STEP_LOG_LINE@criteria@  failure_threshold: 6@@@",
+      "@@@STEP_LOG_LINE@criteria@  consecutive_failure_threshold: 3@@@",
+      "@@@STEP_LOG_LINE@criteria@}@@@",
+      "@@@STEP_LOG_LINE@criteria@flake_rate {@@@",
+      "@@@STEP_LOG_LINE@criteria@  min_window: 100@@@",
+      "@@@STEP_LOG_LINE@criteria@  flake_threshold: 2@@@",
+      "@@@STEP_LOG_LINE@criteria@  flake_rate_threshold: 0.01@@@",
+      "@@@STEP_LOG_LINE@criteria@}@@@",
+      "@@@STEP_LOG_END@criteria@@@",
+      "@@@STEP_LOG_LINE@all_stats@failed_tests {@@@",
+      "@@@STEP_LOG_LINE@all_stats@  test_id: \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"@@@",
+      "@@@STEP_LOG_LINE@all_stats@  build_target: \"hana\"@@@",
+      "@@@STEP_LOG_LINE@all_stats@  automatically_exonerated: true@@@",
+      "@@@STEP_LOG_LINE@all_stats@  consistent_failure_count: 10@@@",
+      "@@@STEP_LOG_LINE@all_stats@  board: \"hana\"@@@",
+      "@@@STEP_LOG_LINE@all_stats@}@@@",
+      "@@@STEP_LOG_LINE@all_stats@override_info {@@@",
+      "@@@STEP_LOG_LINE@all_stats@}@@@",
+      "@@@STEP_LOG_END@all_stats@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/test_exoneration.binaryproto",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Auto exoneration v2 dry run.fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal/+/HEAD/test/exoneration/generated/excludes.binaryproto",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Auto exoneration v2 dry run.fetch HEAD:test/exoneration/generated/excludes.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run.set failed_test_stats_v2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_stats_v2@{\"failedTests\": [{\"automaticallyExonerated\": true, \"board\": \"hana\", \"buildTarget\": \"hana\", \"consistentFailureCount\": 10, \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"}], \"overrideInfo\": {}}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

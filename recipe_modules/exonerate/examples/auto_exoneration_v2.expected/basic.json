@@ -1,0 +1,67 @@
+[
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Step(None)@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run.query LUCI Analysis for stability",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "prpc",
+      "call",
+      "luci-analysis.appspot.com",
+      "luci.analysis.v1.TestVariants.QueryStability"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Auto exoneration v2 dry run.query LUCI Analysis for stability.rpc call",
+    "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"sources\": {\"gitiles_commit\": {}}, \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\", \"variant\": {\"def\": {\"board\": \"hana\", \"build_target\": \"hana\"}}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@json.output (invalid)@@@",
+      "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
+      "@@@STEP_LOG_END@json.output (exception)@@@",
+      "@@@STEP_LOG_LINE@input@{@@@",
+      "@@@STEP_LOG_LINE@input@  \"project\": \"chromeos\",@@@",
+      "@@@STEP_LOG_LINE@input@  \"testVariants\": [@@@",
+      "@@@STEP_LOG_LINE@input@    {@@@",
+      "@@@STEP_LOG_LINE@input@      \"sources\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"gitiles_commit\": {}@@@",
+      "@@@STEP_LOG_LINE@input@      },@@@",
+      "@@@STEP_LOG_LINE@input@      \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\",@@@",
+      "@@@STEP_LOG_LINE@input@      \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@input@        \"def\": {@@@",
+      "@@@STEP_LOG_LINE@input@          \"board\": \"hana\",@@@",
+      "@@@STEP_LOG_LINE@input@          \"build_target\": \"hana\"@@@",
+      "@@@STEP_LOG_LINE@input@        }@@@",
+      "@@@STEP_LOG_LINE@input@      }@@@",
+      "@@@STEP_LOG_LINE@input@    }@@@",
+      "@@@STEP_LOG_LINE@input@  ]@@@",
+      "@@@STEP_LOG_LINE@input@}@@@",
+      "@@@STEP_LOG_END@input@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

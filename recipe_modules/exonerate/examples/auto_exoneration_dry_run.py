@@ -15,6 +15,7 @@ from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'exonerate',
 ]
@@ -54,6 +55,16 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.properties(
+          **{
+              '$chromeos/exonerate':
+                  ExonerateProperties(enable_exoneration=True, dry_run=True)
+          }))
+
+  yield api.test(
+      'v2-enabled',
+      api.buildbucket.try_build(
+          experiments=['chromeos.cq.auto.exoneration.v2.enabled']),
       api.properties(
           **{
               '$chromeos/exonerate':
