@@ -32,11 +32,14 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.orch_menu.setup_orchestrator():
     # Run the child builders.
     extra_child_props = {
-        '$chromeos/metadata': {
-            'sources_gitiles_commit_override':
-                json_format.MessageToDict(api.build_menu.resultdb_gitiles_commit
-                                         )
-        }
+        # Value is a callback function that should be executed after LFG
+        # has chosen the snapshot.
+        '$chromeos/metadata':
+            lambda: {
+                'sources_gitiles_commit_override':
+                    json_format.MessageToDict(api.build_menu.
+                                              resultdb_gitiles_commit)
+            }
     }
 
     testable_builds = api.orch_menu.plan_and_wait_for_images(

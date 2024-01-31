@@ -954,6 +954,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       parent_step (Step): the calling step, used for presentation purposes.
       child_specs (list(ChildSpec)): A list of child specs.
       extra_props (dict): Extra properties to append to child requests.
+        Value can be a callback function to be executed when applying the props.
 
     Returns:
       (list[Build], list[Build]) Two lists of scheduled builds, the first
@@ -975,10 +976,20 @@ class OrchMenuApi(recipe_api.RecipeApi):
     if new_build_requests:
       # Add in extra_props.
       if extra_props:
+        # Evaluate extra props for values that are callback functions.
+        # Not cache all values to be compatible with existing tests that
+        # mock a dict (`.items()`).
+        evaluated_extra_props_cache = {}
+        for key, val in extra_props.items():
+          if callable(val):
+            evaluated_extra_props_cache[key] = val()
         for _, req in enumerate(new_build_requests):
           # Only set the value if it's not set already.
           # We don't want to clobber anything.
           for key, val in extra_props.items():
+            if callable(val):
+              # Use cached value to avoid redundant callback executions.
+              val = evaluated_extra_props_cache[key]
             if key not in req.properties:
               req.properties[key] = val
             elif req.properties[key] != val:

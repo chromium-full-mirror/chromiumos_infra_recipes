@@ -98,7 +98,7 @@ def RunSteps(api, properties):
         pass
 
       def items(self):
-        return [('foo', 'bar'), ('foo', 'baz')]
+        return [('foo', 'bar'), ('foo', lambda: 'baz')]
 
     f = FakeDict()
 
