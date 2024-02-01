@@ -52,8 +52,6 @@ def RunSteps(api, properties):
   # The codesearch recipe module relies on checkout path to be set.
   chromiumos_src_dir = api.cros_source.workspace_path.join('src')
   api.path['checkout'] = chromiumos_src_dir
-  with api.context(cwd=cache_dir):
-    api.bot_update.ensure_checkout(set_output_commit=False)
 
   commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
                          ref='refs/heads/snapshot',
@@ -94,7 +92,6 @@ def RunSteps(api, properties):
         api.step('run package_index_cros', [
             package_index_cros_dir.join('main'),
             '--debug',
-            '--with-tests',
             '--board',
             build_target,
             '--chroot',
