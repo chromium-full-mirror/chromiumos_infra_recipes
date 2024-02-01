@@ -38,6 +38,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
+    'bot_cost',
     'build_reporting',
     'cros_release_util',
     'cros_storage',
@@ -48,8 +49,12 @@ DEPS = [
 
 PROPERTIES = PaygenOrchestratorProperties
 
-
 def RunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
+  with api.bot_cost.build_cost_context():
+    return DoRunSteps(api, properties)
+
+
+def DoRunSteps(api: RecipeApi, properties: PaygenOrchestratorProperties):
   # Parse all properties, defaulting the values if not set.
   delta_types = properties.delta_types or api.paygen_orchestration.default_delta_types
   paygen_mpa = properties.paygen_mpa or False

@@ -44,6 +44,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
+    'bot_cost',
     'bot_scaling',
     'cros_build_api',
     'cros_infra_config',
@@ -72,18 +73,19 @@ _PAYGEN_TRY_COUNT = 2
 
 
 def RunSteps(api: RecipeApi, properties: PaygenProperties):
-  api.easy.log_parent_step()
-  with api.failures.ignore_exceptions():
-    api.bcid_reporter.report_stage('start')
-
-  if api.cros_infra_config.is_staging:
-    api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
-
-  with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+  with api.bot_cost.build_cost_context():
+    api.easy.log_parent_step()
     with api.failures.ignore_exceptions():
-      api.bcid_reporter.report_stage('fetch')
+      api.bcid_reporter.report_stage('start')
 
-    DoRunSteps(api, properties)
+    if api.cros_infra_config.is_staging:
+      api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
+
+    with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
+      with api.failures.ignore_exceptions():
+        api.bcid_reporter.report_stage('fetch')
+
+      DoRunSteps(api, properties)
 
 
 def DoRunSteps(api: RecipeApi, properties: PaygenProperties):

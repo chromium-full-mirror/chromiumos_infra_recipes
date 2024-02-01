@@ -15239,22 +15239,22 @@ installer, shrink the ROOT-B partition down to a single block.
 &mdash; **def [RunSteps](/recipe_modules/overlayfs/examples/full.py#18)(api):**
 ### *recipes* / [paygen](/recipes/paygen.py)
 
-[DEPS](/recipes/paygen.py#37): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/paygen.py#37): [bot\_cost](#recipe_modules-bot_cost), [bot\_scaling](#recipe_modules-bot_scaling), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [gitiles](#recipe_modules-gitiles), [naming](#recipe_modules-naming), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [paygen\_testing](#recipe_modules-paygen_testing), [repo](#recipe_modules-repo), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [DoRunSteps](/recipes/paygen.py#89)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#91)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [RunSteps](/recipes/paygen.py#74)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [RunSteps](/recipes/paygen.py#75)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_failure\_reason](/recipes/paygen.py#379)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
+&mdash; **def [get\_failure\_reason](/recipes/paygen.py#381)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
 
 Get the failure reason from the given response, if any.
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#390)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#392)(resp: GenerationResponse):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#269)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#271)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
@@ -15262,9 +15262,9 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#404)(api: RecipeApi, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#406)(api: RecipeApi, resp: GenerationResponse):**
 
-&mdash; **def [split\_generation\_request](/recipes/paygen.py#342)(req: GenerationRequest):**
+&mdash; **def [split\_generation\_request](/recipes/paygen.py#344)(req: GenerationRequest):**
 
 Split a GenerationRequest into the corresponding split paygen requests.
 
@@ -15322,10 +15322,12 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/paygen_orchestration/tests/verify_paygen_timeout.py#20)(api: RecipeApi):**
 ### *recipes* / [paygen\_orchestrator](/recipes/paygen_orchestrator.py)
 
-[DEPS](/recipes/paygen_orchestrator.py#36): [build\_reporting](#recipe_modules-build_reporting), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/paygen_orchestrator.py#36): [bot\_cost](#recipe_modules-bot_cost), [build\_reporting](#recipe_modules-build_reporting), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_storage](#recipe_modules-cros_storage), [easy](#recipe_modules-easy), [paygen\_orchestration](#recipe_modules-paygen_orchestration), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for orchestrating ChromeOS payloads (AU deltas etc).
+
+&mdash; **def [DoRunSteps](/recipes/paygen_orchestrator.py#57)(api: RecipeApi, properties: PaygenOrchestratorProperties):**
 
 &mdash; **def [RunSteps](/recipes/paygen_orchestrator.py#52)(api: RecipeApi, properties: PaygenOrchestratorProperties):**
 ### *recipes* / [paygen\_testing:examples/create\_paygen\_build\_report](/recipe_modules/paygen_testing/examples/create_paygen_build_report.py)
