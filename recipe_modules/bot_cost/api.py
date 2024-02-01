@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for calculating bot cost."""
+
 import contextlib
 from typing import List
 
@@ -13,48 +15,58 @@ from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from recipe_engine.post_process_inputs import Step
 from recipe_engine.recipe_api import RecipeApi
 
-# Cost values are hourly pulled from bot_policies_helper.
-# Cost is in USD per day, last updated on 05/05/2020.
+# Cost is in USD per hour, last updated in 02/2024.
+# Calculated from https://cloud.google.com/compute/vm-instance-pricing,
+# using the us-west4 zone.
+# Use "Price", not "Spot Price".
 BOT_COST = {
     # Will set cost to zero if we don't have a lookup.
     'unknown': 0.0,
+    # TODO(b/323350989): Update or remove.
     'small': 0.01425,
+    # TODO(b/323350989): Update or remove.
     'smedium': 0.001675,
+    # TODO(b/323350989): Update or remove.
     'medium': 0.08042,
+    # TODO(b/323350989): Update or remove.
     'large': 0.337,
+    # TODO(b/323350989): Update or remove.
     'xlarge': 0.337,
+    # TODO(b/323350989): Update or remove.
     'xxlarge': 0.599,
-    'custom-32-65536': 0.337,
-    'e2-custom-32-65536': 0.279,
-    'f1-micro': .00228,
-    'g1-small': .00771,
-    'e2-medium': 0.010051,
-    'e2-small': 0.005025,
-    'e2-standard-2': 0.020102,
-    'e2-standard-4': 0.040204,
-    'e2-standard-8': 0.080408,
-    'e2-standard-16': 0.160816,
-    'e2-standard-32': 0.321632,
-    'n1-standard-1': 0.01,
-    'n1-standard-2': 0.02,
-    'n1-standard-4': 0.04,
-    'n1-standard-8': 0.08,
-    'n1-standard-16': 0.16,
-    'n1-standard-32': 0.32,
-    'n2-highcpu-64': 0.55552,
-    'n2d-highcpu-64': 0.301056,
-    'n2d-highmem-64': 0.550144,
-    'n2d-standard-2': 0.012744,
-    'n2d-standard-4': 0.025488,
-    'n2d-standard-8': 0.050976,
-    'n2d-standard-16': 0.101952,
-    'n2d-standard-32': 0.203904,
-    'n2d-standard-48': 0.305856,
-    'n2d-standard-64': 0.407808,
-    'n2d-standard-80': 0.50976,
-    'n2d-standard-96': 0.611712,
-    'n2d-standard-128': 0.815616,
-    'n2d-standard-224': 1.427328,
+    # Calculated using 32 cores, 64gb RAM and
+    # the custom e2 costs.
+    'custom-32-65536': 1.21,
+    'e2-custom-32-65536': 1.21,
+    'f1-micro': .0086,
+    'g1-small': .0289,
+    'e2-medium': 0.037731,
+    'e2-small': 0.018866,
+    'e2-standard-2': 0.075462,
+    'e2-standard-4': 0.150924,
+    'e2-standard-8': 0.301848,
+    'e2-standard-16': 0.603696,
+    'e2-standard-32': 1.207392,
+    'n1-standard-1': 0.0535,
+    'n1-standard-2': 0.107,
+    'n1-standard-4': 0.214,
+    'n1-standard-8': 0.428,
+    'n1-standard-16': 0.856,
+    'n1-standard-32': 1.712,
+    'n2-highcpu-64': 2.583936,
+    'n2d-highcpu-64': 2.248128,
+    'n2d-highmem-64': 4.107776,
+    'n2d-standard-2': 0.09516,
+    'n2d-standard-4': 0.19032,
+    'n2d-standard-8': 0.38064,
+    'n2d-standard-16': 0.76128,
+    'n2d-standard-32': 1.52256,
+    'n2d-standard-48': 2.28384,
+    'n2d-standard-64': 3.04512,
+    'n2d-standard-80': 3.8064,
+    'n2d-standard-96': 4.56768,
+    'n2d-standard-128': 6.09024,
+    'n2d-standard-224': 10.65792,
 }
 
 
