@@ -716,6 +716,35 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set build cost",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,id,output,status",
+      "-predicate",
+      "{\"builder\": {}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}"
+    ],
+    "infra_step": true,
+    "name": "set build cost.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "1 out of 1 requests were unsuccessful\n\n- Failed with complete results: 1 request"

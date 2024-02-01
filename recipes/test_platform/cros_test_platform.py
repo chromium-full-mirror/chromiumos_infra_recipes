@@ -69,6 +69,7 @@ DEPS = [
     'recipe_engine/service_account',
     'recipe_engine/step',
     'recipe_engine/time',
+    'bot_cost',
     'ctpv2',
     'cros_infra_config',
     'cros_history',
@@ -1188,6 +1189,11 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
 
 
 def RunSteps(api, properties):
+  with api.bot_cost.build_cost_context():
+    DoRunSteps(api, properties)
+
+
+def DoRunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
