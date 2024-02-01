@@ -153,9 +153,12 @@ def RunSteps(api, properties):
           api.build_menu.chroot.out_path: 'out',
       }
 
-      # Don't sync chroot/home/. The directory doesn't contain any relevant
-      # files for cross-references.
-      ignore = (api.path.join(api.build_menu.chroot.path, 'home'),)
+      # Don't sync chroot/home/ nor out/home. The directory doesn't contain any
+      # relevant files for cross-references.
+      ignore = (
+          api.path.join(api.build_menu.chroot.path, 'home'),
+          api.path.join(api.build_menu.chroot.out_path, 'home'),
+      )
 
       api.codesearch.checkout_generated_files_repo_and_sync(
           copy_config, kzip_path=kzip_path, ignore=ignore,
