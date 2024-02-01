@@ -124,7 +124,6 @@ def RunSteps(api, properties):
       api.codesearch.run_clang_tool(
           clang_dir=clang_dir, run_dirs=[
               chromiumos_src_dir.join('platform2'),
-              chromiumos_src_dir.join('aosp', 'system', 'update_engine'),
           ])
 
       # Create the kythe index pack and upload it to google storage.

@@ -5570,34 +5570,6 @@
   },
   {
     "cmd": [
-      "python3",
-      "-u",
-      "[CACHE]/builder/clang/scripts/run_tool.py",
-      "--tool",
-      "translation_unit",
-      "--tool-path",
-      "[CLEANUP]/tmp_tmp_5/bin",
-      "-p",
-      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic",
-      "--all"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/aosp/system/update_engine",
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "run translation_unit clang tool (2)"
-  },
-  {
-    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
