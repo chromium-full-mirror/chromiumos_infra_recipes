@@ -16765,9 +16765,9 @@
   },
   {
     "cmd": [],
-    "name": "set cq run cost",
+    "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@cq_run_cost@0.0@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
     ]
   },
   {
@@ -16798,7 +16798,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set cq run cost.buildbucket.search",
+    "name": "set build cost.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"

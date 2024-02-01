@@ -23,7 +23,7 @@ DEPS = [
 
 
 def RunSteps(api: RecipeApi):
-  api.bot_cost.set_build_cost()
+  api.bot_cost.set_build_run_cost()
   api.assertions.assertEqual(api.bot_cost._bot_size, 'unknown')
 
 

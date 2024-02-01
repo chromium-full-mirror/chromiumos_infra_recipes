@@ -90,7 +90,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(
           post_process.StepTextEquals, 'failure',
-          "Infra Failure: Step('configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit') (canceled) (retcode: None)"
+          "Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)"
       ),
       # TODO (b/275363240): is this status code wrong?
       status='CANCELED',

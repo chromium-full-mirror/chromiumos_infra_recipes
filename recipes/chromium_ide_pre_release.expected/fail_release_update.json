@@ -2010,6 +2010,31 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,id,output,status",
+      "-predicate",
+      "{\"builder\": {}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}"
+    ],
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "set build cost.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Step('release update') (retcode: 1)"

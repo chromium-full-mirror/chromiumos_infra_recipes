@@ -72,19 +72,27 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set build cost.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
     "name": "failure",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Infra Failure: Step('configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit') (canceled) (retcode: None)@@@"
+      "@@@STEP_TEXT@Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)@@@"
     ]
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit') (canceled) (retcode: None)"
+      "humanReason": "Infra Failure: Step('set build cost.buildbucket.search') (canceled) (retcode: None)"
     },
     "name": "$result"
   }

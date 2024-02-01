@@ -5,74 +5,137 @@
 
 # pylint: disable=protected-access
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Tests for bot_cost."""
 
 from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipe_modules.chromeos.bot_cost.examples.test import TestProperties
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
+
+from RECIPE_MODULES.chromeos.bot_cost.api import BOT_COST
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
     'bot_cost',
     'cros_tags',
 ]
 
 
-PROPERTIES = TestProperties
-
-
-def RunSteps(api: RecipeApi, properties: TestProperties):
+def RunSteps(api: RecipeApi):
   with api.bot_cost.build_cost_context():
-    with api.step.nest(properties.name):
-      build_cost = api.bot_cost._calculate_build_cost()
-      if properties.expect_cost:
-        api.assertions.assertNotEqual(0, build_cost)
-      else:
-        api.assertions.assertEqual(0, build_cost)
+    pass
 
 
 def GenTests(api: RecipeTestApi):
 
-  def test(name: str, status: str, start_time: int = None, end_time: int = None,
-           update_time: int = None, bot_size: str = 'small',
-           expect_cost: bool = True) -> TestData:
+  def buildbucket_build(status: str, start_time: int = None,
+                        end_time: int = None, update_time: int = None,
+                        bot_size: str = 'e2-medium', bbid: int = None,
+                        build_cost: float = 0.0) -> TestData:
     if start_time:
       start_time = timestamp_pb2.Timestamp(seconds=start_time)
     if end_time:
       end_time = timestamp_pb2.Timestamp(seconds=end_time)
     if update_time:
       update_time = timestamp_pb2.Timestamp(seconds=update_time)
-    bld_msg = build_pb2.Build(id=123, status=status, start_time=start_time,
-                              end_time=end_time, update_time=update_time)
-    bld_msg.infra.swarming.bot_dimensions.extend(
+    build = build_pb2.Build(id=bbid or 123, status=status,
+                            start_time=start_time, end_time=end_time,
+                            update_time=update_time)
+    build.infra.swarming.bot_dimensions.extend(
         api.cros_tags.tags(bot_size=bot_size))
-    build = api.buildbucket.build(bld_msg)
-    if status != 'STATUS_UNSPECIFIED':
-      build += api.buildbucket.simulated_get(
-          bld_msg, step_name='%s.calculate build cost.buildbucket.get' % name)
-    build += api.properties(
-        TestProperties(name=name, bot_size=bot_size, expect_cost=expect_cost))
-    return api.test(name, build, *[])
+    if build_cost:
+      build.output.properties['build_cost'] = build_cost
+    return build
 
-  yield test('terminal-build', status='SUCCESS', start_time=5000,
-             end_time=15000)
+  build = buildbucket_build(status='SUCCESS', start_time=3600, end_time=7200,
+                            bot_size='n2d-standard-8')
+  yield api.test(
+      'terminal-build',
+      api.buildbucket.build(build),
+      api.buildbucket.simulated_get(
+          build,
+          step_name='set build cost.calculate build cost.buildbucket.get'),
+      api.post_check(post_process.PropertyEquals, 'build_cost',
+                     round(BOT_COST['n2d-standard-8'] * 1, 4)),
+      api.post_process(post_process.DropExpectation),
+  )
 
-  yield test('started-build', status='STARTED', start_time=5000,
-             update_time=15000)
+  build = buildbucket_build(
+      status='STARTED',
+      start_time=3600,
+      update_time=7200,
+  )
+  yield api.test(
+      'started-build',
+      api.buildbucket.build(build),
+      api.buildbucket.simulated_get(
+          build,
+          step_name='set build cost.calculate build cost.buildbucket.get'),
+      api.post_check(post_process.PropertyEquals, 'build_cost',
+                     round(BOT_COST['e2-medium'] * 1, 4)),
+      api.post_process(post_process.DropExpectation),
+  )
 
-  yield test('scheduled-build', status='SCHEDULED', start_time=5000,
-             end_time=15000, update_time=15000, expect_cost=False)
+  child_builds = [
+      buildbucket_build(
+          bbid=124,
+          status='SUCCESS',
+          start_time=3600,
+          update_time=7200,
+          build_cost=10.,
+      ),
+      buildbucket_build(
+          bbid=125,
+          status='SUCCESS',
+          start_time=3600,
+          update_time=7200,
+      )
+  ]
+  yield api.test(
+      'started-build-with-children',
+      api.buildbucket.build(build),
+      api.buildbucket.simulated_search_results(
+          child_builds, step_name='set build cost.buildbucket.search'),
+      api.buildbucket.simulated_get(
+          build,
+          step_name='set build cost.calculate build cost.buildbucket.get'),
+      api.post_check(post_process.PropertyEquals, 'build_cost',
+                     round(BOT_COST['e2-medium'] * 1 + 10., 4)),
+      api.post_process(post_process.LogDoesNotContain, 'set build cost',
+                       'child builds missing build_cost', ['124']),
+      api.post_process(post_process.LogContains, 'set build cost',
+                       'child builds missing build_cost', ['125']),
+      api.post_process(post_process.DropExpectation),
+  )
 
-  yield test('medium-bot', status='SUCCESS', start_time=5000, end_time=15000,
-             bot_size='medium')
+  build = buildbucket_build(
+      status='SCHEDULED',
+      start_time=3600,
+      update_time=7200,
+  )
+  yield api.test(
+      'scheduled-build',
+      api.buildbucket.build(build),
+      api.buildbucket.simulated_get(
+          build,
+          step_name='set build cost.calculate build cost.buildbucket.get'),
+      api.post_check(post_process.PropertyEquals, 'build_cost', 0),
+      api.post_process(post_process.DropExpectation),
+  )
 
-  # Covers led launched builds, too.
-  yield test('unspecified', status='STATUS_UNSPECIFIED')
+  build = buildbucket_build(status='STATUS_UNSPECIFIED')
+  yield api.test(
+      'unspecified',
+      api.time.step(3600),
+      api.post_check(post_process.PropertyEquals, 'build_cost',
+                     round(BOT_COST['e2-medium'] * 1., 4)),
+      api.buildbucket.build(build),
+      api.post_process(post_process.DropExpectation),
+  )

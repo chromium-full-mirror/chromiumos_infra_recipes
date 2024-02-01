@@ -2574,6 +2574,28 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,id,output,status",
+      "-predicate",
+      "{\"builder\": {}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}"
+    ],
+    "infra_step": true,
+    "name": "set build cost.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "name": "$result",
     "summaryMarkdown": "uploaded new instances for: [rustfmt](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/rustfmt/+/subtools_hash:5e5)[shellcheck](https://chrome-infra-packages.appspot.com/p/chromiumos/infra/tools/shellcheck/+/subtools_hash:4f4)"
   }

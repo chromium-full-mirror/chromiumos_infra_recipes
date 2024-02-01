@@ -251,7 +251,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Returns:
       BuilderConfig or None, with an active context.
     """
-    with self.m.bot_cost.cq_run_cost_context(), \
+    with self.m.bot_cost.build_cost_context(), \
         self.m.cros_source.checkout_overlays_context():
       with self.m.step.nest('set up orchestrator') as presentation:
         self._validate_properties()
@@ -371,7 +371,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()
 
-      # Yield while inside of the bot_cost.cq_run_cost_context.
+      # Yield while inside of the bot_cost.build_cost_context.
       yield config
 
   def create_recipe_result(

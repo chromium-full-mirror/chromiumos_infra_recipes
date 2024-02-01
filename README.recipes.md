@@ -153,8 +153,7 @@
   * [auto_retry_util:tests/throttle](#recipes-auto_retry_util_tests_throttle)
   * [binhost_lookup_service:examples/publish_binhost_data](#recipes-binhost_lookup_service_examples_publish_binhost_data) &mdash; Test the `publish binhost metadata` functionality of the module.
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
-  * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost)
-  * [bot_cost:examples/calculate_cq_run_cost](#recipes-bot_cost_examples_calculate_cq_run_cost)
+  * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) &mdash; Tests for bot_cost.
   * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
   * [bot_scaling:examples/drop_cpus](#recipes-bot_scaling_examples_drop_cpus)
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
@@ -1101,39 +1100,23 @@ Module for calculating bot cost.
 
 A module to calculate the cost of running bots.
 
-&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#83)(self):**
+&emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#82)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#96)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#95)(self):**
 
 Set build cost after running.
 
 Returns:
   A context that sets build_cost on exit.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [cq\_run\_cost\_context](/recipe_modules/bot_cost/api.py#108)(self):**
-
-Set cq cost after running.
-
-Returns:
-  A context that sets cq_run_cost on exit.
-
 &mdash; **def [initialize](/recipe_modules/bot_cost/api.py#76)(self):**
 
-&mdash; **def [set\_build\_cost](/recipe_modules/bot_cost/api.py#120)(self):**
+&mdash; **def [set\_build\_run\_cost](/recipe_modules/bot_cost/api.py#107)(self):**
 
-Wrapper function to calculate and set the cost of creating the build.
+Wrapper function to calculate and set the cost of the run.
 
-Calculate the cost of creating the build and set it as a build output
-property.
-
-&mdash; **def [set\_cq\_run\_cost](/recipe_modules/bot_cost/api.py#175)(self, child_builds: List[Build]=None):**
-
-Wrapper function to calculate and set the cost of the cq run.
-
-Calculate the cost of the cq run and set it as a build output property.
-
-Args:
-  child_builds: The child builds for this cq run.
+Calculate the cost of the run and set it as a build output property.
+Includes cost of any child builds.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
 [DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11646,16 +11629,12 @@ Test the `publish snapshot metadata` functionality of the module.
 &mdash; **def [RunSteps](/recipe_modules/binhost_lookup_service/examples/publish_snapshot_data.py#19)(api: RecipeApi):**
 ### *recipes* / [bot\_cost:examples/calculate\_build\_cost](/recipe_modules/bot_cost/examples/calculate_build_cost.py)
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#19): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_cost/examples/calculate_build_cost.py#20): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#32)(api: RecipeApi, properties: TestProperties):**
-### *recipes* / [bot\_cost:examples/calculate\_cq\_run\_cost](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py)
+Tests for bot_cost.
 
-[DEPS](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#18): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_cq_run_cost.py#29)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipe_modules/bot_cost/examples/calculate_build_cost.py#31)(api: RecipeApi):**
 ### *recipes* / [bot\_cost:tests/bot\_size](/recipe_modules/bot_cost/tests/bot_size.py)
 
 [DEPS](/recipe_modules/bot_cost/tests/bot_size.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

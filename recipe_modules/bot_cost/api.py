@@ -78,7 +78,6 @@ class BotCostApi(RecipeApi):
     # If we are led launched, this lets us at least estimate the actual time
     # spend in the run.
     self._start_time = self.m.time.time()
-    self._cq_run_cost = 0
 
   @property
   def bot_size(self) -> str:
@@ -103,32 +102,21 @@ class BotCostApi(RecipeApi):
     try:
       yield
     finally:
-      self.set_build_cost()
+      self.set_build_run_cost()
 
-  @contextlib.contextmanager
-  def cq_run_cost_context(self):
-    """Set cq cost after running.
+  def set_build_run_cost(self):
+    """Wrapper function to calculate and set the cost of the run.
 
-    Returns:
-      A context that sets cq_run_cost on exit.
-    """
-    try:
-      yield
-    finally:
-      self.set_cq_run_cost()
-
-  def set_build_cost(self):
-    """Wrapper function to calculate and set the cost of creating the build.
-
-    Calculate the cost of creating the build and set it as a build output
-    property.
+    Calculate the cost of the run and set it as a build output property.
+    Includes cost of any child builds.
     """
     with self.m.step.nest('set build cost') as presentation:
-      build_cost = self._calculate_build_cost()
+      child_builds = self._get_child_builds()
+      build_cost = self._calulate_build_cost(child_builds, presentation)
       presentation.properties['build_cost'] = round(build_cost, 4)
 
-  def _calculate_build_cost(self) -> float:
-    """Calculate the cost of creating a build.
+  def _calculate_current_build_cost(self) -> float:
+    """Calculate the cost of running the current build.
 
     Calculates the cost of creating a build based on the time duration. If
     the build status is terminal, the duration is based on the start_time and
@@ -172,20 +160,6 @@ class BotCostApi(RecipeApi):
     bot_days = build_duration / (60.0 * 60.0 * 24.0)
     return bot_days * daily_cost
 
-  def set_cq_run_cost(self, child_builds: List[Build] = None):
-    """Wrapper function to calculate and set the cost of the cq run.
-
-    Calculate the cost of the cq run and set it as a build output property.
-
-    Args:
-      child_builds: The child builds for this cq run.
-    """
-    with self.m.step.nest('set cq run cost') as presentation:
-      child_builds = child_builds or self._get_child_builds()
-      cq_run_cost = self._calculate_cq_run_cost(child_builds, presentation)
-      presentation.properties['cq_run_cost'] = round(cq_run_cost, 4)
-      self._cq_run_cost = cq_run_cost
-
   def _get_child_builds(self) -> List[Build]:
     """Get the child builders for this orchestrator."""
     # We only really care about id and output.properties.bot_cost, but
@@ -200,20 +174,19 @@ class BotCostApi(RecipeApi):
   @staticmethod
   def _get_child_builds_cost(child_builds: List[Build],
                              parent_step: Step) -> float:
-    """Get the cost of building child images during this cq run.
+    """Get the cost of running child builders.
 
-    Get the cost for building child images during this cq run. Adds together the
-    build_cost of child builds created during this cq run. Logs the build ids of
-    the child builds created for this cq run that do not have a build_cost
-    property.
+    Adds together the build_cost of child builds created during the build.
+    Logs the build ids of the child builds created for this build that do not
+    have a build_cost property.
 
     Args:
-      child_builds: The builds completed for this cq run.
+      child_builds: The builds completed for this run.
       parent_step: The calling step, to be used for presentation purposes.
 
     Returns:
       total_child_build_cost: The cost (USD) of building child images during
-      this cq run.
+      this run.
     """
     total_child_build_cost = 0
     child_builds_missing_cost = []
@@ -229,20 +202,23 @@ class BotCostApi(RecipeApi):
           'child builds missing build_cost'] = child_builds_missing_cost
     return total_child_build_cost
 
-  def _calculate_cq_run_cost(self, child_builds: List[Build],
-                             parent_step: Step) -> float:
-    """Calculates the cost of the cq run.
+  def _calulate_build_cost(self, child_builds: List[Build],
+                           parent_step: Step) -> float:
+    """Calculates the cost of the run, including the children.
 
-    Calculates the total cost of this cq run based on the cost to run the
-    orchestrator and build the child images.
+    Calculates the total cost of this run based on the cost to run the build
+    and all children.
 
     Args:
-      child_builds: The child builds for this cq run.
+      child_builds: The child builds for this run.
       parent_step: The calling step, to be used for presentation purposes.
 
     Returns:
-      A float representing the cost (USD) of the cq run.
+      A float representing the cost (USD) of the run.
     """
-    orch_cost = self._calculate_build_cost()
-    child_builds_cost = self._get_child_builds_cost(child_builds, parent_step)
-    return orch_cost + child_builds_cost
+    cost = self._calculate_current_build_cost()
+
+    build = self.m.buildbucket.build
+    if not (self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED):
+      cost += self._get_child_builds_cost(child_builds, parent_step)
+    return cost
