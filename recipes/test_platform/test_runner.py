@@ -1713,7 +1713,9 @@ def _execution_steps_for_test_with_ctr(api, properties, interface,
     result_for_output_props.add_test_response(run_test_resp_for_output_props)
     result_for_output_props.update_log_urls(test_metadata)
   finally:
-    if result_for_uploading is not None and result_for_uploading.is_failure():
+    if (result_for_uploading is not None and result_for_uploading.is_failure()
+       ) or (result_for_output_props is not None and
+             result_for_output_props.is_failure()):
       dut_state = _DUT_STATE_NEEDS_REPAIR
     _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
                            result_for_uploading, results_dir, test_metadata,
