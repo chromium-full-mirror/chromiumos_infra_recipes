@@ -5304,32 +5304,6 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[CLEANUP]/chromiumos_workspace/src/scripts/hooks/install/find-missing-deps.sh"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:cron"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "remove deps hook"
-  },
-  {
-    "cmd": [
       "[CLEANUP]/chromiumos_workspace/chromite/contrib/package_index_cros/main",
       "--debug",
       "--board",

@@ -75,12 +75,6 @@ def RunSteps(api, properties):
       chromite_contrib = workspace.join('chromite', 'contrib')
       package_index_cros_dir = chromite_contrib.join('package_index_cros')
 
-      # This hook causes package_index_cros to fail. See
-      # https://crbug.com/1484258#c12.
-      hook_path = workspace.join('src', 'scripts', 'hooks', 'install',
-                                 'find-missing-deps.sh')
-      api.file.remove('remove deps hook', hook_path)
-
       # Generate KZIP.
       build_dir = workspace.join('src', 'out', build_target)
       with api.context(
