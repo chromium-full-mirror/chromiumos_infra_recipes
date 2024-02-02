@@ -253,14 +253,18 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             _InstallPackagesRequest(), dep_graph, check_pres)
 
         if ebuild_chrome:
-          # This will change the return from _InstallPackagesRequest().
-          chrome_root = self.m.path['start_dir'].join('chrome')
-          self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
-                                   step_name='populate chrome cache')
-          self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
-                             self.sysroot.build_target, config.chrome.internal,
-                             cache_dir=chrome_root.join('chrome_cache'))
-          self.m.cros_sdk.set_chrome_root(chrome_root)
+          # Bazel builds pull the source in a repository rule, so don't need the
+          # recipe to pull it or update the SDK accordingly.
+          if not bazel_build:
+            # This will change the return from _InstallPackagesRequest().
+            chrome_root = self.m.path['start_dir'].join('chrome')
+            self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
+                                     step_name='populate chrome cache')
+            self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
+                               self.sysroot.build_target,
+                               config.chrome.internal,
+                               cache_dir=chrome_root.join('chrome_cache'))
+            self.m.cros_sdk.set_chrome_root(chrome_root)
 
           if install_packages.use_remoteexec:
             self.m.cros_sdk.configure_remoteexec()
