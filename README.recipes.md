@@ -1760,7 +1760,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#500)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#503)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1780,7 +1780,7 @@ Returns:
 
 Returns BuilderConfigs deemed relevant by the RelevancyService.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#539)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#542)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 

@@ -78,10 +78,12 @@ def GenTests(api):
   builds = [
       # Completed successfully.
       build_pb2.Build(id=8922054662172514000, builder={'builder': 'cave-cq'},
+                      start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'cave')),
       build_pb2.Build(id=8922054662172514001,
                       builder={'builder': 'amd64-generic-slim-cq'},
+                      start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'amd64-generic-slim')),
       # Non-critical private failure.
@@ -96,17 +98,17 @@ def GenTests(api):
       # Broken before private builder.
       build_pb2.Build(id=8922054662172514004,
                       builder={'builder': 'atlas-slim-cq'},
-                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'atlas-slim')),
       build_pb2.Build(id=8922054662172514005, builder={'builder': 'atlas-cq'},
-                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'atlas')),
       # Broken before public builder.
       build_pb2.Build(id=8922054662172514006,
                       builder={'builder': 'arm64-generic-cq'},
-                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
+                      start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'arm64-generic'))
   ]

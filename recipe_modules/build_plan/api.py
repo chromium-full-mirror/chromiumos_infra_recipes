@@ -473,8 +473,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         builder_config = self.m.cros_infra_config.get_builder_config(
             build.builder.builder)
+        # We need to offset the original build's start_time to the most likely snapshot chosen.
+        # Won't be a thing once broken_before specifies snapshot instead.
+        lfg_offset = 4 * 60 * 60
         # If the build ran before a known bug was fixed, don't reuse it.
-        if build.start_time.seconds < builder_config.general.broken_before.seconds:
+        if build.start_time.seconds - lfg_offset < builder_config.general.broken_before.seconds:
           count_broken_before_rebuilds += 1
           skip_log.append(
               '{} is skipped because it was broken till {}UTC'.format(

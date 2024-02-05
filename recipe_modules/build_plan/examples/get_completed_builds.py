@@ -42,6 +42,7 @@ def GenTests(api):
   builds = [
       build_pb2.Build(id=8922054662172514000,
                       builder={'builder': 'amd64-generic-cq'},
+                      start_time=timestamp_pb2.Timestamp(seconds=1562475245),
                       status=common_pb2.SUCCESS,
                       input=input_proto(None, 'amd64-generic')),
       build_pb2.Build(id=8922054662172514001,
