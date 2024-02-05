@@ -7,12 +7,17 @@
 """Tests to test e2e coverage uploads."""
 
 import os
+from pathlib import Path
 import shutil
+import sys
 import tempfile
 import unittest
 import json
 
-import e2e_coverage
+__THIS_DIR__ = os.path.dirname(os.path.abspath(__file__))
+__RESOURCES_DIR__ = str(Path(__file__).parent.parent.resolve())
+sys.path.insert(0, os.path.abspath(os.path.join(__THIS_DIR__, os.pardir)))
+import e2e_coverage  # pylint: disable=wrong-import-position
 
 
 class E2ECoverageTest(unittest.TestCase):
@@ -26,7 +31,8 @@ class E2ECoverageTest(unittest.TestCase):
 
   def test_upload_metadata(self):
     """Test that we add metadata correctly."""
-    e2e_coverage.write_metadata('bucket', 'path', self.tmpdir)
+    e2e_coverage.write_metadata('bucket', 'path', 'brya',
+                                'R123-15766.0.0-94241', self.tmpdir)
     files = os.listdir(self.tmpdir)
     self.assertEqual(len(files), 1)
 
@@ -34,3 +40,5 @@ class E2ECoverageTest(unittest.TestCase):
     content = json.loads(metadata_file)
     self.assertEqual(content['artifacts_bucket'], 'bucket')
     self.assertEqual(content['artifacts_path'], 'path')
+    self.assertEqual(content['board'], 'brya')
+    self.assertEqual(content['version'], 'R123-15766.0.0-94241')

@@ -24,11 +24,13 @@ def RunSteps(api):
     api.build_menu.install_packages()
     api.build_menu.build_and_test_images()
     api.code_coverage.update_e2e_metadata('chromeos-image-archive',
-                                          'buildername/id')
+                                          'buildername/id', 'brya',
+                                          'R123-15527.0.0-13245678')
 
 
 def GenTests(api):
   yield api.build_menu.test(
       'e2e-uploads-metadata',
       api.post_check(post_process.MustRun, 'upload e2e coverage metadata'),
-  )
+      api.post_check(post_process.MustRun,
+                     'upload e2e coverage metadata.add e2e coverage metadata'))

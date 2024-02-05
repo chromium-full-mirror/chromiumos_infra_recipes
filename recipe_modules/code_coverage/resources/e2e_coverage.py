@@ -14,17 +14,25 @@ import sys
 _METADATA_FILENAME = 'e2e_metadata.json'
 
 
-def write_metadata(gs_bucket: str, gs_path: str, out_dir: str) -> None:
+def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
+                   out_dir: str) -> None:
   """Write metadata associated with e2e coverage.
 
   Args:
     gs_bucket: GCS bucket with the coverage artifacts.
-    gs_path: Path to the artifact
-    out_dir: Directory to store the metadata
+    gs_path: Path to the artifact.
+    board: Board used for generating artifacts.
+    version: CROS version used to build artifacts.
+    out_dir: Directory to store the metadata.
   """
-  content = {'artifacts_bucket': gs_bucket, 'artifacts_path': gs_path}
+  content = {
+      'artifacts_bucket': gs_bucket,
+      'artifacts_path': gs_path,
+      'board': board,
+      'version': version,
+  }
 
-  with open(os.path.join(out_dir, _METADATA_FILENAME), 'wb',
+  with open(os.path.join(out_dir, _METADATA_FILENAME), 'w',
             encoding='utf-8') as f:
     f.write(json.dumps(content))
 
@@ -37,6 +45,12 @@ def _parse_args(args):
 
   parser.add_argument('--artifacts-path', required=True, type=str,
                       help='Path to the tarball.')
+
+  parser.add_argument('--board', required=True, type=str,
+                      help='Board used to generate artifacts.')
+
+  parser.add_argument('--version', required=True, type=str,
+                      help='CROS version used to generate artifacts.')
 
   parser.add_argument(
       '--output-dir', required=True, type=str,
@@ -51,8 +65,8 @@ def main():
   if not os.path.exists(params.output_dir):
     raise RuntimeError(f'Output directory {params.output_dir} must exist')
 
-  write_metadata(params.artifacts_bucket, params.artifacts_path,
-                 params.output_dir)
+  write_metadata(params.artifacts_bucket, params.artifacts_path, params.board,
+                 params.version, params.output_dir)
 
 
 if __name__ == '__main__':

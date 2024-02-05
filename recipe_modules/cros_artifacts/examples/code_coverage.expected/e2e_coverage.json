@@ -3775,6 +3775,10 @@
       "chromeos-image-archive",
       "--artifacts-path",
       "amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184",
+      "--board",
+      "amd64-generic",
+      "--version",
+      "R99-1234.56.0-101",
       "--output-dir",
       "[CLEANUP]/code-coverage_tmp_1"
     ],
@@ -3806,7 +3810,7 @@
       "----",
       "cp",
       "[CLEANUP]/code-coverage_tmp_1",
-      "gs://e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json"
+      "gs://e2e-coverage-artifacts/e2e_coverage/amd64-generic/R99-1234.56.0-101/02-05-2024/metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -3825,8 +3829,8 @@
     "name": "upload artifacts.upload e2e coverage metadata.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@",
-      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/[CLEANUP]/code-coverage_tmp_1/e2e_coverage/metadata.json@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/amd64-generic/R99-1234.56.0-101/02-05-2024/metadata.json@@@",
+      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/amd64-generic/R99-1234.56.0-101/02-05-2024/metadata.json@@@"
     ]
   },
   {

@@ -940,7 +940,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
 
       for fname in files_by_artifact.get('CODE_COVERAGE_E2E', []):
-        self.m.code_coverage.update_e2e_metadata(gs_bucket, gs_path)
+        self.m.code_coverage.update_e2e_metadata(
+            gs_bucket, gs_path, sysroot.build_target.name,
+            str(self.m.cros_version.version))
 
       if upload_coverage:
         cov_files = {}

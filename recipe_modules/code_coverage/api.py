@@ -8,6 +8,7 @@
 import copy
 import json
 import os
+from datetime import date
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import recipe_api
@@ -244,13 +245,15 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         'CovType': coverage_type
     })
 
-  def update_e2e_metadata(self, gs_artifact_bucket: str,
-                          gs_artifact_path: str) -> None:
+  def update_e2e_metadata(self, gs_artifact_bucket: str, gs_artifact_path: str,
+                          board: str, version: str) -> None:
     """Uploads metadata needed for e2e coverage.
 
       Args:
         gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
         gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+        board: Board used for generating artifacts.
+        version: CROS version used to build artifacts.
     """
     with self.m.step.nest('upload e2e coverage metadata'):
       self.m.step(
@@ -259,12 +262,14 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               'vpython3',
               self.resource('e2e_coverage.py'), '--artifacts-bucket',
               gs_artifact_bucket, '--artifacts-path', gs_artifact_path,
-              '--output-dir', self.metadata_dir
+              '--board', board, '--version', version, '--output-dir',
+              self.metadata_dir
           ],
       )
 
-      dest_path = os.path.join(
-          str(self.metadata_dir), 'e2e_coverage', 'metadata.json')
+      dest_path = os.path.join('e2e_coverage', board, version,
+                               date.today().strftime('%m-%d-%Y'),
+                               'metadata.json')
       upload_step = self.m.gsutil.upload(self.metadata_dir,
                                          E2E_COVERAGE_BUCKET_NAME, dest_path)
       upload_step.presentation.links[
