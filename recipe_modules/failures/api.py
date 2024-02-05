@@ -18,17 +18,19 @@ from dataclasses import dataclass, field
 from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import ImageType
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFailureAttribute, FaultAttributedBuildTarget
 from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 
+from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
-from recipe_engine.engine_types import StepPresentation
+from recipe_engine.post_process_inputs import Step
+
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
 
@@ -101,24 +103,24 @@ class FailuresApi(RecipeApi):
       self.add_failures(results.failures)
       self.add_successes(results.successes)
 
-  def _proto_to_step_status(self, proto_status):
-    """Convert from common_pb2.Status to api.step status.
+  def _proto_to_step_status(self, proto_status: bb_common_pb2.Status):
+    """Convert from bb_common_pb2.Status to api.step status.
 
     Args:
-      status (common_pb2.Status): status of the step.
+      status: The status of the step.
 
     Returns:
       str representing status as listed in step/api.py.
     """
-    if proto_status == common_pb2.SUCCESS:
+    if proto_status == bb_common_pb2.SUCCESS:
       return self.m.step.SUCCESS
-    if proto_status == common_pb2.INFRA_FAILURE:
+    if proto_status == bb_common_pb2.INFRA_FAILURE:
       return self.m.step.EXCEPTION
     return self.m.step.FAILURE
 
   def _present_run(self, title, link_map, status, critical=True):
     with self.m.step.nest(title) as presentation:
-      if status != common_pb2.SUCCESS and not critical:
+      if status != bb_common_pb2.SUCCESS and not critical:
         presentation.step_text = 'failed but is not critical'
         presentation.status = self.m.step.SUCCESS
       else:
@@ -134,7 +136,7 @@ class FailuresApi(RecipeApi):
       non_critical_build_results = self.Results(failures=[], successes={})
 
       failed_runs = [
-          run for run in runs if get_status(run) != common_pb2.SUCCESS
+          run for run in runs if get_status(run) != bb_common_pb2.SUCCESS
       ]
       only_infra_failure = True
 
@@ -146,7 +148,7 @@ class FailuresApi(RecipeApi):
         critical = is_critical(failed_run)
 
         self._present_run(title, link_map, status, critical)
-        only_infra_failure &= (status == common_pb2.INFRA_FAILURE)
+        only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:
           results.failures.append(
@@ -223,18 +225,19 @@ class FailuresApi(RecipeApi):
       self._caught_exceptions.update({'.'.join(self.m.step.active_result.name_tokens): repr(e)})
       self.m.easy.set_properties_step(caught_exceptions=self._caught_exceptions)
 
-  def _set_failed_packages(self, enclosing_step, packages, compile_failure):
+  def _set_failed_packages(self, enclosing_step: Step,
+                           packages: List[Tuple[common_pb2.PackageInfo,
+                                                str]], compile_failure: bool):
     """If any failed packages, set presentation and raise failure.
 
     Args:
-      enclosing_step (step): The enclosing step to mutate.
-      packages (list[tuple[chromiumos.common.PackageInfo, str]]): The failed
-        packages.
+      enclosing_step: The enclosing step to mutate.
+      packages: The failed packages.
+      compile_failure: Whether this was a compilation failure.
 
     Raises:
       StepFailure: If failed_packages is not empty.
     """
-
     def _concat_package_markdown_link(package_info, log_text):
       # If the package did not produce a log, just return the name.
       if not log_text:
@@ -299,11 +302,41 @@ class FailuresApi(RecipeApi):
     enclosing_step.presentation.step_text = step_text
     raise StepFailure(failure_message)
 
-  def set_test_failed_packages(self, enclosing_step, packages):
-    return self._set_failed_packages(enclosing_step, packages, False)
+  def set_test_failed_packages(self, enclosing_step: Step,
+                               packages: List[Tuple[common_pb2.PackageInfo,
+                                                    str]]):
+    """If any packages failed unit tests set presentation and raise failure.
 
-  def set_compile_failed_packages(self, enclosing_step, packages):
-    return self._set_failed_packages(enclosing_step, packages, True)
+    Args:
+      enclosing_step: The enclosing step to mutate.
+      packages: The failed packages.
+
+    Raises:
+      StepFailure: If failed_packages is not empty.
+    """
+    return self._set_failed_packages(
+        enclosing_step,
+        packages,
+        False,
+    )
+
+  def set_compile_failed_packages(self, enclosing_step: Step,
+                                  packages: List[Tuple[common_pb2.PackageInfo,
+                                                       str]]):
+    """If any packages failed compilation set presentation and raise failure.
+
+    Args:
+      enclosing_step: The enclosing step to mutate.
+      packages: The failed packages.
+
+    Raises:
+      StepFailure: If failed_packages is not empty.
+    """
+    return self._set_failed_packages(
+        enclosing_step,
+        packages,
+        True,
+    )
 
   def raise_failed_image_tests(self, failed_images):
     """Display failed image tests and raise a failure.
@@ -327,7 +360,9 @@ class FailuresApi(RecipeApi):
       message = '{} images failed'.format(len(failed_images))
       presentation.step_text = message
       presentation.status = self.m.step.FAILURE
-      failed_types = [ImageType.Name(image.type) for image in failed_images]
+      failed_types = [
+          common_pb2.ImageType.Name(image.type) for image in failed_images
+      ]
       presentation.logs['list of failed images'] = failed_types
       raise StepFailure(message)
 
@@ -349,9 +384,9 @@ class FailuresApi(RecipeApi):
 
     fatal_failures = [failure for failure in results.failures if failure.fatal]
 
-    status = common_pb2.SUCCESS if (
+    status = bb_common_pb2.SUCCESS if (
         (not fatal_failures) or
-        ignore_build_test_failures) else common_pb2.FAILURE
+        ignore_build_test_failures) else bb_common_pb2.FAILURE
 
     non_fatal_failures = [
         failure.kind for failure in results.failures if not failure.fatal
@@ -782,15 +817,8 @@ class FailuresApi(RecipeApi):
                              self.m.naming.get_vm_test_title,
                              self.m.urls.get_vm_test_link_map, get_id)
 
-  def get_build_status(self, build):
-    """Retrieve the status of the build.
-
-    Args:
-      build (Build): The buildbucket Build in question.
-
-    Returns:
-      status (common_pb2.Status) of the build.
-    """
+  def get_build_status(self, build: build_pb2.Build) -> bb_common_pb2.Status:
+    """Retrieve the status of the build."""
     return build.status
 
   def is_critical_test_failure(self, test):
@@ -808,15 +836,8 @@ class FailuresApi(RecipeApi):
       return self.is_critical_hw_test_failure(test)
     raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
 
-  def get_hwtest_status(self, hw_test):
-    """Get the status of the hw_test.
-
-    Args:
-      hw_test (SkylabResult): The hardware test result in question.
-
-    Returns:
-      status (common_pb2.STATUS) of the test.
-    """
+  def get_hwtest_status(self, hw_test: SkylabResult) -> bb_common_pb2.Status:
+    """Get the status of the hw_test."""
     return hw_test.status
 
   def is_hw_test_critical(self, hw_test):
@@ -839,7 +860,7 @@ class FailuresApi(RecipeApi):
     Returns:
       bool: True if the build failed and was critical.
     """
-    return (self.get_build_status(build) != common_pb2.SUCCESS and
+    return (self.get_build_status(build) != bb_common_pb2.SUCCESS and
             self.m.buildbucket.is_critical(build))
 
   def is_critical_hw_test_failure(self, hw_test):
@@ -851,7 +872,7 @@ class FailuresApi(RecipeApi):
     Returns:
       bool: True if the test failed and was critical.
     """
-    return (self.get_hwtest_status(hw_test) != common_pb2.SUCCESS and
+    return (self.get_hwtest_status(hw_test) != bb_common_pb2.SUCCESS and
             hw_test.task.test.common.critical.value)
 
   @contextlib.contextmanager
