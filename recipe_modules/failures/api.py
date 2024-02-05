@@ -230,19 +230,23 @@ class FailuresApi(RecipeApi):
       self._caught_exceptions.update({'.'.join(self.m.step.active_result.name_tokens): repr(e)})
       self.m.easy.set_properties_step(caught_exceptions=self._caught_exceptions)
 
-  def _set_failed_packages(self, enclosing_step: Step,
-                           packages: List[Tuple[common_pb2.PackageInfo,
-                                                str]], compile_failure: bool):
+  def _set_failed_packages(
+      self, enclosing_step: Step,
+      packages: List[Tuple[common_pb2.PackageInfo, str]], compile_failure: bool,
+      cl_affected_packages: Optional[List[common_pb2.PackageInfo]] = None):
     """If any failed packages, set presentation and raise failure.
 
     Args:
       enclosing_step: The enclosing step to mutate.
       packages: The failed packages.
       compile_failure: Whether this was a compilation failure.
+      cl_affected_packages: The packages which are affected by the changes under
+        test.
 
     Raises:
       StepFailure: If failed_packages is not empty.
     """
+    cl_affected_packages = cl_affected_packages or []
     def _concat_package_markdown_link(package_info, log_text):
       # If the package did not produce a log, just return the name.
       if not log_text:
@@ -299,7 +303,8 @@ class FailuresApi(RecipeApi):
     package_failures = [
         PackageFailure(
             package=p[0], phase=PackageFailure.COMPILE
-            if compile_failure else PackageFailure.TEST) for p in packages
+            if compile_failure else PackageFailure.TEST,
+            affected_by_changes=p[0] in cl_affected_packages) for p in packages
     ]
     self._package_failures.extend(package_failures)
     enclosing_step.presentation.properties['package_failures'] = [
@@ -309,14 +314,17 @@ class FailuresApi(RecipeApi):
     enclosing_step.presentation.step_text = step_text
     raise StepFailure(failure_message)
 
-  def set_test_failed_packages(self, enclosing_step: Step,
-                               packages: List[Tuple[common_pb2.PackageInfo,
-                                                    str]]):
+  def set_test_failed_packages(
+      self, enclosing_step: Step, packages: List[Tuple[common_pb2.PackageInfo,
+                                                       str]],
+      cl_affected_packages: Optional[List[common_pb2.PackageInfo]] = None):
     """If any packages failed unit tests set presentation and raise failure.
 
     Args:
       enclosing_step: The enclosing step to mutate.
       packages: The failed packages.
+      cl_affected_packages: The packages which are affected by the changes under
+        test.
 
     Raises:
       StepFailure: If failed_packages is not empty.
@@ -325,16 +333,20 @@ class FailuresApi(RecipeApi):
         enclosing_step,
         packages,
         False,
+        cl_affected_packages,
     )
 
-  def set_compile_failed_packages(self, enclosing_step: Step,
-                                  packages: List[Tuple[common_pb2.PackageInfo,
-                                                       str]]):
+  def set_compile_failed_packages(
+      self, enclosing_step: Step, packages: List[Tuple[common_pb2.PackageInfo,
+                                                       str]],
+      cl_affected_packages: Optional[List[common_pb2.PackageInfo]] = None):
     """If any packages failed compilation set presentation and raise failure.
 
     Args:
       enclosing_step: The enclosing step to mutate.
       packages: The failed packages.
+      cl_affected_packages: The packages which are affected by the changes under
+        test.
 
     Raises:
       StepFailure: If failed_packages is not empty.
@@ -343,6 +355,7 @@ class FailuresApi(RecipeApi):
         enclosing_step,
         packages,
         True,
+        cl_affected_packages,
     )
 
   def raise_failed_image_tests(self, failed_images):

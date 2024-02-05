@@ -39,13 +39,29 @@ def RunSteps(api):
         api.failures.set_compile_failed_packages, test_step,
         [(package_info_0, 'test log')])
 
+  with api.step.nest('one compile failure with attribution') as test_step:
+    api.assertions.assertRaisesRegexp(
+        api.step.StepFailure, r'failed compilation for \[category/package-name]'
+        r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
+        r'\+/u/one_compile_failure_with_attribution/category_package-name_log\)',
+        api.failures.set_compile_failed_packages, test_step,
+        [(package_info_0, 'test log')], cl_affected_packages=[package_info_0])
+
   with api.step.nest('one test failure') as test_step:
     api.assertions.assertRaisesRegexp(
         api.step.StepFailure, r'failed unit tests for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_test_failure/category_package-name_log\)',
-        api.failures.set_test_failed_packages, test_step, [(PackageInfo(
-            package_name='package-name', category='category'), 'test log')])
+        api.failures.set_test_failed_packages, test_step,
+        [(package_info_0, 'test log')])
+
+  with api.step.nest('one test failure with attribution') as test_step:
+    api.assertions.assertRaisesRegexp(
+        api.step.StepFailure, r'failed unit tests for \[category/package-name]'
+        r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
+        r'\+/u/one_test_failure_with_attribution/category_package-name_log\)',
+        api.failures.set_test_failed_packages, test_step,
+        [(package_info_0, 'test log')], cl_affected_packages=[package_info_0])
 
   with api.step.nest('multiple compile failures') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
@@ -68,7 +84,11 @@ def RunSteps(api):
 
   api.assertions.assertCountEqual(api.failures.package_failures, [
       PackageFailure(package=package_info_0, phase='COMPILE'),
+      PackageFailure(package=package_info_0, phase='COMPILE',
+                     affected_by_changes=True),
       PackageFailure(package=package_info_0, phase='TEST'),
+      PackageFailure(package=package_info_0, phase='TEST',
+                     affected_by_changes=True),
       PackageFailure(package=package_info_1, phase='COMPILE'),
       PackageFailure(package=package_info_2, phase='COMPILE'),
       PackageFailure(package=package_info_3, phase='TEST'),

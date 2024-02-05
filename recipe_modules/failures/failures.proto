@@ -21,4 +21,9 @@ message PackageFailure {
 
   // The build phase during which the package failed to emerge.
   Phase phase = 2;
+
+  // Whether the failed package was affected by the changes under test.
+  // This could be the CLs applied to the CQ run or the packages upreved in a
+  // snapshot build.
+  bool affected_by_changes = 3;
 }

@@ -18,6 +18,19 @@
   },
   {
     "cmd": [],
+    "name": "one compile failure with attribution",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"affectedByChanges\": true, \"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"COMPILE\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "one test failure",
     "~followup_annotations": [
       "@@@STEP_TEXT@failed unit tests for category/package-name@@@",
@@ -26,6 +39,19 @@
       "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
       "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
       "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"TEST\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "one test failure with attribution",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed unit tests for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"affectedByChanges\": true, \"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"TEST\"}]@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
