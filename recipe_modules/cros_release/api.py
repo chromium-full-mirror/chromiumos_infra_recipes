@@ -18,12 +18,11 @@ from recipe_engine.recipe_api import InfraFailure, StepFailure
 from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build_report import BuildReport
-from PB.chromiumos.common import (Channel, IMAGE_TYPE_RECOVERY,
-                                  IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
-                                  IMAGE_TYPE_ACCESSORY_USBPD,
-                                  IMAGE_TYPE_HPS_FIRMWARE,
-                                  IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
-                                  IMAGE_TYPE_GSC_FIRMWARE)
+from PB.chromiumos.common import (
+    Channel, IMAGE_TYPE_RECOVERY, IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
+    IMAGE_TYPE_ACCESSORY_USBPD, IMAGE_TYPE_HPS_FIRMWARE,
+    IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE, IMAGE_TYPE_GSC_FIRMWARE,
+    IMAGE_TYPE_FLEXOR_KERNEL)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
@@ -38,7 +37,8 @@ from RECIPE_MODULES.chromeos.gerrit.api import Label
 SUPPORTED_SIGN_TYPES = set([
     IMAGE_TYPE_RECOVERY, IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
     IMAGE_TYPE_ACCESSORY_USBPD, IMAGE_TYPE_HPS_FIRMWARE,
-    IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE, IMAGE_TYPE_GSC_FIRMWARE
+    IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE, IMAGE_TYPE_GSC_FIRMWARE,
+    IMAGE_TYPE_FLEXOR_KERNEL
 ])
 
 # GS URI to the Release Schedule.
