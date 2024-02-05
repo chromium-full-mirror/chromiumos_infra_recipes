@@ -2335,7 +2335,8 @@
   {
     "cmd": [
       "./regenerate_configs.py",
-      "-b"
+      "-b",
+      "--no-check-resources"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
     "env_suffixes": {

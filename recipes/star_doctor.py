@@ -397,7 +397,9 @@ def _regenerate_configs(api: RecipeApi) -> None:
   with api.depot_tools.on_path():
     # NOTE: The following generate scripts each obtain their own copy of protoc.
     with api.context(cwd=INFRA_CONFIG.checkout_path):
-      api.step('regenerate configs', ['./regenerate_configs.py', '-b'])
+      # NOTE: we won't validate resource definitions for automated updates.
+      api.step('regenerate configs',
+               ['./regenerate_configs.py', '-b', '--no-check-resources'])
     with api.context(cwd=CONFIG_INTERNAL.checkout_path):
       api.step('regenerate test configs', ['./board_config/generate', '-b'],
                timeout=3 * 60)
