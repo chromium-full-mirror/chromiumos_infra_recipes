@@ -137,6 +137,11 @@ class CrosReleaseApi(recipe_api.RecipeApi):
     return self._sign_types
 
   @property
+  def release_bucket(self) -> str:
+    """Return the release_bucket as passed into input properties."""
+    return self._release_bucket
+
+  @property
   def channels(self) -> List['common_pb2.Channel']:
     """Return the channels as passed into input properties."""
     return self._channels

@@ -250,8 +250,20 @@ def GenTests(api: RecipeTestApi):
           [
               '/archive_dir/bar.bin',
               'gs://chromeos-releases/canary-channel/kukui/1234.56.0/'
-          ]), api.post_process(post_process.DropExpectation),
-      build_target='kukui', builder='kukui-release-main', status='FAILURE')
+          ]),
+      api.post_check(post_process.PropertyEquals, 'upload_size', [
+          {
+              'gs_path':
+                  'gs://chromeos-releases/canary-channel/kukui/1234.56.0/',
+              'gb':
+                  1337.0,
+          },
+          {
+              'gs_path': 'gs://chromeos-releases/dev-channel/kukui/1234.56.0/',
+              'gb': 1337.0,
+          },
+      ]), api.post_process(post_process.DropExpectation), build_target='kukui',
+      builder='kukui-release-main', status='FAILURE')
 
   yield api.build_menu.test(
       'staging',

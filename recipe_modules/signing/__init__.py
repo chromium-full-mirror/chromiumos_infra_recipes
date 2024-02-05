@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
+    'bot_cost',
     'build_menu',
     'cros_artifacts',
     'cros_build_api',

@@ -433,8 +433,12 @@ class SigningApi(recipe_api.RecipeApi):
 
   def stage_paygen_artifacts(self,
                              build_target_config: BuildTargetSigningConfig,
-                             channels: List['common_pb2.Channel']) -> None:
-    """Copy the artifacts needed for paygen into the appropriate GS locations."""
+                             channels: List['common_pb2.Channel']) -> List[str]:
+    """Copy the artifacts needed for paygen into the appropriate GS locations.
+
+    Returns:
+      List of GS dirs that were pushed to.
+    """
     src_gs_dir = self.m.build_menu.artifacts_gs_path()
     version = self.m.cros_version.version.legacy_version
 
@@ -452,10 +456,12 @@ class SigningApi(recipe_api.RecipeApi):
     # Otherwise, only the image types specified in |sign_types| are marked for
     # signing.
     with self.m.step.nest('stage paygen artifacts'):
+      gs_dirs = []
       for channel in channels:
         with self.m.step.nest(
             f'for channel {common_pb2.Channel.Name(channel)}'):
           dest_gs_dir = self._get_gs_path_for_channel(channel)
+          gs_dirs.append(dest_gs_dir)
           for src_file, upload_path in files_to_copy.items():
 
             artifact_upload_name = upload_path(build_target_config.build_target,
@@ -467,6 +473,7 @@ class SigningApi(recipe_api.RecipeApi):
                 os.path.join(src_gs_dir, src_file),
                 os.path.join(dest_gs_dir, artifact_upload_name),
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+      return gs_dirs
 
 
   def sign_artifacts(
@@ -492,8 +499,13 @@ class SigningApi(recipe_api.RecipeApi):
           self.signing_docker_image,
       ])
 
-      self.stage_paygen_artifacts(build_target_config, channels)
-      self.upload_unsigned_artifacts(archive_dir, build_target_config, channels)
+      gs_dirs = set()
+      gs_dirs.update(self.stage_paygen_artifacts(build_target_config, channels))
+      gs_dirs.update(
+          self.upload_unsigned_artifacts(archive_dir, build_target_config,
+                                         channels))
+      for gs_dir in sorted(gs_dirs):
+        self.m.bot_cost.set_upload_size(gs_dir)
 
       with self.m.step.nest('call BAPI') as presentation:
         request = SignImageRequest(
@@ -549,15 +561,20 @@ class SigningApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
-  def upload_unsigned_artifacts(self, archive_dir: Path,
-                                build_target_config: BuildTargetSigningConfig,
-                                channels: List['common_pb2.Channel']) -> None:
-    """Uploads files from archive_dir to GS based on signing config."""
+  def upload_unsigned_artifacts(
+      self, archive_dir: Path, build_target_config: BuildTargetSigningConfig,
+      channels: List['common_pb2.Channel']) -> List[str]:
+    """Uploads files from archive_dir to GS based on signing config.
 
+    Returns:
+      List of GS dirs that were pushed to.
+    """
     with self.m.step.nest(
         f'upload unsigned artifacts to {self.gs_upload_bucket} bucket'):
+      gs_dirs = []
       for channel in channels:
         gs_dir = self._get_gs_path_for_channel(channel)
+        gs_dirs.append(gs_dir)
 
         with self.m.step.nest(
             f'upload unsigned artifacts for {common_pb2.Channel.Name(channel)}'
@@ -581,7 +598,7 @@ class SigningApi(recipe_api.RecipeApi):
                 os.path.join(str(archive_dir), signing_config.archive_path),
                 os.path.join(gs_dir, artifact_upload_name),
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
-
+      return gs_dirs
 
   def upload_signed_artifacts(self, response: SignImageResponse) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""

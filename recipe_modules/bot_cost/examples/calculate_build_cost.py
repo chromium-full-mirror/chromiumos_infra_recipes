@@ -21,6 +21,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'bot_cost',
@@ -31,6 +32,11 @@ DEPS = [
 def RunSteps(api: RecipeApi):
   with api.bot_cost.build_cost_context():
     pass
+  api.bot_cost.set_upload_size('gs://chromeos-image-archive/foo/R120-1000.0.0')
+  api.bot_cost.set_upload_size('gs://chromeos-image-archive/foo/R120-1000.0.0')
+  api.bot_cost.set_upload_size(
+      'gs://chromeos-releases/canary-channel/foo/1000.0.0')
+  api.bot_cost.update_upload_sizes()
 
 
 def GenTests(api: RecipeTestApi):
@@ -62,8 +68,21 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.simulated_get(
           build,
           step_name='set build cost.calculate build cost.buildbucket.get'),
+      # Check that upload_size is correctly updated.
+      api.step_data(
+          'update upload_size.gsutil calculate directory size for gs://chromeos-releases/canary-channel/foo/1000.0.0',
+          stdout=api.raw_io.output_text(
+              f'{1024 * 1024 * 1024 * 1000} gs://chromeos-releases/canary-channel/foo/1000.0.0'
+          )),
       api.post_check(post_process.PropertyEquals, 'build_cost',
                      round(BOT_COST['n2d-standard-8'] * 1, 4)),
+      api.post_check(post_process.PropertyEquals, 'upload_size', [{
+          'gs_path': 'gs://chromeos-image-archive/foo/R120-1000.0.0',
+          'gb': 1337.0,
+      }, {
+          'gs_path': 'gs://chromeos-releases/canary-channel/foo/1000.0.0',
+          'gb': 1000.0,
+      }]),
       api.post_process(post_process.DropExpectation),
   )
 

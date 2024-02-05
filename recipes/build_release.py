@@ -41,6 +41,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/runtime',
     'recipe_engine/step',
+    'bot_cost',
     'bot_scaling',
     'build_menu',
     'build_reporting',
@@ -50,11 +51,13 @@ DEPS = [
     'cros_infra_config',
     'cros_prebuilts',
     'cros_release',
+    'cros_release_util',
     'cros_sdk',
     'cros_test_plan',
     'cros_try',
     'cros_source',
     'cros_tags',
+    'cros_version',
     'debug_symbols',
     'dlc_utils',
     'easy',
@@ -216,6 +219,8 @@ def DoRunSteps(api, config, properties):
             # Publish prebuilt DLCs the new way (i.e. publish the DLC uri as
             # well as the hash for provenance).
             api.build_reporting.publish_dlc_artifacts(prebuilt_dlcs)
+
+          api.bot_cost.set_upload_size(gs_image_dir)
       except StepFailure as sf:
         # If uploading artifacts threw an exception, surface that exception unless
         # build_images above threw an exception, in which case we want to
@@ -269,6 +274,18 @@ def DoRunSteps(api, config, properties):
       if run_step:
         gs_image_dir, instructions = api.cros_release.push_and_sign_images(
             config, api.build_menu.sysroot)
+
+        # This is a bit of a hack but it's OK since this will soon be
+        # deprecated.
+        release_bucket = api.cros_release.release_bucket
+        build_target = api.build_menu.sysroot.build_target.name
+        version = api.cros_version.version.platform_version
+        for channel_int in api.cros_release.channels:
+          channel = api.cros_release_util.channel_to_short_string(channel_int)
+          gs_path = f'gs://{release_bucket}/{channel}-channel/{build_target}/{version}'
+          api.bot_cost.set_upload_size(gs_path)
+
+    # TODO: Implement this for chromeos-release dirs can use api.cros_release.channels
       else:
         gs_image_dir = api.checkpoint.artifact_link
         instructions = api.checkpoint.signing_instructions_uris
@@ -435,6 +452,7 @@ def GenTests(api):
                   MessageToDict(SigningProperties(timeout=5)),
               '$chromeos/cros_release': {
                   'channels': [4, 3],
+                  'release_bucket': 'chromeos-releases',
               }
           }),
       api.signing.setup_mocks(),
@@ -494,6 +512,24 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
       api.post_check(post_process.DoesNotRun, 'overriding release channels'),
+      api.post_check(post_process.PropertyEquals, 'upload_size', [
+          {
+              'gs_path':
+                  'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101',
+              'gb':
+                  1337.0,
+          },
+          {
+              'gs_path':
+                  'gs://chromeos-releases/canary-channel/kukui/1234.56.0',
+              'gb':
+                  1337.0,
+          },
+          {
+              'gs_path': 'gs://chromeos-releases/dev-channel/kukui/1234.56.0',
+              'gb': 1337.0,
+          },
+      ]),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
@@ -579,6 +615,19 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
               RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS',
               RetryStep.Name(RetryStep.PAYGEN): 'SUCCESS'
           }),
+      api.post_check(
+          post_process.PropertyEquals,
+          'upload_size',
+          [
+              {
+                  'gs_path':
+                      'gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101',
+                  'gb':
+                      1337.0,
+              },
+              # TODO(b/323200728): Update this to include the signing buckets when
+              # this test actually pushes.
+          ]),
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',

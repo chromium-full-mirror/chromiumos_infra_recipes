@@ -27,6 +27,8 @@ def RunSteps(api):
 
   api.assertions.assertEqual(api.cros_release.channels,
                              [CHANNEL_BETA, CHANNEL_STABLE])
+  api.assertions.assertEqual(api.cros_release.release_bucket,
+                             'chromeos-releases')
 
 
 def GenTests(api):
@@ -37,6 +39,7 @@ def GenTests(api):
               '$chromeos/cros_release': {
                   'channels': [CHANNEL_BETA, CHANNEL_STABLE],
                   'sign_types': [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE],
+                  'release_bucket': 'chromeos-releases',
               }
           }),
       api.post_process(post_process.DropExpectation),
@@ -49,5 +52,6 @@ def GenTests(api):
               '$chromeos/cros_release': {
                   'channels': [CHANNEL_BETA, CHANNEL_STABLE],
                   'sign_types': [IMAGE_TYPE_TEST_GUEST_VM],
+                  'release_bucket': 'chromeos-releases',
               }
           }), api.post_process(post_process.DropExpectation), status='FAILURE')

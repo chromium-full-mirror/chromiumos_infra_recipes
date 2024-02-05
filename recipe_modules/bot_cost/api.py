@@ -79,6 +79,8 @@ class BotCostApi(RecipeApi):
     # spend in the run.
     self._start_time = self.m.time.time()
 
+    self.upload_sizes = []
+
   @property
   def bot_size(self) -> str:
     if not self._bot_size:
@@ -103,6 +105,7 @@ class BotCostApi(RecipeApi):
       yield
     finally:
       self.set_build_run_cost()
+      self.update_upload_sizes()
 
   def set_build_run_cost(self):
     """Wrapper function to calculate and set the cost of the run.
@@ -222,3 +225,59 @@ class BotCostApi(RecipeApi):
     if not (self.m.led.run_id or build.status == common_pb2.STATUS_UNSPECIFIED):
       cost += self._get_child_builds_cost(child_builds, parent_step)
     return cost
+
+  def _get_upload_size(self, gs_path: str):
+    """Get the size of the given GS directory.
+
+    Args:
+      gs_path: The path to the directory. Should include gs://{bucket}...
+    """
+    cmd = [
+        'du',
+        '-a',
+        '-s',
+        gs_path,
+    ]
+
+    test_data = f'{1024 * 1024 * 1024 * 1337} {gs_path}'
+    ret = self.m.gsutil(
+        cmd=cmd, name=f'calculate directory size for {gs_path}',
+        use_retry_wrapper=True,
+        stdout=self.m.raw_io.output_text(add_output_log=True),
+        step_test_data=lambda: self.m.raw_io.test_api.stream_output_text(
+            test_data))
+
+    # TODO(b/323200728): Figure out what to do if we get 0 bytes (the directory
+    # probably doesn't exist).
+    return float(ret.stdout.strip().split()[0]) / 1024 / 1024 / 1024
+
+  def set_upload_size(self, gs_path: str):
+    """Output the size of the given GS directory as an output property.
+
+    Args:
+      gs_path: The path to the directory. Should include gs://{bucket}...
+    """
+    # TODO(b/323200728): Should this step be fatal?
+    with self.m.step.nest(f'set upload_size for {gs_path}'):
+      gb_uploaded = self._get_upload_size(gs_path)
+
+      # Replace existing entry, if any
+      upload_size = next(
+          (entry for entry in self.upload_sizes if entry['gs_path'] == gs_path),
+          None)
+      if upload_size is None:
+        self.upload_sizes.append({'gs_path': gs_path})
+        upload_size = self.upload_sizes[-1]
+      upload_size['gb'] = gb_uploaded
+
+      self.m.easy.set_properties_step(upload_size=self.upload_sizes)
+
+  def update_upload_sizes(self):
+    """Update the upload_sizes for all dirs that have previously been logged."""
+    if self.upload_sizes:
+      with self.m.step.nest('update upload_size'):
+        for upload_size in self.upload_sizes:
+          new_gb_uploaded = self._get_upload_size(upload_size['gs_path'])
+          upload_size['gb'] = new_gb_uploaded
+
+        self.m.easy.set_properties_step(upload_size=self.upload_sizes)
