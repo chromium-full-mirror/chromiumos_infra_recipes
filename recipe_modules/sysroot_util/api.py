@@ -328,7 +328,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         self.m.file.rmtree('deleting chrome checkout', chrome_root)
         # Set the chrome root to None so it isn't used later.
         self.m.cros_sdk.set_chrome_root(None)
-      self.m.failures.set_compile_failed_packages(presentation, pkgs)
+
+      cl_affected_packages = []
+      if pkgs and self.m.workspace_util.patch_sets:
+        cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
+            self.sysroot, self.m.cros_sdk.chroot,
+            self.m.workspace_util.patch_sets, include_rev_deps=True)
+      self.m.failures.set_compile_failed_packages(presentation, pkgs,
+                                                  cl_affected_packages)
 
   def create_netboot_image(self) -> None:
     """Create a netboot image for the factory build."""

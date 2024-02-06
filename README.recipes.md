@@ -10748,7 +10748,7 @@ Returns:
   Parsed ChromeOS version and cl diff count.
 ### *recipe_modules* / [sysroot\_util](/recipe_modules/sysroot_util)
 
-[DEPS](/recipe_modules/sysroot_util/__init__.py#10): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/sysroot_util/__init__.py#10): [android](#recipe_modules-android), [chrome](#recipe_modules-chrome), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [goma](#recipe_modules-goma), [remoteexec](#recipe_modules-remoteexec), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for various support functions for building.
@@ -10773,7 +10773,7 @@ Args:
     cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#359)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: Optional[int]=None, build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#366)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: Optional[int]=None, build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
 
 Build and validate images.
 
@@ -10798,7 +10798,7 @@ Args:
 Returns:
   The images built during the stage.
 
-&mdash; **def [create\_netboot\_image](/recipe_modules/sysroot_util/api.py#333)(self):**
+&mdash; **def [create\_netboot\_image](/recipe_modules/sysroot_util/api.py#340)(self):**
 
 Create a netboot image for the factory build.
 
@@ -16127,10 +16127,10 @@ Tests to verify sysroot_archive.parse_archive_path.
 &mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/create_sysroot.py#24)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/full](/recipe_modules/sysroot_util/examples/full.py)
 
-[DEPS](/recipe_modules/sysroot_util/examples/full.py#18): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/sysroot_util/examples/full.py#19): [chrome](#recipe_modules-chrome), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [sysroot\_util](#recipe_modules-sysroot_util), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#34)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/sysroot_util/examples/full.py#37)(api, properties):**
 ### *recipes* / [sysroot\_util:examples/update\_for\_artifact\_build](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py)
 
 [DEPS](/recipe_modules/sysroot_util/examples/update_for_artifact_build.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [sysroot\_util](#recipe_modules-sysroot_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

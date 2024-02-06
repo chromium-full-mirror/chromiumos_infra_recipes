@@ -6,8 +6,9 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-import json
+from google.protobuf import json_format
 
+from PB.chromite.api import depgraph
 from PB.chromiumos import common
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
@@ -18,6 +19,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'chrome',
     'cros_build_api',
@@ -25,6 +27,7 @@ DEPS = [
     'cros_relevance',
     'sysroot_util',
     'test_util',
+    'workspace_util',
 ]
 
 
@@ -32,6 +35,8 @@ PROPERTIES = FullTestProperties
 
 
 def RunSteps(api, properties):
+  # Changes need to be applied for fault attribution.
+  api.workspace_util.apply_changes()
   image_types = properties.image_types or [
       common.IMAGE_TYPE_BASE, common.IMAGE_TYPE_TEST
   ]
@@ -90,7 +95,7 @@ def GenTests(api):
               'ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz'
           ]
       }
-    return json.dumps(ret, sort_keys=True)
+    return api.json.dumps(ret, sort_keys=True)
 
   def create_image_events(rootfs_size):
     ret = {}
@@ -100,7 +105,7 @@ def GenTests(api):
           'gauge': str(rootfs_size),
           'timestampMilliseconds': '1580481610805'
       }]
-    return json.dumps(ret, sort_keys=True)
+    return api.json.dumps(ret, sort_keys=True)
 
   def get_buildbucket_simulated_search_results(rootfs_size):
     """Get buildbucket simulated search results for finding child builders.
@@ -200,8 +205,16 @@ def GenTests(api):
       test_build(cq=True),
       test_build(cq=True),
       api.cros_build_api.set_api_return(
+          'install packages.get package dependencies', 'DependencyService/List',
+          json_format.MessageToJson(
+              depgraph.ListResponse(package_deps=[
+                  common.PackageInfo(category='chromeos-base',
+                                     package_name='thislongpackagenameomg',
+                                     version='0.0.1-r199')
+              ]))),
+      api.cros_build_api.set_api_return(
           'install packages', 'SysrootService/InstallPackages',
-          json.dumps(
+          api.json.dumps(
               {
                   'failedPackageData': [{
                       'name': {
