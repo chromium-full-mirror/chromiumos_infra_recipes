@@ -131,6 +131,8 @@ def GenTests(api: RecipeTestApi):
                        'child builds missing build_cost', ['124']),
       api.post_process(post_process.LogContains, 'set build cost',
                        'child builds missing build_cost', ['125']),
+      api.post_process(post_process.PropertyEquals,
+                       'build_cost_missing_children', ['125']),
       api.post_process(post_process.DropExpectation),
   )
 

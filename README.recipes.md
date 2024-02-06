@@ -1118,14 +1118,14 @@ Wrapper function to calculate and set the cost of the run.
 Calculate the cost of the run and set it as a build output property.
 Includes cost of any child builds.
 
-&mdash; **def [set\_upload\_size](/recipe_modules/bot_cost/api.py#254)(self, gs_path: str):**
+&mdash; **def [set\_upload\_size](/recipe_modules/bot_cost/api.py#256)(self, gs_path: str):**
 
 Output the size of the given GS directory as an output property.
 
 Args:
   gs_path: The path to the directory. Should include gs://{bucket}...
 
-&mdash; **def [update\_upload\_sizes](/recipe_modules/bot_cost/api.py#275)(self):**
+&mdash; **def [update\_upload\_sizes](/recipe_modules/bot_cost/api.py#277)(self):**
 
 Update the upload_sizes for all dirs that have previously been logged.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
