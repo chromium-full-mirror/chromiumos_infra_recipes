@@ -6,8 +6,9 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-import json
+from google.protobuf import json_format
 
+from PB.chromite.api import depgraph
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -17,6 +18,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
@@ -96,7 +98,7 @@ def step_data_no_cached_container_gcs(api):
 
 def step_data_complete_cached_container_gcs(api):
 
-  test_data_complete = json.dumps({'status': 'completed'})
+  test_data_complete = api.json.dumps({'status': 'completed'})
   step_data_ls_attempt_1 = api.step_data(
       'create test service containers.cached container info from gcs.attempt-1.gsutil list',
       stdout=api.raw_io.output_text('''
@@ -110,7 +112,7 @@ def step_data_complete_cached_container_gcs(api):
 
 def step_data_incomplete_cached_container_gcs(api):
 
-  test_data_incomplete = json.dumps({'status': 'started'})
+  test_data_incomplete = api.json.dumps({'status': 'started'})
 
   step_data_ls_attempt_1 = api.step_data(
       'create test service containers.cached container info from gcs.attempt-1.gsutil list',
@@ -561,8 +563,15 @@ def GenTests(api):
       endpoint='TestService/BuildTargetUnitTest',
       data='{ "failed_package_data": [{"name": {"package_name": "bar", "category": "foo", "version": "1.0-r1"}, "log_path": {"path": "/all/your/package/foo:bar-1.0-r1"}}] }'
     ),
+      api.cros_build_api.set_api_return(
+          'run ebuild tests.get package dependencies', 'DependencyService/List',
+          json_format.MessageToJson(
+              depgraph.ListResponse(package_deps=[
+                  common.PackageInfo(category='foo',
+                                     package_name='bar',
+                                     version='1.0-r1')
+              ]))),
     cq=True,
-    # TODO (b/275363240): audit this test.
     status='FAILURE',
   )
 

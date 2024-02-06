@@ -834,7 +834,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
             response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
-        self.m.failures.set_test_failed_packages(presentation, pkgs)
+        if pkgs:
+          self.m.failures.set_test_failed_packages(
+              presentation, pkgs,
+              self.get_cl_affected_sysroot_packages(include_rev_deps=True))
 
   def upload_artifacts(
       self, config=None, private_bundle_func=None, sysroot=None,

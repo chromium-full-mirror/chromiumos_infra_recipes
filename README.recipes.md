@@ -1343,7 +1343,7 @@ there via this module, and are a simple sequence of steps.
 
 &emsp; **@property**<br>&mdash; **def [artifact\_build](/recipe_modules/build_menu/api.py#94)(self):**
 
-&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#891)(self):**
+&mdash; **def [artifacts\_build\_path](/recipe_modules/build_menu/api.py#894)(self):**
 
 Get the standard artifacts build path for the builder (without bucket).
 
@@ -1352,7 +1352,7 @@ For example betty-arc-r-release/R114-15436.0.0
 This method will only work if the checkout has already been initialized,
 as we rely on the CrOS version (and thus the version file).
 
-&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#905)(self):**
+&mdash; **def [artifacts\_gs\_path](/recipe_modules/build_menu/api.py#908)(self):**
 
 Get the standard artifacts GS path for the builder (including bucket).
 
@@ -1434,7 +1434,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1039)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1042)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1508,7 +1508,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#196)(self):**
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1334)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1337)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1518,7 +1518,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1314)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1317)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1646,7 +1646,7 @@ Args:
 Returns:
   (bool): Whether to continue with the build.
 
-&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#839)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
+&mdash; **def [upload\_artifacts](/recipe_modules/build_menu/api.py#842)(self, config=None, private_bundle_func=None, sysroot=None, report_to_spike=False, name='upload artifacts', previously_uploaded_artifacts=None, ignore_breakpad_symbol_generation_errors=False):**
 
 Upload artifacts from the build.
 
@@ -1672,21 +1672,21 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1275)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1278)(self, config: Optional[BuilderConfig]=None):**
 
 Upload Chrome prebuilts from the build.
 
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1262)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1265)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1293)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1296)(self, config: Optional[BuilderConfig]=None):**
 
 Upload host prebuilts from the build.
 
@@ -1695,7 +1695,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1243)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1246)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1704,7 +1704,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1183)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1186)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
@@ -11967,18 +11967,18 @@ Recipe for modifying images for mass deployment. Intended for use with ChromeOS 
 &mdash; **def [RunSteps](/recipes/build_mass_deploy.py#179)(api, properties):**
 ### *recipes* / [build\_menu:examples/full](/recipe_modules/build_menu/examples/full.py)
 
-[DEPS](/recipe_modules/build_menu/examples/full.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/build_menu/examples/full.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [gerrit](#recipe_modules-gerrit), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
-&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#48)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipe_modules/build_menu/examples/full.py#50)(api, config, properties):**
 
-&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#37)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_menu/examples/full.py#39)(api, properties):**
 
-&mdash; **def [step\_data\_complete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#97)(api):**
+&mdash; **def [step\_data\_complete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#99)(api):**
 
-&mdash; **def [step\_data\_incomplete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#111)(api):**
+&mdash; **def [step\_data\_incomplete\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#113)(api):**
 
-&mdash; **def [step\_data\_no\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#91)(api):**
+&mdash; **def [step\_data\_no\_cached\_container\_gcs](/recipe_modules/build_menu/examples/full.py#93)(api):**
 ### *recipes* / [build\_menu:tests/is\_staging](/recipe_modules/build_menu/tests/is_staging.py)
 
 [DEPS](/recipe_modules/build_menu/tests/is_staging.py#15): [build\_menu](#recipe_modules-build_menu), [easy](#recipe_modules-easy), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
