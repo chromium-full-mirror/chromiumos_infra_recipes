@@ -89,8 +89,7 @@ def RunSteps(api, properties):
   api.path.mock_add_paths(
       api.path['cleanup'].join('artifacts_tmp_1/dlc/fake2/dlc.img'))
 
-  if api.cros_infra_config.is_staging and not api.led.run_id:
-    api.bot_scaling.drop_cpu_cores(min_cpus_left=16, max_drop_ratio=.50)
+  api.bot_scaling.drop_cpu_cores(min_cpus_left=16, max_drop_ratio=.50)
 
   api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
                                      api.build_menu.build_target.name)

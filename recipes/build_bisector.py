@@ -37,9 +37,7 @@ PROPERTIES = BuildBisectorProperties
 def RunSteps(api: RecipeApi,
              properties: BuildBisectorProperties) -> Optional[RawResult]:
 
-  if api.cros_infra_config.is_staging:
-    api.bot_scaling.drop_cpu_cores(min_cpus_left=4,
-                                   max_drop_ratio=.75)  # pragma: nocover
+  api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():

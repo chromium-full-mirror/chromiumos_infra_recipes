@@ -78,8 +78,7 @@ def RunSteps(api: RecipeApi, properties: PaygenProperties):
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('start')
 
-    if api.cros_infra_config.is_staging:
-      api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
+    api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.75)
 
     with api.workspace_util.setup_workspace(), api.cros_sdk.cleanup_context():
       with api.failures.ignore_exceptions():

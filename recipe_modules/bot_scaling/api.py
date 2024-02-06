@@ -84,6 +84,8 @@ class BotScalingApi(recipe_api.RecipeApi):
     Warning!: We've embedded an assumption that we will reboot between tasks
     so these changes are effectual for a single run only.
 
+    Note: This is only enabled on non-led staging builds.
+
     Args:
       min_cpus_left (int): Do not drop below this number of cores.
       max_drop_ratio (float): The maximum ratio of cpus to drop relative to
@@ -93,6 +95,12 @@ class BotScalingApi(recipe_api.RecipeApi):
 
     Returns: The number of cpus dropped.
     """
+    drop_n_cores = 0
+    # Do not drop cores for production builds or led runs.
+    if (self.m.led.run_id or self.m.led.led_build or
+        not self.m.cros_infra_config.is_staging):
+      return drop_n_cores
+
     min_cpus_left = max(1, min_cpus_left)
 
     with self.m.step.nest('dropping cores') as pres:

@@ -155,7 +155,7 @@
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) &mdash; Tests for bot_cost.
   * [bot_cost:tests/bot_size](#recipes-bot_cost_tests_bot_size)
-  * [bot_scaling:examples/drop_cpus](#recipes-bot_scaling_examples_drop_cpus)
+  * [bot_scaling:examples/drop_cpus](#recipes-bot_scaling_examples_drop_cpus) &mdash; Unit tests for the drop_cpu_cores function.
   * [bot_scaling:examples/get_bot_request](#recipes-bot_scaling_examples_get_bot_request)
   * [bot_scaling:examples/get_gce_config](#recipes-bot_scaling_examples_get_gce_config)
   * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage)
@@ -1130,7 +1130,7 @@ Args:
 Update the upload_sizes for all dirs that have previously been logged.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
 
-[DEPS](/recipe_modules/bot_scaling/__init__.py#6): [cros\_history](#recipe_modules-cros_history), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/bot_scaling/__init__.py#8): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [gce\_provider](#recipe_modules-gce_provider), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 A module that determines how to scale bot groups based on demand.
@@ -1149,6 +1149,8 @@ instances. Sets a property 'enabled_cpu_cores', with the final count.
 Warning!: We've embedded an assumption that we will reboot between tasks
 so these changes are effectual for a single run only.
 
+Note: This is only enabled on non-led staging builds.
+
 Args:
   min_cpus_left (int): Do not drop below this number of cores.
   max_drop_ratio (float): The maximum ratio of cpus to drop relative to
@@ -1158,7 +1160,7 @@ Args:
 
 Returns: The number of cpus dropped.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#210)(demand, scaling_restriction):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_bot\_request](/recipe_modules/bot_scaling/api.py#218)(demand, scaling_restriction):**
 
 Core function that scales bots based on demand.
 
@@ -1170,7 +1172,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#337)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#345)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -1182,7 +1184,7 @@ Returns:
   ConfigResponse (named_tuple), GCE Provider config definitions and missing
     configs.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#354)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#362)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -1197,7 +1199,7 @@ Returns:
 
 Get the number of cores on the host.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#229)(bots_requested: int, region_restrictions: List[BotPolicy.RegionRestriction]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_regional\_actions](/recipe_modules/bot_scaling/api.py#237)(bots_requested: int, region_restrictions: List[BotPolicy.RegionRestriction]):**
 
 Determines regional distribution of bot requests.
 
@@ -1211,7 +1213,7 @@ Args:
 Returns:
   Region wise distribution of bots requested.
 
-&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#126)(self, bot_policy_config, configs, swarming_stats):**
+&mdash; **def [get\_robocrop\_action](/recipe_modules/bot_scaling/api.py#134)(self, bot_policy_config, configs, swarming_stats):**
 
 Function to compute all the actions of this RoboCrop.
 
@@ -1224,7 +1226,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#167)(self, demand, bot_policy, configs):**
+&mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#175)(self, demand, bot_policy, configs):**
 
 The function that creates a ScalingAction for a bot group.
 
@@ -1236,7 +1238,7 @@ Args:
 Returns:
   ScalingAction, comprehensive action to be taken by RoboCrop.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#268)(swarming_stats: SwarmingStats, bot_group: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#276)(swarming_stats: SwarmingStats, bot_group: str):**
 
 Return the demand for bots in a bot group.
 
@@ -1247,7 +1249,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#313)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#321)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -1258,7 +1260,7 @@ Args:
 Returns:
   SwarmingStats: Dataclass containing bot and task stats.
 
-&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#397)(bot_policy_config: BotPolicyCfg):**
+&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#405)(bot_policy_config: BotPolicyCfg):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
@@ -1268,7 +1270,7 @@ Args:
 Returns:
   Scaled-down config that only includes data needed for Plx.
 
-&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#450)(dimensions):**
+&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#458)(dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -1278,7 +1280,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#372)(bot_policy_config: BotPolicyCfg, configs: Configs):**
+&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#380)(bot_policy_config: BotPolicyCfg, configs: Configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -1290,7 +1292,7 @@ Returns:
   The original bot_policy_config, updated to reflect ScalingRestriction
   values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#421)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#429)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -11678,8 +11680,10 @@ Tests for bot_cost.
 &mdash; **def [RunSteps](/recipe_modules/bot_cost/tests/bot_size.py#25)(api: RecipeApi):**
 ### *recipes* / [bot\_scaling:examples/drop\_cpus](/recipe_modules/bot_scaling/examples/drop_cpus.py)
 
-[DEPS](/recipe_modules/bot_scaling/examples/drop_cpus.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/bot_scaling/examples/drop_cpus.py#13): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
+
+Unit tests for the drop_cpu_cores function.
 
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/drop_cpus.py#25)(api, properties):**
 ### *recipes* / [bot\_scaling:examples/get\_bot\_request](/recipe_modules/bot_scaling/examples/get_bot_request.py)
@@ -11785,7 +11789,7 @@ for example:
 
 Recipe for building a BuildTarget image for Bisector.
 
-&mdash; **def [DoRunSteps](/recipes/build_bisector.py#49)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_bisector.py#47)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
 
 &mdash; **def [RunSteps](/recipes/build_bisector.py#37)(api: RecipeApi, properties: BuildBisectorProperties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
@@ -11821,7 +11825,7 @@ Recipe for building public ChromiumOS images.
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#66)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#65)(api: RecipeApi, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_cq.py#52)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
@@ -12088,7 +12092,7 @@ Unit tests for the get_relevant_builder_configs function.
 
 Recipe for building a BuildTarget image for Postsubmit.
 
-&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#43)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_postsubmit.py#41)(api: RecipeApi, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_postsubmit.py#32)(api: RecipeApi):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
@@ -12098,7 +12102,7 @@ Recipe for building a BuildTarget image for Postsubmit.
 
 Recipe for building images for release.
 
-&mdash; **def [DoRunSteps](/recipes/build_release.py#135)(api, config, properties):**
+&mdash; **def [DoRunSteps](/recipes/build_release.py#134)(api, config, properties):**
 
 &mdash; **def [RunSteps](/recipes/build_release.py#76)(api, properties):**
 ### *recipes* / [build\_reporting:examples/contexts\_1](/recipe_modules/build_reporting/examples/contexts_1.py)
@@ -12187,7 +12191,7 @@ then uploads build artifacts to external locations, such as CIPD.
 
 Recipe for building and testing a BuildTarget's packages.
 
-&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#52)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_slim_cq.py#51)(api: RecipeApi, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_slim_cq.py#38)(api: RecipeApi):**
 ### *recipes* / [build\_snapshot](/recipes/build_snapshot.py)
@@ -12197,7 +12201,7 @@ Recipe for building and testing a BuildTarget's packages.
 
 Recipe for building a BuildTarget image for Snapshot.
 
-&mdash; **def [DoRunSteps](/recipes/build_snapshot.py#46)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_snapshot.py#44)(api: RecipeApi, config: BuilderConfig):**
 
 &mdash; **def [RunSteps](/recipes/build_snapshot.py#35)(api: RecipeApi):**
 ### *recipes* / [build\_toolchain](/recipes/build_toolchain.py)
@@ -15281,17 +15285,17 @@ installer, shrink the ROOT-B partition down to a single block.
 
 Recipe for generating ChromeOS payloads (AU deltas etc).
 
-&mdash; **def [DoRunSteps](/recipes/paygen.py#91)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/paygen.py#90)(api: RecipeApi, properties: PaygenProperties):**
 
 &mdash; **def [RunSteps](/recipes/paygen.py#75)(api: RecipeApi, properties: PaygenProperties):**
 
-&mdash; **def [get\_failure\_reason](/recipes/paygen.py#381)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
+&mdash; **def [get\_failure\_reason](/recipes/paygen.py#380)(resp: Union[(GenerationResponse, GenerateUnsignedPayloadResponse, FinalizePayloadRequest)]):**
 
 Get the failure reason from the given response, if any.
 
-&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#392)(resp: GenerationResponse):**
+&mdash; **def [get\_paygen\_response\_artifacts](/recipes/paygen.py#391)(resp: GenerationResponse):**
 
-&mdash; **def [initialize\_directories](/recipes/paygen.py#271)(api: RecipeApi, properties: PaygenProperties):**
+&mdash; **def [initialize\_directories](/recipes/paygen.py#270)(api: RecipeApi, properties: PaygenProperties):**
 
 Set up all the directories needed to do paygen.
 
@@ -15299,9 +15303,9 @@ Args:
   api: api object to use.
   properties: recipe properties.
 
-&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#406)(api: RecipeApi, resp: GenerationResponse):**
+&mdash; **def [report\_paygen\_success\_to\_snoopy](/recipes/paygen.py#405)(api: RecipeApi, resp: GenerationResponse):**
 
-&mdash; **def [split\_generation\_request](/recipes/paygen.py#344)(req: GenerationRequest):**
+&mdash; **def [split\_generation\_request](/recipes/paygen.py#343)(req: GenerationRequest):**
 
 Split a GenerationRequest into the corresponding split paygen requests.
 

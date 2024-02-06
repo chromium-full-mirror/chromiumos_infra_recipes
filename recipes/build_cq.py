@@ -52,8 +52,7 @@ EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
 
-  if api.cros_infra_config.is_staging and not api.led.run_id:
-    api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
+  api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot() as is_relevant:

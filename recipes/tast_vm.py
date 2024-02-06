@@ -28,8 +28,7 @@ PROPERTIES = TastVmProperties
 
 def RunSteps(api: RecipeApi, properties: TastVmProperties):
 
-  if api.cros_infra_config.is_staging:  #pragma: no cover
-    api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.90)
+  api.bot_scaling.drop_cpu_cores(min_cpus_left=2, max_drop_ratio=.90)
 
   test_artifacts_dir = api.path.mkdtemp(prefix='test-artifacts')
   api.tast_exec.download_tast(properties.build_payload, test_artifacts_dir)
