@@ -198,6 +198,10 @@ class SdkSubtoolsService(Stub):
   """Stub for SdkSubtoolsService."""
 
 
+class SigningService(Stub):
+  """Stub for SigningService."""
+
+
 class SysrootService(Stub):
   """Stub for SysrootService."""
 

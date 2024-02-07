@@ -27,6 +27,7 @@ from PB.chromite.api import portage_explorer
 from PB.chromite.api import relevancy
 from PB.chromite.api import sdk
 from PB.chromite.api import sdk_subtools
+from PB.chromite.api import signing
 from PB.chromite.api import sysroot
 from PB.chromite.api import test
 from PB.chromite.api import toolchain
@@ -192,6 +193,9 @@ def RunSteps(api):
       'SdkSubtoolsService': {
           'BuildSdkSubtools': sdk_subtools.BuildSdkSubtoolsResponse,
           'UploadSdkSubtools': sdk_subtools.UploadSdkSubtoolsResponse,
+      },
+      'SigningService': {
+          'CreatePreMPKeys': signing.CreatePreMPKeysResponse,
       },
       'SysrootService': {
           'Create': sysroot.SysrootCreateResponse,

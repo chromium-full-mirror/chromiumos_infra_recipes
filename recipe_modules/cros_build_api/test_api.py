@@ -747,6 +747,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     return responses
 
   @property
+  def signing_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
+    """Generate responses for SigningService."""
+    responses = {}
+    responses['CreatePreMPKeys'] = '{}'
+    return responses
+
+  @property
   def sysroot_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for SysrootService."""
     responses = {}
@@ -852,6 +859,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'RelevancyService': self.relevancy_service_responses,
         'SdkService': self.sdk_service_responses,
         'SdkSubtoolsService': self.sdk_subtools_service_responses,
+        'SigningService': self.signing_service_responses,
         'SysrootService': self.sysroot_service_responses,
         'TestService': self.test_service_responses,
         'ToolchainService': self.toolchain_service_responses,
