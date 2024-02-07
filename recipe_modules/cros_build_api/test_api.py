@@ -765,6 +765,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
             },
         },
     )
+    responses['GetTargetArchitecture'] = jsonify(architecture='amd64')
     responses['GenerateArchive'] = jsonify(
         sysroot_archive={
             'path': '/tmp/foo.zip',

@@ -5438,6 +5438,141 @@
     "name": "git clone"
   },
   {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/GetTargetArchitecture",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"compilation_database\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"architecture\": \"amd64\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"compilation_database\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "call chromite.api.SysrootService/GetTargetArchitecture.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/GetTargetArchitecture"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "call chromite.api.SysrootService/GetTargetArchitecture.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:cron"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "call chromite.api.SysrootService/GetTargetArchitecture.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/GetTargetArchitecture.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",
@@ -5471,7 +5606,11 @@
       "[CLEANUP]/tmp_tmp_5/bin",
       "-p",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic",
-      "--all"
+      "--all",
+      "--tool-arg",
+      "-arch",
+      "--tool-arg",
+      "amd64"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform2",
     "luci_context": {
@@ -5966,7 +6105,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"compilation_database\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -5990,9 +6129,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_11/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -6027,7 +6166,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_11/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_12/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {

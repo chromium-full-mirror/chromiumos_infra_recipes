@@ -8,17 +8,16 @@ Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 """
 
-from PB.chromiumos.common import UseFlag
+from PB.chromite.api import sysroot as sysroot_pb2
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
-from recipe_engine.post_process import PropertyEquals
-
+from recipe_engine import post_process
+from recipe_engine import recipe_api
 
 DEPS = [
     'infra/codesearch',
-    'chromeos/build_menu',
-    'chromeos/cros_source',
     'depot_tools/bot_update',
     'depot_tools/gclient',
     'recipe_engine/buildbucket',
@@ -28,6 +27,11 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/time',
+    'build_menu',
+    'cros_build_api',
+    'cros_sdk',
+    'cros_source',
+    'easy',
 ]
 
 PROPERTIES = ChromiumosCodesearchProperties
@@ -61,7 +65,8 @@ def RunSteps(api, properties):
   with api.build_menu.configure_builder(commit=commit) as config, \
       api.build_menu.setup_workspace_and_chroot(replace=True):
 
-    config.build.use_flags.append(UseFlag(flag='compilation_database'))
+    config.build.use_flags.append(
+        common_pb2.UseFlag(flag='compilation_database'))
 
     env_info = api.build_menu.setup_sysroot_and_determine_relevance()
     api.build_menu.bootstrap_sysroot(config)
@@ -112,10 +117,11 @@ def RunSteps(api, properties):
       clang_dir = api.codesearch.clone_clang_tools(cache_dir)
 
       # Run the translation_unit tool in chromiumos/src dirs.
+      target_architecture = _get_target_architecture(api, build_target)
       api.codesearch.run_clang_tool(
           clang_dir=clang_dir, run_dirs=[
               chromiumos_src_dir.join('platform2'),
-          ])
+          ], target_architecture=target_architecture)
 
       # Create the kythe index pack and upload it to google storage.
 
@@ -154,6 +160,17 @@ def RunSteps(api, properties):
           revision=codesearch_mirror_revision)
 
 
+def _get_target_architecture(api: recipe_api.RecipeApi,
+                             build_target: str) -> str:
+  """Return the given build target's architecture, such as "amd64"."""
+  request = sysroot_pb2.GetTargetArchitectureRequest(
+      build_target=common_pb2.BuildTarget(name=build_target),
+      chroot=api.cros_sdk.chroot,
+  )
+  response = api.cros_build_api.SysrootService.GetTargetArchitecture(request)
+  return response.architecture
+
+
 # TODO(crbug/1284439): Add more tests.
 def GenTests(api):
   yield api.build_menu.test(
@@ -170,7 +187,9 @@ def GenTests(api):
           sync_generated_files=True,
           experimental=False,
       ),
-  )
+      api.post_check(post_process.StepCommandContains,
+                     'run translation_unit clang tool',
+                     ['--tool-arg', '-arch', '--tool-arg', 'amd64']))
 
   yield api.build_menu.test(
       'repo sync to manifest_hash',
@@ -187,7 +206,7 @@ def GenTests(api):
           experimental=False,
       ),
       api.post_process(
-          PropertyEquals, 'commit', '''{
+          post_process.PropertyEquals, 'commit', '''{
   "host": "chromium.googlesource.com",
   "project": "chromiumos/manifest",
   "id": "d3adb33f",
