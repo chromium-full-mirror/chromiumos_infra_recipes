@@ -6385,7 +6385,7 @@
       "----",
       "cp",
       "[CLEANUP]/code-coverage_tmp_1",
-      "gs://e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-06-2024/metadata.json"
+      "gs://e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-07-2024/metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6404,8 +6404,8 @@
     "name": "upload e2e coverage metadata.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-06-2024/metadata.json@@@",
-      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-06-2024/metadata.json@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-07-2024/metadata.json@@@",
+      "@@@STEP_LINK@uploaded report@https://storage.cloud.google.com/e2e-coverage-artifacts/e2e_coverage/brya/R123-15527.0.0-13245678/02-07-2024/metadata.json@@@"
     ]
   },
   {
