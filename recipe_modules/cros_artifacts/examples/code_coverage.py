@@ -71,6 +71,6 @@ def GenTests(api):
                   }
               }, sort_keys=True)),
       api.post_check(
-        post_process.MustRun,
-        'upload artifacts.upload e2e coverage metadata.add e2e coverage metadata')
-    )
+          post_process.MustRun,
+          'upload artifacts.upload e2e coverage metadata.add e2e coverage metadata'
+      ))

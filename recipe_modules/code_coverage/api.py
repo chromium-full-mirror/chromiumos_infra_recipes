@@ -8,7 +8,6 @@
 import copy
 import json
 import os
-from datetime import date
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import recipe_api
@@ -268,7 +267,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       )
 
       dest_path = os.path.join('e2e_coverage', board, version,
-                               date.today().strftime('%m-%d-%Y'),
+                               self.m.time.utcnow().strftime('%m-%d-%Y'),
                                'metadata.json')
       upload_step = self.m.gsutil.upload(self.metadata_dir,
                                          E2E_COVERAGE_BUCKET_NAME, dest_path)

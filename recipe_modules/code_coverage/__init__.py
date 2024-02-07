@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Code coverage module."""
+
 from PB.recipe_modules.chromeos.code_coverage.code_coverage import CodeCoverageProperties
 
 DEPS = [
@@ -15,6 +17,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/cq',
     'recipe_engine/archive',
+    'recipe_engine/time',
     'depot_tools/gsutil',
     'cros_source',
     'gitiles',

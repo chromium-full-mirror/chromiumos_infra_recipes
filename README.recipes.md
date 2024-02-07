@@ -2457,22 +2457,22 @@ Raises:
   InfraFailure: If the publish fails and raise_on_failed_publish.
 ### *recipe_modules* / [code\_coverage](/recipe_modules/code_coverage)
 
-[DEPS](/recipe_modules/code_coverage/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/code_coverage/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [gitiles](#recipe_modules-gitiles), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe definition for code coverage recipe.
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#49)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#78)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#77)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#140)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#139)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -2487,7 +2487,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): absolute coverage settings.
   absolute_chromium_settings (CoverageFileSettings): absolute chromium coverage settings.
 
-&mdash; **def [update\_e2e\_metadata](/recipe_modules/code_coverage/api.py#248)(self, gs_artifact_bucket: str, gs_artifact_path: str, board: str, version: str):**
+&mdash; **def [update\_e2e\_metadata](/recipe_modules/code_coverage/api.py#247)(self, gs_artifact_bucket: str, gs_artifact_path: str, board: str, version: str):**
 
 Uploads metadata needed for e2e coverage.
 
@@ -2497,7 +2497,7 @@ Args:
   board: Board used for generating artifacts.
   version: CROS version used to build artifacts.
 
-&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#109)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
+&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#108)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
 
 Uploads code coverage llvm json and golang.
 
@@ -2508,7 +2508,7 @@ Args:
   gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
   gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#92)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#91)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 
