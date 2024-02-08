@@ -1,0 +1,14 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.snapshot_orch_menu.examples;
+
+message AggregateProperties {
+  repeated int64 skip_builds = 1;       // Builds to skip gathering metadata
+  repeated int64 skip_build_target = 2; // Builds to unset the build_target
+  repeated int64 skip_artifacts = 3;    // Builds to skip setting artifacts path
+  repeated int64 failed_builds = 4;     // Builds to mock as failures
+}

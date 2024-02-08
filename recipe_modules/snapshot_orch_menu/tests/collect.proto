@@ -1,0 +1,28 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.snapshot_orch_menu.tests;
+
+import "chromiumos/builder_config.proto";
+import "chromiumos/common.proto";
+
+message CollectProperties {
+  // The expected answer from should_collect.
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec.CollectHandling
+      expected_collect = 1;
+
+  // The value in child_specs.
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec child_spec = 2;
+
+  // The value in child_targets.
+  chromiumos.BuilderConfig.Orchestrator.ChildSpec child_target = 3;
+
+  // The Build target.
+  chromiumos.BuildTarget build_target = 4;
+
+  //
+  repeated string forced_testable_builders = 5;
+}

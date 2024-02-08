@@ -1,0 +1,90 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.snapshot_orch_menu;
+
+message SnapshotOrchMenuProperties {
+  // Specifies which refs in the manifest repository should point to the
+  // snapshot ref used by the orchestrator, and when.
+  message UpdateManifestRefs {
+    // The start ref is updated before child builds are launched.
+    // An example start ref is 'postsubmit', which should update
+    // right when the orchestrator launches.
+    string start = 1;
+
+    // The "build" ref is updated only if max_build_failure_ratio is met.
+    string build = 2;
+
+    // The maximum fraction of builds that can fail when considering if we
+    // should update the ref. Default (0.0) means all must succeed.
+    float max_build_failure_ratio = 4;
+
+    // The "test" ref is updated only if ALL tests succeed.
+    string test = 3;
+  }
+  UpdateManifestRefs update_manifest_refs = 1;
+
+  // Time delay between each child build.
+  float stagger_children_seconds = 2;
+
+  // Specifies whether to enable cros_history based resource saving.
+  bool enable_history = 3;
+
+  // Specifies whether to enable exiting redundant builds.
+  bool assert_singleton = 4;
+
+  // Feature flag: Whether to defer COLLECT_AFTER_HW_TEST builders to after HW
+  // testing.
+  // bool collect_after_hw_test = 5;
+  reserved 5;
+
+  // Should we collect failures after test proctor is ran or continue without
+  // referencing or setting status on test results.
+  bool run_tests_async = 6;
+
+  // GS path to upload buildspecs to. Only used for release orchestrators.
+  // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
+  string buildspec_gs_path = 7;
+
+  // Whether to bump the version for a release builder. Will be ignored if
+  // the builder is a staging builder.
+  bool bump_version = 8;
+
+  // Branch of manifest-versions to upload to. Only used for release builders.
+  // Defaults to 'release'.
+  string manifest_versions_branch = 9;
+
+  // If non-empty, launch this list of child builds instead of those listed
+  // in builder config. Should be the full builder name, e.g.
+  // "eve-release-main".
+  repeated string child_builds = 10;
+
+  // Whether to skip paygen. Only used for release builders.
+  bool skip_paygen = 11;
+
+  // Whether to schedule a public build. Only used for release builders.
+  bool schedule_public_build = 12;
+
+  reserved 13;
+  reserved 14;
+
+  // List of QS accounts for which retries can be enabled.
+  // See b/293879623 for context.
+  // Only used by release builders.
+  repeated string retry_allowlist_qs_account = 15;
+
+  // List of build targets for which retries can be enabled.
+  // See b/293879623 for context.
+  // Only used by release builders.
+  repeated string retry_allowlist_build_target = 16;
+
+  // If set, only schedules children on the days they're configured to run
+  // as specified by the `run_on` field in the ChildSpec. Otherwise, default
+  // behavior applies.
+  // Primarily inteded for use by release orchestrators, see b/316171866 for
+  // context.
+  bool custom_build_cadence = 17;
+}

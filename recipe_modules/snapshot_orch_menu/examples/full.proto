@@ -1,0 +1,43 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.snapshot_orch_menu.examples;
+
+import "go.chromium.org/luci/buildbucket/proto/build.proto";
+import "recipe_engine/result.proto";
+
+message FullProperties {
+  // Whether to expect a missing config.
+  bool expect_missing_config = 1;
+
+  // Test footers to pass to git_footers.  This is a newline separated string of
+  // footer values.
+  string test_footers = 2;
+
+  // The expected value for completed_builds.
+  repeated buildbucket.v2.Build expected_completed_builds = 3;
+
+  // The expected value for enable_history.
+  bool expected_enable_history = 4;
+
+  // The expected build result.
+  recipe_engine.RawResult expected_recipe_result = 5;
+
+  // The name of any process_child builder to run.
+  string process_child = 6;
+
+  // Whether or not the test is for a release orchestrator.
+  bool is_release_orchestrator = 7;
+
+  // Whether or not to include extra_props.
+  bool use_extra_props = 8;
+
+  // Whether to skip paygen.
+  bool skip_paygen = 9;
+
+  // Any experiments to include.
+  repeated string experiments = 10;
+}
