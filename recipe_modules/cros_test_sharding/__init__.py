@@ -5,4 +5,3 @@
 """init cros_test_sharding recipe module"""
 
 DEPS = []
-

@@ -19,33 +19,44 @@ PROPERTIES = {
     'shard_count': Property(
         kind=int,
     ),
-    'shard_time': Property(
-        kind=int,
-    ),
     'expected_shard_count': Property(
         kind=int,
     ),
+    'test_suite_token': Property(
+        kind=str,
+    )
 }
 
 
-def RunSteps(api, shard_count, shard_time, expected_shard_count):
+def RunSteps(api, shard_count, expected_shard_count, test_suite_token):
   #  Define some example tests
-  test_suite = _gen_generic_test_suites()
+  test_suite = None
+  if test_suite_token == '_gen_generic_test_suites':
+    test_suite = _gen_generic_test_suites()
+  elif test_suite_token == '_gen_secuirty_test_suites':
+    test_suite = _gen_security_test_suites()
   #  Directly test some methods.
-  tests_to_bucket = list(test_suite.test_cases.test_cases)
-  shards = api.cros_test_sharding._shard_constrained(  # pylint: disable=protected-access
-      tests_to_bucket, shard_count, shard_time)
+  # tests_to_bucket = list(test_suite.test_cases.test_cases)
+  shards = api.cros_test_sharding.optimized_shard_allocation(  # pylint: disable=protected-access
+      test_suite, shard_count)
   api.assertions.assertEqual(len(shards), expected_shard_count)
 
 
 def GenTests(api):
   yield api.test(
       'zero shard time',
-      api.properties(shard_count=2, shard_time=1, expected_shard_count=2),
+      api.properties(shard_count=2, expected_shard_count=2,
+                     test_suite_token='_gen_generic_test_suites'),
   )
   yield api.test(
       'zero shard count',
-      api.properties(shard_count=0, shard_time=1, expected_shard_count=9),
+      api.properties(shard_count=0, expected_shard_count=8,
+                     test_suite_token='_gen_generic_test_suites'),
+  )
+  yield api.test(
+      'security only tests',
+      api.properties(shard_count=2, expected_shard_count=1,
+                     test_suite_token='_gen_secuirty_test_suites'),
   )
 
 
@@ -103,6 +114,14 @@ def _gen_generic_test_suites():
       'tast.example.Four',
       'tast.example.Five',
       'tast.example.Six',
+      'tast.security.Pass',
+      'tast.security.Fail',
+  ]
+  return TestSuite(test_cases)
+
+
+def _gen_security_test_suites():
+  test_cases = [
       'tast.security.Pass',
       'tast.security.Fail',
   ]

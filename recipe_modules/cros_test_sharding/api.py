@@ -598,8 +598,6 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
     if requested_shard_count != 0 and requested_makespan != 0:
       makespan = 0
     shard_count = requested_shard_count
-    if shard_count == 0:
-      shard_count = CrosTestShardingAPI._MAX_SHARDS
     # total_test_time = sum([test_case.execution_time for test_case in test_cases])
     # if makespan == 0:
     #   makespan = math.ceil(total_test_time / shard_count)
@@ -614,7 +612,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
     searching = None
 
     #  Using shards as the primary object
-    while True:
+    while len(test_queue) != 0:
       if shards[current_shard].can_accept(test_queue[-1]):
         shards[current_shard].add(test_queue.pop())
         searching = None

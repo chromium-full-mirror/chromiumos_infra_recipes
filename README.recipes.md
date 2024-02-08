@@ -14039,7 +14039,7 @@ Test against public methods in the cros_test_sharding module
 
 Test against private methods in the cros_test_sharding module
 
-&mdash; **def [RunSteps](/recipe_modules/cros_test_sharding/examples/method_tests.py#31)(api, shard_count, shard_time, expected_shard_count):**
+&mdash; **def [RunSteps](/recipe_modules/cros_test_sharding/examples/method_tests.py#31)(api, shard_count, expected_shard_count, test_suite_token):**
 ### *recipes* / [cros\_tool\_runner:examples/full](/recipe_modules/cros_tool_runner/examples/full.py)
 
 [DEPS](/recipe_modules/cros_tool_runner/examples/full.py#14): [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
