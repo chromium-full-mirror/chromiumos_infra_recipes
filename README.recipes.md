@@ -14926,12 +14926,12 @@ Testing whether cq-depended CLs are being tested in the run.
 &mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/cq_depends_included.py#24)(api, properties):**
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)
 
-[DEPS](/recipes/libchrome_uprev.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/libchrome_uprev.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for upreving libchrome
 
-&mdash; **def [RunSteps](/recipes/libchrome_uprev.py#42)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/libchrome_uprev.py#43)(api: RecipeApi):**
 ### *recipes* / [libchrome\_upstream](/recipes/libchrome_upstream.py)
 
 [DEPS](/recipes/libchrome_upstream.py#14): [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_source](#recipe_modules-cros_source), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

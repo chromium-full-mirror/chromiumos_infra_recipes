@@ -13,6 +13,7 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.chromiumos.common import BuildTarget, PackageInfo
 
 DEPS = [
     'build_menu',
@@ -44,7 +45,9 @@ def RunSteps(api: RecipeApi):
   if not commit.project:
     commit = api.src_state.internal_manifest.as_gitiles_commit_proto
 
-  with api.build_menu.configure_builder(missing_ok=True, commit=commit):
+  with api.build_menu.configure_builder(
+      missing_ok=True, commit=commit,
+      targets=[BuildTarget(name='amd64-generic')]) as config:
     # automated_uprev.py needs chroot to test emerge libchrome.
     with api.build_menu.setup_workspace_and_chroot():
       project_dir = api.cros_source.workspace_path.join(
@@ -146,6 +149,20 @@ def RunSteps(api: RecipeApi):
 
         patchset_description = 'm=' + 'Generated_by%3A_https%3A%2F%2Fcr%2Dbuildbucket%2Eappspot%2Ecom%2Fbuild%2F{}'.format(
             api.buildbucket.build.id)
+
+        with api.step.nest('verify uprev commit') as presentation:
+          push_options += '' if push_options.endswith(',') else ','
+          try:
+            api.build_menu.setup_sysroot_and_determine_relevance()
+            api.build_menu.bootstrap_sysroot()
+            api.build_menu.install_packages(config, [
+                PackageInfo(category='chromeos-base', package_name='libchrome')
+            ])
+            push_options += 'l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'
+          except StepFailure:
+            api.build_menu.upload_artifacts(config)
+            push_options += 'l=Verified-1,'
+          presentation.properties['final_push_options'] = push_options
 
         with api.step.nest('push uprev commit'):
           api.git.push(
@@ -279,17 +296,6 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'script-success',
-      api.gerrit.set_query_changes_response(
-          'identify outdated uprev commits', [],
-          'https://chromium-review.googlesource.com'),
-      api.step_data(
-          'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,'
-              'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
-  )
-
-  yield api.test(
       'script-wrong-option-format',
       api.gerrit.set_query_changes_response(
           'identify outdated uprev commits', [],
@@ -327,4 +333,38 @@ def GenTests(api: RecipeTestApi):
               'l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,')),
       api.post_check(post_process.StepFailure, 'validate push options'),
       status='FAILURE',
+  )
+
+  yield api.test(
+      'script-build-succeeded',
+      api.gerrit.set_query_changes_response(
+          'identify outdated uprev commits', [],
+          'https://chromium-review.googlesource.com'),
+      api.step_data(
+          'generate uprev commit', stdout=api.raw_io.output_text(
+              '%r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,')),
+      api.post_check(
+          post_process.PropertyEquals, 'final_push_options',
+          '%r=fqj@google.com,r=hidehiko@google.com,'
+          'topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'
+      ),
+  )
+
+  yield api.test(
+      'script-build-failed',
+      api.gerrit.set_query_changes_response(
+          'identify outdated uprev commits', [],
+          'https://chromium-review.googlesource.com'),
+      api.step_data(
+          'generate uprev commit', stdout=api.raw_io.output_text(
+              '%r=fqj@google.com,r=hidehiko@google.com,'
+              'topic=libchrome-automated-uprev,')),
+      api.build_menu.set_build_api_return(
+          'verify uprev commit.install packages',
+          'SysrootService/InstallPackages', retcode=1),
+      api.post_check(
+          post_process.PropertyEquals, 'final_push_options',
+          '%r=fqj@google.com,r=hidehiko@google.com,'
+          'topic=libchrome-automated-uprev,l=Verified-1,'),
   )
