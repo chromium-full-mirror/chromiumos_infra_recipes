@@ -1,0 +1,2950 @@
+[
+  {
+    "cmd": [],
+    "name": "configure chroot path"
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes"
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.ensure support",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/infrainfra-golang.version",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.ensure support.read infrainfra golang version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
+      "@@@STEP_LOG_END@infrainfra-golang.version@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.ensure support.find cipd instance for support for infra/infra commit deadbeef",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/support/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
+      "@@@STEP_LOG_END@cipd instance@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "search",
+      "chromiumos/infra/support/${platform}",
+      "-tag",
+      "git_revision:deadbeef",
+      "-json-output",
+      "[CLEANUP]/cipd.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/cipd.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@cipd.json@{@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    \"result\": [@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        {@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"package\": \"chromiumos/infra/support/${platform}\",@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"instance_id\": \"wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC\"@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        }@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    ]@@@",
+      "@@@STEP_LOG_LINE@cipd.json@}@@@",
+      "@@@STEP_LOG_END@cipd.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/support",
+      "-ensure-file",
+      "chromiumos/infra/support/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.ensure support.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-wzCA5zCcIkg0uYro\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/support/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/gerrit-fetch-changes"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.gerrit-fetch-changes",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
+    "timeout": 2160,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"Ideadbeef\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"project-a\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"subject\": \"Change title\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submittable\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"submitted\": \"\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"topic\": \"Change topic\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"unresolved_comment_count\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"updated\": \"2017-02-01 13:11:20.000000000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"work_in_progress\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set\": 7,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"patch_set_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 7,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/7\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/project-a\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/7\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": true, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "project-a",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@project-a|src/project-a|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/project-a",
+      "refs/changes/56/123456/7:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "cherry-pick",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.update src_state.gerrit_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.update src_state.gerrit_changes.set gerrit_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@changes@[\"{\\n  \\\"host\\\": \\\"chromium-review.googlesource.com\\\",\\n  \\\"project\\\": \\\"project-a\\\",\\n  \\\"change\\\": \\\"123456\\\",\\n  \\\"patchset\\\": \\\"7\\\"\\n}\"]@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read builder configs"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/generated/builder_configs.binaryproto",
+      "--format",
+      "text"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot"
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"chrootCurrent\": true,@@@",
+      "@@@STEP_LOG_LINE@request@    \"replace\": true@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"flags\": {\n    \"chrootCurrent\": true,\n    \"replace\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create sysroot.call chromite.api.SysrootService/Create.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/Create"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create sysroot.call chromite.api.SysrootService/Create.call build API script",
+    "timeout": 600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create sysroot.call chromite.api.SysrootService/Create.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:24.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"sysrootCreateRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"chrootCurrent\": true,@@@",
+      "@@@STEP_LOG_LINE@published event@      \"replace\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"sysrootCreateResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"create sysroot|call chromite.api.SysrootService/Create|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIw4DE/QQiDAjEgMT9BBCAyrXuAeIBRAoFCgNldmUSBAgBEAEiNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V06gEVChMKCi9idWlsZC9ldmUSBQoDZXZl0ALQ7IDZrvG1knzaAkxjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIw4DE/QQiDAjEgMT9BBCAyrXuAeIBRAoFCgNldmUSBAgBEAEiNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V06gEVChMKCi9idWlsZC9ldmUSBQoDZXZl0ALQ7IDZrvG1knzaAkxjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain"
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": []@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/eve\",\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }\n  },\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_2/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/InstallToolchain"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call build API script",
+    "timeout": 1800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_2/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:26Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:27.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_1\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installToolchainResponse\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install toolchain|call chromite.api.SysrootService/InstallToolchain|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIxoDE/QQiDAjHgMT9BBCAyrXuAfIBaQoTCgovYnVpbGQvZXZlEgUKA2V2ZRIAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIZChcKE1tDTEVBTlVQXS90bXBfdG1wXzEQAvoBANAC0OyA2a7xtZJ82gJZaW5zdGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRvb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install toolchain.call chromite.api.SysrootService/InstallToolchain.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIxoDE/QQiDAjHgMT9BBCAyrXuAfIBaQoTCgovYnVpbGQvZXZlEgUKA2V2ZRIAGjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCIZChcKE1tDTEVBTlVQXS90bXBfdG1wXzEQAvoBANAC0OyA2a7xtZJ82gJZaW5zdGFsbCB0b29sY2hhaW58Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFRvb2xjaGFpbnxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation"
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"dep_graph\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"package_deps\": [@@@",
+      "@@@STEP_LOG_LINE@response@      {@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_packages\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"category\": \"chromeos-base\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"package_name\": \"chrome-icu\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"version\": \"1-r52\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ],@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_source_paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ]@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@  },@@@",
+      "@@@STEP_LOG_LINE@response@  \"sdk_dep_graph\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"package_deps\": [@@@",
+      "@@@STEP_LOG_LINE@response@      {@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_packages\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"category\": \"virtual\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"package_name\": \"target-sdk-post-cross\",@@@",
+      "@@@STEP_LOG_LINE@response@            \"version\": \"1-r3\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ],@@@",
+      "@@@STEP_LOG_LINE@response@        \"dependency_source_paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"some/sdk/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ]@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {},\n  \"sysroot\": {\n    \"path\": \"/build/eve\",\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_3/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.DependencyService/GetBuildDependencyGraph"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_3/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:29Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:30.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBuildDependencyGraphRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getBuildDependencyGraphResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"depGraph\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"packageDeps\": [@@@",
+      "@@@STEP_LOG_LINE@published event@        {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencyPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"packageName\": \"chrome-icu\",@@@",
+      "@@@STEP_LOG_LINE@published event@              \"category\": \"chromeos-base\",@@@",
+      "@@@STEP_LOG_LINE@published event@              \"version\": \"1-r52\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ],@@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencySourcePaths\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"path\": \"some/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ]@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      ]@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sdkDepGraph\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"packageDeps\": [@@@",
+      "@@@STEP_LOG_LINE@published event@        {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencyPackages\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"packageName\": \"target-sdk-post-cross\",@@@",
+      "@@@STEP_LOG_LINE@published event@              \"category\": \"virtual\",@@@",
+      "@@@STEP_LOG_LINE@published event@              \"version\": \"1-r3\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ],@@@",
+      "@@@STEP_LOG_LINE@published event@          \"dependencySourcePaths\": [@@@",
+      "@@@STEP_LOG_LINE@published event@            {@@@",
+      "@@@STEP_LOG_LINE@published event@              \"path\": \"some/sdk/source/dir\"@@@",
+      "@@@STEP_LOG_LINE@published event@            }@@@",
+      "@@@STEP_LOG_LINE@published event@          ]@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      ]@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"dependency graph calculation|call chromite.api.DependencyService/GetBuildDependencyGraph|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIyYDE/QQiDAjKgMT9BBCAyrXuAZIBFxIAIhMKCi9idWlsZC9ldmUSBQoDZXZlmgF+CjkSNxIiCgpjaHJvbWUtaWN1Eg1jaHJvbWVvcy1iYXNlGgUxLXI1MhoRCg9zb21lL3NvdXJjZS9kaXISQRI/EiYKFXRhcmdldC1zZGstcG9zdC1jcm9zcxIHdmlydHVhbBoEMS1yMxoVChNzb21lL3Nkay9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "dependency graph calculation.call chromite.api.DependencyService/GetBuildDependencyGraph.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIyYDE/QQiDAjKgMT9BBCAyrXuAZIBFxIAIhMKCi9idWlsZC9ldmUSBQoDZXZlmgF+CjkSNxIiCgpjaHJvbWUtaWN1Eg1jaHJvbWVvcy1iYXNlGgUxLXI1MhoRCg9zb21lL3NvdXJjZS9kaXISQRI/EiYKFXRhcmdldC1zZGstcG9zdC1jcm9zcxIHdmlydHVhbBoEMS1yMxoVChNzb21lL3Nkay9zb3VyY2UvZGly0ALQ7IDZrvG1knzaAm5kZXBlbmRlbmN5IGdyYXBoIGNhbGN1bGF0aW9ufGNhbGwgY2hyb21pdGUuYXBpLkRlcGVuZGVuY3lTZXJ2aWNlL0dldEJ1aWxkRGVwZW5kZW5jeUdyYXBofGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages"
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@local_uprev no_prebuilt@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https:///",
+      ":"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~5..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"installRequest\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"flags\": {},@@@",
+      "@@@STEP_LOG_LINE@request@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@      {@@@",
+      "@@@STEP_LOG_LINE@request@        \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    ],@@@",
+      "@@@STEP_LOG_LINE@request@    \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"path\": \"[CLEANUP]/tmp_tmp_2\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"binhostLookupServiceData\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"snapshotShas\": [@@@",
+      "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000000\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000001\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000002\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000003\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000004\"@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"needs_chrome_source\": true,@@@",
+      "@@@STEP_LOG_LINE@response@  \"reasons\": [@@@",
+      "@@@STEP_LOG_LINE@response@    \"LOCAL_UPREV\",@@@",
+      "@@@STEP_LOG_LINE@response@    \"NO_PREBUILT\"@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"installRequest\": {\n    \"sysroot\": {\n      \"path\": \"/build/eve\",\n      \"buildTarget\": {\n        \"name\": \"eve\"\n      }\n    },\n    \"flags\": {},\n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\",\n      \"outPath\": \"[CACHE]/cros_chroot/out\"\n    },\n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ],\n    \"resultPath\": {\n      \"path\": {\n        \"path\": \"[CLEANUP]/tmp_tmp_2\",\n        \"location\": 2\n      }\n    },\n    \"binhostLookupServiceData\": {\n      \"snapshotShas\": [\n        \"deadbeef00000000000000000000000000000000\",\n        \"deadbeef00000000000000000000000000000001\",\n        \"deadbeef00000000000000000000000000000002\",\n        \"deadbeef00000000000000000000000000000003\",\n        \"deadbeef00000000000000000000000000000004\"\n      ]\n    }\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_4/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/NeedsChromeSource"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_4/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.call chromite.api.PackageService/NeedsChromeSource.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.set properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@builds_chrome@false@@@",
+      "@@@SET_BUILD_PROPERTY@chrome_source_reasons@{\"compile_source\": false, \"follower_lacks_prebuilt\": false, \"local_uprev\": true, \"no_prebuilt\": true}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.populate chrome cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome/src"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.populate chrome cache.ensure chrome src directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome/chrome_cache"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.populate chrome cache.ensure chrome cache directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "solutions = [\n    {\n        'url': 'https://chromium.googlesource.com/chromium/src.git',\n        'managed': False,\n        'name': 'src',\n        'custom_deps': {},\n        'custom_vars': {\n            'checkout_src_internal': True,\n            'checkout_google_internal': True\n        }\n    }\n]\ncache_dir = '../chrome_cache'"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/cq/amd64-generic-cq/8945511751514863184"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.populate chrome cache.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/git_cache.py",
+      "populate",
+      "-v",
+      "--cache-dir",
+      "../chrome_cache",
+      "https://chromium.googlesource.com/chromium/src.git",
+      "--reset-fetch-config"
+    ],
+    "cwd": "[START_DIR]/chrome/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.populate chrome cache.populate git cache",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.sync chrome",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@gclient configuration@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@gclient configuration@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetChromeVersion"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:35Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:36.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|check chrome source needed|sync chrome|call chromite.api.PackageService/GetChromeVersion|call build API script\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"getChromeVersionResponse\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"version\"@@@",
+      "@@@STEP_LOG_LINE@published event@  }@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVjayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDPgo1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQSBQoDZXZligMJCgd2ZXJzaW9u',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.call chromite.api.PackageService/GetChromeVersion.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJ/aW5zdGFsbCBwYWNrYWdlc3xjaGVjayBjaHJvbWUgc291cmNlIG5lZWRlZHxzeW5jIGNocm9tZXxjYWxsIGNocm9taXRlLmFwaS5QYWNrYWdlU2VydmljZS9HZXRDaHJvbWVWZXJzaW9ufGNhbGwgYnVpbGQgQVBJIHNjcmlwdIIDPgo1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQSBQoDZXZligMJCgd2ZXJzaW9u\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.ensure chrome root",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "config",
+      "--spec",
+      "cache_dir = '[START_DIR]/chrome/chrome_cache'\nsolutions = [{'custom_vars': {'checkout_src_internal': True}, 'deps_file': '.DEPS.git', 'managed': True, 'name': 'src', 'url': 'https://chromium.googlesource.com/chromium/src.git'}]\ntarget_os = ['chromeos']"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/cq/amd64-generic-cq/8945511751514863184"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.gclient config",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[START_DIR]/chrome/.gclient",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.gclient contents",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@.gclient@solutions = [ {\"name\":\"src\"}]@@@",
+      "@@@STEP_LOG_END@.gclient@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_REPO[depot_tools]/gclient.py",
+      "sync",
+      "--verbose",
+      "--nohooks",
+      "--reset",
+      "--force",
+      "--upstream",
+      "--no-nag-max",
+      "--with_branch_heads",
+      "--with_tags",
+      "--delete_unversioned_trees",
+      "--revision",
+      "src@version"
+    ],
+    "cwd": "[START_DIR]/chrome",
+    "env": {
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/cq/amd64-generic-cq/8945511751514863184"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]",
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.sync chrome.gclient sync",
+    "timeout": 10800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check chrome source needed.ensure goma client",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/goma",
+      "-ensure-file",
+      "infra_internal/goma/client/${platform} release",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check chrome source needed.ensure goma client.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-release---------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra_internal/goma/client/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check if an android uprev is required",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@no file diffs caused an android uprev@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_branch\": \"git_rvc-arc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_package\": \"android-vm-rvc\",@@@",
+      "@@@STEP_LOG_LINE@response@  \"android_version\": \"7123456\"@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_6/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.PackageService/GetAndroidMetadata"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_6/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.check if an android uprev is required.call chromite.api.PackageService/GetAndroidMetadata.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https:///",
+      ":"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~5..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"gomaConfig\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"gomaApproach\": 4,@@@",
+      "@@@STEP_LOG_LINE@request@    \"logDir\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"statsFile\": \"stats.binaryproto\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"counterzFile\": \"counterz.binaryproto\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_3\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"binhostLookupServiceData\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"snapshotShas\": [@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000000\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000001\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000002\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000003\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000004\"@@@",
+      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": []@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/eve\",\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }\n  },\n  \"flags\": {\n    \"useGoma\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ],\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"gomaApproach\": 4,\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\",\n    \"counterzFile\": \"counterz.binaryproto\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_3\",\n      \"location\": 2\n    }\n  },\n  \"binhostLookupServiceData\": {\n    \"snapshotShas\": [\n      \"deadbeef00000000000000000000000000000000\",\n      \"deadbeef00000000000000000000000000000001\",\n      \"deadbeef00000000000000000000000000000002\",\n      \"deadbeef00000000000000000000000000000003\",\n      \"deadbeef00000000000000000000000000000004\"\n    ]\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_7/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/InstallPackages"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
+    "timeout": 28800,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/eve\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"flags\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"useGoma\": true@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"chromeDir\": \"[START_DIR]/chrome\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ],@@@",
+      "@@@STEP_LOG_LINE@published event@    \"gomaConfig\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"gomaDir\": \"[START_DIR]/cipd/goma\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"gomaApproach\": \"RBE_CHROMEOS\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"logDir\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      \"statsFile\": \"stats.binaryproto\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"counterzFile\": \"counterz.binaryproto\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"resultPath\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_3\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"location\": \"OUTSIDE\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"binhostLookupServiceData\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"snapshotShas\": [@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000000\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000001\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000002\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000003\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000004\"@@@",
+      "@@@STEP_LOG_LINE@published event@      ]@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {},@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:41Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:42.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"install packages|call chromite.api.SysrootService/InstallPackages|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CskDChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASJJChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCoRCg9jaHJvbWVfaW50ZXJuYWwyYAoVW1NUQVJUX0RJUl0vY2lwZC9nb21hIAQqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90b0oZChcKE1tDTEVBTlVQXS90bXBfdG1wXzMQAlrSAQooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMAooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMQooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMgooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMwooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNBIAGgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"CskDChMKCi9idWlsZC9ldmUSBQoDZXZlEgIYASJJChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdCISW1NUQVJUX0RJUl0vY2hyb21lMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dCoRCg9jaHJvbWVfaW50ZXJuYWwyYAoVW1NUQVJUX0RJUl0vY2lwZC9nb21hIAQqHAoaW0NMRUFOVVBdL2dvbWEtbG9ncy1fdG1wXzEyEXN0YXRzLmJpbmFyeXByb3RvOhRjb3VudGVyei5iaW5hcnlwcm90b0oZChcKE1tDTEVBTlVQXS90bXBfdG1wXzMQAlrSAQooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMAooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMQooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMgooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMwooZGVhZGJlZWYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwNBIAGgYI1YDE/QQiDAjWgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gJXaW5zdGFsbCBwYWNrYWdlc3xjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9JbnN0YWxsUGFja2FnZXN8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "install packages.process_goma_artifacts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@NoGomaArtifacts@@@@",
+      "@@@STEP_LOG_END@NoGomaArtifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chrome"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.deleting chrome checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images"
+  },
+  {
+    "cmd": [],
+    "name": "build images.call chromite.api.ImageService/Create",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"imageTypes\": [@@@",
+      "@@@STEP_LOG_LINE@request@    1,@@@",
+      "@@@STEP_LOG_LINE@request@    3@@@",
+      "@@@STEP_LOG_LINE@request@  ],@@@",
+      "@@@STEP_LOG_LINE@request@  \"disableRootfsVerification\": true,@@@",
+      "@@@STEP_LOG_LINE@request@  \"diskLayout\": \"big_disk\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"builder/path\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true,@@@",
+      "@@@STEP_LOG_LINE@response@  \"images\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": \"/build/images/test.bin\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"type\": \"IMAGE_TYPE_TEST\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"imageTypes\": [\n    1,\n    3\n  ],\n  \"disableRootfsVerification\": true,\n  \"diskLayout\": \"big_disk\",\n  \"builderPath\": \"builder/path\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.call chromite.api.ImageService/Create.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_8/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ImageService/Create"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.call chromite.api.ImageService/Create.call build API script",
+    "timeout": 7200,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.call chromite.api.ImageService/Create.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.call chromite.api.ImageService/Create.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.call chromite.api.ImageService/Create.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:44Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:45.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"createImageRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"imageTypes\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_TEST\"@@@",
+      "@@@STEP_LOG_LINE@published event@    ],@@@",
+      "@@@STEP_LOG_LINE@published event@    \"disableRootfsVerification\": true,@@@",
+      "@@@STEP_LOG_LINE@published event@    \"diskLayout\": \"big_disk\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"builder/path\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"createImageResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"success\": true,@@@",
+      "@@@STEP_LOG_LINE@published event@    \"images\": [@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"type\": \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"path\": \"/build/images/test.bin\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"type\": \"IMAGE_TYPE_TEST\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@          \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@        }@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    ]@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build images|call chromite.api.ImageService/Create|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.call chromite.api.ImageService/Create.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI2IDE/QQiDAjZgMT9BBCAyrXuAaIBXAoFCgNldmUSAgEDGAEqCGJpZ19kaXNrMgxidWlsZGVyL3BhdGg6NQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0qgFICAESIQoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgUKA2V2ZRIhChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaBQoDZXZl0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI2IDE/QQiDAjZgMT9BBCAyrXuAaIBXAoFCgNldmUSAgEDGAEqCGJpZ19kaXNrMgxidWlsZGVyL3BhdGg6NQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0qgFICAESIQoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgUKA2V2ZRIhChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaBQoDZXZl0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.set rootfs_size",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@rootfs_size@0@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images.call chromite.api.ImageService/Test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"type\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"image\": {\n    \"path\": \"/build/images/base.bin\",\n    \"type\": 1,\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }\n  },\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.test images.call chromite.api.ImageService/Test.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_9/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ImageService/Test"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.test images.call chromite.api.ImageService/Test.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.test images.call chromite.api.ImageService/Test.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images.call chromite.api.ImageService/Test.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:47Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:53:48.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"image\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"type\": \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"eve\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"result\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build images|test images|call chromite.api.ImageService/Test|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI24DE/QQiDAjcgMT9BBCAyrXuAbIBhwEKIQoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgUKA2V2ZRIFCgNldmUaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI24DE/QQiDAjcgMT9BBCAyrXuAbIBhwEKIQoWL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgUKA2V2ZRIFCgNldmUaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build images.test images.image test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@all images passed@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

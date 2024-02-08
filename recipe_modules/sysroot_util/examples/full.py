@@ -418,3 +418,11 @@ def GenTests(api):
           'build images.Running `make_netboot.sh` for legacy factory branch'),
       api.post_process(post_process.DropExpectation),
   )
+
+  yield api.test('toolchain-CL-add-thinlto',
+                 api.cros_relevance.toolchain_cls_applied(True),
+                 test_build(cq=True))
+
+  yield api.test('non-toolchain-CL-no-thinlto',
+                 api.cros_relevance.toolchain_cls_applied(False),
+                 test_build(cq=True))

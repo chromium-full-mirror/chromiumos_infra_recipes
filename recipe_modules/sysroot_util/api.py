@@ -5,6 +5,7 @@
 
 """API for various support functions for building."""
 
+import copy
 import re
 from typing import Iterable, List, Optional
 
@@ -26,6 +27,7 @@ from PB.chromite.api.sysroot import SysrootCreateResponse
 from PB.chromiumos import builder_config as builder_config_pb2
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos import prebuilts_cloud as prebuilts_cloud_pb2
+from PB.chromiumos.common import UseFlag
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from recipe_engine import recipe_api
@@ -213,6 +215,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         presentation.step_text = 'Forcing toolchain_changed=False'
         toolchain_cls = False
 
+      # Always enable thinlto for toolchain related CLs. This adds coverage
+      # for CFI as well to help protect against regressions.
+      additional_use_flags = copy.deepcopy(config.build.use_flags)
+      if toolchain_cls:
+        additional_use_flags.append(UseFlag(flag='chrome_cfi_thinlto'))
+
       def _InstallPackagesRequest(dryrun=False):
         """Helper to make InstallPackagesRequest."""
         remoteexec_config = None
@@ -233,7 +241,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 toolchain_changed=toolchain_cls, dryrun=dryrun,
                 bazel=bazel_build,
                 skip_clean_package_dirs=skip_clean_package_dirs),
-            use_flags=config.build.use_flags,
+            use_flags=additional_use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             remoteexec_config=remoteexec_config,
             result_path=common_pb2.ResultPath(
