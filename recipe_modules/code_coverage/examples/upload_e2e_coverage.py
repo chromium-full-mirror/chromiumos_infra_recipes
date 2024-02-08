@@ -8,6 +8,7 @@
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/file',
     'recipe_engine/raw_io',
     'recipe_engine/swarming',
     'build_menu',
@@ -34,3 +35,13 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'upload e2e coverage metadata'),
       api.post_check(post_process.MustRun,
                      'upload e2e coverage metadata.add e2e coverage metadata'))
+
+  yield api.build_menu.test(
+      'upload-active-version-no-date',
+      api.step_data('verify active version.read current active version',
+                    api.file.read_text('{"date":""}')),
+      api.post_check(post_process.MustRun,
+                     'verify active version.gsutil download'),
+      api.post_check(
+          post_process.MustRun,
+          'verify active version.upload active version(found date diff)'))

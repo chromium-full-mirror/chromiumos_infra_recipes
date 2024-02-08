@@ -6,6 +6,7 @@
 
 """Tests to test e2e coverage uploads."""
 
+from datetime import date
 import os
 from pathlib import Path
 import shutil
@@ -31,14 +32,19 @@ class E2ECoverageTest(unittest.TestCase):
 
   def test_upload_metadata(self):
     """Test that we add metadata correctly."""
+    path = self.tmpdir + '/metadata.json'
     e2e_coverage.write_metadata('bucket', 'path', 'brya',
-                                'R123-15766.0.0-94241', self.tmpdir)
-    files = os.listdir(self.tmpdir)
-    self.assertEqual(len(files), 1)
+                                'R123-15766.0.0-94241', path)
+    self.assertEqual(len(os.listdir(self.tmpdir)), 1)
 
-    metadata_file = files[0]
-    content = json.loads(metadata_file)
-    self.assertEqual(content['artifacts_bucket'], 'bucket')
-    self.assertEqual(content['artifacts_path'], 'path')
-    self.assertEqual(content['board'], 'brya')
-    self.assertEqual(content['version'], 'R123-15766.0.0-94241')
+    with open(path, encoding='utf-8') as f:
+      content = json.loads(f.read())
+      self.assertEqual(content['artifacts_bucket'], 'bucket')
+      self.assertEqual(content['artifacts_path'], 'path')
+      self.assertEqual(content['board'], 'brya')
+      self.assertEqual(content['version'], 'R123-15766.0.0-94241')
+      self.assertEqual(content['date'], date.today().isoformat())
+
+
+if __name__ == '__main__':
+  unittest.main()

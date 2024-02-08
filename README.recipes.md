@@ -249,6 +249,7 @@
   * [cloud_pubsub:tests/request_size_too_large](#recipes-cloud_pubsub_tests_request_size_too_large) &mdash; Tests the case where a request is larger than the Pub/Sub limit.
   * [code_coverage:examples/firmware_lcov](#recipes-code_coverage_examples_firmware_lcov)
   * [code_coverage:examples/full](#recipes-code_coverage_examples_full)
+  * [code_coverage:examples/upload_active_version](#recipes-code_coverage_examples_upload_active_version) &mdash; Tests to test e2e coverage uploads active version.
   * [code_coverage:examples/upload_code_coverage_llvm_json](#recipes-code_coverage_examples_upload_code_coverage_llvm_json)
   * [code_coverage:examples/upload_e2e_coverage](#recipes-code_coverage_examples_upload_e2e_coverage) &mdash; Tests to test e2e coverage uploads.
   * [code_coverage:examples/upload_firmware_lcov](#recipes-code_coverage_examples_upload_firmware_lcov)
@@ -2478,17 +2479,17 @@ Raises:
 
 Recipe definition for code coverage recipe.
 
-#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#48)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CodeCoverageApi](/recipe_modules/code_coverage/api.py#54)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 This module contains apis to generate code coverage data.
 
-&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#77)(self):**
+&emsp; **@property**<br>&mdash; **def [metadata\_dir](/recipe_modules/code_coverage/api.py#83)(self):**
 
 A temporary directory for the metadata.
 
 Temp dir is created on first access to this property.
 
-&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#139)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
+&mdash; **def [process\_coverage\_data](/recipe_modules/code_coverage/api.py#145)(self, tarfile, coverage_type, merger_flow_enabled=False, gs_artifact_bucket=None, gs_artifact_path=None, step_name='upload code coverage data', incremental_settings=None, absolute_cs_settings=None, absolute_chromium_settings=None):**
 
 Uploads code coverage data to the requested external sources.
 
@@ -2503,7 +2504,7 @@ Args:
   absolute_cs_settings (CoverageFileSettings): absolute coverage settings.
   absolute_chromium_settings (CoverageFileSettings): absolute chromium coverage settings.
 
-&mdash; **def [update\_e2e\_metadata](/recipe_modules/code_coverage/api.py#247)(self, gs_artifact_bucket: str, gs_artifact_path: str, board: str, version: str):**
+&mdash; **def [update\_e2e\_metadata](/recipe_modules/code_coverage/api.py#253)(self, gs_artifact_bucket: str, gs_artifact_path: str, board: str, version: str):**
 
 Uploads metadata needed for e2e coverage.
 
@@ -2513,7 +2514,14 @@ Args:
   board: Board used for generating artifacts.
   version: CROS version used to build artifacts.
 
-&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#108)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
+&mdash; **def [upload\_active\_version](/recipe_modules/code_coverage/api.py#283)(self, active_date: str):**
+
+Whether we need to upload active version.
+
+Args:
+  active_date: The date in ISOformat present in uploaded active_version.
+
+&mdash; **def [upload\_code\_coverage](/recipe_modules/code_coverage/api.py#114)(self, tarfile, coverage_type, gs_artifact_bucket, gs_artifact_path, step_name='upload code coverage data'):**
 
 Uploads code coverage llvm json and golang.
 
@@ -2524,7 +2532,7 @@ Args:
   gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
   gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
 
-&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#91)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
+&mdash; **def [upload\_firmware\_lcov](/recipe_modules/code_coverage/api.py#97)(self, tarfile, step_name='upload code coverage data (firmware lcov)'):**
 
 Uploads firmware lcov code coverage.
 
@@ -12765,6 +12773,14 @@ Tests the case where a request is larger than the Pub/Sub limit.
 
 
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/full.py#21)(api):**
+### *recipes* / [code\_coverage:examples/upload\_active\_version](/recipe_modules/code_coverage/examples/upload_active_version.py)
+
+[DEPS](/recipe_modules/code_coverage/examples/upload_active_version.py#10): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Tests to test e2e coverage uploads active version.
+
+&mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_active_version.py#18)(api):**
 ### *recipes* / [code\_coverage:examples/upload\_code\_coverage\_llvm\_json](/recipe_modules/code_coverage/examples/upload_code_coverage_llvm_json.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/upload_code_coverage_llvm_json.py#11): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -12773,12 +12789,12 @@ Tests the case where a request is larger than the Pub/Sub limit.
 &mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_code_coverage_llvm_json.py#20)(api):**
 ### *recipes* / [code\_coverage:examples/upload\_e2e\_coverage](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py)
 
-[DEPS](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#10): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#10): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
 Tests to test e2e coverage uploads.
 
-&mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#19)(api):**
+&mdash; **def [RunSteps](/recipe_modules/code_coverage/examples/upload_e2e_coverage.py#20)(api):**
 ### *recipes* / [code\_coverage:examples/upload\_firmware\_lcov](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py)
 
 [DEPS](/recipe_modules/code_coverage/examples/upload_firmware_lcov.py#11): [build\_menu](#recipe_modules-build_menu), [code\_coverage](#recipe_modules-code_coverage), [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]

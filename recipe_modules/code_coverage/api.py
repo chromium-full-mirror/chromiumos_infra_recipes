@@ -8,6 +8,8 @@
 import copy
 import json
 import os
+from datetime import datetime
+from pathlib import Path
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from recipe_engine import recipe_api
@@ -28,6 +30,10 @@ PUBLIC_CODE_HOST = 'chromium'
 CODESEARCH_PROJECT = 'chromiumos/codesearch'
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 E2E_COVERAGE_BUCKET_NAME = 'e2e-coverage-artifacts'
+E2E_METADATA_FILENAME = 'e2e_metadata.json'
+ACTIVE_VERSION_FILENAME = 'current.json'
+# Number of seconds in 2w.
+ACTIVE_VERSION_DIFF_SECONDS = 1209600
 # TODO(b/222328534): Use autopush as default value instead.
 DEFAULT_COVERAGE_ENV = 'prod'
 
@@ -254,25 +260,69 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         board: Board used for generating artifacts.
         version: CROS version used to build artifacts.
     """
-    with self.m.step.nest('upload e2e coverage metadata'):
+    gs_path = self.m.path.join('active_version', board, ACTIVE_VERSION_FILENAME)
+    with self.m.step.nest('verify active version'):
+      path = self.metadata_dir.join(ACTIVE_VERSION_FILENAME)
+      self.m.gsutil.download(E2E_COVERAGE_BUCKET_NAME, gs_path, path)
+      contents = json.loads(
+          self.m.file.read_text(name='read current active version', source=path,
+                                test_data='{"date":"2024-02-07"}'))
+
+      if self.upload_active_version(contents['date']):
+        step_text = 'upload active version(found date diff)'
+        self._upload_metadata(step_text, gs_artifact_bucket, gs_artifact_path,
+                              board, version, gs_path)
+
+    # Upload metadata irrespective of active version for this builder.
+    today = self.m.time.utcnow().strftime('%m-%d-%Y')
+    dest_path = Path('e2e_coverage') / board / version / today / 'metadata.json'
+    step_text = 'upload e2e coverage metadata'
+    self._upload_metadata(step_text, gs_artifact_bucket, gs_artifact_path,
+                          board, version, dest_path)
+
+  def upload_active_version(self, active_date: str):
+    """Whether we need to upload active version.
+
+      Args:
+        active_date: The date in ISOformat present in uploaded active_version.
+    """
+    if not active_date:
+      return True
+
+    diff = self.m.time.utcnow() - datetime.fromisoformat(active_date)
+    if diff.total_seconds() >= ACTIVE_VERSION_DIFF_SECONDS:
+      return True
+    return False
+
+  def _upload_metadata(self, step_text: str, gs_artifact_bucket: str,
+                       gs_artifact_path: str, board: str, version: str,
+                       gs_dest_path: str) -> None:
+    """Upload active version to be used when running tests.
+
+      Args:
+        step_text: Step text to write for description.
+        gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
+        gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
+        board: Board used for generating artifacts.
+        version: CROS version used to build artifacts.
+        gs_dest_path: Path inside the E2E bucket to write data to.
+    """
+    path = os.path.join(str(self.metadata_dir), E2E_METADATA_FILENAME)
+    with self.m.step.nest(step_text):
       self.m.step(
           'add e2e coverage metadata',
           [
               'vpython3',
               self.resource('e2e_coverage.py'), '--artifacts-bucket',
               gs_artifact_bucket, '--artifacts-path', gs_artifact_path,
-              '--board', board, '--version', version, '--output-dir',
-              self.metadata_dir
+              '--board', board, '--version', version, '--path', path
           ],
       )
 
-      dest_path = os.path.join('e2e_coverage', board, version,
-                               self.m.time.utcnow().strftime('%m-%d-%Y'),
-                               'metadata.json')
-      upload_step = self.m.gsutil.upload(self.metadata_dir,
-                                         E2E_COVERAGE_BUCKET_NAME, dest_path)
+      upload_step = self.m.gsutil.upload(path, E2E_COVERAGE_BUCKET_NAME,
+                                         gs_dest_path)
       upload_step.presentation.links[
-          'uploaded report'] = f'https://storage.cloud.google.com/{E2E_COVERAGE_BUCKET_NAME}/{dest_path}'
+          'uploaded report'] = f'https://storage.cloud.google.com/{E2E_COVERAGE_BUCKET_NAME}/{gs_dest_path}'
 
   def _merger_absolute(
       self,

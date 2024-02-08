@@ -6,16 +6,15 @@
 
 """A script to manipulate e2e coverage."""
 import argparse
+from datetime import date
 import json
 import logging
 import os
 import sys
 
-_METADATA_FILENAME = 'e2e_metadata.json'
-
 
 def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
-                   out_dir: str) -> None:
+                   file_path: str) -> None:
   """Write metadata associated with e2e coverage.
 
   Args:
@@ -23,17 +22,17 @@ def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
     gs_path: Path to the artifact.
     board: Board used for generating artifacts.
     version: CROS version used to build artifacts.
-    out_dir: Directory to store the metadata.
+    file_path: Path of file to store the metadata.
   """
   content = {
       'artifacts_bucket': gs_bucket,
       'artifacts_path': gs_path,
       'board': board,
       'version': version,
+      'date': date.today().isoformat(),
   }
 
-  with open(os.path.join(out_dir, _METADATA_FILENAME), 'w',
-            encoding='utf-8') as f:
+  with open(file_path, 'w', encoding='utf-8') as f:
     f.write(json.dumps(content))
 
 
@@ -53,8 +52,8 @@ def _parse_args(args):
                       help='CROS version used to generate artifacts.')
 
   parser.add_argument(
-      '--output-dir', required=True, type=str,
-      help='absolute path to the directory to store the metadata, must exist')
+      '--path', required=True, type=str,
+      help='absolute path to the file to store the metadata, must exist')
 
   return parser.parse_args(args=args)
 
@@ -62,8 +61,8 @@ def _parse_args(args):
 def main():
   params = _parse_args(sys.argv[1:])
 
-  if not os.path.exists(params.output_dir):
-    raise RuntimeError(f'Output directory {params.output_dir} must exist')
+  if not os.path.exists(os.path.dirname(params.path)):
+    raise RuntimeError(f'Parent directory for {params.path} must exist')
 
   write_metadata(params.artifacts_bucket, params.artifacts_path, params.board,
                  params.version, params.output_dir)
