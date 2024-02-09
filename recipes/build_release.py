@@ -161,6 +161,14 @@ def DoRunSteps(api, config, properties):
               step.status = api.step.FAILURE
               step.step_summary_text = 'One or more test service containers failed to build.'
 
+          with api.step.nest(
+              'try publishing centralized suites to BigQuery') as step:
+            try:
+              api.build_menu.publish_centralized_suites(config)
+            except StepFailure:
+              step.status = api.step.FAILURE
+              step.step_summary_text = 'Centralized Suite metadata failed to publish to BigQuery.'
+
           with api.failures.ignore_exceptions():
             if api.cros_infra_config.config.artifacts.attestation_eligible:
               api.bcid_reporter.report_stage('compile')
@@ -1243,4 +1251,26 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       build_target='kukui',
       builder='kukui-release-main',
       bucket='release',
+  )
+
+  yield api.build_menu.test(
+      'publish-centralized-suites-fail',
+      api.properties(
+          **{
+              '$chromeos/cros_source':
+                  MessageToDict(
+                      CrosSourceProperties(
+                          sync_to_manifest=ManifestLocation(
+                              manifest_repo_url=manifest_url, branch='release',
+                              manifest_file='buildspecs/91/13818.0.0.xml'))),
+          }),
+      api.signing.setup_mocks(),
+      api.build_menu.set_build_api_return(
+          'try publishing centralized suites to BigQuery.publish centralized suites',
+          'ArtifactsService/FetchCentralizedSuites', retcode=1),
+      api.post_check(post_process.StepFailure,
+                     'try publishing centralized suites to BigQuery'),
+      api.post_check(post_process.MustRun, 'build images'),
+      api.post_check(post_process.MustRun, 'upload artifacts'),
+      api.post_process(post_process.DropExpectation),
   )
