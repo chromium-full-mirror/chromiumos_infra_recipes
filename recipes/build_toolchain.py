@@ -29,8 +29,10 @@ from recipe_engine.recipe_test_api import TestData
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
     'build_menu',
@@ -45,6 +47,12 @@ DEPS = [
 
 PROPERTIES = BuildToolchainProperties
 
+# These files are used to point at the newly-built SDK.
+BINHOST_FILES = (
+    'src/third_party/chromiumos-overlay/chromeos/binhost/host/sdk_version.conf',
+    'src/third_party/chromiumos-overlay/chromeos/config/make.conf.amd64-host',
+    'src/overlays/overlay-amd64-host/prebuilt.conf',
+)
 
 # The 'board' that represents the host platform the SDK will be run on.
 SDK_BUILD_TARGET = 'amd64-host'
@@ -191,6 +199,26 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
 
   with api.build_menu.configure_builder(
   ), api.build_menu.setup_workspace_and_chroot():
+    # Save the revisions the binhost files are currently at.
+    # At the end of the build, we will check that no changes to binhosts
+    # have occurred between the version we built from and the version
+    # that is current by that time. If changes *have* occurred, landing
+    # the SDK built by this build would revert those changes, which we
+    # want to avoid.
+    binhost_revs = {}
+    with api.step.nest('get binhost file revisions'):
+      for filename in BINHOST_FILES:
+        with api.context(
+            cwd=api.workspace_util.workspace_path.join(
+                os.path.dirname(filename))):
+          result = api.step(f'get revision of {filename}', [
+              'git',
+              'rev-parse',
+              'HEAD',
+          ], stdout=api.raw_io.output_text())
+          binhost_revs[filename] = result.stdout.rstrip()
+          result.presentation.step_text = binhost_revs[filename]
+
     # Check out the central CL on a branch. This is necessary for calling
     # api.gerrit.set_change_description(), which we will do later.
     with api.step.nest('ensure key CL branch is tracking upstream'):
@@ -343,6 +371,36 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
       description = _insert_before_change_id(central_cl.display_id, description,
                                              depends_str)
       api.gerrit.set_change_description(gerrit_change, description)
+
+    # Check that there are no changes to the binhost files between the
+    # revision at the start of the build and the current revision.  If
+    # there are, that means we built an SDK from binhost files which
+    # are now out of date, and landing the new SDK will undo the
+    # changes that were made in the meantime. This is almost certainly
+    # undesirable, so we fail the build if we detect this.
+    with api.step.nest('check that binhost files are up-to-date'):
+      for filename, rev in binhost_revs.items():
+        dirname, basename = os.path.split(filename)
+        with api.context(cwd=api.workspace_util.workspace_path.join(dirname)):
+          api.step(f'fetching latest source for {filename}', [
+              'git',
+              'fetch',
+          ])
+          result = api.step(f'check {filename}', [
+              'git',
+              'log',
+              '-p',
+              f'{rev}..FETCH_HEAD',
+              '--',
+              basename,
+          ], stdout=api.raw_io.output_text())
+          output = result.stdout
+          # If the output is nonempty, then the file is out-of-date.
+          if output:
+            raise StepFailure(
+                (f'{filename} has changed since the build started.'
+                 " This build's SDK was built without those changes."
+                 ' Marking the build as failed.'))
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
@@ -638,6 +696,24 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ]),
       status='FAILURE',
   )
+
+  # If the binhost files have changed in cros/main compared to the revisions
+  # we are building against, we want to fail the build. This test verifies
+  # that we do so.
+  yield api.build_menu.test(
+      'binhosts-outdated', api.properties(good_properties),
+      api.gerrit.set_gerrit_fetch_changes_response(
+          'identify key CLs',
+          [single_change_with_trybots],
+          fetch_changes_responses,
+      ),
+      api.step_data(
+          ('check that binhost files are up-to-date.'
+           'check src/third_party/chromiumos-overlay/'
+           'chromeos/config/make.conf.amd64-host'),
+          stdout=api.raw_io.output_text('eab1234 some change\n-abc\n+xyz\n'),
+      ), api.post_process(post_process.DropExpectation), status='FAILURE',
+      **builder_args(gerrit_changes=[single_change_with_trybots]))
 
   yield api.build_menu.test(
       'successful-run', api.properties(good_properties),
