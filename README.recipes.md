@@ -11033,7 +11033,7 @@ Args:
     cros_build_api/test_api.py.
   name (str): Step name to use, or None for the default name.
 
-&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#374)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: Optional[int]=None, build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
+&mdash; **def [build\_images](/recipe_modules/sysroot_util/api.py#375)(self, image_types: List['common_pb2.ImageType'], builder_path: str, disable_rootfs_verification: bool, disk_layout: str, base_is_recovery: bool=False, version: Optional[str]=None, timeout_sec: Optional[int]=None, build_test_data: Optional[str]=None, test_test_data: Optional[str]=None, name: Optional[str]=None, skip_image_tests: bool=False, verify_image_size_delta: bool=False, bazel: bool=False):**
 
 Build and validate images.
 
@@ -11058,7 +11058,7 @@ Args:
 Returns:
   The images built during the stage.
 
-&mdash; **def [create\_netboot\_image](/recipe_modules/sysroot_util/api.py#348)(self):**
+&mdash; **def [create\_netboot\_image](/recipe_modules/sysroot_util/api.py#349)(self):**
 
 Create a netboot image for the factory build.
 

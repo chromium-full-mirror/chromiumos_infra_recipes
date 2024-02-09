@@ -250,8 +250,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                     location=common_pb2.Path.OUTSIDE)),
             bazel_targets=bazel_targets,
             binhost_lookup_service_data=prebuilts_cloud_pb2
-            .BinhostLookupServiceData(snapshot_shas=snapshot_shas,
-                                      private=is_private))
+            .BinhostLookupServiceData(
+                snapshot_shas=snapshot_shas, private=is_private,
+                is_staging=self.m.cros_infra_config.is_staging))
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:
