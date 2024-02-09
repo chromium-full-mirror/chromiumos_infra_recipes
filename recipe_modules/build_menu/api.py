@@ -21,6 +21,7 @@ from PB.chromite.api.sysroot import Sysroot
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromite.api.test import BuildTestServiceContainersRequest
 from PB.chromite.api.test import BuildTestServiceContainersResponse
+from PB.chromite.api.artifacts import FetchCentralizedSuitesRequest
 from PB.chromite.api.toolchain import SetupToolchainsRequest
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
@@ -1182,6 +1183,48 @@ class BuildMenuApi(recipe_api.RecipeApi):
             )
             presentation.links['test metadata (gs)'] = (
                 self.m.urls.get_gs_bucket_url(gs_bucket, gs_path))
+
+  def publish_centralized_suites(
+      self, builder_config: Optional[BuilderConfig] = None) -> None:
+    """Call the PublishCentralizedSuites endpoint to build test containers.
+
+    Args:
+      builder_config: The BuilderConfig for this build, or None.
+    Raises:
+      recipe_api.StepFailure: If the FetchCentralizedSuites endpoint doesn't exist.
+    """
+    builder_config = builder_config or self.config_or_default
+    with self.m.step.nest('publish centralized suites'):
+      if not self.m.cros_build_api.has_endpoint(
+          self.m.cros_build_api.ArtifactsService, 'FetchCentralizedSuites'):
+        raise recipe_api.StepFailure(
+            'no ArtifactsService.FetchCentralizedSuites endpoint')
+      resp = self.m.cros_build_api.ArtifactsService.FetchCentralizedSuites(
+          FetchCentralizedSuitesRequest(chroot=self.chroot,
+                                        sysroot=self.sysroot))
+      suite_file = self.m.util.proto_path_to_recipes_path(
+          proto_path=resp.suite_file.path)
+      suite_set_file = self.m.util.proto_path_to_recipes_path(
+          proto_path=resp.suite_set_file.path)
+      bqProject = 'cros-test-analytics'
+      if self.is_staging:
+        bqProject += '-staging'
+      cmd = [
+          'publish',
+          '--project',
+          bqProject,
+          '--build-target',
+          self.build_target.name,
+          '--milestone',
+          str(self.m.cros_version.version.milestone),
+          '--version',
+          self.m.cros_version.version.platform_version,
+          '--suite-proto',
+          str(suite_file),
+          '--suiteset-proto',
+          str(suite_set_file),
+      ]
+      self.m.gobin.call('suite_publisher', cmd)
 
   def upload_sources(self,
                      config: BuilderConfig) -> Optional[invocation_pb2.Sources]:

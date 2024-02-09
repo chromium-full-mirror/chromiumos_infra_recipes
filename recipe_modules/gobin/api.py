@@ -28,6 +28,7 @@ SUPPORTED_PACKAGES = [
     'gerrit_related_changes',
     'manifest_doctor',
     'pointless_build_checker',
+    'suite_publisher',
     'support',
     'test_plan',
     'test_plan_generator',

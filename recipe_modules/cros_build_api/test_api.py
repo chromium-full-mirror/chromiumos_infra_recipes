@@ -132,6 +132,20 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                 'filename': 'filename',
                 'uri': 'https://example.com/filename'
             }]),
+        'FetchCentralizedSuites':
+            jsonify(
+                suite_set_file={
+                    'path': {
+                        'path': '[CACHE]/suite_set_file.pb',
+                        'location': 2  # chromiumos.Path.Location.OUTSIDE
+                    }
+                },
+                suite_file={
+                    'path': {
+                        'path': '[CACHE]/suite_file.pb',
+                        'location': 2  # chromiumos.Path.Location.OUTSIDE
+                    }
+                }),
         'BuildSetup':
             jsonify(build_relevance='UNKNOWN'),
         'Get':

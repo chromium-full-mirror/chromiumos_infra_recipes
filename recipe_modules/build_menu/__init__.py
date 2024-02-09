@@ -32,6 +32,7 @@ DEPS = [
     'easy',
     'failures',
     'git_footers',
+    'gobin',
     'metadata',
     'metadata_json',
     'observability_image_size',
@@ -40,6 +41,7 @@ DEPS = [
     'sysroot_util',
     'test_util',
     'urls',
+    'util',
     'workspace_util',
 ]
 
