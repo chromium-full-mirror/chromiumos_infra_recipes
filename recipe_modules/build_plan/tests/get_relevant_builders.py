@@ -88,12 +88,33 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
+  # Test that it calls the right things.
+  yield api.test(
+      'returns-all-on-failure',
+      api.step_data(build_api_call_step, retcode=1),
+      api.post_check(post_process.MustRun, 'gerrit-fetch-changes'),
+      api.post_check(post_process.MustRun, 'get affected paths'),
+      api.post_check(post_process.MustRun, build_api_call_step),
+      api.properties(
+          input_builder_configs=[
+              json_format.MessageToJson(target_a_builder_config),
+              json_format.MessageToJson(target_a_other_profile_builder_config),
+              json_format.MessageToJson(target_b_builder_config),
+          ], expected_builder_configs=[
+              json_format.MessageToJson(target_a_builder_config),
+              json_format.MessageToJson(target_a_other_profile_builder_config),
+              json_format.MessageToJson(target_b_builder_config),
+          ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
   build_api_return_val = json_format.MessageToJson(
       relevancy_pb2.GetRelevantBuildTargetsResponse(build_targets=[
           relevancy_pb2.GetRelevantBuildTargetsResponse.RelevantTarget(
               build_target=common_pb2.BuildTarget(
                   name='b', profile=common_pb2.Profile(name='BASE')))
       ]))
+
   yield api.test(
       'distinguish-between-target-name',
       api.properties(

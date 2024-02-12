@@ -413,18 +413,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       # TODO(b/316010599): Remove after the experiment.
       with self.m.failures.ignore_exceptions():
-        builder_configs = [
-            self.m.cros_infra_config.get_builder_config(cs.name) for cs in
-            self.m.cros_infra_config.config_or_default.orchestrator.child_specs
-        ]
-        # In order to simplify things, we are going to start with only first CQ
-        # attempts which do not configure additional builders via footer.
-        if (self._is_cq_orchestrator and not self.m.cros_history.is_retry and
-            not self.m.cros_relevance.check_force_relevance_footer(
-                self.gerrit_changes, builder_configs)):
+
+        if (self._is_cq_orchestrator and
+            self.m.build_plan.cros_query_relevant_builder_configs is not None):
           cros_query_relevant_builders = {
-              b.id.name for b in self.m.build_plan.get_relevant_builder_configs(
-                  builder_configs, self.gerrit_changes)
+              b.id.name
+              for b in self.m.build_plan.cros_query_relevant_builder_configs
           }
 
           actual_relevant_child_builders = set(

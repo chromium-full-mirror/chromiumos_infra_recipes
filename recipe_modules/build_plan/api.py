@@ -33,6 +33,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
     self._additional_chrome_pupr_builders = (
         properties.additional_chrome_pupr_builders or [])
 
+    # TODO(b/316010599): Remove after experiment.
+    # Store the result from calling the relevance service in order to compare
+    # with the result of the portage relevance check at the end of the run.
+    self.cros_query_relevant_builder_configs = None
+
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -80,34 +85,41 @@ class BuildPlanApi(recipe_api.RecipeApi):
   def get_relevant_builder_configs(self, builder_configs: List[BuilderConfig],
                                    gerrit_changes: List[GerritChange]):
     """Returns BuilderConfigs deemed relevant by the RelevancyService."""
-    req = relevancy_pb2.GetRelevantBuildTargetsRequest(
-        build_targets=[bc.build_target for bc in builder_configs])
+    try:
+      req = relevancy_pb2.GetRelevantBuildTargetsRequest(
+          build_targets=[bc.build_target for bc in builder_configs])
 
-    patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes,
-                                                include_files=True)
-    affected_paths = self.m.cros_relevance.get_affected_paths(patch_sets)
-    for p in affected_paths:
-      path = req.affected_paths.add()
-      path.path = p
+      patch_sets = self.m.gerrit.fetch_patch_sets(gerrit_changes,
+                                                  include_files=True)
+      affected_paths = self.m.cros_relevance.get_affected_paths(patch_sets)
+      for p in affected_paths:
+        path = req.affected_paths.add()
+        path.path = p
 
-    resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(req)
-    relevant_build_targets = [bt.build_target for bt in resp.build_targets]
+      resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(req)
+      relevant_build_targets = [bt.build_target for bt in resp.build_targets]
 
-    # Bazel builders need to be forced relevant for changes to the
-    # 'chromiumos/bazel' repo.
-    relevant_bazel_builder_configs = []
-    if any(gc.project == 'chromiumos/bazel' for gc in gerrit_changes):
-      relevant_bazel_builder_configs = [
+      # Bazel builders need to be forced relevant for changes to the
+      # 'chromiumos/bazel' repo.
+      relevant_bazel_builder_configs = []
+      if any(gc.project == 'chromiumos/bazel' for gc in gerrit_changes):
+        relevant_bazel_builder_configs = [
+            bc for bc in builder_configs
+            if bc.build.build_images.build_images_orchestrator ==
+            BuilderConfig.BuildOrchestrator.BAZEL
+        ]
+
+      self.cros_query_relevant_builder_configs = [
           bc for bc in builder_configs
-          if bc.build.build_images.build_images_orchestrator ==
-          BuilderConfig.BuildOrchestrator.BAZEL
+          if bc.build_target in relevant_build_targets or
+          bc in relevant_bazel_builder_configs
       ]
+      return self.cros_query_relevant_builder_configs
 
-    return [
-        bc for bc in builder_configs
-        if bc.build_target in relevant_build_targets or
-        bc in relevant_bazel_builder_configs
-    ]
+    except recipe_api.StepFailure:
+      # If there is a failure calling the relevancy service, fallback to
+      # scheduling all builders.
+      return builder_configs
 
   def _get_necessary_cq_child_specs(
       self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
@@ -328,6 +340,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
         # If we made it this far, we need to schedule the build.
         filtered_child_specs.append(child_spec)
+
+      # TODO(b/316010599): Get data from cros-query experiment.
+      # Eventually, this will be taken into account when build planning.
+      # In order to simplify things, we are going to start with only first CQ
+      # attempts which do not configure additional builders via footer.
+      if not (is_retry or forced_relevant):
+        _ = self.get_relevant_builder_configs(
+            [b for b in builder_configs if b.id.name in necessary_builders],
+            gerrit_changes)
 
       necessary_child_specs = filtered_child_specs
 
