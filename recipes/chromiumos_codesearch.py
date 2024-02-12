@@ -186,7 +186,7 @@ def GenTests(api):
   # A more general substring match of 'amd64' would be too permissive.
   # We need both of those forms because the underlying implementation in the
   # infra/infra codesearch module is subject to change.
-  tool_arg_amd64_regex = re.compile('^(--tool-arg=)?amd64')
+  tool_arg_amd64_regex = re.compile('^(--tool-arg=.*)?amd64')
 
   yield api.build_menu.test(
       'basic',
