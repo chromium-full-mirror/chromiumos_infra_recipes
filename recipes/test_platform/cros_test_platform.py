@@ -516,13 +516,6 @@ def _enumerate_cft_tests(api, properties, requests):
       test_finder_result = api.cros_tool_runner.find_tests(
           ctr_test_finder_request)
 
-      # Autotest sharding to be skipped for for tast  tests running with autotest wrapper
-      skip_autotest_sharding = False
-      for test_suite in test_finder_result.test_suites:
-        for test_case in test_suite.test_cases.test_cases:
-          if test_case.id.value.startswith('tauto.tast'):
-            skip_autotest_sharding = True  # pragma: no cover
-
       suite_name = ''
       if r.test_plan.suite:
         suite_name = r.test_plan.suite[0].name
@@ -549,10 +542,36 @@ def _enumerate_cft_tests(api, properties, requests):
         autotest_invocations = _build_tast_invocations(api, properties, r,
                                                        test_suites, suite_name,
                                                        args)
-      elif not skip_autotest_sharding and r.test_plan.enable_autotest_sharding:
-        autotest_invocations = _build_tast_invocations(api, properties, r,
-                                                       test_suites, suite_name,
-                                                       args)  # pragma: no cover
+      elif r.test_plan.enable_autotest_sharding:
+        # Sort test cases into test suites to be sharded or skipped based on whether their IDs start with 'tauto.tast'.
+        test_cases_skip_shard = []
+        test_cases_shard_eligible = []
+
+        for test_suite in test_finder_result.test_suites:
+          for test_case in test_suite.test_cases.test_cases:
+            if test_case.id.value.startswith('tauto.tast'):
+              test_cases_skip_shard.append(test_case)  # pragma: no cover
+            else:
+              test_cases_shard_eligible.append(test_case)
+
+        test_suites_shard_eligible = [
+            ctr_test_suite.TestSuite(
+                test_cases=ctr_test_case.TestCaseList(
+                    test_cases=test_cases_shard_eligible))
+        ]
+        test_suites_skip_sharding = [
+            ctr_test_suite.TestSuite(
+                test_cases=ctr_test_case.TestCaseList(
+                    test_cases=test_cases_skip_shard))
+        ]
+
+        autotest_invocations_sharded = _build_tast_invocations(
+            api, properties, r, test_suites_shard_eligible, suite_name, args)
+        autotest_invocations_unsharded = _build_autotest_invocations(
+            test_suites_skip_sharding, suite_name, args)
+
+        autotest_invocations = autotest_invocations_sharded + autotest_invocations_unsharded
+
       else:
         autotest_invocations = _build_autotest_invocations(
             test_suites, suite_name, args)
@@ -1819,7 +1838,8 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   scheduling=_test_scheduling(), individual_test=False,
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
-                  total_shards=0, suite_name=None):
+                  total_shards=0, suite_name=None,
+                  enable_autotest_sharding=False):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
           build_target=BuildTarget(
@@ -1853,10 +1873,10 @@ def _test_request(request_name_tag, build_target='foo-build-target',
     #  Prevent mangling suite name
     request_suite_name = suite_name
   return Request(
-      params=params,
-      test_plan=Request.TestPlan(suite=[Request.Suite(name=request_suite_name)],
-                                 tag_criteria=tag_criteria, seed=seed,
-                                 total_shards=total_shards))
+      params=params, test_plan=Request.TestPlan(
+          suite=[Request.Suite(name=request_suite_name)],
+          tag_criteria=tag_criteria, seed=seed, total_shards=total_shards,
+          enable_autotest_sharding=enable_autotest_sharding))
 
 
 # pylint: disable=dangerous-default-value
@@ -1864,13 +1884,15 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       individual_test=False, individual_test_name=None,
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
-                      total_shards=0, suite_name=None):
+                      total_shards=0, suite_name=None,
+                      enable_autotest_sharding=False):
   test_req = _test_request(request_name, build_target,
                            individual_test=individual_test,
                            individual_test_name=individual_test_name,
                            tag_criteria=tag_criteria, seed=seed,
                            software_deps=software_deps, retries=retries,
-                           total_shards=total_shards, suite_name=suite_name)
+                           total_shards=total_shards, suite_name=suite_name,
+                           enable_autotest_sharding=enable_autotest_sharding)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -3238,6 +3260,24 @@ def GenTests(api):
           CrosTestPlatformProperties(
               requests={'default': _cft_test_request('foo')},
               config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'cft-suite-without-tags-execution-with-passed-tasks-enabled-autotest-sharding',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request('foo', enable_autotest_sharding=True)
+              }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
