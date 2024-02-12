@@ -15,6 +15,7 @@ from recipe_engine.recipe_api import RecipeApi, StepFailure
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.sdk_cache_state import SdkCacheState
+from PB.chromite.api import sysroot
 from PB.chromite.api import toolchain
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
 from PB.chromite.api.sdk import CreateRequest as CreateSdkRequest
@@ -144,6 +145,11 @@ class CrosSdkApi(RecipeApi):
   @property
   def chrome_root(self):
     return str(self._chrome_root) if self._chrome_root else None
+
+  @property
+  def default_sdk_sysroot(self):
+    """Returns the default SDK Sysroot."""
+    return sysroot.Sysroot(path='/')
 
   @property
   def sdk_cache_state(self):
@@ -585,8 +591,14 @@ class CrosSdkApi(RecipeApi):
         # Context: If a package failed to compile, the Build API call will have
         # a return code of 2 which does not automatically throw an exception.
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
+        cl_affected_packages = []
+        if pkgs and self.m.workspace_util.patch_sets:
+          cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
+              self.default_sdk_sysroot, self.chroot,
+              self.m.workspace_util.patch_sets, include_rev_deps=True)
         # TODO(b/271120919): Specify that it is a host package.
-        self.m.failures.set_compile_failed_packages(pres, pkgs)
+        self.m.failures.set_compile_failed_packages(pres, pkgs,
+                                                    cl_affected_packages)
       except StepFailure as e:
         # If the update fails, also delete the SDK.
         self._remove_chroot(name='UpdateSDK failure')

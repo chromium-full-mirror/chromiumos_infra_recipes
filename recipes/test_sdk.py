@@ -8,6 +8,11 @@
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
+from google.protobuf import json_format
+
+from PB.chromite.api import depgraph
+from PB.chromite.api import sysroot
+from PB.chromite.api import test
 from PB.chromite.api.test import BuildTargetUnitTestRequest
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common
@@ -30,6 +35,7 @@ DEPS = [
     'cros_sdk',
     'easy',
     'failures',
+    'workspace_util',
 ]
 
 
@@ -68,7 +74,12 @@ def RunSteps(api: RecipeApi):
           request, response_lambda=api.cros_build_api.failed_pkg_data_names,
           pkg_logs_lambda=api.cros_build_api.failed_pkg_logs)
       pkgs = api.cros_build_api.failed_pkg_logs(request, response)
-      api.failures.set_test_failed_packages(step, pkgs)
+      cl_affected_packages = []
+      if pkgs and api.workspace_util.patch_sets:
+        cl_affected_packages = api.cros_relevance.get_package_dependencies(
+            api.cros_sdk.default_sdk_sysroot, api.cros_sdk.chroot,
+            api.workspace_util.patch_sets, include_rev_deps=True)
+      api.failures.set_test_failed_packages(step, pkgs, cl_affected_packages)
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()
@@ -117,5 +128,31 @@ def GenTests(api: RecipeTestApi):
       'builder-no-longer-exists',
       api.buildbucket.ci_build(builder='deleted-builder'),
       api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
+      status='FAILURE',
+  )
+
+  failed_package_info = common_pb2.PackageInfo(category='foo',
+                                               package_name='bar',
+                                               version='1.0-r1')
+  yield api.test(
+      'unit-test-failure-with-attribution',
+      api.buildbucket.try_build(builder='host-packages-cq'),
+      api.build_menu.depgraph_relevance_return(
+          'validate SDK reuse.depgraph relevance check', pointless=False),
+      api.cros_build_api.set_api_return(
+          'run SDK package unit tests',
+          endpoint='TestService/BuildTargetUnitTest',
+          data=json_format.MessageToJson(
+              test.BuildTargetUnitTestResponse(failed_package_data=[
+                  sysroot.FailedPackageData(
+                      name=failed_package_info, log_path=common_pb2.Path(
+                          path='/all/your/package/foo:bar-1.0-r1'))
+              ]))),
+      api.cros_build_api.set_api_return(
+          'run SDK package unit tests.get package dependencies',
+          'DependencyService/List',
+          json_format.MessageToJson(
+              depgraph.ListResponse(package_deps=[failed_package_info]))),
+      cq=True,
       status='FAILURE',
   )
