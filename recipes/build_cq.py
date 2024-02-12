@@ -49,118 +49,143 @@ GERRIT_CHANGE = GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)
 EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 
+class ArtifactUploader:
+  """State to control the behavior of `upload_artifacts_on_failure`."""
+
+  def __init__(self):
+    self.uploaded_artifacts = None
+    self.skip_upload = False
+
+  def final_upload(self, api: RecipeApi, config: BuilderConfig,
+                   step_failure: Optional[StepFailure] = None) -> None:
+    """Runs the final upload step.
+
+    If a non-None step_failure was passed, this step will raise that once the
+    upload is complete.
+    """
+    if self.skip_upload:
+      return
+
+    # Set skip_upload prior to uploading, since uploading may `raise`, and
+    # this type is used in exception handlers. No need to have multiple
+    # calls to the 'final' `upload_artifacts`.
+    self.skip_upload = True
+    try:
+      api.build_menu.upload_artifacts(
+          config, name='final upload artifacts',
+          previously_uploaded_artifacts=self.uploaded_artifacts,
+          ignore_breakpad_symbol_generation_errors=step_failure is not None)
+    except StepFailure as sf:
+      # If uploading artifacts threw an exception, surface that exception
+      # unless build_and_test_images above threw an exception, in which
+      # case we want to surface *that* exception for accuracy in
+      # reporting the build (and it's likely that upload artifacts failed
+      # as a result of those previous issues).
+      step_failure = step_failure or sf
+
+    # Finally, if there was an exception caught above in building the
+    # image, but the upload succeeded, raise that exception.
+    if step_failure:
+      raise step_failure
+
+
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
 
   api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot() as is_relevant:
-    if is_relevant:
-      return DoRunSteps(api, config)
-    return RawResult(status=common.SUCCESS,
-                     summary_markdown='Build was not relevant.')
+  with api.build_menu.configure_builder() as config:
+    uploader = ArtifactUploader()
+    with api.build_menu.setup_workspace():
+      try:
+        is_relevant = api.build_menu.setup_chroot()
+        if is_relevant:
+          return DoRunSteps(api, config, uploader)
+        uploader.skip_upload = True
+        return RawResult(status=common.SUCCESS,
+                         summary_markdown='Build was not relevant.')
+      except StepFailure as sf:
+        uploader.final_upload(api, config, step_failure=sf)
+        raise RuntimeError(  # pragma: nocover
+            'final_upload() should have reraised sf') from sf
+      finally:
+        uploader.final_upload(api, config, step_failure=None)
 
 
-def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
+def DoRunSteps(api: RecipeApi, config: BuilderConfig,
+               uploader: ArtifactUploader) -> Optional[RawResult]:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   if env_info.pointless:
+    # No artifacts are ever necessary from pointless builds.
+    uploader.skip_upload = True
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was pointless.')
 
   packages = env_info.packages
 
-  failing_build_exception = None
-  uploaded_artifacts = None
-
   upload_prebuilts_from_cq = 'chromeos.build_cq.upload_prebuilts' in \
-      api.buildbucket.build.input.experiments
+        api.buildbucket.build.input.experiments
 
-  try:
-    api.build_menu.bootstrap_sysroot(config)
-    if api.build_menu.install_packages(config, packages):
-      # Create the test containers async.
+  api.build_menu.bootstrap_sysroot(config)
+  if api.build_menu.install_packages(config, packages):
+    # Create the test containers async.
 
-      with api.step.nest('upload prebuilts'), api.context(infra_steps=True):
-        upload = False
-        with api.step.nest(
-            'Check if the CQ uploads the prebuilts') as presentation:
-          if upload_prebuilts_from_cq:
-            if len(api.src_state.gerrit_changes) == 1:
-              if api.chrome.is_chrome_pupr_atomic_uprev(
-                  api.src_state.gerrit_changes[0]):
-                presentation.step_text = \
-                    'decided to upload by chrome pupr change'
-                upload = True
-              else:
-                presentation.step_text = \
-                    'decided not to upload: not Chrome pupr atomic uprev'
+    with api.step.nest('upload prebuilts'), api.context(infra_steps=True):
+      upload = False
+      with api.step.nest(
+          'Check if the CQ uploads the prebuilts') as presentation:
+        if upload_prebuilts_from_cq:
+          if len(api.src_state.gerrit_changes) == 1:
+            if api.chrome.is_chrome_pupr_atomic_uprev(
+                api.src_state.gerrit_changes[0]):
+              presentation.step_text = \
+                  'decided to upload by chrome pupr change'
+              upload = True
+            else:
+              presentation.step_text = \
+                  'decided not to upload: not Chrome pupr atomic uprev'
 
-        if upload:
-          with api.step.nest('do upload'):
-            api.build_menu.upload_chrome_prebuilts(config)
+      if upload:
+        with api.step.nest('do upload'):
+          api.build_menu.upload_chrome_prebuilts(config)
 
-      test_containers_runner = api.future_utils.create_parallel_runner()
-      test_containers_runner.run_function_async(
-          lambda cfg, _: api.build_menu.create_containers(cfg), config)
+    test_containers_runner = api.future_utils.create_parallel_runner()
+    test_containers_runner.run_function_async(
+        lambda cfg, _: api.build_menu.create_containers(cfg), config)
 
-      api.build_menu.build_images(config)
+    api.build_menu.build_images(config)
 
-      # This Recipe support async unit testing by doing an initial upload of
-      # artifacts after buing images and before running unit tests. This allows
-      # the orchestrator use the image artifacts without waiting for unit
-      # testing to complete. A final upload will be done at the end of the
-      # build, for any additional artifacts produced by unit testing, or if an
-      # exception was thrown.
-      uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
+    # This Recipe support async unit testing by doing an initial upload of
+    # artifacts after buing images and before running unit tests. This allows
+    # the orchestrator use the image artifacts without waiting for unit
+    # testing to complete. A final upload will be done at the end of the
+    # build, for any additional artifacts produced by unit testing, or if an
+    # exception was thrown.
+    uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
+    uploader.uploaded_artifacts = uploaded_artifacts
 
-      # Pause and throw if test containers failed to upload. Note that this
-      # is done before the image_artifacts_uploaded property is set, as
-      # containers need to be present for testing.
-      test_containers_runner.wait_for_and_throw()
+    # Pause and throw if test containers failed to upload. Note that this
+    # is done before the image_artifacts_uploaded property is set, as
+    # containers need to be present for testing.
+    test_containers_runner.wait_for_and_throw()
 
-      # Set a property to indicate image artifacts are uploaded, so CQ
-      # orchestrator can poll for this property.
-      api.easy.set_properties_step(image_artifacts_uploaded=True)
-      image_artifacts_uploaded_time = timestamp_pb2.Timestamp()
-      image_artifacts_uploaded_time.FromDatetime(api.time.utcnow())
-      api.easy.set_properties_step(
-          image_artifacts_uploaded_time=json_format.MessageToDict(
-              image_artifacts_uploaded_time))
+    # Set a property to indicate image artifacts are uploaded, so CQ
+    # orchestrator can poll for this property.
+    api.easy.set_properties_step(image_artifacts_uploaded=True)
+    image_artifacts_uploaded_time = timestamp_pb2.Timestamp()
+    image_artifacts_uploaded_time.FromDatetime(api.time.utcnow())
+    api.easy.set_properties_step(
+        image_artifacts_uploaded_time=json_format.MessageToDict(
+            image_artifacts_uploaded_time))
 
-      # We have no steps following unit_test_images, so we don't need to
-      # check the return value.
-      api.build_menu.unit_test_images(config)
+    # We have no steps following unit_test_images, so we don't need to
+    # check the return value.
+    api.build_menu.unit_test_images(config)
 
-      # Publish image and package sizes.
-      # This method, as written, is expected to never raise exceptions.
-      api.build_menu.publish_image_size_data(config)
-  except StepFailure as sf:
-    # If we catch an exception, swallow it and store it so the next steps can
-    # still occur (as stated above there is value in uploading the artifact even
-    # in cases of build failure for debug purposes).
-    failing_build_exception = sf
-
-  # Always upload the artifacts, regardless of whether the above threw an
-  # exception.
-  try:
-    api.build_menu.upload_artifacts(
-        config, name='final upload artifacts',
-        previously_uploaded_artifacts=uploaded_artifacts,
-        ignore_breakpad_symbol_generation_errors=failing_build_exception
-        is not None)
-  except StepFailure as sf:
-    # If uploading artifacts threw an exception, surface that exception unless
-    # build_and_test_images above threw an exception, in which case we want to
-    # surface *that* exception for accuracy in reporting the build (and it's
-    # likely that upload artifacts failed as a result of those previous issues).
-    raise failing_build_exception or sf
-
-  # Finally, if there was an exception caught above in building the image, but
-  # the upload succeeded, raise that exception.
-  if failing_build_exception:
-    raise failing_build_exception  # pylint: disable=raising-bad-type
+    # Publish image and package sizes.
+    # This method, as written, is expected to never raise exceptions.
+    api.build_menu.publish_image_size_data(config)
   return None
 
 
@@ -319,6 +344,20 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.build_menu.set_build_api_return(
           'final upload artifacts.call artifacts service',
           'ArtifactsService/Get', retcode=1),
+      cq=True,
+      build_target='coral',
+      status='FAILURE',
+  )
+
+  # The CQ should upload artifacts even if sysroot setup/update fails; some
+  # artifacts (specifically toolchain ones) may still be usable in that case.
+  yield api.build_menu.test(
+      'setup-sysroot-fail',
+      api.post_check(post_process.DoesNotRun, 'build images'),
+      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
+      api.post_check(post_process.MustRun, 'final upload artifacts'),
+      api.build_menu.set_build_api_return('update sdk', 'SdkService/Update',
+                                          retcode=1),
       cq=True,
       build_target='coral',
       status='FAILURE',

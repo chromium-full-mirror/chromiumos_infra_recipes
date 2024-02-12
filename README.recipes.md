@@ -12037,9 +12037,9 @@ Recipe for building public ChromiumOS images.
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#65)(api: RecipeApi, config: BuilderConfig):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#115)(api: RecipeApi, config: BuilderConfig, uploader: ArtifactUploader):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#52)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#92)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#19): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_version](#recipe_modules-cros_version), [factory\_util](#recipe_modules-factory_util), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
