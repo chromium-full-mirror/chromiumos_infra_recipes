@@ -15,7 +15,6 @@ from typing import Any, Dict, Generator, Iterable, List, Optional
 from google.protobuf import json_format
 
 from PB.chromite.api import sdk as sdk_pb2
-from PB.chromite.api import toolchain as toolchain_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
@@ -59,8 +58,6 @@ PROPERTIES = build_sdk_pb2.BuildSDKProperties
 SDK_BUILD_TARGET = 'amd64-host'
 # SDK_ARCH is the architecture of the SDK_BUILD_TARGET.
 SDK_ARCH = 'amd64'
-# Path to the SDK sysroot in the chroot.
-SDK_SYSROOT = f'/build/{SDK_BUILD_TARGET}'
 
 # LLVM_NEXT_USE_FLAG is the name of the USE flag for llvm-next builds.
 LLVM_NEXT_USE_FLAG = 'llvm-next'
@@ -175,7 +172,6 @@ class BuildSDKRun:
     with self._setup():
       self._build_sdk_packages()
       self._build_toolchain()
-      self._install_toolchains()
       self._create_sdk_tarball()
       self._create_sdk_manifest()
       self._upload_prebuilts()
@@ -229,22 +225,6 @@ class BuildSDKRun:
       self._toolchain_tarball_paths.append(path)
       self.m.path.mock_add_file(path)
 
-  def _install_toolchains(self) -> None:
-    """Install cross-compiling toolchains into the SDK.
-
-    Note: this assumes you've previously run BuildSdkToolchain.
-    """
-    request = toolchain_pb2.SetupToolchainsRequest(
-        chroot=self.m.cros_sdk.chroot,
-        targets=[
-            toolchain_pb2.SetupToolchainsRequest.ToolchainTarget(
-                target='all',
-            )
-        ],
-        sysroot_path=SDK_SYSROOT,
-    )
-    self.m.cros_build_api.ToolchainService.SetupToolchains(request)
-
   def _create_sdk_tarball(self) -> None:
     """Create a tarball containing a previously built SDK.
 
@@ -270,7 +250,7 @@ class BuildSDKRun:
     request = sdk_pb2.CreateManifestFromSdkRequest(
         chroot=self.m.cros_sdk.chroot,
         sdk_path=common_pb2.Path(
-            path=SDK_SYSROOT,
+            path=f'/build/{SDK_BUILD_TARGET}',
             location=common_pb2.Path.INSIDE,
         ),
         dest_dir=common_pb2.Path(
@@ -697,8 +677,6 @@ def GenTests(
                      'call chromite.api.SdkService/BuildPrebuilts'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkToolchain'),
-      api.post_check(post_process.StepSuccess,
-                     'call chromite.api.ToolchainService/SetupToolchains'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkTarball'),
       api.post_check(post_process.StepSuccess,
