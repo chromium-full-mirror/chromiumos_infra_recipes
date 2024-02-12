@@ -8,6 +8,9 @@ Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 """
 
+import re
+from typing import Optional
+
 from PB.chromite.api import sysroot as sysroot_pb2
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -29,12 +32,16 @@ DEPS = [
     'recipe_engine/time',
     'build_menu',
     'cros_build_api',
+    'cros_infra_config',
     'cros_sdk',
     'cros_source',
     'easy',
 ]
 
 PROPERTIES = ChromiumosCodesearchProperties
+
+# Experiment to pass target architecture into clang tooling.
+_CLANG_TARGET_ARCH_EXPERIMENT = 'chromeos.chromeos_codesearch.pass_target_arch_to_clang'
 
 
 def RunSteps(api, properties):
@@ -117,7 +124,9 @@ def RunSteps(api, properties):
       clang_dir = api.codesearch.clone_clang_tools(cache_dir)
 
       # Run the translation_unit tool in chromiumos/src dirs.
-      target_architecture = _get_target_architecture(api, build_target)
+      target_architecture: Optional[str] = None
+      if _CLANG_TARGET_ARCH_EXPERIMENT in api.cros_infra_config.experiments:
+        target_architecture = _get_target_architecture(api, build_target)
       api.codesearch.run_clang_tool(
           clang_dir=clang_dir, run_dirs=[
               chromiumos_src_dir.join('platform2'),
@@ -173,6 +182,12 @@ def _get_target_architecture(api: recipe_api.RecipeApi,
 
 # TODO(crbug/1284439): Add more tests.
 def GenTests(api):
+  # tool_arg_amd64_regex should match '--tool-arg=amd64' and just 'amd64'.
+  # A more general substring match of 'amd64' would be too permissive.
+  # We need both of those forms because the underlying implementation in the
+  # infra/infra codesearch module is subject to change.
+  tool_arg_amd64_regex = re.compile('^(--tool-arg=)?amd64')
+
   yield api.build_menu.test(
       'basic',
       api.buildbucket.generic_build(builder='amd64-generic-codesearch'),
@@ -187,9 +202,11 @@ def GenTests(api):
           sync_generated_files=True,
           experimental=False,
       ),
-      api.post_check(post_process.StepCommandContains,
-                     'run translation_unit clang tool',
-                     ['--tool-arg', '-arch', '--tool-arg', 'amd64']))
+      api.post_check(
+          post_process.StepCommandDoesNotContain,
+          'run translation_unit clang tool',
+          [tool_arg_amd64_regex],
+      ))
 
   yield api.build_menu.test(
       'repo sync to manifest_hash',
@@ -212,4 +229,18 @@ def GenTests(api):
   "id": "d3adb33f",
   "ref": "refs/heads/snapshot"
 }'''),
+  )
+
+  yield api.build_menu.test(
+      'with-target-arch-experiment',
+      api.buildbucket.generic_build(
+          builder='amd64-generic-codesearch',
+          experiments=(_CLANG_TARGET_ARCH_EXPERIMENT,),
+      ),
+      api.post_check(
+          post_process.StepCommandContains,
+          'run translation_unit clang tool',
+          [tool_arg_amd64_regex],
+      ),
+      api.post_process(post_process.DropExpectation),
   )
