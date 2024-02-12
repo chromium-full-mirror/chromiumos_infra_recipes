@@ -48,7 +48,9 @@ DEPS = [
 
 PROPERTIES = BuildFirmwareHistoricalDbProperties
 PRECONDITION_FAILURE = 412
-
+HISTORICAL_DB = 'historical.bin'
+TOKEN_BUCKET = 'gs://chromeos-localmirror/cros_ec/tokens'
+TOKEN_VERSION_BUCKET = f'{TOKEN_BUCKET}/version'
 
 def RunSteps(api, properties):
   with api.build_menu.configure_builder(
@@ -82,6 +84,41 @@ def RunSteps(api, properties):
     UpdateHistoricalTokenDatabase(api, location, uploaded_artifacts)
 
 
+def _GetStatInfo(api: RecipeApi, gsFile: str, field: str):
+
+  def _GetField(name, output):
+    m = re.search(r'%s:\s*(.+)' % re.escape(name), output.stdout)
+    if m:
+      return m.group(1)
+    raise StepFailure('Field "%s" missing in "%s"' % (name, output.stdout))
+
+  statOut = api.gsutil.stat(
+      gsFile,
+      stdout=api.raw_io.output_text(),
+  )
+
+  return _GetField(field, statOut)
+
+
+def _GetGenerationId(api: RecipeApi, gsFile: str):
+  return int(_GetStatInfo(api, gsFile, 'Generation'))
+
+
+def CopyVersionedDatabase(api: RecipeApi, source: str):
+  with api.step.nest('Generate versioned database name'):
+    file_hash = api.file.file_hash(source, test_data='deadbeef')
+    versionedFileName = f'historical.{file_hash}.bin'
+    api.gcloud.storage_cp(
+        source,
+        f'{TOKEN_VERSION_BUCKET}/{versionedFileName}',
+        flags=[
+            '--if-generation-match=0',
+            '--predefined-acl=publicRead',
+        ],
+        ok_ret=(0, PRECONDITION_FAILURE),
+    )
+
+
 def UpdateHistoricalTokenDatabase(
     api: RecipeApi,
     location: common_pb2.FwLocation,
@@ -105,12 +142,10 @@ def UpdateHistoricalTokenDatabase(
 
     with api.step.nest('Update Historical Token Database'):
       if 'FIRMWARE_TOKEN_DATABASE' in uploaded_artifacts.files_by_artifact:
-        historical_db = 'historical.bin'
         temp_dir = api.path.mkdtemp()
         token_dir = api.path.join(temp_dir, 'token')
         api.file.ensure_directory('Create token download directory', token_dir)
-        temp_historical_db = api.path.join(token_dir, historical_db)
-        token_bucket = 'gs://chromeos-localmirror/cros_ec/tokens'
+        temp_historical_db = api.path.join(token_dir, HISTORICAL_DB)
 
         unified_dbs = uploaded_artifacts.files_by_artifact[
             'FIRMWARE_TOKEN_DATABASE']
@@ -124,23 +159,12 @@ def UpdateHistoricalTokenDatabase(
           )
           local_unified_dbs.append(f'{token_dir}/{db}')
 
-        def _GetField(name, output):
-          m = re.search(r'%s:\s*(.+)' % re.escape(name), output.stdout)
-          if m:
-            return m.group(1)
-          raise StepFailure('Field "%s" missing in "%s"' %
-                            (name, output.stdout))
-
         retry_count = 0
         retval = PRECONDITION_FAILURE
         while retry_count < 3 and retval == PRECONDITION_FAILURE:
-          stat_out = api.gsutil.stat(
-              f'{token_bucket}/{historical_db}',
-              stdout=api.raw_io.output_text(),
-          )
-          generation_id = int(_GetField('Generation', stat_out))
-
-          api.gsutil.download_url(f'{token_bucket}/{historical_db}',
+          generation_id = _GetGenerationId(api,
+                                           f'{TOKEN_BUCKET}/{HISTORICAL_DB}')
+          api.gsutil.download_url(f'{TOKEN_BUCKET}/{HISTORICAL_DB}',
                                   temp_historical_db)
 
           pw_cmd = [
@@ -165,7 +189,7 @@ def UpdateHistoricalTokenDatabase(
 
           retval = api.gcloud.storage_cp(
               temp_historical_db,
-              f'{token_bucket}/{historical_db}',
+              f'{TOKEN_BUCKET}/{HISTORICAL_DB}',
               flags=[
                   f'--if-generation-match={generation_id}',
                   '--predefined-acl=publicRead',
@@ -177,7 +201,9 @@ def UpdateHistoricalTokenDatabase(
             api.time.sleep(1)
 
         if retval == PRECONDITION_FAILURE and retry_count == 3:
-          raise StepFailure(f'Failed to update {token_bucket}/{historical_db}')
+          raise StepFailure(f'Failed to update {TOKEN_BUCKET}/{HISTORICAL_DB}')
+
+        CopyVersionedDatabase(api, temp_historical_db)
 
 
 def GenTests(api):

@@ -12135,9 +12135,11 @@ This recipe builds firmware and merges its unified database with the
 historical database in GCS. This database maintenance runs on a
 24 hour cadence.
 
-&mdash; **def [RunSteps](/recipes/build_firmware_historical_db.py#53)(api, properties):**
+&mdash; **def [CopyVersionedDatabase](/recipes/build_firmware_historical_db.py#107)(api: RecipeApi, source: str):**
 
-&mdash; **def [UpdateHistoricalTokenDatabase](/recipes/build_firmware_historical_db.py#85)(api: RecipeApi, location: common_pb2.FwLocation, uploaded_artifacts: UploadedArtifacts):**
+&mdash; **def [RunSteps](/recipes/build_firmware_historical_db.py#55)(api, properties):**
+
+&mdash; **def [UpdateHistoricalTokenDatabase](/recipes/build_firmware_historical_db.py#122)(api: RecipeApi, location: common_pb2.FwLocation, uploaded_artifacts: UploadedArtifacts):**
 
 Updates Historical Token Database in GCS
 
