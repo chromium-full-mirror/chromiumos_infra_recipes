@@ -4311,6 +4311,30 @@
       "update_chroot": {
         "run_spec": "RUN"
       }
+    },
+    {
+      "id": {
+        "bucket": "infra",
+        "name": "build-chromiumos-sdk",
+        "type": "SDK"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {
+          "toolchain": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "CLANG_CRASH_DIAGNOSES"
+                ],
+                "gsLocations": [
+                  "chromeos-toolchain-artifacts/clang-crash-diagnoses/{label}/{builder_name}/{build_id}"
+                ]
+              }
+            ]
+          }
+        }
+      }
     }
   ]
 }

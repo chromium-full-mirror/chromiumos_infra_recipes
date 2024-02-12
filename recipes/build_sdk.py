@@ -30,6 +30,7 @@ from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
+from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -44,6 +45,7 @@ DEPS = [
     'build_menu',
     'cros_build_api',
     'cros_sdk',
+    'deferrals',
     'easy',
     'key_value_store',
     'src_state',
@@ -169,7 +171,7 @@ class BuildSDKRun:
   def run(self) -> result_pb2.RawResult:
     """Run the main logic for this builder."""
     # Determine which commit
-    with self._setup():
+    with self._setup_with_auto_artifact_upload():
       self._build_sdk_packages()
       self._build_toolchain()
       self._create_sdk_tarball()
@@ -183,17 +185,27 @@ class BuildSDKRun:
       return self._create_build_result(None)
 
   @contextlib.contextmanager
-  def _setup(self) -> Generator:
-    """Configure the builder and setup the workspace and chroot."""
+  def _setup_with_auto_artifact_upload(self) -> Generator:
+    """Configure the builder and setup the workspace and chroot.
+
+    This also uploads toolchain artifacts, even if any step executed within
+    this context manager fails.
+    """
     commit = None
     if self.properties.manifest_branch:
       commit = self.m.src_state.external_manifest.as_gitiles_commit_proto
       commit.ref = 'refs/heads/{}'.format(self.properties.manifest_branch)
-    with self.m.build_menu.configure_builder(missing_ok=True, commit=commit), \
-      self.m.build_menu.setup_workspace_and_chroot(
-        bootstrap_chroot=True,
-        replace=True):
-      yield
+    with self.m.build_menu.configure_builder(missing_ok=True,
+                                             commit=commit) as config, \
+         self.m.deferrals.raise_exceptions_at_end():
+      with self.m.deferrals.defer_exceptions([StepFailure]), \
+          self.m.build_menu.setup_workspace_and_chroot(
+            bootstrap_chroot=True, replace=True):
+        result = yield config
+      with self.m.deferrals.defer_exceptions([StepFailure]):
+        self.m.build_menu.upload_artifacts(config,
+                                           name='upload toolchain artifacts')
+    return result
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
@@ -780,4 +792,55 @@ def GenTests(
       api.post_check(post_process.LogContains, 'schedule uprev', 'request',
                      ['"branch_policies":', '"email": "sundar@google.com"']),
       api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.build_menu.test(
+      'upload-toolchain-artifacts-runs-on-success',
+      api.properties(launch_pupr=True),
+      api.post_check(post_process.StepSuccess, 'upload prebuilts'),
+      api.post_check(post_process.StepSuccess, 'upload toolchain artifacts'),
+      api.post_process(post_process.DropExpectation),
+      builder='build-chromiumos-sdk',
+  )
+
+  yield api.build_menu.test(
+      'upload-toolchain-artifacts-runs-on-failure',
+      api.properties(launch_pupr=True),
+      api.build_menu.set_build_api_return('update sdk', 'SdkService/Update',
+                                          retcode=1),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.StepSuccess, 'upload toolchain artifacts'),
+      api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+      builder='build-chromiumos-sdk',
+  )
+
+  yield api.build_menu.test(
+      'upload-toolchain-artifacts-upload-fails',
+      api.properties(launch_pupr=True),
+      api.build_menu.set_build_api_return(
+          'upload toolchain artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1),
+      api.post_check(post_process.MustRun, 'upload toolchain artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload toolchain artifacts (2)'),
+      api.post_process(post_process.DropExpectation),
+      # Infra failures are expected here, similar to build_cq.py.
+      status='INFRA_FAILURE',
+      builder='build-chromiumos-sdk',
+  )
+
+  yield api.build_menu.test(
+      'upload-toolchain-artifacts-upload-fails-and-step-fails',
+      api.properties(launch_pupr=True),
+      api.build_menu.set_build_api_return('update sdk', 'SdkService/Update',
+                                          retcode=1),
+      api.build_menu.set_build_api_return(
+          'upload toolchain artifacts.call artifacts service',
+          'ArtifactsService/Get', retcode=1),
+      api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
+      api.post_check(post_process.MustRun, 'upload toolchain artifacts'),
+      api.post_process(post_process.DropExpectation),
+      # Infra failures are expected here, similar to build_cq.py.
+      status='INFRA_FAILURE',
+      builder='build-chromiumos-sdk',
   )
