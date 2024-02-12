@@ -13,12 +13,30 @@ from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
-DEPS = ['recipe_engine/properties', 'recipe_engine/step', 'cros_build_api']
+DEPS = [
+    'recipe_engine/properties',
+    'recipe_engine/step',
+    'cros_build_api',
+    'git',
+    'src_state',
+]
 
 PROPERTIES = KeyManagerProperties
 
 
 def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
+  with api.step.nest('set up dependencies'):
+    api.git.clone(
+        'https://chromium.googlesource.com/chromiumos/chromite/',
+        target_path=api.src_state.workspace_path.join('infra/chromite-HEAD'),
+        branch='main', single_branch=True)
+
+    api.git.clone(
+        'https://chromium.googlesource.com/chromiumos/chromite/',
+        target_path=api.src_state.workspace_path.join('infra/chromite'),
+        branch='main', single_branch=True)
+
+
   with api.step.nest('create PreMP keys'):
     for create_premp_keys_request in properties.create_premp_keys_requests:
       api.cros_build_api.SigningService.CreatePreMPKeys(

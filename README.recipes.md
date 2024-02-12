@@ -15067,12 +15067,12 @@ Recipe to enforce go/kernel-upstream-tracking-process
 &mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#69)(api: RecipeApi):**
 ### *recipes* / [key\_manager](/recipes/key_manager.py)
 
-[DEPS](/recipes/key_manager.py#16): [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/key_manager.py#16): [cros\_build\_api](#recipe_modules-cros_build_api), [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for performing various manipulations on ChromeOS signing keys.
 
-&mdash; **def [RunSteps](/recipes/key_manager.py#21)(api: RecipeApi, properties: KeyManagerProperties):**
+&mdash; **def [RunSteps](/recipes/key_manager.py#27)(api: RecipeApi, properties: KeyManagerProperties):**
 ### *recipes* / [key\_value\_store:tests/parse](/recipe_modules/key_value_store/tests/parse.py)
 
 [DEPS](/recipe_modules/key_value_store/tests/parse.py#19): [key\_value\_store](#recipe_modules-key_value_store), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
