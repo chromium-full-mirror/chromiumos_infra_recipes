@@ -7711,6 +7711,14 @@
   },
   {
     "cmd": [],
+    "name": "deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "final upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throwaway/coral-cq/R99-1234.56.0-101-8945511751514863184@@@"

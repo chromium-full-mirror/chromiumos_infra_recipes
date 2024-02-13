@@ -5724,6 +5724,10 @@ with api.deferrals.raise_exceptions_at_end():
 
 A module for deferring actions, such as raising Exceptions.
 
+&mdash; **def [are\_exceptions\_pending](/recipe_modules/deferrals/api.py#131)(self):**
+
+Returns whether any exceptions would be raised by `raise_exceptions`.
+
 &mdash; **def [defer\_exception](/recipe_modules/deferrals/api.py#95)(self, exception):**
 
 Takes an exception and defers it until raised (see usage above).
@@ -5755,7 +5759,7 @@ Args:
   exception_types (Optional[List[Type]]): types of exceptions to defer
     (allowing all others through).
 
-&mdash; **def [raise\_exceptions](/recipe_modules/deferrals/api.py#131)(self):**
+&mdash; **def [raise\_exceptions](/recipe_modules/deferrals/api.py#135)(self):**
 
 Explicitly raise any deferred exceptions.
 
@@ -12082,14 +12086,14 @@ Recipe for building public ChromiumOS images.
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#13)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#24): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_cq.py#24): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#115)(api: RecipeApi, config: BuilderConfig, uploader: ArtifactUploader):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#91)(api: RecipeApi, config: BuilderConfig, upload_state: ArtifactUploadState):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#92)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#63)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#19): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_version](#recipe_modules-cros_version), [factory\_util](#recipe_modules-factory_util), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

@@ -128,13 +128,17 @@ class DeferralsApi(RecipeApi):
       if not caught:
         self.raise_exceptions()
 
+  def are_exceptions_pending(self) -> bool:
+    """Returns whether any exceptions would be raised by `raise_exceptions`."""
+    return bool(self._deferred_exceptions)
+
   def raise_exceptions(self):
     """Explicitly raise any deferred exceptions.
 
     This is the non-context manager approach to using this module. Simply call
     this method at the point where you want deferred exceptions to be raised.
     """
-    if self._deferred_exceptions:
+    if self.are_exceptions_pending():
       deferred = self._deferred_exceptions
       self._deferred_exceptions = []
       if len(deferred) == 1:

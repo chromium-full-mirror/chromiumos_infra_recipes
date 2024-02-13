@@ -33,6 +33,7 @@ DEPS = [
     'build_menu',
     'chrome',
     'cros_infra_config',
+    'deferrals',
     'easy',
     'gerrit',
     'future_utils',
@@ -49,44 +50,14 @@ GERRIT_CHANGE = GerritChange(host=GERRIT_HOST, change=CHANGE_NUM)
 EBUILD_PATH = 'chromeos-base/chromeos-chrome/chromeos-chrome-9999.ebuild'
 
 
-class ArtifactUploader:
-  """State to control the behavior of `upload_artifacts_on_failure`."""
+class ArtifactUploadState:
+  """State about artifacts we've uploaded so far."""
 
   def __init__(self):
+    # An optional list of artifacts that've been already uploaded.
     self.uploaded_artifacts = None
+    # Set to True if all artifact uploading should be skipped.
     self.skip_upload = False
-
-  def final_upload(self, api: RecipeApi, config: BuilderConfig,
-                   step_failure: Optional[StepFailure] = None) -> None:
-    """Runs the final upload step.
-
-    If a non-None step_failure was passed, this step will raise that once the
-    upload is complete.
-    """
-    if self.skip_upload:
-      return
-
-    # Set skip_upload prior to uploading, since uploading may `raise`, and
-    # this type is used in exception handlers. No need to have multiple
-    # calls to the 'final' `upload_artifacts`.
-    self.skip_upload = True
-    try:
-      api.build_menu.upload_artifacts(
-          config, name='final upload artifacts',
-          previously_uploaded_artifacts=self.uploaded_artifacts,
-          ignore_breakpad_symbol_generation_errors=step_failure is not None)
-    except StepFailure as sf:
-      # If uploading artifacts threw an exception, surface that exception
-      # unless build_and_test_images above threw an exception, in which
-      # case we want to surface *that* exception for accuracy in
-      # reporting the build (and it's likely that upload artifacts failed
-      # as a result of those previous issues).
-      step_failure = step_failure or sf
-
-    # Finally, if there was an exception caught above in building the
-    # image, but the upload succeeded, raise that exception.
-    if step_failure:
-      raise step_failure
 
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
@@ -95,30 +66,35 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   with api.build_menu.configure_builder() as config:
-    uploader = ArtifactUploader()
-    with api.build_menu.setup_workspace():
-      try:
+    with api.build_menu.setup_workspace(), \
+        api.deferrals.raise_exceptions_at_end():
+      upload_state = ArtifactUploadState()
+      with api.deferrals.defer_exceptions([StepFailure]):
         is_relevant = api.build_menu.setup_chroot()
         if is_relevant:
-          return DoRunSteps(api, config, uploader)
-        uploader.skip_upload = True
-        return RawResult(status=common.SUCCESS,
-                         summary_markdown='Build was not relevant.')
-      except StepFailure as sf:
-        uploader.final_upload(api, config, step_failure=sf)
-        raise RuntimeError(  # pragma: nocover
-            'final_upload() should have reraised sf') from sf
-      finally:
-        uploader.final_upload(api, config, step_failure=None)
+          result = DoRunSteps(api, config, upload_state)
+        else:
+          upload_state.skip_upload = True
+          result = RawResult(status=common.SUCCESS,
+                             summary_markdown='Build was not relevant.')
+
+      if not upload_state.skip_upload:
+        with api.deferrals.defer_exceptions([StepFailure]):
+          api.build_menu.upload_artifacts(
+              config, name='final upload artifacts',
+              previously_uploaded_artifacts=upload_state.uploaded_artifacts,
+              ignore_breakpad_symbol_generation_errors=api.deferrals
+              .are_exceptions_pending())
+  return result
 
 
 def DoRunSteps(api: RecipeApi, config: BuilderConfig,
-               uploader: ArtifactUploader) -> Optional[RawResult]:
+               upload_state: ArtifactUploadState) -> Optional[RawResult]:
   env_info = api.build_menu.setup_sysroot_and_determine_relevance()
 
   if env_info.pointless:
     # No artifacts are ever necessary from pointless builds.
-    uploader.skip_upload = True
+    upload_state.skip_upload = True
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was pointless.')
 
@@ -163,7 +139,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # build, for any additional artifacts produced by unit testing, or if an
     # exception was thrown.
     uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
-    uploader.uploaded_artifacts = uploaded_artifacts
+    upload_state.uploaded_artifacts = uploaded_artifacts
 
     # Pause and throw if test containers failed to upload. Note that this
     # is done before the image_artifacts_uploaded property is set, as
@@ -346,7 +322,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'ArtifactsService/Get', retcode=1),
       cq=True,
       build_target='coral',
-      status='FAILURE',
+      status='INFRA_FAILURE',
   )
 
   # The CQ should upload artifacts even if sysroot setup/update fails; some

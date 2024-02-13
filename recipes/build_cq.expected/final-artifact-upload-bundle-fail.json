@@ -8480,6 +8480,14 @@
   },
   {
     "cmd": [],
+    "name": "deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {

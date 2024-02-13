@@ -6679,6 +6679,14 @@
   },
   {
     "cmd": [],
+    "name": "deferring exception until later",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@StepFailure(\"Step('install packages.call chromite.api.SysrootService/InstallPackages.call build API script') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "final upload artifacts",
     "~followup_annotations": [
       "@@@STEP_EXCEPTION@@@"
@@ -7093,6 +7101,14 @@
     "timeout": 600,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "deferring exception until later (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)\")@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
     ]
   },
   {
@@ -7813,8 +7829,7 @@
   },
   {
     "failure": {
-      "failure": {},
-      "humanReason": "Step('install packages.call chromite.api.SysrootService/InstallPackages.call build API script') (retcode: 1)"
+      "humanReason": "Step('install packages.call chromite.api.SysrootService/InstallPackages.call build API script') (retcode: 1)\nInfra Failure: Step('final upload artifacts.call artifacts service.call chromite.api.ArtifactsService/Get.call build API script') (retcode: 1)"
     },
     "name": "$result"
   }
