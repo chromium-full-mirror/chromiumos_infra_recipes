@@ -1,6 +1,7 @@
 per-file dupit.* = file:chromiumos/owners:v1:/infra/OWNERS.build
 per-file build_incremental.* = file:chromiumos/owners:v1:/infra/OWNERS.build
 per-file build_sdk_subtools.* = file:chromiumos/owners:v1:/infra/OWNERS.build
+per-file build_toolchain.* = file:chromiumos/third_party/toolchain-utils:/OWNERS.toolchain
 per-file presubmit_cq.* = file:chromiumos/owners:v1:/infra/OWNERS.build
 per-file presubmit_tests.* = file:chromiumos/owners:v1:/infra/OWNERS.build
 per-file regen_build_cache.* = file:chromiumos/owners:v1:/infra/OWNERS.build
