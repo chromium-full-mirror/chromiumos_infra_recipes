@@ -35,4 +35,7 @@ message FullTestProperties {
 
   // Whether to check out the chrome source as part of the test setup.
   bool checkout_chrome = 9;
+
+  // Whether to build an official image.
+  bool is_official = 10;
 }

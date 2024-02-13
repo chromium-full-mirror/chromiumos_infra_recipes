@@ -685,6 +685,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self.packages_installed
 
   def build_images(self, config=None, include_version=False,
+                   is_official: bool = False,
                    timeout_sec: Optional[int] = None):
     """Build the image.
 
@@ -694,6 +695,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build, or None.
       include_version (bool): Whether or not to pass the workspace version
         to sysroot_util.build.
+      is_official: Whether to produce official builds.
       timeout_sec (int): Step timeout (in seconds), None uses default timeout.
     """
     config = config or self.config_or_default
@@ -714,7 +716,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         build_images.base_is_recovery, version=version,
         skip_image_tests=unit_tests.skip_image_tests,
         verify_image_size_delta=build_images.verify_image_size_delta,
-        bazel=bazel, timeout_sec=timeout_sec)
+        bazel=bazel, is_official=is_official, timeout_sec=timeout_sec)
 
   def unit_test_images(self, config=None):
     """Run ebuild tests.
@@ -732,6 +734,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return not self.m.cros_infra_config.should_exit(unit_tests.ebuilds_run_spec)
 
   def build_and_test_images(self, config=None, include_version=False,
+                            is_official: bool = False,
                             build_images_timeout_sec: Optional[int] = None):
     """Build the image and run ebuild tests.
 
@@ -741,11 +744,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       config (BuilderConfig): The Builder Config for the build, or None.
       include_version (bool): Whether or not to pass the workspace version
         to sysroot_util.build.
+      is_official: Whether to produce official builds.
       build_images_timeout_sec (int): Step timeout, None uses default timeout.
     Returns:
       (bool): Whether to continue with the build.
     """
-    self.build_images(config, include_version,
+    self.build_images(config, include_version, is_official=is_official,
                       timeout_sec=build_images_timeout_sec)
     return self.unit_test_images(config)
 

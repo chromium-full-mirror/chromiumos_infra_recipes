@@ -2151,6 +2151,9 @@
       "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"imageTypes\": [\n    1,\n    3,\n    7\n  ],\n  \"disableRootfsVerification\": true,\n  \"diskLayout\": \"big_disk\",\n  \"builderPath\": \"builder/path\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2180,6 +2183,9 @@
       "debug",
       "chromite.api.ImageService/Create"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2214,6 +2220,9 @@
       "[CLEANUP]/build_api_messages_tmp_7/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2322,6 +2331,9 @@
     "cmd": [
       "[START_DIR]/cipd/support/publish-message"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2380,6 +2392,9 @@
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2409,6 +2424,9 @@
       "debug",
       "chromite.api.ImageService/CreateNetboot"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2442,6 +2460,9 @@
       "[CLEANUP]/build_api_messages_tmp_8/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2531,6 +2552,9 @@
       "{\n  \"image\": {\n    \"path\": \"/build/images/base.bin\",\n    \"type\": 1,\n    \"buildTarget\": {\n      \"name\": \"eve\"\n    }\n  },\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2560,6 +2584,9 @@
       "debug",
       "chromite.api.ImageService/Test"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2593,6 +2620,9 @@
       "[CLEANUP]/build_api_messages_tmp_9/output_proto.json",
       "/path/to/tmp/"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
@@ -2680,6 +2710,9 @@
     "cmd": [
       "[START_DIR]/cipd/support/publish-message"
     ],
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
     "env_suffixes": {
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"

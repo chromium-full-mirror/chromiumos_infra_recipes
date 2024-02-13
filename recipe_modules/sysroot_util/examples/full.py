@@ -65,7 +65,8 @@ def RunSteps(api, properties):
       image_types, 'builder/path', disable_rootfs_verification=True,
       disk_layout='big_disk', base_is_recovery=properties.base_is_recovery,
       test_test_data=image_test_json, skip_image_tests=properties.skip_tests,
-      verify_image_size_delta=properties.verify_image_size_delta)
+      verify_image_size_delta=properties.verify_image_size_delta,
+      is_official=properties.is_official)
 
 
 def GenTests(api):
@@ -306,7 +307,7 @@ def GenTests(api):
               common.IMAGE_TYPE_BASE,
               common.IMAGE_TYPE_TEST,
               common.IMAGE_TYPE_FACTORY,
-          ])),
+          ]), is_official=True),
       api.post_process(
           post_process.DoesNotRun,
           'build images.Running `make_netboot.sh` for legacy factory branch'),

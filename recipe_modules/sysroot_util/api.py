@@ -380,8 +380,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                    build_test_data: Optional[str] = None,
                    test_test_data: Optional[str] = None,
                    name: Optional[str] = None, skip_image_tests: bool = False,
-                   verify_image_size_delta: bool = False,
-                   bazel: bool = False) -> Iterable[Image]:
+                   verify_image_size_delta: bool = False, bazel: bool = False,
+                   is_official: bool = False) -> Iterable[Image]:
     """Build and validate images.
 
     Args:
@@ -401,6 +401,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         ImageService/Test.
       verify_image_size_delta: Whether to verify the image size delta.
       bazel: Whether to use Bazel to build the images.
+      is_official: Whether to produce official builds.
 
     Returns:
       The images built during the stage.
@@ -430,98 +431,104 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                         self._image_type_to_fname(x))),
                     build_target=self.sysroot.build_target) for x in image_types
             ]))
-    with self.m.step.nest(name or 'build images') as pres:
-      # Use default timeout if none specified.
-      if not timeout_sec:
-        timeout_sec = 2 * 60 * 60
-      request = CreateImageRequest(
-          build_target=self.sysroot.build_target,
-          chroot=self.m.cros_sdk.chroot,
-          image_types=image_types,
-          builder_path=builder_path,
-          disable_rootfs_verification=disable_rootfs_verification,
-          disk_layout=disk_layout,
-          base_is_recovery=base_is_recovery,
-          version=version,
-          bazel=bazel,
-      )
-      response = self.m.cros_build_api.ImageService.Create(
-          request, timeout=timeout_sec,
-          response_lambda=self.m.cros_build_api.failed_pkg_names,
-          test_output_data=build_test_data)
-      self.m.failures.set_compile_failed_packages(
-          pres, [(p, '') for p in response.failed_packages])
 
-      # b/239795601: We can't currently finish the factory image inside of the
-      # previous Create call because the image doesn't have network access and
-      # packages are attempting downloads when we're adding the netbook kernel.
-      # In the future this should be rolled into the Create() call above.
-      if common_pb2.IMAGE_TYPE_FACTORY in image_types:
-        self.create_netboot_image()
+    env = {}
+    if is_official:
+      env = {'CHROMEOS_OFFICIAL': '1'}
+    with self.m.context(env=env):
+      with self.m.step.nest(name or 'build images') as pres:
+        # Use default timeout if none specified.
+        if not timeout_sec:
+          timeout_sec = 2 * 60 * 60
+        request = CreateImageRequest(
+            build_target=self.sysroot.build_target,
+            chroot=self.m.cros_sdk.chroot,
+            image_types=image_types,
+            builder_path=builder_path,
+            disable_rootfs_verification=disable_rootfs_verification,
+            disk_layout=disk_layout,
+            base_is_recovery=base_is_recovery,
+            version=version,
+            bazel=bazel,
+        )
+        response = self.m.cros_build_api.ImageService.Create(
+            request, timeout=timeout_sec,
+            response_lambda=self.m.cros_build_api.failed_pkg_names,
+            test_output_data=build_test_data)
+        self.m.failures.set_compile_failed_packages(
+            pres, [(p, '') for p in response.failed_packages])
 
-      # Hack warning. Add the rootfs size to the output properties to make
-      # image size regressions easy to calculate until we have the proper
-      # system in place.
-      rootfs_size = 0
-      for event in response.events:
-        if event.name.endswith('total_size.base.rootfs'):
-          rootfs_size = event.gauge
-          break
-      self.m.easy.set_properties_step(rootfs_size=rootfs_size)
+        # b/239795601: We can't currently finish the factory image inside of the
+        # previous Create call because the image doesn't have network access and
+        # packages are attempting downloads when we're adding the netbook kernel.
+        # In the future this should be rolled into the Create() call above.
+        if common_pb2.IMAGE_TYPE_FACTORY in image_types:
+          self.create_netboot_image()
 
-      if verify_image_size_delta:
-        # Use the rootfs size output property from the latest successful
-        # postsubmit builder as the base for the comparison.
-        with self.m.step.nest('image size regression check') as presentation:
-          if not rootfs_size:
-            presentation.step_text = 'No rootfs size found for current build.'
-          else:
-            with self.m.step.nest('fetch last recorded rootfs size') as subpres:
-              bbid, latest_size = self._get_last_postsubmit_rootfs_size()
-              subpres.step_text = 'build {}: {}B'.format(bbid, latest_size)
-            if not latest_size:
-              presentation.step_text = 'No previous rootfs size found.'
+        # Hack warning. Add the rootfs size to the output properties to make
+        # image size regressions easy to calculate until we have the proper
+        # system in place.
+        rootfs_size = 0
+        for event in response.events:
+          if event.name.endswith('total_size.base.rootfs'):
+            rootfs_size = event.gauge
+            break
+        self.m.easy.set_properties_step(rootfs_size=rootfs_size)
+
+        if verify_image_size_delta:
+          # Use the rootfs size output property from the latest successful
+          # postsubmit builder as the base for the comparison.
+          with self.m.step.nest('image size regression check') as presentation:
+            if not rootfs_size:
+              presentation.step_text = 'No rootfs size found for current build.'
             else:
-              delta = int(rootfs_size) - int(latest_size)
-              self.m.easy.set_properties_step(rootfs_delta=delta)
-              if delta == 0:
-                presentation.step_text = 'No rootfs size delta.'
+              with self.m.step.nest(
+                  'fetch last recorded rootfs size') as subpres:
+                bbid, latest_size = self._get_last_postsubmit_rootfs_size()
+                subpres.step_text = 'build {}: {}B'.format(bbid, latest_size)
+              if not latest_size:
+                presentation.step_text = 'No previous rootfs size found.'
               else:
-                direction = 'increase' if delta > 0 else 'decrease'
-                hr_delta = format_size(abs(delta))
-                presentation.step_text = \
-                  'Estimated {} rootfs size {}.'.format(hr_delta, direction)
+                delta = int(rootfs_size) - int(latest_size)
+                self.m.easy.set_properties_step(rootfs_delta=delta)
+                if delta == 0:
+                  presentation.step_text = 'No rootfs size delta.'
+                else:
+                  direction = 'increase' if delta > 0 else 'decrease'
+                  hr_delta = format_size(abs(delta))
+                  presentation.step_text = \
+                    'Estimated {} rootfs size {}.'.format(hr_delta, direction)
 
-      to_test = [
-          image for image in response.images
-          if image.type == common_pb2.IMAGE_TYPE_BASE
-      ]
-      if common_pb2.IMAGE_TYPE_BASE not in image_types or not to_test:
-        # For now, as in legacy CQ, we only test base images. Images created
-        # as a sideeffect (not explicitly requested in image_types) are not
-        # tested.
-        return response.images
-
-      with self.m.step.nest('test images') as presentation:
-        if skip_image_tests:
-          presentation.step_text = \
-            'Skipping image tests as per board configuration.To check ' \
-            'configuration, view generated/builder_configs.cfg or ' \
-            'builderconfig/unit_tests_config.star in infra/config.'
+        to_test = [
+            image for image in response.images
+            if image.type == common_pb2.IMAGE_TYPE_BASE
+        ]
+        if common_pb2.IMAGE_TYPE_BASE not in image_types or not to_test:
+          # For now, as in legacy CQ, we only test base images. Images created
+          # as a sideeffect (not explicitly requested in image_types) are not
+          # tested.
           return response.images
 
-        failed_images = []
-        for image in to_test:
-          result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
-          if not self.m.cros_build_api.ImageService.Test(
-              TestImageRequest(
-                  image=image, build_target=self.sysroot.build_target,
-                  result=TestImageRequest.Result(directory=str(result_dir)),
-                  chroot=self.m.cros_sdk.chroot),
-              test_output_data=test_test_data).success:
-            failed_images.append(image)
-          self.m.failures.raise_failed_image_tests(failed_images)
-      return response.images
+        with self.m.step.nest('test images') as presentation:
+          if skip_image_tests:
+            presentation.step_text = \
+              'Skipping image tests as per board configuration.To check ' \
+              'configuration, view generated/builder_configs.cfg or ' \
+              'builderconfig/unit_tests_config.star in infra/config.'
+            return response.images
+
+          failed_images = []
+          for image in to_test:
+            result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
+            if not self.m.cros_build_api.ImageService.Test(
+                TestImageRequest(
+                    image=image, build_target=self.sysroot.build_target,
+                    result=TestImageRequest.Result(directory=str(result_dir)),
+                    chroot=self.m.cros_sdk.chroot),
+                test_output_data=test_test_data).success:
+              failed_images.append(image)
+            self.m.failures.raise_failed_image_tests(failed_images)
+        return response.images
 
   def _get_last_postsubmit_rootfs_size(self):
     builder_name = '{}-postsubmit'.format(self.sysroot.build_target.name)
