@@ -86,7 +86,6 @@ DEPS = [
     'skylab_results',
 ]
 
-
 # Each CIPD package instance of cros_test_platform that has been promoted to
 # staging or prod is tagged with a timestamped release version.
 CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
@@ -377,7 +376,7 @@ def _extract_builds_to_stage(requests):
   return builds, bucket
 
 
-#pylint: disable=inconsistent-return-statements
+# pylint: disable=inconsistent-return-statements
 def _extract_build_from_request(r):
   """Extracts the build in a test_platform request
 
@@ -763,10 +762,14 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
     autotest_invocations = []
     for test_suite in test_suites:
       test_buckets = []
-      if ( suite_name.__contains__('bvt-tast-cq')\
-          or suite_name.__contains__('cq-medium')) and\
-          ('chromeos.cros_infra_config.optimized_shard_allocation' in api.cros_infra_config.experiments\
-          or CrosTestPlatformProperties.OPTIMIZED_SHARDING in properties.experiments):
+      if (suite_name in {
+          'bvt-tast-cq', 'bvt-tast-cq-hw', 'bvt-tast-cq-hw-agnostic',
+          'cq-medium'}) \
+          and \
+          ('chromeos.cros_infra_config.optimized_shard_allocation' in
+           api.cros_infra_config.experiments or
+           CrosTestPlatformProperties.OPTIMIZED_SHARDING in
+           properties.experiments):
         shards = api.cros_test_sharding.optimized_shard_allocation(
             test_suite, total_shards)
       else:
@@ -1599,6 +1602,7 @@ def summarize(api, enumerations, responses, error_in_requests,
     if not responses:
       raise api.step.StepFailure('No requests ran')
 
+
 def _get_requests_from_properties(api, properties):
   if properties.HasField('request'):
     raise api.step.StepFailure(
@@ -1700,6 +1704,7 @@ def _log_task_results(api, unsorted_task_results):
         _emit_links(step, task_results)
         if task_state in _UNSUCCESSFUL_TASK_STATES:
           step.presentation.status = api.step.FAILURE
+
 
 _PASSED_VERDICTS = [TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED_ON_RETRY]
 _FAILED_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
@@ -1918,6 +1923,7 @@ def _cft_test_request_without_container_metadata(tag):
   test_req = _cft_test_request(tag)
   test_req.params.metadata.container_metadata_url = ''
   return test_req
+
 
 def _cft_test_request_with_build_target_in_keyvals(tag):
   test_req = _cft_test_request(tag)
@@ -2170,6 +2176,7 @@ def _generic_cft_enumerate_response(api):
    ]
 }'''))
 
+
 # Not currently used, but keeping it in a comment, as we might need to backfill
 # test data.
 # def _generic_cft_filter_tests_response(api):
@@ -2264,7 +2271,6 @@ def _generic_passing_execute_response(api):
 
 
 def GenTests(api):
-
   def _set_build(bid=None, tags=None, experiments=None,
                  ancestor_buildbucket_ids=None):
     # tags is a dict, convert that into [StringPair].
@@ -2605,7 +2611,6 @@ def GenTests(api):
           api.cipd.example_describe(
               'chromiumos/infra/cros_test_platform/${platform}',
               version='latest', test_data_tags=['random-key:random-value'])))
-
 
   # An end-to-end run with partner_config set to skip cros_test_postprocess
   yield api.test(
@@ -3645,6 +3650,30 @@ def GenTests(api):
                               cipd_label='prod')),
               }),
       _mock_container_metadata_step(api, 'bvt-tast-cq'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'with-optimization-bvt-tast-cq-security',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'bvt-tast-cq-security',
+                          tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
+                          total_shards=5, suite_name='bvt-tast-cq-security')
+              }, experiments=[CrosTestPlatformProperties.OPTIMIZED_SHARDING],
+              config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'bvt-tast-cq-security'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
   )
