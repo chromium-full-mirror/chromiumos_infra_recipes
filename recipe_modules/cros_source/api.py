@@ -97,6 +97,7 @@ class CrosSourceApi(RecipeApi):
     # chromiumos named cache gave us".
     self._sync_target = {}
     self._is_configured = False
+    self.git_strategy = GitStrategy.CHERRY_PICK
 
   def initialize(self):
     """Initialization that follows all module loading."""
@@ -109,7 +110,6 @@ class CrosSourceApi(RecipeApi):
         with self.m.context(cwd=workspace):
           self.m.step('ls', ['ls', '-l'])
           self.m.step('mounts', ['cat', '/proc/mounts'])
-    self.git_strategy = GitStrategy.CHERRY_PICK
 
   @property
   def mirrored_manifest_files(self):

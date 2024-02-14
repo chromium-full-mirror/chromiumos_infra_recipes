@@ -113,6 +113,10 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def related_changes_to_apply(self, related_changes_to_apply):
     self._related_changes_to_apply = related_changes_to_apply
 
+  def set_stats(self):
+    """Sets the LFG output property based on latest info."""
+    self.m.easy.set_properties_step(looks_for_green=self.stats)
+
   def should_lfg(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether looks for green logic should be run."""
     if self._should_lfg is None:
@@ -161,7 +165,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                     ' looks for green.')
           if not self._should_lfg:
             should_lfg_log += '. Using original snapshot.'
-            self.m.easy.set_properties_step(looks_for_green=self.stats)
+            self.set_stats()
           pres.logs['should_lfg'] = should_lfg_log
     return self._should_lfg
 

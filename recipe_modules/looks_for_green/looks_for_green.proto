@@ -55,6 +55,8 @@ enum LooksForGreenStatus {
   STATUS_SKIPPED_DISALLOW = 6;
   // Skipped the LFG due to merge commit.
   STATUS_SKIPPED_MERGE_COMMIT = 7;
+  // Skipped the LFG as cherry-pick failed.
+  STATUS_SKIPPED_FAILED_CHERRY_PICK = 8;
 }
 
 message LooksForGreenStats {

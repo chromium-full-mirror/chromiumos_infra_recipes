@@ -16,6 +16,8 @@ from PB.go.chromium.org.luci.buildbucket.proto \
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 
 from RECIPE_MODULES.chromeos.src_state.common import ManifestProject
 
@@ -633,6 +635,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 # This step will throw a StepFailure if changes cannot be applied
                 # to chosen snapshot.
                 self.m.workspace_util.apply_changes()
+                # If changes could not be cherry-picked, they will be merged instead.
+                # This is bad for LFG as only a single repo will be fast-forwarded and
+                # CQ will have to rebuild all of the fast-forwarded code. Instead
+                # skip LFG. b/322174445
+                if self.m.cros_source.git_strategy is GitStrategy.MERGE:
+                  self.m.looks_for_green.stats.status = LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK
+                  self.m.looks_for_green.set_stats()
+                  raise recipe_api.StepFailure('CL(s) cannot be cherry-picked!')
               # Manifest-internal needs to be sync'ed separately.
               # It is used by testplannerv1. b/315475873
               with self.m.context(cwd=internal_manifest.path):

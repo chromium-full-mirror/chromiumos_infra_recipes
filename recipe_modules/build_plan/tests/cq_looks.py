@@ -221,6 +221,53 @@ def GenTests(api):
   )
 
   yield api.test(
+      'change-had-to-be-merged-onto-older-snap',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(),
+      api.properties(
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True
+          }},
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.looks for green.check should look for green.check disallow looks for green'
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+      ),
+      api.step_data(
+          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
+          retcode=1),
+      api.buildbucket.simulated_search_results(
+          builds=[red_build],
+          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
+      ),
+      api.buildbucket.simulated_search_results(
+          builds=[green_internal_build, red_build],
+          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
+      ),
+      api.post_check(post_process.MustRun,
+                     'filter builds.looks for green.find green snapshot'),
+      api.post_check(post_process.MustRun,
+                     'filter builds.looks for green.set green snapshot'),
+      api.post_check(
+          post_process.MustRun,
+          'filter builds.looks for green.find green snapshot.set looks_for_green'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'filter builds.looks for green.checking mergability.sync to gitiles commit.repo sync'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'filter builds.looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'lfg-disabled',
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),

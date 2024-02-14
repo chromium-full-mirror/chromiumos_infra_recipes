@@ -1739,13 +1739,13 @@ Returns:
 
 Functions related to build planning.
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#50)(self):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#52)(self):**
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#213)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#215)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
 
 Return a two-tuple of completed and needed builds.
 
@@ -1765,7 +1765,7 @@ Returns:
     A list of Build objects of successful builds with refreshed criticality.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#461)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#463)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1779,7 +1779,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#524)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#526)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1795,11 +1795,11 @@ Returns:
   forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_relevant\_builder\_configs](/recipe_modules/build_plan/api.py#85)(self, builder_configs: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
+&mdash; **def [get\_relevant\_builder\_configs](/recipe_modules/build_plan/api.py#87)(self, builder_configs: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
 
 Returns BuilderConfigs deemed relevant by the RelevancyService.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#563)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#565)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -4853,7 +4853,7 @@ Raises:
 Returns:
   The corresponding exteral manifest snapshot commit.
 
-&mdash; **def [initialize](/recipe_modules/cros_source/api.py#101)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_source/api.py#102)(self):**
 
 Initialization that follows all module loading.
 
@@ -8591,7 +8591,7 @@ Functions implementing looks for green.
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#322)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#326)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -8601,7 +8601,7 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#354)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#358)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
@@ -8618,7 +8618,7 @@ Args:
 Returns:
   A green snapshot, if one was found.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#419)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#423)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -8628,11 +8628,11 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#485)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#489)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#278)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#282)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Returns the latest scored Snapshot.
 
@@ -8653,14 +8653,14 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#445)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#449)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
 If there are irrelevant builders for the current snapshot, look at previous
 snapshots to find the last relevant build and update the greenness scores.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#399)(self):**
+&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#403)(self):**
 
 Returns whether the latest scored snapshot-orchestrator greenness is
 
@@ -8684,7 +8684,11 @@ Returns the current UTC time in seconds.
 
 Initialized once and used throughout for any time calculations. Cast to int to use seconds as level of precision.
 
-&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#116)(self, gerrit_changes: List[GerritChange]):**
+&mdash; **def [set\_stats](/recipe_modules/looks_for_green/api.py#116)(self):**
+
+Sets the LFG output property based on latest info.
+
+&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#120)(self, gerrit_changes: List[GerritChange]):**
 
 Returns whether looks for green logic should be run.
 
