@@ -662,6 +662,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 )
                 with self.m.context(cwd=self.m.cros_source.workspace_path):
                   self.m.cros_source.sync_checkout(chosen_internal)
+                  self.m.workspace_util.apply_changes()
                 with self.m.context(cwd=internal_manifest.path):
                   self.m.git.checkout(chosen_internal.id, force=True)
       else:
