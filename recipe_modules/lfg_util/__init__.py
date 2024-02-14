@@ -6,7 +6,7 @@
 """Init for LFG utility functions module."""
 
 DEPS = [
+    'depot_tools/gerrit',
     'recipe_engine/step',
     'git_footers',
 ]
-

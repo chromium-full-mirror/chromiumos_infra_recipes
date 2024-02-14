@@ -10,3 +10,9 @@ message CQDependsIncludedProperties {
   bool expected_result = 1;
   repeated int32 change_ids = 2;
 }
+
+message LatestSubmittedTimeProperties {
+  string expected_result = 1;
+  repeated int32 change_ids = 2;
+  bool expected_submission = 3;
+}

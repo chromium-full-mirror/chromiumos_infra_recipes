@@ -7,11 +7,13 @@
 """Utility functions for looks for green."""
 
 from typing import List
+from datetime import datetime
 from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 
 HOST_SUFFIX = '-review.googlesource.com'
 ALLOWED_HOSTS = ['chromium', 'chrome-internal']
+DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 
 
 class LFGUtilApi(recipe_api.RecipeApi):
@@ -61,3 +63,28 @@ class LFGUtilApi(recipe_api.RecipeApi):
       pres.logs['bad_footers'] = '\n'.join(log_lines)
       pres.step_text = 'all depended CLs are included'
       return True
+
+  def latest_submitted_time(self, gerrit_changes: List[GerritChange],
+                            step_test_data=None) -> datetime:
+    """Find the last submitted change and return the submit time.
+
+    Args:
+      gerrit_changes: Gerrit changes to analyze.
+
+    Returns:
+      Submit time of the last submitted change among the inputs, None
+      if one of them hasn't submitted yet.
+    """
+    submitted_times = []
+    for change in gerrit_changes:
+      repo_url = 'https://{}/{}'.format(change.host, change.project)
+      rev_info = self.m.gerrit.get_revision_info(host=repo_url,
+                                                 change=change.change,
+                                                 patchset=change.patchset,
+                                                 step_test_data=step_test_data)
+      submit_string = rev_info.get('submitted', None)
+      if submit_string is None:
+        return None
+      submitted_times.append(datetime.strptime(submit_string, DATETIME_FORMAT))
+
+    return max(submitted_times)
