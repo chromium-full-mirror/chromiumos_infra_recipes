@@ -9,11 +9,8 @@
 from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
-  LooksForGreenStatus
 from PB.recipe_modules.chromeos.looks_for_green.tests.test import \
   GetLatestSnapshotGreennessProperties
-from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 from recipe_engine import post_process
 
 DEPS = [
@@ -36,13 +33,8 @@ TEST_END_TIMESTAMP = timestamp_pb2.Timestamp(seconds=1613779227)
 
 def RunSteps(api, properties):
   snapshot = api.looks_for_green.get_latest_snapshot_greenness()
-  # Call to satisfy recipe coverage rules.
-  _ = api.looks_for_green.use_scored_over_minted
   api.assertions.assertEqual(properties.expected_greenness,
                              snapshot.agg_green if snapshot else -1)
-  is_snap_orch_green = api.looks_for_green.is_snap_orch_green()
-  api.assertions.assertEqual(properties.expected_is_snap_orch_green,
-                             is_snap_orch_green)
   api.assertions.assertEqual(properties.expected_staging,
                              api.cros_infra_config.is_staging)
 
@@ -51,30 +43,6 @@ def GenTests(api):
   output = build_pb2.Build.Output()
   output.properties['greenness'] = {'aggregateBuildMetric': 100}
   output.properties['commit'] = {'id': 'sampleSHA'}
-  yield api.test(
-      'success',
-      api.properties(expected_greenness=100, expected_is_snap_orch_green=True),
-      api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_RAN_LATEST_MINTED),
-      api.post_process(post_process.DropExpectation),
-  )
 
   yield api.test(
       'success-but-scored',
@@ -91,46 +59,6 @@ def GenTests(api):
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
       ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
-      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'success-on-retry',
-      api.properties(expected_greenness=100, expected_is_snap_orch_green=True),
-      api.time.seed(TEST_SEED_TIME_SECONDS),
-      api.step_data(
-          'checking latest scored snapshot greenness.buildbucket.search',
-          retcode=1),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness.buildbucket.search (2)'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_RAN_LATEST_MINTED),
-      api.post_check(
-          post_process.MustRun,
-          'checking latest scored snapshot greenness.buildbucket.search (2)'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -152,14 +80,6 @@ def GenTests(api):
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
       ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -175,14 +95,6 @@ def GenTests(api):
                               end_time=TEST_END_TIMESTAMP)
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -203,17 +115,6 @@ def GenTests(api):
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
       ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-              build_pb2.Build(id=123, output=output,
-                              start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP)
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -230,15 +131,6 @@ def GenTests(api):
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
       ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-              build_pb2.Build(id=123, start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
-      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -249,10 +141,6 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds=[],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -272,17 +160,6 @@ def GenTests(api):
                               end_time=TEST_END_TIMESTAMP),
           ],
           step_name='checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[
-              build_pb2.Build(id=123, start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-              build_pb2.Build(id=123, start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-              build_pb2.Build(id=123, start_time=TEST_START_TIMESTAMP,
-                              end_time=TEST_END_TIMESTAMP),
-          ],
-          step_name='checking latest scored snapshot greenness (2).buildbucket.search'
       ),
       api.post_check(post_process.StatusSuccess),
       api.post_process(post_process.DropExpectation),

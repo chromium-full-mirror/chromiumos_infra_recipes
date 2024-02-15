@@ -115,10 +115,6 @@ def GenTests(api):
           'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
-      api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
       ),
@@ -157,8 +153,6 @@ def GenTests(api):
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
       ),
-      api.post_check(post_process.DoesNotRun,
-                     'filter builds.looks for green.checking latest green snapshot'),  # skipped for use_complete_snapshot
       api.post_check(post_process.MustRun,
                      'filter builds.looks for green.find green snapshot'),
       api.post_check(post_process.MustRun,
@@ -193,10 +187,6 @@ def GenTests(api):
       api.step_data(
           'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git merge',
           retcode=1),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
@@ -240,10 +230,6 @@ def GenTests(api):
       api.step_data(
           'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
           retcode=1),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
-      ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
@@ -322,10 +308,6 @@ def GenTests(api):
       api.git_footers.simulated_get_footers(
           [],
           'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
-      ),
-      api.buildbucket.simulated_search_results(
-          builds=[red_build],
-          step_name='filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],

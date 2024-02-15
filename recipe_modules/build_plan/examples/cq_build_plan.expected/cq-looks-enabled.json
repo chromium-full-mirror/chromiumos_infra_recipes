@@ -1242,7 +1242,8 @@
       "@@@STEP_LOG_LINE@filter log@cave-cq already passed@@@",
       "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_END@filter log@@@"
+      "@@@STEP_LOG_END@filter log@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -1276,8 +1277,7 @@
     "name": "filter builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
-      "@@@STEP_LOG_END@cq looks log@@@"
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -1456,11 +1456,11 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.checking latest scored snapshot greenness",
+    "name": "filter builds.looks for green.find green snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@latest scored snapshot greenness@latest scored snapshot-orchestrator go/bbid/123 has aggregate greenness of 100. Start time: 2012-05-14 05:15:27 End time: 2012-05-14 12:10:27. The current time is 2012-05-14 12:53:27@@@",
-      "@@@STEP_LOG_END@latest scored snapshot greenness@@@"
+      "@@@STEP_LOG_LINE@latest green@Found green snapshot:  with greenness 100 and 8 hours old.@@@",
+      "@@@STEP_LOG_END@latest green@@@"
     ]
   },
   {
@@ -1472,7 +1472,7 @@
       "-json",
       "-nopage",
       "-n",
-      "25",
+      "1000",
       "-fields",
       "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
       "-predicate",
@@ -1491,7 +1491,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.checking latest scored snapshot greenness.buildbucket.search",
+    "name": "filter builds.looks for green.find green snapshot.buildbucket.search",
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -1502,10 +1502,111 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.set looks_for_green",
+    "name": "filter builds.looks for green.find green snapshot.set looks_for_green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latestScored\": {\"approxSnapAgeHours\": 8, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}, \"status\": \"STATUS_RAN_OLDER\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.set green snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "",
+      "--key",
+      "Cr-External-Snapshot"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.looks for green.set green snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.checking mergability",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latestScored\": {\"approxSnapAgeHours\": 8, \"isSnapOrchGreen\": true, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}, \"status\": \"STATUS_RAN_LATEST_MINTED\"}@@@"
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.checking mergability.sync to gitiles commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+//snapshot.xml",
+      "--format",
+      "text",
+      "--accept-statuses",
+      "200,404"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.looks for green.checking mergability.sync to gitiles commit.fetch :snapshot.xml",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.ignored exception",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@caught exception@AssertionError('no repo root found')@@@",
+      "@@@STEP_LOG_END@caught exception@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds.looks for green.set caught_exceptions",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"filter builds.looks for green.ignored exception\": \"AssertionError('no repo root found')\"}@@@"
     ]
   },
   {
@@ -1520,15 +1621,7 @@
     "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set_output_gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },
   {

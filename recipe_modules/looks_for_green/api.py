@@ -46,11 +46,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                **kwargs: Any) -> None:
     super().__init__(**kwargs)
     self.enable_looks_for_green = properties.enable_looks_for_green
-    self._max_concurrent_snapshot_runs = properties.max_concurrent_snapshot_runs or 25
     self._lookback_hours = properties.lookback_hours or 10
     self._greenness_threshold = properties.greenness_threshold or 80
     self.use_complete_snapshot = properties.use_complete_snapshot
-    self._use_scored_over_minted = properties.use_scored_over_minted
     self._stats = LooksForGreenStats()
     self._now = None
     self._seconds_now = None
@@ -88,11 +86,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def stats(self) -> LooksForGreenStats:
     """Returns looks for green stats"""
     return self._stats
-
-  @property
-  def use_scored_over_minted(self) -> bool:
-    """Returns use_scored_over_minted property."""
-    return self._use_scored_over_minted
 
   @property
   def _greenness_bucket(self) -> str:
@@ -138,6 +131,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           disallow = self.found_disallow_lfg_footer(gerrit_changes)
           if disallow:
             self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_DISALLOW
+            self.set_stats()
+            self._should_lfg = False
+            return self._should_lfg
           has_merge_commit = any(
               self.m.gerrit.is_merge_commit(c.change, c.host)
               for c in gerrit_changes)
@@ -252,19 +248,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def _set_snapshot_stats(
       self,
       snapshot_stats: Snapshot,
-      suggested: bool = False,
   ) -> None:
-    """Set output stats using LooksForGreenStats proto fields.
-
-    When suggested is True, populate stats for the snapshot that CQ Looks
-    recommends to use. Otherwise, populate state for the latest snapshot that
-    has go/greenness properties set.
-    """
-    if not suggested:
-      stats = self._stats.latest_scored
-    else:
-      stats = self._stats.suggested
-
+    """Set output stats using LooksForGreenStats proto fields."""
+    stats = self._stats.latest_scored
     stats.snap_orch_greenness = snapshot_stats.agg_green
     stats.approx_snap_age_hours = snapshot_stats.approx_snap_age_hours
     stats.snap_orch_bbid = snapshot_stats.bbid
@@ -289,9 +275,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Or None if no latest scored snapshot is found.
 
     If the latest snapshot-orchestrator has just started, we won't have
-    greenness yet, so look back at the most recent snapshot-orchestrator (of
-    the self._max_concurrent_snapshot_runs most recent runs) that does have
-    greenness populated.
+    greenness yet, so look back at the most recent snapshot-orchestrator
+    that does have greenness populated.
 
     Args:
       bucket: If specified, the bucket to search in. Defaults to
@@ -305,13 +290,11 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest(
         'checking latest scored snapshot greenness') as presentation:
-      results = self._get_snapshots(limit=self._max_concurrent_snapshot_runs,
-                                    bucket=bucket, builder=builder)
+      results = self._get_snapshots(bucket=bucket, builder=builder)
       scored_snapshot = self._get_latest_scored_snapshot(results)
       if not scored_snapshot:
         presentation.logs['latest scored snapshot greenness'] = (
-            'found no scored snapshot in the latest '
-            f'{self._max_concurrent_snapshot_runs} builds')
+            'found no scored snapshot in the latest builds')
         return None
       snapshot_stats = self._parse_snapshot_result(scored_snapshot)
       presentation.logs['latest scored snapshot greenness'] = (
@@ -388,7 +371,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             f'Found green snapshot: {green.commit_sha} with '
             f'greenness {green.agg_green} and {green.approx_snap_age_hours} '
             'hours old.')
-        self._set_snapshot_stats(green, suggested=True)
+        self._set_snapshot_stats(green)
         self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
         self.m.easy.set_properties_step(looks_for_green=self.stats)
       else:
@@ -399,26 +382,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
         self.m.easy.set_properties_step(looks_for_green=self.stats)
       return green
-
-  def is_snap_orch_green(self) -> bool:
-    """Returns whether the latest scored snapshot-orchestrator greenness is
-
-    higher than greenness threshold.
-
-    Returns:
-      Whether latest scored snap-orch run is green
-    """
-    latest_greenness = self.get_latest_snapshot_greenness()
-    is_snap_orch_green = latest_greenness is not None and latest_greenness.agg_green >= self._greenness_threshold
-    self._stats.latest_scored.is_snap_orch_green = is_snap_orch_green
-    # This logic is a bit brittle as it assumes that the caller is not going to
-    # turn around and choose a different snapshot.
-    if is_snap_orch_green:
-      self._stats.status = (
-          LooksForGreenStatus.STATUS_RAN_OLDER if self._use_scored_over_minted
-          else LooksForGreenStatus.STATUS_RAN_LATEST_MINTED)
-    self.m.easy.set_properties_step(looks_for_green=self.stats)
-    return is_snap_orch_green
 
   def found_disallow_lfg_footer(
       self, gerrit_changes: List[common_pb2.GerritChange]) -> bool:

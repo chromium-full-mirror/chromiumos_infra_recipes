@@ -26,16 +26,7 @@ message LooksForGreenProperties {
   // broken).
   bool use_complete_snapshot = 5;
 
-  // Upper limit on expected concurrent snapshot runs. Used to find the latest
-  // scored snapshot-orchestrator.
-  int32 max_concurrent_snapshot_runs = 6;
-
-  // Whether to use latest scored snapshot instead of minted snapshot if the
-  // latest scored snapshot is green.
-  // b/296112695: Remove this once the feature is launched and stable.
-  bool use_scored_over_minted = 7;
-
-  reserved 2;
+  reserved 2, 6, 7;
 }
 
 enum LooksForGreenStatus {

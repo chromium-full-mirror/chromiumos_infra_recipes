@@ -8622,7 +8622,7 @@ Functions implementing looks for green.
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#326)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#309)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -8632,7 +8632,7 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#358)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#341)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
@@ -8649,7 +8649,7 @@ Args:
 Returns:
   A green snapshot, if one was found.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#423)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#386)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -8659,20 +8659,19 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#489)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#452)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#282)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#268)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Returns the latest scored Snapshot.
 
 Or None if no latest scored snapshot is found.
 
 If the latest snapshot-orchestrator has just started, we won't have
-greenness yet, so look back at the most recent snapshot-orchestrator (of
-the self._max_concurrent_snapshot_runs most recent runs) that does have
-greenness populated.
+greenness yet, so look back at the most recent snapshot-orchestrator
+that does have greenness populated.
 
 Args:
   bucket: If specified, the bucket to search in. Defaults to
@@ -8684,52 +8683,39 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#449)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#412)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
 If there are irrelevant builders for the current snapshot, look at previous
 snapshots to find the last relevant build and update the greenness scores.
 
-&mdash; **def [is\_snap\_orch\_green](/recipe_modules/looks_for_green/api.py#403)(self):**
-
-Returns whether the latest scored snapshot-orchestrator greenness is
-
-higher than greenness threshold.
-
-Returns:
-  Whether latest scored snap-orch run is green
-
-&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#58)(self):**
 
 Returns the current UTC time.
 
 Initialized once and used throughout for any time calculations. Zero out
 the microseconds to use seconds as level of precision.
 
-&emsp; **@related_changes_to_apply.setter**<br>&mdash; **def [related\_changes\_to\_apply](/recipe_modules/looks_for_green/api.py#112)(self, related_changes_to_apply):**
+&emsp; **@related_changes_to_apply.setter**<br>&mdash; **def [related\_changes\_to\_apply](/recipe_modules/looks_for_green/api.py#105)(self, related_changes_to_apply):**
 
-&emsp; **@property**<br>&mdash; **def [seconds\_utc](/recipe_modules/looks_for_green/api.py#74)(self):**
+&emsp; **@property**<br>&mdash; **def [seconds\_utc](/recipe_modules/looks_for_green/api.py#72)(self):**
 
 Returns the current UTC time in seconds.
 
 Initialized once and used throughout for any time calculations. Cast to int to use seconds as level of precision.
 
-&mdash; **def [set\_stats](/recipe_modules/looks_for_green/api.py#116)(self):**
+&mdash; **def [set\_stats](/recipe_modules/looks_for_green/api.py#109)(self):**
 
 Sets the LFG output property based on latest info.
 
-&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#120)(self, gerrit_changes: List[GerritChange]):**
+&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#113)(self, gerrit_changes: List[GerritChange]):**
 
 Returns whether looks for green logic should be run.
 
-&emsp; **@property**<br>&mdash; **def [stats](/recipe_modules/looks_for_green/api.py#87)(self):**
+&emsp; **@property**<br>&mdash; **def [stats](/recipe_modules/looks_for_green/api.py#85)(self):**
 
 Returns looks for green stats
-
-&emsp; **@property**<br>&mdash; **def [use\_scored\_over\_minted](/recipe_modules/looks_for_green/api.py#92)(self):**
-
-Returns use_scored_over_minted property.
 ### *recipe_modules* / [mass\_deploy](/recipe_modules/mass_deploy)
 
 [DEPS](/recipe_modules/mass_deploy/__init__.py#6): [build\_menu](#recipe_modules-build_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15295,10 +15281,10 @@ Runs the presubmit for a project with checkout per local manifest.
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/find_green_snapshot.py#103)(api, properties):**
 ### *recipes* / [looks\_for\_green:tests/get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py)
 
-[DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#19): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#37)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#34)(api, properties):**
 ### *recipes* / [looks\_for\_green:tests/is\_green\_for\_local](/recipe_modules/looks_for_green/tests/is_green_for_local.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/is_green_for_local.py#16): [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

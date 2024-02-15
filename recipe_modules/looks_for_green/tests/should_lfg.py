@@ -179,7 +179,7 @@ def GenTests(api):
   yield api.test(
       'cherry-pick-and-merge-commits',
       api.buildbucket.try_build(
-          gerrit_changes=[gerrit_change_1, gerrit_change_2, gerrit_change_3]),
+          gerrit_changes=[gerrit_change_1, gerrit_change_2]),
       api.properties(
           expected_should_lfg=False, **{
               '$chromeos/looks_for_green': {
