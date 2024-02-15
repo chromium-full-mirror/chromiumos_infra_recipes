@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Testing module for cros_infra_config."""
+
 import os
 
 from google.protobuf import json_format
@@ -41,6 +43,21 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     msg = json_format.Parse(data, msg)
     return self.m.depot_gitiles.make_encoded_file_from_bytes(
         msg.SerializeToString())
+
+  def _read_txt(self, filename: str) -> recipe_test_api.StepTestData:
+    """Read the content of a txt file in this directory.
+
+    Args:
+      filename: the basename of the file (located in this directory) to read.
+
+    Returns:
+      A StepTestData containing a txt string.
+    """
+    with open(
+        os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
+        encoding='utf-8') as f:
+      data = f.read().strip().encode('utf-8')
+    return self.m.depot_gitiles.make_encoded_file_from_bytes(data)
 
   @property
   def builder_configs_test_data(self) -> BuilderConfigs:
@@ -95,6 +112,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     # Humans can edit the JSON file for test data, impl reads binary proto.
     return self._read_config('test_test_filter_config.json',
                              pre_request.FilterCfgs())  # pragma: no cover
+
+  def ctp2_pools_test_data(self) -> recipe_test_api.StepTestData:
+    """A function for step_test_data to generate ctp2 pools config."""
+    # Humans can edit the txt file for test data.
+    return self._read_txt('test_ctp2_pools_config.txt')
 
   def dut_tracking_test_data(self) -> recipe_test_api.StepTestData:
     """A function for step_test_data to generate TrackingPolicyCfg."""

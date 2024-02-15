@@ -20,6 +20,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     self._cipd_label = str(properties.version.cipd_label) or None
     self._cipd_package = str(properties.version.cipd_package) or \
         'chromiumos/infra/ctpv2/${platform}'
+    self.allowed_pools = []
 
   def is_enabled(self):
     """Checks if ctpv2 is enabled for use.
@@ -63,9 +64,9 @@ class Ctpv2Command(recipe_api.RecipeApi):
     """Return the CTPv2 CIPD package version (e.g. prod/staging/latest)."""
     return self._cipd_label
 
-  def allowed_pools(self):  # pragma: no cover
-    """Return the CTPv2 allowed pools."""
-    return ['schedukeTest']
+  def set_allowed_pools(self, allowed_pools):  # pragma: no cover
+    """Set the allowed ctp2 pools"""
+    self.allowed_pools = allowed_pools
 
   def filter_legacy_requests(self, requests, reverse=False):  # pragma: no cover
     """Filter out the legacy requests based on allowed pools.
@@ -76,7 +77,6 @@ class Ctpv2Command(recipe_api.RecipeApi):
 
     Returns dict of filtered legacy v1 requests.
     """
-    allowed_pools = self.allowed_pools()
     result = copy.deepcopy(requests)
     for name, request in requests.items():
       meets_criteria = False
@@ -94,7 +94,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
             tag = tag.lstrip('pool:')
           else:
             continue
-          if tag in allowed_pools:
+          if tag in self.allowed_pools:
             meets_criteria = True
       # XOR meets_criteria with reverse to
       # produce the reversing boolean algebra.

@@ -343,6 +343,7 @@
   * [cros_infra_config:tests/determine_if_staging](#recipes-cros_infra_config_tests_determine_if_staging)
   * [cros_infra_config:tests/experiments](#recipes-cros_infra_config_tests_experiments)
   * [cros_infra_config:tests/get_build_target](#recipes-cros_infra_config_tests_get_build_target)
+  * [cros_infra_config:tests/get_ctp2_pools](#recipes-cros_infra_config_tests_get_ctp2_pools) &mdash; Unit tests for the get_ctp2_pools_config function.
   * [cros_infra_config:tests/get_realms_list](#recipes-cros_infra_config_tests_get_realms_list)
   * [cros_infra_config:tests/lookup_with_bucket](#recipes-cros_infra_config_tests_lookup_with_bucket)
   * [cros_infra_config:tests/override_channels](#recipes-cros_infra_config_tests_override_channels)
@@ -3402,7 +3403,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#715)(self, builds: List[Build]):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#738)(self, builds: List[Build]):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -3434,7 +3435,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#590)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#613)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
 
 Configure the builder.
 
@@ -3460,7 +3461,7 @@ Args:
 Returns:
   The BuilderConfig for this builder, if one was found.
 
-&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#573)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#596)(self, config: Optional[BuilderConfig]=None):**
 
 Configure the builder's knowledge of whether it's running in staging.
 
@@ -3471,6 +3472,10 @@ Args:
 
 Helper method to fetch a file from gitiles.
 
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [download\_txt](/recipe_modules/cros_infra_config/api.py#235)(self, filename: str, step_test_data: recipe_test_api.StepTestData, timeout: Optional[int]=None, repo: str=CHROME_OS_INFRA_CONFIG_REPO_URL):**
+
+Helper method to fetch a txt file from gitiles.
+
 &emsp; **@property**<br>&mdash; **def [experiments](/recipe_modules/cros_infra_config/api.py#131)(self):**
 
 Return the list of experiments active for this build.
@@ -3479,7 +3484,7 @@ Return the list of experiments active for this build.
 
 Return value for bb schedule_request experiments arg.
 
-&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#363)(self):**
+&mdash; **def [force\_reload](/recipe_modules/cros_infra_config/api.py#375)(self):**
 
 Force a reload of the config map from ToT.
 
@@ -3492,7 +3497,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/cros_infra_config/api.py#127)(self):**
 
-&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#382)(self, application: str='ChromeOS'):**
+&mdash; **def [get\_bot\_policy\_config](/recipe_modules/cros_infra_config/api.py#394)(self, application: str='ChromeOS'):**
 
 Get BotPolicies as defined in infra/config.
 If application is Chrome, BotPolicies will be fetched from infradata/config.
@@ -3500,7 +3505,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#675)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#698)(self, build: Optional[Build]=None):**
 
 Return the build target from input properties.
 
@@ -3511,7 +3516,7 @@ Args:
 Returns:
   The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#700)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#723)(self, build: Optional[Build]=None):**
 
 Return the build target name from input properties.
 
@@ -3522,7 +3527,7 @@ Args:
 Returns:
   The name of the build target, or None.
 
-&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#293)(self, builder_name: str, \*, bucket_name: Optional[str]=None, missing_ok: bool=False):**
+&mdash; **def [get\_builder\_config](/recipe_modules/cros_infra_config/api.py#305)(self, builder_name: str, \*, bucket_name: Optional[str]=None, missing_ok: bool=False):**
 
 Gets the BuilderConfig for the specified builder from HEAD.
 
@@ -3552,25 +3557,32 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#421)(self):**
+&mdash; **def [get\_ctp2\_pools\_config](/recipe_modules/cros_infra_config/api.py#433)(self):**
+
+Download ctp2 pools config and return list of ctp2 pools.
+
+Returns:
+  List[str]: List of allowed ctp2 pools.
+
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#444)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
 Returns:
   TrackingPolicyCfg as defined in the config repo.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#235)(self):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [get\_realms\_list](/recipe_modules/cros_infra_config/api.py#247)(self):**
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
-&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#409)(self):**
+&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#421)(self):**
 
 Download config files and return the extracted config protos.
 
 Returns:
   TestDisablementCfg object of the config.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#398)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#410)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -3603,7 +3615,7 @@ Return properties dict meant to be passed to child builds.
 
 Preserve $chromeos/cros_infra_config when launching a child build.
 
-&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#340)(self, builder_names: List[str]):**
+&mdash; **def [safe\_get\_builder\_configs](/recipe_modules/cros_infra_config/api.py#352)(self, builder_names: List[str]):**
 
 Gets the BuilderConfigs for the specified builder names from HEAD.
 
@@ -3617,7 +3629,7 @@ Args:
 Returns:
   Dict mapping builder names to found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#730)(self, critical: Optional['Trinary']=None, override: bool=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#753)(self, critical: Optional['Trinary']=None, override: bool=False):**
 
 Set the buildbucket.build.critical value.
 
@@ -3626,11 +3638,11 @@ Args:
     the value from the builder config.
   override: Whether to override the existing criticality value.
 
-&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#379)(self, run_spec: 'BuilderConfig.RunSpec'):**
+&mdash; **def [should\_exit](/recipe_modules/cros_infra_config/api.py#391)(self, run_spec: 'BuilderConfig.RunSpec'):**
 
 &emsp; **@property**<br>&mdash; **def [should\_override\_release\_channels](/recipe_modules/cros_infra_config/api.py#202)(self):**
 
-&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#367)(self, run_spec: 'BuilderConfig.RunSpec', default: bool=False):**
+&mdash; **def [should\_run](/recipe_modules/cros_infra_config/api.py#379)(self, run_spec: 'BuilderConfig.RunSpec', default: bool=False):**
 
 Return whether run_spec represents a step that should run.
 
@@ -5610,23 +5622,19 @@ API to call into the CTPv2 binary
 
 Module for issuing ctpv2 commands
 
-&mdash; **def [allowed\_pools](/recipe_modules/ctpv2/api.py#66)(self):**
-
-Return the CTPv2 allowed pools.
-
-&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#62)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#63)(self):**
 
 Return the CTPv2 CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#47)(self):**
+&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#48)(self):**
 
 Ensure the ctpv2 CLI is installed.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#31)(self, use_legacy=False):**
+&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#32)(self, use_legacy=False):**
 
 Execute work via ctpv2 luciexe binary.
 
-&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#70)(self, requests, reverse=False):**
+&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#71)(self, requests, reverse=False):**
 
 Filter out the legacy requests based on allowed pools.
 
@@ -5636,11 +5644,15 @@ Args:
 
 Returns dict of filtered legacy v1 requests.
 
-&mdash; **def [is\_enabled](/recipe_modules/ctpv2/api.py#24)(self):**
+&mdash; **def [is\_enabled](/recipe_modules/ctpv2/api.py#25)(self):**
 
 Checks if ctpv2 is enabled for use.
 
 Returns: bool
+
+&mdash; **def [set\_allowed\_pools](/recipe_modules/ctpv2/api.py#67)(self, allowed_pools):**
+
+Set the allowed ctp2 pools
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
 
 [DEPS](/recipe_modules/cts_results_archive/__init__.py#8): [cros\_tags](#recipe_modules-cros_tags), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -13521,6 +13533,14 @@ Main test logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/get_build_target.py#20)(api):**
+### *recipes* / [cros\_infra\_config:tests/get\_ctp2\_pools](/recipe_modules/cros_infra_config/tests/get_ctp2_pools.py)
+
+[DEPS](/recipe_modules/cros_infra_config/tests/get_ctp2_pools.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Unit tests for the get_ctp2_pools_config function.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/tests/get_ctp2_pools.py#16)(api):**
 ### *recipes* / [cros\_infra\_config:tests/get\_realms\_list](/recipe_modules/cros_infra_config/tests/get_realms_list.py)
 
 [DEPS](/recipe_modules/cros_infra_config/tests/get_realms_list.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -16617,7 +16637,7 @@ Recipe for the ChromeOS Test Frontend.
 
 &mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1213)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1342)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1344)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -16651,7 +16671,7 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1438)(api, requests, responses, skip_postprocess=True):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1440)(api, requests, responses, skip_postprocess=True):**
 
 &mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1116)(api, config, should_poll_for_completion=False):**
 
@@ -16662,13 +16682,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1634)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1636)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1713)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1715)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1541)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1543)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#118)(api, properties):**
 

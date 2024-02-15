@@ -234,6 +234,18 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
                      condition=lambda e: getattr(e, 'had_timeout', False))
+  def download_txt(self, filename: str,
+                   step_test_data: recipe_test_api.StepTestData,
+                   timeout: Optional[int] = None,
+                   repo: str = CHROME_OS_INFRA_CONFIG_REPO_URL) -> bytes:
+    """Helper method to fetch a txt file from gitiles."""
+    return self.m.depot_gitiles.download_file(repo, filename + '.txt',
+                                              branch=self._config_ref,
+                                              step_test_data=step_test_data,
+                                              timeout=timeout).encode('utf-8')
+
+  @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1),
+                     condition=lambda e: getattr(e, 'had_timeout', False))
   def get_realms_list(self) -> List[str]:
     """Helper method to fetch the list of chromeos realms from gitiles."""
     data = self.m.depot_gitiles.download_file(
@@ -417,6 +429,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
             'testingconfig/generated/test_filters',
             step_test_data=self.test_api.test_filter_test_data,
             msg=pre_request.FilterCfgs()))
+
+  def get_ctp2_pools_config(self) -> List[str]:
+    """Download ctp2 pools config and return list of ctp2 pools.
+
+    Returns:
+      List[str]: List of allowed ctp2 pools.
+    """
+    return self.download_txt(
+        'testingconfig/ctp2_pools',
+        step_test_data=self.test_api.ctp2_pools_test_data).decode(
+            'utf-8').split(',')
 
   def get_dut_tracking_config(self) -> TrackingPolicyCfg:
     """Get TrackingPolicyCfg as defined in infra/config.

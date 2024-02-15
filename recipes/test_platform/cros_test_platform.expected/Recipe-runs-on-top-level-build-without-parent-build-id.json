@@ -67,6 +67,32 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/ctp2_pools.txt",
+      "--format",
+      "text"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "fetch HEAD:testingconfig/ctp2_pools.txt"
+  },
+  {
     "cmd": [],
     "name": "configure resultdb bigquery export"
   },

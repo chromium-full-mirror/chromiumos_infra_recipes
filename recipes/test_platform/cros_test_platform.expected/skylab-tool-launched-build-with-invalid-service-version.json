@@ -55,6 +55,20 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/ctp2_pools.txt",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:testingconfig/ctp2_pools.txt"
+  },
+  {
     "cmd": [],
     "name": "publish build ID",
     "~followup_annotations": [
