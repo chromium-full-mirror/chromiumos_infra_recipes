@@ -348,9 +348,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
       # In order to simplify things, we are going to start with only first CQ
       # attempts which do not configure additional builders via footer.
       if not (is_retry or forced_relevant):
-        _ = self.get_relevant_builder_configs(
-            [b for b in builder_configs if b.id.name in necessary_builders],
-            gerrit_changes)
+        _ = self.get_relevant_builder_configs([
+            self.m.cros_infra_config.get_builder_config(b)
+            for b in necessary_builders
+        ], gerrit_changes)
 
       necessary_child_specs = filtered_child_specs
 
