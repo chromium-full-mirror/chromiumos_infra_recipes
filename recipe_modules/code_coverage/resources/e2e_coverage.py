@@ -65,7 +65,7 @@ def main():
     raise RuntimeError(f'Parent directory for {params.path} must exist')
 
   write_metadata(params.artifacts_bucket, params.artifacts_path, params.board,
-                 params.version, params.output_dir)
+                 params.version, params.path)
 
 
 if __name__ == '__main__':
