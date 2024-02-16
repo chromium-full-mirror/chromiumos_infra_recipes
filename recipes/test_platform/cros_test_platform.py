@@ -1228,7 +1228,12 @@ def DoRunSteps(api, properties):
 
   # Check for any requests that qualify for
   # ctpv2 translation.
-  ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
+  ctp2_pools = []
+  try:
+    ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
+  # pylint: disable=broad-except
+  except Exception:  # pragma: no cover
+    pass
   api.ctpv2.set_allowed_pools(ctp2_pools)
   v2_request_count = len(api.ctpv2.filter_legacy_requests(properties.requests))
   if v2_request_count > 0:
