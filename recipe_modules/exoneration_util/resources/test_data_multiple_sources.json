@@ -1,0 +1,85 @@
+{
+    "testVariants": [
+        {
+            "testId": "tast.hwsec.Login",
+            "variant": {
+                "def": {
+                    "build_target": "dedede",
+                    "model": "dedede"
+                }
+            },
+            "variantHash": "dedede",
+            "status": "EXONERATED",
+            "sourcesId": "a"
+        },
+        {
+            "testId": "tast.session.OwnershipTaken",
+            "variant": {
+                "def": {
+                    "board": "betty"
+                }
+            },
+            "variantHash": "betty",
+            "status": "EXONERATED",
+            "sourcesId": "b"
+        },
+        {
+            "testId": "tast.hwsec.Login",
+            "variant": {
+                "def": {
+                    "build_target": "amd64-generic"
+                }
+            },
+            "variantHash": "6d35426b9fce79e2",
+            "status": "EXONERATED",
+            "sourcesId": "a"
+        },
+        {
+            "testId": "tast.session.OwnershipTaken",
+            "variant": {
+                "def": {
+                    "build_target": "amd64-generic"
+                }
+            },
+            "variantHash": "6d35426b9fce79e2",
+            "status": "EXONERATED",
+            "sourcesId": "b"
+        }
+    ],
+    "sources": {
+        "a": {
+            "gitilesCommit": {
+                "host": "chrome-internal.googlesource.com",
+                "project": "chromeos/manifest-internal",
+                "ref": "refs/heads/snapshot",
+                "commitHash": "aaaa",
+                "position": "92279"
+            },
+            "changelists": [
+                {
+                    "host": "chromium-review.googlesource.com",
+                    "project": "chromiumos/overlays/chromiumos-overlay",
+                    "change": "5138795",
+                    "patchset": "2"
+                }
+            ]
+        },
+        "b": {
+            "gitilesCommit": {
+                "host": "chrome-internal.googlesource.com",
+                "project": "chromeos/manifest-internal",
+                "ref": "refs/heads/snapshot",
+                "commitHash": "bbbb",
+                "position": "92280"
+            },
+            "changelists": [
+                {
+                    "host": "chromium-review.googlesource.com",
+                    "project": "chromiumos/overlays/chromiumos-overlay",
+                    "change": "5138795",
+                    "patchset": "3"
+                }
+            ]
+        }
+    }
+}

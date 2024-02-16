@@ -488,6 +488,7 @@
   * [exoneration_util:examples/check_overall_limit](#recipes-exoneration_util_examples_check_overall_limit)
   * [exoneration_util:examples/get_tastless_name](#recipes-exoneration_util_examples_get_tastless_name)
   * [exoneration_util:examples/get_updated_configs](#recipes-exoneration_util_examples_get_updated_configs)
+  * [exoneration_util:examples/match_test_variants_sources](#recipes-exoneration_util_examples_match_test_variants_sources) &mdash; Unit test match_test_variants_sources API.
   * [exoneration_util:examples/override_calculation](#recipes-exoneration_util_examples_override_calculation)
   * [exoneration_util:examples/per_target_limit](#recipes-exoneration_util_examples_per_target_limit)
   * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate)
@@ -6209,16 +6210,16 @@ Args:
   property_name: Name of the property to populate.
 ### *recipe_modules* / [exoneration\_util](/recipe_modules/exoneration_util)
 
-[DEPS](/recipe_modules/exoneration_util/__init__.py#10): [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis]
+[DEPS](/recipe_modules/exoneration_util/__init__.py#10): [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
 
 
 A module for util functions associated with cq test exoneration.
 
-#### **class [ExonerationUtilApi](/recipe_modules/exoneration_util/api.py#22)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ExonerationUtilApi](/recipe_modules/exoneration_util/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with exoneration.
 
-&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#130)(self, test_stats: List[FailedTestStats], overall_limit: int):**
+&mdash; **def [check\_overall\_limit](/recipe_modules/exoneration_util/api.py#170)(self, test_stats: List[FailedTestStats], overall_limit: int):**
 
 Check if automated exoneration exceeded overall limit.
 
@@ -6229,7 +6230,7 @@ Args:
 Returns:
   Boolean indicating if number of exonerations has exceeded overall_limit.
 
-&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#107)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
+&mdash; **def [check\_per\_target\_limit](/recipe_modules/exoneration_util/api.py#147)(self, test_stats: List[FailedTestStats], per_target_limit: int):**
 
 Check if automated exoneration exceeded per target limit.
 
@@ -6241,11 +6242,11 @@ Returns:
   Tuple of boolean indicating if per-target exonerations have exceeded per_target_limit
   and offending build_target. If multiple targets have exceeded, return any one.
 
-&mdash; **def [get\_tastless\_name](/recipe_modules/exoneration_util/api.py#29)(self, test_name):**
+&mdash; **def [get\_tastless\_name](/recipe_modules/exoneration_util/api.py#34)(self, test_name):**
 
 Return test_name without the tast prefix.
 
-&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#147)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
+&mdash; **def [get\_updated\_configs](/recipe_modules/exoneration_util/api.py#187)(self, test_stats: List[FailedTestStats], manual_configs: dict):**
 
 Update exoneration configs dict based on autoex analysis.
 
@@ -6256,7 +6257,21 @@ Args:
 Returns:
   A map of the same format as manual_configs but is updated to include autoex tests.
 
-&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#82)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
+&mdash; **def [match\_test\_variants\_sources](/recipe_modules/exoneration_util/api.py#71)(self, test_variant_list: List[dict], fake_query_func: Callable[([Optional[str]], QueryTestVariantsResponse)]=None):**
+
+Query resultdb test variants API and populate sources to the given
+test variants (dict). The return data is readily to be consumed by the
+query_stability method.
+
+Args:
+  test_variants: list of test variant dicts to be matched.
+  fake_query_func: a fake query function to be used for unit testing.
+
+Returns:
+  a new list of test variant dicts that have sources populated. The list can
+  be compared to the original to identify any missed matches.
+
+&mdash; **def [override\_calculation](/recipe_modules/exoneration_util/api.py#122)(self, test_stats: List[FailedTestStats], overall_limit: int, per_target_limit: int):**
 
 Populate and return OverrideInfo based on stats of auto exoneration.
 
@@ -6267,7 +6282,7 @@ Args:
 
 Returns: OverrideInfo based on auto exoneration statistics.
 
-&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#35)(self, test_variant_list: List[dict]):**
+&mdash; **def [query\_failure\_rate](/recipe_modules/exoneration_util/api.py#40)(self, test_variant_list: List[dict]):**
 
 Query failure rate from luci_analysis.
 
@@ -6277,7 +6292,7 @@ Args:
 Returns:
   List of TestVariantFailureRateAnalysis for each input.
 
-&mdash; **def [query\_stability](/recipe_modules/exoneration_util/api.py#55)(self, test_variant_position_list: List[dict], fake_data=None):**
+&mdash; **def [query\_stability](/recipe_modules/exoneration_util/api.py#95)(self, test_variant_position_list: List[dict], fake_data=None):**
 
 Query stability from luci_analysis. Batched client.
 
@@ -14398,6 +14413,18 @@ Unit test auto exoneration v2 (dry run) logic.
 
 
 &mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/get_updated_configs.py#19)(api):**
+### *recipes* / [exoneration\_util:examples/match\_test\_variants\_sources](/recipe_modules/exoneration_util/examples/match_test_variants_sources.py)
+
+[DEPS](/recipe_modules/exoneration_util/examples/match_test_variants_sources.py#13): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/luci\_analysis][recipe_engine/recipe_modules/luci_analysis], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb]
+
+
+Unit test match_test_variants_sources API
+
+&mdash; **def [RunSteps](/recipe_modules/exoneration_util/examples/match_test_variants_sources.py#24)(api):**
+
+&mdash; **def [get\_variants](/recipe_modules/exoneration_util/examples/match_test_variants_sources.py#80)():**
+
+&mdash; **def [load\_data](/recipe_modules/exoneration_util/examples/match_test_variants_sources.py#75)(content):**
 ### *recipes* / [exoneration\_util:examples/override\_calculation](/recipe_modules/exoneration_util/examples/override_calculation.py)
 
 [DEPS](/recipe_modules/exoneration_util/examples/override_calculation.py#13): [exoneration\_util](#recipe_modules-exoneration_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

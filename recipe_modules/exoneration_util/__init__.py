@@ -9,6 +9,7 @@ from PB.recipe_modules.chromeos.exoneration_util.exoneration_util import Exonera
 
 DEPS = [
     'recipe_engine/luci_analysis',
+    'recipe_engine/resultdb',
 ]
 
 
