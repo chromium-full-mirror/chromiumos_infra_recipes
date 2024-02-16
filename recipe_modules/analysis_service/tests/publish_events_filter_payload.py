@@ -21,7 +21,6 @@ DEPS = [
 
 PYTHON_VERSION_COMPATIBILITY = 'PY3'
 
-
 def RunSteps(api):
   input_proto = InstallPackagesRequest(
       sysroot=Sysroot(
@@ -56,6 +55,17 @@ def GenTests(api):
           post_process.LogDoesNotContain,
           'call chromite.api.SysrootService/InstallPackages.publish event',
           'published event', ['failedPackageData']))
+
+  yield api.test(
+      'disabled',
+      api.properties(
+          **{'$chromeos/analysis_service': {
+              'disable_publish': True
+          }}),
+      api.post_check(
+          post_process.DoesNotRun,
+          'call chromite.api.SysrootService/InstallPackages.publish event'),
+  )
 
   yield api.test(
       'basic',

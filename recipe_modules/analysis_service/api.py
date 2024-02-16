@@ -89,6 +89,7 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     self._pubsub_project_id = properties.pubsub_project_id or 'chromeos-bot'
     self._pubsub_topic_id = (
         properties.pubsub_topic_id or 'analysis-service-events')
+    self._disable_publish = properties.disable_publish
 
   def _logging_optional(self, field_desc: FieldDescriptor) -> bool:
     if self._test_data.enabled:
@@ -247,7 +248,8 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
     """Publish request and response on Cloud Pub/Sub.
 
     Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
-    must be called before (and return true).
+    must be called before (and return true), and it will return early if
+    disable_publish is specified.
 
     Does not check that request and response are corresponding types, e.g. it is
     possible to send a InstallPackagesRequest and SysrootCreateResponse; it is
@@ -264,6 +266,9 @@ class AnalysisServiceApi(recipe_api.RecipeApi):
       step_output: Output for the step.
       max_stdout_stderr_bytes: Truncate stdout and stderr to this many bytes.
     """
+    if self._disable_publish:
+      return
+
     with self.m.step.nest('publish event') as presentation:
       if not self.can_publish_event(request, response):
         raise ValueError(

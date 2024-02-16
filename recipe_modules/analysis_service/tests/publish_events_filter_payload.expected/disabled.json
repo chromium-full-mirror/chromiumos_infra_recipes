@@ -1,0 +1,112 @@
+[
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallPackages",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/my_target\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"my_target\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"profile\": {}@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"failed_package_data\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"name\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"package_name\": \"package1\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"category\": \"category\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"version\": \"r1\"@@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
+      "@@@STEP_LOG_LINE@response@      \"log_path\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"path\": \"/some/path\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ],@@@",
+      "@@@STEP_LOG_LINE@response@  \"remoteexec_artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"log_files\": [@@@",
+      "@@@STEP_LOG_LINE@response@      \"log1\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"log2\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"log3\"@@@",
+      "@@@STEP_LOG_LINE@response@    ]@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/my_target\",\n    \"buildTarget\": {\n      \"name\": \"my_target\",\n      \"profile\": {}\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
+    ],
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallPackages.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_1/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.SysrootService/InstallPackages"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "name": "call chromite.api.SysrootService/InstallPackages.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_1/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "name": "call chromite.api.SysrootService/InstallPackages.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "call chromite.api.SysrootService/InstallPackages.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

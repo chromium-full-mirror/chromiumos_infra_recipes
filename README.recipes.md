@@ -815,7 +815,7 @@ API for publishing events to the Analysis Service.
 
 #### **class [AnalysisServiceApi](/recipe_modules/analysis_service/api.py#85)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#218)(request: Message, response: Message):**
+&emsp; **@staticmethod**<br>&mdash; **def [can\_publish\_event](/recipe_modules/analysis_service/api.py#219)(request: Message, response: Message):**
 
 Return whether 'request' and 'response' can be published.
 
@@ -836,12 +836,13 @@ Args:
 Return:
   Whether an event can be published.
 
-&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#242)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None, max_stdout_stderr_bytes: int=_MAX_STDOUT_STDERR_BYTES):**
+&mdash; **def [publish\_event](/recipe_modules/analysis_service/api.py#243)(self, request: Message, response: Message, request_time: Timestamp, response_time: Timestamp, step_data: StepData, step_output: Optional[str]=None, max_stdout_stderr_bytes: int=_MAX_STDOUT_STDERR_BYTES):**
 
 Publish request and response on Cloud Pub/Sub.
 
 Wraps request and response in a AnalysisServiceEvent. 'can_publish_event'
-must be called before (and return true).
+must be called before (and return true), and it will return early if
+disable_publish is specified.
 
 Does not check that request and response are corresponding types, e.g. it is
 possible to send a InstallPackagesRequest and SysrootCreateResponse; it is
@@ -11757,7 +11758,7 @@ Recipe for building an AFDO benchmark profile.
 [DEPS](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py#15): [analysis\_service](#recipe_modules-analysis_service), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/analysis_service/tests/publish_events_filter_payload.py#24)(api):**
 ### *recipes* / [android:examples/full](/recipe_modules/android/examples/full.py)
 
 [DEPS](/recipe_modules/android/examples/full.py#20): [android](#recipe_modules-android), [cros\_build\_api](#recipe_modules-cros_build_api), [gerrit](#recipe_modules-gerrit), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

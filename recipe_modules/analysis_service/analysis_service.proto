@@ -13,5 +13,6 @@ message AnalysisServiceProperties {
   // The Cloud Pub/Sub topic to publish events to.
   string pubsub_topic_id = 2;
 
-  reserved 3;
+  // Should the analysis service be disabled and not publish.
+  bool disable_publish = 3;
 }
