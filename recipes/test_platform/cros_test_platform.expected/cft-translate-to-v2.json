@@ -13,6 +13,18 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -55,6 +67,20 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "check if Ctpv2 needs to run"
+  },
+  {
+    "cmd": [],
+    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@allowed pools@schedukeTest@@@",
+      "@@@STEP_LOG_LINE@allowed pools@examplePool@@@",
+      "@@@STEP_LOG_END@allowed pools@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -66,40 +92,211 @@
       "--format",
       "text"
     ],
-    "name": "fetch HEAD:testingconfig/ctp2_pools.txt"
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2.fetch HEAD:testingconfig/ctp2_pools.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "ensure ctpv2"
+    "name": "ctpv1",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.configure resultdb bigquery export",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/cipd/ctpv2",
-      "-ensure-file",
-      "chromiumos/infra/ctpv2/${platform} None",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateInvocation",
+      "-include-update-token"
     ],
     "infra_step": true,
-    "name": "ensure ctpv2.ensure_installed",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "ctpv1.configure resultdb bigquery export.mark resultdb invocation for bigquery export",
+    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:42\"}, \"updateMask\": \"bigqueryExports\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"bigqueryExports\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@      {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"dataset\": \"resultdb\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"project\": \"cros-test-analytics\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"table\": \"test_results\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    ],@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:42\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.publish build ID",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"40-chars-fake-of-the-package-instance_id\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/ctpv2/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_SUMMARY_TEXT@Skipped: PubSub topic not set@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.service version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.request",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.request.validate timeouts",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.request.validate scheduling parameters",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.request.software dependencies",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.input validation.request.container metadata url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.retrieve container metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@unique container metadata urls in request@gs://foo-container-metadata-url@@@",
+      "@@@STEP_LOG_END@unique container metadata urls in request@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.retrieve container metadata.get container metadata from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Failed to load JSON: Expecting value: line 1 column 1 (char 0).@@@",
+      "@@@STEP_LOG_END@container metadata error@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://foo-container-metadata-url"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "ctpv1.retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.assign container metadata to requests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.assign container metadata to requests.default_2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@container metadata error@Error while retrieving container metadata from gs://foo-container-metadata-url: Failed to load JSON: Expecting value: line 1 column 1 (char 0).@@@",
+      "@@@STEP_LOG_END@container metadata error@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv1.determine if cft should be turned off",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@summary@No requests were modified to turn off cft.@@@",
+      "@@@STEP_LOG_END@summary@@@"
     ]
   },
   {
@@ -122,9 +319,21 @@
       "-fields",
       "builder,id,output,status",
       "-predicate",
-      "{\"builder\": {}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"42\"}]}"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "set build cost.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -132,6 +341,63 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure ctpv2"
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/ctpv2",
+      "-ensure-file",
+      "chromiumos/infra/ctpv2/${platform} None",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "ensure ctpv2.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"40-chars-fake-of-the-package-instance_id\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/ctpv2/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "ctpv2 async error handler",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Value not set@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "No valid request found"
+    },
     "name": "$result"
   }
 ]

@@ -25,11 +25,11 @@ class Ctpv2Command(recipe_api.RecipeApi):
   def is_enabled(self):
     """Checks if ctpv2 is enabled for use.
 
-    Returns: bool
-    """
+        Returns: bool
+        """
     return self._cipd_label is not None
 
-  def execute_luciexe(self, use_legacy=False):
+  def execute_luciexe(self, use_legacy=False, runningAsync=False):
     """Execute work via ctpv2 luciexe binary."""
     self.ensure_ctpv2()
     build = build_pb2.Build()
@@ -41,9 +41,12 @@ class Ctpv2Command(recipe_api.RecipeApi):
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
       build.ClearField(ofield)
     cmd = self._cipd_dir.join('ctpv2')
+    stepName = 'ctpv2 sub-build'
+    if runningAsync:  # pragma: no cover
+      stepName += ' (async)'
 
     with self.m.context(infra_steps=True):
-      self.m.step.sub_build('ctpv2', [cmd], build, legacy_global_namespace=True)
+      self.m.step.sub_build(stepName, [cmd], build)
 
   def ensure_ctpv2(self):
     """Ensure the ctpv2 CLI is installed."""
@@ -71,12 +74,12 @@ class Ctpv2Command(recipe_api.RecipeApi):
   def filter_legacy_requests(self, requests, reverse=False):  # pragma: no cover
     """Filter out the legacy requests based on allowed pools.
 
-    Args:
-      * requests: Dict of legacy v1 requests.
-      * reverse: boolean to flip the filter result.
+        Args:
+          * requests: Dict of legacy v1 requests.
+          * reverse: boolean to flip the filter result.
 
-    Returns dict of filtered legacy v1 requests.
-    """
+        Returns dict of filtered legacy v1 requests.
+        """
     result = copy.deepcopy(requests)
     for name, request in requests.items():
       meets_criteria = False

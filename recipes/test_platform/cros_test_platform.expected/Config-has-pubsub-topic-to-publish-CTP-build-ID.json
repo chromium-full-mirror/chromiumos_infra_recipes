@@ -74,6 +74,20 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "check if Ctpv2 needs to run"
+  },
+  {
+    "cmd": [],
+    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@allowed pools@schedukeTest@@@",
+      "@@@STEP_LOG_LINE@allowed pools@examplePool@@@",
+      "@@@STEP_LOG_END@allowed pools@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -97,7 +111,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "fetch HEAD:testingconfig/ctp2_pools.txt"
+    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2.fetch HEAD:testingconfig/ctp2_pools.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
   },
   {
     "cmd": [],

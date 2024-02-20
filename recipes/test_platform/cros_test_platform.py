@@ -366,6 +366,7 @@ def _extract_builds_to_stage(requests):
   Returns: set(str) - set of builds, str - bucket
   """
   builds = set()
+  bucket = None
   for _, r in requests.items():
     bucket = _extract_bucket_from_request(r)
     if bucket and bucket != 'chromeos-image-archive':
@@ -1220,31 +1221,52 @@ def DoRunSteps(api, properties):
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
 
+  # If ctpv2 req is provided, run the ctpv2 flow
   if properties.HasField(
       'ctpv2_request') and api.ctpv2.is_enabled():  # pragma: nocover
-    # Use ctpv2 binary rather than the normal ctpv1 workflow.
+    # Use ctpv2 binary rather than the normal ctpv1 workflow
     api.ctpv2.execute_luciexe()
     return
 
-  # Check for any requests that qualify for
-  # ctpv2 translation.
-  ctp2_pools = []
-  try:
-    ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
-  # pylint: disable=broad-except
-  except Exception:  # pragma: no cover
-    pass
-  api.ctpv2.set_allowed_pools(ctp2_pools)
-  v2_request_count = len(api.ctpv2.filter_legacy_requests(properties.requests))
+  runner = api.future_utils.create_parallel_runner()
+  v2_request_count = CheckIfCtpv2NeedsToRun(api, properties)
+  # v2 eligible request found so run ctpv2
   if v2_request_count > 0:
-    try:
-      api.ctpv2.execute_luciexe(use_legacy=True)
-    # pylint: disable=broad-except
-    except Exception:
-      pass
-    if v2_request_count == len(properties.requests):
-      return
 
+    def errorHandlerFunc(resp):
+      with api.step.nest('ctpv2 async error handler') as pres:
+        pres.step_text = '{}'.format(resp)
+
+    runner.run_function_async(api.ctpv2.execute_luciexe, (True, True),
+                              error_handler=errorHandlerFunc)
+    if v2_request_count < len(properties.requests):
+      # If ctpv2 was invoked, nest the ctpv1 steps under a parent step
+      with api.step.nest('ctpv1'):
+        RunCtpv1(api, properties)
+  else:
+    # If ctpv2 was not invoked, let's show the steps similar to legacy to avoid user confusion
+    RunCtpv1(api, properties)
+  runner.wait_for_and_throw()
+
+
+def CheckIfCtpv2NeedsToRun(api, properties):
+  with api.step.nest('check if Ctpv2 needs to run') as step:
+
+    # Check for any requests that qualify for
+    # ctpv2 translation.
+    ctp2_pools = []
+    try:
+      with api.step.nest('get allowed pools for ctpv2') as step:
+        ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
+        step.presentation.logs['allowed pools'] = '\n'.join(ctp2_pools)
+    # pylint: disable=broad-except
+    except Exception:  # pragma: no cover
+      pass
+    api.ctpv2.set_allowed_pools(ctp2_pools)
+    return len(api.ctpv2.filter_legacy_requests(properties.requests))
+
+
+def RunCtpv1(api, properties):
   _top_level_export_to_bigquery(api, properties.force_export)
   if api.cq.active:
     api.easy.set_properties_step(is_retry=api.cros_history.is_retry)
@@ -3206,13 +3228,22 @@ def GenTests(api):
                           .TestCaseTagCriteria(tags=['beep', 'boop'],
                                                tag_excludes=['blap', 'blop']),
                           total_shards=5,
-                          swarming_tags=['label-pool:schedukeTest'])
+                          swarming_tags=['label-pool:schedukeTest']),
+                  'default_2':
+                      _cft_test_request(
+                          'foo', tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
+                          total_shards=5,
+                          swarming_tags=['label-pool:NotSchedukeTest'])
               }, config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':
                       CrosToolRunnerProperties(
                           version=CrosToolRunnerProperties.Version(
                               cipd_label='prod')),
               }),
+      _set_build(bid=42, tags={'label-pool': 'schedukeTest'}),
+      status='FAILURE',
   )
 
   yield api.test(

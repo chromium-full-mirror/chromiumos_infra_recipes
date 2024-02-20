@@ -5627,19 +5627,19 @@ API to call into the CTPv2 binary
 
 Module for issuing ctpv2 commands
 
-&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#63)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#66)(self):**
 
 Return the CTPv2 CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#48)(self):**
+&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#51)(self):**
 
 Ensure the ctpv2 CLI is installed.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#32)(self, use_legacy=False):**
+&mdash; **def [execute\_luciexe](/recipe_modules/ctpv2/api.py#32)(self, use_legacy=False, runningAsync=False):**
 
 Execute work via ctpv2 luciexe binary.
 
-&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#71)(self, requests, reverse=False):**
+&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#74)(self, requests, reverse=False):**
 
 Filter out the legacy requests based on allowed pools.
 
@@ -5655,7 +5655,7 @@ Checks if ctpv2 is enabled for use.
 
 Returns: bool
 
-&mdash; **def [set\_allowed\_pools](/recipe_modules/ctpv2/api.py#67)(self, allowed_pools):**
+&mdash; **def [set\_allowed\_pools](/recipe_modules/ctpv2/api.py#70)(self, allowed_pools):**
 
 Set the allowed ctp2 pools
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
@@ -16628,11 +16628,15 @@ Updates test plan rules to reflect new risk-based rules.
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [DoRunSteps](/recipes/test_platform/cros_test_platform.py#1218)(api, properties):**
+&mdash; **def [CheckIfCtpv2NeedsToRun](/recipes/test_platform/cros_test_platform.py#1252)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1213)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/test_platform/cros_test_platform.py#1219)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1349)(api, requests, error_in_requests):**
+&mdash; **def [RunCtpv1](/recipes/test_platform/cros_test_platform.py#1269)(api, properties):**
+
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1214)(api, properties):**
+
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1371)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -16653,7 +16657,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1139)(api, properties, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1140)(api, properties, requests):**
 
 Execute request in the correct backend.
 
@@ -16666,9 +16670,9 @@ Args:
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1445)(api, requests, responses, skip_postprocess=True):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1467)(api, requests, responses, skip_postprocess=True):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1116)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1117)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -16677,13 +16681,13 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1641)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1663)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1720)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1742)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1548)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1570)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
 &mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#118)(api, properties):**
 

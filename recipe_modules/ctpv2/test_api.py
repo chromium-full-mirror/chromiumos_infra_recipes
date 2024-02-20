@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Test API to call into the CTPv2 binary"""
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
@@ -20,7 +22,7 @@ class Ctpv2TestApi(recipe_test_api.RecipeTestApi):
     """
     if name != '':
       name += '.'
-    name += 'ctpv2'
+    name += 'ctpv2 sub-build'
     return (self.step_data(
         name,
         self.m.step.sub_build(build_pb2.Build(status=common_pb2.SUCCESS))))
