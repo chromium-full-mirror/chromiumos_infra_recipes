@@ -1082,25 +1082,32 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               include_messages=True, include_detailed_labels=True,
               step_name=f'fetch changes for {c.id}')
 
-          wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
-          non_latest_patch_set_ids.update(
-              {c.id for p in patch_sets if not p.is_latest_patch_set()})
-          unresolved_comment_ids.update(
-              {c.id for p in patch_sets if p.unresolved_comment_count})
+          # Filters which apply to all CQ modes.
           if not self._was_cv_active(c.id, patch_sets):
             removed_label_ids.add(c.id)
             # If the CV was not active, the build could have been run manually.
             # Manually launched builds do not have the `$recipe_engine/cq` property,
             # so we do not want to check for them what type it was (DryRun/FullRun).
             continue
+          non_latest_patch_set_ids.update(
+              {c.id for p in patch_sets if not p.is_latest_patch_set()})
+
+          # Filters which only apply to dry-runs.
           if self.build_was_dry_run(c):
+            # If the build was a dry-run, retry even if it is not "submittable"
+            # as long as there are not "negative" votes on the CL.
             negative_labels_ids = {
                 c.id
                 for p in patch_sets
                 if p.has_label_vote('Code-Review', -1) or p.has_label_vote(
                     'Code-Review', -2) or p.has_label_vote('Verified', -1)
             }
+
+          # Filters which only apply to full runs.
           else:
+            wip_ids.update({c.id for p in patch_sets if p.work_in_progress})
+            unresolved_comment_ids.update(
+                {c.id for p in patch_sets if p.unresolved_comment_count})
             non_submittable_ids.update(
                 {c.id for p in patch_sets if not p.submittable})
 

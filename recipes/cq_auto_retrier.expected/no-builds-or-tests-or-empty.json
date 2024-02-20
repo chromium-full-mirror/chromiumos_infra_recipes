@@ -824,10 +824,10 @@
       "    api.deferrals.raise_exceptions()",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/deferrals/api.py\", line 145, in raise_exceptions",
       "    raise deferred[0]",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/auto_retry_util/api.py\", line 1686, in retry_builds",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/auto_retry_util/api.py\", line 1693, in retry_builds",
       "    if self._retry_build(b, details.retryable_builders,",
       "       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/auto_retry_util/api.py\", line 1630, in _retry_build",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/auto_retry_util/api.py\", line 1637, in _retry_build",
       "    raise ValueError(",
       "ValueError: At least one builder or test suite must be given as a retry reason for build 1111"
     ]

@@ -970,7 +970,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1529)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1536)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -984,7 +984,7 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1370)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
+&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1377)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
 
 Returns a list of suites that can have their failures attributed.
 
@@ -1031,7 +1031,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_builds](/recipe_modules/auto_retry_util/api.py#1667)(self, retryable_runs: List[Tuple[(build_pb2.Build, RetryDetails)]]):**
+&mdash; **def [retry\_builds](/recipe_modules/auto_retry_util/api.py#1674)(self, retryable_runs: List[Tuple[(build_pb2.Build, RetryDetails)]]):**
 
 Performs retry on retryable builds.
 
@@ -1043,7 +1043,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#204)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1169)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1176)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
