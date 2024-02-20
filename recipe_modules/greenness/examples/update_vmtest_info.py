@@ -21,11 +21,12 @@ def RunSteps(api):
           build_target_name='betty', output_properties={
               'greenness': '78'
           }, input_properties={
-              'name': 'betty-arc-r-cq.tast_vm.direct_tast_vm_shard_3_of_5'
+              'name': 'betty-arc-r-snapshot.tast_vm.direct_tast_vm_shard_3_of_5'
           }).message
   ]
   api.greenness.update_vmtest_info(builds)
-  api.assertions.assertEqual(api.greenness.greenness_dict['betty'].score, 78)
+  api.assertions.assertEqual(
+      api.greenness.builder_greenness_dict['betty-arc-r-snapshot'].score, 78)
   api.greenness.print_step()
 
 

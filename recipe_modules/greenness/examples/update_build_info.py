@@ -64,8 +64,6 @@ def RunSteps(api):
     api.assertions.assertEqual(
         api.greenness.builder_greenness_dict['eve-postsubmit'].build_score, 98)
   api.greenness.print_step()
-  api.assertions.assertEqual(
-      api.greenness.get_greenness('eve-kernelnext').build_score, 100)
 
 
 def GenTests(api):

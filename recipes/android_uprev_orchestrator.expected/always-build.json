@@ -3807,8 +3807,6 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@",
       "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-cq', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('atlas-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
@@ -13448,8 +13446,6 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('amd64-generic', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('atlas', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@",
       "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-cq', GreennessTuple(score=0, build_score=0, critical=True, relevant=True)), ('atlas-cq', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]

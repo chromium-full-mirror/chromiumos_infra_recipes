@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Mock returns from HW Tests."""
+
 import base64
 import json
 import zlib
@@ -31,6 +33,7 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
     if common is None:
       common = TestUnitCommon(
           build_target=BuildTarget(name='build_target_name'),
+          builder_name='builder_name',
           build_payload=BuildPayload(
               artifacts_gs_bucket='gsbucket',
               artifacts_gs_path='gspath',

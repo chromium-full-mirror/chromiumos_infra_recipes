@@ -5354,8 +5354,6 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@",
       "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-release-main', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
@@ -14852,8 +14850,6 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict([('eve', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('another_target', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@greenness@@@",
       "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-release-main', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]

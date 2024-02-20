@@ -697,8 +697,6 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@greenness@OrderedDict()@@@",
-      "@@@STEP_LOG_END@greenness@@@",
       "@@@STEP_LOG_LINE@builder_greenness@OrderedDict()@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
