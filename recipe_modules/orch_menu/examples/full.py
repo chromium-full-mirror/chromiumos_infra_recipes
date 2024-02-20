@@ -651,43 +651,6 @@ def GenTests(api):
       status='FAILURE',
   )
 
-  summary = (
-      '1 out of 1 hw test failed (2 additional non-critical failures)\n\n- htarget.hw.some-other-suite:'
-  )
-  yield api.orch_menu.test(
-      'non-crit-test-check-updates-some',
-      data.ctp_failure,
-      api.step_data(
-          'clean up orchestrator.'
-          'non-critical test check.generate test plan.read output file',
-          api.file.read_raw(
-              api.cros_test_plan.reduced_criticality_generate_test_plan_response
-              .SerializeToString())),
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
-                                               summary_markdown=summary))),
-      status='FAILURE',
-      collect_builds=collect,
-  )
-
-  summary = '3 non-critical hw tests failed'
-  yield api.orch_menu.test(
-      'non-crit-test-check-updates-all',
-      data.ctp_failure,
-      api.step_data(
-          'clean up orchestrator.'
-          'non-critical test check.generate test plan.read output file',
-          api.file.read_raw(
-              api.cros_test_plan.all_non_critical_generate_test_plan_response
-              .SerializeToString())),
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(status=common_pb2.SUCCESS,
-                                               summary_markdown=summary))),
-      collect_builds=collect,
-  )
-
   yield api.orch_menu.test(
       'bad-ref',
       api.properties(FullProperties(expect_missing_config=True)),
@@ -938,27 +901,7 @@ def GenTests(api):
               },
           },
       ),
-      api.gerrit.set_gerrit_fetch_changes_response(
-          'clean up orchestrator.non-critical test check.check test planning v2 enabled',
-          gerrit_changes,
-          {
-              1234: {
-                  'patch_set': 5,
-                  'files': {
-                      'a/b/d/test.txt': {},
-                  },
-                  'branch': 'main',
-              },
-          },
-      ),
       data.ctp_failure,
-      # The criticality update step should not run if test planning v2 is
-      # enabled.
-      api.post_process(post_process.PropertiesDoNotContain,
-                       'test_criticality_update_count'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'clean up orchestrator.non-critical test check.generate test plan'),
       input_properties=input_props_with_generate_ctpv1_format,
       builder='postsubmit-orchestrator',
       collect_builds=data.builds,

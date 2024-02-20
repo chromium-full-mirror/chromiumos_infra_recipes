@@ -12562,14 +12562,6 @@
   },
   {
     "cmd": [],
-    "name": "clean up orchestrator.non-critical test check",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@no critical test failures@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

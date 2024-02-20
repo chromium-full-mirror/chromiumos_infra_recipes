@@ -949,48 +949,6 @@ class FailuresApi(RecipeApi):
         pres.logs['new non-critical builders'] = new_non_critical_builds
     return updated_failures
 
-  def update_non_critical_test_failures(self, failures: List[Failure],
-                                        test_plan_summary: Dict[str, bool],
-                                        presentation: Optional[StepPresentation] = None) -> List[Failure]:
-    """If tests are now non-critical, failures are non-fatal.
-
-    Args:
-      failures: All failures encountered during execution.
-      test_plan_summary: Map of test display name to criticality against which
-        to check test failures.
-      presentation: Parent step presentation.  If None, a StepPresentation will
-        be created.
-
-    Returns:
-      The list of Failures with 'fatal' statuses possibly updated.
-    """
-    updated_failures = []
-    new_non_critical_tests = []
-
-    for f in failures:
-      # Skip build and non-fatal failures.
-      if not f.kind.endswith('test') or not f.fatal:
-        updated_failures.append(f)
-        continue
-
-      # Deleted tests are considered critical. The planner may have different
-      # options, and choose one test in the first plan, a second test in the
-      # second plan; to err on the side of caution, assume that if a test is not
-      # explicitly marked non-critical, it is still critical.
-      critical = test_plan_summary.get(f.id, True)
-      if not critical:
-        new_non_critical_tests.append(f.id)
-        updated_failures.append(
-            self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                         fatal=critical, id=f.id))
-      else:
-        updated_failures.append(f)
-
-    if new_non_critical_tests:
-      with self._with_step(presentation, 'non-critical test check') as pres:
-        pres.logs['new non-critical tests'] = new_non_critical_tests
-    return updated_failures
-
   def format_step_failures(self, step_failures):
     """Helper function to format the collected failures for presentation.
 

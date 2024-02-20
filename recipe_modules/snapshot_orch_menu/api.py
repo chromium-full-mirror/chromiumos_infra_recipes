@@ -404,7 +404,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       self._non_critical_build_check('final build criticality update',
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
-      self._non_critical_test_check()
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
       self.m.greenness.print_step()
@@ -523,76 +522,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
             # update a ref before the older one.
             pres.status = self.m.step.WARNING
             pres.text = 'failed to push. continuing'
-
-  def _update_test_summary(self):
-    """Updates criticality on the output test_summary.
-
-    Returns the names of the test configs whose results have been updated.
-    """
-    updated_tests = []
-    non_fatal_failures = {
-        f.id for f in self.builds_status.failures if not f.fatal
-    }
-    test_summary = self.m.cros_test_proctor.test_summary
-    for test in test_summary:
-      if test['status'] == 'FAILURE' and test['critical']:
-        name = test.get('name')
-        if name in non_fatal_failures:
-          test['critical'] = False
-          updated_tests.append(name)
-
-    # Output the number of updates in order to measure impact.
-    self.m.step.active_result.presentation.properties[
-        'test_criticality_update_count'] = len(updated_tests)
-    if updated_tests:
-      self.m.cros_test_proctor.test_summary = test_summary
-
-    return updated_tests
-
-  def _non_critical_test_check(self):
-    """Update failures in builds_status based on the current criticality."""
-    with self.m.step.nest('non-critical test check') as pres:
-      # Avoid regenerating the test plan if there are no critical test failures.
-      if not any(
-          f.kind.endswith('test') and f.fatal
-          for f in self.builds_status.failures):
-        pres.step_text = 'no critical test failures'
-        return
-
-      if self.gerrit_changes and self.m.cros_test_plan_v2.enabled_on_changes(
-          self.gerrit_changes):
-        pres.step_text = 'test planning v2 enabled, skipping non-critical test check'
-        return
-
-      refreshed_test_plan = self.m.cros_test_plan.generate(
-          self.builds_status.completed_builds, self.gerrit_changes,
-          self.gitiles_commit)
-
-      test_plan_summary = self.m.cros_test_plan.get_test_plan_summary(
-          refreshed_test_plan)
-
-      updated_failures = self.m.failures.update_non_critical_test_failures(
-          self.builds_status.failures, test_plan_summary)
-
-      self.builds_status.update(failures=updated_failures)
-
-      # TODO(b/274664680): Reinstate and refactor this.
-      #updated_test_config_names = self._update_test_summary()
-      _ = self._update_test_summary()
-
-      #self._exonerate_resultdb_results(updated_test_config_names)
-
-  # TODO(b/274664680): Reinstate and refactor this.
-  # def _exonerate_resultdb_results(self, test_config_names):
-  #   """Apply exonerations to test results for which are now non-critical."""
-  #   if not test_config_names:
-  #     return
-
-  #   for t in test_config_names:
-  #     self.m.cros_resultdb.apply_exonerations(
-  #         [self.m.cros_resultdb.current_invocation_id],
-  #         Request.Params.TestExecutionBehavior.NON_CRITICAL,
-  #         variant_filter={'test_config': t})
 
   def _non_critical_build_check(self, step_name, builds, failures):
     """Update failures based on the current criticality of the builders.
