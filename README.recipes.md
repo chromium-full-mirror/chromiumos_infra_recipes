@@ -730,13 +730,11 @@
   * [skylab_results:tests/translate_result](#recipes-skylab_results_tests_translate_result)
   * [snapshot_orch_menu:examples/aggregate_metadata](#recipes-snapshot_orch_menu_examples_aggregate_metadata)
   * [snapshot_orch_menu:examples/full](#recipes-snapshot_orch_menu_examples_full)
-  * [snapshot_orch_menu:examples/wait_for_images](#recipes-snapshot_orch_menu_examples_wait_for_images) &mdash; Tests for the plan_and_wait_for_images function.
   * [snapshot_orch_menu:tests/builds_status](#recipes-snapshot_orch_menu_tests_builds_status)
   * [snapshot_orch_menu:tests/categorize_builds](#recipes-snapshot_orch_menu_tests_categorize_builds)
   * [snapshot_orch_menu:tests/child_build_info](#recipes-snapshot_orch_menu_tests_child_build_info) &mdash; Tests for the add_child_build_info_to_output_property function.
   * [snapshot_orch_menu:tests/collect](#recipes-snapshot_orch_menu_tests_collect)
   * [snapshot_orch_menu:tests/collect_and_check_build_results](#recipes-snapshot_orch_menu_tests_collect_and_check_build_results)
-  * [snapshot_orch_menu:tests/no_necessary_builds](#recipes-snapshot_orch_menu_tests_no_necessary_builds)
   * [snapshot_orch_menu:tests/run_follow_on_orchestrator](#recipes-snapshot_orch_menu_tests_run_follow_on_orchestrator)
   * [snapshot_orch_menu:tests/set_child_builds](#recipes-snapshot_orch_menu_tests_set_child_builds)
   * [snapshot_orchestrator](#recipes-snapshot_orchestrator) &mdash; Recipe that schedules snapshot/postsubmit child builders and watches for failures.
@@ -10548,18 +10546,18 @@ Translates result to a Skylab result.
 
 API providing a menu for snapshot orchestrator steps
 
-#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#124)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#123)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#1403)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#1245)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#1243)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#1085)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -10572,9 +10570,9 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#175)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#174)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#1445)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#1287)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -10586,20 +10584,20 @@ Returns:
   A dict mapping CollectHandling to the list of builds which fall into that
       category.
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/snapshot_orch_menu/api.py#215)(self):**
+&mdash; **def [chrome\_module\_child\_props](/recipe_modules/snapshot_orch_menu/api.py#214)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/snapshot_orch_menu/api.py#203)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/snapshot_orch_menu/api.py#202)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#155)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#154)(self):**
 
-&mdash; **def [cq\_relevant](/recipe_modules/snapshot_orch_menu/api.py#792)(self, build: build_pb2.Build):**
+&mdash; **def [cq\_relevant](/recipe_modules/snapshot_orch_menu/api.py#634)(self, build: build_pb2.Build):**
 
 Whether the CQ child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#377)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#355)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
 
 Create the correct return value for RunSteps.
 
@@ -10615,33 +10613,33 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#163)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#162)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#167)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#166)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#159)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#158)(self):**
 
-&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#151)(self):**
+&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#150)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#179)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#178)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/snapshot_orch_menu/api.py#171)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/snapshot_orch_menu/api.py#170)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#187)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#186)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#195)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#194)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#191)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#190)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#183)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#182)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#199)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#198)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#771)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#613)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#678)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#520)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -10655,7 +10653,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#1134)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#976)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10673,32 +10671,20 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/snapshot_orch_menu/api.py#638)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
-
-Plan and schedule children, and wait until they have produced images.
-
-Args:
-  run_step_name: Name for "run builds" step, or None.
-  extra_child_props: If set, extra properties to append to the child
-    builder requests.
-
-Returns:
-  A list of builds that have produced images and are ready for testing.
-
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#779)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#621)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#211)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#210)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#1028)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#870)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/snapshot_orch_menu/api.py#1035)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/snapshot_orch_menu/api.py#877)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -10715,7 +10701,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#239)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#238)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -10730,7 +10716,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/snapshot_orch_menu/api.py#207)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/snapshot_orch_menu/api.py#206)(self):**
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
 
 [DEPS](/recipe_modules/src_state/__init__.py#10): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16252,14 +16238,6 @@ Tests for the get_per_board_prejob_stats function.
 
 
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/examples/full.py#44)(api, properties):**
-### *recipes* / [snapshot\_orch\_menu:examples/wait\_for\_images](/recipe_modules/snapshot_orch_menu/examples/wait_for_images.py)
-
-[DEPS](/recipe_modules/snapshot_orch_menu/examples/wait_for_images.py#15): [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
-
-
-Tests for the plan_and_wait_for_images function.
-
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/examples/wait_for_images.py#22)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/builds\_status](/recipe_modules/snapshot_orch_menu/tests/builds_status.py)
 
 [DEPS](/recipe_modules/snapshot_orch_menu/tests/builds_status.py#11): [failures](#recipe_modules-failures), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -16292,12 +16270,6 @@ Tests for the add_child_build_info_to_output_property function.
 
 
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py#27)(api, properties):**
-### *recipes* / [snapshot\_orch\_menu:tests/no\_necessary\_builds](/recipe_modules/snapshot_orch_menu/tests/no_necessary_builds.py)
-
-[DEPS](/recipe_modules/snapshot_orch_menu/tests/no_necessary_builds.py#11): [cros\_relevance](#recipe_modules-cros_relevance), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/no_necessary_builds.py#18)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/tests/run_follow_on_orchestrator.py)
 
 [DEPS](/recipe_modules/snapshot_orch_menu/tests/run_follow_on_orchestrator.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

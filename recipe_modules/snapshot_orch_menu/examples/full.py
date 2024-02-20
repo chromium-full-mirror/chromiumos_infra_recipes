@@ -685,41 +685,6 @@ def GenTests(api):
   )
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
-  collect, collect_after = api.snapshot_orch_menu.orch_child_builds(
-      'cq-orchestrator', '-cq')
-  # Joins an inflight orchestrator run.
-  yield api.snapshot_orch_menu.test(
-      'inflight-orchestrator', data.ctp_normal,
-      api.post_check(post_process.MustRun, 'find inflight orchestrator'),
-      api.post_check(
-          post_process.MustRun,
-          'find inflight orchestrator.waiting for existing runs.wait'),
-      api.properties(
-          FullProperties(
-              expected_completed_builds=collect + collect_after,
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True)), cq=True, collect_builds=collect,
-      history_builds=data.history_builds, collect_after_builds=collect_after,
-      with_history=True, git_footers=[],
-      inflight_orch=[data.inflight_orchestrator])
-
-  # Runs when there is no inflight orchestrator.
-  yield api.snapshot_orch_menu.test(
-      'no-inflight-orchestrator', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=collect + collect_after,
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True)),
-      api.post_check(post_process.DoesNotRun,
-                     'find related CLs'), cq=True, collect_builds=collect,
-      history_builds=data.history_builds, collect_after_builds=collect_after,
-      with_history=True, git_footers=[], inflight_orch=[])
-
   # Collect times out
   yield api.snapshot_orch_menu.test(
       'collect-children-timeout', data.ctp_normal,
@@ -911,44 +876,6 @@ def GenTests(api):
       extra_changes=gerrit_changes,
       status='FAILURE',
   )
-
-  RELATED_OUTPUT = {
-      'related': [{
-          '_change_number': '123456',
-          '_revision_number': '7',
-          'project': 'chromeos/manifest-internal'
-      }, {
-          '_change_number': '321',
-          '_revision_number': '1',
-          'project': 'sample'
-      }, {
-          '_change_number': '432',
-          '_revision_number': '2',
-          'project': 'sample'
-      }]
-  }
-
-  yield api.snapshot_orch_menu.test(
-      'cq-orch-include-related-changes', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=collect + collect_after,
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True,
-              experiments=['chromeos.cros_infra_config.include_related'])),
-      api.post_check(post_process.MustRun, 'find related CLs'),
-      api.gerrit.set_gerrit_related_changes(RELATED_OUTPUT,
-                                            step_name='find related CLs'),
-      api.post_check(post_process.MustRun,
-                     'find related CLs.set related_changes'),
-      api.post_check(post_process.MustRun,
-                     'find related CLs.set related_changes_to_apply'),
-      api.post_process(post_process.DropExpectation), cq=True,
-      collect_builds=collect, history_builds=data.history_builds,
-      collect_after_builds=collect_after, with_history=True, git_footers=[],
-      inflight_orch=[])
 
   annealing_build_with_found_changes = build_pb2.Build()
   annealing_build_with_found_changes.output.properties[

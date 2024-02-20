@@ -12,8 +12,6 @@ consistent.
 from collections import namedtuple
 import typing
 
-from google.protobuf import json_format
-
 from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
@@ -41,9 +39,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         input_properties.
       git_footers (list): The list of git footers to return from build history,
         or None.  Only used if with_history evaluates True.
-      inflight_orch (list): List of build messages to return when we search for
-        inflight orchestrators, or None.  Only used if with_history evaluates
-        True.
       history_builds (list): List of build messages to return when we are
         checking history, or None.
       collect_builds (list): List of build messages to return when we are
@@ -68,7 +63,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     with_manifest_refs = kwargs.pop('with_manifest_refs', False)
     max_build_failure_ratio = kwargs.pop('max_build_failure_ratio', 0.0)
     git_footers = kwargs.pop('git_footers', None)
-    inflight_orch = kwargs.pop('inflight_orch', None)
     history_builds = kwargs.pop('history_builds', None)
     collect_builds = kwargs.pop('collect_builds', [])
     collect_timeout = kwargs.pop('collect_timeout', None)
@@ -113,16 +107,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
                 [x for x in history_builds if x.status == common_pb2.SUCCESS],
                 'run builds.get build history.get completed builds.'
                 'get change build history.buildbucket.search'))
-      if inflight_orch is not None:
-        args.append(
-            self.m.buildbucket.simulated_search_results(
-                inflight_orch, step_name='find inflight orchestrator.'
-                'find matching builds.buildbucket.search'))
-        if inflight_orch:
-          args.append(
-              self.m.buildbucket.simulated_collect_output(
-                  inflight_orch,
-                  'find inflight orchestrator.waiting for existing runs'))
 
     if collect_builds:
       if collect_timeout:
@@ -470,18 +454,3 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
       start_build_id += 1
 
     return collect_builds, collect_after_builds
-
-  def build_poller_step_data(
-      self, builds: typing.List[Build],
-      parent_step_name: typing.Optional[str] = '') -> recipe_test_api.TestData:
-    """Set the response to the build_poller `collect` call."""
-    step_name = '.'.join([parent_step_name, 'collect'])
-    test_data = '\n'.join(
-        json_format.MessageToJson(b).replace('\n', '') for b in builds or [])
-
-    return self.step_data(
-        step_name,
-        stdout=self.m.raw_io.output_text(
-            test_data,
-        ),
-    )

@@ -9,7 +9,6 @@ from __future__ import division
 
 import contextlib
 from collections import defaultdict
-from collections import OrderedDict
 from collections import namedtuple
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -349,27 +348,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           if not self.m.gerrit.changes_submittable(self.gerrit_changes):
             raise recipe_api.StepFailure(
                 'Merge conflict detected! Please rebase and retry.')
-          # If enabled, ensure all related changes are present
-          with self.m.failures.ignore_exceptions():
-            if ('chromeos.cros_infra_config.include_related'
-                in self.m.cros_infra_config.experiments):
-              with self.m.step.nest('find related CLs'):
-                all_related_changes = OrderedDict()
-                for change in self.gerrit_changes:
-                  # Note: this might include duplicates.
-                  all_related_changes[
-                      change.change] = self.m.gerrit.gerrit_related_changes(
-                          change)
-                self.m.easy.set_properties_step(
-                    related_changes=all_related_changes)
-                to_apply = self.m.cros_source.related_changes_to_apply(
-                    self.gerrit_changes, all_related_changes)
-                self.m.looks_for_green.related_changes_to_apply = to_apply
-                self.m.easy.set_properties_step(
-                    related_changes_to_apply=to_apply)
-
-      # If we are waiting on inflight orchestrators, do that now.
-      self._wait_for_inflight_orchestrator()
 
       # Yield while inside of the bot_cost.build_cost_context.
       yield config
@@ -538,142 +516,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       failures = self.m.failures.update_non_critical_build_failures(
           failures, configs, presentation)
       self.builds_status.update(failures=failures, configs=configs)
-
-  def _wait_for_inflight_orchestrator(self):
-    """If there is an inflight orchestrator, wait for it."""
-
-    if not (self.gerrit_changes and self._properties.enable_history and
-            self._properties.assert_singleton):
-      # In order to join an inflight orchestrator, there must be changes and we
-      # must have history, and only allow one orchestrator for a cl_group.  If
-      # that is not the case, we're done.
-      return
-
-    with self.m.step.nest('find inflight orchestrator') as pres:
-      my_build = self.m.buildbucket.build
-      running_builds = self.m.cros_history.get_matching_builds(
-          my_build, statuses=[common_pb2.STARTED])
-
-      # Make sure we are not in the list.
-      running_builds = [b for b in running_builds if b.id != my_build.id]
-
-      # Is a run of the same configuration ongoing? If so, inform and join().
-      if not running_builds:
-        pres.step_text = 'found no inflight run'
-        return
-
-      pres.step_text = 'found {} inflight run(s) to wait on'.format(
-          len(running_builds))
-
-      # Give the UI the links to STARTED builds with same configuration.
-      for build in running_builds:
-        title = self.m.naming.get_build_title(build)
-        url = self.m.buildbucket.build_url(build_id=build.id)
-        pres.links[title] = url
-
-      # Wait for all started builds.
-      self.m.buildbucket.collect_builds(
-          [b.id for b in running_builds],
-          step_name='waiting for existing runs',
-          timeout=60 * 60 * 23,
-      )
-
-  def _poll_for_output_prop(
-      self,
-      build_ids: List[int],
-      output_property: str,
-      timeout: int,
-      interval: int = 60,
-  ) -> Dict[int, build_pb2.Build]:
-    """Poll until all of build_ids are completed or have set an output property.
-
-    If timeout is reached, the set of currently completed builds will be
-    returned.
-
-    Args:
-      build_ids: Ids of builds to poll.
-      property: Name of the property to poll for. Note that the truthiness of
-        the property will not be checked, just whether it is set.
-      timeout: Maximum seconds to wait for builds to complete or set property.
-      interval: Delay in seconds between requests for the state of the builds.
-
-    Returns:
-      A map from build id -> build_pb2.Build
-    """
-    if not build_ids:
-      return {}
-
-    # Call build_poller with '-json -' to print build protos to stdout. Build
-    # protos will be printed as jsonproto, one per-line.
-    try:
-      poll_result = self.m.gobin.call(
-          'build_poller',
-          [
-              'collect', '-loglevel', 'debug', '-outputprop', output_property,
-              '-interval', f'{interval}s', '-json', '-'
-          ] + build_ids,
-          step_name='collect',
-          timeout=timeout,
-          stdout=self.m.raw_io.output_text(add_output_log=True),
-          infra_step=True,
-      )
-
-      completed_builds = {}
-      for line in poll_result.stdout.strip().split('\n'):
-        build = build_pb2.Build()
-        json_format.Parse(line, build, ignore_unknown_fields=True)
-        completed_builds[build.id] = build
-    except recipe_api.StepFailure as ex:
-      # If build_poller timed out, return the current status of builds with
-      # get_multi.
-      if ex.had_timeout:
-        completed_builds = self.m.buildbucket.get_multi(
-            build_ids, fields=self.m.buildbucket.DEFAULT_FIELDS | {'tags'},
-            step_name='collect after timeout')
-      else:
-        raise ex
-
-    return completed_builds
-
-  def plan_and_wait_for_images(
-      self,
-      run_step_name: Optional[str] = None,
-      extra_child_props: Optional[Dict[str, Any]] = None,
-  ) -> List[build_pb2.Build]:
-    """Plan and schedule children, and wait until they have produced images.
-
-    Args:
-      run_step_name: Name for "run builds" step, or None.
-      extra_child_props: If set, extra properties to append to the child
-        builder requests.
-
-    Returns:
-      A list of builds that have produced images and are ready for testing.
-    """
-    with self.m.step.nest(run_step_name or 'run builds') as pres:
-      if self._update_manifest_refs:
-        raise ValueError(
-            'currently plan_and_wait_for_images cannot be called when update_manifest_refs is set.'
-        )
-
-      child_specs = self._get_child_specs()
-      collect_now, collect_after = self._filter_schedule_builds(
-          pres, child_specs, extra_props=extra_child_props)
-
-      # It is possible that some of the builds that uploaded testing artifacts
-      # have completed after _poll_for_output_prop. However, we have not
-      # explicitly collected them, so keep them in the running status; these
-      # builds should be collected by later steps, e.g.
-      # _collect_remaining_children.
-      self._builds_status.update(running=collect_now + collect_after)
-
-      # Wait until the children being used for end-to-end tests either complete
-      # or upload testing artifacts.
-      testable_builds = self._poll_for_output_prop(
-          [b.id for b in collect_now], 'image_artifacts_uploaded',
-          timeout=60 * 60 * 36).values()
-
-      return list(testable_builds)
 
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
                             check_critical_step_name=None,
