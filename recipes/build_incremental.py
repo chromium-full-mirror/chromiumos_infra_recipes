@@ -28,6 +28,8 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
+    'build_plan',
+    'cros_infra_config',
     'cros_prebuilts',
     'cros_sdk',
     'easy',
@@ -80,10 +82,18 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   relevant_pkgs = None
   if properties.run_relevancy_check:
-    api.build_menu.setup_chroot()
-    env_info = api.build_menu.setup_sysroot_and_determine_relevance()
-    relevant_pkgs = env_info.packages
-    if env_info.pointless:
+    child_specs = api.cros_infra_config.get_builder_config(
+        api.buildbucket.build.builder.builder).orchestrator.child_specs
+    builder_configs = [
+        api.cros_infra_config.get_builder_config(b.name) for b in child_specs
+    ]
+    necessary_builders = [b.id.name for b in builder_configs]
+    gerrit_changes = api.cros_infra_config.gerrit_changes
+    relevant_builder_configs = api.build_plan.get_relevant_builder_configs([
+        api.cros_infra_config.get_builder_config(b) for b in necessary_builders
+    ], gerrit_changes)
+
+    if not relevant_builder_configs:
       return RawResult(status=common.SUCCESS,
                        summary_markdown='Build was not relevant.')
 
@@ -102,6 +112,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Attempt to build the current snapshot.
   if not failing_build_exception:
     try:
+      # TODO(sfrolov): remove update_chroot call when cros_sdk revamp is ready.
       api.cros_sdk.update_chroot(
           toolchain_targets=[api.build_menu.build_target],
           build_source=config.build.sdk_update.compile_source)
