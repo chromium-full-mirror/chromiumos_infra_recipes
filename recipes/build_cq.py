@@ -16,6 +16,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
+from recipe_engine.recipe_api import InfraFailure
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -66,8 +67,11 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   with api.build_menu.configure_builder() as config:
+    # Prefer the type of the first deferred exception: if uploading artifacts
+    # hits an InfraFailure after DoRunSteps has a StepFailure, it's likely the
+    # DoRunSteps exception was the cause of the InfraFailure.
     with api.build_menu.setup_workspace(), \
-        api.deferrals.raise_exceptions_at_end():
+        api.deferrals.raise_exceptions_at_end(prefer_first_type=True):
       upload_state = ArtifactUploadState()
       with api.deferrals.defer_exceptions([StepFailure]):
         is_relevant = api.build_menu.setup_chroot()
@@ -79,7 +83,9 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
                              summary_markdown='Build was not relevant.')
 
       if not upload_state.skip_upload:
-        with api.deferrals.defer_exceptions([StepFailure]):
+        # Defer InfraFailures as well here, since any exceptions raised in this
+        # block might have been caused by StepFailures suppressed above.
+        with api.deferrals.defer_exceptions([InfraFailure, StepFailure]):
           api.build_menu.upload_artifacts(
               config, name='final upload artifacts',
               previously_uploaded_artifacts=upload_state.uploaded_artifacts,
@@ -322,7 +328,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'ArtifactsService/Get', retcode=1),
       cq=True,
       build_target='coral',
-      status='INFRA_FAILURE',
+      status='FAILURE',
   )
 
   # The CQ should upload artifacts even if sysroot setup/update fails; some

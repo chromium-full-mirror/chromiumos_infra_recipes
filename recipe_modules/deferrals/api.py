@@ -108,7 +108,7 @@ class DeferralsApi(RecipeApi):
     self._deferred_exceptions.append(exception)
 
   @contextlib.contextmanager
-  def raise_exceptions_at_end(self):
+  def raise_exceptions_at_end(self, prefer_first_type: bool = False):
     """Sets up a context manager to raise deferred failures at the end.
 
     Note: while using this context manager, if an exception is thrown that is
@@ -126,23 +126,39 @@ class DeferralsApi(RecipeApi):
       raise e
     finally:
       if not caught:
-        self.raise_exceptions()
+        self.raise_exceptions(prefer_first_type)
 
   def are_exceptions_pending(self) -> bool:
     """Returns whether any exceptions would be raised by `raise_exceptions`."""
     return bool(self._deferred_exceptions)
 
-  def raise_exceptions(self):
+  def raise_exceptions(self, prefer_first_type: bool = False):
     """Explicitly raise any deferred exceptions.
 
     This is the non-context manager approach to using this module. Simply call
     this method at the point where you want deferred exceptions to be raised.
+
+    If multiple exceptions were deferred, the superclass of the raised
+    exception depends on the value of `prefer_first_type` and the order in
+    which exceptions that were raised:
+    - An InfraFailure will be raised if:
+      - prefer_first_type is False and _any_ deferred exception was an
+        InfraFailure, or
+      - prefer_first_type is True and _the first_ deferred exception was an
+        InfraFailure.
+    - Otherwise, a StepFailure will be raised.
     """
     if self.are_exceptions_pending():
       deferred = self._deferred_exceptions
       self._deferred_exceptions = []
       if len(deferred) == 1:
         raise deferred[0]
-      if any(isinstance(x, InfraFailure) for x in deferred):
+
+      if prefer_first_type:
+        raise_infra_failure = isinstance(deferred[0], InfraFailure)
+      else:
+        raise_infra_failure = any(isinstance(x, InfraFailure) for x in deferred)
+
+      if raise_infra_failure:
         raise MultipleFailuresIncludingInfraFailures(deferred)
       raise MultipleFailures(deferred)

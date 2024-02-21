@@ -822,7 +822,7 @@
       "           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"RECIPE_REPO[chromeos]/recipes/cq_auto_retrier.py\", line 189, in RunSteps",
       "    api.deferrals.raise_exceptions()",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/deferrals/api.py\", line 145, in raise_exceptions",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/deferrals/api.py\", line 155, in raise_exceptions",
       "    raise deferred[0]",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/auto_retry_util/api.py\", line 1693, in retry_builds",
       "    if self._retry_build(b, details.retryable_builders,",

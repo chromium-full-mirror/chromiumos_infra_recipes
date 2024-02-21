@@ -451,6 +451,7 @@
   * [deferrals:tests/defer_exceptions_block](#recipes-deferrals_tests_defer_exceptions_block)
   * [deferrals:tests/defer_exceptions_block_incorrect](#recipes-deferrals_tests_defer_exceptions_block_incorrect)
   * [deferrals:tests/defer_exceptions_by_type](#recipes-deferrals_tests_defer_exceptions_by_type)
+  * [deferrals:tests/defer_exceptions_first_type](#recipes-deferrals_tests_defer_exceptions_first_type) &mdash; Ensures that the first exception type is preferred when that's requested.
   * [deferrals:tests/defer_exceptions_infra_fail](#recipes-deferrals_tests_defer_exceptions_infra_fail)
   * [deferrals:tests/defer_exceptions_uncaught](#recipes-deferrals_tests_defer_exceptions_uncaught)
   * [dirmd:examples/full](#recipes-dirmd_examples_full)
@@ -5763,14 +5764,24 @@ Args:
   exception_types (Optional[List[Type]]): types of exceptions to defer
     (allowing all others through).
 
-&mdash; **def [raise\_exceptions](/recipe_modules/deferrals/api.py#135)(self):**
+&mdash; **def [raise\_exceptions](/recipe_modules/deferrals/api.py#135)(self, prefer_first_type: bool=False):**
 
 Explicitly raise any deferred exceptions.
 
 This is the non-context manager approach to using this module. Simply call
 this method at the point where you want deferred exceptions to be raised.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [raise\_exceptions\_at\_end](/recipe_modules/deferrals/api.py#110)(self):**
+If multiple exceptions were deferred, the superclass of the raised
+exception depends on the value of `prefer_first_type` and the order in
+which exceptions that were raised:
+- An InfraFailure will be raised if:
+  - prefer_first_type is False and _any_ deferred exception was an
+    InfraFailure, or
+  - prefer_first_type is True and _the first_ deferred exception was an
+    InfraFailure.
+- Otherwise, a StepFailure will be raised.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [raise\_exceptions\_at\_end](/recipe_modules/deferrals/api.py#110)(self, prefer_first_type: bool=False):**
 
 Sets up a context manager to raise deferred failures at the end.
 
@@ -12032,14 +12043,14 @@ Recipe for building public ChromiumOS images.
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#13)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#24): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_cq.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#91)(api: RecipeApi, config: BuilderConfig, upload_state: ArtifactUploadState):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#97)(api: RecipeApi, config: BuilderConfig, upload_state: ArtifactUploadState):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#63)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#64)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#19): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_version](#recipe_modules-cros_version), [factory\_util](#recipe_modules-factory_util), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14155,6 +14166,14 @@ Tests for api.cros_version.Version.
 
 
 &mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_by_type.py#23)(api):**
+### *recipes* / [deferrals:tests/defer\_exceptions\_first\_type](/recipe_modules/deferrals/tests/defer_exceptions_first_type.py)
+
+[DEPS](/recipe_modules/deferrals/tests/defer_exceptions_first_type.py#12): [deferrals](#recipe_modules-deferrals)
+
+
+Ensures that the first exception type is preferred when that's requested.
+
+&mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_first_type.py#17)(api):**
 ### *recipes* / [deferrals:tests/defer\_exceptions\_infra\_fail](/recipe_modules/deferrals/tests/defer_exceptions_infra_fail.py)
 
 [DEPS](/recipe_modules/deferrals/tests/defer_exceptions_infra_fail.py#15): [deferrals](#recipe_modules-deferrals), [recipe\_engine/step][recipe_engine/recipe_modules/step]
