@@ -25,7 +25,7 @@ DEPS = [
 
 def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), \
-      api.build_menu.setup_workspace_and_chroot():
+      api.build_menu.setup_workspace_and_chroot(force_no_chroot_upgrade=True):
     api.cros_build_api.TestService.ChromitePytest(
         ChromitePytestRequest(chroot=api.cros_sdk.chroot),
         name='run chromite pytest')
