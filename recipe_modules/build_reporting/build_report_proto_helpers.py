@@ -100,8 +100,11 @@ def create_signed_build(signed_build_meta, status):
   signed_build.status = SignedBuild.SigningStatus.Value(
       'SIGNING_STATUS_{}'.format(status.upper()))
   signed_build.board = signed_build_meta['board']
-  signed_build.type = ImageType.Value('IMAGE_TYPE_{}'.format(
-      signed_build_meta['type'].upper()))
+  # For now always assume that signed UEFI kernels are Flexor.
+  # This may change in the future.
+  image_type = 'FLEXOR_KERNEL' if signed_build_meta['type'].upper(
+  ) == 'UEFI_KERNEL' else signed_build_meta['type'].upper()
+  signed_build.type = ImageType.Value('IMAGE_TYPE_{}'.format(image_type))
   signed_build.channel = Channel.Value('CHANNEL_{}'.format(
       signed_build_meta['channel'].upper()))
   signed_build.keyset = signed_build_meta['keyset']
