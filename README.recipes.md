@@ -60,7 +60,7 @@
   * [cts_results_archive](#recipe_modules-cts_results_archive) &mdash; API to archive test results to CTS specific buckets.
   * [debug_symbols](#recipe_modules-debug_symbols) &mdash; Module for working with debug symbols.
   * [deferrals](#recipe_modules-deferrals) &mdash; API for deferring things (mainly failures).
-  * [dirmd](#recipe_modules-dirmd)
+  * [dirmd](#recipe_modules-dirmd) &mdash; Functions for using the `dirmd` tool.
   * [disk_usage](#recipe_modules-disk_usage)
   * [dlc_utils](#recipe_modules-dlc_utils)
   * [dut_interface](#recipe_modules-dut_interface)
@@ -5779,14 +5779,16 @@ precendence over the deferred one. However, the deferred one will still be
 logged.
 ### *recipe_modules* / [dirmd](/recipe_modules/dirmd)
 
-[DEPS](/recipe_modules/dirmd/__init__.py#7): [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/dirmd/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [DirmdApi](/recipe_modules/dirmd/api.py#9)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Functions for using the `dirmd` tool.
+
+#### **class [DirmdApi](/recipe_modules/dirmd/api.py#11)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for using the dirmd tool.
 
-&mdash; **def [validate\_dir](/recipe_modules/dirmd/api.py#35)(self, directory: str):**
+&mdash; **def [validate\_dir](/recipe_modules/dirmd/api.py#37)(self, directory: str):**
 
 Find and validate all DIR_METADATA files in a directory.
 
@@ -14182,10 +14184,10 @@ Tests for api.cros_version.Version.
 &mdash; **def [RunSteps](/recipe_modules/deferrals/tests/defer_exceptions_uncaught.py#19)(api):**
 ### *recipes* / [dirmd:examples/full](/recipe_modules/dirmd/examples/full.py)
 
-[DEPS](/recipe_modules/dirmd/examples/full.py#10): [dirmd](#recipe_modules-dirmd), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
+[DEPS](/recipe_modules/dirmd/examples/full.py#10): [dirmd](#recipe_modules-dirmd), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/dirmd/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/dirmd/examples/full.py#19)(api):**
 ### *recipes* / [dirmd\_update](/recipes/dirmd_update.py)
 
 [DEPS](/recipes/dirmd_update.py#17): [build\_menu](#recipe_modules-build_menu), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [src\_state](#recipe_modules-src_state), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -17194,7 +17196,7 @@ Basic tests for the urls recipe module.
 &mdash; **def [RunSteps](/recipe_modules/util/tests/proto_path_to_recipes_path.py#29)(api: recipe_api.RecipeApi, properties: ProtoPathToRecipesPathProperties):**
 ### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
 
-[DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe to validate DIR_METADATA files in the ChromeOS source tree.
@@ -17202,7 +17204,7 @@ Recipe to validate DIR_METADATA files in the ChromeOS source tree.
 This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
 files in projects touched by the input CLs.
 
-&mdash; **def [RunSteps](/recipes/validate_dirmd.py#31)(api):**
+&mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
 ### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
 
 [DEPS](/recipe_modules/vmlab/examples/full.py#11): [vmlab](#recipe_modules-vmlab), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]

@@ -10,6 +10,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'dirmd',
 ]
 
@@ -19,10 +20,10 @@ def RunSteps(api):
   # Call validate_dir twice, once on a dir that has DIR_METADATA files, once on
   # a dir that doesn't. Note that although two separate directories are created,
   # the difference in behavior is caused by the `glob_paths` test data.
-  testdir = api.path.mkdtemp()
+  testdir = str(api.path.mkdtemp())
   api.dirmd.validate_dir(testdir)
 
-  testdir_without_metadata_files = api.path.mkdtemp()
+  testdir_without_metadata_files = str(api.path.mkdtemp())
   api.dirmd.validate_dir(testdir_without_metadata_files)
 
 
@@ -30,7 +31,9 @@ def GenTests(api):
 
   dirmd_glob_paths = api.step_data(
       'dirmd validate [CLEANUP]/tmp_tmp_1.find DIR_METADATA files',
-      api.file.glob_paths(['a/b/DIR_METADATA']),
+      stdout=api.raw_io.output(
+          '[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA\n[CLEANUP]/tmp_tmp_1/a/DIR_METADATA\n'
+      ),
   )
 
   yield api.test(
@@ -40,8 +43,10 @@ def GenTests(api):
           post_process.StepCommandContains,
           'dirmd validate [CLEANUP]/tmp_tmp_1.dirmd validate',
           [
-              '[START_DIR]/cipd_dirmd/dirmd', 'validate',
-              '[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA'
+              '[START_DIR]/cipd_dirmd/dirmd',
+              'validate',
+              '[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA',
+              '[CLEANUP]/tmp_tmp_1/a/DIR_METADATA',
           ],
       ),
       api.post_process(

@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Functions for using the `dirmd` tool."""
+
 from recipe_engine import recipe_api
 
 
@@ -44,10 +46,16 @@ class DirmdApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('dirmd validate {}'.format(directory)) as pres:
       self._ensure_dirmd()
-      dirmd_paths = self.m.file.glob_paths('find DIR_METADATA files', directory,
-                                           '**/DIR_METADATA')
+      # Use the `find` command because the `file.glob_paths` function infinite
+      # loops if there is a symlink cycle in a repo.
+      dirmd_paths = self.m.easy.stdout_step(
+          'find DIR_METADATA files',
+          ['find', directory, '-name', 'DIR_METADATA'
+          ]).decode().strip().split('\n')
 
-      if not dirmd_paths:
+      # Calling `split('\n')` on any empty string will produce the list `['']`.
+      # So check that there is at least one non-empty string in the list.
+      if not any(p for p in dirmd_paths):
         pres.step_summary_text = 'No DIR_METADATA files found'
         return
 

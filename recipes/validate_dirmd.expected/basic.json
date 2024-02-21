@@ -2507,17 +2507,12 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "glob",
+      "find",
       "[CLEANUP]/chromiumos_workspace/src/project-a",
-      "**/DIR_METADATA"
+      "-name",
+      "DIR_METADATA"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:try"
@@ -2532,8 +2527,7 @@
     },
     "name": "validate project-a.dirmd validate [CLEANUP]/chromiumos_workspace/src/project-a.find DIR_METADATA files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@glob@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

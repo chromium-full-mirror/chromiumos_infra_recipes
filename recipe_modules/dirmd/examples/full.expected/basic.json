@@ -42,28 +42,22 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "glob",
+      "find",
       "[CLEANUP]/tmp_tmp_1",
-      "**/DIR_METADATA"
+      "-name",
+      "DIR_METADATA"
     ],
-    "infra_step": true,
     "name": "dirmd validate [CLEANUP]/tmp_tmp_1.find DIR_METADATA files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@glob@[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA@@@",
-      "@@@STEP_LOG_END@glob@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [
       "[START_DIR]/cipd_dirmd/dirmd",
       "validate",
-      "[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA"
+      "[CLEANUP]/tmp_tmp_1/a/b/DIR_METADATA",
+      "[CLEANUP]/tmp_tmp_1/a/DIR_METADATA"
     ],
     "name": "dirmd validate [CLEANUP]/tmp_tmp_1.dirmd validate",
     "~followup_annotations": [
@@ -79,20 +73,14 @@
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "glob",
+      "find",
       "[CLEANUP]/tmp_tmp_2",
-      "**/DIR_METADATA"
+      "-name",
+      "DIR_METADATA"
     ],
-    "infra_step": true,
     "name": "dirmd validate [CLEANUP]/tmp_tmp_2.find DIR_METADATA files",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@glob@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

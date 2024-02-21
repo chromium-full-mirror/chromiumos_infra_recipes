@@ -17,6 +17,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'recipe_engine/buildbucket',
     'recipe_engine/file',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'cros_test_plan_v2',
     'dirmd',
@@ -127,7 +128,7 @@ def GenTests(api):
   # Step data for dirmd and test_plan validation failures.
   dirmd_glob_paths = api.step_data(
       'validate project-a.dirmd validate [CLEANUP]/chromiumos_workspace/src/project-a.find DIR_METADATA files',
-      api.file.glob_paths(['a/b/DIR_METADATA']),
+      stdout=api.raw_io.output('a/b/DIR_METADATA'),
   )
   dirmd_validation_fail = api.step_data(
       'validate project-a.dirmd validate [CLEANUP]/chromiumos_workspace/src/project-a.dirmd validate',
