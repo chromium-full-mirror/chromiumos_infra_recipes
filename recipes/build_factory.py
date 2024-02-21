@@ -70,9 +70,9 @@ def RunSteps(api, properties: BuildFactoryProperties):
               uploaded_artifacts,
               artifact_dir,
           ) = api.build_menu.upload_artifacts(config)
-          # TODO(b/316925119): Remove support when all factory versions>=13295.
+          # TODO(b/316925119): Remove support when all factory versions>=13963.
           # Workaround to support branches cut before ArtifactsService.
-          if not api.cros_version.version.is_after('13929.0.0'):
+          if not api.cros_version.version.is_after('14000.0.0'):
             api.factory_util.upload_factory(config, artifact_dir)
           if uploaded_artifacts:
             api.build_reporting.publish_build_artifacts(uploaded_artifacts,
@@ -118,7 +118,7 @@ def GenTests(api):
           'read chromeos version.read chromeos_version.sh',
           api.file.read_text(
               text_content=api.cros_version.chromeos_version_contents(
-                  'R92-13929.158.0'))),
+                  'R92-14929.158.0'))),
       # Make sure signing times out after 5 seconds to not explode test runs.
       api.signing.set_timeout(timeout=5),
       # Mock signing responses.
@@ -191,7 +191,7 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
-      'version-before-13929',
+      'version-before-14000',
       api.properties(
           **{
               '$chromeos/cros_source':

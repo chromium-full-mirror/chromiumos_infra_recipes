@@ -2646,7 +2646,7 @@
     "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found version: R92-13929.158.0-101@@@"
+      "@@@STEP_TEXT@found version: R92-14929.158.0-101@@@"
     ]
   },
   {
@@ -2767,7 +2767,7 @@
     "cmd": [],
     "name": "set chromeos_version",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R92-13929.158.0-101\"@@@"
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R92-14929.158.0-101\"@@@"
     ]
   },
   {
@@ -4073,7 +4073,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/partial-metadata.json@@@"
     ]
   },
   {
@@ -4143,7 +4143,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6025,8 +6025,8 @@
       "@@@STEP_LOG_LINE@request@    5,@@@",
       "@@@STEP_LOG_LINE@request@    1@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"version\": \"13929.158.0\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"version\": \"14929.158.0\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -6077,7 +6077,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"imageTypes\": [\n    7,\n    3,\n    5,\n    1\n  ],\n  \"version\": \"13929.158.0\",\n  \"builderPath\": \"factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"imageTypes\": [\n    7,\n    3,\n    5,\n    1\n  ],\n  \"version\": \"14929.158.0\",\n  \"builderPath\": \"factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6198,8 +6198,8 @@
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_TEST_VM\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_BASE\"@@@",
       "@@@STEP_LOG_LINE@published event@    ],@@@",
-      "@@@STEP_LOG_LINE@published event@    \"version\": \"13929.158.0\",@@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"14929.158.0\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -6249,7 +6249,7 @@
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBpAEKDwoNYW1kNjQtZ2VuZXJpYxIEBwMFASILMTM5MjkuMTU4LjAyR2ZhY3RvcnktY29yc29sYS0xNTE5Ny5CLWNvcnNvbGEvUjkyLTEzOTI5LjE1OC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBvAEIARIuChkvYnVpbGQvaW1hZ2VzL2ZhY3RvcnkuYmluEAcaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpYxIuChkvYnVpbGQvaW1hZ2VzL3Rlc3Rfdm0uYmluEAUaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBpAEKDwoNYW1kNjQtZ2VuZXJpYxIEBwMFASILMTQ5MjkuMTU4LjAyR2ZhY3RvcnktY29yc29sYS0xNTE5Ny5CLWNvcnNvbGEvUjkyLTE0OTI5LjE1OC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBvAEIARIuChkvYnVpbGQvaW1hZ2VzL2ZhY3RvcnkuYmluEAcaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpYxIuChkvYnVpbGQvaW1hZ2VzL3Rlc3Rfdm0uYmluEAUaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6281,7 +6281,7 @@
       }
     },
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBpAEKDwoNYW1kNjQtZ2VuZXJpYxIEBwMFASILMTM5MjkuMTU4LjAyR2ZhY3RvcnktY29yc29sYS0xNTE5Ny5CLWNvcnNvbGEvUjkyLTEzOTI5LjE1OC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBvAEIARIuChkvYnVpbGQvaW1hZ2VzL2ZhY3RvcnkuYmluEAcaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpYxIuChkvYnVpbGQvaW1hZ2VzL3Rlc3Rfdm0uYmluEAUaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI5IDE/QQiDAjlgMT9BBCAyrXuAaIBpAEKDwoNYW1kNjQtZ2VuZXJpYxIEBwMFASILMTQ5MjkuMTU4LjAyR2ZhY3RvcnktY29yc29sYS0xNTE5Ny5CLWNvcnNvbGEvUjkyLTE0OTI5LjE1OC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBvAEIARIuChkvYnVpbGQvaW1hZ2VzL2ZhY3RvcnkuYmluEAcaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL3Rlc3QuYmluEAMaDwoNYW1kNjQtZ2VuZXJpYxIuChkvYnVpbGQvaW1hZ2VzL3Rlc3Rfdm0uYmluEAUaDwoNYW1kNjQtZ2VuZXJpYxIrChYvYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJIYnVpbGQgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6887,7 +6887,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -7839,7 +7839,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -7856,7 +7856,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7883,14 +7883,14 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ARCHIVES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ARCHIVES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"TAST_FILES\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184', files_by_artifact={'AUTOTEST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'TAST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'IMAGE_ARCHIVES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184', files_by_artifact={'AUTOTEST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'TAST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'IMAGE_ARCHIVES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -7995,7 +7995,7 @@
     "cmd": [],
     "name": "push images",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs image dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -8008,7 +8008,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"gsImageDir\": \"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic\"@@@",
@@ -8038,7 +8038,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"destBucket\": \"gs://\"\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"gsImageDir\": \"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184\",\n  \"sysroot\": {\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"destBucket\": \"gs://\"\n}",
       "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -8615,7 +8615,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -8711,7 +8711,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9513,7 +9513,7 @@
     "cmd": [],
     "name": "upload build report to GS",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -9709,7 +9709,7 @@
       "----",
       "cp",
       "[CLEANUP]/LATEST_tmp_1/build_report.json",
-      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/build_report.json"
+      "gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/build_report.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9734,7 +9734,7 @@
     "name": "upload build report to GS.set build_report_uri",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-13929.158.0-101-8945511751514863184/build_report.json\"@@@"
+      "@@@SET_BUILD_PROPERTY@build_report_uri@\"gs://chromeos-image-archive/factory-corsola-15197.B-corsola/R92-14929.158.0-101-8945511751514863184/build_report.json\"@@@"
     ]
   },
   {
