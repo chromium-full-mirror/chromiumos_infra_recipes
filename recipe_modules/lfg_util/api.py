@@ -19,16 +19,17 @@ DATETIME_FORMAT = '%Y-%m-%d %H:%M:%S.%f'
 class LFGUtilApi(recipe_api.RecipeApi):
   """A module for util functions associated with LFG."""
 
-  def cq_depends_included(self, gerrit_changes: List[GerritChange]) -> bool:
-    """Checks that all the CQ-Depend changes are included.
+  def not_included_cq_depend_cls(
+      self, gerrit_changes: List[GerritChange]) -> List[GerritChange]:
+    """Find the CQ-Depended changes that are not included in this run.
 
     Args:
       gerrit_changes: Gerrit changes included in this CQ run.
 
     Returns:
-      Whether all the CQ-Depend changes are a subset of
-      the input changes.
+      List of changes that input CLs CQ-depend on but are not included in this run.
     """
+    not_included_changes = []
     with self.m.step.nest('check if all Cq-Depend CLs are included') as pres:
       changes_included = set(
           (change.host, change.change) for change in gerrit_changes)
@@ -53,16 +54,20 @@ class LFGUtilApi(recipe_api.RecipeApi):
             # Malformed footer
             log_lines.append('Could not resolve {} footer.'.format(footer))
             continue
-          if ('{}{}'.format(host, HOST_SUFFIX),
-              int(change_id)) not in changes_included:
-            pres.step_text = '{}:{} is not included in {}'.format(
-                host, change_id, changes_included)
-            pres.logs['bad_footers'] = '\n'.join(log_lines)
-            return False
+          host_url = '{}{}'.format(host, HOST_SUFFIX)
+          if (host_url, int(change_id)) not in changes_included:
+            pres.step_text = 'cq-depended cl(s) not included in the run'
+            not_included_changes.append(
+                GerritChange(host=host_url, change=int(change_id),
+                             project=change.project))
 
       pres.logs['bad_footers'] = '\n'.join(log_lines)
-      pres.step_text = 'all depended CLs are included'
-      return True
+      if not not_included_changes:
+        pres.step_text = 'all depended CLs are included'
+      else:
+        pres.logs['not_included_changes'] = '\n'.join(
+            [str(c) for c in not_included_changes])
+      return not_included_changes
 
   def latest_submitted_time(self, gerrit_changes: List[GerritChange],
                             step_test_data=None) -> datetime:

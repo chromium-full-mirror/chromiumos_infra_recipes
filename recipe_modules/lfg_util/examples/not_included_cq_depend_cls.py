@@ -28,14 +28,14 @@ def RunSteps(api, properties):
       GerritChange(change=c, host=host, project=project)
       for c in properties.change_ids
   ]
-  result = api.lfg_util.cq_depends_included(gerrit_changes=changes)
-  api.assertions.assertEqual(result, properties.expected_result)
+  result = api.lfg_util.not_included_cq_depend_cls(gerrit_changes=changes)
+  api.assertions.assertEqual([c.change for c in result], properties.expected_result)
 
 
 def GenTests(api):
   yield api.test(
       'no-cq-depend',
-      api.properties(expected_result=True, change_ids=[123, 456]),
+      api.properties(expected_result=[], change_ids=[123, 456]),
       api.git_footers.simulated_get_footers(
           [], parent_step_name='check if all Cq-Depend CLs are included'),
       api.post_process(post_process.DropExpectation),
@@ -43,7 +43,7 @@ def GenTests(api):
 
   yield api.test(
       'included',
-      api.properties(expected_result=True, change_ids=[123, 456]),
+      api.properties(expected_result=[], change_ids=[123, 456]),
       api.git_footers.simulated_get_footers(
           ['chromium:456'],
           parent_step_name='check if all Cq-Depend CLs are included'),
@@ -52,7 +52,7 @@ def GenTests(api):
 
   yield api.test(
       'included-numeric',
-      api.properties(expected_result=True, change_ids=[123, 456]),
+      api.properties(expected_result=[], change_ids=[123, 456]),
       api.git_footers.simulated_get_footers(
           ['456'], parent_step_name='check if all Cq-Depend CLs are included'),
       api.post_process(post_process.DropExpectation),
@@ -60,8 +60,9 @@ def GenTests(api):
 
   yield api.test(
       'not-included',
-      api.properties(expected_result=False, change_ids=[123, 456]),
+      api.properties(expected_result=[321], change_ids=[123, 456]),
       api.git_footers.simulated_get_footers(
           ['chromium:456, chrome-internal:321'],
           parent_step_name='check if all Cq-Depend CLs are included'),
-      api.post_process(post_process.DropExpectation))
+      api.post_process(post_process.DropExpectation)
+      )

@@ -596,8 +596,8 @@
   * [labpack:tests/test_get_use_ile_de_france](#recipes-labpack_tests_test_get_use_ile_de_france) &mdash; test_run_labpack.
   * [labpack:tests/test_run_labpack](#recipes-labpack_tests_test_run_labpack) &mdash; test_run_labpack.
   * [labpack:tests/test_timeout](#recipes-labpack_tests_test_timeout) &mdash; test_timeout.
-  * [lfg_util:examples/cq_depends_included](#recipes-lfg_util_examples_cq_depends_included) &mdash; Testing whether cq-depended CLs are being tested in the run.
   * [lfg_util:examples/latest_submitted_time](#recipes-lfg_util_examples_latest_submitted_time) &mdash; Testing when the changes were submitted.
+  * [lfg_util:examples/not_included_cq_depend_cls](#recipes-lfg_util_examples_not_included_cq_depend_cls) &mdash; Testing whether cq-depended CLs are being tested in the run.
   * [libchrome_uprev](#recipes-libchrome_uprev) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
   * [libchrome_version_update](#recipes-libchrome_version_update) &mdash; Recipe for updating libchrome-version.
@@ -8573,18 +8573,7 @@ Utility functions for looks for green.
 
 A module for util functions associated with LFG.
 
-&mdash; **def [cq\_depends\_included](/recipe_modules/lfg_util/api.py#22)(self, gerrit_changes: List[GerritChange]):**
-
-Checks that all the CQ-Depend changes are included.
-
-Args:
-  gerrit_changes: Gerrit changes included in this CQ run.
-
-Returns:
-  Whether all the CQ-Depend changes are a subset of
-  the input changes.
-
-&mdash; **def [latest\_submitted\_time](/recipe_modules/lfg_util/api.py#67)(self, gerrit_changes: List[GerritChange], step_test_data=None):**
+&mdash; **def [latest\_submitted\_time](/recipe_modules/lfg_util/api.py#72)(self, gerrit_changes: List[GerritChange], step_test_data=None):**
 
 Find the last submitted change and return the submit time.
 
@@ -8594,6 +8583,16 @@ Args:
 Returns:
   Submit time of the last submitted change among the inputs, None
   if one of them hasn't submitted yet.
+
+&mdash; **def [not\_included\_cq\_depend\_cls](/recipe_modules/lfg_util/api.py#22)(self, gerrit_changes: List[GerritChange]):**
+
+Find the CQ-Depended changes that are not included in this run.
+
+Args:
+  gerrit_changes: Gerrit changes included in this CQ run.
+
+Returns:
+  List of changes that input CLs CQ-depend on but are not included in this run.
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
 [DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -15170,14 +15169,6 @@ correctly with a timeout.
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_timeout.py#23)(api):**
 
 RunSteps runs ensure_labpack
-### *recipes* / [lfg\_util:examples/cq\_depends\_included](/recipe_modules/lfg_util/examples/cq_depends_included.py)
-
-[DEPS](/recipe_modules/lfg_util/examples/cq_depends_included.py#13): [git\_footers](#recipe_modules-git_footers), [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-Testing whether cq-depended CLs are being tested in the run.
-
-&mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/cq_depends_included.py#24)(api, properties):**
 ### *recipes* / [lfg\_util:examples/latest\_submitted\_time](/recipe_modules/lfg_util/examples/latest_submitted_time.py)
 
 [DEPS](/recipe_modules/lfg_util/examples/latest_submitted_time.py#14): [lfg\_util](#recipe_modules-lfg_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -15186,6 +15177,14 @@ Testing whether cq-depended CLs are being tested in the run.
 Testing when the changes were submitted.
 
 &mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/latest_submitted_time.py#26)(api, properties):**
+### *recipes* / [lfg\_util:examples/not\_included\_cq\_depend\_cls](/recipe_modules/lfg_util/examples/not_included_cq_depend_cls.py)
+
+[DEPS](/recipe_modules/lfg_util/examples/not_included_cq_depend_cls.py#13): [git\_footers](#recipe_modules-git_footers), [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Testing whether cq-depended CLs are being tested in the run.
+
+&mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/not_included_cq_depend_cls.py#24)(api, properties):**
 ### *recipes* / [libchrome\_uprev](/recipes/libchrome_uprev.py)
 
 [DEPS](/recipes/libchrome_uprev.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

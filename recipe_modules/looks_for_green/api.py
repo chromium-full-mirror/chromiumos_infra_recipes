@@ -144,7 +144,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                             f' merge commit: {has_merge_commit}')
           if self._should_lfg:
             # TODO(b/276363760): Don't LFG if all Cq-Depend CLs are being tested in the run.
-            if not self.m.lfg_util.cq_depends_included(gerrit_changes):
+            if self.m.lfg_util.not_included_cq_depend_cls(gerrit_changes):
               self._should_lfg = False
               self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
           # TODO(b/276363760): Don't LFG with stacked changes that aren't
