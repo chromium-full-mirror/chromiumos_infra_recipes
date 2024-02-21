@@ -52,7 +52,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._stats = LooksForGreenStats()
     self._now = None
     self._seconds_now = None
-    self._should_lfg = None
     self._related_changes_to_apply = None
 
   @property
@@ -112,58 +111,48 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def should_lfg(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether looks for green logic should be run."""
-    if self._should_lfg is None:
-      # This check shouldn't be fatal to a build.
-      self._should_lfg = False
-      with self.m.failures.ignore_exceptions():
-        with self.m.step.nest('check should look for green') as pres:
-          # Don't perform extra checks if LFG is not enabled.
-          if not self.m.looks_for_green.enable_looks_for_green:
-            pres.step_text = 'Looks for green not enabled'
-            self._should_lfg = False
-            return self._should_lfg
+    with self.m.step.nest('check should look for green') as pres:
+      # Don't perform extra checks if LFG is not enabled.
+      if not self.m.looks_for_green.enable_looks_for_green:
+        pres.step_text = 'Looks for green not enabled'
+        return False
+      # Only look for green in CQ.
+      if not self.m.cq.active:
+        pres.step_text = 'Skipping looks for green outside of CQ'
+        return False
+      disallow = self.found_disallow_lfg_footer(gerrit_changes)
+      if disallow:
+        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_DISALLOW
+        pres.step_text = 'Skipping looks for green due to disallow footer'
+        self.set_stats()
+        return False
+      has_merge_commit = any(
+          self.m.gerrit.is_merge_commit(c.change, c.host)
+          for c in gerrit_changes)
+      if has_merge_commit:
+        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
+        pres.step_text = 'Skipping looks for green due to merge commit'
+        self.set_stats()
+        return False
+      # TODO(b/276363760): Don't LFG if all Cq-Depend CLs are being tested in the run.
+      if self.m.lfg_util.not_included_cq_depend_cls(gerrit_changes):
+        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
+        pres.step_text = 'Skipping looks for green due to missing depended cl(s)'
+        self.set_stats()
+        return False
+      # TODO(b/276363760): Don't LFG with stacked changes that aren't
+      # included.
+      if self.related_changes_to_apply:
+        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES
+        pres.step_text = 'Skipping looks for green due to missing depended cl(s)'
+        pres.logs['Relation chain'] = (
+            f'Found CL(s) part of a relation chain. Some depended changes are not included: {self.related_changes_to_apply}. Skipping'
+            ' looks for green.')
+        self.set_stats()
+        return False
+      self.set_stats()
 
-          # Only look for green in CQ.
-          if not self.m.cq.active:
-            pres.step_text = 'Skipping looks for green outside of CQ'
-            self._should_lfg = False
-            return self._should_lfg
-          disallow = self.found_disallow_lfg_footer(gerrit_changes)
-          if disallow:
-            self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_DISALLOW
-            self.set_stats()
-            self._should_lfg = False
-            return self._should_lfg
-          has_merge_commit = any(
-              self.m.gerrit.is_merge_commit(c.change, c.host)
-              for c in gerrit_changes)
-          if has_merge_commit:
-            self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
-          self._should_lfg = (not disallow and not has_merge_commit)
-          should_lfg_log = (f'Found disallow footer: {disallow}, Found has'
-                            f' merge commit: {has_merge_commit}')
-          if self._should_lfg:
-            # TODO(b/276363760): Don't LFG if all Cq-Depend CLs are being tested in the run.
-            if self.m.lfg_util.not_included_cq_depend_cls(gerrit_changes):
-              self._should_lfg = False
-              self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
-          # TODO(b/276363760): Don't LFG with stacked changes that aren't
-          # included.
-          if self._should_lfg:
-            with self.m.step.nest(
-                'check if CL has related changes not included'):
-              if self.related_changes_to_apply:
-                self._should_lfg = False
-                self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES
-                should_lfg_log += '. Found relation chain with depended changes not included'
-                pres.logs['Relation chain'] = (
-                    f'Found CL(s) part of a relation chain. Some depended changes are not included: {self.related_changes_to_apply}. Skipping'
-                    ' looks for green.')
-          if not self._should_lfg:
-            should_lfg_log += '. Using original snapshot.'
-            self.set_stats()
-          pres.logs['should_lfg'] = should_lfg_log
-    return self._should_lfg
+    return True
 
   @exponential_retry(retries=2, delay=datetime.timedelta(seconds=1))
   def _get_snapshots(

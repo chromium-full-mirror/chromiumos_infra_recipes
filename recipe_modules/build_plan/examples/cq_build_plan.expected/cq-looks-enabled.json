@@ -1284,9 +1284,7 @@
     "cmd": [],
     "name": "filter builds.looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@should_lfg@Found disallow footer: False, Found has merge commit: False@@@",
-      "@@@STEP_LOG_END@should_lfg@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1449,9 +1447,10 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check if CL has related changes not included",
+    "name": "filter builds.looks for green.check should look for green.set looks_for_green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{}@@@"
     ]
   },
   {
