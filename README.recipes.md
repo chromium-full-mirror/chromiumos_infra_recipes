@@ -10547,18 +10547,18 @@ Translates result to a Skylab result.
 
 API providing a menu for snapshot orchestrator steps
 
-#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#123)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#122)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#1245)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#1125)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#1085)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#965)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -10571,9 +10571,9 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#174)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#172)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#1287)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#1167)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -10585,62 +10585,49 @@ Returns:
   A dict mapping CollectHandling to the list of builds which fall into that
       category.
 
-&mdash; **def [chrome\_module\_child\_props](/recipe_modules/snapshot_orch_menu/api.py#214)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#152)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/snapshot_orch_menu/api.py#202)(self):**
-
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#154)(self):**
-
-&mdash; **def [cq\_relevant](/recipe_modules/snapshot_orch_menu/api.py#634)(self, build: build_pb2.Build):**
+&mdash; **def [cq\_relevant](/recipe_modules/snapshot_orch_menu/api.py#540)(self, build: build_pb2.Build):**
 
 Whether the CQ child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#355)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False, no_nest_final_build_collect: bool=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#325)(self):**
 
 Create the correct return value for RunSteps.
-
-Args:
-  include_build_details: If True augment RawResults.summary_markdown
-    with additional details about the build for both successes and failures.
-  ignore_build_test_failures: If True, we will still produce a summary
-    of failures if present, but we will not set the build status to FAILURE.
-  no_nest_final_build_collect: If True, we do not create the parent 'final
-    build collect' step so that 'check build results' step is a top-level
-    step.
 
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#162)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#160)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#166)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#164)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#158)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#156)(self):**
 
-&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#150)(self):**
+&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#148)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#178)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#176)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/snapshot_orch_menu/api.py#170)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/snapshot_orch_menu/api.py#168)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#186)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#184)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#194)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#192)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#190)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#188)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#182)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#180)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#198)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#196)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#613)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#519)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#520)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#426)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -10654,7 +10641,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#976)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#882)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10672,20 +10659,20 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#621)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#527)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#210)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#204)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#870)(self):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#776)(self):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/snapshot_orch_menu/api.py#877)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/snapshot_orch_menu/api.py#783)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -10702,7 +10689,7 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#238)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#228)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -10717,7 +10704,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/snapshot_orch_menu/api.py#206)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/snapshot_orch_menu/api.py#200)(self):**
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
 
 [DEPS](/recipe_modules/src_state/__init__.py#10): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]

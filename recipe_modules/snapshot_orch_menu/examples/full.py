@@ -84,11 +84,6 @@ def RunSteps(api, properties):
         api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
     )
 
-    if api.snapshot_orch_menu.chromium_src_ref_cl_tag:
-      api.assertions.assertEqual(
-          api.snapshot_orch_menu.chrome_module_child_props()['version'],
-          api.snapshot_orch_menu.chromium_src_ref_cl_tag)
-
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
     # same key, knowing that the impl of this module calls dict.items().
@@ -125,9 +120,7 @@ def RunSteps(api, properties):
     expected = properties.expected_recipe_result
     if not expected.status:
       expected = RawResult(status=common_pb2.SUCCESS)
-    actual = api.snapshot_orch_menu.create_recipe_result(
-        include_build_details=api.snapshot_orch_menu.is_release_orchestrator,
-        no_nest_final_build_collect=api.snapshot_orch_menu.is_cq_orchestrator)
+    actual = api.snapshot_orch_menu.create_recipe_result()
     api.assertions.assertEqual(expected.status, actual.status)
     return actual
 
@@ -589,25 +582,6 @@ def GenTests(api):
       status='FAILURE',
   )
 
-  yield api.snapshot_orch_menu.test(
-      'public-orchestrator',
-      api.properties(
-          **{
-              '$chromeos/cros_source': {
-                  'syncToManifest': {
-                      'manifestGsPath':
-                          'gs://chromiumos-manifest-versions/buildspecs/108/15156.0.0.xml'
-                  }
-              }
-          }),
-      api.post_check(post_process.MustRun,
-                     'set up orchestrator.sync to specified manifest'),
-      builder='public-main-orchestrator',
-      with_manifest_refs=True,
-      with_history=True,
-      bot_size='medium',
-  )
-
   # TODO(b/245326818): Add useful assertions
   yield api.snapshot_orch_menu.test(
       'factory-orchestrator',
@@ -735,52 +709,6 @@ def GenTests(api):
           )), collect_builds=data.builds, history_builds=data.history_builds,
       process_child=data.process_child, process_child_timeout=True,
       bucket='toolchain', builder='artifact-generate-orchestrator')
-
-  collect, collect_after = api.snapshot_orch_menu.orch_child_builds(
-      'cq-orchestrator', '-cq')
-  # Mark one critical child build as failed in each of the collect steps.
-  # TODO(b/279016710): Get clarification on how we should treat unset
-  # criticality (apparently cave-cq is not actually critical).
-  for b in collect:
-    if b.builder.builder == 'atlas-cq':
-      b.status = common_pb2.FAILURE
-  for b in collect_after:
-    if b.builder.builder == 'cave-cq':
-      b.status = common_pb2.FAILURE
-  summary = ('1 out of 6 builds failed\n\n- atlas-cq: [build page](https://'
-             'cr-buildbucket.appspot.com/build/8922054662172514004)')
-  yield api.snapshot_orch_menu.test(
-      'critical-child-builder-fails',
-      api.properties(
-          FullProperties(
-              expected_completed_builds=collect + collect_after,
-              expected_recipe_result=RawResult(status=common_pb2.FAILURE,
-                                               summary_markdown=summary))),
-      collect_builds=collect,
-      collect_after_builds=collect_after,
-      with_manifest_refs=True,
-      status='FAILURE',
-      cq=True,
-      builder='cq-orchestrator',
-  )
-
-  collect, collect_after = api.snapshot_orch_menu.orch_child_builds(
-      'cq-orchestrator', '-cq')
-  # Mark one of the non-critical child builds as a failure.
-  for b in collect_after:
-    if b.builder.builder == 'coral-cq':
-      b.status = common_pb2.FAILURE
-  yield api.snapshot_orch_menu.test(
-      'non-critical-child-builder-fails',
-      data.ctp_normal,
-      api.properties(
-          FullProperties(expected_completed_builds=collect + collect_after)),
-      collect_builds=collect,
-      collect_after_builds=collect_after,
-      with_manifest_refs=True,
-      builder='cq-orchestrator',
-      cq=True,
-  )
 
   yield api.snapshot_orch_menu.test(
       'chromium-src-ref-cq-cl-tag', data.ctp_normal,

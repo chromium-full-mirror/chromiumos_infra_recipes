@@ -15314,7 +15314,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Full version: R99-1234.56.0\n\n3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n- htarget.hw.bvt-inline\n\n- htarget.hw.some-other-suite"
+      "humanReason": "3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n- htarget.hw.bvt-inline\n\n- htarget.hw.some-other-suite"
     },
     "name": "$result"
   }

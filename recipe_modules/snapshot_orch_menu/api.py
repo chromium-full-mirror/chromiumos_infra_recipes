@@ -22,7 +22,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
-from PB.recipe_modules.chromeos.chrome.chrome import ChromeProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine import recipe_api
@@ -140,7 +139,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
     self._is_snapshot_orchestrator = False
-    self._chromium_src_ref_cl_tag = None
     self._relevant_child_builder_names = []
 
     self._builder_to_collect_value = defaultdict(
@@ -200,20 +198,12 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     return self._is_snapshot_orchestrator
 
   @property
-  def chromium_src_ref_cl_tag(self):
-    return self._chromium_src_ref_cl_tag
-
-  @property
   def skip_paygen(self):
     return self._properties.skip_paygen
 
   @property
   def relevant_child_builder_names(self):
     return self._relevant_child_builder_names
-
-  def chrome_module_child_props(self):
-    return json_format.MessageToDict(
-        ChromeProperties(version=self._chromium_src_ref_cl_tag))
 
   def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -311,23 +301,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
               self.m.cros_release.buildspec = ManifestLocation(
                   manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
 
-        if config and config.id.type == BuilderConfig.Id.FACTORY:
-          self._is_factory_orchestrator = True
-          with self.m.workspace_util.sync_to_commit(staging=is_staging):
-            bump_version = self._properties.bump_version and not is_staging
-            self.m.cros_version.bump_version(dry_run=not bump_version)
-            self.m.cros_release.create_buildspec(
-                dry_run=is_staging,
-                gs_location=self._properties.buildspec_gs_path)
-
-        if config and config.id.type == BuilderConfig.Id.PUBLIC:
-          self._is_public_orchestrator = True
-          # Need to sync to buildspec in the public orchestrator so that
-          # chromeos_version.sh accurately reflects the version.
-          # b/238330273 for context.
-          with self.m.workspace_util.sync_to_commit(staging=is_staging):
-            pass
-
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
@@ -335,9 +308,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'snapshot-orchestrator'):
           self._is_snapshot_orchestrator = True
-
-        self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
-            'chromium_src_ref', self.m.buildbucket.build.tags)
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.
@@ -352,27 +322,12 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       # Yield while inside of the bot_cost.build_cost_context.
       yield config
 
-  def create_recipe_result(
-      self, include_build_details: bool = False,
-      ignore_build_test_failures: bool = False,
-      no_nest_final_build_collect: bool = False) -> result_pb2.RawResult:
+  def create_recipe_result(self) -> result_pb2.RawResult:
     """Create the correct return value for RunSteps.
-
-    Args:
-      include_build_details: If True augment RawResults.summary_markdown
-        with additional details about the build for both successes and failures.
-      ignore_build_test_failures: If True, we will still produce a summary
-        of failures if present, but we will not set the build status to FAILURE.
-      no_nest_final_build_collect: If True, we do not create the parent 'final
-        build collect' step so that 'check build results' step is a top-level
-        step.
 
     Returns:
       (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
     """
-    # If there are any remaining children to collect, collect them now.
-    self._collect_remaining_children(no_nest=no_nest_final_build_collect)
-
     if not self.builds_status.fatal_failures:
       self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
@@ -388,46 +343,11 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       # Set child output ids if any
       self.add_child_info_to_output_property()
 
-      # TODO(b/316010599): Remove after the experiment.
-      with self.m.failures.ignore_exceptions():
-        builder_configs = [
-            self.m.cros_infra_config.get_builder_config(cs.name) for cs in
-            self.m.cros_infra_config.config_or_default.orchestrator.child_specs
-        ]
-        # In order to simplify things, we are going to start with only first CQ
-        # attempts which do not configure additional builders via footer.
-        if (self._is_cq_orchestrator and not self.m.cros_history.is_retry and
-            not self.m.cros_relevance.check_force_relevance_footer(
-                self.gerrit_changes, builder_configs)):
-          cros_query_relevant_builders = {
-              b.id.name for b in self.m.build_plan.get_relevant_builder_configs(
-                  builder_configs, self.gerrit_changes)
-          }
-
-          actual_relevant_child_builders = set(
-              self._relevant_child_builder_names)
-          cros_query_false_positives = (
-              cros_query_relevant_builders - actual_relevant_child_builders)
-          cros_query_false_negatives = (
-              actual_relevant_child_builders - cros_query_relevant_builders)
-          self.m.easy.set_properties_step(
-              cros_query_response_was_identical=cros_query_relevant_builders ==
-              actual_relevant_child_builders,
-              cros_query_false_positives=sorted(cros_query_false_positives),
-              cros_query_false_negatives=sorted(cros_query_false_negatives))
-
-    if self.is_cq_orchestrator:
-      successes = {
-          'build':
-              self._count_successful_critical_relevant_cq_builds(
-                  self.builds_status.completed_builds)
-      }
-    else:
-      successes = {
-          'build':
-              self._count_successful_critical_builds(
-                  self.builds_status.completed_builds)
-      }
+    successes = {
+        'build':
+            self._count_successful_critical_builds(
+                self.builds_status.completed_builds)
+    }
 
     results = self.m.failures.Results(failures=self.builds_status.failures,
                                       successes=successes)
@@ -437,27 +357,13 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     has_child_failures = any(failure.fatal for failure in results.failures)
     self.m.easy.set_properties_step(has_child_failures=has_child_failures)
 
-    raw_result = self.m.failures.aggregate_failures(results,
-                                                    ignore_build_test_failures)
-    if include_build_details:
-      summary_markdown = 'Full version: {}'.format(
-          self.m.cros_version.version.legacy_version)
-      if raw_result.summary_markdown:
-        summary_markdown += '\n\n{}'.format(raw_result.summary_markdown)
-      raw_result = result_pb2.RawResult(status=raw_result.status,
-                                        summary_markdown=summary_markdown)
+    raw_result = self.m.failures.aggregate_failures(results)
     return raw_result
 
   def _count_successful_critical_builds(self, builds):
     return len([
         b for b in builds
         if b.critical == common_pb2.YES and b.status == common_pb2.SUCCESS
-    ])
-
-  def _count_successful_critical_relevant_cq_builds(self, builds):
-    return len([
-        b for b in builds if b.critical == common_pb2.YES and
-        b.status == common_pb2.SUCCESS and self.cq_relevant(b)
     ])
 
   def _validate_properties(self):
@@ -1034,32 +940,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         build_target_critical_allowlist=build_target_critical_allowlist,
     )
     self._builds_status.update([], test_failures)
-
-    return self._builds_status
-
-  def _collect_remaining_children(
-      self,
-      step_name: str = 'final build collect',
-      no_nest: bool = False,
-  ) -> BuildsStatus:
-    """Collect any remaining children.
-
-    Args:
-      step_name: The name for the step.
-      no_nest: If true, no nested step will be created.
-
-    Returns:
-      The current status of the builds.
-    """
-    if self._builds_status.running_builds:
-      with contextlib.nullcontext() if no_nest else self.m.step.nest(step_name):
-        completed_builds = self._collect_builds(
-            [b.id for b in self._builds_status.running_builds])
-        self._collect_and_check_build_results(completed_builds)
-        if self._test_data.enabled:
-          assert len(self._builds_status.running_builds) == 0
-        self.m.greenness.update_build_info(completed_builds)
-        self.m.greenness.print_step()
 
     return self._builds_status
 

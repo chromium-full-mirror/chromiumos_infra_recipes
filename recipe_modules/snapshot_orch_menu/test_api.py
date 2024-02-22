@@ -18,7 +18,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
-from PB.chromiumos.builder_config import BuilderConfig
 
 
 class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
@@ -119,11 +118,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         args.append(
             self.m.buildbucket.simulated_collect_output(collect_builds,
                                                         'run builds.collect'))
-    if collect_after_builds:
-      step_name = 'collect' if cq else 'final build collect.collect'
-      args.append(
-          self.m.buildbucket.simulated_collect_output(collect_after_builds,
-                                                      step_name))
 
     child_builds = collect_builds + collect_after_builds
     if child_builds:
@@ -412,11 +406,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     def _child_build_msg(build_target_name, **kwargs):
       """Return the Build message for a child build."""
       kwargs.setdefault('status', 'SUCCESS')
-      # Mark the pointless build with the appropriate output properties.
-      if build_target_name == 'arm-generic-pointless':
-        output_properties = kwargs.pop('output_properties') or {}
-        output_properties['relevant_build'] = False
-        kwargs['output_properties'] = output_properties
       return self.m.test_util.test_child_build(build_target_name,
                                                **kwargs).message
 
@@ -437,20 +426,12 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     # test_data for scheduling the NO_COLLECT builds but not collecting them.
     for c in orch_config.orchestrator.child_specs:
       target = c.name.split(child_builder_suffix)[0]
-      if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
-        collect_after_builds.append(
-            _child_build_msg(target,
-                             cq=orchestrator_name.endswith('cq-orchestrator'),
-                             builder_name=c.name, build_id=start_build_id,
-                             critical='YES',
-                             output_properties={'build_cost': 10.0}))
-      else:
-        collect_builds.append(
-            _child_build_msg(target,
-                             cq=orchestrator_name.endswith('cq-orchestrator'),
-                             builder_name=c.name, build_id=start_build_id,
-                             critical='YES',
-                             output_properties={'build_cost': 10.0}))
+      collect_builds.append(
+          _child_build_msg(target,
+                           cq=orchestrator_name.endswith('cq-orchestrator'),
+                           builder_name=c.name, build_id=start_build_id,
+                           critical='YES',
+                           output_properties={'build_cost': 10.0}))
       start_build_id += 1
 
     return collect_builds, collect_after_builds
