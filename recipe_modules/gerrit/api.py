@@ -1138,6 +1138,8 @@ class GerritApi(RecipeApi):
         presentation.logs['output_json'] = output_json_str
         output = json.loads(output_json_str)
         related = output.get('related', [])
+        host_dict = {'host': gerrit_change.host}
+        related = [dict(rc, **host_dict) for rc in related]
         return related
       except Exception as e:  #pylint: disable=broad-except
         presentation.step_text = "couldn't parse output of related changes"

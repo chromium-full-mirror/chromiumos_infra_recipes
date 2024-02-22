@@ -109,6 +109,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     """Sets the LFG output property based on latest info."""
     self.m.easy.set_properties_step(looks_for_green=self.stats)
 
+  def _test_submission_data(self):
+    kwargs = {}
+    eight_hours_ago = self.m.time.utcnow() - datetime.timedelta(hours=8)
+    kwargs['submitted'] = eight_hours_ago.strftime(
+        '%Y-%m-%d %H:%M:%S.%f') + '000'
+    return self.m.depot_tools_gerrit.test_api.get_one_change_response_data(
+        change_number=123, patchset=1, **kwargs)
+
   def should_lfg(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether looks for green logic should be run."""
     with self.m.step.nest('check should look for green') as pres:
@@ -134,22 +142,33 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         pres.step_text = 'Skipping looks for green due to merge commit'
         self.set_stats()
         return False
-      # TODO(b/276363760): Don't LFG if all Cq-Depend CLs are being tested in the run.
-      if self.m.lfg_util.not_included_cq_depend_cls(gerrit_changes):
-        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND
-        pres.step_text = 'Skipping looks for green due to missing depended cl(s)'
-        self.set_stats()
-        return False
-      # TODO(b/276363760): Don't LFG with stacked changes that aren't
-      # included.
-      if self.related_changes_to_apply:
-        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES
-        pres.step_text = 'Skipping looks for green due to missing depended cl(s)'
-        pres.logs['Relation chain'] = (
-            f'Found CL(s) part of a relation chain. Some depended changes are not included: {self.related_changes_to_apply}. Skipping'
-            ' looks for green.')
-        self.set_stats()
-        return False
+      not_included_cq_depend_cls = self.m.lfg_util.not_included_cq_depend_cls(
+          gerrit_changes)
+      depended_cls = (
+          not_included_cq_depend_cls +
+          self.m.lfg_util.json_to_gerritchanges(self.related_changes_to_apply))
+      if depended_cls:
+        submit_time = self.m.lfg_util.latest_submission_time(
+            depended_cls, step_test_data=self._test_submission_data)
+        if submit_time is None:
+          # A CQ shouldn't be launched if any of the depended CLs are not included
+          # in the run and are not submitted.
+          # This clause covers the case of gerritAPI crash.
+          self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
+          pres.step_text = 'Skipping looks for green due to depended cl(s) not being submitted'
+          self.set_stats()
+          return False
+        hours_since_submission = (self.m.time.utcnow() -
+                                  submit_time).total_seconds() / (60 * 60)
+        self._lookback_hours = min(self._lookback_hours,
+                                   hours_since_submission - 1)
+        pres.logs['reduced_lookback'] = '\n'.join([
+            f'One of the depended CLs was submitted {hours_since_submission:.2f} hours ago.',
+            'Since it can take up to 30 mins from submission for Annealing to kick off and',
+            '10-15 mins for annealing to complete, lookback should be atleast an hour less.',
+            f'lfg lookback is now {self._lookback_hours:.2f} hours.',
+        ])
+        pres.text = f'lfg lookback is now {self._lookback_hours:.2f} hours.'
       self.set_stats()
 
     return True
@@ -189,14 +208,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - self._lookback_hours * 60 * 60,
+                  seconds=latest_seconds - int(self._lookback_hours * 60 * 60),
               ), end_time=latest_start))
     else:
       latest_seconds = self.seconds_utc
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - self._lookback_hours * 60 * 60,
+                  seconds=latest_seconds - int(self._lookback_hours * 60 * 60),
               )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = bucket or self._greenness_bucket

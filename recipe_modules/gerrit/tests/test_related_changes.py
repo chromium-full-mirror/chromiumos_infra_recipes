@@ -28,9 +28,11 @@ gerrit_change = GerritChange(host='chromium-review.googlesource.com',
 
 RELATED_OUTPUT = {
     'related': [{
-        '_change_number': '321'
+        '_change_number': '321',
+        'host': 'chromium-review.googlesource.com'
     }, {
-        '_change_number': '432'
+        '_change_number': '432',
+        'host': 'chromium-review.googlesource.com'
     }]
 }
 NO_RELATED_OUTPUT = {'related': []}

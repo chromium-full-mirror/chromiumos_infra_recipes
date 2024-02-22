@@ -7,20 +7,21 @@
 
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenProperties
 
-DEPS = [
-    'recipe_engine/buildbucket',
-    'recipe_engine/cq',
-    'recipe_engine/step',
-    'recipe_engine/time',
-    'buildbucket_stats',
-    'cros_infra_config',
-    'easy',
-    'failures',
-    'gerrit',
-    'git_footers',
-    'greenness',
-    'lfg_util',
-]
+DEPS = {
+    'depot_tools_gerrit': 'depot_tools/gerrit',
+    'buildbucket': 'recipe_engine/buildbucket',
+    'cq': 'recipe_engine/cq',
+    'step': 'recipe_engine/step',
+    'time': 'recipe_engine/time',
+    'buildbucket_stats': 'buildbucket_stats',
+    'cros_infra_config': 'cros_infra_config',
+    'easy': 'easy',
+    'failures': 'failures',
+    'gerrit': 'gerrit',
+    'git_footers': 'git_footers',
+    'greenness': 'greenness',
+    'lfg_util': 'lfg_util',
+}
 
 
 PROPERTIES = LooksForGreenProperties

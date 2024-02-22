@@ -33,12 +33,12 @@ def RunSteps(api, properties):
   kwargs = {}
   if properties.expected_submission:
     submit_time = str(api.time.utcnow() - datetime.timedelta(hours=5))
-    kwargs['submitted'] = str(api.time.utcnow() - datetime.timedelta(hours=5))
-    kwargs['revisions'] = {'SHA': {'_number': '1', 'submitted': submit_time}}
+    kwargs['submitted'] = submit_time + '000'
   gerrit_response_data = api.gerrit.test_api.get_one_change_response_data(
-      change_number=properties.change_ids[0], patchset=1, **kwargs)
+      change_number=properties.change_ids[0],
+      patchset=properties.patchset or 1, **kwargs)
   step_test_data = lambda: gerrit_response_data
-  result = api.lfg_util.latest_submitted_time(gerrit_changes=changes,
+  result = api.lfg_util.latest_submission_time(gerrit_changes=changes,
                                               step_test_data=step_test_data)
   api.assertions.assertEqual(str(result), properties.expected_result)
 
@@ -47,6 +47,12 @@ def GenTests(api):
   yield api.test(
       'not-submitted',
       api.properties(expected_result='None', change_ids=[123]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'gerrit-error',
+      api.properties(expected_result='None', change_ids=[123], patchset=2),
       api.post_process(post_process.DropExpectation),
   )
 

@@ -598,7 +598,8 @@
   * [labpack:tests/test_get_use_ile_de_france](#recipes-labpack_tests_test_get_use_ile_de_france) &mdash; test_run_labpack.
   * [labpack:tests/test_run_labpack](#recipes-labpack_tests_test_run_labpack) &mdash; test_run_labpack.
   * [labpack:tests/test_timeout](#recipes-labpack_tests_test_timeout) &mdash; test_timeout.
-  * [lfg_util:examples/latest_submitted_time](#recipes-lfg_util_examples_latest_submitted_time) &mdash; Testing when the changes were submitted.
+  * [lfg_util:examples/json_to_gerritchanges](#recipes-lfg_util_examples_json_to_gerritchanges) &mdash; Testing whether cq-depended CLs are being tested in the run.
+  * [lfg_util:examples/latest_submission_time](#recipes-lfg_util_examples_latest_submission_time) &mdash; Testing when the changes were submitted.
   * [lfg_util:examples/not_included_cq_depend_cls](#recipes-lfg_util_examples_not_included_cq_depend_cls) &mdash; Testing whether cq-depended CLs are being tested in the run.
   * [libchrome_uprev](#recipes-libchrome_uprev) &mdash; Recipe for upreving libchrome.
   * [libchrome_upstream](#recipes-libchrome_upstream) &mdash; Recipe for updating libchrome upstream branch.
@@ -8605,7 +8606,18 @@ Utility functions for looks for green.
 
 A module for util functions associated with LFG.
 
-&mdash; **def [latest\_submitted\_time](/recipe_modules/lfg_util/api.py#72)(self, gerrit_changes: List[GerritChange], step_test_data=None):**
+&mdash; **def [json\_to\_gerritchanges](/recipe_modules/lfg_util/api.py#102)(self, changes_dict: Dict):**
+
+Create GerritChange objects from JSON objects return from GerritAPI.
+
+Args:
+  changes_dict: A map of gerrit_change in this run to the changes that they
+      related on the stack.
+
+Returns:
+  List the related changes in the proto format.
+
+&mdash; **def [latest\_submission\_time](/recipe_modules/lfg_util/api.py#72)(self, gerrit_changes: List[GerritChange], step_test_data=None):**
 
 Find the last submitted change and return the submit time.
 
@@ -8627,7 +8639,7 @@ Returns:
   List of changes that input CLs CQ-depend on but are not included in this run.
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
-[DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [lfg\_util](#recipe_modules-lfg_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Functions implementing looks for green.
@@ -8636,7 +8648,7 @@ Functions implementing looks for green.
 
 A module to look for green snapshots.
 
-&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#298)(self, orch_start_time: datetime.datetime):**
+&mdash; **def [calc\_approx\_snap\_age\_hours](/recipe_modules/looks_for_green/api.py#317)(self, orch_start_time: datetime.datetime):**
 
 Returns how many hours age the latest scored snap-orch started.
 
@@ -8646,7 +8658,7 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#330)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#349)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
@@ -8663,7 +8675,7 @@ Args:
 Returns:
   A green snapshot, if one was found.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#375)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#394)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -8673,11 +8685,11 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#441)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#460)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
-&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#257)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
+&mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#276)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Returns the latest scored Snapshot.
 
@@ -8697,7 +8709,7 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#401)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#420)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
@@ -8723,7 +8735,7 @@ Initialized once and used throughout for any time calculations. Cast to int to u
 
 Sets the LFG output property based on latest info.
 
-&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#112)(self, gerrit_changes: List[GerritChange]):**
+&mdash; **def [should\_lfg](/recipe_modules/looks_for_green/api.py#120)(self, gerrit_changes: List[GerritChange]):**
 
 Returns whether looks for green logic should be run.
 
@@ -14820,7 +14832,7 @@ Tests for the is_merge_commit function.
 [DEPS](/recipe_modules/gerrit/tests/test_related_changes.py#15): [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/gerrit/tests/test_related_changes.py#39)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/gerrit/tests/test_related_changes.py#41)(api, properties):**
 ### *recipes* / [git:examples/bad\_ref](/recipe_modules/git/examples/bad_ref.py)
 
 [DEPS](/recipe_modules/git/examples/bad_ref.py#8): [git](#recipe_modules-git), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15194,14 +15206,22 @@ correctly with a timeout.
 &mdash; **def [RunSteps](/recipe_modules/labpack/tests/test_timeout.py#23)(api):**
 
 RunSteps runs ensure_labpack
-### *recipes* / [lfg\_util:examples/latest\_submitted\_time](/recipe_modules/lfg_util/examples/latest_submitted_time.py)
+### *recipes* / [lfg\_util:examples/json\_to\_gerritchanges](/recipe_modules/lfg_util/examples/json_to_gerritchanges.py)
 
-[DEPS](/recipe_modules/lfg_util/examples/latest_submitted_time.py#14): [lfg\_util](#recipe_modules-lfg_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/lfg_util/examples/json_to_gerritchanges.py#11): [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+Testing whether cq-depended CLs are being tested in the run.
+
+&mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/json_to_gerritchanges.py#17)(api):**
+### *recipes* / [lfg\_util:examples/latest\_submission\_time](/recipe_modules/lfg_util/examples/latest_submission_time.py)
+
+[DEPS](/recipe_modules/lfg_util/examples/latest_submission_time.py#14): [lfg\_util](#recipe_modules-lfg_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Testing when the changes were submitted.
 
-&mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/latest_submitted_time.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/lfg_util/examples/latest_submission_time.py#26)(api, properties):**
 ### *recipes* / [lfg\_util:examples/not\_included\_cq\_depend\_cls](/recipe_modules/lfg_util/examples/not_included_cq_depend_cls.py)
 
 [DEPS](/recipe_modules/lfg_util/examples/not_included_cq_depend_cls.py#13): [git\_footers](#recipe_modules-git_footers), [lfg\_util](#recipe_modules-lfg_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

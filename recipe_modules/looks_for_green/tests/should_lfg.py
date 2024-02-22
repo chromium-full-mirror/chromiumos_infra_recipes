@@ -38,16 +38,19 @@ def RunSteps(api, properties):
 gerrit_change_1 = GerritChange(
     host='chromium-review.googlesource.com',
     change=1234,
+    patchset=1,
 )
 
 gerrit_change_2 = GerritChange(
     host='chromium-review.googlesource.com',
     change=4568,
+    patchset=1,
 )
 
 gerrit_change_3 = GerritChange(
     host='chromium-review.googlesource.com',
     change=9012,
+    patchset=1,
 )
 
 
@@ -102,12 +105,11 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  # TODO(b/276363760): Remove when not included Cq-Depended changes are supported.
   yield api.test(
-      'cq-depend',
+      'cq-depend-but-submitted',
       api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
-          expected_should_lfg=False, **{
+          expected_should_lfg=True, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -118,8 +120,6 @@ def GenTests(api):
       api.git_footers.simulated_get_footers([
           'chromium:123456'
       ], 'check should look for green.check if all Cq-Depend CLs are included'),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_SKIPPED_CQ_DEPEND),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -127,15 +127,17 @@ def GenTests(api):
       '4508966': [{
           '_change_number': 4508965,
           '_revision_number': 1,
-          'project': 'chromiumos/platform2'
+          'project': 'chromiumos/platform2',
+          'host': 'chromium-review.googlesource.com',
       }, {
           '_change_number': 4508966,
           '_revision_number': 2,
+          'host': 'chromium-review.googlesource.com',
           'project': 'chromiumos/platform2'
       }]
   }
   yield api.test(
-      'relation-chain-with-missing',
+      'relation-chain-with-missing-but-not-submitted',
       api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=False,
@@ -151,8 +153,9 @@ def GenTests(api):
           [],
           'check should look for green.check if all Cq-Depend CLs are included'
       ),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
+      api.step_data('check should look for green.gerrit changes',
+                    api.json.output([])),
       api.post_process(post_process.DropExpectation),
   )
 
