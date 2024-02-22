@@ -315,6 +315,8 @@ class SigningApi(recipe_api.RecipeApi):
                              channel: common_pb2.Channel) -> SigningConfig:
     config = copy.deepcopy(config)
     config.channel = channel
+    # Always set recovery_zip to be true.
+    config.recovery_zip = True
     return config
 
   # Public method so we can test it.

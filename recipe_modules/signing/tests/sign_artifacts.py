@@ -86,6 +86,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='chromiumos_base_image.tar.xz',
+              recovery_zip=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
@@ -93,6 +94,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
+              recovery_zip=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
@@ -100,6 +102,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
+              recovery_zip=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_BASE,
@@ -108,6 +111,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='chromiumos_base_image.tar.xz',
+              recovery_zip=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_FIRMWARE,
@@ -115,6 +119,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
+              recovery_zip=True,
           ),
           SigningConfig(
               image_type=IMAGE_TYPE_RECOVERY,
@@ -122,6 +127,7 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
+              recovery_zip=True,
           ),
       ],
   )
