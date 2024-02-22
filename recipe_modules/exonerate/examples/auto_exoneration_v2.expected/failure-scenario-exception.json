@@ -1,0 +1,55 @@
+[
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Error occurred when running auto exoneration v2@@@",
+      "@@@STEP_LOG_LINE@error@'NoneType' object is not iterable@@@",
+      "@@@STEP_LOG_END@error@@@",
+      "@@@STEP_WARNINGS@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.ResultDB",
+      "QueryTestVariants"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Auto exoneration v2 dry run.query_test_variants",
+    "stdin": "{\"invocations\": [\"invocations/build:8945511751514863184\"], \"pageSize\": 10000, \"predicate\": {\"status\": \"UNEXPECTED_MASK\"}, \"readMask\": \"testId,variant,status,sourcesId\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@json.output (invalid)@@@",
+      "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
+      "@@@STEP_LOG_END@json.output (exception)@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"pageSize\": 10000,@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"status\": \"UNEXPECTED_MASK\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"readMask\": \"testId,variant,status,sourcesId\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

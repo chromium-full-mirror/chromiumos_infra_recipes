@@ -143,25 +143,20 @@
     "name": "Automated Exoneration Analysis (2).Auto exoneration v2 dry run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Step(None)@@@",
+      "@@@STEP_TEXT@Error occurred when running auto exoneration v2@@@",
+      "@@@STEP_LOG_LINE@error@'NoneType' object is not iterable@@@",
+      "@@@STEP_LOG_END@error@@@",
       "@@@STEP_WARNINGS@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "Automated Exoneration Analysis (2).Auto exoneration v2 dry run.query LUCI Analysis for stability",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
     "cmd": [
-      "prpc",
-      "call",
-      "luci-analysis.appspot.com",
-      "luci.analysis.v1.TestVariants.QueryStability"
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.ResultDB",
+      "QueryTestVariants"
     ],
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "project:try"
@@ -174,30 +169,24 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Automated Exoneration Analysis (2).Auto exoneration v2 dry run.query LUCI Analysis for stability.rpc call",
-    "stdin": "{\"project\": \"chromeos\", \"testVariants\": [{\"sources\": {\"gitiles_commit\": {}}, \"testId\": \"tast.test1\", \"variant\": {\"def\": {\"build_target\": \"betty\"}}}]}",
+    "name": "Automated Exoneration Analysis (2).Auto exoneration v2 dry run.query_test_variants",
+    "stdin": "{\"invocations\": [\"invocations/build:8945511751514863184\"], \"pageSize\": 10000, \"predicate\": {\"status\": \"UNEXPECTED_MASK\"}, \"readMask\": \"testId,variant,status,sourcesId\"}",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@json.output (invalid)@@@",
       "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
       "@@@STEP_LOG_END@json.output (exception)@@@",
-      "@@@STEP_LOG_LINE@input@{@@@",
-      "@@@STEP_LOG_LINE@input@  \"project\": \"chromeos\",@@@",
-      "@@@STEP_LOG_LINE@input@  \"testVariants\": [@@@",
-      "@@@STEP_LOG_LINE@input@    {@@@",
-      "@@@STEP_LOG_LINE@input@      \"sources\": {@@@",
-      "@@@STEP_LOG_LINE@input@        \"gitiles_commit\": {}@@@",
-      "@@@STEP_LOG_LINE@input@      },@@@",
-      "@@@STEP_LOG_LINE@input@      \"testId\": \"tast.test1\",@@@",
-      "@@@STEP_LOG_LINE@input@      \"variant\": {@@@",
-      "@@@STEP_LOG_LINE@input@        \"def\": {@@@",
-      "@@@STEP_LOG_LINE@input@          \"build_target\": \"betty\"@@@",
-      "@@@STEP_LOG_LINE@input@        }@@@",
-      "@@@STEP_LOG_LINE@input@      }@@@",
-      "@@@STEP_LOG_LINE@input@    }@@@",
-      "@@@STEP_LOG_LINE@input@  ]@@@",
-      "@@@STEP_LOG_LINE@input@}@@@",
-      "@@@STEP_LOG_END@input@@@"
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"pageSize\": 10000,@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"status\": \"UNEXPECTED_MASK\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"readMask\": \"testId,variant,status,sourcesId\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {

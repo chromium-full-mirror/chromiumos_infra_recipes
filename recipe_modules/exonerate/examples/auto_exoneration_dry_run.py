@@ -61,6 +61,7 @@ def GenTests(api):
           }))
 
   yield api.test(
+      # v2-enabled just cover the exception scenario: v2 has its own test cases
       'v2-enabled',
       api.buildbucket.try_build(
           experiments=['chromeos.cq.auto.exoneration.v2.enabled']),

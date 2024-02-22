@@ -964,17 +964,27 @@ class ExonerateApi(recipe_api.RecipeApi):
           if not failed_tests:
             failed_tests = self._failed_tests
           # Convert request
-          test_variant_position_list = []
+          test_variant_list = []
           for test in failed_tests:
             test_variant = self.get_test_variant_dict(
                 test_id=test.name, board=test.board,
                 build_target=test.build_target, model=test.model)
-            test_variant['sources'] = {
-                'gitiles_commit':
-                    json_format.MessageToDict(self.m.src_state.gitiles_commit)
-            }
-            test_variant_position_list.append(test_variant)
-            test_variant_position_list.sort(key=lambda x: x['testId'])
+            test_variant_list.append(test_variant)
+          test_variant_list.sort(key=lambda x: x['testId'])
+          test_variant_position_list = self.m.exoneration_util.match_test_variants_sources(
+              test_variant_list)
+          all_count = len(test_variant_list)
+          matched_count = len(test_variant_position_list)
+          # Temporary output properties for v2 dry run debug only
+          debug_dict = {
+              'all_test_variants_count': all_count,
+              'source_matched_count': matched_count,
+              'all_matched': all_count == matched_count,
+          }
+          self.m.easy.set_properties_step(failed_test_stats_v2_debug=debug_dict)
+          pres.logs['source matched test_variant_list'] = str(test_variant_list)
+          if all_count != matched_count:
+            pres.step_text = f'Only {matched_count}/{all_count} variants source matched'
 
           # Make call to LUCI Analysis
           stability, criteria = self.m.exoneration_util.query_stability(
@@ -995,6 +1005,7 @@ class ExonerateApi(recipe_api.RecipeApi):
               override_info=override_info)
           pres.logs['all_stats'] = str(overall_stats)
           self.m.easy.set_properties_step(failed_test_stats_v2=overall_stats)
-        except self.m.step.StepFailure as f:
-          pres.step_text = f.reason_message()
+        except Exception as e:  # pylint: disable=broad-except
+          pres.step_text = 'Error occurred when running auto exoneration v2'
+          pres.logs['error'] = str(e)
           pres.status = self.m.step.WARNING

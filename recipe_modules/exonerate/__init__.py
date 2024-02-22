@@ -17,7 +17,6 @@ DEPS = [
     'exoneration_util',
     'naming',
     'rdb_util',
-    'src_state',
     'urls',
 ]
 

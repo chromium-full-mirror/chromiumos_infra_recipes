@@ -3,6 +3,8 @@
     "cmd": [],
     "name": "Auto exoneration v2 dry run",
     "~followup_annotations": [
+      "@@@STEP_LOG_LINE@source matched test_variant_list@[{'testId': 'tast.lockscreen.CloseLid.fieldtrial_testing_config_on', 'variant': {'def': {'build_target': 'hana', 'board': 'hana'}}, 'sources': {'gitilesCommit': {'host': 'chrome-internal.googlesource.com', 'project': 'chromeos/manifest-internal', 'ref': 'refs/heads/snapshot', 'commitHash': '93cf925c8cd052ebbe6133a8cef885d92c56cdc5', 'position': '92279'}}}]@@@",
+      "@@@STEP_LOG_END@source matched test_variant_list@@@",
       "@@@STEP_LOG_LINE@stability@[test_id: \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"@@@",
       "@@@STEP_LOG_LINE@stability@variant {@@@",
       "@@@STEP_LOG_LINE@stability@  def {@@@",
@@ -76,6 +78,78 @@
       "@@@STEP_LOG_LINE@all_stats@override_info {@@@",
       "@@@STEP_LOG_LINE@all_stats@}@@@",
       "@@@STEP_LOG_END@all_stats@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.ResultDB",
+      "QueryTestVariants"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Auto exoneration v2 dry run.query_test_variants",
+    "stdin": "{\"invocations\": [\"invocations/build:8945511751514863184\"], \"pageSize\": 10000, \"predicate\": {\"status\": \"UNEXPECTED_MASK\"}, \"readMask\": \"testId,variant,status,sourcesId\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"sources\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"aaaa\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"commitHash\": \"93cf925c8cd052ebbe6133a8cef885d92c56cdc5\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"host\": \"chrome-internal.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"position\": \"92279\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  },@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"testVariants\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"sourcesId\": \"aaaa\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"status\": \"UNEXPECTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\",@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"variant\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"def\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"board\": \"hana\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"build_target\": \"hana\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"pageSize\": 10000,@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"status\": \"UNEXPECTED_MASK\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"readMask\": \"testId,variant,status,sourcesId\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Auto exoneration v2 dry run.set failed_test_stats_v2_debug",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_test_stats_v2_debug@{\"all_matched\": true, \"all_test_variants_count\": 1, \"source_matched_count\": 1}@@@"
     ]
   },
   {
