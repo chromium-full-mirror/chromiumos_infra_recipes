@@ -799,6 +799,11 @@ def GenTests(
       api.properties(launch_pupr=True),
       api.post_check(post_process.StepSuccess, 'upload prebuilts'),
       api.post_check(post_process.StepSuccess, 'upload toolchain artifacts'),
+      # b/326461362: ensure the artifact link is correct.
+      api.post_check(
+          post_process.PropertyEquals, 'artifact_link',
+          'gs://chromeos-image-archive/build-chromiumos-sdk/'
+          'R99-1234.56.0-101-8945511751514863184'),
       api.post_process(post_process.DropExpectation),
       builder='build-chromiumos-sdk',
   )

@@ -4320,6 +4320,7 @@
       },
       "artifacts": {
         "prebuilts": "NONE",
+        "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "toolchain": {
             "outputArtifacts": [
