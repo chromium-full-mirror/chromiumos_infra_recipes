@@ -526,7 +526,8 @@ def _enumerate_cft_tests(api, properties, requests):
       # Is singular in practice, even though its a list. This is because the
       # test_finder_request is being built from 1 request (r).
       # this needs to remain singular for downstream assumptions to work.
-      test_suites = test_finder_result.test_suites
+      test_suites = _test_suites_with_filtered_tests(
+          api, r, test_finder_result.test_suites)
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
           dry_run = True
@@ -598,6 +599,27 @@ def _enumerate_cft_tests(api, properties, requests):
 
     return tagged_responses
 
+
+def _test_suites_with_filtered_tests(api, r, test_suites):
+  """Filter tests based on use flag information from gs
+
+  Args:
+    * api: (object): See RunSteps documentation.
+    * r: test_platform.Request.
+    * tests: (List[test_suite]): Test suites containg all test cases
+
+  Returns: List[test_suite]
+  """
+  metadata = r.params.metadata if hasattr(r.params, 'metadata') else None
+  if metadata and hasattr(metadata, 'test_metadata_url'):
+    url = metadata.test_metadata_url + '/tast_use_flags.txt'
+    # pylint: disable=unused-variable
+    tast_use_flag_list = _get_dut_use_flags(api, url)
+  else:
+    # pylint: disable=unused-variable
+    tast_use_flag_list = None  #pragma: nocover
+  # TODO (b/326451615): use tast_use_flag_list to filter test case based on test metadata
+  return test_suites
 
 def _upload_filtered_test_cases_async(api, req, tests):  # pragma: nocover
   """Upload filtered test cases to rdb, async.
@@ -1456,6 +1478,31 @@ def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
 
   return metadata
 
+
+def _get_dut_use_flags(api, use_flag_gs_url):
+  """Get tast_use_flags.txt file from GS.
+
+  Args:
+    * api (RecipeApi): Recipe api object.
+    * use_flag_gs_url (str): URL for the gs path
+    * url_to_error_map: {tag: error(str)} dict.
+  Returns:
+    List of use flags in the file. Otherwise None.
+  """
+  with api.step.nest('get dut use flag from GS') as step:
+    # Retrieve tast use flags and log any parsing errors that occur,
+    # but don't allow it to fail the overall build.
+    try:
+      cat_res = api.gsutil.cat(use_flag_gs_url, infra_step=True,
+                               name='cat {}'.format(use_flag_gs_url),
+                               stdout=api.raw_io.output(add_output_log=True))
+      res = cat_res.stdout
+    # pylint: disable=broad-except
+    except Exception as ex:  #pragma: nocover
+      step.presentation.logs['tast use flags gs error'] = str(ex)
+      step.status = api.step.FAILURE
+    step.presentation.logs['tast use flags list'] = res
+  return res
 
 def _build_has_ancestor(api):
   """Determine whether the current build has any ancestor."""

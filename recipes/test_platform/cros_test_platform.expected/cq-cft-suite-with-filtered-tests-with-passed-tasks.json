@@ -406,6 +406,33 @@
   },
   {
     "cmd": [],
+    "name": "enumerate CFT tests.get dut use flag from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@tast use flags list@@@@",
+      "@@@STEP_LOG_END@tast use flags list@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://foo-metadata-url/tast_use_flags.txt"
+    ],
+    "infra_step": true,
+    "name": "enumerate CFT tests.get dut use flag from GS.gsutil cat gs://foo-metadata-url/tast_use_flags.txt",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate CFT tests.filter test cases",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
