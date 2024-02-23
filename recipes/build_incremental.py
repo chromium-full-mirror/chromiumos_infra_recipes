@@ -37,6 +37,7 @@ DEPS = [
     'incremental',
     'repo',
     'src_state',
+    'workspace_util',
 ]
 
 REPO_SYNC_JOBS = 64
@@ -46,7 +47,7 @@ PROPERTIES = IncrementalProperties
 def RunSteps(api: RecipeApi,
              properties: IncrementalProperties) -> Optional[RawResult]:
   with api.build_menu.configure_builder() as config, \
-    api.build_menu.setup_workspace():
+    api.build_menu.setup_workspace(cherry_pick_changes=False):
 
     # Disable cros clean-outdated-pkgs via ENV var, if necessary.
     cop_enabled = properties.cop_enabled
@@ -81,9 +82,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     raise StepFailure('build_time_delta input property is empty')
 
   relevant_pkgs = None
+  gerrit_changes = api.cros_infra_config.gerrit_changes
   if properties.run_relevancy_check:
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
-    gerrit_changes = api.cros_infra_config.gerrit_changes
     _builder_config = BuilderConfig(build_target=api.build_menu.build_target)
     relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
         [_builder_config], gerrit_changes)
@@ -107,6 +108,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Attempt to build the current snapshot.
   if not failing_build_exception:
     try:
+      api.workspace_util.apply_changes(changes=gerrit_changes,
+                                       ignore_missing_projects=False)
       # TODO(sfrolov): remove update_chroot call when cros_sdk revamp is ready.
       api.cros_sdk.update_chroot(
           toolchain_targets=[api.build_menu.build_target],
