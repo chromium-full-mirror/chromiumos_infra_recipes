@@ -82,16 +82,11 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   relevant_pkgs = None
   if properties.run_relevancy_check:
-    child_specs = api.cros_infra_config.get_builder_config(
-        api.buildbucket.build.builder.builder).orchestrator.child_specs
-    builder_configs = [
-        api.cros_infra_config.get_builder_config(b.name) for b in child_specs
-    ]
-    necessary_builders = [b.id.name for b in builder_configs]
+    # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
     gerrit_changes = api.cros_infra_config.gerrit_changes
-    relevant_builder_configs = api.build_plan.get_relevant_builder_configs([
-        api.cros_infra_config.get_builder_config(b) for b in necessary_builders
-    ], gerrit_changes)
+    _builder_config = BuilderConfig(build_target=api.build_menu.build_target)
+    relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
+        [_builder_config], gerrit_changes)
 
     if not relevant_builder_configs:
       return RawResult(status=common.SUCCESS,
