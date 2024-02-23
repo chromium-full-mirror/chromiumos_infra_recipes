@@ -14,7 +14,7 @@ import sys
 
 
 def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
-                   file_path: str) -> None:
+                   snapshot_version: str, file_path: str) -> None:
   """Write metadata associated with e2e coverage.
 
   Args:
@@ -22,6 +22,7 @@ def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
     gs_path: Path to the artifact.
     board: Board used for generating artifacts.
     version: CROS version used to build artifacts.
+    snapshot_version: Complete version that generated snapshot.
     file_path: Path of file to store the metadata.
   """
   content = {
@@ -29,6 +30,7 @@ def write_metadata(gs_bucket: str, gs_path: str, board: str, version: str,
       'artifacts_path': gs_path,
       'board': board,
       'version': version,
+      'snapshot_version': snapshot_version,
       'date': date.today().isoformat(),
   }
 
@@ -51,6 +53,9 @@ def _parse_args(args):
   parser.add_argument('--version', required=True, type=str,
                       help='CROS version used to generate artifacts.')
 
+  parser.add_argument('--snapshot-version', required=True, type=str,
+                      help='Complete snapshot version including builderid.')
+
   parser.add_argument(
       '--path', required=True, type=str,
       help='absolute path to the file to store the metadata, must exist')
@@ -65,7 +70,7 @@ def main():
     raise RuntimeError(f'Parent directory for {params.path} must exist')
 
   write_metadata(params.artifacts_bucket, params.artifacts_path, params.board,
-                 params.version, params.path)
+                 params.version, params.snapshot_version, params.path)
 
 
 if __name__ == '__main__':

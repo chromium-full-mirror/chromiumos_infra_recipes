@@ -11,6 +11,7 @@ import json
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/raw_io',
     'recipe_engine/swarming',
     'build_menu',
     'cros_build_api',
@@ -70,6 +71,11 @@ def GenTests(api):
                       }
                   }
               }, sort_keys=True)),
+      api.step_data(
+          'upload artifacts.gsutil ls snapshot version',
+          stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/brya-snapshot/8766842719767962417/
+          '''), retcode=0),
       api.post_check(
           post_process.MustRun,
           'upload artifacts.upload e2e coverage metadata.add e2e coverage metadata'

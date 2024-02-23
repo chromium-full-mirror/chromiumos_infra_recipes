@@ -32,6 +32,7 @@ DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 E2E_COVERAGE_BUCKET_NAME = 'e2e-coverage-artifacts'
 E2E_METADATA_FILENAME = 'e2e_metadata.json'
 ACTIVE_VERSION_FILENAME = 'current.json'
+CHROMEOS_IMAGE_FILE = 'image.zip'
 # Number of seconds in 2w.
 ACTIVE_VERSION_DIFF_SECONDS = 1209600
 # TODO(b/222328534): Use autopush as default value instead.
@@ -307,6 +308,23 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         version: CROS version used to build artifacts.
         gs_dest_path: Path inside the E2E bucket to write data to.
     """
+    ls_regex = version + '*'
+    snapshot_builder = board + '-snapshot'
+    files = self.m.gsutil.list(
+        'gs://' + os.path.join(gs_artifact_bucket, snapshot_builder, ls_regex,
+                               CHROMEOS_IMAGE_FILE),
+        args=['-d'],
+        name='ls snapshot version',
+        # empty list is fine.
+        ok_ret=(0, 1),
+        stdout=self.m.raw_io.output_text(name='ls results',
+                                         add_output_log=True)).stdout.split()
+
+    # Dont update metadata if we dont find a valid chromeos image.
+    if not files or len(files) > 1:
+      return
+
+    snapshot_version = files[0]
     path = os.path.join(str(self.metadata_dir), E2E_METADATA_FILENAME)
     with self.m.step.nest(step_text):
       self.m.step(
@@ -315,7 +333,8 @@ class CodeCoverageApi(recipe_api.RecipeApi):
               'vpython3',
               self.resource('e2e_coverage.py'), '--artifacts-bucket',
               gs_artifact_bucket, '--artifacts-path', gs_artifact_path,
-              '--board', board, '--version', version, '--path', path
+              '--board', board, '--version', version, '--snapshot-version',
+              snapshot_version, '--path', path
           ],
       )
 

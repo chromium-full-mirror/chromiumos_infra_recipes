@@ -32,6 +32,10 @@ def RunSteps(api):
 def GenTests(api):
   yield api.build_menu.test(
       'e2e-uploads-metadata',
+      api.step_data(
+          'gsutil ls snapshot version', stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/brya-snapshot/8766842719767962417/
+        '''), retcode=0),
       api.post_check(post_process.MustRun, 'upload e2e coverage metadata'),
       api.post_check(post_process.MustRun,
                      'upload e2e coverage metadata.add e2e coverage metadata'))
@@ -43,5 +47,17 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'verify active version.gsutil download'),
       api.post_check(
-          post_process.MustRun,
+          post_process.DoesNotRun,
           'verify active version.upload active version(found date diff)'))
+
+  yield api.build_menu.test(
+      'snapshot-version',
+      api.
+      post_check(post_process.StepCommandContains, 'gsutil ls snapshot version', [
+          'gs://chromeos-image-archive/brya-snapshot/R123-15527.0.0-13245678*/image.zip'
+      ]),
+      api.step_data(
+          'gsutil ls snapshot version', stdout=api.raw_io.output_text('''
+            gs://chromeos-image-archive/brya-snapshot/8766842719767962417/
+        '''), retcode=0),
+      api.post_check(post_process.MustRun, 'upload e2e coverage metadata'))

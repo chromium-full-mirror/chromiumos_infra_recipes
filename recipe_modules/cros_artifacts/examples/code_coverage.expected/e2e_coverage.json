@@ -3839,6 +3839,41 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "-d",
+      "gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101*/image.zip"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.gsutil ls snapshot version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@            gs://chromeos-image-archive/brya-snapshot/8766842719767962417/@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@          @@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "upload artifacts.upload e2e coverage metadata",
     "~followup_annotations": [
@@ -3857,6 +3892,8 @@
       "amd64-generic",
       "--version",
       "R99-1234.56.0-101",
+      "--snapshot-version",
+      "gs://chromeos-image-archive/brya-snapshot/8766842719767962417/",
       "--path",
       "[CLEANUP]/code-coverage_tmp_1/e2e_metadata.json"
     ],

@@ -34,7 +34,8 @@ class E2ECoverageTest(unittest.TestCase):
     """Test that we add metadata correctly."""
     path = self.tmpdir + '/metadata.json'
     e2e_coverage.write_metadata('bucket', 'path', 'brya',
-                                'R123-15766.0.0-94241', path)
+                                'R123-15766.0.0-94241',
+                                'R123-15766.0.0-94241-bid', path)
     self.assertEqual(len(os.listdir(self.tmpdir)), 1)
 
     with open(path, encoding='utf-8') as f:
@@ -43,6 +44,7 @@ class E2ECoverageTest(unittest.TestCase):
       self.assertEqual(content['artifacts_path'], 'path')
       self.assertEqual(content['board'], 'brya')
       self.assertEqual(content['version'], 'R123-15766.0.0-94241')
+      self.assertEqual(content['builder_id'], 'R123-15766.0.0-94241-bid')
       self.assertEqual(content['date'], date.today().isoformat())
 
 
