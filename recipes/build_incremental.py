@@ -8,6 +8,7 @@
 from typing import Generator, Optional
 
 # pylint: disable=import-error
+from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
@@ -29,6 +30,7 @@ DEPS = [
     'recipe_engine/step',
     'build_menu',
     'build_plan',
+    'cros_build_api',
     'cros_infra_config',
     'cros_prebuilts',
     'cros_sdk',
@@ -85,7 +87,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   gerrit_changes = api.cros_infra_config.gerrit_changes
   if properties.run_relevancy_check:
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
-    _builder_config = BuilderConfig(build_target=api.build_menu.build_target)
+    _build_target = common_pb2.BuildTarget(
+        name=api.build_menu.build_target.name,
+        profile=common_pb2.Profile(name='base'))
+    _builder_config = BuilderConfig(build_target=_build_target)
     relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
         [_builder_config], gerrit_changes)
 
@@ -305,6 +310,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.build_menu.test(
       'inc-pointless-build-check',
       api.buildbucket.ci_build(builder='cq-orchestrator'),
+      api.cros_build_api.set_api_return(
+          parent_step_name='',
+          endpoint='RelevancyService/GetRelevantBuildTargets', data='{}'),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
