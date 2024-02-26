@@ -16,13 +16,11 @@ from google.protobuf import json_format
 
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.checkpoint import RetryStep
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
-from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -133,10 +131,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/snapshot_orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
-    self._is_cq_orchestrator = False
-    self._is_release_orchestrator = False
-    self._is_factory_orchestrator = False
-    self._is_public_orchestrator = False
     self._is_postsubmit_orchestrator = False
     self._is_snapshot_orchestrator = False
     self._relevant_child_builder_names = []
@@ -166,28 +160,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     return self.m.cros_infra_config.gerrit_changes
 
   @property
-  def is_dry_run(self):
-    return self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN
-
-  @property
   def builds_status(self):
     return self._builds_status
-
-  @property
-  def is_cq_orchestrator(self):
-    return self._is_cq_orchestrator
-
-  @property
-  def is_release_orchestrator(self):
-    return self._is_release_orchestrator
-
-  @property
-  def is_factory_orchestrator(self):
-    return self._is_factory_orchestrator
-
-  @property
-  def is_public_orchestrator(self):
-    return self._is_public_orchestrator
 
   @property
   def is_postsubmit_orchestrator(self):
@@ -260,46 +234,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
         # We cannot push manifest refs to unpinned branches.
         self._update_manifest_refs &= (external_commit.id != '')
-
-        is_staging = self.m.cros_infra_config.is_staging
-
-        if config and config.id.type == BuilderConfig.Id.CQ:
-          self._is_cq_orchestrator = True
-
-        # If release orchestrator, full checkout and pin manifest.
-        if config and config.id.type == BuilderConfig.Id.RELEASE:
-          self._is_release_orchestrator = True
-
-          with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
-            if run_step:
-              with self.m.workspace_util.sync_to_commit(staging=is_staging):
-                # If we're syncing to a specific manifest, don't bump the version.
-                if not self.m.cros_source.sync_to_manifest:
-                  # If we're not on ToT, we need to uprev packages since we don't
-                  # have annealing.
-                  if not self.m.cros_source.is_tot:
-                    if not self.m.cros_release.uprev_packages():
-                      raise StepFailure('Failed to uprev all changes')
-
-                  bump_version = self._properties.bump_version and not is_staging
-                  # Release orchestrators may build for a pinned manifest that is
-                  # behind tip-of-branch and need to create a version bump CL
-                  # using a local diff to ensure other files are not included.
-                  use_local_diff = self.is_release_orchestrator
-                  self.m.cros_version.bump_version(
-                      dry_run=not bump_version, use_local_diff=use_local_diff)
-
-                  self.m.cros_release.create_buildspec(
-                      dry_run=is_staging,
-                      gs_location=self._properties.buildspec_gs_path)
-                if self._properties.schedule_public_build:
-                  with self.m.checkpoint.retry(
-                      RetryStep.PUBLIC_BUILD_LKGM) as run_step:
-                    if run_step:
-                      self.m.cros_lkgm.schedule_public_build()
-            else:
-              self.m.cros_release.buildspec = ManifestLocation(
-                  manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
 
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
@@ -439,61 +373,15 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
-      completed_builds = None
-      collect_after = None
-      # This retry logic doesn't do anything with collect_after, and thus
-      # only works with the release orchestrator.
-      with self.m.checkpoint.retry(RetryStep.RUN_CHILDREN) as run_step:
-        if run_step:
-          collect_kwargs = {}
-          collect_now, collect_after = [], []
-          if self.m.checkpoint.is_run_step(RetryStep.RUN_FAILED_CHILDREN):
-            # Conductor leverages `cros try retry` to retry builds.
-            if not self.m.conductor.enabled or self.m.conductor.dryrun:
-              raise StepFailure(
-                  'RUN_FAILED_CHILDREN only works if conductor is enabled in non-dryrun mode.'
-              )
-            with self.m.step.nest(
-                'only rerunning failed children') as presentation:
-              presentation.logs['failed children'] = [
-                  b.builder.builder
-                  for b in self.m.checkpoint.failed_builder_children()
-              ]
-              # Don't naively schedule builds. Instead, use conductor to
-              # retry failed builds from the previous run.
-              collect_now = self.m.checkpoint.failed_builder_children()
-              collect_kwargs['conductor_initial_retry'] = True
-          else:
-            # Schedule builds.
-            collect_now, collect_after = self._filter_schedule_builds(
-                pres, self._get_child_specs(), extra_props=extra_child_props)
+      collect_now, collect_after = self._filter_schedule_builds(
+          pres, self._get_child_specs(), extra_props=extra_child_props)
 
-          completed_builds = list(
-              self._collect_builds([b.id for b in collect_now],
-                                   collect_name='child builds',
-                                   **collect_kwargs))
-          self.add_child_info_to_output_property()
-        else:
-          results_step_name = '(RETRY-MODE) check build results from previous builds'
-          completed_builds = self.m.buildbucket.get_multi(
-              self.m.checkpoint.builder_children()).values()
-          collect_after = []
+      completed_builds = list(self._collect_builds([b.id for b in collect_now]))
+      self.add_child_info_to_output_property()
 
     self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,
         check_critical_step_name=check_critical_step_name)
-    successful_child_bbids = self.m.checkpoint.successful_builder_children_bbids(
-    )
-    if self.m.checkpoint.is_run_step(
-        RetryStep.RUN_FAILED_CHILDREN) and successful_child_bbids:
-      with self.m.step.nest('(RETRY-MODE) previously successful builds'):
-        # Include the successful builds from the original build.
-        previously_successful_builds = self.m.buildbucket.get_multi(
-            successful_child_bbids).values()
-        completed_builds += previously_successful_builds
-        self._collect_and_check_build_results(
-            previously_successful_builds,
-            check_critical_step_name=check_critical_step_name)
 
     self._builds_status.update(running=collect_after)
     self.m.greenness.update_build_info(completed_builds)
@@ -537,45 +425,15 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     # If relevance tag is not set, assume relevance
     return True
 
-  def cq_relevant(self, build: build_pb2.Build) -> bool:
-    """Whether the CQ child build was critical and relevant.
-
-    Args:
-      build: The child build.
-    """
-    # Assume relevant if the child doesn't have the relevant_build prop.
-    return ('relevant_build' not in build.output.properties or
-            build.output.properties['relevant_build'])
-
   def _collect_and_check_build_results(self, builds, results_step_name=None,
                                        check_critical_step_name=None):
-    with self.m.step.nest(results_step_name or 'check build results') as pres:
+    with self.m.step.nest(results_step_name or 'check build results'):
       # Add the newly completed builds to build_status.
       self.builds_status.update(completed=builds)
 
       # Output information about child build relevancy.
 
-      if self.config.id.type == BuilderConfig.Id.CQ:
-        cq_relevant_builds = [
-            x.builder.builder
-            for x in self._builds_status.completed_builds
-            if self.cq_relevant(x)
-        ]
-        pres.logs['cq_relevant_builds'] = sorted(cq_relevant_builds or
-                                                 ['no relevant builds'])
-        self._relevant_child_builder_names = cq_relevant_builds
-        self.m.easy.set_properties_step(
-            child_builds_relevant=len(cq_relevant_builds))
-
-        # Rollup testing_toolchain: true if true from any child builds output
-        cq_toolchain_outputs = [
-            build.output.properties['testing_toolchain']
-            for build in self._builds_status.completed_builds
-            if 'testing_toolchain' in build.output.properties
-        ]
-        self.m.easy.set_properties_step(
-            testing_toolchain=any(cq_toolchain_outputs))
-      elif self.config.id.type in [
+      if self.config.id.type in [
           BuilderConfig.Id.POSTSUBMIT, BuilderConfig.Id.SNAPSHOT
       ]:
         self._relevant_child_builder_names = [
@@ -682,27 +540,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         with self.m.buildbucket.with_host(self.m.buildbucket.HOST_PROD):
           futures = []
 
-          child_specs_dict = {cs.name: cs for cs in child_specs}
-
-          # With .strftime('%w'), Sunday is 0 and Saturday is 6.
-          today = int(self.m.time.utcnow().date().strftime('%w'))
-
           for new_build_request in new_build_requests:
             builder_name = new_build_request.builder.builder
-
-            # If custom build cadence is enabled, schedule based on which
-            # day of the week it is.
-            if self._properties.custom_build_cadence:
-              child_spec = child_specs_dict[builder_name]
-              # If `run_on` is not set at all, default to daily cadence.
-              if child_spec.run_on and today not in child_spec.run_on:
-                step_text = (
-                    f'{builder_name} configured to run on days '
-                    f'{",".join([str(day) for day in child_spec.run_on])}, '
-                    f'today is {today}')
-                self.m.step.empty(builder_name, step_text=step_text)
-                continue
-
             # Request new builds and add to total existing.
             futures.append(
                 self.m.futures.spawn(self.m.buildbucket.schedule,
@@ -725,18 +564,9 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
             collect_when_dict[
                 BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST])
 
-  def _collect_builds(self, build_ids, collect_name=None,
-                      conductor_initial_retry: bool = False):
+  def _collect_builds(self, build_ids):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
     try:
-      if self.m.conductor.enabled and self.m.conductor.collect_config(
-          collect_name):
-        bbids = self.m.conductor.collect(collect_name, build_ids,
-                                         timeout=60 * 60 * 36,
-                                         initial_retry=conductor_initial_retry)
-        return self.m.buildbucket.get_multi(
-            bbids, step_name='get', url_title_fn=self.m.naming.get_build_title,
-            fields=fields).values()
       return self.m.buildbucket.collect_builds(
           build_ids, timeout=60 * 60 * 36, step_name='collect',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
@@ -749,25 +579,18 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       self,
       build: build_pb2.Build,
       child_specs_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
-      forced_testable_builders: List[str],
   ) -> BuilderConfig.Orchestrator.ChildSpec:
     """Returns whether the orchestrator should collect the build, and when.
 
     Args:
       build: the build to check whether to collect.
       child_specs_dict: mapping of builder name to ChildSpec.
-      forced_testable_builders: The list of builders for which additional
-        testing was defined via footer.
 
     Returns:
       (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
       when.
     """
     values = BuilderConfig.Orchestrator.ChildSpec
-
-    if build.builder.builder in forced_testable_builders:
-      return values.COLLECT
-
     ret = values.COLLECT
     child_spec = child_specs_dict.get(build.builder.builder)
 
@@ -901,16 +724,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     Returns:
       BuildsStatus updated with any test failures.
     """
-    # allowlist None means nothing is blocked from being critical.
-    # We want this behavior if we're not on release.
-    build_target_critical_allowlist = None
-    if self._is_release_orchestrator:
-      if self.m.skylab.qs_account in self._properties.retry_allowlist_qs_account:
-        build_target_critical_allowlist = self._properties.retry_allowlist_build_target
-      else:
-        # Nothing should be critical.
-        build_target_critical_allowlist = []
-
+    build_target_critical_allowlist = []
     self.m.skylab.apply_qs_account_overrides(self.gerrit_changes)
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
 
@@ -936,7 +750,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         container_metadata=container_metadata,
         use_test_plan_v2=gerrit_changes and
         self.m.cros_test_plan_v2.enabled_on_changes(gerrit_changes),
-        supports_fault_attribution=self.is_cq_orchestrator,
         build_target_critical_allowlist=build_target_critical_allowlist,
     )
     self._builds_status.update([], test_failures)
@@ -1140,7 +953,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           in self.m.cros_test_proctor.builders_tested_in_this_run)
       # Add whether this builder was relevant.
       # This is only applicable to CQ and Snapshot.
-      if self.is_cq_orchestrator or self.is_snapshot_orchestrator:
+      if self.is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
             b.builder.builder in self._relevant_child_builder_names)
       # If running unit tests async, add the time the child build was elegible
@@ -1180,13 +993,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           category.
     """
     with self.m.step.nest('categorize builds by collect handling') as pres:
-      if (self.m.cq.active and self.gerrit_changes and
-          self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
-        collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
-            builds)
-      else:
-        collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
-            child_specs, builds)
+      collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
+          child_specs, builds)
 
       for collect_value, _builds in collect_when_dict.items():
         for b in _builds:
@@ -1215,69 +1023,9 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
-    if self.m.cq.active and self.gerrit_changes:
-      forced_testable_builders = self.m.cros_cq_additional_tests.get_additional_test_builders(
-          builds, self.gerrit_changes)
-    else:
-      forced_testable_builders = []
-
     collect_when_dict = defaultdict(list)
     child_specs_dict = {cs.name: cs for cs in child_specs}
     for b in builds:
-      collect_value = self._collect_value(b, child_specs_dict,
-                                          forced_testable_builders)
+      collect_value = self._collect_value(b, child_specs_dict)
       collect_when_dict[collect_value].append(b)
-    return collect_when_dict
-
-  def _categorize_builds_by_collect_handling_using_coverage_rules(
-      self, builds: List[build_pb2.Build]
-  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
-            List[build_pb2.Build]]:
-    """Group builds by CollectHandling using CoverageRules.
-
-    Use the relevant CoverageRules for the Gerrit Changes applied to the CQ
-    run and the criticality of the builders to group builds based on when they
-    should be collected.
-
-    Groupings:
-      * NO_COLLECT: Build is non-critical.
-      * COLLECT: Build is testable in this run.
-      * COLLECT_AFTER_HW_TESTS: Build is critical but not testable.
-
-    Args:
-      builds: The list of builds spawned by this CQ run.
-
-    Returns:
-      A dict mapping CollectHandling to the list of builds which fall into that
-          category.
-    """
-    testable_builders = None
-    with self.m.failures.ignore_exceptions():
-      testable_builders = set(
-          self.m.cros_test_proctor.get_testable_builders(
-              self.gerrit_changes, builds))
-    if testable_builders is None:
-      # If there is a failure in calling testplan, default to collecting all
-      # critical child builds. As of now, all non-critical CQ child builds are
-      # special non-image builders which should not need end-to-end testing.
-      testable_builders = [
-          b.builder.builder for b in builds if self.m.buildbucket.is_critical(b)
-      ]
-    else:
-      forced_testable_builders = self.m.cros_cq_additional_tests.get_additional_test_builders(
-          builds, self.gerrit_changes)
-      testable_builders.update(set(forced_testable_builders))
-
-    collect_when_dict = defaultdict(list)
-    for b in builds:
-      if not self.m.buildbucket.is_critical(b):
-        collect_when_dict[
-            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT].append(b)
-      elif b.builder.builder in testable_builders:
-        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT].append(
-            b)
-      else:
-        collect_when_dict[BuilderConfig.Orchestrator.ChildSpec
-                          .COLLECT_AFTER_HW_TEST].append(b)
-
     return collect_when_dict

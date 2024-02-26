@@ -97,26 +97,6 @@ def GenTests(api):
               irrelevant,
           ])))
 
-  yield api.test(
-      'cq', api.buildbucket.ci_build(builder='cq-orchestrator'),
-      api.post_check(post_process.PropertyEquals, 'testing_toolchain', False),
-      api.properties(
-          CollectAndCheckBuildResultsProperties(input_builds=[successful])))
-
-  successful_tool_chain = api.test_util.test_child_build(
-      build_target_name='grunt', status='SUCCESS', critical='YES',
-      output_properties={
-          'testing_toolchain': True
-      }).message
-  yield api.test(
-      'cq-rollup-testing-toolchain',
-      api.buildbucket.ci_build(builder='cq-orchestrator'),
-      api.post_check(post_process.PropertyEquals, 'testing_toolchain', True),
-      api.post_process(post_process.DropExpectation),
-      api.properties(
-          CollectAndCheckBuildResultsProperties(
-              input_builds=[successful_tool_chain, irrelevant])))
-
   # Although the build is critical, the builder config is non-critical, so the
   # result will no longer be fatal.
   newly_non_critical_failure = api.test_util.test_child_build(
