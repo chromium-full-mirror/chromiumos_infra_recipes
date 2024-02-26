@@ -370,9 +370,20 @@
   },
   {
     "cmd": [],
-    "name": "enumerate CFT tests.get dut use flag from GS",
+    "name": "enumerate CFT tests.filter tests based on test metadata dependencies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@{@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@  \"filtered tests\": []@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@}@@@",
+      "@@@STEP_LOG_END@filtered&#x2f;removed tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.filter tests based on test metadata dependencies.get dut use flag from GS",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@tast use flags list@@@@",
       "@@@STEP_LOG_END@tast use flags list@@@"
     ]
@@ -389,9 +400,9 @@
       "gs://bvt-tast-cq-metadata-url/tast_use_flags.txt"
     ],
     "infra_step": true,
-    "name": "enumerate CFT tests.get dut use flag from GS.gsutil cat gs://bvt-tast-cq-metadata-url/tast_use_flags.txt",
+    "name": "enumerate CFT tests.filter tests based on test metadata dependencies.get dut use flag from GS.gsutil cat gs://bvt-tast-cq-metadata-url/tast_use_flags.txt",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },

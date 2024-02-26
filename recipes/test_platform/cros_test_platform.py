@@ -600,6 +600,44 @@ def _enumerate_cft_tests(api, properties, requests):
     return tagged_responses
 
 
+def _get_tast_use_flags(api, r):
+  """Retrieve tast use flags from the specified URL.
+    Args:
+    * api: (object): See RunSteps documentation.
+    * r: test_platform.Request.
+
+  Returns: List[string]
+  """
+  metadata = getattr(r.params, 'metadata', None)
+  if metadata and hasattr(metadata, 'test_metadata_url'):
+    url = metadata.test_metadata_url + '/tast_use_flags.txt'
+    return _get_dut_use_flags(api, url)
+  return None  # pragma: nocover
+
+
+def _filter_test_cases(test_cases, tast_use_flag_list):
+  """Filter test cases based on tast use flags.
+
+    Args:
+    * api: (object): See RunSteps documentation.
+    * tast_use_flag_list: List if use flags on DUT.
+    * test_cases: (List[test_case]): All test cases from a test suite.
+
+  Returns: List[test_suite]
+  """
+  filtered_test_cases = []
+  removed_test_cases = []
+  for test_case in test_cases:
+    if not test_case.build_dependencies or any(
+        dep in tast_use_flag_list for dep in test_case.build_dependencies):
+      filtered_test_cases.append(test_case)
+    else:
+      removed_test_cases.append(test_case)  # pragma: nocover
+  return ctr_test_suite.TestSuite(
+      test_cases=ctr_test_case.TestCaseList(
+          test_cases=filtered_test_cases)), removed_test_cases
+
+
 def _test_suites_with_filtered_tests(api, r, test_suites):
   """Filter tests based on use flag information from gs
 
@@ -610,16 +648,29 @@ def _test_suites_with_filtered_tests(api, r, test_suites):
 
   Returns: List[test_suite]
   """
-  metadata = r.params.metadata if hasattr(r.params, 'metadata') else None
-  if metadata and hasattr(metadata, 'test_metadata_url'):
-    url = metadata.test_metadata_url + '/tast_use_flags.txt'
-    # pylint: disable=unused-variable
-    tast_use_flag_list = _get_dut_use_flags(api, url)
-  else:
-    # pylint: disable=unused-variable
-    tast_use_flag_list = None  #pragma: nocover
-  # TODO (b/326451615): use tast_use_flag_list to filter test case based on test metadata
-  return test_suites
+  with api.step.nest(
+      'filter tests based on test metadata dependencies') as step:
+    tast_use_flag_list = _get_tast_use_flags(api, r)
+    if tast_use_flag_list is None:  # pragma: nocover
+      step.step_text = 'Skipping as tast_use_flags.txt was not found'
+      return test_suites
+
+    filtered_test_suites = []
+    removed_test_cases = []
+
+    for test_suite in test_suites:
+      if test_suite and test_suite.test_cases:
+        filtered_test_suite, removed_cases = _filter_test_cases(
+            test_suite.test_cases.test_cases, tast_use_flag_list)
+        filtered_test_suites.append(filtered_test_suite)
+        removed_test_cases.extend(removed_cases)
+
+    step.presentation.logs['filtered/removed tests'] = json.dumps(
+        {'filtered tests': removed_test_cases}, separators=(',', ': '),
+        indent=2)
+
+    return filtered_test_suites
+
 
 def _upload_filtered_test_cases_async(api, req, tests):  # pragma: nocover
   """Upload filtered test cases to rdb, async.
@@ -1498,9 +1549,11 @@ def _get_dut_use_flags(api, use_flag_gs_url):
                                stdout=api.raw_io.output(add_output_log=True))
       res = cat_res.stdout
     # pylint: disable=broad-except
-    except Exception as ex:  #pragma: nocover
-      step.presentation.logs['tast use flags gs error'] = str(ex)
-      step.status = api.step.FAILURE
+    except StepFailure as e:  #pragma: nocover
+      step.step_text = 'tast_use_flags.txt not found'
+      step.presentation.logs['tast use flags gs error'] = str(e)
+      step.presentation.status = api.step.SUCCESS
+      return None
     step.presentation.logs['tast use flags list'] = res
   return res
 
