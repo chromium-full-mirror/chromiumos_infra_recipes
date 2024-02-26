@@ -653,7 +653,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -683,7 +683,7 @@
       "@@@STEP_LOG_LINE@builder config@  gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@builder config@    host: \"chrome-internal.googlesource.com\"@@@",
       "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
       "@@@STEP_LOG_LINE@builder config@    name: \"eve-release-main\"@@@",
@@ -922,12 +922,12 @@
       }
     },
     "name": "set up orchestrator.configure builder.cros_infra_config.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -945,7 +945,7 @@
     "name": "set up orchestrator.configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
@@ -953,7 +953,7 @@
     "name": "set up orchestrator.configure builder.cros_infra_config.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
     ]
   },
   {
@@ -1164,7 +1164,7 @@
     "name": "set up orchestrator.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1175,7 +1175,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1195,7 +1195,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1207,7 +1207,7 @@
     "name": "set up orchestrator.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
     ]
   },
   {
@@ -1247,7 +1247,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "snapshot",
+      "main",
       "--groups",
       "all",
       "--repo-rev=stable",
@@ -1737,7 +1737,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1757,7 +1757,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1826,7 +1826,7 @@
       "git",
       "checkout",
       "--force",
-      "snapshot-HEAD-SHA"
+      "main-HEAD-SHA"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -1851,7 +1851,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "main-HEAD-SHA",
       "--key",
       "Cr-External-Snapshot"
     ],
@@ -1940,7 +1940,7 @@
     "name": "set up orchestrator.sync cached directory.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1951,7 +1951,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1971,7 +1971,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1983,7 +1983,7 @@
     "name": "set up orchestrator.sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
     ]
   },
   {
@@ -2023,7 +2023,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "snapshot",
+      "main",
       "--groups",
       "all",
       "--repo-rev=stable",
@@ -2378,7 +2378,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
@@ -2398,7 +2398,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -2572,7 +2572,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -2592,7 +2592,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
+    "name": "set up orchestrator.sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -3098,7 +3098,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
+      "main-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -3148,7 +3148,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "main-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -5238,7 +5238,7 @@
       }
     },
     "name": "run builds.schedule new builds.eve-release-main",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"main\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"main\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5274,9 +5274,9 @@
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"main-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
@@ -5308,7 +5308,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"main-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
@@ -5344,7 +5344,7 @@
       }
     },
     "name": "run builds.schedule new builds.kukui-release-main",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"kukui-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"main\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"kukui-release-main\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_source\": {\"syncToManifest\": {\"branch\": \"main\", \"manifestFile\": \"buildspecs/99/1234.56.0.xml\", \"manifestRepoUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-versions\"}}, \"override_qs_account\": \"pcq\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"swarming\": {\"parentRunId\": \"fake-task-id\"}, \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"main-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -5380,9 +5380,9 @@
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"host\": \"chrome-internal.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"id\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"main-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
@@ -5414,7 +5414,7 @@
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"value\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"main-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          {@@@",
       "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
@@ -5912,7 +5912,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}}@@@"
     ]
   },
   {

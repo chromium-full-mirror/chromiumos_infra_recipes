@@ -74,7 +74,7 @@
       "./board_config/generate_test_config",
       "",
       "--branch",
-      "staging-snapshot"
+      "main"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "luci_context": {

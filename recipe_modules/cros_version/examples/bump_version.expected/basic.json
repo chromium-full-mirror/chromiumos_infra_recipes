@@ -18,7 +18,7 @@
       "@@@STEP_LOG_LINE@builder config@  gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@builder config@    host: \"chrome-internal.googlesource.com\"@@@",
       "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@  child_specs {@@@",
       "@@@STEP_LOG_LINE@builder config@    name: \"eve-release-main\"@@@",

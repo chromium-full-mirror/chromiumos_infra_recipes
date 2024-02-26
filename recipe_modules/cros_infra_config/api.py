@@ -287,13 +287,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         builder_cfgs_file_contents = self._fetch_builder_configs()
       configs = BuilderConfigs.FromString(builder_cfgs_file_contents)
       for config in configs.builder_configs:
-        # Override the ref from generated builder_config for (staging-)
-        # release-main-orchestrator.
-        if self._is_staging and config.id.name == 'staging-release-main-orchestrator':
-          config.orchestrator.gitiles_commit.ref = 'refs/heads/staging-snapshot'
-        elif not self._is_staging and config.id.name == 'release-main-orchestrator':
-          config.orchestrator.gitiles_commit.ref = 'refs/heads/snapshot'
-
         # Store the BuilderConfig with both name and (bucket, name) as a key,
         # to allow lookup by either name or (bucket, name).
         name_to_builder_config[config.id.name] = config

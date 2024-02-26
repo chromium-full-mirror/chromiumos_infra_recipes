@@ -45,7 +45,7 @@ def GenTests(api):
       'main-branch',
       api.test_util.test_orchestrator(
           bucket='release', builder='release-main-orchestrator').build,
-      api.properties(expected_ref='refs/heads/snapshot'),
+      api.properties(expected_ref='refs/heads/main'),
       api.properties(expected_builder='public-main-orchestrator'),
       api.post_process(post_process.DropExpectation),
   )
@@ -54,7 +54,7 @@ def GenTests(api):
       'staging-main-branch',
       api.test_util.test_orchestrator(
           bucket='staging', builder='staging-release-main-orchestrator').build,
-      api.properties(expected_ref='refs/heads/staging-snapshot'),
+      api.properties(expected_ref='refs/heads/main'),
       api.properties(expected_builder='staging-public-main-orchestrator'),
       api.post_process(post_process.DropExpectation),
   )

@@ -23,7 +23,7 @@
       "@@@STEP_LOG_LINE@builder config@  gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@builder config@    host: \"chrome-internal.googlesource.com\"@@@",
       "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/staging-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
@@ -247,12 +247,12 @@
       }
     },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -270,7 +270,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
@@ -278,7 +278,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
     ]
   },
   {
@@ -391,7 +391,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-snapshot-HEAD-SHA:"
+      "main-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -441,7 +441,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "staging-snapshot-HEAD-SHA",
+      "main-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",

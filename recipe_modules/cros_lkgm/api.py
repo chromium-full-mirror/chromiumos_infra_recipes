@@ -4,6 +4,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for ChromeOS LKGM (Last Known Good Manifest)."""
+
 from google.protobuf.json_format import MessageToDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -60,9 +62,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         raise StepFailure(
             'could not find builder config, needed to determine branch')
       branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
-      # Main release branches build from snapshot manifests.
-      if branch in ['snapshot', 'staging-snapshot']:
-        branch = 'main'
+      # Allow main release branches to build from snapshot manifests.
+      branch = 'main' if branch in ['snapshot', 'staging-snapshot'] else branch
 
       is_staging = self.m.cros_infra_config.is_staging
       staging_prefix = 'staging-' if is_staging else ''

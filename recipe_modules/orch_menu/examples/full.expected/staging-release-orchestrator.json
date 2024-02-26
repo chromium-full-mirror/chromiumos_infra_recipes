@@ -653,7 +653,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -684,7 +684,7 @@
       "@@@STEP_LOG_LINE@builder config@  gitiles_commit {@@@",
       "@@@STEP_LOG_LINE@builder config@    host: \"chrome-internal.googlesource.com\"@@@",
       "@@@STEP_LOG_LINE@builder config@    project: \"chromeos/manifest-internal\"@@@",
-      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/staging-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@builder config@    ref: \"refs/heads/main\"@@@",
       "@@@STEP_LOG_LINE@builder config@  }@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_END@builder config@@@"
@@ -908,12 +908,12 @@
       }
     },
     "name": "set up orchestrator.configure builder.cros_infra_config.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -931,7 +931,7 @@
     "name": "set up orchestrator.configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
     ]
   },
   {
@@ -939,7 +939,7 @@
     "name": "set up orchestrator.configure builder.cros_infra_config.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
     ]
   },
   {
@@ -1150,7 +1150,7 @@
     "name": "set up orchestrator.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1161,7 +1161,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1181,7 +1181,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1193,7 +1193,7 @@
     "name": "set up orchestrator.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
     ]
   },
   {
@@ -1233,7 +1233,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "staging-snapshot",
+      "main",
       "--groups",
       "all",
       "--repo-rev=main",
@@ -1723,7 +1723,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1743,7 +1743,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1812,7 +1812,7 @@
       "git",
       "checkout",
       "--force",
-      "staging-snapshot-HEAD-SHA"
+      "main-HEAD-SHA"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -1837,7 +1837,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "staging-snapshot-HEAD-SHA",
+      "main-HEAD-SHA",
       "--key",
       "Cr-External-Snapshot"
     ],
@@ -1985,7 +1985,7 @@
     "name": "set up orchestrator.sync cached directory.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"main\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1996,7 +1996,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
@@ -2016,7 +2016,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -2028,7 +2028,7 @@
     "name": "set up orchestrator.sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"main\" branch@@@"
     ]
   },
   {
@@ -2068,7 +2068,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "staging-snapshot",
+      "main",
       "--groups",
       "all",
       "--repo-rev=main",
@@ -2423,7 +2423,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"main\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
@@ -2443,7 +2443,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"main\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -2617,7 +2617,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/main-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -2637,7 +2637,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.sync to gitiles commit.fetch staging-snapshot-HEAD-SHA:snapshot.xml",
+    "name": "set up orchestrator.sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -3143,7 +3143,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-snapshot-HEAD-SHA:"
+      "main-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -3193,7 +3193,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "staging-snapshot-HEAD-SHA",
+      "main-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -4255,7 +4255,7 @@
       "git",
       "push",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "staging-snapshot-HEAD-SHA:refs/heads/test"
+      "main-HEAD-SHA:refs/heads/test"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -4409,7 +4409,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}}@@@"
     ]
   },
   {
