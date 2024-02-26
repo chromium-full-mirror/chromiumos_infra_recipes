@@ -18,6 +18,7 @@ DEPS = [
     'recipe_engine/step',
     'cros_build_api',
     'git',
+    'signing',
     'src_state',
 ]
 
@@ -36,11 +37,23 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
         target_path=api.src_state.workspace_path.join('infra/chromite'),
         branch='main', single_branch=True)
 
+  if properties.create_premp_keys_requests:
+    with api.step.nest('create PreMP keys'):
+      api.step('docker auth', [
+          'gcloud',
+          'auth',
+          'configure-docker',
+          'us-docker.pkg.dev',
+      ])
+      api.step('docker pull', [
+          'docker',
+          'pull',
+          api.signing.signing_docker_image,
+      ])
 
-  with api.step.nest('create PreMP keys'):
-    for create_premp_keys_request in properties.create_premp_keys_requests:
-      api.cros_build_api.SigningService.CreatePreMPKeys(
-          create_premp_keys_request)
+      for create_premp_keys_request in properties.create_premp_keys_requests:
+        api.cros_build_api.SigningService.CreatePreMPKeys(
+            create_premp_keys_request)
 
 
 def GenTests(api: RecipeTestApi):
@@ -50,6 +63,11 @@ def GenTests(api: RecipeTestApi):
           KeyManagerProperties(create_premp_keys_requests=[
               CreatePreMPKeysRequest(build_target=BuildTarget(name='atlas'))
           ])),
+      api.post_check(
+          post_process.StepCommandContains, 'create PreMP keys.docker pull', [
+              'docker', 'pull',
+              'us-docker.pkg.dev/chromeos-bot/signing/signing:latest:'
+          ]),
       api.post_check(
           post_process.MustRun,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
