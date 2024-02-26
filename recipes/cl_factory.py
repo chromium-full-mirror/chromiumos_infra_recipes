@@ -408,8 +408,9 @@ def _make_gerrit_commands(api: RecipeApi, hashtags: List[str],
     str of approval commands suitable for presenting to the user, or None
       if no commands could be determined.
   """
-  owner_constraint = 'owner:{}'.format(
-      api.buildbucket.build.infra.swarming.task_service_account)
+  service_account = api.buildbucket.swarming_task_service_account
+  owner = service_account if service_account else ''
+  owner_constraint = 'owner:{}'.format(owner)
   hashtag_constraints = ' '.join(['hashtag:{}'.format(t) for t in hashtags])
   reviews = []
   verifies = []
