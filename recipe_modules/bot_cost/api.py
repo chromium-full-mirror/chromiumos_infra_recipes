@@ -84,8 +84,9 @@ class BotCostApi(RecipeApi):
   @property
   def bot_size(self) -> str:
     if not self._bot_size:
-      swarming = self.m.buildbucket.build.infra.swarming
-      for dimension in swarming.bot_dimensions or swarming.task_dimensions:
+      bot_dimensions = self.m.buildbucket.swarming_bot_dimensions
+      task_dimensions = self.m.buildbucket.backend_task_dimensions
+      for dimension in bot_dimensions or task_dimensions:
         if dimension.key == 'bot_size':
           if dimension.value not in BOT_COST:
             self._bot_size = 'unknown'

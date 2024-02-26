@@ -1121,7 +1121,7 @@ A module to calculate the cost of running bots.
 
 &emsp; **@property**<br>&mdash; **def [bot\_size](/recipe_modules/bot_cost/api.py#84)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#97)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [build\_cost\_context](/recipe_modules/bot_cost/api.py#98)(self):**
 
 Set build cost after running.
 
@@ -1130,21 +1130,21 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/bot_cost/api.py#76)(self):**
 
-&mdash; **def [set\_build\_run\_cost](/recipe_modules/bot_cost/api.py#110)(self):**
+&mdash; **def [set\_build\_run\_cost](/recipe_modules/bot_cost/api.py#111)(self):**
 
 Wrapper function to calculate and set the cost of the run.
 
 Calculate the cost of the run and set it as a build output property.
 Includes cost of any child builds.
 
-&mdash; **def [set\_upload\_size](/recipe_modules/bot_cost/api.py#256)(self, gs_path: str):**
+&mdash; **def [set\_upload\_size](/recipe_modules/bot_cost/api.py#257)(self, gs_path: str):**
 
 Output the size of the given GS directory as an output property.
 
 Args:
   gs_path: The path to the directory. Should include gs://{bucket}...
 
-&mdash; **def [update\_upload\_sizes](/recipe_modules/bot_cost/api.py#277)(self):**
+&mdash; **def [update\_upload\_sizes](/recipe_modules/bot_cost/api.py#278)(self):**
 
 Update the upload_sizes for all dirs that have previously been logged.
 ### *recipe_modules* / [bot\_scaling](/recipe_modules/bot_scaling)
