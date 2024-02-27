@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Unittesting helper file for cros_history."""
+
 from typing import List
 
 from google.protobuf import json_format, timestamp_pb2
@@ -214,14 +216,18 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
     return builds
 
   @staticmethod
-  def build_with_uprev_response() -> build_pb2.Build:
+  def build_with_uprev_response(end_time: int = None) -> build_pb2.Build:
     """Generate a test build with the uprev response in the output.
+
+    Args:
+      end_time: end_time in seconds for the build.
 
     Returns:
       Build containing the expected 'compressed_uprev_response' property.
     """
     build = build_pb2.Build(
-        id=123, builder=builder_common_pb2.BuilderID(builder='Annealing'))
+        id=123, builder=builder_common_pb2.BuilderID(builder='Annealing'),
+        end_time=timestamp_pb2.Timestamp(seconds=(end_time or 0)))
     build.output.properties.update(
         {'compressed_uprev_response': COMPRESSED_UPREV_RESPONSE})
     return build

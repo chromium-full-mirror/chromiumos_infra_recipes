@@ -24,6 +24,8 @@ DEPS = [
 def RunSteps(api: recipe_api.RecipeApi) -> None:
   with api.step.nest('find annealing build') as presentation:
     build = api.cros_history.get_annealing_from_snapshot('fake-snapshot-id')
+    # Duplicate to test caching.
+    build = api.cros_history.get_annealing_from_snapshot('fake-snapshot-id')
     if build is None:
       presentation.step_text = 'No build found'
     else:

@@ -49,8 +49,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._use_group_key = not properties.disable_group_key
     self._lookback_seconds = properties.lookback_seconds or 5 * 24 * 60 * 60
-
     self._passed_tests = None
+    self._cached_annealing_builds = {}
 
   @property
   def start_time_in_seconds(self) -> float:
@@ -69,6 +69,8 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       If an Annealing build is found, then a proto message of that build.
       Otherwise, None.
     """
+    if snapshot_id in self._cached_annealing_builds:
+      return self._cached_annealing_builds[snapshot_id]
     tags = self.m.cros_tags.tags(published_snapshot_id=snapshot_id)
     # Not searching based on builder because we want to find both Annealing
     # staging-Annealing builds. Tags are indexed by Buildbucket so this
@@ -80,7 +82,43 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     if not builds:
       return None
     assert len(builds) == 1
+    self._cached_annealing_builds[snapshot_id] = builds[0]
     return builds[0]
+
+  def is_build_broken(self, build_snapshot: str,
+                      broken_until_snapshot: str) -> Optional[bool]:
+    """Determine whether the build to be recycled is broken.
+
+    Args:
+      build_snapshot: GitliesCommit id of the build to be recycled.
+      broken_until_snapshot: SHA of the manifest snapshot from broken_until config.
+
+    Returns:
+      Whether to recycle the build.
+    """
+    with self.m.step.nest('check if build is broken'):
+      broken_until_annealing = self.get_annealing_from_snapshot(
+          broken_until_snapshot)
+      build_annealing = self.get_annealing_from_snapshot(build_snapshot)
+      # If we can't find the annealing builds, don't reuse.
+      if not build_annealing or not broken_until_annealing:
+        return True
+      return (broken_until_annealing.end_time.seconds
+              > build_annealing.end_time.seconds)
+
+  def hours_since_breakage(self, broken_until: str) -> Optional[int]:
+    """Determine how long it has been since the tree was fixed.
+
+    Args:
+      broken_until: manifest snapshot SHA from builderconfig.
+
+    Returns:
+      hours since broken_until snapshot creation.
+    """
+    annealing = self.get_annealing_from_snapshot(broken_until)
+    if not annealing:
+      return None
+    return int((self.m.time.time() - annealing.end_time.seconds) / (60 * 60))
 
   @staticmethod
   def get_upreved_pkgs(
