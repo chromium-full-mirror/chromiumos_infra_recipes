@@ -527,7 +527,7 @@ def _enumerate_cft_tests(api, properties, requests):
       # test_finder_request is being built from 1 request (r).
       # this needs to remain singular for downstream assumptions to work.
       test_suites = _test_suites_with_filtered_tests(
-          api, r, test_finder_result.test_suites)
+          api, r, build_target, test_finder_result.test_suites)
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
           dry_run = True
@@ -620,8 +620,8 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
 
     Args:
     * api: (object): See RunSteps documentation.
-    * tast_use_flag_list: List if use flags on DUT.
     * test_cases: (List[test_case]): All test cases from a test suite.
+    * tast_use_flag_list: List if use flags on DUT.
 
   Returns: List[test_suite]
   """
@@ -629,27 +629,29 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
   removed_test_cases = []
   for test_case in test_cases:
     if not test_case.build_dependencies or any(
-        dep in tast_use_flag_list for dep in test_case.build_dependencies):
+        build_dep.value in tast_use_flag_list
+        for build_dep in test_case.build_dependencies):
       filtered_test_cases.append(test_case)
     else:
-      removed_test_cases.append(test_case)  # pragma: nocover
+      removed_test_cases.append(test_case.id.value)  # pragma: nocover
   return ctr_test_suite.TestSuite(
       test_cases=ctr_test_case.TestCaseList(
           test_cases=filtered_test_cases)), removed_test_cases
 
 
-def _test_suites_with_filtered_tests(api, r, test_suites):
+def _test_suites_with_filtered_tests(api, r, build_target, test_suites):
   """Filter tests based on use flag information from gs
 
   Args:
     * api: (object): See RunSteps documentation.
     * r: test_platform.Request.
+    * build_target : build_target value for request
     * tests: (List[test_suite]): Test suites containg all test cases
 
   Returns: List[test_suite]
   """
-  with api.step.nest(
-      'filter tests based on test metadata dependencies') as step:
+  with api.step.nest('metadata based test filtering - %s' %
+                     build_target) as step:
     tast_use_flag_list = _get_tast_use_flags(api, r)
     if tast_use_flag_list is None:  # pragma: nocover
       step.step_text = 'Skipping as tast_use_flags.txt was not found'
@@ -664,10 +666,12 @@ def _test_suites_with_filtered_tests(api, r, test_suites):
             test_suite.test_cases.test_cases, tast_use_flag_list)
         filtered_test_suites.append(filtered_test_suite)
         removed_test_cases.extend(removed_cases)
-
-    step.presentation.logs['filtered/removed tests'] = json.dumps(
-        {'filtered tests': removed_test_cases}, separators=(',', ': '),
-        indent=2)
+    if removed_cases:  # pragma: nocover
+      step.presentation.logs['filtered/removed tests'] = json.dumps(
+          {'filtered tests': removed_test_cases}, separators=(',', ': '),
+          indent=2)
+    else:
+      step.step_text = 'No tests filtered/removed'
 
     return filtered_test_suites
 
@@ -1547,7 +1551,7 @@ def _get_dut_use_flags(api, use_flag_gs_url):
       cat_res = api.gsutil.cat(use_flag_gs_url, infra_step=True,
                                name='cat {}'.format(use_flag_gs_url),
                                stdout=api.raw_io.output(add_output_log=True))
-      res = cat_res.stdout
+      res = cat_res.stdout.splitlines()
     # pylint: disable=broad-except
     except StepFailure as e:  #pragma: nocover
       step.step_text = 'tast_use_flags.txt not found'
