@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for gcloud commands."""
+
 import contextlib
 import datetime
 import json
@@ -602,6 +604,9 @@ class GcloudApi(recipe_api.RecipeApi):
         'gcloud', 'compute', 'images', 'list', '--format', 'json(name)',
         '--filter', 'name={}'.format(image)
     ]
+    # If we aren't in DEFAULT_GCE_PROJECT, specify DEFAULT_GCE_PROJECT which houses images.
+    if self._gce_project != DEFAULT_GCE_PROJECT:
+      list_cmd += ['--project', DEFAULT_GCE_PROJECT]
     test_stdout = self.test_api.image_exists_data
     # If there is test data set for this call, pass that through. Otherwise, use
     # the default response from test_api.
