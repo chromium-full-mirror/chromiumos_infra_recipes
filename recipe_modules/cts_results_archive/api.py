@@ -30,7 +30,7 @@ class CTSResultsArchive(recipe_api.RecipeApi):
     model = self.m.cros_tags.get_single_value('label-model')
     if not model:
       model = self.m.cros_tags.get_single_value(
-          'label-model', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+          'label-model', self.m.buildbucket.swarming_bot_dimensions)
     build = self.m.cros_tags.get_single_value('build')
     if not build:
       build = self.m.cros_tags.get_single_value('label-image')
