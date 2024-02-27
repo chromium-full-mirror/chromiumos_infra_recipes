@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API to write metadata json file into GS for GoldenEye consumption."""
+
 import contextlib
 import datetime
 import email.utils
@@ -89,10 +91,11 @@ class MetadataJsonApi(RecipeApi):
 
     config = self.m.cros_infra_config.config
     self._metadata['unibuild'] = config.general.unibuild
-
-    for dimension in build.infra.swarming.bot_dimensions:  # pragma: nocover
-      if dimension.key == 'id':
-        self._metadata['bot-hostname'] = dimension.value
+    dimensions = self.m.buildbucket.swarming_bot_dimensions_from_build(build)
+    if dimensions:
+      for dimension in dimensions:  # pragma: nocover
+        if dimension.key == 'id':
+          self._metadata['bot-hostname'] = dimension.value
 
   def add_version_entries(self, version_dict):
     """Update metadata with version info.

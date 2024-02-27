@@ -91,7 +91,7 @@
   * [looks_for_green](#recipe_modules-looks_for_green) &mdash; Functions implementing looks for green.
   * [mass_deploy](#recipe_modules-mass_deploy) &mdash; An API for triggering the mass deploy builder.
   * [metadata](#recipe_modules-metadata) &mdash; API to support metadata generation and wrangling.
-  * [metadata_json](#recipe_modules-metadata_json)
+  * [metadata_json](#recipe_modules-metadata_json) &mdash; API to write metadata json file into GS for GoldenEye consumption.
   * [naming](#recipe_modules-naming) &mdash; API featuring shared helpers for naming things.
   * [observability_image_size](#recipe_modules-observability_image_size) &mdash; API for retrieving image and package size data.
   * [orch_menu](#recipe_modules-orch_menu) &mdash; API providing a menu for orchestrator steps.
@@ -8793,33 +8793,35 @@ Returns:
 [DEPS](/recipe_modules/metadata_json/__init__.py#10): [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+API to write metadata json file into GS for GoldenEye consumption.
+
+#### **class [MetadataJsonApi](/recipe_modules/metadata_json/api.py#23)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to write metadata.json into GS for GoldenEye consumption.
 
-&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#65)(self):**
+&mdash; **def [add\_default\_entries](/recipe_modules/metadata_json/api.py#67)(self):**
 
 These fields are available at the start of the build.
 
-&mdash; **def [add\_entries](/recipe_modules/metadata_json/api.py#110)(self, \*\*kwargs):**
+&mdash; **def [add\_entries](/recipe_modules/metadata_json/api.py#113)(self, \*\*kwargs):**
 
 Add elements to metadata.
 
 Args:
   kwargs (dict): dictionary of key-values to update.
 
-&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#193)(self):**
+&mdash; **def [add\_stage\_results](/recipe_modules/metadata_json/api.py#196)(self):**
 
 Add stage results for DebugSymbols and Unittest stages.
 
-&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#97)(self, version_dict):**
+&mdash; **def [add\_version\_entries](/recipe_modules/metadata_json/api.py#100)(self, version_dict):**
 
 Update metadata with version info.
 
 Args:
   version_dict (dict): Map containing version info.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#244)(self, config, targets=()):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [context](/recipe_modules/metadata_json/api.py#247)(self, config, targets=()):**
 
 Returns a context that upload final metadata.json to GS.
 
@@ -8827,7 +8829,7 @@ Args:
   config (BuilderConfig): builder config of this builder.
   targets (list[BuildTarget]): The build targets of this builder.
 
-&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#221)(self, config, targets, success):**
+&mdash; **def [finalize\_build](/recipe_modules/metadata_json/api.py#224)(self, config, targets, success):**
 
 Finish the build stats and upload metadata.json.
 
@@ -8836,13 +8838,13 @@ Args:
   targets (list[BuildTarget]): The build target of this builder.
   success (bool): Did this build pass.
 
-&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#118)(self):**
+&mdash; **def [get\_metadata](/recipe_modules/metadata_json/api.py#121)(self):**
 
 Get the metadata dict. Should only be used for unittesting.
 
 Returns: dict, metadata info.
 
-&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#140)(self, config, targets, partial=False):**
+&mdash; **def [upload\_to\_gs](/recipe_modules/metadata_json/api.py#143)(self, config, targets, partial=False):**
 
 Upload metadata to GS at its current state.
 
@@ -8853,7 +8855,7 @@ Args:
       list is used for additional publication locations.
   partial (bool): whether the metadata is incomplete.
 
-&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#125)(self, filename):**
+&mdash; **def [write\_to\_file](/recipe_modules/metadata_json/api.py#128)(self, filename):**
 
 Write metadata dict to a tempfile.
 
