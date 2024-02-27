@@ -178,6 +178,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
       summary = (f'{len(new_builds) - len(new_dry_run_builds)} CQ+2 run(s) '
                  f'to retry, {len(new_dry_run_builds)} CQ+1 run(s) to retry, '
                  f'{throttled_runs_n} are throttled.')
+    for b in new_builds:
+      pres.links[b.id] = api.buildbucket.build_url(build_id=b.id)
     pres.step_text = summary
     run_properties['retries_made'] = len(new_builds)
 
@@ -458,7 +460,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       ))
 
   yield api.test(
-      'no-builds-or-tests-or-empty', api.auto_retry_util.enable_retries(),
+      'no-builds-or-tests-or-empty',
+      api.auto_retry_util.enable_retries(),
       api.gerrit.set_get_account_id(
           gerrit_host='chromium-review.googlesource.com',
           email=CHROMEOS_LUCI_SERVICE_ACCOUNT, value=1234,
@@ -485,7 +488,11 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(
           post_process.SummaryMarkdown,
           f"Uncaught Exception: ValueError('At least one builder or test suite must be given as a retry reason for build {retryable_build_orch.id}')",
-      ), api.expect_exception('ValueError'), status='INFRA_FAILURE')
+      ),
+      api.expect_exception('ValueError'),
+      api.post_process(post_process.DropExpectation),
+      status='INFRA_FAILURE',
+  )
 
   yield api.test(
       'two-retryable-runs-one-with-exception-during-analyzing',

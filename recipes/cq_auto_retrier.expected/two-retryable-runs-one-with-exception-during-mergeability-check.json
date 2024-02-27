@@ -1161,7 +1161,8 @@
     "cmd": [],
     "name": "performing retries",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.@@@"
+      "@@@STEP_TEXT@1 CQ+2 run(s) to retry, 0 CQ+1 run(s) to retry, 0 are throttled.@@@",
+      "@@@STEP_LINK@1111@https://cr-buildbucket.appspot.com/build/1111@@@"
     ]
   },
   {
