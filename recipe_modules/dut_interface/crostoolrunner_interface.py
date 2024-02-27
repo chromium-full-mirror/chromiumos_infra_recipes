@@ -1149,7 +1149,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     # Get all of the pools that this DUT belongs to
     label_pool = self._api.cros_tags.get_values(
-        'label-pool', self._api.buildbucket.build.infra.swarming.bot_dimensions)
+        'label-pool', self._api.buildbucket.swarming_bot_dimensions)
 
     # Check to see if this dut is in a pool that also prevents firmware updates
     if label_pool and 'mp_firmware_testing' in label_pool:
