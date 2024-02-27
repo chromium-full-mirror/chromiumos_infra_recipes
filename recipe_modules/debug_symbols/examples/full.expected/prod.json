@@ -5,7 +5,7 @@
   },
   {
     "cmd": [],
-    "name": "uploading splitdebug",
+    "name": "uploading breakpad+splitdebug",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@upload logs@@@@",
       "@@@STEP_LOG_END@upload logs@@@"
@@ -13,7 +13,7 @@
   },
   {
     "cmd": [],
-    "name": "uploading splitdebug.ensure upload_debug_symbols",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -30,7 +30,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "uploading splitdebug.ensure upload_debug_symbols.read infrainfra golang version",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols.read infrainfra golang version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
@@ -39,7 +39,7 @@
   },
   {
     "cmd": [],
-    "name": "uploading splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/upload_debug_symbols/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
@@ -57,7 +57,7 @@
       "[CLEANUP]/cipd.json"
     ],
     "infra_step": true,
-    "name": "uploading splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.cipd search",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -74,7 +74,7 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
-    "name": "uploading splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@cipd.json@{@@@",
@@ -102,7 +102,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "uploading splitdebug.ensure upload_debug_symbols.ensure_installed",
+    "name": "uploading breakpad+splitdebug.ensure upload_debug_symbols.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -129,31 +129,7 @@
       "-retry-quota 90",
       "-dry-run=false"
     ],
-    "name": "uploading splitdebug.run upload_debug_symbols",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "uploading breakpad",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@upload logs@@@@",
-      "@@@STEP_LOG_END@upload logs@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
-      "upload",
-      "-gs-path",
-      "gs-test/debug_breakpad.tar.xz",
-      "-worker-count 90",
-      "-retry-quota 90",
-      "-dry-run=false"
-    ],
-    "name": "uploading breakpad.run upload_debug_symbols",
+    "name": "uploading breakpad+splitdebug.run upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"

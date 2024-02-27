@@ -36,42 +36,20 @@ class DebugSymbols(recipe_api.RecipeApi):
                           self._worker_count if self._worker_count else None)
     staging_param = '-staging' if staging else None
     dryrun_param = '-dry-run=false' if not self._dryrun else None
-    gs_debug_image_location = '%s/debug_breakpad.tar.xz' % (gs_path)
 
     # The crash symbol collector service only returns information about
     # breakpad symbols that have been uploaded. Upload splitdebug first so that
     # we can rely on the status of the breakpad symbols to proxy the status of
     # splitdebug symbols. If the breakpad symbols aren't uploaded, we can
     # assume the splitdebug symbols aren't uploaded either.
-    with self.m.failures.ignore_exceptions():
-      if not staging:
-        with self.m.step.nest('uploading splitdebug') as pres:
-          # CLI invocation of upload_debug_symbols golang binary.
-          cmd = list(
-              filter(None, [
-                  'upload',
-                  '-gs-path',
-                  gs_path,
-                  '-data-type=splitdebug',
-                  worker_count_param,
-                  retry_quota_param,
-                  staging_param,
-                  dryrun_param,
-              ]))
-          if not staging:
-            step_data = self.m.gobin.call(
-                'upload_debug_symbols', cmd,
-                stdout=self.m.raw_io.output_text(name='stdout',
-                                                 add_output_log=True))
-            pres.logs['upload logs'] = step_data.stdout
-
-    with self.m.step.nest('uploading breakpad') as pres:
+    with self.m.step.nest('uploading breakpad+splitdebug') as pres:
       # CLI invocation of upload_debug_symbols golang binary.
       cmd = list(
           filter(None, [
               'upload',
               '-gs-path',
-              gs_debug_image_location,
+              gs_path,
+              '-data-type=splitdebug',
               worker_count_param,
               retry_quota_param,
               staging_param,

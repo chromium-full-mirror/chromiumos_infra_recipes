@@ -10574,7 +10574,7 @@
   },
   {
     "cmd": [],
-    "name": "upload debug symbols.uploading breakpad",
+    "name": "upload debug symbols.uploading breakpad+splitdebug",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@upload logs@@@@",
@@ -10583,14 +10583,14 @@
   },
   {
     "cmd": [],
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.ensure upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/upload_debug_symbols/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
@@ -10624,7 +10624,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.cipd search",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -10657,7 +10657,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.ensure upload_debug_symbols.find cipd instance for upload_debug_symbols for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@cipd.json@{@@@",
@@ -10701,7 +10701,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading breakpad.ensure upload_debug_symbols.ensure_installed",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.ensure upload_debug_symbols.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -10722,7 +10722,8 @@
       "[START_DIR]/cipd/upload_debug_symbols/upload_debug_symbols",
       "upload",
       "-gs-path",
-      "gs://chromeos-releases-test/staging-eve-release/R99-1234.56.0-101/debug_breakpad.tar.xz",
+      "gs://chromeos-releases-test/staging-eve-release/R99-1234.56.0-101",
+      "-data-type=splitdebug",
       "-staging",
       "-dry-run=false"
     ],
@@ -10742,7 +10743,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "upload debug symbols.uploading breakpad.run upload_debug_symbols",
+    "name": "upload debug symbols.uploading breakpad+splitdebug.run upload_debug_symbols",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
