@@ -626,23 +626,23 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     base_tags.append(('test_plan_id', testplan_id[0]))
 
   # Fetches the following information from buildbucket.swarming bot dimensions.
-  board = api.cros_tags.get_values(
-      'label-board', api.buildbucket.build.infra.swarming.bot_dimensions)
+  board = api.cros_tags.get_values('label-board',
+                                   api.buildbucket.swarming_bot_dimensions)
   if not board:
     board = api.cros_tags.get_values('label-board')
   if board:
     base_tags.append(('board', board[0]))
 
-  model = api.cros_tags.get_values(
-      'label-model', api.buildbucket.build.infra.swarming.bot_dimensions)
+  model = api.cros_tags.get_values('label-model',
+                                   api.buildbucket.swarming_bot_dimensions)
   if not model:
     model = api.cros_tags.get_values('label-model')
   if model:
     base_tags.append(('model', model[0]))
 
   # Multi-DUTs support
-  multiduts = api.cros_tags.get_values(
-      'label-multiduts', api.buildbucket.build.infra.swarming.bot_dimensions)
+  multiduts = api.cros_tags.get_values('label-multiduts',
+                                       api.buildbucket.swarming_bot_dimensions)
   if multiduts and multiduts[0] == 'True':
     base_tags.append(('multiduts', multiduts[0]))
 
@@ -665,59 +665,58 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   else:
     base_tags.append(('multiduts', 'False'))
 
-  drone = api.cros_tags.get_values(
-      'drone', api.buildbucket.build.infra.swarming.bot_dimensions)
+  drone = api.cros_tags.get_values('drone',
+                                   api.buildbucket.swarming_bot_dimensions)
   if drone:
     base_tags.append(('drone', drone[0]))
 
   drone_server = api.cros_tags.get_values(
-      'drone_server', api.buildbucket.build.infra.swarming.bot_dimensions)
+      'drone_server', api.buildbucket.swarming_bot_dimensions)
   if drone_server:
     base_tags.append(('drone_server', drone_server[0]))
 
-  hostname = api.cros_tags.get_values(
-      'dut_name', api.buildbucket.build.infra.swarming.bot_dimensions)
+  hostname = api.cros_tags.get_values('dut_name',
+                                      api.buildbucket.swarming_bot_dimensions)
   if hostname:
     base_tags.append(('hostname', hostname[0]))
 
-  pool = api.cros_tags.get_values(
-      'pool', api.buildbucket.build.infra.swarming.bot_dimensions)
+  pool = api.cros_tags.get_values('pool',
+                                  api.buildbucket.swarming_bot_dimensions)
   if pool:
     base_tags.append(('pool', pool[0]))
 
   # Fetches the label-pool from the requested task dimensions first, and then
   # fall back to the bot dimensions if it doesn't exists.
-  label_pool = api.cros_tags.get_values(
-      'label-pool', api.buildbucket.build.infra.swarming.task_dimensions)
+  label_pool = api.cros_tags.get_values('label-pool',
+                                        api.buildbucket.backend_task_dimensions)
   if not label_pool:
     label_pool = api.cros_tags.get_values(
-        'label-pool', api.buildbucket.build.infra.swarming.bot_dimensions)
+        'label-pool', api.buildbucket.swarming_bot_dimensions)
   if label_pool:
     base_tags.append(('label_pool', label_pool[0]))
 
-  wifi_chip = api.cros_tags.get_values(
-      'label-wifi_chip', api.buildbucket.build.infra.swarming.bot_dimensions)
+  wifi_chip = api.cros_tags.get_values('label-wifi_chip',
+                                       api.buildbucket.swarming_bot_dimensions)
   if wifi_chip:
     base_tags.append(('wifi_chip', wifi_chip[0]))
 
   wifi_router_models = api.cros_tags.get_values(
-      'label-wifi_router_models',
-      api.buildbucket.build.infra.swarming.bot_dimensions)
+      'label-wifi_router_models', api.buildbucket.swarming_bot_dimensions)
   if wifi_router_models:
     base_tags.append(('wifi_router_models', wifi_router_models[0]))
 
-  hwid_sku = api.cros_tags.get_values(
-      'label-hwid_sku', api.buildbucket.build.infra.swarming.bot_dimensions)
+  hwid_sku = api.cros_tags.get_values('label-hwid_sku',
+                                      api.buildbucket.swarming_bot_dimensions)
   if hwid_sku:
     base_tags.append(('hwid_sku', hwid_sku[0]))
 
-  cbx = api.cros_tags.get_values(
-      'label-cbx', api.buildbucket.build.infra.swarming.bot_dimensions)
+  cbx = api.cros_tags.get_values('label-cbx',
+                                 api.buildbucket.swarming_bot_dimensions)
   if cbx:
     base_tags.append(('cbx', cbx[0]))
 
   suite_task_id = _convert_to_task_request_id(
-      api.buildbucket.build.infra.swarming.parent_run_id)
+      api.buildbucket.swarming_parent_run_id)
   if suite_task_id:
     base_tags.append(('suite_task_id', suite_task_id))
 
@@ -804,8 +803,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     for key in sysinfo_keyvals:
       base_tags.append((key, sysinfo_keyvals[key]))
 
-  carrier = api.cros_tags.get_values(
-      'label-carrier', api.buildbucket.build.infra.swarming.bot_dimensions)
+  carrier = api.cros_tags.get_values('label-carrier',
+                                     api.buildbucket.swarming_bot_dimensions)
   if carrier:
     base_tags.append(('carrier', carrier[0]))
 
