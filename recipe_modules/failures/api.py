@@ -37,19 +37,28 @@ from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
 
-  # A failure in recipe execution.
-  #
-  # Fields:
-  #   kind (str): Describes the kind of failure, e.g. 'build'
-  #   title (str): Full title of the failure.
-  #   link_map (str->str): title to URL map for the failed task.
-  #   fatal (bool): Whether or not the failure is fatal. Fatal failures cause
-  #       recipes to fail when the failure is aggregated.
-  #   id (str): a unique, reproducible name for this failure. For build-type
-  #       failures, this is the builder name. For test-type failures this is the
-  #       display_name.
-  Failure = collections.namedtuple('Failure',
-                                   ['kind', 'title', 'link_map', 'fatal', 'id'])
+  @dataclass
+  class Failure:
+    """A failure in recipe execution.
+
+    Fields:
+      kind: Describes the kind of failure, e.g. 'build'
+      title: Full title of the failure.
+      link_map: title to URL map for the failed task.
+      fatal: Whether or not the failure is fatal. Fatal failures cause
+          recipes to fail when the failure is aggregated.
+      id: a unique, reproducible name for this failure. For build-type
+          failures, this is the builder name. For test-type failures this is the
+          display_name.
+      failure_reason: The reason for the failure.
+    """
+    kind: str
+    title: str
+    link_map: Dict[str, str]
+    fatal: bool
+    id: str
+    failure_reason: Optional[str] = None
+
   # Test kind for hw tests.
   HW_TEST = 'hw test'
   # Test kind for vm tests.
@@ -134,6 +143,22 @@ class FailuresApi(RecipeApi):
         presentation.links[link_text] = link_url
       return
 
+  # TODO(b/327255136): Generalize this to other failures.
+  def _get_build_failure_reason(self, failed_build) -> Optional[str]:
+    """Returns the reason the image builder failed."""
+    output_dict = json_format.MessageToDict(failed_build.output.properties)
+    package_failures = [
+        json_format.ParseDict(x, PackageFailure())
+        for x in output_dict.get('package_failures', [])
+    ]
+    # TODO(b/327255136): Start with builds that have exactly 1 package failure.
+    if len(package_failures) != 1:
+      return None
+    phase = 'compilation' if package_failures[
+        0].phase == PackageFailure.Phase.COMPILE else 'unit tests'
+    package = f'{package_failures[0].package.category}/{package_failures[0].package.package_name}'
+    return f'failed {phase} for {package}'
+
   def _get_results(self, kind, runs, get_status, is_critical, get_title,
                    get_link_map, get_id, build_detailed_kind = None):
     with self.m.step.nest('{} results'.format(build_detailed_kind or kind)) as results_pres:
@@ -151,6 +176,8 @@ class FailuresApi(RecipeApi):
         fail_id = get_id(failed_run)
         status = get_status(failed_run)
         critical = is_critical(failed_run)
+        failure_reason = self._get_build_failure_reason(
+            failed_run) if kind == 'build' else None
 
         self._present_run(title, link_map, status, critical)
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
@@ -158,11 +185,13 @@ class FailuresApi(RecipeApi):
         if critical:
           results.failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=True, id=fail_id))
+                           fatal=True, id=fail_id,
+                           failure_reason=failure_reason))
         elif build_detailed_kind:
           non_critical_build_results.failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=False, id=fail_id))
+                           fatal=False, id=fail_id,
+                           failure_reason=failure_reason))
 
       success_runs = [run for run in runs if run not in failed_runs]
       results.successes = {kind: 0}
@@ -483,6 +512,14 @@ class FailuresApi(RecipeApi):
         total_count,
         kind + 's' if total_count > 1 else kind,
     )
+
+    failure_reasons = {
+        f.failure_reason for f in failure_group if f.failure_reason
+    }
+
+    # TODO(b/327255136): Start with builds where all failures were alike.
+    if len(failure_reasons) == 1:
+      main_line = f'{failure_count} out of {total_count} {kind}s {failure_reasons.pop()}'
 
     main_line += \
       self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
