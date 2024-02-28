@@ -737,9 +737,7 @@
   * [snapshot_orch_menu:tests/builds_status](#recipes-snapshot_orch_menu_tests_builds_status)
   * [snapshot_orch_menu:tests/categorize_builds](#recipes-snapshot_orch_menu_tests_categorize_builds)
   * [snapshot_orch_menu:tests/child_build_info](#recipes-snapshot_orch_menu_tests_child_build_info) &mdash; Tests for the add_child_build_info_to_output_property function.
-  * [snapshot_orch_menu:tests/collect](#recipes-snapshot_orch_menu_tests_collect)
   * [snapshot_orch_menu:tests/collect_and_check_build_results](#recipes-snapshot_orch_menu_tests_collect_and_check_build_results)
-  * [snapshot_orch_menu:tests/run_follow_on_orchestrator](#recipes-snapshot_orch_menu_tests_run_follow_on_orchestrator)
   * [snapshot_orch_menu:tests/set_child_builds](#recipes-snapshot_orch_menu_tests_set_child_builds)
   * [snapshot_orchestrator](#recipes-snapshot_orchestrator) &mdash; Recipe that schedules snapshot/postsubmit child builders and watches for failures.
   * [source_cache_builder](#recipes-source_cache_builder) &mdash; Recipe for generating ChromeOS source cache snapshots.
@@ -10599,11 +10597,11 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#938)(self):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/snapshot_orch_menu/api.py#848)(self):**
 
 Add child information to output property of current build.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#778)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/snapshot_orch_menu/api.py#688)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -10618,7 +10616,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#162)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#980)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/snapshot_orch_menu/api.py#885)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -10632,7 +10630,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#146)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#259)(self):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#249)(self):**
 
 Create the correct return value for RunSteps.
 
@@ -10651,11 +10649,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#170)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#407)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#392)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#360)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#345)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -10669,7 +10667,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#705)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#615)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10687,37 +10685,16 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#415)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#400)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#178)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#174)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#599)(self):**
-
-Run the follow_on_orchestrator, if any.  Wait if necessary.
-
-&mdash; **def [schedule\_wait\_build](/recipe_modules/snapshot_orch_menu/api.py#606)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
-
-Schedule a builder, and optionally await completion.
-
-Args:
-  builder (str): The name of the builder: one of project/bucket/builder,
-    bucket/builder, or builder.
-  await_completion (bool): Whether to await completion.
-  properties (dict): Dictionary of input properties for the builder.
-  check_failures (bool): Whether or not failures accumulate in
-    builds_status.  This is only used if await_completion is True.
-  step_name (str): Name for the step, or None.
-  timeout_sec (int): Timeout for the builder, in seconds.
-
-Returns:
-  (Build): The build that was scheduled, and possibly waited for.
-
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#202)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#198)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -10731,8 +10708,6 @@ Raises:
 
 Returns:
   BuilderConfig or None, with an active context.
-
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/snapshot_orch_menu/api.py#174)(self):**
 ### *recipe_modules* / [src\_state](/recipe_modules/src_state)
 
 [DEPS](/recipe_modules/src_state/__init__.py#10): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16305,30 +16280,18 @@ Tests for the get_per_board_prejob_stats function.
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/categorize_builds.py#25)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/child\_build\_info](/recipe_modules/snapshot_orch_menu/tests/child_build_info.py)
 
-[DEPS](/recipe_modules/snapshot_orch_menu/tests/child_build_info.py#16): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/snapshot_orch_menu/tests/child_build_info.py#15): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
 
 
 Tests for the add_child_build_info_to_output_property function.
 
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/child_build_info.py#24)(api):**
-### *recipes* / [snapshot\_orch\_menu:tests/collect](/recipe_modules/snapshot_orch_menu/tests/collect.py)
-
-[DEPS](/recipe_modules/snapshot_orch_menu/tests/collect.py#15): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/collect.py#26)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/child_build_info.py#23)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/collect\_and\_check\_build\_results](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py)
 
 [DEPS](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py#15): [cros\_tags](#recipe_modules-cros_tags), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py#27)(api, properties):**
-### *recipes* / [snapshot\_orch\_menu:tests/run\_follow\_on\_orchestrator](/recipe_modules/snapshot_orch_menu/tests/run_follow_on_orchestrator.py)
-
-[DEPS](/recipe_modules/snapshot_orch_menu/tests/run_follow_on_orchestrator.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
-
-
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/run_follow_on_orchestrator.py#22)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/set\_child\_builds](/recipe_modules/snapshot_orch_menu/tests/set_child_builds.py)
 
 [DEPS](/recipe_modules/snapshot_orch_menu/tests/set_child_builds.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

@@ -16,7 +16,6 @@ from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
     BatchResponse)
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
 
 
@@ -61,18 +60,13 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     with_history = kwargs.pop('with_history', False)
     with_manifest_refs = kwargs.pop('with_manifest_refs', False)
     max_build_failure_ratio = kwargs.pop('max_build_failure_ratio', 0.0)
-    git_footers = kwargs.pop('git_footers', None)
-    history_builds = kwargs.pop('history_builds', None)
     collect_builds = kwargs.pop('collect_builds', [])
     collect_timeout = kwargs.pop('collect_timeout', None)
     collect_after_builds = kwargs.pop('collect_after_builds', [])
-    process_child = kwargs.pop('process_child', None)
-    process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
     local_green_builds = kwargs.pop('local_green_builds', [])
     sheriff_rotations = kwargs.pop('sheriff_rotations', [])
 
-    cq = kwargs.get('cq')
     default_props = {
         '$chromeos/snapshot_orch_menu':
             self.get_default_module_properties(
@@ -95,17 +89,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     ret = self.m.test_util.test_orchestrator(**kwargs).build
     args = list(args)
-    if with_history:
-      if git_footers is not None:
-        args.append(
-            self.m.git_footers.simulated_get_footers(
-                git_footers, 'run builds.check disallow recycled builds'))
-      if cq and history_builds is not None:
-        args.append(
-            self.m.buildbucket.simulated_search_results(
-                [x for x in history_builds if x.status == common_pb2.SUCCESS],
-                'run builds.get build history.get completed builds.'
-                'get change build history.buildbucket.search'))
 
     if collect_builds:
       if collect_timeout:
@@ -123,24 +106,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     if child_builds:
       ret += self.m.buildbucket.simulated_search_results(
           child_builds, 'clean up orchestrator.buildbucket.search')
-
-    if process_child:
-      process_name = 'run {}'.format(process_child.builder.builder)
-      args.append(
-          self.m.buildbucket.simulated_schedule_output(
-              BatchResponse(responses=[{
-                  'schedule_build': process_child
-              }]), '{}.buildbucket.schedule'.format(process_name)))
-      if process_child_timeout:
-        args.extend([
-            self.step_data('{}.collect.wait'.format(process_name), retcode=1),
-            self.m.buildbucket.simulated_get_multi(
-                [process_child], '{}.get'.format(process_name))
-        ])
-      else:
-        args.append(
-            self.m.buildbucket.simulated_collect_output(
-                [process_child], '{}.collect'.format(process_name)))
 
     if follow_on_orch:
       args.append(

@@ -172,10 +172,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     return self._is_snapshot_orchestrator
 
   @property
-  def skip_paygen(self):
-    return self._properties.skip_paygen
-
-  @property
   def relevant_child_builder_names(self):
     return self._relevant_child_builder_names
 
@@ -247,12 +243,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         # Update the start ref to indicate we've begun processing the snapshot.
         self._push_manifest_refs(self._properties.update_manifest_refs.start)
 
-        if self.gerrit_changes:
-          # Any changes we have must be submittable.
-          if not self.m.gerrit.changes_submittable(self.gerrit_changes):
-            raise recipe_api.StepFailure(
-                'Merge conflict detected! Please rebase and retry.')
-
       # Yield while inside of the bot_cost.build_cost_context.
       yield config
 
@@ -285,11 +275,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
     results = self.m.failures.Results(failures=self.builds_status.failures,
                                       successes=successes)
-
-    # Output whether any of the cq-orchestrator children (build and test) had
-    # fatal failures. This is currently used by cq-auto-retrier.
-    has_child_failures = any(failure.fatal for failure in results.failures)
-    self.m.easy.set_properties_step(has_child_failures=has_child_failures)
 
     raw_result = self.m.failures.aggregate_failures(results)
     return raw_result
@@ -596,81 +581,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
     return child_spec.collect_handling or ret
 
-  def run_follow_on_orchestrator(self):
-    """Run the follow_on_orchestrator, if any.  Wait if necessary."""
-    follower = self.config.orchestrator.follow_on_orchestrator
-    if not self.builds_status.fatal_failures and follower.name:
-      self.schedule_wait_build(follower.name, follower.await_completion,
-                               step_name='run follow on orchestrator')
-
-  def schedule_wait_build(self, builder, await_completion=False,
-                          properties=None, check_failures=False, step_name=None,
-                          timeout_sec=None):
-    """Schedule a builder, and optionally await completion.
-
-    Args:
-      builder (str): The name of the builder: one of project/bucket/builder,
-        bucket/builder, or builder.
-      await_completion (bool): Whether to await completion.
-      properties (dict): Dictionary of input properties for the builder.
-      check_failures (bool): Whether or not failures accumulate in
-        builds_status.  This is only used if await_completion is True.
-      step_name (str): Name for the step, or None.
-      timeout_sec (int): Timeout for the builder, in seconds.
-
-    Returns:
-      (Build): The build that was scheduled, and possibly waited for.
-    """
-    timeout_sec = timeout_sec or 60 * 60 * 36
-    step_name = step_name or 'run %s' % builder
-    with self.m.step.nest(step_name) as pres:
-      # Separate out any project/bucket in the builder name.
-      parts = builder.split('/', 2)
-      project = self.m.buildbucket.INHERIT if len(parts) < 3 else parts[-3]
-      bucket = self.m.buildbucket.INHERIT if len(parts) < 2 else parts[-2]
-      builder = parts[-1]
-
-      # The builder may or may not be in the same bucket as us, and the
-      # gitiles_commit and gerrit_changes that we are using may have derived
-      # from our builder config, rather than buildbucket properties.  Pass the
-      # actual answers to schedule_request.
-      props = self.m.cros_infra_config.props_for_child_build
-      props.update(self.m.cq.props_for_child_build)
-      props.update(properties or {})
-      tags = self.m.cros_tags.make_schedule_tags(self.gitiles_commit)
-      exps = self.m.cros_infra_config.experiments_for_child_build
-      req = self.m.buildbucket.schedule_request(
-          gitiles_commit=self.gitiles_commit, project=project, bucket=bucket,
-          builder=builder, gerrit_changes=self.gerrit_changes, critical=True,
-          experiments=exps, properties=props, tags=tags,
-          inherit_buildsets=False)
-      title_fn = self.m.naming.get_build_title
-      build = self.m.buildbucket.schedule([req], url_title_fn=title_fn)[0]
-      build_id = build.id
-      url = self.m.buildbucket.build_url(build_id=build_id)
-      pres.presentation.links[title_fn(build)] = url
-
-      # Are we supposed to wait?
-      if await_completion:
-        fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}
-        try:
-          build = list(
-              self.m.buildbucket.collect_builds([build_id], timeout=timeout_sec,
-                                                step_name='collect',
-                                                url_title_fn=title_fn,
-                                                fields=fields).values())[0]
-        except StepFailure:
-          build = list(
-              self.m.buildbucket.get_multi([build_id], step_name='get',
-                                           url_title_fn=title_fn,
-                                           fields=fields).values())[0]
-
-        failures = (
-            self.m.failures.get_build_results([build]).failures
-            if check_failures else [])
-        self._builds_status.update([build], failures)
-      return build
-
   def _gerrit_changes_in_snapshot(self) -> List[common_pb2.GerritChange]:
     """Find the changes landed in the orchestrator's snapshot commit.
 
@@ -956,11 +866,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       if self.is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
             b.builder.builder in self._relevant_child_builder_names)
-      # If running unit tests async, add the time the child build was elegible
-      # for collection.
-      if 'image_artifacts_uploaded_time' in b.output.properties:
-        child_build_dict['image_artifacts_uploaded_time'] = b.output.properties[
-            'image_artifacts_uploaded_time']
       # Add whether this builder failed to emerge any packages.
       if 'package_failures' in b.output.properties:
         child_build_dict['package_failures'] = json_format.MessageToDict(

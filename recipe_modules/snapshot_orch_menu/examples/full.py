@@ -52,9 +52,6 @@ def RunSteps(api, properties):
       return None
     api.assertions.assertIsNotNone(config)
 
-    api.assertions.assertEqual(api.snapshot_orch_menu.skip_paygen,
-                               properties.skip_paygen)
-
     is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
     api.assertions.assertEqual(
         api.snapshot_orch_menu.is_postsubmit_orchestrator, is_postsubmit_orch)
@@ -80,17 +77,6 @@ def RunSteps(api, properties):
 
     if not builds_status.fatal_failures:
       builds_status = api.snapshot_orch_menu.plan_and_run_tests()
-
-    if properties.process_child:
-      api.snapshot_orch_menu.schedule_wait_build(
-          properties.process_child, await_completion=True, check_failures=True,
-          step_name='run %s' % properties.process_child)
-
-    if properties.expected_completed_builds:
-      for actual, expected in zip(
-          api.snapshot_orch_menu.builds_status.completed_builds,
-          properties.expected_completed_builds):
-        api.assertions.assertEqual(actual, expected)
 
     expected = properties.expected_recipe_result
     if not expected.status:
@@ -126,18 +112,6 @@ def GenTests(api):
   original_build.output.properties['child_builds'] = [
       '8922054662172514002', '8922054662172514003'
   ]
-
-  # TODO(b/245326818): Add useful assertions
-  yield api.snapshot_orch_menu.test(
-      'factory-orchestrator',
-      input_properties=snapshot_orch_menu_properties(
-          update_manifest_refs={'test': 'refs/heads/test'},
-          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
-          bump_version=True, manifest_versions_branch='main'),
-      builder='factory-corsola-15197.B-orchestrator',
-      with_history=True,
-      bot_size='medium',
-  )
 
   collect, _ = api.snapshot_orch_menu.orch_child_builds(
       'postsubmit-orchestrator', '-postsubmit')
@@ -196,15 +170,6 @@ def GenTests(api):
       api.properties(FullProperties(expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)
 
-  yield api.snapshot_orch_menu.test(
-      'fails-if-changes-not-submittable',
-      api.gerrit.simulated_changes_are_submittable(submittable=False),
-      cq=True,
-      with_history=True,
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
-  )
-
   one_non_crit_fail_summary = ('1 non-critical build failed')
   # Collect times out
   yield api.snapshot_orch_menu.test(
@@ -214,61 +179,10 @@ def GenTests(api):
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary))),
-      api.step_data('run builds.collect.wait', retcode=1),
-      collect_builds=data.builds, history_builds=data.history_builds,
+      api.step_data('run builds.collect.wait',
+                    retcode=1), collect_builds=data.builds,
       collect_timeout=True, with_manifest_refs=True, with_history=True)
 
-  yield api.snapshot_orch_menu.test(
-      'quota-scheduler-override', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      collect_builds=data.builds, history_builds=data.history_builds, cq=True,
-      with_history=True, git_footers=[],
-      tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
-
-  # Process-child
-  yield api.snapshot_orch_menu.test(
-      'with-process-child', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=data.builds + [data.process_child],
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, history_builds=data.history_builds,
-      process_child=data.process_child, bucket='toolchain',
-      builder='artifact-generate-orchestrator')
-
-  # Process-child times out.
-  yield api.snapshot_orch_menu.test(
-      'with-process-child-timeout', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_completed_builds=data.builds + [data.process_child],
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, history_builds=data.history_builds,
-      process_child=data.process_child, process_child_timeout=True,
-      bucket='toolchain', builder='artifact-generate-orchestrator')
-
-  yield api.snapshot_orch_menu.test(
-      'chromium-src-ref-cq-cl-tag', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator',
-          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
-      collect_builds=data.builds)
 
   input_props = snapshot_orch_menu_properties(
       update_manifest_refs={'test': 'refs/heads/test'})
