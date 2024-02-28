@@ -87,6 +87,10 @@ class GitApi(recipe_api.RecipeApi):
     """
     self._step(['add'] + paths)
 
+  def add_all(self):
+    """Add/stage all changed files."""
+    self._step(['add', '-A'])
+
   def diff_check(self, path):
     """Check if the given file changed from HEAD.
 

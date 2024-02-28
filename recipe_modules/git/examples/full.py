@@ -60,6 +60,7 @@ def RunSteps(api):
     api.assertions.assertEqual(commit.rev, commit_id)
     api.assertions.assertEqual(commit.message, 'message')
     api.git.add(['some/file/path', 'some/other/path'])
+    api.git.add_all()
     api.git.is_reachable('deadbeef')
     api.git.show_file('deadbeef', 'some/path')
     api.git.create_bundle(api.path['start_dir'].join('bundle'), 'HEAD^', 'HEAD')

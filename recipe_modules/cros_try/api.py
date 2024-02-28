@@ -5,6 +5,8 @@
 
 """API for working with `cros try`-initiated jobs."""
 
+from typing import Optional
+
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.recipe_modules.chromeos.cros_try.cros_try import CrosTryProperties
@@ -38,3 +40,11 @@ class CrosTryApi(RecipeApi):
         raise StepFailure(
             'Using outdated version of `cros try`, please see go/cros-try#stale.'
         )
+
+  def get_invoker(self) -> Optional[str]:
+    """Get the email of the tryjob invoker, if any."""
+    with self.m.step.nest('get `cros try` invoker'):
+      for tag in self.m.buildbucket.build.tags:
+        if tag.key == 'tryjob-launcher':
+          return tag.value
+    return None

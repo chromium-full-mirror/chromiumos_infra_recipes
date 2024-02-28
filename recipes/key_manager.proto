@@ -9,5 +9,8 @@ package recipes.chromeos.key_manager;
 import "chromite/api/signing.proto";
 
 message KeyManagerProperties {
-  repeated chromite.api.CreatePreMPKeysRequest create_premp_keys_requests = 1;
+  chromite.api.CreatePreMPKeysRequest create_premp_keys_request = 1;
+
+  // Buganizer ID to be associated with the PreMP Key creation request.
+  int64 bug = 2;
 }

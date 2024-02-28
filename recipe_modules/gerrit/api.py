@@ -616,11 +616,13 @@ class GerritApi(RecipeApi):
       presentation.step_text = 'confirmed no merge conflicts'
       return True
 
-  def create_change(
-      self, project: Union[str, Path], reviewers: Optional[List[str]] = None,
-      ccs: Optional[List[str]] = None, topic: Optional[str] = None,
-      ref: Optional[str] = None, hashtags: Optional[List[str]] = None,
-      project_path: Path = None, use_local_diff: bool = False) -> GerritChange:
+  def create_change(self, project: Union[str, Path],
+                    reviewers: Optional[List[str]] = None,
+                    ccs: Optional[List[str]] = None,
+                    topic: Optional[str] = None, ref: Optional[str] = None,
+                    hashtags: Optional[List[str]] = None,
+                    project_path: Path = None, use_local_diff: bool = False,
+                    non_repo_checkout: bool = False) -> GerritChange:
     """Create a Gerrit change for the most recent commits in the given project.
 
     Assumes one or more local commits exists in the project. The commit message
@@ -638,23 +640,28 @@ class GerritApi(RecipeApi):
         value inferred from the gerrit_change.
       use_local_diff: If true, use the local diff instead of diff taken against
         tip-of-branch for the CL.
+      non_repo_checkout: If true, means that the checkout described by
+        `project_path` is not within a repo checkout (and thus the method
+        will skip `repo` calls used to gather optional information).
 
     Returns:
       The newly created change.
     """
     with self.m.step.nest('create gerrit change for %s' % project) as pres:
       project_info = None
-      # Attempt to get project_info. If the project does not exist, we'll assume
-      # `project` is the project name and use `project_path` as our cwd.
-      # Otherwise, we'll infer the information from the repo.project_info
-      # results.
-      if self.m.path.exists(self.m.src_state.workspace_path):
-        # Need to check that the ChromeOS workspace path exists. In some cases
-        # it doesn't, like for StarDoctor. Then we definitely can't get project
-        # info.
-        with self.m.context(cwd=self.m.src_state.workspace_path):
-          if self.m.repo.project_exists(project):
-            project_info = self.m.repo.project_info(project)
+
+      if not non_repo_checkout:
+        # Attempt to get project_info. If the project does not exist, we'll assume
+        # `project` is the project name and use `project_path` as our cwd.
+        # Otherwise, we'll infer the information from the repo.project_info
+        # results.
+        if self.m.path.exists(self.m.src_state.workspace_path):
+          # Need to check that the ChromeOS workspace path exists. In some cases
+          # it doesn't, like for StarDoctor. Then we definitely can't get project
+          # info.
+          with self.m.context(cwd=self.m.src_state.workspace_path):
+            if self.m.repo.project_exists(project):
+              project_info = self.m.repo.project_info(project)
 
       if project_path:
         cwd = project_path

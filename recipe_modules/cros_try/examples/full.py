@@ -9,18 +9,26 @@
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_try.cros_try import CrosTryProperties
+from PB.recipe_modules.chromeos.cros_try.examples.full import TestProperties
 from PB.recipe_modules.recipe_engine.buildbucket.properties import InputProperties
 from recipe_engine import post_process
 
 DEPS = [
+    'recipe_engine/assertions',
     'recipe_engine/properties',
     'cros_try',
 ]
 
+PROPERTIES = TestProperties
 
 
-def RunSteps(api):
+def RunSteps(api, properties: TestProperties):
   api.cros_try.check_try_version()
+
+  api.assertions.assertEqual(
+      api.cros_try.get_invoker(),
+      properties.expected_invoker or None,
+  )
 
 
 def GenTests(api):
@@ -36,6 +44,8 @@ def GenTests(api):
       'try-build-unsupported-unenforced',
       api.properties(
           **{
+              'expected_invoker':
+                  'sundar@google.com',
               '$recipe_engine/buildbucket':
                   InputProperties(
                       build=build_pb2.Build(tags=[
@@ -50,6 +60,8 @@ def GenTests(api):
       'try-build-unsupported',
       api.properties(
           **{
+              'expected_invoker':
+                  'sundar@google.com',
               '$chromeos/cros_try':
                   CrosTryProperties(enforce_support=True),
               '$recipe_engine/buildbucket':
@@ -68,6 +80,8 @@ def GenTests(api):
       'try-build-supported',
       api.properties(
           **{
+              'expected_invoker':
+                  'sundar@google.com',
               '$chromeos/cros_try':
                   CrosTryProperties(enforce_support=True, supported_build=True),
               '$recipe_engine/buildbucket':

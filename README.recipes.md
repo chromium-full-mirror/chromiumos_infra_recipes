@@ -5623,13 +5623,17 @@ Args:
 
 API for working with `cros try`-initiated jobs.
 
-#### **class [CrosTryApi](/recipe_modules/cros_try/api.py#13)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTryApi](/recipe_modules/cros_try/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for checking `cros try` builds.
 
-&mdash; **def [check\_try\_version](/recipe_modules/cros_try/api.py#20)(self):**
+&mdash; **def [check\_try\_version](/recipe_modules/cros_try/api.py#22)(self):**
 
 Checks that this specific `cros try` invocation is supported.
+
+&mdash; **def [get\_invoker](/recipe_modules/cros_try/api.py#44)(self):**
+
+Get the email of the tryjob invoker, if any.
 ### *recipe_modules* / [cros\_version](/recipe_modules/cros_version)
 
 [DEPS](/recipe_modules/cros_version/__init__.py#10): [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gobin](#recipe_modules-gobin), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -7220,7 +7224,7 @@ A module for Gerrit helpers.
 
 Initialize GerritApi.
 
-&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#920)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
+&mdash; **def [abandon\_change](/recipe_modules/gerrit/api.py#927)(self, gerrit_change: GerritChange, message: Optional[str]=None):**
 
 Abandon the given change.
 
@@ -7228,7 +7232,7 @@ Args:
   gerrit_change: The change to abandon.
   message: Optional message to post to change.
 
-&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#843)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
+&mdash; **def [add\_change\_comment](/recipe_modules/gerrit/api.py#850)(self, gerrit_change: GerritChange, comment: str, project_path: Optional[Path]=None):**
 
 Add a comment to the given Gerrit change.
 
@@ -7238,7 +7242,7 @@ Args:
   project_path: If set, will use this as the project path rather than any
     value inferred from the gerrit_change.
 
-&mdash; **def [add\_change\_comment\_remote](/recipe_modules/gerrit/api.py#729)(self, gerrit_change: GerritChange, comment: str):**
+&mdash; **def [add\_change\_comment\_remote](/recipe_modules/gerrit/api.py#736)(self, gerrit_change: GerritChange, comment: str):**
 
 Add comment to gerrit_change.
 
@@ -7256,7 +7260,7 @@ Args:
   gerrit_changes: The changes to check.
   test_output_data: Mock response for the git-test-submit support tool.
 
-&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#619)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False):**
+&mdash; **def [create\_change](/recipe_modules/gerrit/api.py#619)(self, project: Union[(str, Path)], reviewers: Optional[List[str]]=None, ccs: Optional[List[str]]=None, topic: Optional[str]=None, ref: Optional[str]=None, hashtags: Optional[List[str]]=None, project_path: Path=None, use_local_diff: bool=False, non_repo_checkout: bool=False):**
 
 Create a Gerrit change for the most recent commits in the given project.
 
@@ -7275,6 +7279,9 @@ Args:
     value inferred from the gerrit_change.
   use_local_diff: If true, use the local diff instead of diff taken against
     tip-of-branch for the CL.
+  non_repo_checkout: If true, means that the checkout described by
+    `project_path` is not within a repo checkout (and thus the method
+    will skip `repo` calls used to gather optional information).
 
 Returns:
   The newly created change.
@@ -7316,7 +7323,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1110)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1117)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -7325,11 +7332,11 @@ Uses the gerrit_related_changes CIPD package.
 Returns:
   The JSON for 'related' outputted by gerrit_related_changes.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#1006)(self, email: str, gerrit_host: str):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#1013)(self, email: str, gerrit_host: str):**
 
 Get the Gerrit account id for the given email on the given host.
 
-&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#861)(self, gerrit_change: GerritChange, memoize: bool=False):**
+&mdash; **def [get\_change\_description](/recipe_modules/gerrit/api.py#868)(self, gerrit_change: GerritChange, memoize: bool=False):**
 
 Get the description of the given Gerrit change.
 
@@ -7341,7 +7348,7 @@ Args:
 Returns:
   The change description.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#1034)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#1041)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -7353,7 +7360,7 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1070)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1077)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Returns whether the given change list contains a merge commit.
 
@@ -7390,7 +7397,7 @@ Return a Gerrit change URL, parsed from a GerritChange proto.
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#972)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#979)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -7402,7 +7409,7 @@ Args:
   label_constraints: Constraints on the changes' labels, to be used as a
       filter before returning.
 
-&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#891)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
+&mdash; **def [set\_change\_description](/recipe_modules/gerrit/api.py#898)(self, gerrit_change: GerritChange, description: str, amend_local: bool=False, project_path: Optional[Path]=None):**
 
 Set the description of the given Gerrit change.
 
@@ -7415,7 +7422,7 @@ Args:
   project_path: If set, use this as the project path rather than any value
     inferred from the gerrit_change.
 
-&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#797)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
+&mdash; **def [set\_change\_labels](/recipe_modules/gerrit/api.py#804)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)], branch: Optional[str]=None, ref: Optional[str]=None):**
 
 (Deprecated) Set the given labels for the given Gerrit change.
 
@@ -7431,7 +7438,7 @@ Args:
 Returns:
   The ref used to push the labels.
 
-&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#702)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
+&mdash; **def [set\_change\_labels\_remote](/recipe_modules/gerrit/api.py#709)(self, gerrit_change: GerritChange, labels: Dict[(Label, int)]):**
 
 Set the given labels for the given Gerrit change.
 
@@ -7445,7 +7452,7 @@ Args:
 Returns:
   The applied labels (primarily for testing).
 
-&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#935)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
+&mdash; **def [submit\_change](/recipe_modules/gerrit/api.py#942)(self, gerrit_change: GerritChange, retries: int=0, project_path: Optional[Path]=None):**
 
 Submit the given change.
 
@@ -7475,7 +7482,11 @@ and not modified, which you can use `diff_check` to check for.
 Args:
   paths (list[str|Path]): The file paths to stage.
 
-&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#324)(self, message, \*\*kwargs):**
+&mdash; **def [add\_all](/recipe_modules/git/api.py#90)(self):**
+
+Add/stage all changed files.
+
+&mdash; **def [amend\_head\_message](/recipe_modules/git/api.py#328)(self, message, \*\*kwargs):**
 
 Runs 'git commit --amend' with the given description.
 
@@ -7483,7 +7494,7 @@ Args:
   message (str): The commit message.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [author\_email](/recipe_modules/git/api.py#799)(self, commit_id):**
+&mdash; **def [author\_email](/recipe_modules/git/api.py#803)(self, commit_id):**
 
 Returns the email of the author of the given commit.
 
@@ -7492,7 +7503,7 @@ Args:
 
 Returns: (str): commit author email.
 
-&mdash; **def [branch\_exists](/recipe_modules/git/api.py#839)(self, branch):**
+&mdash; **def [branch\_exists](/recipe_modules/git/api.py#843)(self, branch):**
 
 Check if a branch exists.
 
@@ -7501,7 +7512,7 @@ Args:
 
 Returns: (bool) Whether or not the branch exists.
 
-&mdash; **def [checkout](/recipe_modules/git/api.py#265)(self, commit=None, force=False, branch=None, \*\*kwargs):**
+&mdash; **def [checkout](/recipe_modules/git/api.py#269)(self, commit=None, force=False, branch=None, \*\*kwargs):**
 
 Runs 'git checkout'.
 
@@ -7510,7 +7521,7 @@ Args:
   force (bool): If True, throw away local changes (--force).
   branch (Optional[str]): The branch to check out a commit from.
 
-&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#294)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick](/recipe_modules/git/api.py#298)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick'.
 
@@ -7518,11 +7529,11 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [cherry\_pick\_abort](/recipe_modules/git/api.py#320)(self):**
+&mdash; **def [cherry\_pick\_abort](/recipe_modules/git/api.py#324)(self):**
 
 Runs 'git cherry_pick --abort'.
 
-&mdash; **def [cherry\_pick\_silent\_fail](/recipe_modules/git/api.py#304)(self, commit, \*\*kwargs):**
+&mdash; **def [cherry\_pick\_silent\_fail](/recipe_modules/git/api.py#308)(self, commit, \*\*kwargs):**
 
 Runs 'git cherry-pick' and returns whether the cherry-pick succeeded.
 
@@ -7530,7 +7541,7 @@ Args:
   commit (str): The commit to cherry pick.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [clone](/recipe_modules/git/api.py#618)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
+&mdash; **def [clone](/recipe_modules/git/api.py#622)(self, repo_url, target_path=None, reference=None, dissociate=False, branch=None, single_branch=False, depth=None, timeout_sec=None, verbose=False, progress=False):**
 
 Clones a Git repo into the current directory.
 
@@ -7548,7 +7559,7 @@ Args:
   verbose (bool): If set, run git clone as verbose.
   progress (bool): If set, print progress to stdout.
 
-&mdash; **def [commit](/recipe_modules/git/api.py#341)(self, message, files=None, author=None, \*\*kwargs):**
+&mdash; **def [commit](/recipe_modules/git/api.py#345)(self, message, files=None, author=None, \*\*kwargs):**
 
 Runs 'git commit' with the given files.
 
@@ -7559,7 +7570,7 @@ Args:
     added to test permission oddities by forcing forged commit failure.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [create\_branch](/recipe_modules/git/api.py#825)(self, branch, remote_branch=None):**
+&mdash; **def [create\_branch](/recipe_modules/git/api.py#829)(self, branch, remote_branch=None):**
 
 Create a branch.
 
@@ -7569,7 +7580,7 @@ Args:
   * remote_branch (str): Name of the remote branch to track, e.g.
     origin/main or cros/mybranch.
 
-&mdash; **def [create\_bundle](/recipe_modules/git/api.py#604)(self, output_path, from_commit, to_ref):**
+&mdash; **def [create\_bundle](/recipe_modules/git/api.py#608)(self, output_path, from_commit, to_ref):**
 
 Creates a git bundle file.
 
@@ -7581,7 +7592,7 @@ Args:
   from_commit (str): Parent commit (exclusive) for bundle.
   to_ref (str): Reference to put in bundle.
 
-&mdash; **def [current\_branch](/recipe_modules/git/api.py#422)(self):**
+&mdash; **def [current\_branch](/recipe_modules/git/api.py#426)(self):**
 
 Returns the currently checked out branch name.
 
@@ -7589,13 +7600,13 @@ Returns:
   (str): The branch name pointed to by HEAD.
   None: If HEAD is detached.
 
-&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#855)(self, branch):**
+&mdash; **def [delete\_local\_branch](/recipe_modules/git/api.py#859)(self, branch):**
 
 Deletes the local branch (if it exists).
 Args:
   branch (str): Name of the branch to be deleted.
 
-&mdash; **def [diff\_check](/recipe_modules/git/api.py#90)(self, path):**
+&mdash; **def [diff\_check](/recipe_modules/git/api.py#94)(self, path):**
 
 Check if the given file changed from HEAD.
 
@@ -7606,7 +7617,7 @@ Returns:
   (bool): True if the file changed from HEAD (or doesn't exist), False
       otherwise.
 
-&mdash; **def [extract\_branch](/recipe_modules/git/api.py#684)(self, refspec, default=None):**
+&mdash; **def [extract\_branch](/recipe_modules/git/api.py#688)(self, refspec, default=None):**
 
 Splits the branch from the refspec.
 
@@ -7620,7 +7631,7 @@ Args:
 Returns:
   (str): the extracted branch name.
 
-&mdash; **def [fetch](/recipe_modules/git/api.py#182)(self, remote=None, refs=None, timeout_sec=None, retries=2):**
+&mdash; **def [fetch](/recipe_modules/git/api.py#186)(self, remote=None, refs=None, timeout_sec=None, retries=2):**
 
 Runs 'git fetch'.
 
@@ -7630,7 +7641,7 @@ Args:
   timeout_sec (int): Timeout in seconds.
   retries (int): Number of times to retry.
 
-&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#236)(self, remote, ref, timeout_sec=None):**
+&mdash; **def [fetch\_ref](/recipe_modules/git/api.py#240)(self, remote, ref, timeout_sec=None):**
 
 Fetch a ref, and return the commit ID (SHA).
 
@@ -7642,7 +7653,7 @@ Args:
 Returns:
   (str): The commit ID (SHA) of the fetched ref.
 
-&mdash; **def [fetch\_refs](/recipe_modules/git/api.py#197)(self, remote, ref, timeout_sec=None, count=1, test_ids=None):**
+&mdash; **def [fetch\_refs](/recipe_modules/git/api.py#201)(self, remote, ref, timeout_sec=None, count=1, test_ids=None):**
 
 Fetch a list of remote refs.
 
@@ -7656,7 +7667,7 @@ Args:
 Returns:
   (list[str]): The commit IDs, starting with the fetched ref.
 
-&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#703)(self, branch):**
+&mdash; **def [get\_branch\_ref](/recipe_modules/git/api.py#707)(self, branch):**
 
 Creates the full ref for a branch.
 
@@ -7668,7 +7679,7 @@ Args:
 Returns:
   (str): The ref for the branch.
 
-&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#121)(self, from_rev=None, to_rev=None, test_stdout=None):**
+&mdash; **def [get\_diff\_files](/recipe_modules/git/api.py#125)(self, from_rev=None, to_rev=None, test_stdout=None):**
 
 Runs 'git diff' to find files changed between two revs.
 
@@ -7686,7 +7697,7 @@ Args:
 Returns:
   (list[str]): changed files.
 
-&mdash; **def [get\_parents](/recipe_modules/git/api.py#718)(self, commit_id, test_contents=None):**
+&mdash; **def [get\_parents](/recipe_modules/git/api.py#722)(self, commit_id, test_contents=None):**
 
 Runs `get log` to determine the parents of a git commit.
 
@@ -7696,11 +7707,11 @@ Args:
 Returns:
   (list[str]): parent commit hash(es).
 
-&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#154)(self):**
+&mdash; **def [get\_working\_dir\_diff\_files](/recipe_modules/git/api.py#158)(self):**
 
 Finds all changed files (including untracked).
 
-&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#743)(self, test_remote='cros-internal', test_url=None):**
+&mdash; **def [gitiles\_commit](/recipe_modules/git/api.py#747)(self, test_remote='cros-internal', test_url=None):**
 
 Return a GitilesCommit for HEAD.
 
@@ -7711,15 +7722,15 @@ Args:
 Returns:
   (GitilesCommit): The GitilesCommit corresponding to HEAD.
 
-&mdash; **def [head\_commit](/recipe_modules/git/api.py#465)(self):**
+&mdash; **def [head\_commit](/recipe_modules/git/api.py#469)(self):**
 
 Returns the HEAD commit ID.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#473)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [head\_context](/recipe_modules/git/api.py#477)(self):**
 
 Returns a context that will revert HEAD when it exits.
 
-&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#732)(self, commit_id):**
+&mdash; **def [is\_merge\_commit](/recipe_modules/git/api.py#736)(self, commit_id):**
 
 Determines if the commit_id is a merge commit.
 
@@ -7729,7 +7740,7 @@ Args:
 Returns:
   (bool): whether the commit has more than 1 parent.
 
-&mdash; **def [is\_reachable](/recipe_modules/git/api.py#537)(self, revision, head='HEAD'):**
+&mdash; **def [is\_reachable](/recipe_modules/git/api.py#541)(self, revision, head='HEAD'):**
 
 Check if the given revision is reachable from HEAD.
 
@@ -7740,7 +7751,7 @@ Args:
 Returns:
   (bool): Whether the revision is reachable from (is an ancestor of) |head|.
 
-&mdash; **def [log](/recipe_modules/git/api.py#504)(self, from_rev, to_rev, limit=None, paths=None):**
+&mdash; **def [log](/recipe_modules/git/api.py#508)(self, from_rev, to_rev, limit=None, paths=None):**
 
 Returns all the `Commit` between `from_rev` and `to_rev`.
 
@@ -7753,7 +7764,7 @@ Args:
 Returns:
   (list[Commit]): A list of commit metas.
 
-&mdash; **def [ls\_remote](/recipe_modules/git/api.py#483)(self, refs, repo_url=None):**
+&mdash; **def [ls\_remote](/recipe_modules/git/api.py#487)(self, refs, repo_url=None):**
 
 Return ls-remote output for a repository.
 
@@ -7764,7 +7775,7 @@ Args:
 Returns:
   (list[Reference]): A list of Refs.
 
-&mdash; **def [merge](/recipe_modules/git/api.py#282)(self, ref, message, \*args, \*\*kwargs):**
+&mdash; **def [merge](/recipe_modules/git/api.py#286)(self, ref, message, \*args, \*\*kwargs):**
 
 Runs `git merge`.
 
@@ -7774,11 +7785,11 @@ Args:
   args (tuple): Additional arguments to git merge.
   kwargs (dict): Passed to recipe_engine/step.
 
-&mdash; **def [merge\_abort](/recipe_modules/git/api.py#316)(self):**
+&mdash; **def [merge\_abort](/recipe_modules/git/api.py#320)(self):**
 
 Runs 'git merge --abort'.
 
-&mdash; **def [merge\_base](/recipe_modules/git/api.py#570)(self, \*args, \*\*kwargs):**
+&mdash; **def [merge\_base](/recipe_modules/git/api.py#574)(self, \*args, \*\*kwargs):**
 
 Return the output from `git merge-base`.
 
@@ -7789,7 +7800,7 @@ Args:
 Returns:
   (str) stdout of the command, or None for errors.
 
-&mdash; **def [push](/recipe_modules/git/api.py#397)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
+&mdash; **def [push](/recipe_modules/git/api.py#401)(self, remote, refspec, dry_run=False, capture_stdout=False, capture_stderr=False, retry=True, force=False, \*\*kwargs):**
 
 Runs 'git push'.
 
@@ -7806,7 +7817,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [rebase](/recipe_modules/git/api.py#658)(self, force=False, branch=None, strategy_option=None):**
+&mdash; **def [rebase](/recipe_modules/git/api.py#662)(self, force=False, branch=None, strategy_option=None):**
 
 Run `git rebase` with the given arguments.
 
@@ -7816,13 +7827,13 @@ Args:
   strategy_option (str): If set, sets the --strategy-option flag. See
     `git help rebase` for details.
 
-&mdash; **def [remote](/recipe_modules/git/api.py#811)(self):**
+&mdash; **def [remote](/recipe_modules/git/api.py#815)(self):**
 
 Return the name of the remote.
 
 Returns: (str): name of the remote, e.g. 'origin' or 'cros'.
 
-&mdash; **def [remote\_head](/recipe_modules/git/api.py#439)(self, remote='.', test_stdout=None):**
+&mdash; **def [remote\_head](/recipe_modules/git/api.py#443)(self, remote='.', test_stdout=None):**
 
 Returns the HEAD ref of the given remote.
 
@@ -7833,7 +7844,7 @@ Returns:
    (str): ref contained in the remote HEAD (ie the default branch), or None
       on error.
 
-&emsp; **@exponential_retry(retries=19, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#255)(self, step_name, timeout_sec=None):**
+&emsp; **@exponential_retry(retries=19, delay=timedelta(minutes=1))**<br>&mdash; **def [remote\_update](/recipe_modules/git/api.py#259)(self, step_name, timeout_sec=None):**
 
 Runs 'git remote update'.
 
@@ -7841,7 +7852,7 @@ Args:
   step_name (str): Name of the step to display.
   timeout_sec (int): Timeout in seconds.
 
-&mdash; **def [remote\_url](/recipe_modules/git/api.py#767)(self, remote='origin'):**
+&mdash; **def [remote\_url](/recipe_modules/git/api.py#771)(self, remote='origin'):**
 
 Get the URL for a defined remote.
 
@@ -7861,14 +7872,14 @@ Args:
 Returns:
   (str): The path to the git repository.
 
-&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#676)(self, args):**
+&mdash; **def [set\_global\_config](/recipe_modules/git/api.py#680)(self, args):**
 
 Runs `git config --global` to set global config.
 
 Args:
   args (list[str]): args for `git config`.
 
-&mdash; **def [set\_upstream](/recipe_modules/git/api.py#783)(self, remote, branch):**
+&mdash; **def [set\_upstream](/recipe_modules/git/api.py#787)(self, remote, branch):**
 
 Set the upretrem for the given branch.
 
@@ -7879,7 +7890,7 @@ Args:
 Returns:
   (StepData): See 'step.__call__'.
 
-&mdash; **def [show\_file](/recipe_modules/git/api.py#587)(self, rev, path, test_contents=None):**
+&mdash; **def [show\_file](/recipe_modules/git/api.py#591)(self, rev, path, test_contents=None):**
 
 Returns the contents of the given file path at the given revision.
 
@@ -7890,7 +7901,7 @@ Args:
 Returns:
   (str): The contents of the file, None if the file does not exist in |rev|.
 
-&mdash; **def [stash](/recipe_modules/git/api.py#851)(self):**
+&mdash; **def [stash](/recipe_modules/git/api.py#855)(self):**
 
 Stash changes.
 ### *recipe_modules* / [git\_cl](/recipe_modules/git_cl)
@@ -14176,10 +14187,10 @@ Test against private methods in the cros_test_sharding module
 &mdash; **def [mock\_metadata](/recipe_modules/cros_tool_runner/examples/full.py#23)(target='test-target'):**
 ### *recipes* / [cros\_try:examples/full](/recipe_modules/cros_try/examples/full.py)
 
-[DEPS](/recipe_modules/cros_try/examples/full.py#15): [cros\_try](#recipe_modules-cros_try), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/cros_try/examples/full.py#16): [cros\_try](#recipe_modules-cros_try), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_try/examples/full.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/cros_try/examples/full.py#25)(api, properties: TestProperties):**
 ### *recipes* / [cros\_version:examples/bump\_version](/recipe_modules/cros_version/examples/bump_version.py)
 
 [DEPS](/recipe_modules/cros_version/examples/bump_version.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_version](#recipe_modules-cros_version), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
@@ -15214,12 +15225,12 @@ Recipe to enforce go/kernel-upstream-tracking-process
 &mdash; **def [RunSteps](/recipes/kernel_technical_debt.py#69)(api: RecipeApi):**
 ### *recipes* / [key\_manager](/recipes/key_manager.py)
 
-[DEPS](/recipes/key_manager.py#20): [cros\_build\_api](#recipe_modules-cros_build_api), [git](#recipe_modules-git), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/key_manager.py#23): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_debug](#recipe_modules-cros_debug), [cros\_try](#recipe_modules-cros_try), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for performing various manipulations on ChromeOS signing keys.
 
-&mdash; **def [RunSteps](/recipes/key_manager.py#33)(api: RecipeApi, properties: KeyManagerProperties):**
+&mdash; **def [RunSteps](/recipes/key_manager.py#40)(api: RecipeApi, properties: KeyManagerProperties):**
 ### *recipes* / [key\_value\_store:tests/parse](/recipe_modules/key_value_store/tests/parse.py)
 
 [DEPS](/recipe_modules/key_value_store/tests/parse.py#19): [key\_value\_store](#recipe_modules-key_value_store), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

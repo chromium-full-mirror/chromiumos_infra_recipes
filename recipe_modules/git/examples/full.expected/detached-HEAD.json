@@ -343,6 +343,15 @@
     "name": "git add"
   },
   {
+    "cmd": [
+      "git",
+      "add",
+      "-A"
+    ],
+    "infra_step": true,
+    "name": "git add (2)"
+  },
+  {
     "cmd": [],
     "name": "log command",
     "~followup_annotations": [

@@ -340,7 +340,16 @@
       "some/other/path"
     ],
     "infra_step": true,
-    "name": "git add",
+    "name": "git add"
+  },
+  {
+    "cmd": [
+      "git",
+      "add",
+      "-A"
+    ],
+    "infra_step": true,
+    "name": "git add (2)",
     "~followup_annotations": [
       "@@@STEP_TEXT@commit is NOT reachable@@@"
     ]
