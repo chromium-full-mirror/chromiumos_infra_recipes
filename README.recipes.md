@@ -1780,13 +1780,13 @@ Returns:
 
 Functions related to build planning.
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#52)(self):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#53)(self):**
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#215)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#219)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
 
 Return a two-tuple of completed and needed builds.
 
@@ -1806,7 +1806,7 @@ Returns:
     A list of Build objects of successful builds with refreshed criticality.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#464)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#468)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1820,7 +1820,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#539)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#543)(self, gerrit_changes: List[bb_common_pb2.GerritChange]):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1829,18 +1829,17 @@ indicated by the Gerrit changes' commit messages. For multiple changes, the
 union of these list is returned.
 
 Args:
-  gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
-    run.
+  gerrit_changes: Gerrit changes applied to this run.
 
 Returns:
-  forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
+  forced_rebuilds: A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_relevant\_builder\_configs](/recipe_modules/build_plan/api.py#87)(self, builder_configs: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
+&mdash; **def [get\_relevant\_builder\_configs](/recipe_modules/build_plan/api.py#88)(self, builder_configs: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
 
 Returns BuilderConfigs deemed relevant by the RelevancyService.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#578)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#582)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 

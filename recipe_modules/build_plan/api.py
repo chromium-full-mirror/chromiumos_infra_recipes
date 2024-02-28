@@ -6,14 +6,15 @@
 """Functions related to build planning."""
 
 from datetime import datetime
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 from PB.chromite.api import relevancy as relevancy_pb2
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto \
   import builds_service as builds_service_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.cros_source.cros_source import GitStrategy
@@ -114,7 +115,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
       self.cros_query_relevant_builder_configs = [
           bc for bc in builder_configs
           if bc.build_target in relevant_build_targets or
-          bc in relevant_bazel_builder_configs
+          bc in relevant_bazel_builder_configs or
+          # Builders with an empty build_target should be assumed relevant
+          # (e.g. chromite-cq).
+          bc.build_target == common_pb2.BuildTarget()
       ]
       return self.cros_query_relevant_builder_configs
 
@@ -527,8 +531,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
           # Refresh the criticality of the builders.
           build.critical = (
-              common_pb2.YES
-              if builder_config.general.critical.value else common_pb2.NO)
+              bb_common_pb2.YES
+              if builder_config.general.critical.value else bb_common_pb2.NO)
           completed_builds.append(build)
 
       presentation.logs['skip log'] = skip_log
@@ -536,7 +540,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           'count_broken_before_rebuilds'] = count_broken_before_rebuilds
       return completed_builds
 
-  def get_forced_rebuilds(self, gerrit_changes):
+  def get_forced_rebuilds(
+      self, gerrit_changes: List[bb_common_pb2.GerritChange]) -> Set[str]:
     """Gets a list of builders whose builds should not be reused.
 
     Compiles a list of all builders whose builds should not be reused as
@@ -544,11 +549,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
     union of these list is returned.
 
     Args:
-      gerrit_changes ([common_pb2.GerritChange]): Gerrit changes applied to this
-        run.
+      gerrit_changes: Gerrit changes applied to this run.
 
     Returns:
-      forced_rebuilds (set(str)): A set of builder names or 'all' if no builds can be
+      forced_rebuilds: A set of builder names or 'all' if no builds can be
         reused.
     """
     with self.m.step.nest('check disallow recycled builds') as pres:

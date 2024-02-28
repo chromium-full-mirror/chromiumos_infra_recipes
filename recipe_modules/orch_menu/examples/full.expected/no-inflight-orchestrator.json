@@ -15346,8 +15346,8 @@
     "name": "clean up orchestrator.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_false_negatives@[\"amd64-generic-cq\", \"arm-generic-cq\", \"arm64-generic-cq\", \"atlas-cq\", \"cave-cq\", \"coral-cq\", \"eve-cq\"]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_false_positives@[]@@@",
+      "@@@SET_BUILD_PROPERTY@cros_query_false_negatives@[]@@@",
+      "@@@SET_BUILD_PROPERTY@cros_query_false_positives@[\"arm-generic-pointless-cq\"]@@@",
       "@@@SET_BUILD_PROPERTY@cros_query_response_was_identical@false@@@"
     ]
   },

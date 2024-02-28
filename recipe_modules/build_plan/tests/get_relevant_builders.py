@@ -51,6 +51,10 @@ def GenTests(api):
   build_api_call_step = 'call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script'
 
   # Test BuilderConfigs.
+  no_target_builder_config = builder_config_pb2.BuilderConfig(
+      id=builder_config_pb2.BuilderConfig.Id(bucket='cq', name='some-util-cq',
+                                             type='CQ'))
+
   target_a_builder_config = builder_config_pb2.BuilderConfig(
       id=builder_config_pb2.BuilderConfig.Id(bucket='cq', name='target-a-cq',
                                              type='CQ'),
@@ -176,6 +180,23 @@ def GenTests(api):
           ], expected_builder_configs=[
               json_format.MessageToJson(target_a_builder_config),
               json_format.MessageToJson(target_a_bazel_builder_config),
+          ]),
+      api.cros_build_api.set_api_return(
+          parent_step_name='',
+          endpoint='RelevancyService/GetRelevantBuildTargets',
+          data=build_api_return_val),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  build_api_return_val = json_format.MessageToJson(
+      relevancy_pb2.GetRelevantBuildTargetsResponse(build_targets=[]))
+  yield api.test(
+      'no-build-target',
+      api.properties(
+          input_builder_configs=[
+              json_format.MessageToJson(no_target_builder_config),
+          ], expected_builder_configs=[
+              json_format.MessageToJson(no_target_builder_config),
           ]),
       api.cros_build_api.set_api_return(
           parent_step_name='',
