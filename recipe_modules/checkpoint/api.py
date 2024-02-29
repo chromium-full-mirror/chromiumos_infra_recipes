@@ -224,10 +224,16 @@ class CheckpointApi(recipe_api.RecipeApi):
             step_included = trigger_step is None or trigger_step in self._run_steps
             if trigger_step is None or inclusion == step_included:
               if prop not in self._original_build.output.properties:
-                presentation.step_text = 'could not get `%s` from previous build' % prop
-                raise StepFailure(presentation.step_text)
-              setattr(self, prop, self._original_build.output.properties[prop])
-              presentation.logs[prop] = getattr(self, prop)
+                if prop == 'build_report_uri':
+                  # Tolerate missing build report in case we're retrying a build that didn't get that far.
+                  presentation.step_text = 'previous build had no build report, starting a new build report'
+                else:
+                  presentation.step_text = 'could not get `%s` from previous build' % prop
+                  raise StepFailure(presentation.step_text)
+              else:
+                setattr(self, prop,
+                        self._original_build.output.properties[prop])
+                presentation.logs[prop] = getattr(self, prop)
 
         if self.child_builds is not None:
           self.child_builder_data = self.m.buildbucket.get_multi(

@@ -291,9 +291,9 @@ def GenTests(api: RecipeApi):
       api.buildbucket.simulated_get(
           no_build_report_uri,
           step_name='RUNNING IN RETRY MODE.get original build'),
-      api.post_check(post_process.StepFailure,
-                     'RUNNING IN RETRY MODE.verify previous build'),
-      api.post_check(post_process.DoesNotRun, 'stage artifacts'),
-      api.post_process(post_process.DropExpectation),
-      status='FAILURE',
-  )
+      api.post_check(
+          post_process.PropertyEquals, 'retry_summary', {
+              RetryStep.Name(RetryStep.STAGE_ARTIFACTS): 'SUCCESS',
+              RetryStep.Name(RetryStep.PUSH_IMAGES): 'SUCCESS',
+              RetryStep.Name(RetryStep.COLLECT_SIGNING): 'SUCCESS'
+          }), api.post_process(post_process.DropExpectation))

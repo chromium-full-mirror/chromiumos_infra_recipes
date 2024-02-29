@@ -176,10 +176,12 @@ class BuildReportingApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('read build report from previous build'):
       build_report = BuildReport()
-      build_report_json = self.m.gsutil.cat(
-          self.m.checkpoint.build_report_uri,
-          stdout=self.m.raw_io.output_text(add_output_log=True))
-      json_format.Parse(build_report_json.stdout, build_report)
+      # If there previous build had a build report, pick up from there. Otherwise, start a new build report.
+      if self.m.checkpoint.build_report_uri:
+        build_report_json = self.m.gsutil.cat(
+            self.m.checkpoint.build_report_uri,
+            stdout=self.m.raw_io.output_text(add_output_log=True))
+        json_format.Parse(build_report_json.stdout, build_report)
 
       # Want to use our BBID.
       build_report.buildbucket_id = self.m.buildbucket.build.id
