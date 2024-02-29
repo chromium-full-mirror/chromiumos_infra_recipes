@@ -97,6 +97,7 @@ class IncrementalApi(RecipeApi):
         bootstrap=False,
         replace=False,
         uprev_packages=False,
+        force_no_chroot_upgrade=True,
         setup_toolchains_if_no_update=False,
     )
 
