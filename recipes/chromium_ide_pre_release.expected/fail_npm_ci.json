@@ -1770,6 +1770,60 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure up-to-date IDE repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "ensure up-to-date IDE repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "cros/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "ensure up-to-date IDE repo.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",

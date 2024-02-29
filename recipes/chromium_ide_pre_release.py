@@ -60,6 +60,11 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
 
         with api.context(cwd=project_dir):
           project_info = api.repo.project_info()
+          # git pull again to avoid commit-race during long repo sync.
+          with api.step.nest('ensure up-to-date IDE repo'):
+            api.git.fetch(project_info.remote, ['main'])
+            api.git.checkout('%s/main' % (project_info.remote))
+          before_bump = api.git.head_commit()
 
           api.repo.start('release', projects=[project_info.name])
 
@@ -89,13 +94,36 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
                 (oncall), step_name='Get oncaller of %s' % (oncall)).output
             reviewers = reviewers + rotation['emails']
 
-          with api.step.nest('upload change') as pres:
+          with api.step.nest('submit change') as pres:
             change = api.gerrit.create_change(
                 'chromiumos/infra/ide', reviewers=reviewers,
                 topic='chromium-ide-pre-release-update')
             pres.properties[
                 'applied labels'] = api.gerrit.set_change_labels_remote(
                     change, {Label.VERIFIED: test_passed})
+            if test_passed < 0:
+              # Skip all following jobs if `npm t` is not passing.
+              return
+            api.gerrit.submit_change(change)
+
+          # It is possible another commit is submitted during the stage.
+          # We checkout to the submitted commits and run npm t again for
+          # verification.
+          # This is important before publishing a prerelease automatically.
+          with api.step.nest('verify update post submit') as pres:
+            with api.step.nest('checkout to bump commit'):
+              api.git.fetch(project_info.remote, ['main'])
+              api.git.checkout('%s/main' % (project_info.remote))
+              after_bump = api.git.head_commit()
+              bump_commit = None
+              commits = api.git.log(before_bump, after_bump)
+              for commit in commits:
+                if 'Bump the version' in commit.message:
+                  bump_commit = commit.rev
+              if not bump_commit:
+                raise api.step.StepFailure('cannot find bump commit.')
+              api.git.checkout(bump_commit)
+            api.step('npm t', ['npm', 't'])
 
 
 def GenTests(api: RecipeTestApi):
@@ -112,16 +140,23 @@ def GenTests(api: RecipeTestApi):
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
-          'upload change.create gerrit change for chromiumos/infra/ide',
+          'submit change.create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
       api.post_check(post_process.MustRun, 'verify update.npm t'),
       api.post_check(post_process.MustRun,
-                     'upload change.set labels on CL 123'),
+                     'submit change.set labels on CL 123'),
       api.post_check(post_process.PropertyEquals, 'applied labels',
                      '{"labels": {"Verified": 1}}'),
+      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.step_data(
+          'verify update post submit.checkout to bump commit.git log',
+          stdout=api.raw_io.output_text(
+              'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
+          )),
+      api.post_check(post_process.MustRun, 'verify update post submit.npm t'),
   )
 
   yield api.test(
@@ -134,9 +169,11 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.DoesNotRun, 'verify update.npm t'),
       api.post_check(
           post_process.DoesNotRun,
-          'upload change.create gerrit change for chromiumos/infra/ide'),
+          'submit change.create gerrit change for chromiumos/infra/ide'),
       api.post_check(post_process.DoesNotRunRE,
-                     r'upload change.set labels on CL .*'),
+                     r'submit change.set labels on CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
       api.expect_status('FAILURE'),
   )
 
@@ -149,10 +186,12 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.StepFailure, 'release update'),
       api.post_check(
           post_process.DoesNotRun,
-          'upload change.create gerrit change for chromiumos/infra/ide'),
+          'submit change.create gerrit change for chromiumos/infra/ide'),
       api.post_check(post_process.DoesNotRun, 'verify update.npm t'),
       api.post_check(post_process.DoesNotRunRE,
-                     r'upload change.set labels on CL .*'),
+                     r'submit change.set labels on CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
       api.expect_status('FAILURE'),
   )
 
@@ -165,11 +204,80 @@ def GenTests(api: RecipeTestApi):
       api.path.exists(api.src_state.workspace_path),
       api.step_data('verify update.npm t', retcode=1),
       api.gerrit.simulated_create_change(
-          'upload change.create gerrit change for chromiumos/infra/ide',
+          'submit change.create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
       ),
       api.post_check(post_process.MustRun,
-                     'upload change.set labels on CL 123'),
+                     'submit change.set labels on CL 123'),
       api.post_check(post_process.PropertyEquals, 'applied labels',
                      '{"labels": {"Verified": -1}}'),
+      api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
+  )
+
+  yield api.test(
+      'fail_post_submit_checkout',
+      api.properties(
+          ChromiumIDEPreReleaseProperties(
+              reviewers=['oka@chromium.org'],
+              reviewer_oncalls=['oncallator:ide_onduty'])),
+      api.step_data('npm ci', retcode=0),
+      api.step_data('release update', retcode=0),
+      api.path.exists(api.src_state.workspace_path),
+      api.step_data('verify update.npm t', retcode=0),
+      api.url.json('Get oncaller of oncallator:ide_onduty',
+                   {'emails': ['fqj@google.com']}),
+      api.gerrit.simulated_create_change(
+          'submit change.create gerrit change for chromiumos/infra/ide',
+          'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
+      ),
+      api.post_check(post_process.MustRun, 'npm ci'),
+      api.post_check(post_process.MustRun, 'release update'),
+      api.post_check(post_process.MustRun, 'verify update.npm t'),
+      api.post_check(post_process.MustRun,
+                     'submit change.set labels on CL 123'),
+      api.post_check(post_process.PropertyEquals, 'applied labels',
+                     '{"labels": {"Verified": 1}}'),
+      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.step_data(
+          'verify update post submit.checkout to bump commit.git log',
+          stdout=api.raw_io.output_text(
+              'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FAdd feature X\x00')),
+      api.post_check(post_process.DoesNotRun,
+                     'verify update post submit.npm t'),
+      api.expect_status('FAILURE'),
+  )
+
+  yield api.test(
+      'fail_post_submit_npm_t',
+      api.properties(
+          ChromiumIDEPreReleaseProperties(
+              reviewers=['oka@chromium.org'],
+              reviewer_oncalls=['oncallator:ide_onduty'])),
+      api.step_data('npm ci', retcode=0),
+      api.step_data('release update', retcode=0),
+      api.path.exists(api.src_state.workspace_path),
+      api.step_data('verify update.npm t', retcode=0),
+      api.step_data('verify update post submit.npm t', retcode=1),
+      api.url.json('Get oncaller of oncallator:ide_onduty',
+                   {'emails': ['fqj@google.com']}),
+      api.gerrit.simulated_create_change(
+          'submit change.create gerrit change for chromiumos/infra/ide',
+          'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
+      ),
+      api.post_check(post_process.MustRun, 'npm ci'),
+      api.post_check(post_process.MustRun, 'release update'),
+      api.post_check(post_process.MustRun, 'verify update.npm t'),
+      api.post_check(post_process.MustRun,
+                     'submit change.set labels on CL 123'),
+      api.post_check(post_process.PropertyEquals, 'applied labels',
+                     '{"labels": {"Verified": 1}}'),
+      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.step_data(
+          'verify update post submit.checkout to bump commit.git log',
+          stdout=api.raw_io.output_text(
+              'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
+          )),
+      api.post_check(post_process.MustRun, 'verify update post submit.npm t'),
+      api.expect_status('FAILURE'),
   )

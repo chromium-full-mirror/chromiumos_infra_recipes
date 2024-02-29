@@ -1770,6 +1770,60 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "ensure up-to-date IDE repo"
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "ensure up-to-date IDE repo.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "cros/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "ensure up-to-date IDE repo.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "start",
@@ -1857,14 +1911,14 @@
   },
   {
     "cmd": [],
-    "name": "upload change",
+    "name": "submit change",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@applied labels@\"{\\\"labels\\\": {\\\"Verified\\\": 1}}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload change.create gerrit change for chromiumos/infra/ide",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
@@ -1872,7 +1926,7 @@
   },
   {
     "cmd": [],
-    "name": "upload change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1896,7 +1950,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upload change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -1924,7 +1978,7 @@
       ]
     },
     "infra_step": true,
-    "name": "upload change.create gerrit change for chromiumos/infra/ide.repo forall",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
@@ -1958,7 +2012,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upload change.create gerrit change for chromiumos/infra/ide.git_cl upload",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1984,14 +2038,14 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "upload change.create gerrit change for chromiumos/infra/ide.git_cl status",
+    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "upload change.set labels on CL 123",
+    "name": "submit change.set labels on CL 123",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@labels@{\"Verified\": 1}@@@",
@@ -2001,7 +2055,7 @@
   },
   {
     "cmd": [],
-    "name": "upload change.set labels on CL 123.ensure auth token",
+    "name": "submit change.set labels on CL 123.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -2019,7 +2073,7 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "upload change.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
+    "name": "submit change.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2040,7 +2094,7 @@
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
     "infra_step": true,
-    "name": "upload change.set labels on CL 123.ensure auth token.Write auth token to temp file",
+    "name": "submit change.set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2063,9 +2117,208 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "upload change.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
+    "name": "submit change.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "submit change.submit CL 123",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromiumos/infra/ide",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "submit change.submit CL 123.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "issue",
+      "123"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "submit change.submit CL 123.git_cl issue",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "land",
+      "-f",
+      "123"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "name": "submit change.submit CL 123.git_cl land",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "verify update post submit"
+  },
+  {
+    "cmd": [],
+    "name": "verify update post submit.checkout to bump commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "cros",
+      "main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "verify update post submit.checkout to bump commit.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "cros/main"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "verify update post submit.checkout to bump commit.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "verify update post submit.checkout to bump commit.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@HEAD@deadbeefdeadbeefdeadbeefdeadbeefdeadbeef@@@",
+      "@@@STEP_LOG_END@HEAD@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%H%x1F%B%x00",
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef...deadbeefdeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "verify update post submit.checkout to bump commit.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@stdout@deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\u001fBump the version\u0000@@@",
+      "@@@STEP_LOG_END@stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "deaddeaddeadbeefdeadbeefdeadbeefdeadbeef"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "infra_step": true,
+    "name": "verify update post submit.checkout to bump commit.git checkout (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "npm",
+      "t"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "name": "verify update post submit.npm t",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
