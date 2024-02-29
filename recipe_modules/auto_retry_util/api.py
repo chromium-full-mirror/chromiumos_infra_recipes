@@ -26,6 +26,7 @@ from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import RetryDeta
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution import CqTestFailureFaultAttributionStats, CqFailureAttribute
 from PB.recipe_modules.chromeos.exonerate.exonerate import FailedTestStats
 from PB.recipe_modules.chromeos.exonerate.exonerate import OverallTestStats
+from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForGreenStatus
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
@@ -71,6 +72,8 @@ EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES = 'retry-prejob-failures'
 EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN = 'wait-for-green'
 EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES = 'retry-sdk-failures'
 EXPERIMENTAL_FEATURE_RETRY_ATTRIBUTED_FAILURES = 'retry-attributed-failures'
+
+EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES = 'retry-not-at-fault-package-failures'
 
 RETRYABLE_STATUSES = [
     bb_common_pb2.FAILURE,
@@ -416,6 +419,23 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               cq_run.
               id].wait_for_green_stats.no_snapshot_data_retryable_builders = no_snapshot_data_builders
           retryable_failure_builders.extend(no_snapshot_data_builders)
+
+      if self.is_experimental_feature_enabled(
+          EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES, cq_run):
+        not_at_fault_builders = self._get_not_cl_affected_package_failure_builders(
+            cq_run)
+        failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+        not_at_fault_retryable_builders = [
+            b for b in not_at_fault_builders
+            # Builders which failed on snapshot should not be retried until
+            # "wait-for-green" kicks in.
+            if _snapshot_builder(b) not in failed_on_snapshot_builders and
+            b not in retryable_failure_builders
+        ]
+        if not_at_fault_retryable_builders:
+          self._experimental_retries[cq_run.id].add(
+              EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES)
+          retryable_failure_builders.extend(not_at_fault_retryable_builders)
 
       # If there were any successful child builders, it means the SDK failures
       # are likely not the fault of the CL. Even pointless successful builds
@@ -1739,3 +1759,22 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         return False
 
     return True
+
+  def _get_not_cl_affected_package_failure_builders(
+      self, cq_run: build_pb2.Build) -> List[Optional[str]]:
+    """Get any builds which had unrelated package failures."""
+    output_dict = json_format.MessageToDict(cq_run.output.properties)
+    child_build_info = output_dict.get('child_build_info', [])
+
+    builders = []
+    for cbi in child_build_info:
+      package_failures = [
+          json_format.ParseDict(x, PackageFailure())
+          for x in cbi.get('package_failures', [])
+      ]
+      if not package_failures:
+        continue
+      if all(not x.affected_by_changes for x in package_failures):
+        builders.append(cbi['builder']['builder'])
+
+    return builders
