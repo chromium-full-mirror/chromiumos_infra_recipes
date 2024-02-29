@@ -397,6 +397,7 @@
   * [cros_sdk:examples/full](#recipes-cros_sdk_examples_full)
   * [cros_sdk:examples/publish_toolchain_info](#recipes-cros_sdk_examples_publish_toolchain_info)
   * [cros_sdk:tests/check_sdk_cache_state](#recipes-cros_sdk_tests_check_sdk_cache_state)
+  * [cros_sdk:tests/cleanup_context_exception_handling](#recipes-cros_sdk_tests_cleanup_context_exception_handling) &mdash; Tests exception handling in the cleanup_context.
   * [cros_sdk:tests/is_chroot_usable](#recipes-cros_sdk_tests_is_chroot_usable)
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
   * [cros_sdk:tests/update](#recipes-cros_sdk_tests_update)
@@ -4459,7 +4460,7 @@ Args:
 Returns:
   See 'step.__call__'.
 
-&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#671)(self):**
+&mdash; **def [build\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#683)(self):**
 
 Chroot needs to be tightened to 755 for the build process.
 
@@ -4488,7 +4489,7 @@ Args:
   checkout_path (Path): Path to source checkout.  Default:
       cros_source.workspace_path.
 
-&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#641)(self):**
+&mdash; **def [cleanup\_sysroot](/recipe_modules/cros_sdk/api.py#653)(self):**
 
 &mdash; **def [configure](/recipe_modules/cros_sdk/api.py#73)(self, chroot_parent_path):**
 
@@ -4548,7 +4549,7 @@ Returns the default SDK Sysroot.
 
 Return whether we are forcing toolchain_cls off for testing.
 
-&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#720)(self, build_target: str):**
+&mdash; **def [get\_toolchain\_info](/recipe_modules/cros_sdk/api.py#732)(self, build_target: str):**
 
 Retrieve metadata about SDK/toolchain usage.
 
@@ -4586,7 +4587,7 @@ This boolean is sticky.
 
 &emsp; **@property**<br>&mdash; **def [remoteexec\_config](/recipe_modules/cros_sdk/api.py#267)(self):**
 
-&mdash; **def [run](/recipe_modules/cros_sdk/api.py#680)(self, name, cmd, env=None, \*\*kwargs):**
+&mdash; **def [run](/recipe_modules/cros_sdk/api.py#692)(self, name, cmd, env=None, \*\*kwargs):**
 
 Runs a command in a cros_sdk chroot.
 
@@ -4635,12 +4636,12 @@ Set the remoteexec config.
 
 &mdash; **def [set\_use\_flags](/recipe_modules/cros_sdk/api.py#271)(self, use_flags):**
 
-&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#662)(self):**
+&mdash; **def [swarming\_chmod\_chroot](/recipe_modules/cros_sdk/api.py#674)(self):**
 
 Chroot is deployed as root, therfore change permissions to
 allow for Swarming cache uninstall/install.
 
-&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#646)(self, checkout_path):**
+&mdash; **def [unlink\_chroot](/recipe_modules/cros_sdk/api.py#658)(self, checkout_path):**
 
 Unlink the chroot from the chromiumos checkout.
 
@@ -13859,6 +13860,14 @@ Unit tests for the run_build_planner function.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/check_sdk_cache_state.py#19)(api):**
+### *recipes* / [cros\_sdk:tests/cleanup\_context\_exception\_handling](/recipe_modules/cros_sdk/tests/cleanup_context_exception_handling.py)
+
+[DEPS](/recipe_modules/cros_sdk/tests/cleanup_context_exception_handling.py#10): [cros\_sdk](#recipe_modules-cros_sdk), [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Tests exception handling in the cleanup_context.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/cleanup_context_exception_handling.py#16)(api):**
 ### *recipes* / [cros\_sdk:tests/is\_chroot\_usable](/recipe_modules/cros_sdk/tests/is_chroot_usable.py)
 
 [DEPS](/recipe_modules/cros_sdk/tests/is_chroot_usable.py#11): [cros\_sdk](#recipe_modules-cros_sdk), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

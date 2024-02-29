@@ -615,28 +615,40 @@ class CrosSdkApi(RecipeApi):
       checkout_path (Path): Path to source checkout.  Default:
           cros_source.workspace_path.
     """
+    failing_build_exception = None
     self.m.file.ensure_directory('ensure chroot directory', self._chroot_path)
     try:
       yield
-    except StepFailure:
+    except StepFailure as sf:
+      failing_build_exception = sf
       self.mark_sdk_as_dirty()
-      raise
     finally:
       with self.m.step.nest('clean up SDK chroot'):
-        if self._chroot_initialized:
-          self.cleanup_sysroot()
-          self._write_sdk_cache_state()
+        try:
+          if self._chroot_initialized:
+            self.cleanup_sysroot()
+            self._write_sdk_cache_state()
 
-          if self._sdk_is_dirty:
-            self._delete_chroot(name='Invalidating SDK due to dirty state')
+            if self._sdk_is_dirty:
+              self._delete_chroot(name='Invalidating SDK due to dirty state')
 
-          self.unlink_chroot(checkout_path or self.m.cros_source.workspace_path)
-          self.swarming_chmod_chroot()
+            self.unlink_chroot(checkout_path or
+                               self.m.cros_source.workspace_path)
+            self.swarming_chmod_chroot()
 
-          if not self._test_data.get('is_chroot_usable', []) == []:
-            raise StepFailure('not all input test data used')
-        else:
-          self._delete_chroot(name='ensure no rogue SDK')
+            if not self._test_data.get('is_chroot_usable', []) == []:
+              raise StepFailure('not all input test data used')
+          else:
+            self._delete_chroot(name='ensure no rogue SDK')
+
+        # If cleaning up the SDK threw an exception, surface that exception
+        # unless there was an earlier exception.
+        except StepFailure as sf:
+          raise failing_build_exception or sf
+
+      # Finally, raise any exception that has yet to be raised.
+      if failing_build_exception:
+        raise failing_build_exception
 
   def cleanup_sysroot(self):
     with self.m.step.nest('removing sysroot'):
