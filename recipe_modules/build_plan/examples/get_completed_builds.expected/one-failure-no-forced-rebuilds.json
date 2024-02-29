@@ -52,9 +52,16 @@
   },
   {
     "cmd": [],
-    "name": "get completed builds.read builder configs",
+    "name": "get completed builds.checking amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get completed builds.checking amd64-generic-cq.read builder configs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -70,10 +77,17 @@
       "text"
     ],
     "infra_step": true,
-    "name": "get completed builds.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
+    "name": "get completed builds.checking amd64-generic-cq.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get completed builds.checking atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

@@ -87,6 +87,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self._stats
 
   @property
+  def lookback_hours(self) -> float:
+    """Returns lookback hours"""
+    return self._lookback_hours
+
+  @lookback_hours.setter
+  def lookback_hours(self, lookback_hours):
+    self._lookback_hours = lookback_hours
+
+  @property
   def _greenness_bucket(self) -> str:
     """Returns bucket to query for greenness."""
     return 'staging' if self.m.cros_infra_config.is_staging else 'postsubmit'

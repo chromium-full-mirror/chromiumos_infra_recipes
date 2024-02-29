@@ -1056,6 +1056,7 @@
       },
       "general": {
         "brokenBefore": "2019-11-01T00:00:00Z",
+        "brokenUntil": "SHA1",
         "critical": true,
         "manifest": "PUBLIC"
       },

@@ -189,7 +189,8 @@
       "@@@STEP_LOG_LINE@planner_input@      \"general\": {@@@",
       "@@@STEP_LOG_LINE@planner_input@        \"critical\": true,@@@",
       "@@@STEP_LOG_LINE@planner_input@        \"brokenBefore\": \"2019-11-01T00:00:00Z\",@@@",
-      "@@@STEP_LOG_LINE@planner_input@        \"manifest\": \"PUBLIC\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@        \"manifest\": \"PUBLIC\",@@@",
+      "@@@STEP_LOG_LINE@planner_input@        \"brokenUntil\": \"SHA1\"@@@",
       "@@@STEP_LOG_LINE@planner_input@      },@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"artifacts\": {@@@",
       "@@@STEP_LOG_LINE@planner_input@        \"prebuilts\": \"NONE\"@@@",
@@ -467,7 +468,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "\n4\n2\n chromium-review.googlesource.com\u0012\bchromeos\u0018\ufffd\ufffd\u0007 \u0007\u001a\ufffd\u0001\n\u0018\n\u0010amd64-generic-cq\u0018\u0001\"\u0002cq\u0012\u0006\n\u0002\b\u00018\u0001\"4\b\u0003\u001a\u0013prebuilts_gs_bucket\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001c\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aP\n\u0016\n\u000earm-generic-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aA\n\u0018\n\u0010arm64-generic-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001aZ\n \n\u0018arm-generic-pointless-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a|\n\u0013\n\batlas-cq\u0018\u0001\"\u0005atlas\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a?\n\u000f\n\u0007cave-cq\u0018\u0001\"\u0002cq*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a\ufffd\u0001\n\u0010\n\bcoral-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001ac\n\u000e\n\u0006eve-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\"Z\nX\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0003abc\"\u0013refs/heads/snapshot",
+      "\n4\n2\n chromium-review.googlesource.com\u0012\bchromeos\u0018\ufffd\ufffd\u0007 \u0007\u001a\ufffd\u0001\n\u0018\n\u0010amd64-generic-cq\u0018\u0001\"\u0002cq\u0012\u0006\n\u0002\b\u00018\u0001\"4\b\u0003\u001a\u0013prebuilts_gs_bucket\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u001c\n\u0011\n\u000fchrome_internal0\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aP\n\u0016\n\u000earm-generic-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001aG\n\u0018\n\u0010arm64-generic-cq\u0018\u0001\"\u0002cq\u0012\u0014\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0001R\u0004SHA1\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001aZ\n \n\u0018arm-generic-pointless-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0001\"\u0002\b\u0003*\u0002\b\u00012\u0007\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a|\n\u0013\n\batlas-cq\u0018\u0001\"\u0005atlas\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001a?\n\u000f\n\u0007cave-cq\u0018\u0001\"\u0002cq*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0003\u0001\ufffd\u0001\u0004\u0010\u0002(\u0001:\u0004(\u0002@\u0001\u001a\ufffd\u0001\n\u0010\n\bcoral-cq\u0018\u0001\"\u0002cq\u0012\u0004\n\u00008\u0002\"\u001f\b\u0003\"\u0012chromeos-throwawayB\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\"\n\u0011\n\u000fchrome_internal0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\u001ac\n\u000e\n\u0006eve-cq\u0018\u0001\"\u0002cq\u0012\u000e\n\u0002\b\u0001\"\u0006\b\ufffd\ufffd\ufffd\ufffd\u00058\u0002\"\u000b\b\u0003B\u0007\n\u0005\u0012\u0003\n\u0001\u0001*\u0002\b\u00012\u000f0\u0001z\u0004\n\u0002\u0001\u0003\ufffd\u0001\u0004\u0010\u0002(\u0001:\u001f(\u0002@\u0001J\u0019\n\bchromite\u0012\rchromeos-base\"Z\nX\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0003abc\"\u0013refs/heads/snapshot",
       "[CLEANUP]/build-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -1203,7 +1204,7 @@
     "name": "get build history.get completed builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
+      "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because its snapshot  was broken until SHA1@@@",
       "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
       "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
       "@@@STEP_LOG_END@skip log@@@",
@@ -1269,6 +1270,116 @@
       "@@@STEP_LINK@atlas-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514004@@@",
       "@@@STEP_LINK@atlas-cq@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@",
       "@@@STEP_LINK@arm64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking amd64-generic-slim-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking arm64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking arm64-generic-cq.check if build is broken",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"SHA1\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get build history.get completed builds.checking arm64-generic-cq.check if build is broken.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "get build history.get completed builds.checking arm64-generic-cq.check if build is broken.buildbucket.search (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking atlas-slim-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get build history.get completed builds.checking cave-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

@@ -483,41 +483,53 @@ class BuildPlanApi(recipe_api.RecipeApi):
       for build in passed_builds:
         # Filter out non-child builds like vm_test, dry run orchestrator or
         # hw_tests in the future.
-        child_builders = [cs.name for cs in child_specs] + [
-            self.get_slim_builder_name(cs.name) for cs in child_specs
-        ]
-        if build.builder.builder not in child_builders:  #pragma: no cover
-          continue
+        builder = build.builder.builder
+        with self.m.step.nest(f'checking {builder}'):
+          child_builders = [cs.name for cs in child_specs] + [
+              self.get_slim_builder_name(cs.name) for cs in child_specs
+          ]
+          if builder not in child_builders:  #pragma: no cover
+            continue
 
-        if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:
-          skip_log.append(
-              '{} is skipped because recycling was disabled for this builder.'
-              .format(build.builder.builder))
-          continue
+          if builder in forced_rebuilds or 'all' in forced_rebuilds:
+            skip_log.append(
+                '{} is skipped because recycling was disabled for this builder.'
+                .format(build.builder.builder))
+            continue
 
-        builder_config = self.m.cros_infra_config.get_builder_config(
-            build.builder.builder)
-        # We need to offset the original build's start_time to the most likely snapshot chosen.
-        # Won't be a thing once broken_before specifies snapshot instead.
-        lfg_offset = 4 * 60 * 60
-        # If the build ran before a known bug was fixed, don't reuse it.
-        if build.start_time.seconds - lfg_offset < builder_config.general.broken_before.seconds:
-          count_broken_before_rebuilds += 1
-          skip_log.append(
-              '{} is skipped because it was broken till {}UTC'.format(
-                  build.builder.builder,
-                  datetime.utcfromtimestamp(
-                      builder_config.general.broken_before.seconds)))
-          # We are planning to switch broken_before to use snapshot instead of time.
-          # Temporarily, just disable lfg. b/314764930
-          self.m.looks_for_green.enable_looks_for_green = False
-          continue
+          builder_config = self.m.cros_infra_config.get_builder_config(builder)
+          broken_until_snapshot = builder_config.general.broken_until
+          if broken_until_snapshot:
+            build_snapshot = build.input.gitiles_commit.id
+            is_build_broken = self.m.cros_history.is_build_broken(
+                build_snapshot, broken_until_snapshot)
+            if is_build_broken:
+              count_broken_before_rebuilds += 1
+              skip_log.append(
+                  '{} is skipped because its snapshot {} was broken until {}'
+                  .format(builder, build_snapshot, broken_until_snapshot))
+              continue
+          # We need to offset the original build's start_time to the most likely snapshot chosen.
+          # Won't be a thing once broken_before specifies snapshot instead.
+          lfg_offset = 4 * 60 * 60
+          # If the build ran before a known bug was fixed, don't reuse it.
+          if build.start_time.seconds - lfg_offset < builder_config.general.broken_before.seconds:
+            count_broken_before_rebuilds += 1
+            skip_log.append(
+                '{} is skipped because it was broken till {}UTC'.format(
+                    builder,
+                    datetime.utcfromtimestamp(
+                        builder_config.general.broken_before.seconds)))
+            # We are planning to switch broken_before to use snapshot instead of time.
+            # Temporarily, just disable lfg. b/314764930
+            self.m.looks_for_green.enable_looks_for_green = False
+            continue
 
-        # Refresh the criticality of the builders.
-        build.critical = (
-            common_pb2.YES
-            if builder_config.general.critical.value else common_pb2.NO)
-        completed_builds.append(build)
+          # Refresh the criticality of the builders.
+          build.critical = (
+              common_pb2.YES
+              if builder_config.general.critical.value else common_pb2.NO)
+          completed_builds.append(build)
 
       presentation.logs['skip log'] = skip_log
       presentation.properties[

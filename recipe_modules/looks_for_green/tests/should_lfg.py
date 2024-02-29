@@ -33,6 +33,8 @@ def RunSteps(api, properties):
   should_lfg = api.looks_for_green.should_lfg(
       api.buildbucket.build.input.gerrit_changes)
   api.assertions.assertEqual(properties.expected_should_lfg, should_lfg)
+  api.looks_for_green.lookback_hours = 10
+  api.assertions.assertEqual(10, api.looks_for_green.lookback_hours)
 
 
 gerrit_change_1 = GerritChange(

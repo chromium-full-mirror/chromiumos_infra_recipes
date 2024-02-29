@@ -52,6 +52,20 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "get completed builds.checking amd64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get completed builds.checking atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
