@@ -526,8 +526,11 @@ def _enumerate_cft_tests(api, properties, requests):
       # Is singular in practice, even though its a list. This is because the
       # test_finder_request is being built from 1 request (r).
       # this needs to remain singular for downstream assumptions to work.
-      test_suites = _test_suites_with_filtered_tests(
-          api, r, build_target, test_finder_result.test_suites)
+      test_suites = _convert_test_cases_metadata_to_test_cases(
+          test_finder_result.test_suites)
+
+      test_suites = _test_suites_with_filtered_tests(api, r, build_target,
+                                                     test_suites)
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
         if api.cq.active:
           dry_run = True
@@ -548,7 +551,7 @@ def _enumerate_cft_tests(api, properties, requests):
         test_cases_skip_shard = []
         test_cases_shard_eligible = []
 
-        for test_suite in test_finder_result.test_suites:
+        for test_suite in test_suites:
           for test_case in test_suite.test_cases.test_cases:
             if test_case.id.value.startswith('tauto.tast'):
               test_cases_skip_shard.append(test_case)  # pragma: no cover
@@ -600,6 +603,25 @@ def _enumerate_cft_tests(api, properties, requests):
     return tagged_responses
 
 
+def _convert_test_cases_metadata_to_test_cases(test_suites):
+  """Convert test cases metadata list to test cases list.
+    Args:
+    * test_suites: (List[test_suite]): Test suites of type test_cases_metadata
+
+  Returns: List[test_suite]
+  """
+  converted_test_suites = []
+  for test_suite in test_suites:
+    test_cases = []
+    for test_case_metadata in test_suite.test_cases_metadata.values:
+      if test_case_metadata.test_case is not None:
+        test_cases.append(test_case_metadata.test_case)
+    new_test_suite = ctr_test_suite.TestSuite(
+        test_cases=ctr_test_case.TestCaseList(test_cases=test_cases))
+    converted_test_suites.append(new_test_suite)
+  return converted_test_suites
+
+
 def _get_tast_use_flags(api, r):
   """Retrieve tast use flags from the specified URL.
     Args:
@@ -623,7 +645,7 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
     * test_cases: (List[test_case]): All test cases from a test suite.
     * tast_use_flag_list: List if use flags on DUT.
 
-  Returns: List[test_suite]
+  Returns: List[test_suite], List[string]
   """
   filtered_test_cases = []
   removed_test_cases = []
@@ -646,12 +668,11 @@ def _test_suites_with_filtered_tests(api, r, build_target, test_suites):
     * api: (object): See RunSteps documentation.
     * r: test_platform.Request.
     * build_target : build_target value for request
-    * tests: (List[test_suite]): Test suites containg all test cases
+    * test_suites: (List[test_suite]): Test suites containing all test cases
 
   Returns: List[test_suite]
   """
-  with api.step.nest('metadata based test filtering - %s' %
-                     build_target) as step:
+  with api.step.nest('useflag based test pruning - %s' % build_target) as step:
     tast_use_flag_list = _get_tast_use_flags(api, r)
     if tast_use_flag_list is None:  # pragma: nocover
       step.step_text = 'Skipping as tast_use_flags.txt was not found'
@@ -1127,7 +1148,8 @@ def _test_finder_request(request):  # pragma: nocover
     centralized_suite = raw_suite.removeprefix(CENTRALIZED_SUITE_PREFIX)
     return ctf.CrosTestFinderRequest(centralized_suite=centralized_suite)
 
-  return ctf.CrosTestFinderRequest(test_suites=[_ctr_test_suite(request)])
+  return ctf.CrosTestFinderRequest(test_suites=[_ctr_test_suite(request)],
+                                   metadata_required=True)
 
 
 def _is_centralized_suite(request):  # pragma: nocover
@@ -2289,25 +2311,40 @@ def _generic_cft_enumerate_response(api):
       'enumerate CFT tests.call `cros-tool-runner`.test-finder',
       stdout=api.raw_io.output('''
 {
-   "test_suites":[
-      {
-         "test_cases":{
-            "test_cases":[
-               {
-                  "id":{
-                     "value":"foo-test"
-                  },
-                  "dependencies":[
-                     {
-                        "value":"foo-dep:bar"
-                     }
-                  ]
-               }
-            ]
-         }
-      }
-   ]
-}'''))
+    "test_suites": [
+        {
+            "test_cases_metadata": {
+                "values": [
+                    {
+                        "test_case": {
+                            "id": {
+                                "value": "foo-test"
+                            },
+                            "dependencies": [
+                                {
+                                    "value": "foo-dep:bar"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "test_case": {
+                            "id": {
+                                "value": "tauto.tast.xyz"
+                            },
+                            "dependencies": [
+                                {
+                                    "value": "foo-dep:bar"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+'''))
 
 
 # Not currently used, but keeping it in a comment, as we might need to backfill
@@ -2343,17 +2380,20 @@ def _generic_cft_enumerate_response(api):
 # }'''))
 
 
+
 def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
-  test_cases = ',\n'.join([
+  values = ',\n'.join([
       '''{
-      "id":{
-          "value":"foo-test-%s"
-      },
-      "dependencies":[
-          {
-            "value":"foo-dep:bar"
-          }
-      ]
+        "test_case": {
+            "id": {
+                "value": "foo-test-%d"
+            },
+            "dependencies": [
+                {
+                    "value": "foo-dep:bar"
+                }
+            ]
+        }
     }''' % i for i in range(number_of_test_cases)
   ])
   return api.step_data(
@@ -2362,14 +2402,14 @@ def _multiple_test_cases_cft_enumerate_response(api, number_of_test_cases):
 {
    "test_suites":[
       {
-         "test_cases":{
-            "test_cases":[
+         "test_cases_metadata":{
+            "values":[
                %s
             ]
          }
       }
    ]
-}''' % test_cases))
+}''' % values))
 
 
 def _empty_cft_enumerate_response(api):

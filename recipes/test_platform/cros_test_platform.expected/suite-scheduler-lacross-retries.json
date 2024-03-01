@@ -353,7 +353,8 @@
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    ]@@@",
+      "@@@STEP_LOG_LINE@request@    ],@@@",
+      "@@@STEP_LOG_LINE@request@    \"metadataRequired\": true@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -446,14 +447,14 @@
       }
     },
     "name": "enumerate CFT tests.call `cros-tool-runner`.test-finder",
-    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"testSuites\": [\n      {\n        \"testCaseIds\": {\n          \"testCaseIds\": [\n            {\n              \"value\": \"tast.lacros\"\n            }\n          ]\n        }\n      }\n    ]\n  }\n}",
+    "stdin": "{\n  \"containerMetadataKey\": \"foo-build-target\",\n  \"request\": {\n    \"testSuites\": [\n      {\n        \"testCaseIds\": {\n          \"testCaseIds\": [\n            {\n              \"value\": \"tast.lacros\"\n            }\n          ]\n        }\n      }\n    ],\n    \"metadataRequired\": true\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "enumerate CFT tests.metadata based test filtering - foo-build-target",
+    "name": "enumerate CFT tests.useflag based test pruning - foo-build-target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@No tests filtered/removed@@@"
@@ -461,7 +462,7 @@
   },
   {
     "cmd": [],
-    "name": "enumerate CFT tests.metadata based test filtering - foo-build-target.get dut use flag from GS",
+    "name": "enumerate CFT tests.useflag based test pruning - foo-build-target.get dut use flag from GS",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@tast use flags list@@@"
@@ -491,7 +492,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "enumerate CFT tests.metadata based test filtering - foo-build-target.get dut use flag from GS.gsutil cat gs://foo-metadata-url/tast_use_flags.txt",
+    "name": "enumerate CFT tests.useflag based test pruning - foo-build-target.get dut use flag from GS.gsutil cat gs://foo-metadata-url/tast_use_flags.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
