@@ -825,8 +825,6 @@
       "--source_cache",
       "--branch",
       "main",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "--remote-trybot",
       "-b",
       "release-R65-10323.B",

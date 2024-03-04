@@ -828,8 +828,6 @@
       "worker_branch",
       "--master-build-id",
       "123",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "worker_config"
     ],
     "env": {

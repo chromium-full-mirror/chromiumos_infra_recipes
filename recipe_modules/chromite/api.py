@@ -2,6 +2,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""API for running cbuildbot chromite scripts."""
+
 import base64
 import re
 import xml.etree.ElementTree as ET
@@ -282,8 +284,6 @@ class ChromiteApi(recipe_api.RecipeApi):
     # Set the CIDB main build ID, if specified.
     if self.c.cbb.build_id:
       cbb_args.extend(['--master-build-id', self.c.cbb.build_id])
-
-    cbb_args.extend(['--git-cache-dir', self.m.path['cache'].join('git')])
 
     if goma_dir is None:
       goma_dir = self.m.goma.goma_dir

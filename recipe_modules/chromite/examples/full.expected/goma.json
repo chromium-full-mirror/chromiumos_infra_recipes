@@ -509,8 +509,6 @@
       "main",
       "--buildbucket-id",
       "8945511751514863184",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "auron-paladin"
     ],
     "env": {

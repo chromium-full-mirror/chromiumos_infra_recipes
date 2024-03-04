@@ -822,8 +822,6 @@
       "--source_cache",
       "--branch",
       "main",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "swarming-build-config"
     ],
     "env": {

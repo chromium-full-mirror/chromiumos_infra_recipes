@@ -825,8 +825,6 @@
       "--source_cache",
       "--branch",
       "main",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "--remote-trybot",
       "tryjob_config"
     ],

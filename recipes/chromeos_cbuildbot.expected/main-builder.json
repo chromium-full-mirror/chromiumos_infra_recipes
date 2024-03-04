@@ -825,8 +825,6 @@
       "--source_cache",
       "--branch",
       "worker_branch",
-      "--git-cache-dir",
-      "[CACHE]/git",
       "main_config"
     ],
     "env": {
