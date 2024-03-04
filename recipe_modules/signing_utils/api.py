@@ -185,10 +185,9 @@ class SigningUtilsApi(recipe_api.RecipeApi):
           file_with_hashes.filename = file_name
           file_with_hashes.size = self.m.file.filesizes('compute file size',
                                                         [file_abspath])[0]
-          # TODO(b/310256594): Pass through hashes from signing.
-          # file_with_hashes.md5 = ''
-          # file_with_hashes.sha1 = ''
-          # file_with_hashes.sha256 = ''
+          file_with_hashes.md5 = signed_art.artifact_hashes.signed_md5
+          file_with_hashes.sha1 = signed_art.artifact_hashes.signed_sha1
+          file_with_hashes.sha256 = signed_art.artifact_hashes.signed_sha256
         signed_builds.append(signed_build)
 
         presentation.logs['signed build metadata'] = json.dumps(

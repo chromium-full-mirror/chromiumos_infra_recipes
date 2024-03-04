@@ -45,9 +45,15 @@ def RunSteps(api: RecipeApi):
                   ),
                   signed_artifacts=[
                       signing_pb2.SignedArtifact(
+                          artifact_hashes=signing_pb2.ArtifactHashes(
+                              signed_md5='dead4ead', signed_sha1='dead4ead',
+                              signed_sha256='dead4ead'),
                           signed_artifact_name='foo.bin',
                       ),
                       signing_pb2.SignedArtifact(
+                          artifact_hashes=signing_pb2.ArtifactHashes(
+                              signed_md5='dead4ead', signed_sha1='dead4ead',
+                              signed_sha256='dead4ead'),
                           signed_artifact_name='bad-artifact',
                       )
                   ],
@@ -66,6 +72,9 @@ def RunSteps(api: RecipeApi):
                   ),
                   signed_artifacts=[
                       signing_pb2.SignedArtifact(
+                          artifact_hashes=signing_pb2.ArtifactHashes(
+                              signed_md5='dead4ead', signed_sha1='dead4ead',
+                              signed_sha256='dead4ead'),
                           signed_artifact_name='bar.bin',
                       ),
                   ],
@@ -84,6 +93,9 @@ def RunSteps(api: RecipeApi):
                   ),
                   signed_artifacts=[
                       signing_pb2.SignedArtifact(
+                          artifact_hashes=signing_pb2.ArtifactHashes(
+                              signed_md5='dead4ead', signed_sha1='dead4ead',
+                              signed_sha256='dead4ead'),
                           signed_artifact_name='no-channel.bin',
                       ),
                   ],
@@ -124,9 +136,11 @@ def RunSteps(api: RecipeApi):
           keyset_is_mp=False,
           files=[
               BuildReport.SignedBuildMetadata.FileWithHashes(
-                  filename='foo.bin', size=111),
+                  filename='foo.bin', md5='dead4ead', sha1='dead4ead',
+                  sha256='dead4ead', size=111),
               BuildReport.SignedBuildMetadata.FileWithHashes(
-                  filename='bad-artifact', size=111)
+                  filename='bad-artifact', md5='dead4ead', sha1='dead4ead',
+                  sha256='dead4ead', size=111)
           ],
           versions=expected_versions,
       ),
@@ -139,7 +153,8 @@ def RunSteps(api: RecipeApi):
           keyset_is_mp=True,
           files=[
               BuildReport.SignedBuildMetadata.FileWithHashes(
-                  filename='bar.bin', size=111)
+                  filename='bar.bin', md5='dead4ead', sha1='dead4ead',
+                  sha256='dead4ead', size=111)
           ],
           versions=expected_versions,
       )
