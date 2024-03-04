@@ -980,7 +980,7 @@ class FailuresApi(RecipeApi):
           fatal = False
       updated_failures.append(
           self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                       fatal=fatal, id=f.id))
+                       fatal=fatal, id=f.id, failure_reason=f.failure_reason))
     if new_non_critical_builds:
       with self._with_step(presentation, 'non-critical build check') as pres:
         pres.logs['new non-critical builders'] = new_non_critical_builds
