@@ -92,6 +92,12 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           # BBID
           'LOGDOG_STREAM_PREFIX',
           'SWARMING_TASK_ID',
+
+          # Cloudbot Envvars
+          'CLOUDBOTS_CA_CERTIFICATE',
+          'CLOUDBOTS_LAB_DOMAIN',
+          'CLOUDBOTS_PROXY_ADDRESS',
+          'SWARMING_BOT_ID',
       ]
       cmd = [
           'sudo',
