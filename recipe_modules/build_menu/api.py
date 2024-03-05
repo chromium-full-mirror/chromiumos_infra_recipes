@@ -496,7 +496,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
                                             snapshot_commit=None,
                                             sysroot_archive=None):
-    """Setup the sysroot for the builder and determine build relevance.
+    """Setup the sysroot for the build and determine build relevance.
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
@@ -513,8 +513,24 @@ class BuildMenuApi(recipe_api.RecipeApi):
         packages (list[PackageInfo]): The packages for this build, or an empty
           list.
     """
-    _env_info = collections.namedtuple('env_info', ['pointless', 'packages'])
+    self.setup_sysroot(with_sysroot=with_sysroot,
+                       snapshot_commit=snapshot_commit,
+                       sysroot_archive=sysroot_archive)
+    return self.determine_relevance()
 
+  def setup_sysroot(self, with_sysroot=True, snapshot_commit=None,
+                    sysroot_archive=None):
+    """Sets up the sysroot for the build.
+
+    Args:
+      with_sysroot (bool): Whether to create a sysroot.  Default: True.
+        (Some builders do not require a sysroot.)
+      snapshot_commit (GitilesCommit): The snapshot commit to use for getting
+        prebuilts metadata, or None to use the commit the builder is
+        configured with.
+      sysroot_archive (str): The gs path of a sysroot archive, used to replace
+        the whole sysroot folder.
+    """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
     artifacts = config.artifacts
@@ -533,7 +549,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                                      self.build_target,
                                                      sysroot_archive)
 
-      # Set the target_versions output property, and upload metatdata.
+      # Set the target_versions output property, and upload metadata.
       # This requires a sysroot for at least the package versions.
       self._target_versions = self.m.cros_build_api.PackageService.GetTargetVersions(
           GetTargetVersionsRequest(
@@ -548,6 +564,17 @@ class BuildMenuApi(recipe_api.RecipeApi):
         self.m.metadata_json.upload_to_gs(config, [self.build_target],
                                           partial=True)
 
+  def determine_relevance(self):
+    """Determines build relevance.
+
+    Returns:
+      An object containing:
+        pointless (bool): Whether the build is pointless.
+        packages (list[PackageInfo]): The packages for this build, or an empty
+          list.
+    """
+    config = self.config_or_default
+    _env_info = collections.namedtuple('env_info', ['pointless', 'packages'])
     dep_graph = self.get_dep_graph_and_validate_sdk_reuse()
 
     relevant = True
