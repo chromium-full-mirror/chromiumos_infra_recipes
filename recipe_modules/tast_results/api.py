@@ -442,9 +442,9 @@ class TastResultsApi(recipe_api.RecipeApi):
     if builder_name:
       base_tags.append(('builder_name', builder_name))
 
-    # Fetches the following information from buildbucket.build.infra.swarming.
+    # Fetches the following information from buildbucket.build.infra.
     suite_task_id = self._convert_to_task_request_id(
-        build.infra.swarming.parent_run_id)
+        self.m.buildbucket.swarming_parent_run_id)
     if suite_task_id:
       base_tags.append(('suite_task_id', suite_task_id))
 
@@ -456,9 +456,9 @@ class TastResultsApi(recipe_api.RecipeApi):
         base_tags.append(('image', image))
         base_tags.append(('build', image.split('/')[-1]))
 
-    # Fetches the following information from buildbucket.swarming bot
-    # dimensions.
-    bot_dimensions = build.infra.swarming.bot_dimensions
+    # Fetches the following information from bot_dimensions in
+    # buildbucket.build.infra.
+    bot_dimensions = self.m.buildbucket.swarming_bot_dimensions
     pool = self.m.cros_tags.get_values('pool', bot_dimensions)
     if pool:
       base_tags.append(('pool', pool[0]))
