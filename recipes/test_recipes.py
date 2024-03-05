@@ -235,8 +235,8 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
       affected_files_pres.logs['affected files'] = affected_files
 
     # TODO(crbug/1012763) small bots do not work well with led launch.
-    def _bad_bot_size(swarm: build_pb2.BuildInfra.Swarming) -> bool:
-      for d in swarm.task_dimensions:
+    def _bad_bot_size(task_dims: [common_pb2.RequestedDimension]) -> bool:
+      for d in task_dims:
         if d.key == 'bot_size':
           if d.value and d.value != 'small':
             return False
@@ -263,7 +263,6 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
 
         buildbucket = led_result.result.buildbucket
         build = buildbucket.bbagent_args.build
-        swarm = build.infra.swarming
         recipe = build.input.properties['recipe']
 
         if (verifier.always_launch or
@@ -292,11 +291,12 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
 
           # Provide a unique id for testing.
           if api._test_data.enabled:  # pylint: disable=protected-access
-            swarm.task_id = 'fake-id-{}'.format(idx + 1)
+            build.infra.backend.task.id.id = 'fake-id-{}'.format(idx + 1)
 
           build.input.properties.update(api.cq.props_for_child_build)
           led_result = led_result.then('edit', '-p', 'dry_run=true')
-          if _bad_bot_size(swarm):
+          task_dims = api.buildbucket.backend_task_dimensions_from_build(build)
+          if _bad_bot_size(task_dims):
             led_result = led_result.then('edit', '-d', 'bot_size=large')
 
           # Skip paygen on release builds since we launch paygen directly.
@@ -521,12 +521,12 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     """
     vals = api.led.get_arg_values(cmd, 'd')
     k, v = vals[0].split('=')
-    swarm = job.buildbucket.bbagent_args.build.infra.swarming
-    for d in swarm.task_dimensions:
+    backend = job.buildbucket.bbagent_args.build.infra.backend
+    for d in backend.task_dimensions:
       if d.key == k:
         d.value = v
       return job
-    dim = swarm.task_dimensions.add()
+    dim = backend.task_dimensions.add()
     dim.key = k
     dim.value = v
     return job
@@ -539,7 +539,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     build_proto.builder.builder = builder
 
     if recipe_name != 'no_size_recipe':
-      dim = build_proto.infra.swarming.task_dimensions.add()
+      dim = build_proto.infra.backend.task_dimensions.add()
       dim.key = 'bot_size'
       dim.value = 'small' if recipe_name == 'release_triggerer' else 'large'
 
