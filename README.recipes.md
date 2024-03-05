@@ -8398,11 +8398,11 @@ Args:
 
 Recipe module to perform a build on an old checkout state.
 
-#### **class [IncrementalApi](/recipe_modules/incremental/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [IncrementalApi](/recipe_modules/incremental/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 Module for performing builds on old checkout state.
 
-&mdash; **def [DoOldBuild](/recipe_modules/incremental/api.py#26)(self, api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+&mdash; **def [DoOldBuild](/recipe_modules/incremental/api.py#23)(self, api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
 
 Rewind the checkout, install packages, and then forward the checkout.
 
@@ -8410,9 +8410,6 @@ Args:
     api: The recipe API.
     config: The BuilderConfig for this incremental builder.
     properties: Input properties for this build.
-
-Returns:
-    A list of relevant packages built.
 ### *recipe_modules* / [ipc](/recipe_modules/ipc)
 
 [DEPS](/recipe_modules/ipc/__init__.py#5): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]

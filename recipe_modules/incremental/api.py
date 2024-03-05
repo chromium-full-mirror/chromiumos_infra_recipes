@@ -5,11 +5,8 @@
 
 """Recipe module to perform a build on an old checkout state."""
 
-from typing import List
-
 # pylint: disable=import-error
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties
 from recipe_engine.recipe_api import RecipeApi
@@ -24,16 +21,13 @@ class IncrementalApi(RecipeApi):
     super().__init__(*args, **kwargs)
 
   def DoOldBuild(self, api: RecipeApi, config: BuilderConfig,
-                 properties: IncrementalProperties) -> List[PackageInfo]:
+                 properties: IncrementalProperties):
     """Rewind the checkout, install packages, and then forward the checkout.
 
         Args:
             api: The recipe API.
             config: The BuilderConfig for this incremental builder.
             properties: Input properties for this build.
-
-        Returns:
-            A list of relevant packages built.
         """
     is_public = config.general.manifest == BuilderConfig.General.PUBLIC
 
@@ -111,11 +105,10 @@ class IncrementalApi(RecipeApi):
         project=api.src_state.gitiles_commit.project,
         id=delta_hash,
     )
-    env_info = api.build_menu.setup_sysroot_and_determine_relevance(
+    api.build_menu.setup_sysroot(
         snapshot_commit=old_commit if delta_hash else None)
-    packages = env_info.packages
     api.build_menu.bootstrap_sysroot(config)
-    api.build_menu.install_packages(config, packages)
+    api.build_menu.install_packages(config)
 
     # Attempt to checkout the current snapshot.
     if properties.use_llfg:
@@ -146,5 +139,3 @@ class IncrementalApi(RecipeApi):
             api.build_menu.build_target.name,
         ],
     )
-
-    return packages

@@ -83,7 +83,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not build_time_delta:
     raise StepFailure('build_time_delta input property is empty')
 
-  relevant_pkgs = None
   gerrit_changes = api.cros_infra_config.gerrit_changes
   if properties.run_relevancy_check:
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
@@ -99,8 +98,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                        summary_markdown='Build was not relevant.')
 
   try:
-    _relevant_pkgs = api.incremental.DoOldBuild(api, config, properties)
-    relevant_pkgs = relevant_pkgs or _relevant_pkgs
+    api.incremental.DoOldBuild(api, config, properties)
     old_build_successful = True
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
@@ -136,7 +134,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       # b/321760005: toolchain files like `package.provided` may need to be
       # updated.
       api.build_menu.bootstrap_sysroot(config=config)
-      api.build_menu.install_packages(config=config, packages=relevant_pkgs,
+      api.build_menu.install_packages(config=config,
                                       package_indexes=package_indexes)
     except StepFailure as sf:
       failing_build_exception = sf
