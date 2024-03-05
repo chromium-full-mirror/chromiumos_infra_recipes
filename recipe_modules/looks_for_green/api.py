@@ -443,7 +443,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       # Filter the last n builds to builds that were created before the current
       # build.
       prev_snapshot_builds = self._get_snapshots(
-          limit=20, latest_start=current_build.create_time)
+          limit=2 * self._lookback_hours,
+          latest_start=current_build.create_time)
 
     with self.m.step.nest(
         'update with previous snapshot builds') as presentation:

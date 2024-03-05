@@ -8732,7 +8732,7 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#469)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#470)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
@@ -8774,7 +8774,7 @@ the microseconds to use seconds as level of precision.
 
 &emsp; **@related_changes_to_apply.setter**<br>&mdash; **def [related\_changes\_to\_apply](/recipe_modules/looks_for_green/api.py#113)(self, related_changes_to_apply):**
 
-&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#480)(self, builders_to_be_scheduled: List[str]):**
+&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#481)(self, builders_to_be_scheduled: List[str]):**
 
 Change LFG lookback based on which builders are about to run & broken_until entries.
 
