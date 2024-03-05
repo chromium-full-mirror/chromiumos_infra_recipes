@@ -193,10 +193,10 @@ class LabpackCommand(recipe_api.RecipeApi):
     assert isinstance(dut_state, str)
 
     models = models or self.m.cros_tags.get_values(
-        'label-model', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+        'label-model', self.m.buildbucket.swarming_bot_dimensions)
 
     hostnames = hostnames or self.m.cros_tags.get_values(
-        'dut_name', self.m.buildbucket.build.infra.swarming.bot_dimensions)
+        'dut_name', self.m.buildbucket.swarming_bot_dimensions)
 
     use_ile_de_france = self.get_use_ile_de_france(models=models,
                                                    common_config=common_config)
@@ -226,7 +226,7 @@ class LabpackCommand(recipe_api.RecipeApi):
 
   def get_dut_name(self) -> str:
     """get the dut name from the swarming bot dimensions"""
-    d = self.m.buildbucket.build.infra.swarming.bot_dimensions
+    d = self.m.buildbucket.swarming_bot_dimensions
     vals = self.m.cros_tags.get_values('dut_name', d)
     if vals:  # pragma: nocover
       return vals[0]
