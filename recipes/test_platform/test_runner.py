@@ -600,6 +600,9 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "gale"
     * testplan_id: the name of the testplan associated with test runner build
         e.g. "ltl_testplan"
+    * chameleon_type: Chameleon type. If multiple labels exist in swarming bot
+        dimensions, they will be concatenated by ",",
+        e.g. "CHAMELEON_TYPE_HDMI,CHAMELEON_TYPE_V3"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -664,6 +667,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
       base_tags.append(('secondary_models', secondary_models[0]))
   else:
     base_tags.append(('multiduts', 'False'))
+
+  chameleon_type = api.cros_tags.get_values(
+      'label-chameleon_type', api.buildbucket.swarming_bot_dimensions)
+  if chameleon_type:
+    base_tags.append(('chameleon_type', ','.join(chameleon_type)))
 
   drone = api.cros_tags.get_values('drone',
                                    api.buildbucket.swarming_bot_dimensions)
@@ -3580,6 +3588,49 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-pool': 'DUT_POOL_QUOTA',
               'label-carrier': 'fake-carrier',
               'label-cbx': 'True',
+              'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
+          }),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      # Sets Tast test name in the test request for Autotest wrapper result
+      # upload.
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL, 'tast.critical-system-shard-2'),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _mock_autotest_wrapper_tast_result(),
+      _autotest_wrapper_tast_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-tast-with-duplicate-swarming-bot-dimensions',
+      _set_build(
+          bid=42,
+          tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+              'test-plan-id': 'ltl_testplan',
+          },
+          swarming_tags={
+              # Duplicate chameleon_type labels.
+              'label-chameleon_type': [
+                  'CHAMELEON_TYPE_HDMI', 'CHAMELEON_TYPE_V3'
+              ]
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
