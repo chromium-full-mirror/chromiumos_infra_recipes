@@ -1,20 +1,5 @@
 [
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
-    "timeout": 180
-  },
-  {
     "cmd": [],
     "name": "ensure swarming bin from CIPD"
   },
@@ -61,7 +46,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "get bot count query result for cq",
+    "name": "get bot count query result for some-bot-group",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\",@@@",
@@ -77,12 +62,31 @@
   {
     "cmd": [
       "[START_DIR]/cipd/swarming",
+      "bots",
+      "-S",
+      "chromeos-swarming.appspot.com",
+      "-count",
+      "-dimension",
+      "role=foo",
+      "-dimension",
+      "bot_size=large"
+    ],
+    "infra_step": true,
+    "name": "get bot count query result for some-bot-group (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/swarming",
       "tasks",
       "-S",
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1336913601.5",
+      "1336827201.5",
       "-state",
       "RUNNING",
       "-tag",
@@ -91,7 +95,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq",
+    "name": "get task count query result for some-bot-group",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -108,7 +112,7 @@
       "chromeos-swarming.appspot.com",
       "-count",
       "-start",
-      "1336913603.0",
+      "1336827203.0",
       "-state",
       "PENDING",
       "-tag",
@@ -117,7 +121,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq (2)",
+    "name": "get task count query result for some-bot-group (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -132,109 +136,29 @@
       "tasks",
       "-S",
       "chromeos-swarming.appspot.com",
-      "-count",
       "-start",
-      "1336913604.5",
-      "-state",
-      "RUNNING",
-      "-tag",
-      "role:bar",
-      "-tag",
-      "bot_size:large"
-    ],
-    "infra_step": true,
-    "name": "get task count query result for cq (3)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/swarming",
-      "tasks",
-      "-S",
-      "chromeos-swarming.appspot.com",
-      "-count",
-      "-start",
-      "1336913606.0",
+      "1336827204.5",
       "-state",
       "PENDING",
       "-tag",
-      "role:bar",
+      "role:cq",
       "-tag",
-      "bot_size:large"
+      "bot_size:large",
+      "-limit",
+      "1000"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq (4)",
+    "name": "get task list query result",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_LINE@json.output@[@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T11:53:26.000000Z\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  },@@@",
+      "@@@STEP_LOG_LINE@json.output@  {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"created_ts\": \"2012-05-14T10:53:26.000000Z\"@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@]@@@",
       "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "estimate time between builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@Buildbucket search returned no builds: assuming default 0.167 hrs/build@@@",
-      "@@@STEP_WARNINGS@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}"
-    ],
-    "infra_step": true,
-    "name": "estimate time between builds.search for builds in past hour",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto (2)",
-    "timeout": 180
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "Chrome/config/repo/+/HEAD/configs/bot-scaling/generated/bot_policy.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy.binaryproto",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@missing_bot_fallbacks@[\"cq1\"]@@@",
-      "@@@STEP_LOG_END@missing_bot_fallbacks@@@",
-      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {

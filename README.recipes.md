@@ -117,7 +117,7 @@
   * [snapshot_orch_menu](#recipe_modules-snapshot_orch_menu) &mdash; API providing a menu for snapshot orchestrator steps.
   * [src_state](#recipe_modules-src_state) &mdash; API providing frequently needed values, that we sometimes override.
   * [support](#recipe_modules-support) &mdash; APIs for running recipes/support tools.
-  * [swarming_cli](#recipe_modules-swarming_cli)
+  * [swarming_cli](#recipe_modules-swarming_cli) &mdash; Wrapper functions for calling the swarming CLI.
   * [sysroot_archive](#recipe_modules-sysroot_archive) &mdash; Sysroot archive functions.
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
@@ -755,7 +755,7 @@
   * [src_state:tests/test_api](#recipes-src_state_tests_test_api)
   * [star_doctor](#recipes-star_doctor) &mdash; Recipe for the Star Doctor.
   * [support:examples/full](#recipes-support_examples_full)
-  * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full)
+  * [swarming_cli:examples/full](#recipes-swarming_cli_examples_full) &mdash; Unit tests for the swarming_cli module.
   * [sync_key_value_store](#recipes-sync_key_value_store) &mdash; Sync values from a source-controlled key-value store to a GS:// file.
   * [sysroot_archive:examples/extract_sysroot](#recipes-sysroot_archive_examples_extract_sysroot) &mdash; Tests to verify sysroot_archive.
   * [sysroot_archive:examples/full](#recipes-sysroot_archive_examples_full) &mdash; Test codes for sysroot archive API.
@@ -1196,7 +1196,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#345)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#347)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -1208,7 +1208,7 @@ Returns:
   ConfigResponse (named_tuple), GCE Provider config definitions and missing
     configs.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#362)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#364)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -1273,7 +1273,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#321)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#323)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -1284,7 +1284,7 @@ Args:
 Returns:
   SwarmingStats: Dataclass containing bot and task stats.
 
-&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#405)(bot_policy_config: BotPolicyCfg):**
+&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#407)(bot_policy_config: BotPolicyCfg):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
@@ -1294,7 +1294,7 @@ Args:
 Returns:
   Scaled-down config that only includes data needed for Plx.
 
-&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#458)(dimensions):**
+&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#460)(dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -1304,7 +1304,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#380)(bot_policy_config: BotPolicyCfg, configs: Configs):**
+&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#382)(bot_policy_config: BotPolicyCfg, configs: Configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -1316,7 +1316,7 @@ Returns:
   The original bot_policy_config, updated to reflect ScalingRestriction
   values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#429)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#431)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -10872,20 +10872,23 @@ Returns:
 [DEPS](/recipe_modules/swarming_cli/__init__.py#8): [easy](#recipe_modules-easy), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+Wrapper functions for calling the swarming CLI.
+
+#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that queries Swarming via the CLI.
 
-&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#46)(self, swarming_instance, dimensions=None):**
+&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#49)(self, swarming_instance: str, dimensions: typing.Optional[typing.Iterable[str]]=None, bot_group: typing.Optional[str]=None):**
 
 Retrieves the count of bots from Swarming based on dimensions.
 
 Args:
-  swarming_instance(str): string containing the name of the Swarming
-    instance to query.
-  dimensions (iterable): strings formatted as "key:value" to query Swarming.
+  swarming_instance: The name of the Swarming instance to query.
+  dimensions: Iterable of strings formatted as "key:value" to query
+      Swarming.
+  bot_group: The name of the bot group for which to get the count.
 
-&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#68)(self, dimensions, lookback_hours, swarming_instance):**
+&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#77)(self, dimensions, lookback_hours, swarming_instance):**
 
 Retrieves the list of tasks from Swarming based on dimensions.
 
@@ -10898,18 +10901,19 @@ Args:
 Returns:
   (float) Max pending time in hours.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#113)(self, dimensions, state, lookback_hours, swarming_instance):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#122)(self, dimensions: typing.Iterable[str], state: str, lookback_hours: int, swarming_instance: str, bot_group: typing.Optional[str]=None):**
 
 Retrieves the count of tasks from Swarming based on filters.
 
 Args:
-  dimensions (iterable): strings formatted as 'key:value' to query Swarming.
-  state (str): state of the tasks to query
-  lookback_hours (int): Number of hours to query swarming on.
-  swarming_instance(str): string containing the name of the Swarming
-    instance to query.
+  dimensions: Iterable of strings formatted as 'key:value' to query
+      Swarming.
+  state: The state of the tasks to query
+  lookback_hours: Number of hours to query swarming on.
+  swarming_instance: The name of the Swarming instance to query.
+  bot_group: The name of the bot group for which to get the count.
 
-&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#89)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
+&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#98)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
 
 Retrieves the list of tasks from Swarming based on dimensions and state.
 
@@ -16444,8 +16448,10 @@ json files.
 &mdash; **def [RunSteps](/recipe_modules/support/examples/full.py#21)(api):**
 ### *recipes* / [swarming\_cli:examples/full](/recipe_modules/swarming_cli/examples/full.py)
 
-[DEPS](/recipe_modules/swarming_cli/examples/full.py#11): [bot\_scaling](#recipe_modules-bot_scaling), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/swarming_cli/examples/full.py#10): [bot\_scaling](#recipe_modules-bot_scaling), [swarming\_cli](#recipe_modules-swarming_cli), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
+
+Unit tests for the swarming_cli module.
 
 &mdash; **def [RunSteps](/recipe_modules/swarming_cli/examples/full.py#19)(api):**
 ### *recipes* / [sync\_key\_value\_store](/recipes/sync_key_value_store.py)

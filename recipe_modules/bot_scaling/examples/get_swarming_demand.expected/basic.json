@@ -61,7 +61,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "get bot count query result",
+    "name": "get bot count query result for cq",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\",@@@",
@@ -91,7 +91,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result",
+    "name": "get task count query result for cq",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -117,7 +117,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result (2)",
+    "name": "get task count query result for cq (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -143,7 +143,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result (3)",
+    "name": "get task count query result for cq (3)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -166,7 +166,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result (4)",
+    "name": "get task count query result for cq (4)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"

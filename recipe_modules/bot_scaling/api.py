@@ -307,7 +307,8 @@ class BotScalingApi(recipe_api.RecipeApi):
       if not bot_stats_hold:
         bot_stats_hold = _bot_swarming_stats(
             policy.bot_group,
-            self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim),
+            self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim,
+                                               policy.bot_group),
             policy.scaling_restriction.bot_floor,
             policy.scaling_restriction.bot_ceiling)
       for state in TASK_STATES:
@@ -315,7 +316,8 @@ class BotScalingApi(recipe_api.RecipeApi):
             policy.bot_group, state, task_stats_hold,
             self.m.swarming_cli.get_task_counts(dim, state,
                                                 policy.lookback_hours,
-                                                policy.swarming_instance))
+                                                policy.swarming_instance,
+                                                policy.bot_group))
     return SwarmingStats(bot_stats=bot_stats_hold, task_stats=task_stats_hold)
 
   def get_swarming_stats(self, bot_policy_config):

@@ -658,7 +658,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get bot count query result",
+    "name": "scale bot groups.get current swarming stats.get bot count query result for cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -689,7 +689,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get task count query result",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -716,7 +716,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get task count query result (2)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -743,7 +743,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get task count query result (3)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -767,7 +767,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get task count query result (4)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",

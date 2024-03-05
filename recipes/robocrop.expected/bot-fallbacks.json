@@ -657,7 +657,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "scale bot groups.get current swarming stats.get bot count query result",
+    "name": "scale bot groups.get current swarming stats.get bot count query result for cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@json.output (invalid)@@@",
@@ -1306,7 +1306,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('scale bot groups.get current swarming stats.get bot count query result') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('scale bot groups.get current swarming stats.get bot count query result for cq') (retcode: 1)"
     },
     "name": "$result"
   }

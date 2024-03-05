@@ -124,7 +124,7 @@ def GenTests(api: RecipeTestApi):
       'bot-fallbacks',
       api.properties(commit_changes=True),
       api.override_step_data(
-          'scale bot groups.get current swarming stats.get bot count query result',
+          'scale bot groups.get current swarming stats.get bot count query result for cq',
           retcode=1),
       api.post_check(
           post_process.MustRun,

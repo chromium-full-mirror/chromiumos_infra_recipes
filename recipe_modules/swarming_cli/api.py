@@ -4,6 +4,9 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Wrapper functions for calling the swarming CLI."""
+
+import typing
 from datetime import datetime
 
 from recipe_engine import recipe_api
@@ -43,21 +46,27 @@ class SwarmingCli(recipe_api.RecipeApi):
                                         test_stdout=test_stdout,
                                         infra_step=True)
 
-  def get_bot_counts(self, swarming_instance, dimensions=None):
+  def get_bot_counts(self, swarming_instance: str,
+                     dimensions: typing.Optional[typing.Iterable[str]] = None,
+                     bot_group: typing.Optional[str] = None):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
-      swarming_instance(str): string containing the name of the Swarming
-        instance to query.
-      dimensions (iterable): strings formatted as "key:value" to query Swarming.
+      swarming_instance: The name of the Swarming instance to query.
+      dimensions: Iterable of strings formatted as "key:value" to query
+          Swarming.
+      bot_group: The name of the bot group for which to get the count.
     """
     cmd = ['bots', '-S', swarming_instance, '-count']
     for dim in dimensions:
       # Dims come delimited by ":", which is proper formatting for task queries.
       # But for bot queries, we need them to be delimited by "=".
       cmd.extend(['-dimension', dim.replace(':', '=')])
+    step_name = 'get bot count query result'
+    if bot_group:
+      step_name = f'{step_name} for {bot_group}'
     step = self._run_bin(
-        'get bot count query result', cmd, test_stdout=lambda: self.test_api.
+        step_name, cmd, test_stdout=lambda: self.test_api.
         swarming_bot_step_test_data(dimensions))
     return step
 
@@ -110,24 +119,29 @@ class SwarmingCli(recipe_api.RecipeApi):
         test_stdout=lambda: self.test_api.swarming_task_list_test_data(self.m))
     return step
 
-  def get_task_counts(self, dimensions, state, lookback_hours,
-                      swarming_instance):
+  def get_task_counts(self, dimensions: typing.Iterable[str], state: str,
+                      lookback_hours: int, swarming_instance: str,
+                      bot_group: typing.Optional[str] = None):
     """Retrieves the count of tasks from Swarming based on filters.
 
     Args:
-      dimensions (iterable): strings formatted as 'key:value' to query Swarming.
-      state (str): state of the tasks to query
-      lookback_hours (int): Number of hours to query swarming on.
-      swarming_instance(str): string containing the name of the Swarming
-        instance to query.
+      dimensions: Iterable of strings formatted as 'key:value' to query
+          Swarming.
+      state: The state of the tasks to query
+      lookback_hours: Number of hours to query swarming on.
+      swarming_instance: The name of the Swarming instance to query.
+      bot_group: The name of the bot group for which to get the count.
     """
     cmd = ['tasks', '-S', swarming_instance, '-count']
     cmd.extend(['-start', str(self._calculate_epoch_start(lookback_hours))])
     cmd.extend(['-state', state])
     for dim in dimensions:
       cmd.extend(['-tag', dim])
+    step_name = 'get task count query result'
+    if bot_group:
+      step_name = f'{step_name} for {bot_group}'
     step = self._run_bin(
-        'get task count query result', cmd, test_stdout=lambda: self.test_api.
+        step_name, cmd, test_stdout=lambda: self.test_api.
         swarming_task_step_test_data(dimensions))
     return step
 
