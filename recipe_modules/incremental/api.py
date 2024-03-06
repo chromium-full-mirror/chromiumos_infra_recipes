@@ -117,19 +117,18 @@ class IncrementalApi(RecipeApi):
             'Apply LLFG manifest snapshot',
             [repo_path, 'init', '--u', manifest_url, '-b', 'stable'],
         )
+      api.repo.sync(
+          jobs=REPO_SYNC_JOBS,
+          force_sync=True,
+          detach=True,
+          retry_fetches=3,
+          force_remove_dirty=True,
+      )
     else:
-      with api.repo.m.depot_tools.on_path():
-        api.step(
-            'Apply latest manifest snapshot',
-            [repo_path, 'init', '--u', manifest_url, '-b', 'snapshot'],
-        )
-    api.repo.sync(
-        jobs=REPO_SYNC_JOBS,
-        force_sync=True,
-        detach=True,
-        retry_fetches=3,
-        force_remove_dirty=True,
-    )
+      with api.context(cwd=api.cros_source.workspace_path):
+        api.cros_source.sync_checkout(api.src_state.gitiles_commit,
+                                      api.src_state.build_manifest.url)
+
     api.cros_sdk(
         'regenerate configs',
         [

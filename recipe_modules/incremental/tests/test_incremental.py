@@ -12,6 +12,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -19,6 +20,7 @@ DEPS = [
     'build_menu',
     'cros_prebuilts',
     'cros_sdk',
+    'cros_source',
     'easy',
     'git',
     'incremental',
@@ -31,7 +33,10 @@ DEPS = [
 def RunSteps(api):
   builder_config = BuilderConfig(id=BuilderConfig.Id(name='test'),)
 
-  # non-llfg run
+  cwd = api.cros_source.workspace_path
+  repo_path = cwd.join('.repo')
+  api.file.ensure_directory('repo dir', repo_path)
+
   inc_props = IncrementalProperties(**{
       'cop_enabled': True,
       'build_time_delta': '7.days.ago',
@@ -54,7 +59,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'repo sync'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.MustRun, 'create sysroot'),
-      api.post_check(post_process.MustRun, 'Apply latest manifest snapshot'),
       api.post_check(post_process.MustRun, 'repo sync (2)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
@@ -75,7 +79,6 @@ def GenTests(api):
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.MustRun, 'create sysroot (2)'),
       api.post_check(post_process.MustRun, 'Apply LLFG manifest snapshot'),
-      api.post_check(post_process.MustRun, 'repo sync (4)'),
       api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),

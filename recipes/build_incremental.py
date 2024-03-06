@@ -34,6 +34,7 @@ DEPS = [
     'cros_infra_config',
     'cros_prebuilts',
     'cros_sdk',
+    'cros_source',
     'cros_tags',
     'easy',
     'git',
