@@ -2143,20 +2143,15 @@ def GenTests(api):
 
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags)
-    build_msg = api.buildbucket.ci_build_message(build_id=bid, tags=bb_tags,
-                                                 experiments=experiments,
-                                                 project='chromeos',
-                                                 bucket='test_runner',
-                                                 builder='test_runner')
+    build_msg = api.buildbucket.ci_build_message(
+        build_id=bid, tags=bb_tags, experiments=experiments, project='chromeos',
+        bucket='test_runner', builder='test_runner', on_backend=True)
+    build_msg.infra.backend.task.id.target = 'swarming://chromeos'
     if swarming_tags:
-      if isinstance(swarming_tags, list):
-        # Allows to pass duplicate keys via list.
-        build_msg.infra.swarming.bot_dimensions.extend(swarming_tags)
-      else:
-        build_msg.infra.swarming.bot_dimensions.extend(
-            api.cros_tags.tags(**swarming_tags))
+      build_msg = api.buildbucket.extend_swarming_bot_dimensions(
+          build_msg, swarming_tags)
     if swarming_task_dimensions:
-      build_msg.infra.swarming.task_dimensions.extend(swarming_task_dimensions)
+      build_msg.infra.backend.task_dimensions.extend(swarming_task_dimensions)
     build_msg.infra.swarming.parent_run_id = 'parent-task-id1'
 
     if ancestor_buildbucket_ids:
@@ -3621,20 +3616,9 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'build': 'fake-board-cq/R11-123.45',
               'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test'
-          }, swarming_tags=[
-              common_pb2.StringPair(
-                  key='label-pool',
-                  value='satlab_faft',
-              ),
-              common_pb2.StringPair(
-                  key='label-pool',
-                  value='satlab_tam',
-              ),
-              common_pb2.StringPair(
-                  key='label-pool',
-                  value='satlab_tp101',
-              )
-          ], swarming_task_dimensions=[
+          }, swarming_tags={
+              'label-pool': ['satlab_faft', 'satlab_tam', 'satlab_tp101']
+          }, swarming_task_dimensions=[
               common_pb2.RequestedDimension(
                   key='label-pool',
                   value='satlab_tp101',
