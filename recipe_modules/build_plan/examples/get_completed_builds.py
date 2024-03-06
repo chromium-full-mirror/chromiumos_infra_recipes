@@ -9,6 +9,7 @@
 
 from google.protobuf import timestamp_pb2
 
+from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.build_plan.examples.get_completed_builds import \
@@ -28,8 +29,8 @@ PROPERTIES = GetCompletedBuildsProperties
 
 def RunSteps(api, properties):
   result = api.build_plan.get_completed_builds([
-      'atlas-cq',
-      'amd64-generic-cq',
+      BuilderConfig.Orchestrator.ChildSpec(name='atlas-cq'),
+      BuilderConfig.Orchestrator.ChildSpec(name='amd64-generic-cq'),
   ], properties.forced_rebuilds)
   actual_completed_builders = [build.builder.builder for build in result]
   api.assertions.assertEqual(

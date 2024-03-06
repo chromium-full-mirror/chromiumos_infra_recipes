@@ -129,6 +129,7 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -194,6 +195,7 @@ def GenTests(api):
               'eve-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -224,6 +226,7 @@ def GenTests(api):
       api.properties(
           expected_build_requests=['atlas-cq', 'arm64-generic-cq', 'eve-cq'],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -261,6 +264,7 @@ def GenTests(api):
               'coral-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -327,6 +331,7 @@ def GenTests(api):
               'coral-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -367,6 +372,7 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_additional_chrome_pupr_builders=[],
@@ -401,6 +407,7 @@ def GenTests(api):
               'atlas-cq',
               'arm64-generic-cq',
           ], expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ], expected_additional_chrome_pupr_builders=[], **{
               '$chromeos/cros_infra_config':
@@ -469,7 +476,10 @@ def GenTests(api):
               'eve-cq',
               'amd64-generic-cq',
           ],
-          expected_completed_builds=[],
+          expected_completed_builds=[
+              'amd64-generic-slim-cq',
+              'cave-cq',
+          ],
           expected_experiments=[],
           expected_additional_chrome_pupr_builders=[
               'amd64-generic-cq',
@@ -501,10 +511,6 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds,
-          'filter additional chrome pupr builds.get completed builds.get change build history.buildbucket.search'
-      ),
       api.buildbucket.simulated_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
@@ -557,6 +563,7 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_experiments=[],
@@ -600,6 +607,7 @@ def GenTests(api):
               'arm64-generic-cq',
           ],
           expected_completed_builds=[
+              'amd64-generic-slim-cq',
               'cave-cq',
           ],
           expected_experiments=[],

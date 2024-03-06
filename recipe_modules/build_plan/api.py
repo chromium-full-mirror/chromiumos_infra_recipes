@@ -172,15 +172,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
   def _get_necessary_chrome_builders(
       self, gerrit_changes: List[Optional[GerritChange]],
       builders: List[Optional[str]],
-      enable_history: bool) -> List[Optional[str]]:
+      completed_builders: List[Optional[str]]) -> List[Optional[str]]:
     """Returns additional builders to schedule for chrome uprev changes.
 
     Args:
       gerrit_changes: The changes under test. Used to determine if the CQ run is
           testing a chrome uprev.
       builders: A list of builders to consider scheduling.
-      enable_history: Whether to be able to reuse passed results for the same
-          cq_equivalent_cl_group.
+      completed_builders: A list of builders that already completed.
     """
     necessary_chrome_builders = []
     chrome_log = []
@@ -191,11 +190,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         presentation.step_text = 'no additional builds needed'
         return necessary_chrome_builders
 
-      completed_builders = []
-      if enable_history:
-        completed_builders = [
-            b.builder.builder for b in self.get_completed_builds(builders)
-        ]
       for builder in sorted(builders):
         builder_config = self.m.cros_infra_config.get_builder_config(builder)
 
@@ -312,8 +306,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
           is_retry = (
               orch_config.id.type == BuilderConfig.Id.CQ and
               self.m.cros_history.is_retry)
-          completed_builds = self.get_completed_builds(
-              necessary_child_spec_names, forced_rebuilds)
+          completed_builds = self.get_completed_builds(child_specs,
+                                                       forced_rebuilds)
           presentation.step_text = ('found {} build{} to recycle'.format(
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
@@ -362,7 +356,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       necessary_child_specs = filtered_child_specs
 
       necessary_chrome_builders = self._get_necessary_chrome_builders(
-          gerrit_changes, irrelevant_builders, enable_history=enable_history)
+          gerrit_changes, irrelevant_builders,
+          [build.builder.builder for build in completed_builds])
 
     # TODO(b/311037472): Rename this step.
     with self.m.step.nest('filter builds') as presentation:
@@ -466,22 +461,20 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     return completed_builds, new_build_requests
 
-  def get_completed_builds(
-      self, child_builders: List[str],
-      forced_rebuilds: Optional[List[str]] = None) -> List[build_pb2.Build]:
+  def get_completed_builds(self, child_specs, forced_rebuilds):
     """Get the list of previously passed child builds with criticality refreshed.
 
     Args:
-      child_builders: List of builds for which to get build history.
-      forced_rebuilds: List of builder names that cannot be reused.
+      api (RecipeApi): See RunSteps documentation.
+      child_specs list(ChildSpec): List of child specs of cq-orchestrator.
+      forced_rebuilds list(str): List of builder names that cannot be reused.
 
     Returns:
-      A list of builds corresponding to the latest successful child builds with
-          the same patches as the current cq orchestrator with refreshed
-          critical values.
+      A list of build_pb2.Build objects corresponding to the
+      latest successful child builds with the same patches as the current
+      cq orchestrator with refreshed critical values.
     """
     with self.m.step.nest('get completed builds') as presentation:
-      forced_rebuilds = forced_rebuilds or []
       completed_builds = []
       passed_builds = self.m.cros_history.get_passed_builds()
       count_broken_before_rebuilds = 0
@@ -490,9 +483,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
       for build in passed_builds:
         # Filter out non-child builds like vm_test, dry run orchestrator or
         # hw_tests in the future.
-        if not (build.builder.builder in child_builders or
-                self.get_slim_builder_name(
-                    build.builder.builder) in child_builders):
+        child_builders = [cs.name for cs in child_specs] + [
+            self.get_slim_builder_name(cs.name) for cs in child_specs
+        ]
+        if build.builder.builder not in child_builders:  #pragma: no cover
           continue
 
         if build.builder.builder in forced_rebuilds or 'all' in forced_rebuilds:

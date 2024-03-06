@@ -1786,7 +1786,7 @@ A module to plan the builds to be launched.
 
 &emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#52)(self):**
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#221)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#215)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
 
 Return a two-tuple of completed and needed builds.
 
@@ -1806,20 +1806,21 @@ Returns:
     A list of Build objects of successful builds with refreshed criticality.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#469)(self, child_builders: List[str], forced_rebuilds: Optional[List[str]]=None):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#464)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
 Args:
-  child_builders: List of builds for which to get build history.
-  forced_rebuilds: List of builder names that cannot be reused.
+  api (RecipeApi): See RunSteps documentation.
+  child_specs list(ChildSpec): List of child specs of cq-orchestrator.
+  forced_rebuilds list(str): List of builder names that cannot be reused.
 
 Returns:
-  A list of builds corresponding to the latest successful child builds with
-      the same patches as the current cq orchestrator with refreshed
-      critical values.
+  A list of build_pb2.Build objects corresponding to the
+  latest successful child builds with the same patches as the current
+  cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#533)(self, gerrit_changes):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#527)(self, gerrit_changes):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1839,7 +1840,7 @@ Returns:
 
 Returns BuilderConfigs deemed relevant by the RelevancyService.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#572)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#566)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -12343,10 +12344,10 @@ Args:
 &mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#41)(api, properties):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
-[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#17): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#18): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#29)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#30)(api, properties):**
 ### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
 
 [DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
