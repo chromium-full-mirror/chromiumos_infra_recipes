@@ -396,13 +396,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
           bucket = self.m.led.shadowed_bucket
         else:
           bucket = self.m.buildbucket.build.builder.bucket
-        parent_run_id = None
         can_outlive_parent = True
         if (child_spec.collect_handling !=
             BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
           # If collect handling not set to NO_COLLECT, the child will be
           # terminated if the orchestrator dies and the child is not finished.
-          parent_run_id = self.m.swarming.task_id
           can_outlive_parent = False
 
         # Build the properties for the child.
@@ -417,7 +415,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
                 builder=child_spec.name, bucket=bucket,
                 gerrit_changes=gerrit_changes, critical=critical, tags=tags,
                 properties=properties, experiments=child_exps,
-                swarming_parent_run_id=parent_run_id,
                 can_outlive_parent=can_outlive_parent))
 
       presentation.logs['filter log'] = sorted(filter_log)
