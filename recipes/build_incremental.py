@@ -34,6 +34,7 @@ DEPS = [
     'cros_infra_config',
     'cros_prebuilts',
     'cros_sdk',
+    'cros_tags',
     'easy',
     'git',
     'incremental',
@@ -92,6 +93,11 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     _builder_config = BuilderConfig(build_target=_build_target)
     relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
         [_builder_config], gerrit_changes)
+    api.cros_tags.add_tags_to_current_build(
+        **{
+            'relevance':
+                '{}relevant'.format('' if relevant_builder_configs else 'not ')
+        })
 
     if not relevant_builder_configs:
       return RawResult(status=common.SUCCESS,
