@@ -982,7 +982,7 @@
     "cmd": [],
     "name": "get build history",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 builds to recycle@@@"
+      "@@@STEP_TEXT@found 1 build to recycle@@@"
     ]
   },
   {
@@ -1055,9 +1055,8 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
       "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
-      "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
       "@@@STEP_LOG_END@skip log@@@",
-      "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@3@@@"
+      "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@2@@@"
     ]
   },
   {

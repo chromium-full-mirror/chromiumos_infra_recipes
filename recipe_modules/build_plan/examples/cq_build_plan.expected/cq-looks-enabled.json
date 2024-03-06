@@ -1080,7 +1080,7 @@
     "cmd": [],
     "name": "get build history",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 2 builds to recycle@@@"
+      "@@@STEP_TEXT@found 1 build to recycle@@@"
     ]
   },
   {

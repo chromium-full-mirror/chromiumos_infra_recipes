@@ -1156,10 +1156,8 @@
     "name": "get build history.get completed builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skip log@amd64-generic-slim-cq is skipped because recycling was disabled for this builder.@@@",
       "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because recycling was disabled for this builder.@@@",
       "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because recycling was disabled for this builder.@@@",
-      "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because recycling was disabled for this builder.@@@",
       "@@@STEP_LOG_LINE@skip log@cave-cq is skipped because recycling was disabled for this builder.@@@",
       "@@@STEP_LOG_END@skip log@@@",
       "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@0@@@"
