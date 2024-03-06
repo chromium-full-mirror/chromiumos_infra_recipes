@@ -1193,6 +1193,55 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "filter additional chrome pupr builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no additional builds needed@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@need 0 new builds (filtered 8)@@@",
+      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm64-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@atlas-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@cave-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_END@filter log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cros-Experiments"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "filter builds.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
@@ -1209,10 +1258,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "gerrit-fetch-changes",
+    "name": "filter builds.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1235, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1270,7 +1320,10 @@
   },
   {
     "cmd": [],
-    "name": "get affected paths"
+    "name": "filter builds.get affected paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
@@ -1303,17 +1356,18 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "get affected paths.repo forall",
+    "name": "filter builds.get affected paths.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@existent-project|src/existent-project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets",
+    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"affectedPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -1371,9 +1425,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
+    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1404,9 +1458,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
+    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1438,67 +1492,18 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
+    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
+    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter additional chrome pupr builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no additional builds needed@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@need 0 new builds (filtered 8)@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm64-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@atlas-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@cave-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Cros-Experiments"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {

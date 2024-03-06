@@ -347,16 +347,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # If we made it this far, we need to schedule the build.
         filtered_child_specs.append(child_spec)
 
-      # TODO(b/316010599): Get data from cros-query experiment.
-      # Eventually, this will be taken into account when build planning.
-      # In order to simplify things, we are going to start with only first CQ
-      # attempts which do not configure additional builders via footer.
-      if not (is_retry or forced_relevant):
-        _ = self.get_relevant_builder_configs([
-            self.m.cros_infra_config.get_builder_config(b)
-            for b in necessary_builders
-        ], gerrit_changes)
-
       necessary_child_specs = filtered_child_specs
 
       necessary_chrome_builders = self._get_necessary_chrome_builders(
@@ -376,6 +366,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
         internal_snapshot, external_snapshot = self._choose_snapshots(
             internal_snapshot, external_snapshot, gerrit_changes,
             self.m.src_state.internal_manifest)
+
+      # TODO(b/316010599): Get data from cros-query experiment.
+      # Eventually, this will be taken into account when build planning.
+      # In order to simplify things, we are going to start with only first CQ
+      # attempts which do not configure additional builders via footer.
+      if not (is_retry or forced_relevant):
+        _ = self.get_relevant_builder_configs([
+            self.m.cros_infra_config.get_builder_config(c.name)
+            for c in necessary_child_specs
+        ], gerrit_changes)
 
       for child_spec in necessary_child_specs:
         child_builder_config = self.m.cros_infra_config.get_builder_config(
