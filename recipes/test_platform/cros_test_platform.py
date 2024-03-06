@@ -1146,7 +1146,8 @@ def _test_finder_request(request):  # pragma: nocover
   if _is_centralized_suite(request):
     raw_suite = request.test_plan.suite[0].name
     centralized_suite = raw_suite.removeprefix(CENTRALIZED_SUITE_PREFIX)
-    return ctf.CrosTestFinderRequest(centralized_suite=centralized_suite)
+    return ctf.CrosTestFinderRequest(centralized_suite=centralized_suite,
+                                     metadata_required=True)
 
   return ctf.CrosTestFinderRequest(test_suites=[_ctr_test_suite(request)],
                                    metadata_required=True)
@@ -3567,6 +3568,26 @@ def GenTests(api):
               }),
       _mock_container_metadata_step(api, 'foo'),
       _generic_enumerate_response(api),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'cft-centralized-suite',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo', suite_name=CENTRALIZED_SUITE_PREFIX + 'foo',
+                          enable_autotest_sharding=True)
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
       _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
   )
