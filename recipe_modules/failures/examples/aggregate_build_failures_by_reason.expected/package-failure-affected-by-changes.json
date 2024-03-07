@@ -1,0 +1,34 @@
+[
+  {
+    "cmd": [],
+    "name": "build results",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.irrelevant critical build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@1 build failed, 0 succeeded@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "build results.irrelevant critical build results.atlas-postsubmit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "1 out of 1 builds failed compilation for foo/bar (affected by changes in CQ run)\n\n- atlas-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
+    },
+    "name": "$result"
+  }
+]

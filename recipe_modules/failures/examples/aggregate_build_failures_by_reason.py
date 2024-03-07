@@ -62,6 +62,47 @@ def GenTests(api):
                       PackageFailure(
                           package=PackageInfo(category='foo',
                                               package_name='bar'),
+                          phase='COMPILE', affected_by_changes=True))
+              ]
+          }).message
+  ]
+  yield api.test(
+      'package-failure-affected-by-changes',
+      api.properties(BuildProperties(builds=builds)),
+      api.post_check(
+          post_process.ResultReasonRE,
+          r'1 out of 1 builds failed compilation for foo/bar \(affected by changes in CQ run\)\n\n'
+      ), status='FAILURE')
+
+  builds = [
+      api.test_util.test_child_build(
+          'atlas', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='bar'),
+                          phase='COMPILE', affected_by_changes=True,
+                          snapshot_comparison='MATCHING_FAILURE_FOUND'))
+              ]
+          }).message
+  ]
+  yield api.test(
+      'package-failure-with-snapshot-comparison',
+      api.properties(BuildProperties(builds=builds)),
+      api.post_check(
+          post_process.ResultReasonRE,
+          r'1 out of 1 builds failed compilation for foo/bar \(failure also seen on snapshot builds\)\n\n'
+      ), status='FAILURE')
+
+  builds = [
+      api.test_util.test_child_build(
+          'atlas', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='bar'),
                           phase='COMPILE'))
               ]
           }).message,

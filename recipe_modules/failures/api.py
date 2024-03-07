@@ -158,10 +158,18 @@ class FailuresApi(RecipeApi):
     # TODO(b/327255136): Start with builds that have exactly 1 package failure.
     if len(package_failures) != 1:
       return None
-    phase = 'compilation' if package_failures[
-        0].phase == PackageFailure.Phase.COMPILE else 'unit tests'
-    package = f'{package_failures[0].package.category}/{package_failures[0].package.package_name}'
-    return f'failed {phase} for {package}'
+    package_failure = package_failures[0]
+    phase = 'compilation' if package_failure.phase == PackageFailure.Phase.COMPILE else 'unit tests'
+    package = f'{package_failure.package.category}/{package_failure.package.package_name}'
+
+    fault_attribution_text = ''
+    if (package_failure.snapshot_comparison ==
+        CqFailureAttribute.MATCHING_FAILURE_FOUND):
+      fault_attribution_text = ' (failure also seen on snapshot builds)'
+    elif package_failure.affected_by_changes:
+      fault_attribution_text = ' (affected by changes in CQ run)'
+
+    return f'failed {phase} for {package}{fault_attribution_text}'
 
   def _get_results(self, kind, runs, get_status, is_critical, get_title,
                    get_link_map, get_id, build_detailed_kind = None):
