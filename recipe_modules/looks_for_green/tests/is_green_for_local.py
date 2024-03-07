@@ -17,6 +17,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'cros_history',
     'looks_for_green',
 ]
 
@@ -69,6 +70,7 @@ previous_snapshot_builds_failure = [
 def RunSteps(api, properties):
   is_green = api.looks_for_green.is_green_for_local()
   api.assertions.assertEqual(properties.expected_result, is_green)
+  api.looks_for_green.resize_lfg_lookback(['arm64-generic-cq'])
 
 
 def GenTests(api):
@@ -84,6 +86,9 @@ def GenTests(api):
       api.buildbucket.simulated_search_results(
           builds=previous_snapshot_builds_success,
           step_name='update with previous snapshot builds.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response(end_time=0)],
+          step_name='resize LFG lookback window.buildbucket.search'),
       api.post_process(post_process.DropExpectation),
   )
 

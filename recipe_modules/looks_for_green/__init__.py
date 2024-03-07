@@ -15,6 +15,7 @@ DEPS = {
     'time': 'recipe_engine/time',
     'buildbucket_stats': 'buildbucket_stats',
     'cros_infra_config': 'cros_infra_config',
+    'cros_history': 'cros_history',
     'easy': 'easy',
     'failures': 'failures',
     'gerrit': 'gerrit',

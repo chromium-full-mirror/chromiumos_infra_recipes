@@ -476,3 +476,31 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     predicate.builder.project = current_build.builder.project
     fields = frozenset({'builder', 'critical', 'id', 'status', 'tags'})
     return self.m.buildbucket.search(predicate, fields=fields)
+
+  def resize_lfg_lookback(self, builders_to_be_scheduled: List[str]) -> None:
+    """Change LFG lookback based on which builders are about to run & broken_until entries.
+
+    Args:
+      builders_to_be_scheduled: List of builders that need to be scheduled.
+    """
+    with self.m.step.nest('resize LFG lookback window') as pres:
+      global_hours_since_breakage = 7 * 24
+      log = []
+      for builder in builders_to_be_scheduled:
+        config = self.m.cros_infra_config.get_builder_config(builder)
+        broken_until_snapshot = config.general.broken_until
+        if broken_until_snapshot:
+          hours_since_breakage = self.m.cros_history.hours_since_breakage(
+              broken_until_snapshot)
+          if hours_since_breakage:
+            log.append(
+                f'{builder} was broken till {hours_since_breakage} hours ago.')
+            global_hours_since_breakage = min(global_hours_since_breakage,
+                                              hours_since_breakage)
+
+      self._lookback_hours = min(
+          self._lookback_hours,
+          # Reduce by 30 mins to account for creation of the next snapshot.
+          global_hours_since_breakage - 0.5)
+      log.append(f'LFG lookback window is now {self._lookback_hours} hours')
+      pres.logs['broken_until logs'] = log

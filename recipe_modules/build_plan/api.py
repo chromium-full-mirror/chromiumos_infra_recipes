@@ -363,6 +363,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
       # Only do LFG logic if there are builds to schedule.
       if necessary_child_specs or necessary_chrome_builders:
+        self.m.looks_for_green.resize_lfg_lookback(
+            [spec.name for spec in necessary_child_specs] +
+            necessary_chrome_builders)
         internal_snapshot, external_snapshot = self._choose_snapshots(
             internal_snapshot, external_snapshot, gerrit_changes,
             self.m.src_state.internal_manifest)
