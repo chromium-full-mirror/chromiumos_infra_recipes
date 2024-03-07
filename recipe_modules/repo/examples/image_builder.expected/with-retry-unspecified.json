@@ -386,6 +386,7 @@
       "--verbose",
       "--no-manifest-update",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromiumos/config",
       "chromeos/project/puff/duffy"
@@ -574,7 +575,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

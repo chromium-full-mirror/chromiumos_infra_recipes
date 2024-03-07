@@ -295,7 +295,8 @@
       "8",
       "--verbose",
       "--no-manifest-update",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--force-checkout"
     ],
     "cwd": "[START_DIR]/repo",
     "env_suffixes": {

@@ -1920,6 +1920,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromiumos/overlays/chromiumos-overlay",
       "chromeos/overlays/chromeos-partner-overlay"
@@ -2246,6 +2247,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-checkout",
       "chromiumos/overlays/chromiumos-overlay",
       "chromeos/overlays/chromeos-partner-overlay"
     ],

@@ -1609,6 +1609,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromeos/overlays/baseboard-bar-private",
       "chromeos/overlays/baseboard-baz-private",

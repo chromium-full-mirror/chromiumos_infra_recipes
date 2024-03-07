@@ -1593,6 +1593,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromium/src"
     ],
@@ -2038,6 +2039,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-checkout",
       "chromium/src"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

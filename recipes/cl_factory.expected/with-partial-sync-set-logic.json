@@ -1680,6 +1680,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromiumos/config",
       "chromeos/program/galaxy"
@@ -2259,6 +2260,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -2716,6 +2718,7 @@
       "sync",
       "--current-branch",
       "--verbose",
+      "--force-checkout",
       "a",
       "b",
       "c",

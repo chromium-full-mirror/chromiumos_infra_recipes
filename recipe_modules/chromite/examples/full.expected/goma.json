@@ -136,7 +136,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "--event-log=[CLEANUP]/event_log__tmp_1",
       "sync",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

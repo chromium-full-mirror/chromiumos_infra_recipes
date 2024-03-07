@@ -1619,6 +1619,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -2061,7 +2062,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2403,7 +2405,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -3273,6 +3276,7 @@
       "--verbose",
       "--no-manifest-update",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

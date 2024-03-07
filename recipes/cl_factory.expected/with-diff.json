@@ -1680,6 +1680,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromiumos/config",
       "chromeos/program/galaxy"
@@ -2259,6 +2260,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -2718,6 +2720,7 @@
       "sync",
       "--current-branch",
       "--verbose",
+      "--force-checkout",
       "chromeos/program/galaxy",
       "chromiumos/config",
       "project-a",
@@ -2924,7 +2927,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

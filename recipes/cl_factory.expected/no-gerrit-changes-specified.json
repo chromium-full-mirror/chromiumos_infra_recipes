@@ -1553,6 +1553,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2128,6 +2129,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -2550,6 +2552,7 @@
       "sync",
       "--current-branch",
       "--verbose",
+      "--force-checkout",
       "chromiumos/config",
       "project-a",
       "project-b",

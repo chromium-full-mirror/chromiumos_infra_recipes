@@ -1148,6 +1148,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

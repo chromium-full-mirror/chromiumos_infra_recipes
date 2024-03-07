@@ -311,7 +311,8 @@
       "sync",
       "--manifest-name",
       "../../manifest",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -494,7 +495,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

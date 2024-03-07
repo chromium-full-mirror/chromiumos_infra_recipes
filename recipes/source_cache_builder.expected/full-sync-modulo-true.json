@@ -486,6 +486,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune"
     ],
     "cwd": "[CLEANUP]/snapshot/chromiumos",

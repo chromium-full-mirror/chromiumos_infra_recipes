@@ -276,8 +276,8 @@ class RepoApi(recipe_api.RecipeApi):
            retry_fetches: Optional[int] = None,
            projects: Optional[List[str]] = None, verbose: bool = True,
            no_manifest_update: bool = False, force_remove_dirty: bool = False,
-           prune: bool = None, repo_event_log: bool = True,
-           manifest_branch_state: bool = True,
+           force_checkout: bool = True, prune: bool = None,
+           repo_event_log: bool = True, manifest_branch_state: bool = True,
            test_manifest_branch_state_failure: bool = False) -> None:
     """Execute 'repo sync' with the given arguments.
 
@@ -296,6 +296,7 @@ class RepoApi(recipe_api.RecipeApi):
       no_manifest_update: Whether to disable updating the manifest.
       force_remove_dirty: Whether to force remove projects with uncommitted
         modifications if projects no longer exist in the manifest.
+      force_checkout: Whether to checkout with the force option.
       prune: Delete refs that no longer exist on the remote.
       repo_event_log: Write the repo event log, do analysis steps.
       manifest_branch_state: Write `repo info` to stdout.
@@ -325,6 +326,8 @@ class RepoApi(recipe_api.RecipeApi):
       cmd.append('--no-manifest-update')
     if force_remove_dirty:
       cmd.append('--force-remove-dirty')
+    if force_checkout:
+      cmd.append('--force-checkout')
     if repo_event_log:
       event_log_tmp = self.m.path.mkstemp('event_log_')
       cmd.insert(0, f'--event-log={event_log_tmp}')

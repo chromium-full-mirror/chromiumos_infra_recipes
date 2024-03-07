@@ -84,7 +84,8 @@
       "--retry-fetches",
       "3",
       "--verbose",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--force-checkout"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1453,7 +1454,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -1662,7 +1664,8 @@
       "--retry-fetches",
       "3",
       "--verbose",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--force-checkout"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2635,7 +2638,8 @@
       "--retry-fetches",
       "3",
       "--verbose",
-      "--force-remove-dirty"
+      "--force-remove-dirty",
+      "--force-checkout"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

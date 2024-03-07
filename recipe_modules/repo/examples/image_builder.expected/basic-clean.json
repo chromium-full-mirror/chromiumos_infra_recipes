@@ -192,7 +192,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "--event-log=[CLEANUP]/event_log__tmp_1",
       "sync",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/ensure",
     "env_suffixes": {
@@ -375,7 +376,8 @@
       "--optimized-fetch",
       "--retry-fetches",
       "8",
-      "--verbose"
+      "--verbose",
+      "--force-checkout"
     ],
     "cwd": "[START_DIR]/repo/manifest-internal",
     "env_suffixes": {

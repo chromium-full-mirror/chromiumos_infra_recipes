@@ -996,6 +996,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromiumos/chromite"
     ],

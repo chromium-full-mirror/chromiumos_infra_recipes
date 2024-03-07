@@ -1604,6 +1604,7 @@
       "8",
       "--verbose",
       "--force-remove-dirty",
+      "--force-checkout",
       "--prune",
       "chromeos/manifest-internal",
       "chromiumos/manifest"
