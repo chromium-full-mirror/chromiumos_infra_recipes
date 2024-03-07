@@ -134,6 +134,7 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
     _test_build_return = namedtuple('_test_build_return', ['message', 'build'])
 
     kwargs.setdefault('project', 'chromeos')
+    kwargs.setdefault('on_backend', True)
     kwargs.setdefault('bucket', 'cq' if cq else 'postsubmit')
     kwargs.setdefault('git_repo', 'https://chromium.googlesource.com/project-a')
 
@@ -157,9 +158,8 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       msg.input.gitiles_commit.Clear()
     msg.input.gerrit_changes.extend(extra_changes or [])
     if bot_size:
-      msg.infra.swarming.bot_dimensions.extend(
-          self.m.cros_tags.tags(bot_size=bot_size))
-
+      msg = self.m.buildbucket.extend_swarming_bot_dimensions(
+          msg, {'bot_size': bot_size})
     msg.created_by = created_by if created_by else msg.created_by
 
     if critical:
