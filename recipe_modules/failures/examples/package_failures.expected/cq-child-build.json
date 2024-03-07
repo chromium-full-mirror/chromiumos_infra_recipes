@@ -1,0 +1,392 @@
+[
+  {
+    "cmd": [],
+    "name": "no failures"
+  },
+  {
+    "cmd": [],
+    "name": "one compile failure",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"COMPILE\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "one compile failure.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "one compile failure with attribution",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"affectedByChanges\": true, \"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"COMPILE\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "one compile failure with attribution.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "one compile failure with snapshot comparison",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"COMPILE\", \"snapshotComparison\": \"MATCHING_FAILURE_FOUND\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "one compile failure with snapshot comparison.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"id\": \"8945511751514863184\", \"infra\": {\"resultdb\": {\"invocation\": \"invocations/build:8945511751514863184\"}, \"swarming\": {\"botDimensions\": [{\"key\": \"bot_size\", \"value\": \"large\"}], \"priority\": 30}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}, \"build_target\": {\"name\": \"atlas\"}}}, \"output\": {\"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}, \"build_target\": {\"name\": \"atlas\"}, \"package_failures\": [{\"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"COMPILE\"}]}}}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@atlas-snapshot@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "one test failure",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed unit tests for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"TEST\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "one test failure.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "one test failure with attribution",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed unit tests for category/package-name@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@category/package-name@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@category&#x2f;package-name log@test log@@@",
+      "@@@STEP_LOG_END@category&#x2f;package-name log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"affectedByChanges\": true, \"package\": {\"category\": \"category\", \"packageName\": \"package-name\"}, \"phase\": \"TEST\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "one test failure with attribution.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "multiple compile failures",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for 2 packages: /package1, /package2@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package1@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package2@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package1 log@test log for package1@@@",
+      "@@@STEP_LOG_END@&#x2f;package1 log@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package2 log@test log for package2@@@",
+      "@@@STEP_LOG_END@&#x2f;package2 log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"packageName\": \"package1\"}, \"phase\": \"COMPILE\"}, {\"package\": {\"packageName\": \"package2\"}, \"phase\": \"COMPILE\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "multiple compile failures.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "multiple test failures",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed unit tests for 2 packages: /package3, /package4@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package3@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package4@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package3 log@test log for package3@@@",
+      "@@@STEP_LOG_END@&#x2f;package3 log@@@",
+      "@@@STEP_LOG_LINE@&#x2f;package4 log@test log for package4@@@",
+      "@@@STEP_LOG_END@&#x2f;package4 log@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"packageName\": \"package3\"}, \"phase\": \"TEST\"}, {\"package\": {\"packageName\": \"package4\"}, \"phase\": \"TEST\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "multiple test failures.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test3",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@failed compilation for /package@@@",
+      "@@@STEP_LOG_LINE@list of failed packages@/package@@@",
+      "@@@STEP_LOG_END@list of failed packages@@@",
+      "@@@SET_BUILD_PROPERTY@package_failures@[{\"package\": {\"packageName\": \"package\"}, \"phase\": \"COMPILE\"}]@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"atlas-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\", \"value\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:123",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test3.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

@@ -10,7 +10,9 @@ DEPS = [
     'recipe_engine/cv',
     'recipe_engine/step',
     'cros_infra_config',
+    'cros_tags',
     'easy',
     'naming',
+    'src_state',
     'urls',
 ]

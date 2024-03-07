@@ -20,6 +20,10 @@ from google.protobuf import json_format
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
+                                                       builder_common_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
@@ -259,6 +263,55 @@ class FailuresApi(RecipeApi):
       self._caught_exceptions.update({'.'.join(self.m.step.active_result.name_tokens): repr(e)})
       self.m.easy.set_properties_step(caught_exceptions=self._caught_exceptions)
 
+  def _add_snapshot_fault_attribution(
+      self, package_failures: List[PackageFailure]) -> List[PackageFailure]:
+    """Populate the snapshot_comparison field for CQ PackageFailures."""
+
+    # This only applies to CQ child builds.
+    if not self.m.buildbucket.build.builder.builder.endswith('-cq'):
+      return package_failures
+
+    snapshot_builder_name = re.sub('(-slim)?-cq$', '-snapshot',
+                                   self.m.buildbucket.build.builder.builder)
+
+    predicate = builds_service_pb2.BuildPredicate(
+        builder=builder_common_pb2.BuilderID(
+            builder=snapshot_builder_name, project='chromeos', bucket='staging'
+            if self.m.cros_infra_config.is_staging else 'postsubmit'),
+        tags=self.m.cros_tags.tags(snapshot=self.m.src_state.gitiles_commit.id))
+
+    # This is best-effort and should not obscure the original failure.
+    try:
+      builds = self.m.buildbucket.search(
+          predicate, limit=1, url_title_fn=self.m.naming.get_build_title)
+    except StepFailure:
+      return package_failures
+
+    # TODO(b/328542826): Consider comparing to the previous snapshot if the
+    # current one has not yet completed or was not relevant.
+    if len(builds) != 1:
+      return package_failures
+
+    snapshot_build_output_dict = json_format.MessageToDict(
+        builds[0].output.properties)
+    snapshot_package_failures = [
+        json_format.ParseDict(x, PackageFailure())
+        for x in snapshot_build_output_dict.get('package_failures', [])
+    ]
+    # Clear the version as it may differ (e.g. package upreved during CQ run).
+    for p in snapshot_package_failures:
+      p.package.version = ''
+
+    for p in package_failures:
+      # Only compare the PackageInfo (without version) and the phase.
+      if PackageFailure(
+          package=common_pb2.PackageInfo(package_name=p.package.package_name,
+                                         category=p.package.category),
+          phase=p.phase) in snapshot_package_failures:
+        p.snapshot_comparison = CqFailureAttribute.MATCHING_FAILURE_FOUND
+
+    return package_failures
+
   def _set_failed_packages(
       self, enclosing_step: Step,
       packages: List[Tuple[common_pb2.PackageInfo, str]], compile_failure: bool,
@@ -335,6 +388,8 @@ class FailuresApi(RecipeApi):
             if compile_failure else PackageFailure.TEST,
             affected_by_changes=p[0] in cl_affected_packages) for p in packages
     ]
+    package_failures = self._add_snapshot_fault_attribution(package_failures)
+
     self._package_failures.extend(package_failures)
     enclosing_step.presentation.properties['package_failures'] = [
         json_format.MessageToDict(p) for p in package_failures

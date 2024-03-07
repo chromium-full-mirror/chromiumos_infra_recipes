@@ -7,6 +7,7 @@ syntax = "proto3";
 package recipe_modules.chromeos.failures;
 
 import "chromiumos/common.proto";
+import "recipe_modules/chromeos/cq_fault_attribution/cq_fault_attribution.proto";
 
 message PackageFailure {
 
@@ -26,4 +27,8 @@ message PackageFailure {
   // This could be the CLs applied to the CQ run or the packages upreved in a
   // snapshot build.
   bool affected_by_changes = 3;
+
+  // Whether this failure was also seen on snapshot.
+  recipe_modules.chromeos.cq_fault_attribution.CqFailureAttribute
+      snapshot_comparison = 4;
 }

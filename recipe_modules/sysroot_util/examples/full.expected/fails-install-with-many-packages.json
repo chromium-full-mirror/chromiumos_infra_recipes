@@ -2926,6 +2926,40 @@
     ]
   },
   {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"snapshot\"}]}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "install packages.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "failed compilation for 3 packages\n\n- [edge-base/shortpackagename-0.0.1-r197](https:///logs///+/u/install_packages/edge-base_shortpackagename_log)\n\n- [chromeos-base/thislongpackagenameomg-0.0.1-r199](https:///logs///+/u/install_packages/chromeos-base_thislongpackagenameomg_log)\n\n- [safari-base/thisotherexceedinglylongpackage-0.0.1-r129](https:///logs///+/u/install_packages/safari-base_thisotherexceedinglylongpackage_log)"
