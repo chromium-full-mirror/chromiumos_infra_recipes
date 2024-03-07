@@ -335,7 +335,7 @@
   * [cros_infra_config:examples/builder](#recipes-cros_infra_config_examples_builder)
   * [cros_infra_config:examples/config_ref](#recipes-cros_infra_config_examples_config_ref)
   * [cros_infra_config:examples/full](#recipes-cros_infra_config_examples_full)
-  * [cros_infra_config:examples/get_bot_policy_config](#recipes-cros_infra_config_examples_get_bot_policy_config)
+  * [cros_infra_config:examples/get_bot_policy_config](#recipes-cros_infra_config_examples_get_bot_policy_config) &mdash; Test getting bot policy configs for ChromeOS and ChromeOSMPA projects.
   * [cros_infra_config:examples/get_bot_policy_config_chrome](#recipes-cros_infra_config_examples_get_bot_policy_config_chrome)
   * [cros_infra_config:examples/get_dut_tracking_config](#recipes-cros_infra_config_examples_get_dut_tracking_config)
   * [cros_infra_config:examples/get_vm_retry_config](#recipes-cros_infra_config_examples_get_vm_retry_config)
@@ -3459,7 +3459,7 @@ A module for accessing data in the chromeos/infra/config repo
 go/robocrop-chrome-browser-proposal: This module is temporarily used to
 access the Chrome Browser infradata/config repo
 
-&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#731)(self, builds: List[Build]):**
+&mdash; **def [build\_target\_dict](/recipe_modules/cros_infra_config/api.py#736)(self, builds: List[Build]):**
 
 Take a list of builds and return a map of build_target names to build.
 
@@ -3491,7 +3491,7 @@ The default config is empty, except for:
   - build.install_packages.run_spec = RUN
   - build.use_flags = 'chrome_internal'
 
-&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#606)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
+&mdash; **def [configure\_builder](/recipe_modules/cros_infra_config/api.py#611)(self, commit: Optional[GitilesCommit]=None, changes: Optional[List[GerritChange]]=None, name: str='configure builder', choose_branch: bool=True, config_ref: Optional[str]=None, lookup_config_with_bucket: bool=False):**
 
 Configure the builder.
 
@@ -3517,7 +3517,7 @@ Args:
 Returns:
   The BuilderConfig for this builder, if one was found.
 
-&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#589)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [determine\_if\_staging](/recipe_modules/cros_infra_config/api.py#594)(self, config: Optional[BuilderConfig]=None):**
 
 Configure the builder's knowledge of whether it's running in staging.
 
@@ -3561,7 +3561,7 @@ If application is Chrome, BotPolicies will be fetched from infradata/config.
 Returns:
   BotPolicyCfg as defined in the config repo.
 
-&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#691)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target](/recipe_modules/cros_infra_config/api.py#696)(self, build: Optional[Build]=None):**
 
 Return the build target from input properties.
 
@@ -3572,7 +3572,7 @@ Args:
 Returns:
   The build target, or None.
 
-&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#716)(self, build: Optional[Build]=None):**
+&mdash; **def [get\_build\_target\_name](/recipe_modules/cros_infra_config/api.py#721)(self, build: Optional[Build]=None):**
 
 Return the build target name from input properties.
 
@@ -3613,14 +3613,14 @@ Returns:
 Raises:
   A LookupError if a BuilderConfig is not found for the specified builder.
 
-&mdash; **def [get\_ctp2\_pools\_config](/recipe_modules/cros_infra_config/api.py#426)(self):**
+&mdash; **def [get\_ctp2\_pools\_config](/recipe_modules/cros_infra_config/api.py#431)(self):**
 
 Download ctp2 pools config and return list of ctp2 pools.
 
 Returns:
   List[str]: List of allowed ctp2 pools.
 
-&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#437)(self):**
+&mdash; **def [get\_dut\_tracking\_config](/recipe_modules/cros_infra_config/api.py#442)(self):**
 
 Get TrackingPolicyCfg as defined in infra/config.
 
@@ -3631,14 +3631,14 @@ Returns:
 
 Helper method to fetch the list of chromeos realms from gitiles.
 
-&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#414)(self):**
+&mdash; **def [get\_test\_filter\_config](/recipe_modules/cros_infra_config/api.py#419)(self):**
 
 Download config files and return the extracted config protos.
 
 Returns:
   TestDisablementCfg object of the config.
 
-&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#403)(self):**
+&mdash; **def [get\_vm\_retry\_config](/recipe_modules/cros_infra_config/api.py#408)(self):**
 
 Get SuiteRetryCfg as defined in infra/config for tast vm.
 
@@ -3685,7 +3685,7 @@ Args:
 Returns:
   Dict mapping builder names to found BuilderConfigs.
 
-&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#746)(self, critical: Optional['Trinary']=None, override: bool=False):**
+&mdash; **def [set\_build\_criticality](/recipe_modules/cros_infra_config/api.py#751)(self, critical: Optional['Trinary']=None, override: bool=False):**
 
 Set the buildbucket.build.critical value.
 
@@ -13501,10 +13501,12 @@ Unittests for is_build_broken() function.
 &mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/full.py#24)(api, properties):**
 ### *recipes* / [cros\_infra\_config:examples/get\_bot\_policy\_config](/recipe_modules/cros_infra_config/examples/get_bot_policy_config.py)
 
-[DEPS](/recipe_modules/cros_infra_config/examples/get_bot_policy_config.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/cros_infra_config/examples/get_bot_policy_config.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/get_bot_policy_config.py#16)(api):**
+Test getting bot policy configs for ChromeOS and ChromeOSMPA projects.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_infra_config/examples/get_bot_policy_config.py#15)(api):**
 ### *recipes* / [cros\_infra\_config:examples/get\_bot\_policy\_config\_chrome](/recipe_modules/cros_infra_config/examples/get_bot_policy_config_chrome.py)
 
 [DEPS](/recipe_modules/cros_infra_config/examples/get_bot_policy_config_chrome.py#9): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]

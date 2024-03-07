@@ -8,8 +8,19 @@ package recipes.chromeos.robocrop;
 
 message RoboCropProperties {
   reserved 1;
+  // TODO(b/329139593): Remove when RoboCropProperties are not directly used.
   // Boolean as to whether to make call to commit changes to GCE Provider.
   bool commit_changes = 2;
   // Chrome or ChromeOS. Determines the correct config repo to read from.
   string application = 3;
+
+  // Used to provide additional projects for robocrop to scale.
+  repeated ProjectProperties robocrop_projects = 4;
+}
+
+message ProjectProperties {
+  // Boolean as to whether to make call to commit changes to GCE Provider.
+  bool commit_changes = 1;
+  // Chrome or ChromeOS. Determines the correct config repo to read from.
+  string application = 2;
 }
