@@ -392,13 +392,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     Returns:
       BotPolicyCfg as defined in the config repo.
     """
-    test_data = (
-        self.test_api.bot_policy_test_data_chrome
-        if application == 'Chrome' else self.test_api.bot_policy_test_data)
+    test_data_by_app = {
+        'Chrome': self.test_api.bot_policy_test_data_chrome,
+        'ChromeOS': self.test_api.bot_policy_test_data,
+        'ChromeOSMPA': self.test_api.bot_policy_test_data_chromeos_mpa
+    }
+
     return BotPolicyCfg.FromString(
         self.download_binproto(
             'configs/bot-scaling/generated/bot_policy_%s' % application.lower(),
-            test_data, repo=INFRADATA_CONFIG_REPO_URL, msg=BotPolicyCfg()))
+            test_data_by_app[application], repo=INFRADATA_CONFIG_REPO_URL,
+            msg=BotPolicyCfg()))
 
   def get_vm_retry_config(self) -> SuiteRetryCfg:
     """Get SuiteRetryCfg as defined in infra/config for tast vm.

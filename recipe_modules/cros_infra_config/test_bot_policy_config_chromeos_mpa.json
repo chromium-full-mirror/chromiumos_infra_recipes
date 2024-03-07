@@ -1,0 +1,65 @@
+{
+    "botPolicies": [
+      {
+        "application": "chromeos-mpa",
+        "botGroup": "release-mpa",
+        "botType": {
+          "botSize": "large",
+          "coresPerBot": 32,
+          "memoryGb": 64
+        },
+        "policyMode": 2,
+        "regionRestrictions": [
+          {
+            "prefix": "prefix-first",
+            "region": "us-central1-b",
+            "weight": 0.245
+          },
+          {
+            "prefix": "prefix-second",
+            "region": "us-central2-d",
+            "weight": 0.31
+          },
+          {
+            "prefix": "prefix-third",
+            "region": "us-east1-d",
+            "weight": 0.245
+          },
+          {
+            "prefix": "prefix-fourth",
+            "region": "us-west1-b",
+            "weight": 0.2
+          },
+          {
+            "prefix": "prefix-fifth",
+            "region": "us-west1-b",
+            "weight": 0.0
+          }
+        ],
+        "scalingRestriction": {
+          "botCeiling": 100,
+          "botFallback": 100,
+          "botFloor": 5,
+          "stepSize": 5
+        },
+        "swarmingDimensions": [
+          {
+            "name": "role",
+            "value": "release-mpa",
+            "values": [
+              "release-mpa",
+              "bar"
+            ]
+          },
+          {
+            "name": "bot_size",
+            "value": "large",
+            "values": [
+              "large"
+            ]
+          }
+        ],
+        "swarmingInstance": "chromeos-swarming.appspot.com"
+      }
+    ]
+  }

@@ -94,6 +94,12 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     return self._read_config('test_bot_policy_config_chrome.json',
                              BotPolicyCfg())
 
+  def bot_policy_test_data_chromeos_mpa(self) -> recipe_test_api.StepTestData:
+    """A function for step_test_data to generate BotPolicies."""
+    # Humans can edit the JSON file for test data, impl reads binary proto.
+    return self._read_config('test_bot_policy_config_chromeos_mpa.json',
+                             BotPolicyCfg())
+
   def bot_policy_test_data_missing_fallback(
       self) -> recipe_test_api.StepTestData:
     """A function for step_test_data to generate BotPolicies."""
