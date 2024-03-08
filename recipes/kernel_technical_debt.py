@@ -47,6 +47,7 @@ CHROMEOS_FILES = (
     'chromeos/',
     'OWNERS',
     'PRESUBMIT.cfg',
+    'security/chromiumos/',
     'unblocked_terms.txt',
     '.cop/',
 )
