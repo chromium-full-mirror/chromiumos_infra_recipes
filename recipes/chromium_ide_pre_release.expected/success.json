@@ -2322,6 +2322,19 @@
     ]
   },
   {
+    "cmd": [
+      "./release.sh",
+      "publish",
+      "--pre-release"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
+    "env": {
+      "FETCH_IDE_RELEASE_CREDENTIALS_FROM_GCLOUD": "1",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+    },
+    "name": "publish prerelease"
+  },
+  {
     "cmd": [],
     "name": "clean up SDK chroot"
   },

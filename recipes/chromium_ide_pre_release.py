@@ -125,6 +125,12 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
               api.git.checkout(bump_commit)
             api.step('npm t', ['npm', 't'])
 
+          with api.context(
+              env={'FETCH_IDE_RELEASE_CREDENTIALS_FROM_GCLOUD': '1'}):
+            api.step('publish prerelease',
+                     ['./release.sh', 'publish', '--pre-release'])
+
+
 
 def GenTests(api: RecipeTestApi):
   yield api.test(
@@ -157,6 +163,7 @@ def GenTests(api: RecipeTestApi):
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
           )),
       api.post_check(post_process.MustRun, 'verify update post submit.npm t'),
+      api.post_check(post_process.MustRun, 'publish prerelease'),
   )
 
   yield api.test(
@@ -174,6 +181,7 @@ def GenTests(api: RecipeTestApi):
                      r'submit change.set labels on CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
+      api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )
 
@@ -192,6 +200,7 @@ def GenTests(api: RecipeTestApi):
                      r'submit change.set labels on CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
+      api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )
 
@@ -213,6 +222,7 @@ def GenTests(api: RecipeTestApi):
                      '{"labels": {"Verified": -1}}'),
       api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
+      api.post_check(post_process.DoesNotRun, 'publish prerelease'),
   )
 
   yield api.test(
@@ -245,6 +255,7 @@ def GenTests(api: RecipeTestApi):
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FAdd feature X\x00')),
       api.post_check(post_process.DoesNotRun,
                      'verify update post submit.npm t'),
+      api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )
 
@@ -279,5 +290,6 @@ def GenTests(api: RecipeTestApi):
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
           )),
       api.post_check(post_process.MustRun, 'verify update post submit.npm t'),
+      api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )
