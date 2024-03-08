@@ -515,8 +515,9 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
 
     builds = []
 
-    # Traverse the patchsets in reverse order to get the latest one with
-    # successful CQ.
+    # Traverse the patchsets in reverse order to get the latest successful
+    # build.
+    patchsets_log = ''
     for patchset in reversed(range(1, landed_patchset)):
       with api.step.nest(f'patchset #{patchset}'):
         gerrit_change = GerritChange(
@@ -525,11 +526,15 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
             change=change_num,
             patchset=patchset,
         )
-
-        builds = get_buildbucket_builds(api, gerrit_change, is_staging)
-        if len(builds) > 0:
-          presentation.step_summary_text = f'Choose the patchset #{patchset}'
-          break
+        current_patchset_builds = get_buildbucket_builds(
+            api, gerrit_change, is_staging)
+        for current_build in current_patchset_builds:
+          if current_build.builder.builder not in [
+              b.builder.builder for b in builds
+          ]:
+            builds.append(current_build)
+            patchsets_log += f'patchset #{patchset} added build: {current_build}\n'
+    presentation.logs['patchsets_log'] = patchsets_log
 
     if len(builds) == 0:
       presentation.step_summary_text = 'No patchset found. Exiting'

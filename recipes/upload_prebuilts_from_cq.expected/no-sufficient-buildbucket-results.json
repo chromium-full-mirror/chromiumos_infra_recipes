@@ -195,7 +195,9 @@
     "cmd": [],
     "name": "search the patchset",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@No patchset found. Exiting@@@"
+      "@@@STEP_SUMMARY_TEXT@No patchset found. Exiting@@@",
+      "@@@STEP_LOG_LINE@patchsets_log@@@@",
+      "@@@STEP_LOG_END@patchsets_log@@@"
     ]
   },
   {
