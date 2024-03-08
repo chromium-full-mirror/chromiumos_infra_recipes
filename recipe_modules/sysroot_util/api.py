@@ -6,10 +6,11 @@
 """API for various support functions for building."""
 
 import copy
+import datetime
 import re
 from typing import Iterable, List, Optional
 
-from google.protobuf import json_format
+from google.protobuf import json_format, timestamp_pb2
 
 from PB.chromite.api.artifacts import BuildSetupResponse
 from PB.chromite.api.image import CreateImageRequest
@@ -232,6 +233,15 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         snapshot_shas = self.m.cros_source.fetch_snapshot_shas(count=5)
         is_private = config.artifacts.prebuilts == builder_config_pb2.BuilderConfig.Artifacts.PRIVATE
 
+        # Get the current datetime, or use a constant value for testing.
+        timeout_timestamp = None
+        if timeout_sec and timeout_sec > 0:
+          datetime_now = self.m.time.utcnow()
+          timeout_datetime = datetime_now + datetime.timedelta(
+              seconds=timeout_sec)
+          timeout_timestamp = timestamp_pb2.Timestamp()
+          timeout_timestamp.FromDatetime(timeout_datetime)
+
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
             packages=packages, package_indexes=package_indexes,
@@ -252,7 +262,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             binhost_lookup_service_data=prebuilts_cloud_pb2
             .BinhostLookupServiceData(
                 snapshot_shas=snapshot_shas, private=is_private,
-                is_staging=self.m.cros_infra_config.is_staging))
+                is_staging=self.m.cros_infra_config.is_staging),
+            timeout_timestamp=timeout_timestamp)
 
       chrome_root = None
       with self.m.step.nest('check chrome source needed') as check_pres:
