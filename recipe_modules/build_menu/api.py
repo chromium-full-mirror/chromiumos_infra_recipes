@@ -364,13 +364,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
                               force_no_chroot_upgrade=force_no_chroot_upgrade)
 
   @contextlib.contextmanager
-  def setup_workspace(self, cherry_pick_changes=True):
+  def setup_workspace(self, cherry_pick_changes=True, ignore_changes=False):
     """Setup the workspace for the builder.
 
     Args:
       cherry_pick_changes (bool): Whether to apply gerrit changes on top of the
         checkout using cherry-pick. If set to False, will directly checkout
         the changes using the gerrit fetch refs.
+      ignore_changes (bool): Whether to apply gerrit changes. Set to True to
+        completely skip application of gerrit changes.
     """
     # If we do not have a config, use an empty one.
     config = self.config_or_default
@@ -381,12 +383,13 @@ class BuildMenuApi(recipe_api.RecipeApi):
       # Apply any appropriate gerrit changes.
       ignore_missing_projects = (
           config.general.manifest == BuilderConfig.General.PUBLIC)
-      if cherry_pick_changes:
-        self.m.workspace_util.apply_changes(
-            ignore_missing_projects=ignore_missing_projects)
-      else:
-        for change in self.m.src_state.gerrit_changes:
-          self.m.workspace_util.checkout_change(change=change)
+      if not ignore_changes:
+        if cherry_pick_changes:
+          self.m.workspace_util.apply_changes(
+              ignore_missing_projects=ignore_missing_projects)
+        else:
+          for change in self.m.src_state.gerrit_changes:
+            self.m.workspace_util.checkout_change(change=change)
 
       # The CrOS verison can be reported once the workspace is synced.
       version = self.m.cros_version.version
