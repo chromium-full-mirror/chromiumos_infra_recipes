@@ -41,7 +41,8 @@ def RunSteps(api, properties):
   expected_failures = [
       api.failures.Failure('build', x.builder.builder,
                            api.urls.get_build_link_map(x), x.critical,
-                           x.builder.builder) for x in expected_failing_builds
+                           x.builder.builder, type=x.status)
+      for x in expected_failing_builds
   ]
   expected_successful_builds = [
       f for f in properties.builds if f.status == common_pb2.SUCCESS

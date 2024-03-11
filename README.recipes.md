@@ -6416,7 +6416,7 @@ API for raising failures and presenting them in cute ways.
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#481)(self, results, ignore_build_test_failures=False):**
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#483)(self, results, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
@@ -6432,7 +6432,7 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [aggregate\_hw\_test\_failures](/recipe_modules/failures/api.py#649)(self, hw_test_failures: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [aggregate\_hw\_test\_failures](/recipe_modules/failures/api.py#660)(self, hw_test_failures: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
 
 Returns aggregate test failure markdown text for HW tests,
 distinguishing between test and shard / suite failures.
@@ -6445,7 +6445,7 @@ Args:
 Returns:
   List of summary markdown lines.
 
-&mdash; **def [aggregate\_vm\_test\_failures](/recipe_modules/failures/api.py#600)(self, vm_test_failures: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [aggregate\_vm\_test\_failures](/recipe_modules/failures/api.py#611)(self, vm_test_failures: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
 
 Returns aggregate test failure markdown text for VM tests,
 distinguishing between test and shard / suite failures, and grouping
@@ -6459,7 +6459,7 @@ Args:
 Returns:
   List of summary markdown lines.
 
-&mdash; **def [aggregrate\_failure\_group](/recipe_modules/failures/api.py#548)(self, kind: str, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter, failure_count: int, total_count: int):**
+&mdash; **def [aggregrate\_failure\_group](/recipe_modules/failures/api.py#559)(self, kind: str, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter, failure_count: int, total_count: int):**
 
 Returns aggregate failure markdown text.
 
@@ -6474,7 +6474,7 @@ Args:
 Returns:
   List of summary markdown lines.
 
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#1052)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#1064)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -6483,9 +6483,9 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#893)(self, not_runnable_addtnl_tests):**
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#904)(self, not_runnable_addtnl_tests):**
 
-&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#823)(self, builds, refresh_configs=False, relevant_child_builder_names=None):**
+&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#834)(self, builds, refresh_configs=False, relevant_child_builder_names=None):**
 
 Verify all builds completed successfully.
 
@@ -6500,11 +6500,11 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#940)(self, build: build_pb2.Build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#951)(self, build: build_pb2.Build):**
 
 Retrieve the status of the build.
 
-&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#876)(self, hw_tests):**
+&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#887)(self, hw_tests):**
 
 Logs hardware test status to UI, and raises on failed tests.
 
@@ -6516,11 +6516,11 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#959)(self, hw_test: SkylabResult):**
+&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#970)(self, hw_test: SkylabResult):**
 
 Get the status of the hw_test.
 
-&mdash; **def [get\_non\_critical\_failures\_text](/recipe_modules/failures/api.py#777)(self, kind: str, non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [get\_non\_critical\_failures\_text](/recipe_modules/failures/api.py#788)(self, kind: str, non_fatal_failures_count_by_kind: collections.Counter):**
 
 Returns a line summarizing the non-critical failures for the kind.
 
@@ -6529,7 +6529,7 @@ Args:
   non_fatal_failures_count_by_kind: Counter of each failure kind to its
     non-fatal failure count.
 
-&mdash; **def [get\_test\_failure\_main\_line](/recipe_modules/failures/api.py#729)(self, shard_pattern: str, kind: str, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [get\_test\_failure\_main\_line](/recipe_modules/failures/api.py#740)(self, shard_pattern: str, kind: str, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
 
 Returns the main line of the summary markdown.
 
@@ -6543,7 +6543,7 @@ Args:
 Returns:
   Main line of the summary markdown.
 
-&mdash; **def [get\_test\_fault\_attribution\_text](/recipe_modules/failures/api.py#692)(self, target_identifier: str, test_id: str):**
+&mdash; **def [get\_test\_fault\_attribution\_text](/recipe_modules/failures/api.py#703)(self, target_identifier: str, test_id: str):**
 
 Returns the fault attribution text of a summary markdown line.
 
@@ -6555,7 +6555,7 @@ Args:
 Returns:
   Fault attribution text for a summary line.
 
-&mdash; **def [get\_vm\_test\_results](/recipe_modules/failures/api.py#923)(self, vm_tests):**
+&mdash; **def [get\_vm\_test\_results](/recipe_modules/failures/api.py#934)(self, vm_tests):**
 
 Logs VM test status to UI, and raises on failed tests.
 
@@ -6567,14 +6567,14 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#258)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#260)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#974)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#985)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -6584,7 +6584,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#986)(self, hw_test):**
+&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#997)(self, hw_test):**
 
 Determine if the hw test failed and was critical.
 
@@ -6594,7 +6594,7 @@ Args:
 Returns:
   bool: True if the test failed and was critical.
 
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#944)(self, test):**
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#955)(self, test):**
 
 Determine if the test is critical and has failed.
 
@@ -6604,7 +6604,7 @@ Args:
 Returns:
   bool: True if the test is critical and has failed.
 
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#963)(self, hw_test):**
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#974)(self, hw_test):**
 
 Determine if the hw test was critical.
 
@@ -6614,9 +6614,9 @@ Args:
 Returns:
   bool: True if the test was critical.
 
-&emsp; **@property**<br>&mdash; **def [package\_failures](/recipe_modules/failures/api.py#79)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_failures](/recipe_modules/failures/api.py#81)(self):**
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#453)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/failures/api.py#455)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -6631,7 +6631,7 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#431)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
+&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/failures/api.py#433)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
 
 If any packages failed compilation set presentation and raise failure.
 
@@ -6644,14 +6644,14 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [set\_exoneration\_markdown](/recipe_modules/failures/api.py#238)(self, markdown_txt: str):**
+&mdash; **def [set\_exoneration\_markdown](/recipe_modules/failures/api.py#240)(self, markdown_txt: str):**
 
 Store string containing exoneration info for summary.
 
 Args:
   markdown_txt: String containing summary of exonerations.
 
-&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#409)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
+&mdash; **def [set\_test\_failed\_packages](/recipe_modules/failures/api.py#411)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
 
 If any packages failed unit tests set presentation and raise failure.
 
@@ -6664,7 +6664,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [set\_test\_variant\_to\_fault\_attribute](/recipe_modules/failures/api.py#246)(self, test_variant_to_fault_attribute: Dict[(Tuple[(str, str, str)], FaultAttributedBuildTarget)]):**
+&mdash; **def [set\_test\_variant\_to\_fault\_attribute](/recipe_modules/failures/api.py#248)(self, test_variant_to_fault_attribute: Dict[(Tuple[(str, str, str)], FaultAttributedBuildTarget)]):**
 
 Sets dictionary information for test variant to the corresponding
 fault attribute.
@@ -6673,7 +6673,7 @@ Args:
   test_variant_to_fault_attribute: defaultdict of tuples of the format:
   (test_id, build_target, model), to fault attribution.
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#1015)(self, failures: List[Failure], fresh_builder_configs: Dict[(str, BuilderConfig)], presentation: Optional[StepPresentation]=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#1026)(self, failures: List[Failure], fresh_builder_configs: Dict[(str, BuilderConfig)], presentation: Optional[StepPresentation]=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 

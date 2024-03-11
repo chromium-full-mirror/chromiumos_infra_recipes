@@ -186,6 +186,27 @@ def RunSteps(api):
       final_result.summary_markdown)
   api.failures.set_exoneration_markdown(markdown_txt='some suites exonerated')
 
+  results = api.failures.Results(failures=[], successes={})
+  infra_failure1 = api.failures.Failure(kind='build', title='build-a',
+                                        link_map={'build page': 'build-a.com'},
+                                        fatal=True, id='id-0',
+                                        type=common_pb2.INFRA_FAILURE)
+  infra_failure2 = api.failures.Failure(kind='build', title='build-a1',
+                                        link_map={'build page': 'build-a.com'},
+                                        fatal=True, id='id-1',
+                                        type=common_pb2.INFRA_FAILURE)
+  regular_failure = api.failures.Failure(kind='build', title='build-b',
+                                         link_map={'build page': 'build-b.com'},
+                                         fatal=True, id='id-2',
+                                         type=common_pb2.FAILURE)
+  results.failures = [infra_failure1, infra_failure2]
+  infra_failure_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(infra_failure_result.status,
+                             common_pb2.INFRA_FAILURE)
+
+  results.failures.append(regular_failure)
+  mix_failure_result = api.failures.aggregate_failures(results)
+  api.assertions.assertEqual(mix_failure_result.status, common_pb2.FAILURE)
 
 def GenTests(api):
   yield api.test('basic', api.cv(run_mode=api.cv.FULL_RUN))

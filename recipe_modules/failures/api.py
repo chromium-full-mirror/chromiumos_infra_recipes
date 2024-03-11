@@ -54,6 +54,7 @@ class FailuresApi(RecipeApi):
       id: a unique, reproducible name for this failure. For build-type
           failures, this is the builder name. For test-type failures this is the
           display_name.
+      type: Type of the failure.
       failure_reason: The reason for the failure.
     """
     kind: str
@@ -61,6 +62,7 @@ class FailuresApi(RecipeApi):
     link_map: Dict[str, str]
     fatal: bool
     id: str
+    type: bb_common_pb2.Status = bb_common_pb2.FAILURE
     failure_reason: Optional[str] = None
 
   # Test kind for hw tests.
@@ -197,7 +199,7 @@ class FailuresApi(RecipeApi):
         if critical:
           results.failures.append(
               self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=True, id=fail_id,
+                           fatal=True, id=fail_id, type=status,
                            failure_reason=failure_reason))
         elif build_detailed_kind:
           non_critical_build_results.failures.append(
@@ -496,9 +498,18 @@ class FailuresApi(RecipeApi):
 
     fatal_failures = [failure for failure in results.failures if failure.fatal]
 
-    status = bb_common_pb2.SUCCESS if (
-        (not fatal_failures) or
-        ignore_build_test_failures) else bb_common_pb2.FAILURE
+    status = bb_common_pb2.SUCCESS
+
+    # Set the status to INFRA_FAILURE if all failures are INFRA_FAILUREs.
+    # Infra failures generally indicate issues not caused by the user's changes.
+    # However, if there are any failures not marked as INFRA_FAILURE, the status should
+    # be set to FAILURE, indicating that there are actionable items for the user.
+    if fatal_failures and not ignore_build_test_failures:
+      if all(failure.type == bb_common_pb2.INFRA_FAILURE
+             for failure in fatal_failures):
+        status = bb_common_pb2.INFRA_FAILURE
+      else:
+        status = bb_common_pb2.FAILURE
 
     non_fatal_failures = [
         failure.kind for failure in results.failures if not failure.fatal
@@ -1043,7 +1054,8 @@ class FailuresApi(RecipeApi):
           fatal = False
       updated_failures.append(
           self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                       fatal=fatal, id=f.id, failure_reason=f.failure_reason))
+                       fatal=fatal, id=f.id, type=f.type,
+                       failure_reason=f.failure_reason))
     if new_non_critical_builds:
       with self._with_step(presentation, 'non-critical build check') as pres:
         pres.logs['new non-critical builders'] = new_non_critical_builds
