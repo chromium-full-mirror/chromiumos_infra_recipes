@@ -12090,14 +12090,14 @@ for example:
 &mdash; **def [RunSteps](/recipes/build_android_uprev.py#38)(api: RecipeApi, properties: AndroidUprevProperties):**
 ### *recipes* / [build\_bisector](/recipes/build_bisector.py)
 
-[DEPS](/recipes/build_bisector.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipes/build_bisector.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [future\_utils](#recipe_modules-future_utils), [sysroot\_archive](#recipe_modules-sysroot_archive), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
 Recipe for building a BuildTarget image for Bisector.
 
-&mdash; **def [DoRunSteps](/recipes/build_bisector.py#47)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_bisector.py#48)(api: RecipeApi, config: BuilderConfig, properties: BuildBisectorProperties):**
 
-&mdash; **def [RunSteps](/recipes/build_bisector.py#37)(api: RecipeApi, properties: BuildBisectorProperties):**
+&mdash; **def [RunSteps](/recipes/build_bisector.py#38)(api: RecipeApi, properties: BuildBisectorProperties):**
 ### *recipes* / [build\_borealis\_rootfs](/recipes/build_borealis_rootfs.py)
 
 [DEPS](/recipes/build_borealis_rootfs.py#21): [build\_menu](#recipe_modules-build_menu), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]

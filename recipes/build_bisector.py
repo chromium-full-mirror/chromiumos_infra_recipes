@@ -27,6 +27,7 @@ DEPS = [
     'build_menu',
     'cros_history',
     'cros_infra_config',
+    'future_utils',
     'sysroot_archive',
 ]
 
@@ -67,8 +68,17 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       # Ignore upload prebuilt steps to speedup for bisector builder.
       # api.build_menu.upload_prebuilts(config)
       # api.build_menu.upload_host_prebuilts(config)
-      api.build_menu.create_containers(config)
+
+      # Create the test containers in parallel to save the build time.
+      test_containers_runner = api.future_utils.create_parallel_runner()
+      test_containers_runner.run_function_async(
+          lambda cfg, _: api.build_menu.create_containers(cfg), config)
+
       api.build_menu.build_images(config)
+
+      # Pause and throw if test containers failed to upload.
+      test_containers_runner.wait_for_and_throw()
+
       api.build_menu.publish_image_size_data(config)
   except StepFailure as sf:
     # If we catch an exception, swallow it and store it so the next steps can
