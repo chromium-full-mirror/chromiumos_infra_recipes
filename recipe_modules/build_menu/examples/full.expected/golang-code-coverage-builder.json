@@ -7809,7 +7809,7 @@
       "@@@STEP_LOG_LINE@response@          \"artifact_type\": \"CODE_COVERAGE_GOLANG\",@@@",
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/code_coverage_go.tbz2\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/generated/code_coverage_go.tbz2\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ],@@@",
       "@@@STEP_LOG_LINE@response@          \"location\": \"PLATFORM_EC\"@@@",
@@ -7979,7 +7979,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_GOLANG\": [\"../../[START_DIR]/code_coverage_go.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"amd64-generic-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_GOLANG\": [\"../generated/code_coverage_go.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"amd64-generic-cq/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
@@ -8049,7 +8049,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../../[START_DIR]/code_coverage_go.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../generated/code_coverage_go.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],

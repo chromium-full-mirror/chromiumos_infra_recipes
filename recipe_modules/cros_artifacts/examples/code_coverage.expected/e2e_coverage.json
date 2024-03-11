@@ -3598,7 +3598,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/coverage.tbz2\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/generated/coverage.tbz2\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -3767,7 +3767,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_E2E\": [\"../../[START_DIR]/coverage.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"CODE_COVERAGE_E2E\": [\"../generated/coverage.tbz2\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {

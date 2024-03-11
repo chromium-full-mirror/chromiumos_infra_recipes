@@ -27,10 +27,10 @@ def GenTests(api):
   yield api.build_menu.test(
       'basic',
       api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
-                '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
-                '"location": "PLATFORM_EC"}]}}')),
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
+              '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
+              '"paths": [{"path":"[CLEANUP]/generated/coverage.tbz2","location":2}],'
+              '"location": "PLATFORM_EC"}]}}')),
       api.post_check(
           post_process.MustRun,
           'upload artifacts.upload code coverage data (firmware lcov)'),

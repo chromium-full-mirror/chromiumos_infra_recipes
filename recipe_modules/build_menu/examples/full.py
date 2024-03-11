@@ -670,7 +670,7 @@ def GenTests(api):
     api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_LLVM_JSON",'
-                '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
+                '"paths": [{"path":"[CLEANUP]/generated/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
     api.post_check(post_process.MustRun,
           'upload artifacts.upload code coverage data'),
@@ -689,7 +689,7 @@ def GenTests(api):
     api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_RUST_LLVM_JSON",'
-                '"paths": [{"path":"[START_DIR]/code_coverage.tbz2"}],'
+                '"paths": [{"path":"[CLEANUP]/generated/code_coverage.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
     api.post_check(post_process.MustRun,
           'upload artifacts.upload code coverage data'),
@@ -715,7 +715,7 @@ def GenTests(api):
     api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           data=('{"artifacts": {"test": {"artifacts": [{"artifact_type":"CODE_COVERAGE_GOLANG",'
-                '"paths": [{"path":"[START_DIR]/code_coverage_go.tbz2"}],'
+                '"paths": [{"path":"[CLEANUP]/generated/code_coverage_go.tbz2"}],'
                 '"location": "PLATFORM_EC"}]}}}')),
     api.post_check(post_process.MustRun,
           'upload artifacts.upload code coverage data'),

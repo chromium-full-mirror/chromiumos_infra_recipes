@@ -30,10 +30,10 @@ def RunSteps(api):
       ])
 
   api.assertions.assertEqual(len(stackwalk_output_paths), 2)
-  api.assertions.assertEqual(stackwalk_output_paths[0].pieces[-1],
-                             'a/b/c.dmp.txt')
-  api.assertions.assertEqual(stackwalk_output_paths[1].pieces[-1],
-                             'a/b/d.dmp.txt')
+  api.assertions.assertTrue(
+      str(stackwalk_output_paths[0]).endswith('a/b/c.dmp.txt'))
+  api.assertions.assertTrue(
+      str(stackwalk_output_paths[1]).endswith('a/b/d.dmp.txt'))
 
 
 def GenTests(api):

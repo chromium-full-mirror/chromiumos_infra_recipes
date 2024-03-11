@@ -39,18 +39,15 @@ def GenTests(api):
                               'artifactType':
                                   39,
                               'paths': [{
-                                  'path': '[START_DIR]/coverage.tbz2',
+                                  'path': '[CLEANUP]/generated/coverage.tbz2',
                                   'location': 2
                               }]
                           },]
                       }
                   }
               }, sort_keys=True)),
-      api.post_check(
-        post_process.MustRun,
-        'upload artifacts.upload code coverage data'),
-      cq=True
-    )
+      api.post_check(post_process.MustRun,
+                     'upload artifacts.upload code coverage data'), cq=True)
 
   yield api.build_menu.test(
       'e2e_coverage',
@@ -64,7 +61,7 @@ def GenTests(api):
                               'artifactType':
                                   54,
                               'paths': [{
-                                  'path': '[START_DIR]/coverage.tbz2',
+                                  'path': '[CLEANUP]/generated/coverage.tbz2',
                                   'location': 2
                               }]
                           },]
