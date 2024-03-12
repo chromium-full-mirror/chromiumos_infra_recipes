@@ -237,7 +237,7 @@
     "name": "get relevant files",
     "~followup_annotations": [
       "@@@STEP_TEXT@found relevant files@@@",
-      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"iwyu\": [], \"tidy\": []}@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"tidy\": []}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },

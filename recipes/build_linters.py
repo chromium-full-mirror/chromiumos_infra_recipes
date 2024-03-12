@@ -65,9 +65,6 @@ def _GetRelevantPatchsetsByLinter(
         'clippy': ['rs'],
         'golint': ['go'],
         'tidy': cpp_extensions,
-        # FIXME(b/260476356): Temporarily disabling IWYU so that we can enable
-        # it in the Chromie API and then test it in build_linters with led
-        'iwyu': [],
     }
     patch_sets = [
         patchset for patchset in (
@@ -162,7 +159,6 @@ def _GetLints(api: RecipeApi, linter: str,
         'tidy': LinterFinding.Linters.CLANG_TIDY,
         'clippy': LinterFinding.Linters.CARGO_CLIPPY,
         'golint': LinterFinding.Linters.GO_LINT,
-        'iwyu': LinterFinding.Linters.IWYU,
     }
     enabled_linter = linters[linter]
 
@@ -198,14 +194,6 @@ def _GetLints(api: RecipeApi, linter: str,
             'line_end': 1
         }],
         'linter': LinterFinding.Linters.CLANG_TIDY
-    }, {
-        'message': 'test message',
-        'locations': [{
-            'filepath': '/build/atlas/usr/include/chromeos/file.cpp',
-            'line_start': 1,
-            'line_end': 1
-        }],
-        'linter': LinterFinding.Linters.IWYU
     }]
 
     test_data = json.dumps(
@@ -234,7 +222,6 @@ def _WriteComments(api: RecipeApi, findings: List[LinterFinding]) -> int:
         LinterFinding.Linters.CLANG_TIDY: 'ClangTidy',
         LinterFinding.Linters.CARGO_CLIPPY: 'CargoClippy',
         LinterFinding.Linters.GO_LINT: 'Golint',
-        LinterFinding.Linters.IWYU: 'Include What You Use',
     }
     for finding in findings:
       for location in finding.locations:
@@ -402,7 +389,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       revision=None, cq=False)
 
   # No changes to relevant projects
@@ -415,7 +401,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       **BuildTestArgs(input_properties={'relevant_projects': []}))
@@ -430,7 +415,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.gerrit.set_gerrit_fetch_changes_response(
           'get relevant patches', changes[:1],
           OrderedDict({
@@ -461,11 +445,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
-      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -493,11 +475,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
-      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -521,11 +501,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'get affected packages for golint'),
       api.post_check(post_process.StepSuccess,
                      'get affected packages for tidy'),
-      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess, 'linting packages with golint'),
       api.post_check(post_process.StepSuccess, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.StepSuccess,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -558,11 +536,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'Sync Chrome sources'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
-      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.repo.project_infos_step_data('get affected packages for clippy',
@@ -599,7 +575,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
@@ -624,11 +599,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'get affected packages for golint'),
       api.post_check(post_process.DoesNotRun, 'get affected packages for tidy'),
-      api.post_check(post_process.DoesNotRun, 'get affected packages for iwyu'),
       api.post_check(post_process.StepFailure, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun, 'linting packages with iwyu'),
       api.post_check(post_process.DoesNotRun,
                      'write comments for linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),

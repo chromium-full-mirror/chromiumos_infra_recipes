@@ -237,7 +237,7 @@
     "name": "get relevant files",
     "~followup_annotations": [
       "@@@STEP_TEXT@found relevant files@@@",
-      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"iwyu\": [], \"tidy\": []}@@@",
+      "@@@STEP_LOG_LINE@output@{\"clippy\": [\"bar.rs\", \"foo.rs\"], \"golint\": [\"bar.go\", \"foo.go\"], \"tidy\": []}@@@",
       "@@@STEP_LOG_END@output@@@"
     ]
   },
@@ -6718,8 +6718,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"disabledLinters\": [@@@",
       "@@@STEP_LOG_LINE@request@    1,@@@",
-      "@@@STEP_LOG_LINE@request@    3,@@@",
-      "@@@STEP_LOG_LINE@request@    4@@@",
+      "@@@STEP_LOG_LINE@request@    3@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -6736,7 +6735,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"packages\": [\n    {\n      \"packageName\": \"chrome-icu\",\n      \"category\": \"chromeos-base\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"packageName\": \"arc-setup\",\n      \"category\": \"chromeos-base\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"path\": \"/build/atlas\",\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    }\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"disabledLinters\": [\n    1,\n    3,\n    4\n  ]\n}",
+      "{\n  \"packages\": [\n    {\n      \"packageName\": \"chrome-icu\",\n      \"category\": \"chromeos-base\",\n      \"version\": \"1-r52\"\n    },\n    {\n      \"packageName\": \"arc-setup\",\n      \"category\": \"chromeos-base\",\n      \"version\": \"1-r123\"\n    }\n  ],\n  \"sysroot\": {\n    \"path\": \"/build/atlas\",\n    \"buildTarget\": {\n      \"name\": \"atlas\"\n    }\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"disabledLinters\": [\n    1,\n    3\n  ]\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
