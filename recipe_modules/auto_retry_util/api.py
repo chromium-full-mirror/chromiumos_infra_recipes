@@ -46,6 +46,9 @@ from recipe_engine import recipe_api
 # The Chromeos LUCI service account.
 CHROMEOS_LUCI_SERVICE_ACCOUNT = 'chromeos-scoped@luci-project-accounts.iam.gserviceaccount.com'
 
+# ChromeOS LUCI auth account identity.
+CHROMEOS_LUCI_AUTH_IDENTITY = 'project:chromeos'
+
 CQ_MINIMAL_SUITE_NAME = 'cq-minimal'
 
 # Start looking back at 1 days worth of data while we are still developing.
@@ -790,7 +793,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               seconds=int(self.m.buildbucket.build.start_time.seconds) -
               self.lookback_seconds))
       search_predicate = builds_service_pb2.BuildPredicate(
-          builder=builder, create_time=create_time)
+          builder=builder, create_time=create_time,
+          created_by=CHROMEOS_LUCI_AUTH_IDENTITY)
 
       # The builds are returned ordered from newest-to-oldest.
       fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}

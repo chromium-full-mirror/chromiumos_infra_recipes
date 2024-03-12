@@ -52,7 +52,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,tags,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-31T00:00:00Z\"}}"
+      "{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-31T00:00:00Z\"}, \"createdBy\": \"project:chromeos\"}"
     ],
     "infra_step": true,
     "name": "find candidates.query for cq-orchestrators.buildbucket.search",
