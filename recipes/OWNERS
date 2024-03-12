@@ -13,6 +13,8 @@ per-file lvfs_mirror.py=file:/recipe_modules/cros_lvfs_mirror/OWNERS
 per-file android_uprev.proto = file:chromiumos/owners:v1:/arc/OWNERS.infra
 per-file android_uprev_orchestrator.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
 per-file build_android_uprev.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
+per-file uprev_preview.proto = file:chromiumos/owners:v1:/arc/OWNERS.infra
+per-file uprev_preview_auto.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
 
 # Recipes which should be reviewed by a member of the CQW team.
 per-file build_cq.py,OWNERS.cqw=set noparent
