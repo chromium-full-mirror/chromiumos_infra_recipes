@@ -35,6 +35,17 @@ def RunSteps(api):
 
 def GenTests(api):
 
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
+      'aggregateMetric': 100,
+      'aggregateBuildMetric': 100,
+  }
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
+      'greenness': {
+          'builder1-snapshot': [100, 100, True, True],
+      }
+  }
+
   child_build_info = [
       {
           'builder': {
@@ -67,6 +78,16 @@ def GenTests(api):
                       )
                   ])
           }),
+      api.buildbucket.simulated_search_results([
+          build_pb2.Build(
+              builder=builder_common_pb2.BuilderID(
+                  project='chromeos',
+                  bucket='postsubmit',
+                  builder='snapshot-orchestrator',
+              ),
+              output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+          ),
+      ], 'analyzing build results.get tot failure builders.buildbucket.search'),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(expected_retryable=['builder1-cq'],
                      expected_outstanding=[]),
@@ -173,7 +194,8 @@ def GenTests(api):
                       )
                   ])
           }),
-      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.cros_infra_config.override_builder_configs_test_data(
+          removed_verifier_configs),
       api.properties(expected_retryable=['builder1-cq'],
                      expected_outstanding=[]),
       api.post_process(post_process.DropExpectation),

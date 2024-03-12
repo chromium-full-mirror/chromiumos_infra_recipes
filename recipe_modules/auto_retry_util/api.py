@@ -425,17 +425,18 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         not_at_fault_builders = self._get_not_cl_affected_package_failure_builders(
             cq_run)
         failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
-        not_at_fault_retryable_builders = [
-            b for b in not_at_fault_builders
-            # Builders which failed on snapshot should not be retried until
-            # "wait-for-green" kicks in.
-            if _snapshot_builder(b) not in failed_on_snapshot_builders and
-            b not in retryable_failure_builders
-        ]
-        if not_at_fault_retryable_builders:
-          self._experimental_retries[cq_run.id].add(
-              EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES)
-          retryable_failure_builders.extend(not_at_fault_retryable_builders)
+        if failed_on_snapshot_builders is not None:
+          not_at_fault_retryable_builders = [
+              b for b in not_at_fault_builders
+              # Builders which failed on snapshot should not be retried until
+              # "wait-for-green" kicks in.
+              if _snapshot_builder(b) not in failed_on_snapshot_builders and
+              b not in retryable_failure_builders
+          ]
+          if not_at_fault_retryable_builders:
+            self._experimental_retries[cq_run.id].add(
+                EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES)
+            retryable_failure_builders.extend(not_at_fault_retryable_builders)
 
       # If there were any successful child builders, it means the SDK failures
       # are likely not the fault of the CL. Even pointless successful builds
@@ -602,6 +603,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest('get now green builders') as pres:
       now_green_builders = []
       failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+      if not failed_on_snapshot_builders:
+        return now_green_builders
 
       pres.logs['failed on snapshot builders'] = failed_on_snapshot_builders
       self.per_build_stats[
@@ -659,7 +662,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         **dataclasses.asdict(v)
     } for k, v in self.per_build_stats.items()])
 
-  def _failed_on_snapshot_builders(self, cq_run: build_pb2.Build) -> List[str]:
+  def _failed_on_snapshot_builders(
+      self, cq_run: build_pb2.Build) -> Optional[List[str]]:
     """Returns builders that failed on cq_run's snapshot.
 
     This function finds the greenness for the snapshot that cq_run ran on
@@ -669,7 +673,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       The CQ run for which to get failed builders.
 
     Returns:
-      The names of the builders that failed on the snapshot.
+      The names of the builders that failed on the snapshot or None if the
+          snapshot greenness was not found.
     """
     with self.m.step.nest('get tot failure builders') as pres:
       commit = cq_run.output.gitiles_commit.id
@@ -687,6 +692,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             )
 
       builder_to_greenness = self._snapshot_greenness_cache[commit]
+      if len(builder_to_greenness) == 0:
+        return None
 
       self.per_build_stats[
           cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
