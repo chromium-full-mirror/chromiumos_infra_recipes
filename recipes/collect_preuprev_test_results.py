@@ -24,6 +24,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.collect_preuprev_test_results import (
     CollectPreuprevTestResults)
 from RECIPE_MODULES.chromeos.gerrit.api import JSONObject as GerritJSONObject
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -196,6 +197,26 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
       return RawResult(status=common_pb2.FAILURE,
                        summary_markdown='Uprev CL is not found.')
 
+  with api.step.nest('Find the uprev CL on gerrit') as presentation:
+    if uprev_cl_number_overridden_for_testing is not None:
+      with api.step.nest('Overriding Uprev CL number as testing') as prep:
+        prep.summary_text = (
+            f'{uprev_cl_number} => {uprev_cl_number_overridden_for_testing}')
+        uprev_cl_number = uprev_cl_number_overridden_for_testing
+
+    uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
+                                change=uprev_cl_number, patchset=1)
+
+    uprev_change_data = api.gerrit.fetch_patch_set_from_change(
+        uprev_change, include_detailed_labels=True)
+    presentation.step_summary_text = (
+        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
+        f' {uprev_change_data.status}')
+
+    in_cq2 = ((uprev_change_data.status == 'NEW') and
+              any(vote['value'] == 2
+                  for vote in uprev_change_data.labels['Commit-Queue']['all']))
+
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
     failed_builds = []
@@ -214,11 +235,11 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
     total_build_len = len(pre_uprev_builders)
 
-    text = '[EXPERIMENTAL] Pre-uprev test result: '
+    text = 'Pre-Uprev Test '
     if not failed_builds:
-      text += 'All builds succeeded\n\n'
+      text += 'PASSED: All builds succeeded\n\n'
     else:
-      text += f'{len(failed_builds)} of {total_build_len} builds failed\n\n'
+      text += f'FAILED: {len(failed_builds)} of {total_build_len} builds failed\n\n'
 
     if failed_builds:
       text += '---\n\n'
@@ -232,37 +253,38 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
       text += ''.join(successful_builds)
 
     text += '\n'
+    text += ('Pre-uprev test verifies the soundness of upreved revision of '
+             'chrome by running a small subset of tast tests with the upreved '
+             'chrome + LKGM CrOS. The test is independent from CQ testing.\n\n')
     if failed_builds:
-      text += 'Please stop the uprev if the failure is critical. '
-    text += 'Ask yoshiki@ on the gardener chat if you have a question.'
+      text += 'The pre-uprev test is NOT passed. '
+      if in_cq2:
+        text += 'Dropping the CQ+2 vote. '
+
+      text += (
+          'Please check the result of failed builders. If failures are real, '
+          'please fix them and trigger (or wait) next uprev. If not, please '
+          'ignore and add CR+2.\n\n'
+          'See http://go/cros-gardening-preuprev-test for detail.')
+    else:
+      text += 'The test is PASSED. No action required. Please wait for the result from CQ.'
 
     presentation.logs['generated message'] = text
 
-  with api.step.nest('Find the uprev CL on gerrit') as presentation:
-    if uprev_cl_number_overridden_for_testing is not None:
-      with api.step.nest('Overriding Uprev CL number as testing') as prep:
-        prep.summary_text = (
-            f'{uprev_cl_number} => {uprev_cl_number_overridden_for_testing}')
-        uprev_cl_number = uprev_cl_number_overridden_for_testing
-
-    uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
-                                change=uprev_cl_number, patchset=1)
-
-    uprev_change_data = api.gerrit.fetch_patch_set_from_change(uprev_change)
-    presentation.step_summary_text = (
-        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
-        f' {uprev_change_data.status}')
-
+  with api.step.nest('Add a comment to the uprev CL') as presentation:
     if uprev_change_data.status != 'NEW':
       return RawResult(status=common_pb2.FAILURE,
                        summary_markdown='Uprev CL is not clean state')
 
-  with api.step.nest('Add a comment to the uprev CL') as presentation:
     presentation.step_summary_text = f'https://crrev.com/c/{uprev_cl_number}'
 
     uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
                                 change=uprev_cl_number)
     api.gerrit.add_change_comment_remote(uprev_change, text)
+
+    # Drop CR+2 if it has, by overriding it with CR+1.
+    if failed_builds and in_cq2:
+      api.gerrit.set_change_labels_remote(uprev_change, {Label.CODE_REVIEW: 1})
 
     overall_summary = (
         'Add a message to ' +
@@ -275,10 +297,24 @@ def GenTests(api: RecipeTestApi):
   UPREV_GERRIT_CHANGE_VALUES = {
       'change_id': '1',
       'status': 'NEW',
+      'labels': {
+          'Commit-Queue': {
+              'all': [{
+                  'value': 2
+              }]
+          }
+      }
   }
   UPREV_GERRIT_CHANGE_VALUES_MERGED = {
       'change_id': '1',
       'status': 'MERGED',
+      'labels': {
+          'Commit-Queue': {
+              'all': [{
+                  'value': 2
+              }]
+          }
+      }
   }
 
   BRANCHING_BUILDER_ID = 101

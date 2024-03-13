@@ -1172,57 +1172,6 @@
   },
   {
     "cmd": [],
-    "name": "Prepare the result message",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@generated message@[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@---@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Please stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.@@@",
-      "@@@STEP_LOG_END@generated message@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "cancellation_markdown,id,output,steps,summary_markdown",
-      "-predicate",
-      "{\"childOf\": \"102\"}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": ":"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Prepare the result message.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"id\": \"203\", \"status\": \"FAILURE\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Find the uprev CL on gerrit",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@[chromium:123456](https://crrev.com/c/123456) NEW@@@"
@@ -1245,7 +1194,7 @@
       }
     },
     "name": "Find the uprev CL on gerrit.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1262,7 +1211,15 @@
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"hashtags\": [],@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"labels\": null,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"labels\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"Commit-Queue\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"all\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@              {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"value\": 2@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            ]@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"messages\": [],@@@",
       "@@@STEP_LOG_LINE@json.output@        \"project\": \"chromium/src\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"NEW\",@@@",
@@ -1300,8 +1257,63 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": true}@@@",
       "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Prepare the result message",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 1 builds failed@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@---@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Dropping the CQ+2 vote. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please ignore and add CR+2.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
+      "@@@STEP_LOG_END@generated message@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "cancellation_markdown,id,output,steps,summary_markdown",
+      "-predicate",
+      "{\"childOf\": \"102\"}"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Prepare the result message.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"id\": \"203\", \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@"
     ]
   },
   {
@@ -1389,7 +1401,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"[EXPERIMENTAL] Pre-uprev test result: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPlease stop the uprev if the failure is critical. Ask yoshiki@ on the gardener chat if you have a question.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Dropping the CQ+2 vote. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please ignore and add CR+2.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1404,6 +1416,106 @@
       }
     },
     "name": "Add a comment to the uprev CL.add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL.set labels on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Code-Review\": 1}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL.set labels on CL 123456.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL.set labels on CL 123456.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL.set labels on CL 123456.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Code-Review\": 1}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL.set labels on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

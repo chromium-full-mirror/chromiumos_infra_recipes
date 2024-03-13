@@ -503,11 +503,10 @@ class GerritApi(RecipeApi):
       raise StepFailure('missing gerrit patch(es)')
     return patch_sets
 
-  def fetch_patch_set_from_change(self, change: GerritChange,
-                                  include_files: bool = False,
-                                  include_commit_info: bool = False,
-                                  test_output_data: Optional[Callable] = None
-                                 ) -> PatchSet:
+  def fetch_patch_set_from_change(
+      self, change: GerritChange, include_files: bool = False,
+      include_commit_info: bool = False, include_detailed_labels: bool = False,
+      test_output_data: Optional[Callable] = None) -> PatchSet:
     """Fetch and return PatchSet associated with the given GerritChange.
 
     Assumes that change.patchset is set (which is not always the case).
@@ -517,13 +516,17 @@ class GerritApi(RecipeApi):
       include_files: If True, include information about changed files.
       test_output_data: Test output for gerrit-fetch-changes.
       include_commit_info: If True, include information about the commit.
+      include_detailed_labels: If True, include information about the labels
+        applied to the change.
 
     Raises:
       StepFailure: If the requested patch set is not found.
     """
-    patch_sets = self.fetch_patch_sets([change], include_files=include_files,
-                                       test_output_data=test_output_data,
-                                       include_commit_info=include_commit_info)
+    patch_sets = self.fetch_patch_sets(
+        [change], include_files=include_files,
+        test_output_data=test_output_data,
+        include_commit_info=include_commit_info,
+        include_detailed_labels=include_detailed_labels)
     patch_sets = [x for x in patch_sets if x.patch_set == change.patchset]
     if not patch_sets:
       raise StepFailure('missing gerrit patch')
