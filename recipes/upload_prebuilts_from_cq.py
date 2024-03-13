@@ -529,11 +529,12 @@ def DoRunSteps(api: RecipeApi, entire_timeout_sec: int) -> Optional[str]:
         current_patchset_builds = get_buildbucket_builds(
             api, gerrit_change, is_staging)
         for current_build in current_patchset_builds:
-          if current_build.builder.builder not in [
-              b.builder.builder for b in builds
-          ]:
+          builder = current_build.builder.builder
+          if builder not in [b.builder.builder for b in builds]:
             builds.append(current_build)
-            patchsets_log += f'patchset #{patchset} added build: {current_build}\n'
+            patchsets_log += f'patchset #{patchset} ' + \
+                f'added build: {current_build.id} ' + \
+                f'for build_target: {builder}\n'
     presentation.logs['patchsets_log'] = patchsets_log
 
     if len(builds) == 0:
