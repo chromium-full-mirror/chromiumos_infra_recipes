@@ -74,6 +74,7 @@
       "@@@STEP_LOG_LINE@all_stats@  automatically_exonerated: true@@@",
       "@@@STEP_LOG_LINE@all_stats@  consistent_failure_count: 10@@@",
       "@@@STEP_LOG_LINE@all_stats@  board: \"hana\"@@@",
+      "@@@STEP_LOG_LINE@all_stats@  query_position_consecutive_failure_count: 10@@@",
       "@@@STEP_LOG_LINE@all_stats@}@@@",
       "@@@STEP_LOG_LINE@all_stats@override_info {@@@",
       "@@@STEP_LOG_LINE@all_stats@}@@@",
@@ -217,7 +218,7 @@
     "name": "Auto exoneration v2 dry run.set failed_test_stats_v2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@failed_test_stats_v2@{\"failedTests\": [{\"automaticallyExonerated\": true, \"board\": \"hana\", \"buildTarget\": \"hana\", \"consistentFailureCount\": 10, \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"}], \"overrideInfo\": {}}@@@"
+      "@@@SET_BUILD_PROPERTY@failed_test_stats_v2@{\"failedTests\": [{\"automaticallyExonerated\": true, \"board\": \"hana\", \"buildTarget\": \"hana\", \"consistentFailureCount\": 10, \"queryPositionConsecutiveFailureCount\": 10, \"testId\": \"tast.lockscreen.CloseLid.fieldtrial_testing_config_on\"}], \"overrideInfo\": {}}@@@"
     ]
   },
   {

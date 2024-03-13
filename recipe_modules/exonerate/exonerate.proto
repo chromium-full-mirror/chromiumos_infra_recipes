@@ -78,6 +78,9 @@ message FailedTestStats {
   // Number of failure in the last ten executions.
   int32 consistent_failure_count = 5;
 
+  // Number of consecutive failures at the query position.
+  int32 query_position_consecutive_failure_count = 9;
+
   // Percent of flaky verdicts in
   // all verdicts for the last 24 hour period.
   int32 flaky_verdict_percent = 6;

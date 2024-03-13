@@ -944,7 +944,8 @@ class ExonerateApi(recipe_api.RecipeApi):
             item.variant)
         stat.board = self.m.rdb_util.get_board_from_variant(item.variant)
         stat.model = self.m.rdb_util.get_model_from_variant(item.variant)
-        stat.consistent_failure_count = item.failure_rate.consecutive_unexpected_test_runs
+        stat.consistent_failure_count = item.failure_rate.unexpected_test_runs
+        stat.query_position_consecutive_failure_count = item.failure_rate.consecutive_unexpected_test_runs
         stat.flaky_verdict_percent = 0 if item.flake_rate.total_verdicts == 0 else round(
             100 * item.flake_rate.run_flaky_verdicts /
             item.flake_rate.total_verdicts)
