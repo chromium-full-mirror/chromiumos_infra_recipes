@@ -431,6 +431,7 @@
   * [cros_test_plan_v2:examples/full](#recipes-cros_test_plan_v2_examples_full)
   * [cros_test_plan_v2:examples/get_testable_builders](#recipes-cros_test_plan_v2_examples_get_testable_builders)
   * [cros_test_plan_v2:examples/template_parameters](#recipes-cros_test_plan_v2_examples_template_parameters)
+  * [cros_test_plan_v2:examples/validate](#recipes-cros_test_plan_v2_examples_validate) &mdash; Tests for the cros_test_plan_v2.
   * [cros_test_platform:examples/full](#recipes-cros_test_platform_examples_full)
   * [cros_test_postprocess:examples/full](#recipes-cros_test_postprocess_examples_full)
   * [cros_test_proctor:examples/full](#recipes-cros_test_proctor_examples_full)
@@ -5274,7 +5275,7 @@ Functions for end-to-end test planning.
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#295)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#299)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5293,7 +5294,7 @@ of this module's properties.
 
 &emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#106)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#429)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#433)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the test_plan Go infra binary to get HWTestPlans.
 
@@ -5310,7 +5311,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#533)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#537)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the test_plan Go infra binary to get a list of testable builders.
 
@@ -5327,7 +5328,7 @@ Returns:
 
 &mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#96)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#219)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#223)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -14122,6 +14123,14 @@ This module tests the utility method of multi-dut suite generation.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/template_parameters.py#31)(api):**
+### *recipes* / [cros\_test\_plan\_v2:examples/validate](/recipe_modules/cros_test_plan_v2/examples/validate.py)
+
+[DEPS](/recipe_modules/cros_test_plan_v2/examples/validate.py#9): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the cros_test_plan_v2.validation function.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_test_plan_v2/examples/validate.py#16)(api):**
 ### *recipes* / [cros\_test\_platform:examples/full](/recipe_modules/cros_test_platform/examples/full.py)
 
 [DEPS](/recipe_modules/cros_test_platform/examples/full.py#17): [cros\_test\_platform](#recipe_modules-cros_test_platform), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

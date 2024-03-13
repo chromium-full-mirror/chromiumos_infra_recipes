@@ -2663,6 +2663,8 @@
     "cmd": [
       "[START_DIR]/cipd/test_plan/test_plan",
       "validate",
+      "-loglevel",
+      "debug",
       "[CLEANUP]/chromiumos_workspace/src/project-a"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

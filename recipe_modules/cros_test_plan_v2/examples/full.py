@@ -81,9 +81,6 @@ def RunSteps(api):
       ],
   )
 
-  testdir = api.path.mkdtemp()
-  api.cros_test_plan_v2.validate(testdir)
-
 
 def GenTests(api):
 

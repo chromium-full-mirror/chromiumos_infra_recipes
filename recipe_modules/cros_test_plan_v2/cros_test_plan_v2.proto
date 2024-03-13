@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.cros_test_plan_v2;
 
+// NEXT ID: 8
 message CrosTestPlanV2Properties {
   reserved 1 to 2;
 
@@ -78,4 +79,9 @@ message CrosTestPlanV2Properties {
   // If true, the testplan tool will return a GenerateTestPlanResponse proto
   // instead of HWTestPlans, for backwards compatibility with CTPV1.
   bool generate_ctpv1_format = 6;
+
+  // If true, the testplan tool will validate that TestCaseTagCriteria in
+  // DIR_METADATA files are non-empty using the cros-test-finder Docker
+  // container.
+  bool validate_tag_criteria_non_empty = 7;
 }

@@ -211,7 +211,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
           directory, not a DIR_METADATA file. Any DIR_METADATA files in a
           subdirectory of directory will also be validated.
     """
-    self.m.gobin.call('test_plan', ['validate', directory],
+    args = ['validate', '-loglevel', 'debug']
+    if self._properties.validate_tag_criteria_non_empty:
+      args.append('-checktagcriteria')
+    args.append(directory)
+    self.m.gobin.call('test_plan', args,
                       step_name='test_plan validate {}'.format(directory))
 
   # TODO(b/277909893): This is called at least twice in a build, determine a
