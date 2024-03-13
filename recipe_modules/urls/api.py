@@ -5,6 +5,7 @@
 
 """API for creating task URLs out of complex data structures."""
 
+import collections
 from typing import Dict
 
 from google.protobuf import json_format
@@ -90,16 +91,38 @@ class UrlsApi(recipe_api.RecipeApi):
         not skylab_result.child_results):
       return {'suite page': ctp_url}
 
-    passed_at_least_once = {
-        tr.name
-        for tr in skylab_result.child_results
-        if tr.state.verdict not in failure_verdicts
-    }
+    task_name_to_results = collections.defaultdict(list)
+    for tr in skylab_result.child_results:
+      task_name_to_results[tr.name].append(tr)
+
+    def _good_attempt(result):
+      # If it passed, that's a great attempt.
+      if result.state.verdict not in failure_verdicts:
+        return True
+
+      # Otherwise, it is a good attempt if it passed provisioning and ran
+      # tests.
+      failed_provisioning = any(
+          tr.verdict in failure_verdicts for tr in result.prejob_steps)
+      ran_test_cases = len(result.test_cases) > 0
+      return ran_test_cases and not failed_provisioning
+
+    # With CFT and Tast First Class, CTP will only retry failed test cases.
+    # Therefore, it is okay to just return the latest attempt where test cases
+    # were actually executed. This should reduce noise when reporting failures.
+    task_name_to_best_result = {}
+    for name, results in task_name_to_results.items():
+      results.sort(key=lambda x: x.attempt, reverse=True)
+      # Return the latest "good" attempt. If none are "good" return the latest
+      # attempt.
+      default_best_attempt = results[0]
+      task_name_to_best_result[name] = next(
+          (x for x in results if _good_attempt(x)), default_best_attempt)
 
     link_map = {}
-    for task_result in skylab_result.child_results:
+    for task_result in task_name_to_best_result.values():
       # Don't raise failure details for tasks that flaked.
-      if task_result.name in passed_at_least_once:
+      if task_result.state.verdict not in failure_verdicts:
         continue
 
       # If the prejob failed, do not attempt to return per-test case results.

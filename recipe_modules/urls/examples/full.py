@@ -6,14 +6,11 @@
 """Basic tests for the urls recipe module."""
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/properties',
     'recipe_engine/step',
     'skylab_results',
     'urls',
@@ -36,99 +33,6 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.urls.get_skylab_task_url(skylab_task), 'skylab.whatever')
 
-  skylab_result = api.skylab_results.test_api.skylab_result(task=skylab_task)
-  api.assertions.assertEqual(
-      api.urls.get_skylab_result_link_map(skylab_result),
-      {'suite page': 'skylab.whatever'})
-
-  # Case when the task is never scheduled so the result does not have a url.
-  response = ExecuteResponse()
-  child_result1 = response.task_results.add()
-  child_result1.state.verdict = TaskState.VERDICT_FAILED
-  child_result1.state.life_cycle = TaskState.LIFE_CYCLE_REJECTED
-  child_result1.name = 'first test'
-  skylab_result = api.skylab_results.test_api.skylab_result(
-      task=skylab_task, child_results=response.task_results,
-      status=common_pb2.FAILURE)
-  api.assertions.assertEqual(
-      api.urls.get_skylab_result_link_map(skylab_result),
-      {'first test (never ran, due to no DUT capacity)': 'skylab.whatever'})
-
-  response = ExecuteResponse()
-  child_result1 = response.task_results.add()
-  child_result1.state.verdict = TaskState.VERDICT_FAILED
-  child_result1.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
-  child_result1.name = 'first test'
-  child_result1.task_url = 'link.com'
-  prejob_step1 = child_result1.prejob_steps.add()
-  prejob_step1.verdict = TaskState.VERDICT_FAILED
-  prejob_step1.name = 'provision'
-  test_case0 = child_result1.test_cases.add()
-  test_case0.name = 'test0'
-  test_case0.verdict = TaskState.VERDICT_UNSPECIFIED
-  test_case1 = child_result1.test_cases.add()
-  test_case1.name = 'test1'
-  test_case1.verdict = TaskState.VERDICT_NO_VERDICT
-
-  expected_map = {
-      'first test - provision failed': 'link.com',
-  }
-  skylab_result = api.skylab_results.test_api.skylab_result(
-      task=skylab_task, status=common_pb2.FAILURE,
-      child_results=response.task_results)
-  api.assertions.assertEqual(
-      api.urls.get_skylab_result_link_map(skylab_result), expected_map)
-
-  prejob_step1.human_readable_summary = 'REASON_DUT_UNREACHABLE_POST_PROVISION'
-  expected_map = {
-      'first test - dut_unreachable_post_provision': 'link.com',
-  }
-  skylab_result = api.skylab_results.test_api.skylab_result(
-      task=skylab_task, status=common_pb2.FAILURE,
-      child_results=response.task_results)
-  api.assertions.assertEqual(
-      api.urls.get_skylab_result_link_map(skylab_result), expected_map)
-
-  response = ExecuteResponse()
-  child_result1 = response.task_results.add()
-  child_result1.state.verdict = TaskState.VERDICT_FAILED
-  child_result1.name = 'first test'
-  child_result1.task_url = 'link.com'
-  child_result2 = response.task_results.add()
-  child_result2.state.verdict = TaskState.VERDICT_FAILED
-  child_result2.state.life_cycle = TaskState.LIFE_CYCLE_COMPLETED
-  child_result2.name = 'second test'
-  child_result2.task_url = 'newlink.com'
-  test_case0 = child_result2.test_cases.add()
-  test_case0.name = 'tast'
-  test_case0.verdict = TaskState.VERDICT_FAILED
-  test_case0.human_readable_summary = 'failed because reasons'
-  test_case1 = child_result2.test_cases.add()
-  test_case1.name = 'tast.speaker.IsReallyLoud'
-  test_case1.verdict = TaskState.VERDICT_FAILED
-  test_case2 = child_result2.test_cases.add()
-  test_case2.name = 'tast.cpu.IsVeryFast'
-  test_case2.verdict = TaskState.VERDICT_FAILED
-  test_case2.human_readable_summary = 'failed because it was just too fast'
-  # Flaked child result should not be surfaced on UI.
-  child_result3 = response.task_results.add()
-  child_result3.name = 'third test'
-  child_result3.state.verdict = TaskState.VERDICT_FAILED
-  child_result4 = response.task_results.add()
-  child_result4.name = 'third test'
-  child_result4.state.verdict = TaskState.VERDICT_PASSED
-
-  expected_map = {
-      'tast: failed because reasons': 'newlink.com',
-      'first test': 'link.com',
-      'tast.speaker.IsReallyLoud': 'newlink.com',
-      'tast.cpu.IsVeryFast': 'newlink.com',
-  }
-  skylab_result = api.skylab_results.test_api.skylab_result(
-      task=skylab_task, status=common_pb2.FAILURE,
-      child_results=response.task_results)
-  api.assertions.assertEqual(
-      api.urls.get_skylab_result_link_map(skylab_result), expected_map)
 
   api.assertions.assertEqual(
       api.urls.get_gs_path_url('gs://bucket/a/b/c'),
