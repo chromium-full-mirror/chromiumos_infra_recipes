@@ -1416,10 +1416,15 @@ class OrchMenuApi(recipe_api.RecipeApi):
                                            fields=CHILD_BUILD_SEARCH_FIELDS)
     return children
 
-  def add_child_info_to_output_property(self):
+  def add_child_info_to_output_property(
+      self, relevant_child_builder_names: List[str] = None):
+    """Add child information to output property of current build.
+
+    Args:
+      relevant_builder_names: List of relevant child builders.
     """
-    Add child information to output property of current build.
-    """
+    relevant_child_builder_names = (
+        relevant_child_builder_names or self._relevant_child_builder_names)
     child_builds = self._get_child_builds()
     child_build_info = []
     # TODO(b/266749698): Deprecate child_build_ids for child_build_info.
@@ -1436,7 +1441,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # This is only applicable to CQ and Snapshot.
       if self.is_cq_orchestrator or self.is_snapshot_orchestrator:
         child_build_dict['relevant'] = (
-            b.builder.builder in self._relevant_child_builder_names)
+            b.builder.builder in relevant_child_builder_names)
       # If running unit tests async, add the time the child build was elegible
       # for collection.
       if 'image_artifacts_uploaded_time' in b.output.properties:

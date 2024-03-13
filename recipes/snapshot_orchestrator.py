@@ -15,6 +15,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'build_menu',
+    'orch_menu',
     'snapshot_orch_menu',
 ]
 
@@ -45,8 +46,7 @@ def DoRunSteps(api: RecipeApi):
       extra_child_props=extra_child_props,
   )
   # Aggregate any metadata produced by the child builds into our own GS bucket
-  metadata = api.snapshot_orch_menu.aggregate_metadata(
-      builds_status.completed_builds)
+  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
   testable_builds = builds_status.testable_builds
 
   # Run any HW tests.

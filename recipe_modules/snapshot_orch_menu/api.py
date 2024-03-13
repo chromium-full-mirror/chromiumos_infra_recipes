@@ -8,7 +8,6 @@
 from __future__ import division
 
 import contextlib
-from collections import defaultdict
 from collections import namedtuple
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -17,13 +16,12 @@ from google.protobuf import json_format
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
-                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.orch_menu.api import BuildsStatus
 
 CHILD_BUILD_SEARCH_FIELDS = frozenset({
     'id', 'create_time', 'start_time', 'end_time', 'status', 'builder.bucket',
@@ -32,89 +30,6 @@ CHILD_BUILD_SEARCH_FIELDS = frozenset({
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
-
-
-class BuildsStatus():
-  """The running status of the builds.
-
-  Properties:
-    completed_builds (list[Build]): The completed builds.
-    testable_builds (list[Build]): The list of testable builds.
-    failures (list[Failure]): The list of failures.
-    fatal_failures (list[Failure]): The list of fatal failures.
-    running_builds (list[Build]): The still-running builds (to be collected
-        after HW test.)
-  """
-
-  def __init__(self, completed, failures, configs, running=None):
-    """
-
-    Args:
-      completed (list[Build]): The builds.
-      failures (list[Failure]): The failures
-      configs (dict{name: BuilderConfig}): Builder config dictionary.
-      running (list[Build]): The running builds, or None.
-    """
-    self.completed_builds = completed
-    self.failures = failures
-    self._configs = configs
-    self.running_builds = running or []
-
-  @property
-  def testable_builds(self):
-    return [b for b in self.completed_builds if self._is_testable(b)]
-
-  @property
-  def fatal_failures(self):
-    return [f for f in self.failures if f.fatal]
-
-  def update(self, completed=None, failures=None, configs=None, running=None):
-    """Update the status.
-
-    Add the new builds and failures to our attributes.  Remove completed builds
-    from running list.
-
-    Args:
-      completed (list[Build]): The builds.
-      failures (list[Failure]): The failures
-      configs (dict{name: BuilderConfig}): Builder config dictionary.
-      running (list[Build]): The still-running builds, or None.
-    """
-    self._configs = configs or self._configs
-    self._update_failures(failures or [])
-    new_completed_builds = [
-        b for b in completed or [] if b not in self.completed_builds
-    ]
-    self.completed_builds += new_completed_builds
-    # Remove any just completed builds from self.running_builds.
-    completed_ids = set(b.id for b in self.completed_builds)
-    self.running_builds = [
-        b for b in self.running_builds if b.id not in completed_ids
-    ]
-    # Add any new running builds to self.running_builds.
-    running_ids = set(b.id for b in self.running_builds)
-    self.running_builds += [b for b in running or [] if not b.id in running_ids]
-
-  def _update_failures(self, failure_updates):
-    """Update self._failures with the list of failure_updates.
-
-    If a failure is new, add it to self._failures. If the a failure is for an id
-    which already exists in self._failures, the updated failure overrides the
-    existing failure.
-
-    Args:
-      failure_updates (list[Failure]): Failures with which to update build_status.
-    """
-    failure_update_ids = [f.id for f in failure_updates]
-    unchanged_failures = [
-        f for f in self.failures if f.id not in failure_update_ids
-    ]
-    self.failures = failure_updates + unchanged_failures
-
-  def _is_testable(self, build):
-    """Whether the build is testable."""
-    return (build.status == common_pb2.SUCCESS and
-            self._configs.get(build.builder.builder))
 
 
 class SnapshotOrchMenuApi(recipe_api.RecipeApi):
@@ -134,10 +49,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self._is_postsubmit_orchestrator = False
     self._is_snapshot_orchestrator = False
     self._relevant_child_builder_names = []
-
-    self._builder_to_collect_value = defaultdict(
-        lambda: BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
-            BuilderConfig.Orchestrator.ChildSpec.COLLECT_HANDLING_UNSPECIFIED))
 
   def initialize(self):
     # Set the default buildbucket host for buildbucket calls.
@@ -215,8 +126,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       with self.m.step.nest('set up orchestrator') as presentation:
         self._validate_properties()
         config = self.m.cros_source.configure_builder(
-            self.m.buildbucket.gitiles_commit,
-            self.m.buildbucket.build.input.gerrit_changes)
+            self.m.buildbucket.gitiles_commit)
 
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
@@ -265,7 +175,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           [self.m.cros_resultdb.current_invocation_id])
       self.m.greenness.print_step()
       # Set child output ids if any
-      self.add_child_info_to_output_property()
+      self.m.orch_menu.add_child_info_to_output_property(
+          self._relevant_child_builder_names)
 
     successes = {
         'build':
@@ -362,7 +273,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           pres, self._get_child_specs(), extra_props=extra_child_props)
 
       completed_builds = list(self._collect_builds([b.id for b in collect_now]))
-      self.add_child_info_to_output_property()
+      self.m.orch_menu.add_child_info_to_output_property(
+          self._relevant_child_builder_names)
 
     self._collect_and_check_build_results(
         completed_builds, results_step_name=results_step_name,
@@ -481,15 +393,15 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         contains builds that have either completed or have COLLECT handling, the
         second contains builds that have COLLECT_AFTER_HW_TEST handling.
     """
-    completed_builds, new_build_requests = (
+    _, new_build_requests = (
         self.m.build_plan.get_build_plan(
             child_specs=child_specs,
             enable_history=self._properties.enable_history,
             gerrit_changes=self.gerrit_changes,
             internal_snapshot=self.gitiles_commit,
             external_snapshot=self.external_gitiles_commit))
-    parent_step.presentation.step_text = ('{} new, {} recycled'.format(
-        len(new_build_requests), len(completed_builds)))
+    parent_step.presentation.step_text = ('{} new'.format(
+        len(new_build_requests)))
 
     log_msg = ''
     new_builds = []
@@ -539,13 +451,13 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           for f in self.m.futures.iwait(futures):
             new_builds += f.result()
 
-    self.add_child_info_to_output_property()
+    self.m.orch_menu.add_child_info_to_output_property(
+        self._relevant_child_builder_names)
 
-    collect_when_dict = self.categorize_builds_by_collect_handling(
+    collect_when_dict = self.m.orch_menu.categorize_builds_by_collect_handling(
         child_specs, new_builds)
 
-    return (completed_builds +
-            collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
+    return (collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
             collect_when_dict[
                 BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST])
 
@@ -559,27 +471,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       return self.m.buildbucket.get_multi(
           build_ids, step_name='get',
           url_title_fn=self.m.naming.get_build_title, fields=fields).values()
-
-  def _collect_value(
-      self,
-      build: build_pb2.Build,
-      child_specs_dict: Dict[str, BuilderConfig.Orchestrator.ChildSpec],
-  ) -> BuilderConfig.Orchestrator.ChildSpec:
-    """Returns whether the orchestrator should collect the build, and when.
-
-    Args:
-      build: the build to check whether to collect.
-      child_specs_dict: mapping of builder name to ChildSpec.
-
-    Returns:
-      (BuilderConfig.Orchestrator.ChildSpec) Whether to collect the build, and
-      when.
-    """
-    values = BuilderConfig.Orchestrator.ChildSpec
-    ret = values.COLLECT
-    child_spec = child_specs_dict.get(build.builder.builder)
-
-    return child_spec.collect_handling or ret
 
   def _gerrit_changes_in_snapshot(self) -> List[common_pb2.GerritChange]:
     """Find the changes landed in the orchestrator's snapshot commit.
@@ -665,272 +556,3 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self._builds_status.update([], test_failures)
 
     return self._builds_status
-
-  def _get_property(self, pathspec, props):
-    """Get a value from a property by pathspec.
-
-      Input and output properties are protobuffer.Struct instances, so
-      normal python .get() methods don't work on them, so we have to walk the
-      struct and check for presence of a key to safely retrieve it.
-
-      Args:
-        pathspec (str): Dotted field names to get, eg: build_target.name.
-        props (Struct): Input or output properties.
-
-      Return:
-        Value of field if found, otherwise None.
-      """
-    obj = props
-    for key in pathspec.split('.'):
-      obj = obj[key] if key in obj else []
-    return obj or None
-
-  def aggregate_metadata(self, child_builds):
-    """Aggregate metadata payloads from children.
-
-    Pull metadata message of each type from children and merge the messages
-    together.  Upload the resulting message as our own metadata.
-
-    Args:
-      child_builds ([BuildStatus]): BuildStatus instances for child builds
-
-    Returns:
-      (ContainerMetadata): Aggregated container metadata
-    """
-    # Iterate over each metadata payload defined in the metadata module.
-    with self.m.step.nest('aggregating metadata') as aggregate_step:
-      for metadata_info in self.m.metadata.METADATA_PAYLOADS.values():
-        aggregated = metadata_info.msgtype()
-
-        # For each child build we were given.
-        step_name = '{} metadata'.format(metadata_info.name)
-        with self.m.step.nest(step_name) as payload_step:
-
-          def fail_parent_steps(summary=None):
-            """Helper to fail higher steps and set step summary text."""
-            # pylint: disable=cell-var-from-loop
-            for step in [payload_step, aggregate_step]:
-              step.status = self.m.step.FAILURE
-              step.step_summary_text = summary or ''
-
-          skipped = []
-          for build in child_builds:
-
-            step_name = 'processing {}'.format(build.builder.builder)
-            with self.m.step.nest(step_name) as child_step:
-              # If no build-target is set on the child build, then it's not an
-              # actual build (not compiling an image), so skip it.
-              input_props = build.input.properties
-              build_target = self._get_property('build_target.name',
-                                                input_props)
-              if not build_target:
-                child_step.step_summary_text = 'no build-target set, skipping'
-                continue
-
-              # If the child wasn't asked to build containers then skip it.
-              container_version_format = self._get_property(
-                  '$chromeos/build_menu.container_version_format',
-                  input_props,
-              )
-              if not container_version_format:
-                child_step.step_summary_text = (
-                    'containers not configured, skipping')
-                skipped.append(
-                    (build.builder.builder, 'containers not configured'))
-                continue
-
-              # Grab artifact bucket and path from output properties of child
-              # and use them to piece together the full path to the metadata
-              # payload.
-              output_props = build.output.properties
-              gs_bucket = self._get_property('artifacts.gs_bucket',
-                                             output_props)
-              gs_path = self._get_property('artifacts.gs_path', output_props)
-
-              if not (gs_bucket and gs_path):
-                child_step.step_summary_text = 'no artifacts path, skipping'
-                skipped.append((build_target, 'no artifacts path'))
-                continue
-
-              # Download the build's metadata payload.
-              payload_path = self.m.metadata.gspath(metadata_info, gs_bucket,
-                                                    gs_path)
-              result = self.m.gsutil.cat(
-                  payload_path,
-                  name='reading payload for {}'.format(build_target),
-                  stdout=self.m.raw_io.output(),
-                  ok_ret=(0, 1),
-              )
-
-              if result.retcode != 0:
-                # If we fail to download the metadata but the child build failed
-                # overall, then we didn't build the containers but it's not an
-                # error.  Containers for failed builds are a nice-to-have not
-                # a requirement.
-                if build.status != common_pb2.Status.SUCCESS:
-                  child_step.status = self.m.step.SUCCESS
-                  child_step.step_summary_text = (
-                      'no metadata but build failed, ignoring.')
-                  skipped.append((build_target, 'no metadata on failed build'))
-                else:
-                  child_step.status = self.m.step.FAILURE
-                  child_step.step_text = 'failed to download'
-                  fail_parent_steps(
-                      'one or more child payloads failed to download')
-                continue
-
-              # Decode the child payload and log any parsing errors that occur,
-              # but don't allow it to fail the overall build.
-              payload = result.stdout
-              try:
-                message = json_format.Parse(payload, metadata_info.msgtype())
-              # pylint: disable=broad-except
-              except Exception as ex:
-                child_step.status = self.m.step.FAILURE
-                child_step.step_text = 'failed to parse'
-                payload_step.logs['proto error'] = str(ex)
-                fail_parent_steps('one or more child payloads failed to parse')
-                continue
-
-              aggregated.MergeFrom(message)
-
-          payload_step.logs['skipped build info'] = '\n'.join(
-              '%s - %s' % skipped_build for skipped_build in sorted(skipped))
-
-        # TODO(b/204184594): Due to an issue in builder_config, we can't set an
-        # artifacts path for orchestrators, so we'll hardcode the image-archive
-        # bucket here but should use the configured bucket once it's fixed.
-        staging = self.m.cros_infra_config.is_staging
-        gs_bucket = ('staging-' if staging else '') + 'chromeos-image-archive'
-
-        # All child payloads should be merged into 'aggregated' now, so write
-        # it to our bucket as just another set of metadata.
-        gs_path = self.m.cros_artifacts.upload_metadata(
-            metadata_info.name,
-            self.m.build_menu.config_or_default.id.name, # eg: cq-orchestrator
-            '', # orchestrators have no build target
-            gs_bucket,
-            metadata_info.filename,
-            aggregated,
-        )
-
-        aggregate_step.links['{} metadata (gs)'.format(metadata_info.name)] = (
-            self.m.path.join(
-                'https://console.cloud.google.com/storage/browser/_details',
-                gs_bucket,
-                gs_path,
-            ))
-
-        aggregate_step.logs['{} metadata (log)'.format(metadata_info.name)] = \
-          json_format.MessageToJson(aggregated)
-
-    return aggregated
-
-  def _get_child_builds(self):
-    """
-    Get the child builders of current build.
-
-    Returns:
-      (list[Build]): List of child builds.
-    """
-    current_build = self.m.buildbucket.build
-    # Do not want to search child builds for led job.
-    children = []
-    if current_build.id:
-      predicate = builds_service_pb2.BuildPredicate(
-          tags=self.m.buildbucket.tags(
-              parent_buildbucket_id=str(current_build.id)))
-      predicate.builder.project = current_build.builder.project
-      children = self.m.buildbucket.search(predicate,
-                                           fields=CHILD_BUILD_SEARCH_FIELDS)
-    return children
-
-  def add_child_info_to_output_property(self):
-    """
-    Add child information to output property of current build.
-    """
-    child_builds = self._get_child_builds()
-    child_build_info = []
-    # TODO(b/266749698): Deprecate child_build_ids for child_build_info.
-    for b in child_builds:
-      child_build_dict = json_format.MessageToDict(b)
-      # Add collect handling information.
-      child_build_dict['collect_value'] = self._builder_to_collect_value[
-          b.builder.builder]
-      # Add whether this builder was tested in this run.
-      child_build_dict['tested_in_this_run'] = (
-          b.builder.builder
-          in self.m.cros_test_proctor.builders_tested_in_this_run)
-      # Add whether this builder was relevant.
-      # This is only applicable to CQ and Snapshot.
-      if self.is_snapshot_orchestrator:
-        child_build_dict['relevant'] = (
-            b.builder.builder in self._relevant_child_builder_names)
-      # Add whether this builder failed to emerge any packages.
-      if 'package_failures' in b.output.properties:
-        child_build_dict['package_failures'] = json_format.MessageToDict(
-            b.output.properties['package_failures'])
-      if 'output' in child_build_dict:
-        del child_build_dict['output']
-
-      child_build_info.append(child_build_dict)
-
-    if child_builds:
-      child_build_ids = [str(b.id) for b in child_builds]
-      self.m.easy.set_properties_step(child_builds=child_build_ids)
-      self.m.easy.set_properties_step(
-          child_build_info=sorted(child_build_info,
-                                  key=lambda b: b['builder']['builder']))
-
-  def categorize_builds_by_collect_handling(
-      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
-      builds: List[build_pb2.Build]
-  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
-            List[build_pb2.Build]]:
-    """Group builds by CollectHandling value.
-
-    Args:
-      child_specs: The list of ChildSpecs used for build planning.
-      builds: The list of builds spawned by this CQ run.
-
-    Returns:
-      A dict mapping CollectHandling to the list of builds which fall into that
-          category.
-    """
-    with self.m.step.nest('categorize builds by collect handling') as pres:
-      collect_when_dict = self._categorize_builds_by_collect_handling_using_child_specs(
-          child_specs, builds)
-
-      for collect_value, _builds in collect_when_dict.items():
-        for b in _builds:
-          self._builder_to_collect_value[
-              b.builder.
-              builder] = BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
-                  collect_value)
-
-        pres.logs[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Name(
-            collect_value)] = sorted([b.builder.builder for b in _builds])
-
-      return collect_when_dict
-
-  def _categorize_builds_by_collect_handling_using_child_specs(
-      self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
-      builds: List[build_pb2.Build]
-  ) -> Dict[BuilderConfig.Orchestrator.ChildSpec.CollectHandling.Value,
-            List[build_pb2.Build]]:
-    """Group builds by CollectHandling using the value in their ChildSpec.
-
-    Args:
-      child_specs: The list of ChildSpecs used for build planning.
-      builds: The list of builds spawned by this CQ run.
-
-    Returns:
-      A dict mapping CollectHandling to the list of builds which fall into that
-          category.
-    """
-    collect_when_dict = defaultdict(list)
-    child_specs_dict = {cs.name: cs for cs in child_specs}
-    for b in builds:
-      collect_value = self._collect_value(b, child_specs_dict)
-      collect_when_dict[collect_value].append(b)
-    return collect_when_dict

@@ -48,6 +48,7 @@ DEPS = [
     'looks_for_green',
     'metadata',
     'naming',
+    'orch_menu',
     'skylab',
     'skylab_results',
     'src_state',

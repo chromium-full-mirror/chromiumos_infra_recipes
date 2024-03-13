@@ -2028,7 +2028,7 @@
     "cmd": [],
     "name": "run builds",
     "~followup_annotations": [
-      "@@@STEP_TEXT@1 new, 0 recycled@@@"
+      "@@@STEP_TEXT@1 new@@@"
     ]
   },
   {
