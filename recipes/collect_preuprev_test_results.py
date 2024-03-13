@@ -49,6 +49,13 @@ PUPR_GENERATOR_BUILDER_NAME = 'lacros-ash-atomic-pupr-generator'
 
 # List of pre-uprev test builders:
 PRE_UPREV_TEST_BUILDERS = [
+    'chromeos-brya-chrome-preuprev',
+    'chromeos-jacuzzi-chrome-preuprev',
+    'chromeos-volteer-chrome-preuprev',
+    'chromeos-betty-pi-arc-chrome-preuprev',
+    'linux-chromeos-chrome-preuprev',
+
+    # Old builders. Remove them after migrating to new builders (*-preuprev).
     'chromeos-brya-chrome-skylab',
     'chromeos-jacuzzi-chrome-skylab',
     'chromeos-volteer-chrome-skylab',
