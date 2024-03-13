@@ -51,7 +51,8 @@ PROPERTIES = IncrementalProperties
 def RunSteps(api: RecipeApi,
              properties: IncrementalProperties) -> Optional[RawResult]:
   with api.build_menu.configure_builder() as config, \
-    api.build_menu.setup_workspace(cherry_pick_changes=False):
+    api.build_menu.setup_workspace(cherry_pick_changes=False,
+                                   ignore_changes=True):
 
     # Disable cros clean-outdated-pkgs via ENV var, if necessary.
     cop_enabled = properties.cop_enabled
