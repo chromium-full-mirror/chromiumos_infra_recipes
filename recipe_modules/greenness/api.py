@@ -105,6 +105,8 @@ class GreennessApi(recipe_api.RecipeApi):
     Args:
       builds: List of builds that have completed.
     """
+    if not self._publish_property:
+      return
     for build in builds:
       builder = build.builder.builder
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0

@@ -580,6 +580,7 @@
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
   * [goma:examples/with_goma_artifacts](#recipes-goma_examples_with_goma_artifacts)
   * [goma:examples/with_goma_artifacts_no_logs](#recipes-goma_examples_with_goma_artifacts_no_logs)
+  * [greenness:examples/dont_update_build_info](#recipes-greenness_examples_dont_update_build_info) &mdash; Unittest noop update_build_info() when not publishing results.
   * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
   * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
   * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
@@ -8306,7 +8307,7 @@ A module to calculate greenness metric.
 
 &emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#51)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#269)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#271)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8337,7 +8338,7 @@ Returns: builderGreenness, or an empty OrderedDict if the builder, its
 
 &emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
 
-&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#129)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#131)(self, builds: List[build_pb2.Build]):**
 
 Populate the local greenness dict with build information.
 
@@ -8348,11 +8349,11 @@ separately from amd64-generic).
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#233)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#235)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#240)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#242)(self):**
 
 Publish greenness to output properties.
 
@@ -8363,14 +8364,14 @@ Update greenness with build information.
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#156)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#158)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#209)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
+&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#211)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
 
 Update scores in the greenness dict for irrelevant builds.
 
@@ -8378,7 +8379,7 @@ Args:
   builds: List of builds that have completed.
   greenness_dict: The greenness dict to update.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#188)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#190)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 
@@ -15115,6 +15116,14 @@ Example to demonstrate usage of the goma module.
 
 
 &mdash; **def [RunSteps](/recipe_modules/goma/examples/with_goma_artifacts_no_logs.py#27)(api, properties):**
+### *recipes* / [greenness:examples/dont\_update\_build\_info](/recipe_modules/greenness/examples/dont_update_build_info.py)
+
+[DEPS](/recipe_modules/greenness/examples/dont_update_build_info.py#10): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util)
+
+
+Unittest noop update_build_info() when not publishing results
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/examples/dont_update_build_info.py#16)(api):**
 ### *recipes* / [greenness:examples/update\_build\_info](/recipe_modules/greenness/examples/update_build_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_build_info.py#11): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
