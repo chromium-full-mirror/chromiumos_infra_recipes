@@ -392,6 +392,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
           child_build_snapshot = external_snapshot
 
         tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+        if not critical and child_spec.name.endswith('-cq'):
+          tags.extend(
+              self.m.cros_tags.tags(
+                  **{'hide-in-gerrit': 'non-critical-builder'}))
 
         if child_spec.bucket:
           bucket = child_spec.bucket
