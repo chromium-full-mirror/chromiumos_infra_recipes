@@ -17,7 +17,7 @@
       "-n",
       "1000",
       "-fields",
-      "*",
+      "end_time,id,input,start_time,tags",
       "-predicate",
       "{\"builder\": {\"bucket\": \"testplatform\", \"builder\": \"cros_test_platform\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"1970-01-01T00:00:00Z\", \"startTime\": \"1969-12-31T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],

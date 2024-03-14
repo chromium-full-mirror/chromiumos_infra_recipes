@@ -20,18 +20,16 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'cros_infra_config',
     'cros_test_platform',
     'skylab',
 ]
 
-
-TIMEOUT_SECONDS = 30 * 60  # 30 minutes
-DEFAULT_CTP_REPLAY_MAX_RUNTIME = 20 * 60
+DEFAULT_CTP_REPLAY_MAX_RUNTIME = 90 * 60  # 90 minutes
 CTP_BUILDS_TO_REPLAY = 10
+MAX_CTP1_RATIO = 0.7
 REPLAYED_PROD_BUILD_ID_TAG = 'replay_from_prod_buildbucket_id'
-
-MAX_CFT_BUILDS = 7
-MAX_PHOSPHORUS_BUILDS = 3
+POOL_TAG_PREFIX = 'label-pool:'
 
 
 def RunSteps(api, properties):
@@ -47,8 +45,8 @@ def RunSteps(api, properties):
 
 
 def _get_last_successful_ctp_prod_builds(api, replay_builder,
-                                         num_builds=CTP_BUILDS_TO_REPLAY,
-                                         time_limit_seconds=TIMEOUT_SECONDS):
+                                         time_limit_seconds,
+                                         num_builds=CTP_BUILDS_TO_REPLAY):
   # Only search up to 6 hrs back to make sure we replay relevant prod CTP data.
   six_hours_back = _bb_time_range(api, 12 * 60)
   ctp_prod_builder = 'cros_test_platform'
@@ -58,8 +56,8 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
               'project': 'chromeos',
               'bucket': 'testplatform',
               'builder': ctp_prod_builder,
-          }, status=bb_common.SUCCESS,
-          create_time=six_hours_back), fields=['*'], limit=1000,
+          }, status=bb_common.SUCCESS, create_time=six_hours_back),
+      fields=['id', 'start_time', 'end_time', 'tags', 'input'], limit=1000,
       step_name='find recent green %s builds' % ctp_prod_builder)
   if not successful_prod_builds:
     raise api.step.StepFailure('No successful builds found for builder %s' %
@@ -68,38 +66,64 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
   already_replayed_build_ids = _already_replayed_ctp_build_ids(
       api, replay_builder, six_hours_back)
 
-  builds = []
-  cft_builds = 0
-  phosphorus_builds = 0
+  ctp2_pools = []
+  try:
+    with api.step.nest('get allowed pools for ctpv2') as step:
+      ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
+      step.presentation.logs['allowed pools'] = '\n'.join(ctp2_pools)
+  # pylint: disable=broad-except
+  except Exception:  # pragma: no cover
+    pass
+
+  max_ctp1_builds = int(num_builds * MAX_CTP1_RATIO)
+  ctp1_builds = []
+  ctp2_builds = []
+
   for build in successful_prod_builds:
-    is_cft_build = False
-
     run_time = build.end_time.seconds - build.start_time.seconds
-    # If run time is less than time_limit_seconds, use the build.
-    # Otherwise keep looking.
-    if run_time < time_limit_seconds and build.id not in already_replayed_build_ids:
+    # Only use builds with runtime less than time_limit_seconds.
+    if run_time > time_limit_seconds or build.id in already_replayed_build_ids:
+      continue
 
-      # Check if build is a CFT build
-      reqs = MessageToDict(build.input.properties['requests'])
-      for _, req in reqs.items():
-        if req.get('params') and req.get('params').get('runViaCft') is True:
-          is_cft_build = True
+    if _is_ctp2_build(build, ctp2_pools):
+      ctp2_builds.append(build)
+    elif len(ctp1_builds) < max_ctp1_builds:
+      ctp1_builds.append(build)
 
-      # Enforce a max ratio of CFT vs Phosphorus builds
-      if is_cft_build and cft_builds < MAX_CFT_BUILDS:
-        cft_builds += 1
-        builds.append(build)
-      elif phosphorus_builds < MAX_PHOSPHORUS_BUILDS:
-        phosphorus_builds += 1
-        builds.append(build)
+    # Don't stop scanning builds until the total max and the CTPv1 max are met.
+    if (len(ctp1_builds) + len(ctp2_builds) >= num_builds and
+        len(ctp1_builds) >= max_ctp1_builds):
+      break
 
-      if len(builds) == num_builds:
-        break
-  if not builds:
+  if not ctp1_builds and not ctp2_builds:
     raise api.step.StepFailure(
         'No new successful builds with completion time under {}s found for builder {}'
         .format(time_limit_seconds, ctp_prod_builder))
-  return builds
+
+  max_ctp2_builds = num_builds - len(ctp1_builds)
+  ctp2_builds_to_return = min(len(ctp2_builds), max_ctp2_builds)
+  return ctp1_builds + ctp2_builds[:ctp2_builds_to_return]
+
+
+def _is_ctp2_build(build, ctp2_pools):
+  for req in MessageToDict(build.input.properties['requests']).values():
+    params = req.get('params')
+    if not params:
+      continue  # pragma: no cover
+    decorations = params.get('decorations')
+    if not decorations:
+      continue  # pragma: no cover
+    tags = decorations.get('tags')
+    if not tags:
+      continue  # pragma: no cover
+    for tag in tags:
+      if not tag.startswith(POOL_TAG_PREFIX):
+        continue
+      pool = tag.removeprefix(POOL_TAG_PREFIX)
+      if pool in ctp2_pools:
+        return True
+
+  return False
 
 
 def _already_replayed_ctp_build_ids(api, replay_builder, time_range):
@@ -165,8 +189,8 @@ def _check_dev_env_and_cft(replay_builder, reqs_dict):
 
 
 def GenTests(api):
-  cft_input_properties = struct_pb2.Struct()
-  cft_input_properties['requests'] = {
+  ctp1_input_properties = struct_pb2.Struct()
+  ctp1_input_properties['requests'] = {
       'gale_gale': {
           'params': {
               'decorations': {
@@ -215,8 +239,8 @@ def GenTests(api):
       }
   }
 
-  phosphorus_input_properties = struct_pb2.Struct()
-  phosphorus_input_properties['requests'] = {
+  ctp2_input_properties = struct_pb2.Struct()
+  ctp2_input_properties['requests'] = {
       'gale_gale': {
           'params': {
               'decorations': {
@@ -224,7 +248,7 @@ def GenTests(api):
                       'label-board:gale', 'analytics_name:RLZ',
                       'label-model:gale', 'build:gale-release/R89-13729.57.2',
                       'suite:rlz', 'ctp-fwd-task-name:RLZ',
-                      'label-pool:MANAGED_POOL_QUOTA'
+                      'label-pool:schedukeTest'
                   ]
               },
               'hardwareAttributes': {
@@ -240,6 +264,7 @@ def GenTests(api):
                   'allow': True,
                   'max': 3
               },
+              'runViaCft': True,
               'scheduling': {
                   'managedPool': 'MANAGED_POOL_QUOTA',
                   'qsAccount': 'legacypool-suites'
@@ -264,7 +289,7 @@ def GenTests(api):
       }
   }
 
-  green_cft_builds = [
+  green_ctp1_builds = [
       # This build should always be skipped since it was previously replayed.
       build_pb2.Build(
           id=100,
@@ -276,7 +301,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 5),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=123,
@@ -286,9 +311,9 @@ def GenTests(api):
               'builder': 'cros_test_platform',
           },
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
-          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 65),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 95),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=456,
@@ -300,7 +325,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 15),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=789,
@@ -312,7 +337,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=7891,
@@ -324,7 +349,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=78912,
@@ -336,7 +361,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=78913,
@@ -348,7 +373,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=78914,
@@ -360,7 +385,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       ),
       build_pb2.Build(
           id=78915,
@@ -372,10 +397,10 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': cft_input_properties},
+          input={'properties': ctp1_input_properties},
       )
   ]
-  green_phosphorus_builds = [
+  green_ctp2_builds = [
       # This build should always be skipped since it was previously replayed.
       build_pb2.Build(
           id=1,
@@ -387,7 +412,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 5),
           status='SUCCESS',
-          input={'properties': phosphorus_input_properties},
+          input={'properties': ctp2_input_properties},
       ),
       build_pb2.Build(
           id=2,
@@ -397,9 +422,9 @@ def GenTests(api):
               'builder': 'cros_test_platform',
           },
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
-          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 65),
+          end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 95),
           status='SUCCESS',
-          input={'properties': phosphorus_input_properties},
+          input={'properties': ctp2_input_properties},
       ),
       build_pb2.Build(
           id=3,
@@ -411,7 +436,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 15),
           status='SUCCESS',
-          input={'properties': phosphorus_input_properties},
+          input={'properties': ctp2_input_properties},
       ),
       build_pb2.Build(
           id=4,
@@ -423,7 +448,7 @@ def GenTests(api):
           start_time=timestamp_pb2.Timestamp(seconds=1617230018),
           end_time=timestamp_pb2.Timestamp(seconds=1617230018 + 60 * 30),
           status='SUCCESS',
-          input={'properties': phosphorus_input_properties},
+          input={'properties': ctp2_input_properties},
       )
   ]
   previous_replayed_runs = [
@@ -449,7 +474,7 @@ def GenTests(api):
               }
           }),
       api.buildbucket.simulated_search_results(
-          green_cft_builds,
+          green_ctp1_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
@@ -469,7 +494,7 @@ def GenTests(api):
               }
           }),
       api.buildbucket.simulated_search_results(
-          green_cft_builds + green_phosphorus_builds,
+          green_ctp1_builds + green_ctp2_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
@@ -481,7 +506,7 @@ def GenTests(api):
       'successful-run-cft',
       api.properties(
           **{
-              'ctp_replay_max_runtime': 70 * 60,
+              'ctp_replay_max_runtime': 100 * 60,
               'ctp_num_replay_builds': 3,
               'ctp_builder': 'cros_test_platform-dev',
               '$chromeos/skylab': {
@@ -489,7 +514,7 @@ def GenTests(api):
               }
           }),
       api.buildbucket.simulated_search_results(
-          green_cft_builds,
+          green_ctp1_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
@@ -515,7 +540,7 @@ def GenTests(api):
               'ctp_builder': 'cros_test_platform-foo_env',
           }),
       api.buildbucket.simulated_search_results(
-          green_cft_builds,
+          green_ctp1_builds,
           step_name='replay prod CTP run.find recent green cros_test_platform builds'
       ),
       api.buildbucket.simulated_search_results(
