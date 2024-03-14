@@ -109,7 +109,66 @@ def GenTests(api):
       api.test_util.test_child_build('volteer', status='FAILURE').message,
   ]
   yield api.test(
-      'multiple-failure-reasons-does-not-bubble-up',
+      'build-failure-without-reason-does-not-bubble-up',
       api.properties(BuildProperties(builds=builds)),
       api.post_check(post_process.ResultReasonRE,
                      '2 out of 2 builds failed\n\n'), status='FAILURE')
+
+  builds = [
+      api.test_util.test_child_build(
+          'atlas', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='bar'),
+                          phase='COMPILE'))
+              ]
+          }).message,
+      api.test_util.test_child_build(
+          'volteer', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='baz'),
+                          phase='COMPILE'))
+              ]
+          }).message,
+  ]
+  yield api.test(
+      'two-failure-reasons', api.properties(BuildProperties(builds=builds)),
+      api.post_check(post_process.ResultReasonRE,
+                     '1 out of 2 builds failed compilation for foo/bar\n\n'),
+      api.post_check(post_process.ResultReasonRE,
+                     '1 out of 2 builds failed compilation for foo/baz\n\n'),
+      status='FAILURE')
+
+  builds = [
+      api.test_util.test_child_build(
+          'atlas', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='bar'),
+                          phase='COMPILE'))
+              ]
+          }).message,
+      api.test_util.test_child_build(
+          'volteer', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='baz'),
+                          phase='COMPILE'))
+              ]
+          }).message,
+      api.test_util.test_child_build('zork', status='FAILURE').message,
+  ]
+  yield api.test(
+      'more-than-2-failure-reasons-does-not-bubble-up',
+      api.properties(BuildProperties(builds=builds)),
+      api.post_check(post_process.ResultReasonRE,
+                     '3 out of 3 builds failed\n\n'), status='FAILURE')

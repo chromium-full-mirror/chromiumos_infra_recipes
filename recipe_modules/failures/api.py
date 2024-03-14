@@ -9,6 +9,7 @@ from __future__ import annotations
 import collections
 import contextlib
 import datetime
+import math
 import operator
 import re
 
@@ -352,21 +353,38 @@ class FailuresApi(RecipeApi):
         kind + 's' if total_count > 1 else kind,
     )
 
-    failure_reasons = {f.failure_reason for f in failure_group}
+    reason_to_failure_map = collections.defaultdict(list)
+    for f in failure_group:
+      reason_to_failure_map[f.failure_reason].append(f)
 
-    # TODO(b/327255136): Start with builds where all failures were alike.
-    # At the moment only builds with package failures produce a failure reason.
-    # Builds which fail in other ways will return None.
-    if None not in failure_reasons and len(failure_reasons) == 1:
-      main_line = f'{failure_count} out of {total_count} {kind}s {failure_reasons.pop()}'
+    lines = []
+    # TODO(b/327255136): Do at most 2 unique failure reasons as we play around
+    # with space.
+    failure_reasons_count = len(reason_to_failure_map.keys())
+    if (None not in reason_to_failure_map and 0 < failure_reasons_count <= 2):
+      # Distribute the lines given to the "kind" across the number of reasons.
+      # keeping in mind that summarizing each reason also takes up a line.
+      failures_per_reason = max(
+          (math.floor((self._failure_truncate_max - failure_reasons_count) /
+                      failure_reasons_count)), 1)
 
-    lines = [main_line]
-    failures_to_print = failure_group[0:self._failure_truncate_max]
-    for failure in failures_to_print:
-      line = '- {}:'.format(failure.title)
-      for link_text, link_url in failure.link_map.items():
-        line += ' [{}]({})'.format(link_text, link_url)
-      lines.append(line)
+      for reason, failures in reason_to_failure_map.items():
+        main_line = f'{len(failures)} out of {total_count} {kind}s {reason}'
+        lines.append(main_line)
+        failures_to_print = failures[0:failures_per_reason]
+        for failure in failures_to_print:
+          line = '- {}:'.format(failure.title)
+          for link_text, link_url in failure.link_map.items():
+            line += ' [{}]({})'.format(link_text, link_url)
+          lines.append(line)
+    else:
+      lines = [main_line]
+      failures_to_print = failure_group[0:self._failure_truncate_max]
+      for failure in failures_to_print:
+        line = '- {}:'.format(failure.title)
+        for link_text, link_url in failure.link_map.items():
+          line += ' [{}]({})'.format(link_text, link_url)
+        lines.append(line)
 
     return lines
 
