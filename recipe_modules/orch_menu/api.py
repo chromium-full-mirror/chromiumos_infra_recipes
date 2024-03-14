@@ -421,22 +421,43 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
         if (self._is_cq_orchestrator and
             self.m.build_plan.cros_query_relevant_builder_configs is not None):
+
+          # All the builders that were scheduled and collected. Non-critical
+          # builds do not get collected.
+          collected_builders = {
+              x.builder.builder for x in self.builds_status.completed_builds
+          }
           cros_query_relevant_builders = {
               b.id.name
               for b in self.m.build_plan.cros_query_relevant_builder_configs
           }
-
-          actual_relevant_child_builders = set(
+          portage_relevant_child_builders = set(
               self._relevant_child_builder_names)
+
+          # CrOS query relevant, but not Portage relevant.
           cros_query_false_positives = (
-              cros_query_relevant_builders - actual_relevant_child_builders)
+              cros_query_relevant_builders - portage_relevant_child_builders)
+          # Portage relevant, not CrOS query relevant.
           cros_query_false_negatives = (
-              actual_relevant_child_builders - cros_query_relevant_builders)
+              portage_relevant_child_builders - cros_query_relevant_builders)
+          # Correctly predicated non-relevant builders. Not relevant by both
+          # CrOS query and Portage. This is the impact of CrOS query.
+          correctly_predicted_not_relevant = {
+              x for x in collected_builders
+              if x not in cros_query_relevant_builders and
+              x not in portage_relevant_child_builders
+          }
+
           self.m.easy.set_properties_step(
               cros_query_response_was_identical=cros_query_relevant_builders ==
-              actual_relevant_child_builders,
+              portage_relevant_child_builders,
+              collected_builders=sorted(collected_builders),
+              cros_query_relevant_builders=sorted(cros_query_relevant_builders),
+              portage_relevant_builders=sorted(portage_relevant_child_builders),
               cros_query_false_positives=sorted(cros_query_false_positives),
-              cros_query_false_negatives=sorted(cros_query_false_negatives))
+              cros_query_false_negatives=sorted(cros_query_false_negatives),
+              cros_query_correctly_predicted_not_relevant=sorted(
+                  correctly_predicted_not_relevant))
 
     if self.is_cq_orchestrator:
       successes = {
