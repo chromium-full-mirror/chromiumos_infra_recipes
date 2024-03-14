@@ -95,13 +95,13 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     _builder_config = BuilderConfig(build_target=_build_target)
     relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
         [_builder_config], gerrit_changes)
+    relevant = bool(relevant_builder_configs)
+    api.easy.set_properties_step(pointless_build=not relevant,
+                                 relevant_build=relevant)
     api.cros_tags.add_tags_to_current_build(
-        **{
-            'relevance':
-                '{}relevant'.format('' if relevant_builder_configs else 'not ')
-        })
+        **{'relevance': '{}relevant'.format('' if relevant else 'not ')})
 
-    if not relevant_builder_configs:
+    if not relevant:
       return RawResult(status=common.SUCCESS,
                        summary_markdown='Build was not relevant.')
 

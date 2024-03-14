@@ -2491,6 +2491,14 @@
   },
   {
     "cmd": [],
+    "name": "set properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@pointless_build@true@@@",
+      "@@@SET_BUILD_PROPERTY@relevant_build@false@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "buildbucket.add_tags_to_current_build",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"not relevant\"]}@@@"
