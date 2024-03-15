@@ -212,6 +212,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
   def relevant_child_builder_names(self):
     return self._relevant_child_builder_names
 
+  @property
   def chrome_module_child_props(self):
     return json_format.MessageToDict(
         ChromeProperties(version=self._chromium_src_ref_cl_tag))

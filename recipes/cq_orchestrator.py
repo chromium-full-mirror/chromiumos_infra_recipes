@@ -41,6 +41,9 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
                                               resultdb_gitiles_commit)
             }
     }
+    if api.orch_menu.chromium_src_ref_cl_tag:
+      extra_child_props[
+          '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props
 
     testable_builds = api.orch_menu.plan_and_wait_for_images(
         extra_child_props=extra_child_props)
@@ -164,4 +167,14 @@ def GenTests(api: RecipeTestApi):
       api.post_process(post_process.SummaryMarkdown,
                        '1 non-critical build failed'),
       cq=True,
+  )
+
+  yield api.orch_menu.test(
+      'chromium-src-ref-cq-cl-tag',
+      data.ctp_normal,
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='cq', builder='cq-orchestrator',
+          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
+      _cq_schedule_and_collect_builds_test_data(collect_builds,
+                                                collect_after_builds),
   )

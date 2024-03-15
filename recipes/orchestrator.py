@@ -67,6 +67,10 @@ def DoRunSteps(api: RecipeApi):
   # Run the child builders.
   extra_child_props = {}
 
+  if api.orch_menu.chromium_src_ref_cl_tag:
+    extra_child_props[
+        '$chromeos/chrome'] = api.orch_menu.chrome_module_child_props
+
   # If the orchestrator was given a manifest to sync to, pass it on to the
   # children.
   if api.cros_source.sync_to_manifest:
@@ -340,4 +344,12 @@ def GenTests(api: RecipeTestApi):
           'run builds.schedule new builds.kukui-release-R111-12345.B',
           'request', ['$chromeos/metadata', 'sources_gitiles_commit_override']),
       builder='release-R111-12345.B-orchestrator',
+  )
+
+  yield api.orch_menu.test(
+      'chromium-src-ref-cq-cl-tag',
+      api.buildbucket.ci_build(
+          project='chromeos', bucket='try-dev',
+          builder='staging-release-main-orchestrator',
+          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
   )

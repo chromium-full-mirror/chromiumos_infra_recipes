@@ -86,7 +86,7 @@ def RunSteps(api, properties):
 
     if api.orch_menu.chromium_src_ref_cl_tag:
       api.assertions.assertEqual(
-          api.orch_menu.chrome_module_child_props()['version'],
+          api.orch_menu.chrome_module_child_props['version'],
           api.orch_menu.chromium_src_ref_cl_tag)
 
     # It's hard to set buildbucket properties for these tests so we
