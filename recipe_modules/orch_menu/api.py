@@ -345,8 +345,14 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self._push_manifest_refs(self._properties.update_manifest_refs.start)
 
         if self.gerrit_changes:
-          # Any changes we have must be submittable.
-          if not self.m.gerrit.changes_submittable(self.gerrit_changes):
+          # Limit to staging and cq-orchestrator for now. We'll want to ask
+          # the RBS team how tryjobs could be affected.
+          if is_staging and self._is_cq_orchestrator:
+            self.m.cros_source.sync_checkout(self.gitiles_commit)
+            # This step will throw a StepFailure if changes cannot be applied
+            # to chosen snapshot.
+            self.m.workspace_util.apply_changes()
+          elif not self.m.gerrit.changes_submittable(self.gerrit_changes):
             raise recipe_api.StepFailure(
                 'Merge conflict detected! Please rebase and retry.')
           # If enabled, ensure all related changes are present

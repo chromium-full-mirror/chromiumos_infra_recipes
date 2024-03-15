@@ -683,6 +683,19 @@ def GenTests(api):
       status='FAILURE',
   )
 
+  yield api.orch_menu.test(
+      'fails-if-changes-not-submittable-staging-exp',
+      api.step_data(
+          'cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
+          retcode=1),
+      api.step_data(
+          'cherry-pick gerrit changes.apply gerrit patch sets.git merge',
+          retcode=1),
+      cq=True,
+      builder='staging-cq-orchestrator',
+      status='FAILURE',
+  )
+
   one_non_crit_fail_summary = ('1 non-critical build failed')
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')
