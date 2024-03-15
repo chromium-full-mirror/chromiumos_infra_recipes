@@ -135,6 +135,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       current_commit = GitilesCommit(
           host=api.src_state.gitiles_commit.host,
           project=api.src_state.gitiles_commit.project, id=current_commit_hash)
+      api.src_state.gitiles_commit = current_commit
       package_indexes = api.cros_prebuilts.get_package_index_info(
           config.artifacts.prebuilts_gs_bucket,
           snapshot=current_commit if current_commit_hash else None)

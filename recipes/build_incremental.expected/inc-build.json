@@ -5909,6 +5909,18 @@
   },
   {
     "cmd": [],
+    "name": "update src_state.gitiles_commit"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\",\\n  \\\"id\\\": \\\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\\\"\\n}\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "install toolchain (2)"
   },
   {
@@ -6164,7 +6176,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "snapshot-HEAD-SHA:"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env": {
@@ -6992,7 +7004,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "snapshot-HEAD-SHA:"
+      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env": {
