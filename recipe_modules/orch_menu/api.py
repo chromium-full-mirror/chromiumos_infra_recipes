@@ -281,37 +281,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
-
-          with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
-            if run_step:
-              with self.m.workspace_util.sync_to_commit(staging=is_staging):
-                # If we're syncing to a specific manifest, don't bump the version.
-                if not self.m.cros_source.sync_to_manifest:
-                  # If we're not on ToT, we need to uprev packages since we don't
-                  # have annealing.
-                  if not self.m.cros_source.is_tot:
-                    if not self.m.cros_release.uprev_packages():
-                      raise StepFailure('Failed to uprev all changes')
-
-                  bump_version = self._properties.bump_version and not is_staging
-                  # Release orchestrators may build for a pinned manifest that is
-                  # behind tip-of-branch and need to create a version bump CL
-                  # using a local diff to ensure other files are not included.
-                  use_local_diff = self.is_release_orchestrator
-                  self.m.cros_version.bump_version(
-                      dry_run=not bump_version, use_local_diff=use_local_diff)
-
-                  self.m.cros_release.create_buildspec(
-                      dry_run=is_staging,
-                      gs_location=self._properties.buildspec_gs_path)
-                if self._properties.schedule_public_build:
-                  with self.m.checkpoint.retry(
-                      RetryStep.PUBLIC_BUILD_LKGM) as run_step:
-                    if run_step:
-                      self.m.cros_lkgm.schedule_public_build()
-            else:
-              self.m.cros_release.buildspec = ManifestLocation(
-                  manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
+          self._create_buildspec()
 
         if config and config.id.type == BuilderConfig.Id.FACTORY:
           self._is_factory_orchestrator = True
@@ -375,6 +345,40 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self.gerrit_changes, all_related_changes)
       self.m.looks_for_green.related_changes_to_apply = to_apply
       self.m.easy.set_properties_step(related_changes_to_apply=to_apply)
+
+  def _create_buildspec(self):
+    """Create a release buildspec."""
+    with self.m.checkpoint.retry(RetryStep.CREATE_BUILDSPEC) as run_step:
+      if run_step:
+        with self.m.workspace_util.sync_to_commit(
+            staging=self.m.cros_infra_config.is_staging):
+          # If we're syncing to a specific manifest, don't bump the version.
+          if not self.m.cros_source.sync_to_manifest:
+            # If we're not on ToT, we need to uprev packages since we don't
+            # have annealing.
+            if not self.m.cros_source.is_tot:
+              if not self.m.cros_release.uprev_packages():
+                raise StepFailure('Failed to uprev all changes')
+
+            bump_version = self._properties.bump_version and not self.m.cros_infra_config.is_staging
+            # Release orchestrators may build for a pinned manifest that is
+            # behind tip-of-branch and need to create a version bump CL
+            # using a local diff to ensure other files are not included.
+            use_local_diff = self.is_release_orchestrator
+            self.m.cros_version.bump_version(dry_run=not bump_version,
+                                             use_local_diff=use_local_diff)
+
+            self.m.cros_release.create_buildspec(
+                dry_run=self.m.cros_infra_config.is_staging,
+                gs_location=self._properties.buildspec_gs_path)
+          if self._properties.schedule_public_build:
+            with self.m.checkpoint.retry(
+                RetryStep.PUBLIC_BUILD_LKGM) as run_step:
+              if run_step:
+                self.m.cros_lkgm.schedule_public_build()
+      else:
+        self.m.cros_release.buildspec = ManifestLocation(
+            manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
 
   def create_recipe_result(
       self, include_build_details: bool = False,
