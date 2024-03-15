@@ -139,9 +139,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._is_release_orchestrator = False
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
-    self._is_postsubmit_orchestrator = False
-    self._is_snapshot_orchestrator = False
-    self._chromium_src_ref_cl_tag = None
     self._relevant_child_builder_names = []
 
     self._builder_to_collect_value = defaultdict(
@@ -194,15 +191,18 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
   @property
   def is_postsubmit_orchestrator(self):
-    return self._is_postsubmit_orchestrator
+    return self.m.buildbucket.build.builder.builder.endswith(
+        'postsubmit-orchestrator')
 
   @property
   def is_snapshot_orchestrator(self):
-    return self._is_snapshot_orchestrator
+    return self.m.buildbucket.build.builder.builder.endswith(
+        'snapshot-orchestrator')
 
   @property
   def chromium_src_ref_cl_tag(self):
-    return self._chromium_src_ref_cl_tag
+    return self.m.cros_tags.cq_cl_tag_value('chromium_src_ref',
+                                            self.m.buildbucket.build.tags)
 
   @property
   def skip_paygen(self):
@@ -215,7 +215,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
   @property
   def chrome_module_child_props(self):
     return json_format.MessageToDict(
-        ChromeProperties(version=self._chromium_src_ref_cl_tag))
+        ChromeProperties(version=self.chromium_src_ref_cl_tag))
 
   def _get_manifest_info(self, external=False):
     """Return information about a manifest repo.
@@ -329,17 +329,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           # b/238330273 for context.
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             pass
-
-        if self.m.buildbucket.build.builder.builder.endswith(
-            'postsubmit-orchestrator'):
-          self._is_postsubmit_orchestrator = True
-
-        if self.m.buildbucket.build.builder.builder.endswith(
-            'snapshot-orchestrator'):
-          self._is_snapshot_orchestrator = True
-
-        self._chromium_src_ref_cl_tag = self.m.cros_tags.cq_cl_tag_value(
-            'chromium_src_ref', self.m.buildbucket.build.tags)
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.

@@ -47,7 +47,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
     self._is_postsubmit_orchestrator = False
-    self._is_snapshot_orchestrator = False
     self._relevant_child_builder_names = []
 
   def initialize(self):
@@ -77,10 +76,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
   @property
   def is_postsubmit_orchestrator(self):
     return self._is_postsubmit_orchestrator
-
-  @property
-  def is_snapshot_orchestrator(self):
-    return self._is_snapshot_orchestrator
 
   @property
   def relevant_child_builder_names(self):
@@ -144,10 +139,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         if self.m.buildbucket.build.builder.builder.endswith(
             'postsubmit-orchestrator'):
           self._is_postsubmit_orchestrator = True
-
-        if self.m.buildbucket.build.builder.builder.endswith(
-            'snapshot-orchestrator'):
-          self._is_snapshot_orchestrator = True
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.
@@ -535,7 +526,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     #
     # TODO(b/289227008): Snapshot should run the base snapshot testing in
     # addition to the testing based on the snapshot CLs.
-    if self.is_snapshot_orchestrator and (
+    if self.m.orch_menu.is_snapshot_orchestrator and (
         'chromeos.snapshot_orch_menu.plan_tests_using_snapshot'
         in self.m.cros_infra_config.experiments):
       assert not gerrit_changes, 'gerrit_changes are not expected on the snapshot orchestrator'
