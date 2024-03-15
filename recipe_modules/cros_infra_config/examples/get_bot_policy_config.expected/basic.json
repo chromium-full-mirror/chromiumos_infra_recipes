@@ -15,21 +15,6 @@
     "timeout": 180
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chromeosmpa.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeosmpa.binaryproto",
-    "timeout": 180
-  },
-  {
     "name": "$result"
   }
 ]

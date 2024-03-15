@@ -1,14 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS",
+    "name": "scale bot groups",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.read bot policies",
+    "name": "scale bot groups.read bot policies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -25,7 +25,7 @@
       "--format",
       "text"
     ],
-    "name": "scale bot groups for ChromeOS.read bot policies.fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
+    "name": "scale bot groups.read bot policies.fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -33,7 +33,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.get current GCE config",
+    "name": "scale bot groups.get current GCE config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_SUMMARY_TEXT@No config found for prefix(s): prefix-fifth@@@",
@@ -246,7 +246,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current GCE config.gce-provider.config.Get (prefix: prefix-first)",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: prefix-first)",
     "stdin": "{\"id\": \"prefix-first\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -310,7 +310,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current GCE config.gce-provider.config.Get (prefix: prefix-second)",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: prefix-second)",
     "stdin": "{\"id\": \"prefix-second\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -374,7 +374,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current GCE config.gce-provider.config.Get (prefix: prefix-third)",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: prefix-third)",
     "stdin": "{\"id\": \"prefix-third\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -438,7 +438,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current GCE config.gce-provider.config.Get (prefix: prefix-fourth)",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: prefix-fourth)",
     "stdin": "{\"id\": \"prefix-fourth\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -502,7 +502,7 @@
       "config.Configuration.Get"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current GCE config.gce-provider.config.Get (prefix: prefix-fifth)",
+    "name": "scale bot groups.get current GCE config.gce-provider.config.Get (prefix: prefix-fifth)",
     "stdin": "{\"id\": \"prefix-fifth\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -512,7 +512,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.get current GCE config.deferring exception until later",
+    "name": "scale bot groups.get current GCE config.deferring exception until later",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@caught exception@NoneConfigFailure('No config found for prefix prefix-fifth')@@@",
@@ -521,7 +521,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.update bot policies",
+    "name": "scale bot groups.update bot policies",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@bot_policy_config@{@@@",
@@ -593,7 +593,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.update bot policies.set bot_policy_config",
+    "name": "scale bot groups.update bot policies.set bot_policy_config",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@bot_policy_config@{\"botPolicies\": [{\"botGroup\": \"cq\", \"policyMode\": \"CONFIGURED\"}]}@@@"
@@ -601,7 +601,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.get current swarming stats",
+    "name": "scale bot groups.get current swarming stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@swarming_stats@SwarmingStats(bot_stats=[BotStats(bot_group='cq', busy=21, count=23, dead=0, maintenance=0, quarantined=0, min=60, max=400)], task_stats=[TaskStats(bot_group='cq', task_state='RUNNING', count=23), TaskStats(bot_group='cq', task_state='PENDING', count=23)])@@@",
@@ -610,7 +610,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.get current swarming stats.ensure swarming bin from CIPD",
+    "name": "scale bot groups.get current swarming stats.ensure swarming bin from CIPD",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -629,7 +629,7 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.ensure swarming bin from CIPD.ensure_installed",
+    "name": "scale bot groups.get current swarming stats.ensure swarming bin from CIPD.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -658,7 +658,7 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get bot count query result for cq",
+    "name": "scale bot groups.get current swarming stats.get bot count query result for cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -689,7 +689,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -716,7 +716,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (2)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -743,7 +743,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (3)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -767,7 +767,7 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (4)",
+    "name": "scale bot groups.get current swarming stats.get task count query result for cq (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
@@ -776,7 +776,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.get current swarming stats.set swarming_stats",
+    "name": "scale bot groups.get current swarming stats.set swarming_stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@swarming_stats@[[[\"cq\", 21, 23, 0, 0, 0, 60, 400]], [[\"cq\", \"RUNNING\", 23], [\"cq\", \"PENDING\", 23]]]@@@"
@@ -784,7 +784,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.compute scaling actions",
+    "name": "scale bot groups.compute scaling actions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@robocrop_action@{@@@",
@@ -883,7 +883,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.compute scaling actions.estimate time between builds",
+    "name": "scale bot groups.compute scaling actions.estimate time between builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Buildbucket search returned no builds: assuming default 0.167 hrs/build@@@",
@@ -906,7 +906,7 @@
       "{\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.compute scaling actions.estimate time between builds.search for builds in past hour",
+    "name": "scale bot groups.compute scaling actions.estimate time between builds.search for builds in past hour",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -914,7 +914,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.compute scaling actions.set robocrop_action",
+    "name": "scale bot groups.compute scaling actions.set robocrop_action",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@robocrop_action@{\"applResourceUtilization\": [{\"application\": \"chromeos\", \"resourceUtilization\": [{\"cpus\": 1920.0, \"diskGb\": 45000.0, \"maxCpus\": 12800.0, \"memoryGb\": 3840.0, \"region\": \"global\", \"vms\": 60}, {\"cpus\": 480.0, \"diskGb\": 11250.0, \"maxCpus\": 3200.0, \"memoryGb\": 960.0, \"region\": \"us-central1-b\", \"vms\": 15}, {\"cpus\": 480.0, \"diskGb\": 11250.0, \"maxCpus\": 3200.0, \"memoryGb\": 960.0, \"region\": \"us-central2-d\", \"vms\": 15}, {\"cpus\": 480.0, \"diskGb\": 11250.0, \"maxCpus\": 3200.0, \"memoryGb\": 960.0, \"region\": \"us-east1-d\", \"vms\": 15}, {\"cpus\": 480.0, \"diskGb\": 11250.0, \"maxCpus\": 3200.0, \"memoryGb\": 960.0, \"region\": \"us-west1-b\", \"vms\": 15}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chromeos\", \"botGroup\": \"cq\", \"botMax\": 400, \"botMin\": 60, \"botType\": {\"botSize\": \"large\", \"coresPerBot\": 32.0, \"memoryGb\": 64.0}, \"botsRequested\": 60, \"regionalActions\": [{\"botsRequested\": 15, \"prefix\": \"prefix-first\", \"region\": \"us-central1-b\"}, {\"botsRequested\": 18, \"prefix\": \"prefix-second\", \"region\": \"us-central2-d\"}, {\"botsRequested\": 15, \"prefix\": \"prefix-third\", \"region\": \"us-east1-d\"}, {\"botsRequested\": 12, \"prefix\": \"prefix-fourth\", \"region\": \"us-west1-b\"}, {\"prefix\": \"prefix-fifth\", \"region\": \"us-west1-b\"}]}]}@@@"
@@ -922,7 +922,7 @@
   },
   {
     "cmd": [],
-    "name": "scale bot groups for ChromeOS.no change to GCE Provider configs",
+    "name": "scale bot groups.no change to GCE Provider configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@final_gce_config@{@@@",
