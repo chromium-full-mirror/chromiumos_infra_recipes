@@ -2238,7 +2238,7 @@ Get the BBIDs of the child builders that were successful.
 Update the retry_summary output property with the given step/status.
 ### *recipe_modules* / [chrome](/recipe_modules/chrome)
 
-[DEPS](/recipe_modules/chrome/__init__.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/chrome/__init__.py#10): [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [recipe\_engine/cas][recipe_engine/recipe_modules/cas], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 #### **class [ChromeApi](/recipe_modules/chrome/api.py#77)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
@@ -2280,7 +2280,7 @@ Delete unnecessary chrome checkout.
 Allows to delete the chrome source synced in sync_chrome_async() function when it
 turns out to be unnecessary for the build.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#329)(self, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#334)(self, patch_sets: Optional[List[PatchSet]]=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -2293,7 +2293,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#408)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#413)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -2310,11 +2310,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#100)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#379)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#384)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#356)(self, gerrit_change: GerritChange):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#361)(self, gerrit_change: GerritChange):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#446)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#451)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -2326,7 +2326,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#388)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#393)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -2342,7 +2342,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#519)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#524)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
 
 Checks whether chrome source is needed.
 

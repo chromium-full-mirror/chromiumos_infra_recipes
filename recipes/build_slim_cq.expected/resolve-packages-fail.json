@@ -6328,7 +6328,6 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
-      "--nohooks",
       "--reset",
       "--force",
       "--upstream",
@@ -6337,7 +6336,8 @@
       "--with_tags",
       "--delete_unversioned_trees",
       "--revision",
-      "src@version"
+      "src@version",
+      "--nohooks"
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
@@ -7896,7 +7896,6 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
-      "--nohooks",
       "--reset",
       "--force",
       "--upstream",
@@ -7905,7 +7904,8 @@
       "--with_tags",
       "--delete_unversioned_trees",
       "--revision",
-      "src@version"
+      "src@version",
+      "--nohooks"
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {

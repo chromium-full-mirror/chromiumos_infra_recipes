@@ -285,7 +285,6 @@ class ChromeApi(recipe_api.RecipeApi):
         sync_cmd = [
             'sync',
             '--verbose',
-            '--nohooks',
             '--reset',
             '--force',
             '--upstream',
@@ -297,6 +296,12 @@ class ChromeApi(recipe_api.RecipeApi):
 
         if version:
           sync_cmd.extend(['--revision', 'src@%s' % version])
+
+        # TODO(b/332670189): Remove support when we stop building branches
+        # older than 15384.0.0.
+        # Workaround to support old factory branches (see b/332195195)
+        if not self.m.cros_version.version.is_after('15383.0.0'):
+          sync_cmd.append('--nohooks')
 
         with self.m.depot_tools.on_path():
           # Define the step call with exp retry attached, pass self to help tests

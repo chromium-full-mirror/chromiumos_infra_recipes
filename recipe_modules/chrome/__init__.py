@@ -18,6 +18,7 @@ DEPS = [
     'depot_tools/gclient',
     'cros_build_api',
     'cros_sdk',
+    'cros_version',
     'easy',
     'gerrit',
     'git_footers',
