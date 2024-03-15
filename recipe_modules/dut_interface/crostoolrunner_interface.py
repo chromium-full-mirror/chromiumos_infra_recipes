@@ -557,7 +557,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     tko_metadata.bot.autotest_dir = self.AUTOTEST_PACKAGE_PATH
     return tko_metadata
 
-  def _process_post_process_response(self, response):
+  def _process_post_process_response(self, response, step):
     """Return the fwinfo from the post_process activity.
 
     This can be expanded as needed.
@@ -567,22 +567,23 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     Returns: (dict): fwinfo map.
     """
-    found = False
+    infos = {}
     for resp in response.response.responses:
       if resp.WhichOneof('response') == 'get_fw_info_response':
         info = resp.get_fw_info_response
-        found = True
-        break
+        infos['ro_fwid'] = info.ro_fwid
+        infos['rw_fwid'] = info.rw_fwid
+        infos['kernel_version'] = info.kernel_version
+        infos['gsc_ro'] = info.gsc_ro
+        infos['gsc_rw'] = info.gsc_rw
+      elif resp.WhichOneof('response') == 'get_gfx_info_response':
+        step.presentation.logs['gfx'] = resp.get_gfx_info_response.gfx_labels
+        # TODO (b/267519521): Uncomment the 2 lines below once TH is ready.
+        # for k in resp.get_gfx_info_response.gfx_labels:
+        #   infos[k] = resp.get_gfx_info_response.gfx_labels[k]
+    step.presentation.logs['infos'] = infos
 
-    if found:
-      return {
-          'ro_fwid': info.ro_fwid,
-          'rw_fwid': info.rw_fwid,
-          'kernel_version': info.kernel_version,
-          'gsc_ro': info.gsc_ro,
-          'gsc_rw': info.gsc_rw
-      }
-    return {}
+    return infos
 
   def upload_to_rdb(
       self, metadata, run_test_response, skip_board_model_check=False,
@@ -619,7 +620,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
               request = post_request.RunActivitiesRequest(requests=[
                   post_request.Request(
-                      get_fw_info_request=post_request.GetFWInfoRequest())
+                      get_fw_info_request=post_request.GetFWInfoRequest(),
+                      get_gfx_info_request=post_request.GetGfxInfoRequest())
               ])
               post_process_request = ctr.CrosToolRunnerPostTestRequest(
                   primary_dut=primary_dut_device,
@@ -628,7 +630,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                   .container_metadata_key)
               resp = self._api.cros_tool_runner.post_process(
                   post_process_request)
-              pp_resp = self._process_post_process_response(resp)
+              pp_resp = self._process_post_process_response(resp, step)
               for k, v in pp_resp.items():
                 if k and v:
                   metadata.rdb_base_tags.append((k, v))
