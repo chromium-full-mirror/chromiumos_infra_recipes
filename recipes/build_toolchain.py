@@ -198,7 +198,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
           (api.buildbucket.builder_full_name,))
 
   with api.build_menu.configure_builder(
-  ), api.build_menu.setup_workspace_and_chroot():
+  ), api.build_menu.setup_workspace_and_chroot(force_no_chroot_upgrade=True):
     # Save the revisions the binhost files are currently at.
     # At the end of the build, we will check that no changes to binhosts
     # have occurred between the version we built from and the version

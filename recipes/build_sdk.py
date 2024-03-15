@@ -200,7 +200,7 @@ class BuildSDKRun:
          self.m.deferrals.raise_exceptions_at_end():
       with self.m.deferrals.defer_exceptions([StepFailure]), \
           self.m.build_menu.setup_workspace_and_chroot(
-            bootstrap_chroot=True, replace=True):
+            bootstrap_chroot=True, replace=True, force_no_chroot_upgrade=True):
         result = yield config
       with self.m.deferrals.defer_exceptions([StepFailure]):
         self.m.build_menu.upload_artifacts(config,
@@ -209,8 +209,9 @@ class BuildSDKRun:
 
   def _build_sdk_packages(self) -> None:
     """Build all packages for the SDK build target."""
-    request = sdk_pb2.BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
-    response = self.m.cros_build_api.SdkService.BuildPrebuilts(request)
+    with self.m.step.nest('build sdk board'):
+      request = sdk_pb2.BuildPrebuiltsRequest(chroot=self.m.cros_sdk.chroot)
+      response = self.m.cros_build_api.SdkService.BuildPrebuilts(request)
     self._host_prebuilts_dir = self.m.util.proto_path_to_recipes_path(
         response.host_prebuilts_path)
     self._target_prebuilts_dir = self.m.util.proto_path_to_recipes_path(
@@ -685,8 +686,8 @@ def GenTests(
       api.post_check(post_process.PropertyEquals, 'version', DEFAULT_VERSION),
       # Make sure we're not updating the chroot, since we need to ensure that
       # all host packages can be built using the bootstrap SDK version.
-      api.post_check(post_process.StepSuccess,
-                     'call chromite.api.SdkService/BuildPrebuilts'),
+      api.post_check(post_process.DoesNotRun, 'update sdk'),
+      api.post_check(post_process.StepSuccess, 'build sdk board'),
       api.post_check(post_process.StepSuccess,
                      'call chromite.api.SdkService/BuildSdkToolchain'),
       api.post_check(post_process.StepSuccess,
@@ -811,8 +812,11 @@ def GenTests(
   yield api.build_menu.test(
       'upload-toolchain-artifacts-runs-on-failure',
       api.properties(launch_pupr=True),
-      api.build_menu.set_build_api_return('update sdk', 'SdkService/Update',
-                                          retcode=1),
+      api.build_menu.set_build_api_return(
+          'build sdk board',
+          'SdkService/BuildPrebuilts',
+          retcode=1,
+      ),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.StepSuccess, 'upload toolchain artifacts'),
       api.post_process(post_process.DropExpectation),
@@ -837,8 +841,11 @@ def GenTests(
   yield api.build_menu.test(
       'upload-toolchain-artifacts-upload-fails-and-step-fails',
       api.properties(launch_pupr=True),
-      api.build_menu.set_build_api_return('update sdk', 'SdkService/Update',
-                                          retcode=1),
+      api.build_menu.set_build_api_return(
+          'build sdk board',
+          'SdkService/BuildPrebuilts',
+          retcode=1,
+      ),
       api.build_menu.set_build_api_return(
           'upload toolchain artifacts.call artifacts service',
           'ArtifactsService/Get', retcode=1),
