@@ -120,7 +120,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not failing_build_exception:
     try:
       api.workspace_util.apply_changes(changes=gerrit_changes,
-                                       ignore_missing_projects=False)
+                                       ignore_missing_projects=True)
       # TODO(sfrolov): remove update_chroot call when cros_sdk revamp is ready.
       api.cros_sdk.update_chroot(
           toolchain_targets=[api.build_menu.build_target],
