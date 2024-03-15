@@ -2147,7 +2147,7 @@ def GenTests(api):
     # parent_task_id is needed by cts_results_archive step. In reality it's
     # always present unless run via led.
     tags = tags or {}
-    tags['parent_task_id'] = tags.get('parent_task_id', 'deadbeef')
+    tags['parent_task_id'] = tags.get('parent_task_id', 'parent-task-id1')
 
     # tags is a dict, convert that into [StringPair].
     bb_tags = api.cros_tags.tags(**tags)

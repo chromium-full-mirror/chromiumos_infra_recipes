@@ -728,7 +728,7 @@
     "name": "execution steps.original_test.Archive CTS results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json_input@{\"build\": \"fake-board-cq/R11-123.45\", \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": \"fake-model\", \"parent_job_id\": \"deadbeef\"}@@@",
+      "@@@STEP_LOG_LINE@json_input@{\"build\": \"fake-board-cq/R11-123.45\", \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": \"fake-model\", \"parent_job_id\": \"parent-task-id1\"}@@@",
       "@@@STEP_LOG_END@json_input@@@",
       "@@@STEP_LOG_LINE@instructions@[{'destination': 'gs://fake-bucket/fake-folder', 'name': 'fake-instruction', 'source': 'local/directory/to/upload'}]@@@",
       "@@@STEP_LOG_END@instructions@@@"
@@ -739,7 +739,7 @@
       "python3",
       "RECIPE_MODULE[chromeos::cts_results_archive]/resources/prepare_uploads.py",
       "--json-input",
-      "{\"build\": \"fake-board-cq/R11-123.45\", \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": \"fake-model\", \"parent_job_id\": \"deadbeef\"}",
+      "{\"build\": \"fake-board-cq/R11-123.45\", \"cts_apfe_gsurl\": \"\", \"cts_results_gsurl\": \"\", \"dir\": \"dummy-results-dir\", \"model\": \"fake-model\", \"parent_job_id\": \"parent-task-id1\"}",
       "--json-output",
       "/path/to/tmp/json"
     ],
