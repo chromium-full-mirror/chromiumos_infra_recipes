@@ -943,14 +943,18 @@ def GenTests(api):
   yield api.orch_menu.test(
       'cq-orch-include-related-changes', data.ctp_normal,
       api.properties(
+          **{'$chromeos/looks_for_green': {
+              'enable_looks_for_green': True,
+          }},
+      ),
+      api.properties(
           FullProperties(
               expected_completed_builds=collect + collect_after,
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary),
               expected_enable_history=True,
-              experiments=['chromeos.cros_infra_config.include_related'])),
-      api.post_check(post_process.MustRun, 'find related CLs'),
+          )), api.post_check(post_process.MustRun, 'find related CLs'),
       api.gerrit.set_gerrit_related_changes(RELATED_OUTPUT,
                                             step_name='find related CLs'),
       api.post_check(post_process.MustRun,
