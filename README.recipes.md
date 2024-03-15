@@ -2275,7 +2275,7 @@ Delete unnecessary chrome checkout.
 Allows to delete the chrome source synced in sync_chrome_async() function when it
 turns out to be unnecessary for the build.
 
-&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#329)(self, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [diffed\_files\_requires\_rebuild](/recipe_modules/chrome/api.py#328)(self, patch_sets: Optional[List[PatchSet]]=None):**
 
 Returns a bool if patch_sets includes files that require rebuilding.
 
@@ -2288,7 +2288,7 @@ Args:
 Returns:
   A bool that indicates a rebuild should be triggered.
 
-&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#408)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
+&mdash; **def [follower\_lacks\_prebuilt](/recipe_modules/chrome/api.py#407)(self, build_target: BuildTarget, chroot: Chroot, packages: List[PackageInfo]):**
 
 Returns whether we need the chrome source to be synced.
 
@@ -2305,11 +2305,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [gclient\_sync\_timeout\_seconds](/recipe_modules/chrome/api.py#100)(self):**
 
-&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#379)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
+&mdash; **def [has\_chrome\_prebuilt](/recipe_modules/chrome/api.py#378)(self, build_target: BuildTarget, chroot: Chroot, internal: bool=False, ignore_prebuilts: bool=False):**
 
-&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#356)(self, gerrit_change: GerritChange):**
+&mdash; **def [is\_chrome\_pupr\_atomic\_uprev](/recipe_modules/chrome/api.py#355)(self, gerrit_change: GerritChange):**
 
-&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#446)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
+&mdash; **def [maybe\_uprev\_local\_chrome](/recipe_modules/chrome/api.py#445)(self, build_target: BuildTarget, chroot: Chroot, patch_sets: List[PatchSet]):**
 
 Checks the patch_sets for chrome 9999 ebuild changes and uprevs if so.
 
@@ -2321,7 +2321,7 @@ Args:
 Returns:
   bool: If we upreved the local Chrome.
 
-&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#388)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
+&mdash; **def [needs\_chrome](/recipe_modules/chrome/api.py#387)(self, build_target: BuildTarget, chroot: Chroot, packages: Optional[List[PackageInfo]]=None):**
 
 Returns whether or not this run needs chrome.
 
@@ -2337,7 +2337,7 @@ Args:
 Returns:
   bool: Whether or not this run needs chrome.
 
-&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#519)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
+&mdash; **def [needs\_chrome\_source](/recipe_modules/chrome/api.py#518)(self, request: InstallPackagesRequest, dep_graph: DepGraph, presentation: StepPresentation, patch_sets: Optional[List[PatchSet]]=None):**
 
 Checks whether chrome source is needed.
 

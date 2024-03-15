@@ -285,7 +285,6 @@ class ChromeApi(recipe_api.RecipeApi):
         sync_cmd = [
             'sync',
             '--verbose',
-            '--nohooks',
             '--reset',
             '--force',
             '--upstream',
