@@ -98,9 +98,12 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
             change = api.gerrit.create_change(
                 'chromiumos/infra/ide', reviewers=reviewers,
                 topic='chromium-ide-pre-release-update')
+            labels = {Label.VERIFIED: test_passed}
+            if test_passed > 0:
+              labels[Label.BOT_COMMIT] = 1
             pres.properties[
                 'applied labels'] = api.gerrit.set_change_labels_remote(
-                    change, {Label.VERIFIED: test_passed})
+                    change, labels)
             if test_passed < 0:
               # Skip all following jobs if `npm t` is not passing.
               return
@@ -155,7 +158,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'submit change.set labels on CL 123'),
       api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Verified": 1}}'),
+                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
       api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',
@@ -247,7 +250,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'submit change.set labels on CL 123'),
       api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Verified": 1}}'),
+                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
       api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',
@@ -282,7 +285,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(post_process.MustRun,
                      'submit change.set labels on CL 123'),
       api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Verified": 1}}'),
+                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
       api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',

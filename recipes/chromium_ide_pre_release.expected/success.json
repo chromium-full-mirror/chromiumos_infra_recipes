@@ -1915,7 +1915,7 @@
     "cmd": [],
     "name": "submit change",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@applied labels@\"{\\\"labels\\\": {\\\"Verified\\\": 1}}\"@@@"
+      "@@@SET_BUILD_PROPERTY@applied labels@\"{\\\"labels\\\": {\\\"Bot-Commit\\\": 1, \\\"Verified\\\": 1}}\"@@@"
     ]
   },
   {
@@ -2050,7 +2050,7 @@
     "name": "submit change.set labels on CL 123",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Verified\": 1}@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
     ]
@@ -2112,7 +2112,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"labels\": {\"Verified\": 1}}",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Verified\": 1}}",
       "https://chromium-review.googlesource.com/changes/123/revisions/current/review"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
