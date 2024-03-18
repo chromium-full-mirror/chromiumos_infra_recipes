@@ -786,6 +786,7 @@
   * [test_platform/ctp_traffic_generator](#recipes-test_platform_ctp_traffic_generator) &mdash; Recipe that triggers cros_test_platform runs.
   * [test_platform/dut_leaser](#recipes-test_platform_dut_leaser)
   * [test_platform/kron](#recipes-test_platform_kron) &mdash; Recipe for the ChromeOS TSE Kron builder.
+  * [test_platform/kron-firestore](#recipes-test_platform_kron-firestore) &mdash; Recipe for the ChromeOS TSE Kron builder.
   * [test_platform/result_flow](#recipes-test_platform_result_flow)
   * [test_platform/suite_manager](#recipes-test_platform_suite_manager) &mdash; Recipe for the ChromeOS TSE SuiteManager builder.
   * [test_platform/test_runner](#recipes-test_platform_test_runner) &mdash; Recipe for the ChromeOS Skylab Test Runner.
@@ -16793,6 +16794,23 @@ Recipe that triggers cros_test_platform runs.
 Recipe for the ChromeOS TSE Kron builder.
 
 &mdash; **def [RunSteps](/recipes/test_platform/kron.py#23)(api, properties):**
+
+Builder Entry Point
+
+Args:
+  api: a RecipeScriptApi instance
+  properties: default recipe properties
+
+Returns:
+  None
+### *recipes* / [test\_platform/kron-firestore](/recipes/test_platform/kron-firestore.py)
+
+[DEPS](/recipes/test_platform/kron-firestore.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Recipe for the ChromeOS TSE Kron builder.
+
+&mdash; **def [RunSteps](/recipes/test_platform/kron-firestore.py#18)(api, properties):**
 
 Builder Entry Point
 
