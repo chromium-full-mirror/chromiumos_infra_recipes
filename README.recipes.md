@@ -2089,7 +2089,7 @@ Args:
 Returns:
   The number of builds in the given bucket with given status.
 
-&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#167)(self, commit: str, pres: StepPresentation, bucket: Optional[str]=None, builder: Optional[str]=None, end_bbid: Optional[int]=None, retries: int=9, use_local_greenness: bool=False):**
+&mdash; **def [get\_snapshot\_greenness](/recipe_modules/buildbucket_stats/api.py#163)(self, commit: str, pres: StepPresentation, bucket: Optional[str]=None, builder: Optional[str]=None, end_bbid: Optional[int]=None, retries: int=9, use_local_greenness: bool=False, wait_for_complete: bool=False):**
 
 Returns greeneness for the specified commit, if found.
 
@@ -2112,6 +2112,10 @@ Args:
     publishes greenness.
   use_local_greenness: If true, parse the 'local_greenness' output property
     instead of the 'greenness' output property.
+  wait_for_complete: If true, wait until the build is completed. Otherwise,
+    wait until the build publishes the build greenness output property. Note
+    that the build will publish the build greenness before the test
+    greenness; i.e. this should be set true if test greenness is required.
 
 Returns:
   An ordered dict mapping builder -> Greenness message as a dict. If
@@ -2135,7 +2139,7 @@ Returns:
   An OrderedDict mapping from builder name to GreennessTuple. If the
     local_greenness output property isn't found, the dict is empty.
 
-&mdash; **def [reformat\_greenness\_dict](/recipe_modules/buildbucket_stats/api.py#232)(self, list_value: struct_pb2.ListValue):**
+&mdash; **def [reformat\_greenness\_dict](/recipe_modules/buildbucket_stats/api.py#235)(self, list_value: struct_pb2.ListValue):**
 
 Reformat ListValue to a dictionary, using builder as key.
 
@@ -8312,9 +8316,9 @@ API providing a menu for calculating greenness metric.
 
 A module to calculate greenness metric.
 
-&emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#51)(self):**
+&emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#50)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#271)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#297)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8333,19 +8337,9 @@ Args:
 Raises:
   StepFailure if snapshot_builder_names is empty.
 
-&mdash; **def [get\_last\_greenness](/recipe_modules/greenness/api.py#59)(self, builder: str):**
+&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#54)(self):**
 
-Get the builderGreenness from the last snapshot run for a given builder.
-
-Args:
-  builder: Name of the builder.
-
-Returns: builderGreenness, or an empty OrderedDict if the builder, its
-  greenness, or the last snapshot wasn't found.
-
-&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#55)(self):**
-
-&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#131)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#157)(self, builds: List[build_pb2.Build]):**
 
 Populate the local greenness dict with build information.
 
@@ -8356,29 +8350,39 @@ separately from amd64-generic).
 Args:
   builds: List of builds that have completed.
 
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#235)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#261)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#242)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#268)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#102)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#109)(self, builds: List[build_pb2.Build], wait_for_complete: bool=False):**
 
 Update greenness with build information.
 
+If there are any irrelevant builders, this method finds the last snapshot
+and propagates greenness forward. Note that the last snapshot may not have
+completed, and thus only build greenness gets propagated; see
+the wait_for_complete option for propagating test greenness.
+
 Args:
   builds: List of builds that have completed.
+  wait_for_complete: If true, wait until the snapshot orchestrator build is
+    completed. Otherwise, only wait until the snapshot orchestrator build
+    publishes the build greenness output property. Note that the build will
+    publish the build greenness before the test greenness; i.e. this should
+    be set true if test greenness is required.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#158)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#184)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#211)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
+&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#237)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
 
 Update scores in the greenness dict for irrelevant builds.
 
@@ -8386,7 +8390,7 @@ Args:
   builds: List of builds that have completed.
   greenness_dict: The greenness dict to update.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#190)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#216)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 
@@ -10703,11 +10707,11 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#76)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#295)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#302)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#247)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#254)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -10721,7 +10725,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#497)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#504)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10739,7 +10743,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#303)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#310)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 

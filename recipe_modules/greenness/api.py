@@ -7,7 +7,7 @@
 
 import collections
 
-from typing import List, OrderedDict, Union
+from typing import List, OrderedDict
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -46,7 +46,6 @@ class GreennessApi(recipe_api.RecipeApi):
         str, GreennessTuple] = collections.OrderedDict()
     self._local_greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
-    self._last_greenness_dict = None
 
   @property
   def builder_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
@@ -56,29 +55,37 @@ class GreennessApi(recipe_api.RecipeApi):
   def local_greenness_dict(self) -> OrderedDict[str, GreennessTuple]:
     return self._local_greenness_dict
 
-  def get_last_greenness(self,
-                         builder: str) -> Union[GreennessTuple, OrderedDict]:
-    """Get the builderGreenness from the last snapshot run for a given builder.
+  def _get_last_greenness(
+      self, wait_for_complete: bool) -> OrderedDict[str, OrderedDict[str, str]]:
+    """Get the greenness from the previous snapshot.
 
     Args:
-      builder: Name of the builder.
+      wait_for_complete: If true, wait until the snapshot orchestrator build is
+        completed. Otherwise, only wait until the snapshot orchestrator build
+        publishes the build greenness output property. Note that the build will
+        publish the build greenness before the test greenness; i.e. this should
+        be set true if test greenness is required.
 
-    Returns: builderGreenness, or an empty OrderedDict if the builder, its
-      greenness, or the last snapshot wasn't found.
+    Returns: OrderedDict mapping builder name to the Greenness message as a
+      dict.
     """
-    if self._last_greenness_dict is None:
-      with self.m.step.nest('getting last snapshot greenness') as pres:
-        current_snapshot = self.m.cros_infra_config.gitiles_commit
-        with self.m.context(cwd=self.m.src_state.build_manifest.path):
-          with self.m.step.nest('last snapshot') as sub_pres:
-            parents = self.m.git.get_parents(current_snapshot.id)
-            last_snapshot = parents.pop().strip()
-            sub_pres.logs['current snapshot'] = str(current_snapshot.id)
-            sub_pres.logs['last snapshot'] = str(last_snapshot)
-          self._last_greenness_dict = self.m.buildbucket_stats.get_snapshot_greenness(
-              commit=last_snapshot, pres=pres,
-              end_bbid=self.m.buildbucket.build.id)
-    return self._last_greenness_dict.get(builder, collections.OrderedDict())
+    with self.m.step.nest('getting last snapshot greenness') as pres:
+      current_snapshot = self.m.cros_infra_config.gitiles_commit
+      with self.m.context(cwd=self.m.src_state.build_manifest.path):
+        with self.m.step.nest('last snapshot') as sub_pres:
+          parents = self.m.git.get_parents(current_snapshot.id)
+          last_snapshot = parents.pop().strip()
+          sub_pres.logs['current snapshot'] = str(current_snapshot.id)
+          sub_pres.logs['last snapshot'] = str(last_snapshot)
+
+        greenness = self.m.buildbucket_stats.get_snapshot_greenness(
+            commit=last_snapshot,
+            pres=pres,
+            end_bbid=self.m.buildbucket.build.id,
+            wait_for_complete=wait_for_complete,
+        )
+        pres.logs['last snapshot greenness'] = str(greenness.items())
+        return greenness
 
   def _is_excluded(self, builder_name: str, exclude_list: List[str]) -> bool:
     """Determine if the builder is an excluded variant."""
@@ -99,14 +106,30 @@ class GreennessApi(recipe_api.RecipeApi):
       # If build_score isn't populated, assume 100 since we made it to tests.
       return 100
 
-  def update_build_info(self, builds: List[build_pb2.Build]) -> None:
+  def update_build_info(self, builds: List[build_pb2.Build],
+                        wait_for_complete: bool = False) -> None:
     """Update greenness with build information.
+
+    If there are any irrelevant builders, this method finds the last snapshot
+    and propagates greenness forward. Note that the last snapshot may not have
+    completed, and thus only build greenness gets propagated; see
+    the wait_for_complete option for propagating test greenness.
 
     Args:
       builds: List of builds that have completed.
+      wait_for_complete: If true, wait until the snapshot orchestrator build is
+        completed. Otherwise, only wait until the snapshot orchestrator build
+        publishes the build greenness output property. Note that the build will
+        publish the build greenness before the test greenness; i.e. this should
+        be set true if test greenness is required.
     """
     if not self._publish_property:
       return
+
+    # Only look up the previous snapshot's greenness if it is required because
+    # of irrelevant builders. Don't cache this between calls because it may
+    # change based on wait_for_complete.
+    last_greenness = None
     for build in builds:
       builder = build.builder.builder
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
@@ -115,11 +138,14 @@ class GreennessApi(recipe_api.RecipeApi):
         score, build_score = 0, 0
         # Failure here should not be fatal to the build.
         with self.m.failures.ignore_exceptions():
+          if last_greenness is None:
+            last_greenness = self._get_last_greenness(
+                wait_for_complete=wait_for_complete)
           # For irrelevant builders, carry forward greenness from last run.
-          last_greenness = self.get_last_greenness(builder)
           # If greenness dict is empty, it means the metric was 0 in the last run.
-          score = int(last_greenness.get('metric', 0))
-          build_score = int(last_greenness.get('buildMetric', 0))
+          score = int(last_greenness.get(builder, {}).get('metric', 0))
+          build_score = int(
+              last_greenness.get(builder, {}).get('buildMetric', 0))
         self._builder_greenness_dict[builder] = GreennessTuple(
             score=score, build_score=build_score, critical=critical,
             relevant=False)

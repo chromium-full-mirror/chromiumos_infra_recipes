@@ -150,10 +150,6 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
           snapshot_greenness = OrderedDict(
               self.reformat_greenness_dict(
                   output_props['greenness']['builderGreenness']))
-          # Remove metric, since we only wait for build to finish, not tests.
-          for v in snapshot_greenness.values():
-            if 'metric' in v:
-              del v['metric']
 
           return snapshot_greenness
 
@@ -173,6 +169,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
       end_bbid: Optional[int] = None,
       retries: int = 9,
       use_local_greenness: bool = False,
+      wait_for_complete: bool = False,
   ) -> OrderedDict:
     """Returns greeneness for the specified commit, if found.
 
@@ -195,6 +192,10 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         publishes greenness.
       use_local_greenness: If true, parse the 'local_greenness' output property
         instead of the 'greenness' output property.
+      wait_for_complete: If true, wait until the build is completed. Otherwise,
+        wait until the build publishes the build greenness output property. Note
+        that the build will publish the build greenness before the test
+        greenness; i.e. this should be set true if test greenness is required.
 
     Returns:
       An ordered dict mapping builder -> Greenness message as a dict. If
@@ -216,6 +217,8 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     predicate.builder.project = self._project
     predicate.builder.bucket = bucket or self._snapshot_bucket
     predicate.builder.builder = builder or self._snapshot_builder
+    if wait_for_complete:
+      predicate.status = common_pb2.ENDED_MASK
 
     greenness = self._poll_and_get_greenness(predicate, retries,
                                              use_local_greenness)

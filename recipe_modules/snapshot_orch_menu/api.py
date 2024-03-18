@@ -164,6 +164,13 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
                                      self.builds_status.failures)
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
+      # Do a final call to update_build_info, to get the previous greenness for
+      # any irrelevant builders. Set wait_for_complete = True so that test
+      # greenness is propagated. The previous call to update_build_info didn't
+      # set wait_for_complete, so the previous snapshot might not have published
+      # test greenness.
+      self.m.greenness.update_build_info(self.builds_status.completed_builds,
+                                         wait_for_complete=True)
       self.m.greenness.print_step()
       # Set child output ids if any
       self.m.orch_menu.add_child_info_to_output_property(
