@@ -164,6 +164,11 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
                                      self.builds_status.failures)
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
+      # Do a final call to update_irrelevant_scores, to get the previous
+      # greenness for any irrelevant builders. The previous call to
+      # update_build_info may have only propagated build scores forward, since
+      # it does not wait for the previous snapshot orchestrator to complete.
+      self.m.greenness.update_irrelevant_scores()
       self.m.greenness.print_step()
       # Set child output ids if any
       self.m.orch_menu.add_child_info_to_output_property(

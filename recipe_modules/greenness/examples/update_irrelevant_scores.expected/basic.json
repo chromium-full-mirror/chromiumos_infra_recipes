@@ -1,0 +1,165 @@
+[
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ababab...@@@",
+      "@@@STEP_LOG_END@looking@@@",
+      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-postsubmit', {'buildMetric': '98'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_END@found@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-postsubmit', {'buildMetric': '98'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_END@last snapshot greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "getting last snapshot greenness.last snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@current snapshot@@@@",
+      "@@@STEP_LOG_END@current snapshot@@@",
+      "@@@STEP_LOG_LINE@last snapshot@ababab@@@",
+      "@@@STEP_LOG_END@last snapshot@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.last snapshot.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "output.properties",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/ababab\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "getting last snapshot greenness.buildbucket.search",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"123\", \"input\": {\"gitilesCommit\": {\"id\": \"ababab\"}}, \"output\": {\"properties\": {\"greenness\": {\"builderGreenness\": [{\"buildMetric\": \"98\", \"builder\": \"eve-postsubmit\"}, {\"builder\": \"eve-kernelnext-postsubmit\", \"context\": \"IRRELEVANT\"}]}}}, \"status\": \"STARTED\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "propagate greenness scores",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@irrelevant builders@eve-postsubmit@@@",
+      "@@@STEP_LOG_END@irrelevant builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "propagate greenness scores.getting last snapshot greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ababab...@@@",
+      "@@@STEP_LOG_END@looking@@@",
+      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-postsubmit', {'buildMetric': '98', 'metric': '78'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_END@found@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-postsubmit', {'buildMetric': '98', 'metric': '78'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_END@last snapshot greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "propagate greenness scores.getting last snapshot greenness.last snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@current snapshot@@@@",
+      "@@@STEP_LOG_END@current snapshot@@@",
+      "@@@STEP_LOG_LINE@last snapshot@ababab@@@",
+      "@@@STEP_LOG_END@last snapshot@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "--pretty=%P",
+      "-n 1",
+      ""
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "propagate greenness scores.getting last snapshot greenness.last snapshot.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "output.properties",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"status\": \"ENDED_MASK\", \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/ababab\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "propagate greenness scores.getting last snapshot greenness.buildbucket.search",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"123\", \"input\": {\"gitilesCommit\": {\"id\": \"ababab\"}}, \"output\": {\"properties\": {\"greenness\": {\"builderGreenness\": [{\"buildMetric\": \"98\", \"builder\": \"eve-postsubmit\", \"metric\": \"78\"}, {\"builder\": \"eve-kernelnext-postsubmit\", \"context\": \"IRRELEVANT\"}]}}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-postsubmit', GreennessTuple(score=78, build_score=98, critical=True, relevant=False))])@@@",
+      "@@@STEP_LOG_END@builder_greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.logging irrelevant builder greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.set greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"99\", \"aggregateMetric\": \"89\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"98\", \"builder\": \"eve-postsubmit\", \"context\": \"IRRELEVANT\", \"metric\": \"78\"}]}@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

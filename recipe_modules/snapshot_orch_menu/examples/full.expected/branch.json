@@ -12349,6 +12349,14 @@
   },
   {
     "cmd": [],
+    "name": "clean up orchestrator.propagate greenness scores",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@irrelevant builders@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
