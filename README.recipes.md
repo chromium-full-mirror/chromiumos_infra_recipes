@@ -17356,7 +17356,7 @@ files in projects touched by the input CLs.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/59c1900dd6408d4977b2f50b84ad08a475b92215/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/59c1900dd6408d4977b2f50b84ad08a475b92215/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/59c1900dd6408d4977b2f50b84ad08a475b92215/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/00cf4312fbb0b9f51d93d48a2ff9028ceea837eb/recipes/README.recipes.md#recipe_modules-codesearch
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/d756fe2ff5447f761efc0d44d15a92d5c243e75b/recipes/README.recipes.md#recipe_modules-codesearch
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f0398dfe93032e961d94010a1e74aeb9a1e8e3cd/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f0398dfe93032e961d94010a1e74aeb9a1e8e3cd/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/f0398dfe93032e961d94010a1e74aeb9a1e8e3cd/README.recipes.md#recipe_modules-bcid_reporter
