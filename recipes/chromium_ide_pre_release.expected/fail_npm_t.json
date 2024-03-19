@@ -1873,14 +1873,6 @@
     "name": "release update"
   },
   {
-    "cmd": [],
-    "name": "verify update",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@test_passed@-1@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
     "cmd": [
       "npm",
       "t"
@@ -1889,221 +1881,16 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify update.npm t",
+    "name": "verify with npm t",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "submit change",
+    "name": "set sdk_state",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@applied labels@\"{\\\"labels\\\": {\\\"Verified\\\": -1}}\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "submit change.create gerrit change for chromiumos/infra/ide",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "chromiumos/infra/ide"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromiumos/infra/ide",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--topic",
-      "chromium-ide-pre-release-update",
-      "--reviewers",
-      "oka@chromium.org",
-      "--send-mail"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "submit change.set labels on CL 123",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Verified\": -1}@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "submit change.set labels on CL 123.ensure auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "luci-auth",
-      "token",
-      "-scopes",
-      "https://www.googleapis.com/auth/gerritcodereview",
-      "-json-output",
-      "-"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "name": "submit change.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_1"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "infra_step": true,
-    "name": "submit change.set labels on CL 123.ensure auth token.Write auth token to temp file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-f",
-      "-X",
-      "POST",
-      "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_1",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Verified\": -1}}",
-      "https://chromium-review.googlesource.com/changes/123/revisions/current/review"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
-    "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
-    },
-    "name": "submit change.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {
@@ -2315,6 +2102,10 @@
     ]
   },
   {
+    "failure": {
+      "failure": {},
+      "humanReason": "Step('verify with npm t') (retcode: 1)"
+    },
     "name": "$result"
   }
 ]

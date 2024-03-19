@@ -1873,13 +1873,6 @@
     "name": "release update"
   },
   {
-    "cmd": [],
-    "name": "verify update",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@test_passed@1@@@"
-    ]
-  },
-  {
     "cmd": [
       "npm",
       "t"
@@ -1888,10 +1881,7 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify update.npm t",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "verify with npm t"
   },
   {
     "cmd": [
@@ -1913,24 +1903,16 @@
   },
   {
     "cmd": [],
-    "name": "submit change",
+    "name": "create gerrit change for chromiumos/infra/ide",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@applied labels@\"{\\\"labels\\\": {\\\"Bot-Commit\\\": 1, \\\"Verified\\\": 1}}\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "submit change.create gerrit change for chromiumos/infra/ide",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
+    "name": "create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1952,9 +1934,9 @@
       ]
     },
     "infra_step": true,
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
+    "name": "create gerrit change for chromiumos/infra/ide.check if project chromiumos/infra/ide exists.repo info",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -1980,9 +1962,9 @@
       ]
     },
     "infra_step": true,
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.repo forall",
+    "name": "create gerrit change for chromiumos/infra/ide.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -2014,9 +1996,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl upload",
+    "name": "create gerrit change for chromiumos/infra/ide.git_cl upload",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2040,16 +2022,15 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "submit change.create gerrit change for chromiumos/infra/ide.git_cl status",
+    "name": "create gerrit change for chromiumos/infra/ide.git_cl status",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "submit change.set labels on CL 123",
+    "name": "set labels on CL 123",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Verified\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
@@ -2057,9 +2038,9 @@
   },
   {
     "cmd": [],
-    "name": "submit change.set labels on CL 123.ensure auth token",
+    "name": "set labels on CL 123.ensure auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2075,9 +2056,9 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "submit change.set labels on CL 123.ensure auth token.Retrieve service_account auth token",
+    "name": "set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2096,9 +2077,9 @@
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
     "infra_step": true,
-    "name": "submit change.set labels on CL 123.ensure auth token.Write auth token to temp file",
+    "name": "set labels on CL 123.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2119,16 +2100,15 @@
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "submit change.set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
+    "name": "set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "submit change.submit CL 123",
+    "name": "submit CL 123",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123@@@"
     ]
   },
@@ -2154,9 +2134,9 @@
       ]
     },
     "infra_step": true,
-    "name": "submit change.submit CL 123.repo forall",
+    "name": "submit CL 123.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromiumos/infra/ide|src/chromiumos/infra/ide|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
@@ -2180,9 +2160,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "submit change.submit CL 123.git_cl issue",
+    "name": "submit CL 123.git_cl issue",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2205,9 +2185,9 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "submit change.submit CL 123.git_cl land",
+    "name": "submit CL 123.git_cl land",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]

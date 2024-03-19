@@ -76,14 +76,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
               f'https://cr-buildbucket.appspot.com/build/{api.buildbucket.build.id}'
           ], stdout=api.raw_io.output_text())
 
-          test_passed = 1
-          with api.step.nest('verify update') as pres:
-            try:
-              api.step('npm t', ['npm', 't'])
-            except api.step.StepFailure:
-              test_passed = -1
-
-            pres.properties['test_passed'] = test_passed
+          api.step('verify with npm t', ['npm', 't'])
 
           reviewers = []
           for reviewer in properties.reviewers:
@@ -94,26 +87,20 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
                 (oncall), step_name='Get oncaller of %s' % (oncall)).output
             reviewers = reviewers + rotation['emails']
 
-          with api.step.nest('submit change') as pres:
-            change = api.gerrit.create_change(
-                'chromiumos/infra/ide', reviewers=reviewers,
-                topic='chromium-ide-pre-release-update')
-            labels = {Label.VERIFIED: test_passed}
-            if test_passed > 0:
-              labels[Label.BOT_COMMIT] = 1
-            pres.properties[
-                'applied labels'] = api.gerrit.set_change_labels_remote(
-                    change, labels)
-            if test_passed < 0:
-              # Skip all following jobs if `npm t` is not passing.
-              return
-            api.gerrit.submit_change(change)
+          change = api.gerrit.create_change(
+              'chromiumos/infra/ide', reviewers=reviewers,
+              topic='chromium-ide-pre-release-update')
+          api.gerrit.set_change_labels_remote(change, {
+              Label.VERIFIED: 1,
+              Label.BOT_COMMIT: 1
+          })
+          api.gerrit.submit_change(change)
 
           # It is possible another commit is submitted during the stage.
           # We checkout to the submitted commits and run npm t again for
           # verification.
           # This is important before publishing a prerelease automatically.
-          with api.step.nest('verify update post submit') as pres:
+          with api.step.nest('verify update post submit'):
             with api.step.nest('checkout to bump commit'):
               api.git.fetch(project_info.remote, ['main'])
               api.git.checkout('%s/main' % (project_info.remote))
@@ -145,21 +132,18 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify update.npm t', retcode=0),
+      api.step_data('verify with npm t', retcode=0),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
-          'submit change.create gerrit change for chromiumos/infra/ide',
+          'create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify update.npm t'),
-      api.post_check(post_process.MustRun,
-                     'submit change.set labels on CL 123'),
-      api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
-      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.post_check(post_process.MustRun, 'verify with npm t'),
+      api.post_check(post_process.MustRun, 'set labels on CL 123'),
+      api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',
           stdout=api.raw_io.output_text(
@@ -176,13 +160,11 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=1),
       api.post_check(post_process.StepFailure, 'npm ci'),
       api.post_check(post_process.DoesNotRun, 'release update'),
-      api.post_check(post_process.DoesNotRun, 'verify update.npm t'),
-      api.post_check(
-          post_process.DoesNotRun,
-          'submit change.create gerrit change for chromiumos/infra/ide'),
-      api.post_check(post_process.DoesNotRunRE,
-                     r'submit change.set labels on CL .*'),
-      api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
+      api.post_check(post_process.DoesNotRun, 'verify with npm t'),
+      api.post_check(post_process.DoesNotRun,
+                     'create gerrit change for chromiumos/infra/ide'),
+      api.post_check(post_process.DoesNotRunRE, r'set labels on CL .*'),
+      api.post_check(post_process.DoesNotRunRE, 'submit CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
       api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
@@ -198,7 +180,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun,
           'submit change.create gerrit change for chromiumos/infra/ide'),
-      api.post_check(post_process.DoesNotRun, 'verify update.npm t'),
+      api.post_check(post_process.DoesNotRun, 'verify with npm t'),
       api.post_check(post_process.DoesNotRunRE,
                      r'submit change.set labels on CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
@@ -214,18 +196,15 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify update.npm t', retcode=1),
-      api.gerrit.simulated_create_change(
-          'submit change.create gerrit change for chromiumos/infra/ide',
-          'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
-      ),
-      api.post_check(post_process.MustRun,
-                     'submit change.set labels on CL 123'),
-      api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Verified": -1}}'),
-      api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
+      api.step_data('verify with npm t', retcode=1),
+      api.post_check(
+          post_process.DoesNotRun,
+          'submit change.create gerrit change for chromiumos/infra/ide'),
+      api.post_check(post_process.DoesNotRunRE, 'set labels on CL.*'),
+      api.post_check(post_process.DoesNotRunRE, 'submit CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'verify update post submit.*'),
       api.post_check(post_process.DoesNotRun, 'publish prerelease'),
+      api.expect_status('FAILURE'),
   )
 
   yield api.test(
@@ -237,21 +216,18 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify update.npm t', retcode=0),
+      api.step_data('verify with npm t', retcode=0),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
-          'submit change.create gerrit change for chromiumos/infra/ide',
+          'create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify update.npm t'),
-      api.post_check(post_process.MustRun,
-                     'submit change.set labels on CL 123'),
-      api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
-      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.post_check(post_process.MustRun, 'verify with npm t'),
+      api.post_check(post_process.MustRun, 'set labels on CL 123'),
+      api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',
           stdout=api.raw_io.output_text(
@@ -271,22 +247,19 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify update.npm t', retcode=0),
+      api.step_data('verify with npm t', retcode=0),
       api.step_data('verify update post submit.npm t', retcode=1),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
-          'submit change.create gerrit change for chromiumos/infra/ide',
+          'create gerrit change for chromiumos/infra/ide',
           'https://chromium-review.googlesource.com/c/chromiumos/infra/ide/+/123'
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify update.npm t'),
-      api.post_check(post_process.MustRun,
-                     'submit change.set labels on CL 123'),
-      api.post_check(post_process.PropertyEquals, 'applied labels',
-                     '{"labels": {"Bot-Commit": 1, "Verified": 1}}'),
-      api.post_check(post_process.MustRun, 'submit change.submit CL 123'),
+      api.post_check(post_process.MustRun, 'verify with npm t'),
+      api.post_check(post_process.MustRun, 'set labels on CL 123'),
+      api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
           'verify update post submit.checkout to bump commit.git log',
           stdout=api.raw_io.output_text(
