@@ -12176,7 +12176,7 @@ Args:
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#66)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#68)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
 
 Tests reliability of incremental build by performing two builds.
 
@@ -12192,7 +12192,7 @@ Args:
 Returns:
   A list of relevant packages built.
 
-&mdash; **def [RunSteps](/recipes/build_incremental.py#51)(api: RecipeApi, properties: IncrementalProperties):**
+&mdash; **def [RunSteps](/recipes/build_incremental.py#53)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#18): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)

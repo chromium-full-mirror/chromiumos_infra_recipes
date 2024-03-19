@@ -46,6 +46,8 @@ DEPS = [
 
 REPO_SYNC_JOBS = 64
 
+EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
+
 PROPERTIES = IncrementalProperties
 
 def RunSteps(api: RecipeApi,
@@ -87,15 +89,21 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     raise StepFailure('build_time_delta input property is empty')
 
   gerrit_changes = api.cros_infra_config.gerrit_changes
+  all_changes_are_private = gerrit_changes and all(
+      c.host != EXTERNAL_REVIEW_HOST for c in gerrit_changes)
+  builder_is_private = api.cros_infra_config.config.general.manifest == BuilderConfig.General.PRIVATE
+  gerrit_changes = [c for c in gerrit_changes if c.host == EXTERNAL_REVIEW_HOST]
   if properties.run_relevancy_check:
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
-    _build_target = common_pb2.BuildTarget(
-        name=api.build_menu.build_target.name,
-        profile=common_pb2.Profile(name='base'))
-    _builder_config = BuilderConfig(build_target=_build_target)
-    relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
-        [_builder_config], gerrit_changes)
-    relevant = bool(relevant_builder_configs)
+    relevant = False
+    if builder_is_private or not all_changes_are_private:
+      _build_target = common_pb2.BuildTarget(
+          name=api.build_menu.build_target.name,
+          profile=common_pb2.Profile(name='base'))
+      _builder_config = BuilderConfig(build_target=_build_target)
+      relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
+          [_builder_config], gerrit_changes)
+      relevant = bool(relevant_builder_configs)
     api.easy.set_properties_step(pointless_build=not relevant,
                                  relevant_build=relevant)
     api.cros_tags.add_tags_to_current_build(
