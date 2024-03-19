@@ -1,0 +1,44 @@
+{
+    "testVariants": [
+        {
+            "testId": "tast.hwsec.Login",
+            "variant": {
+                "def": {
+                    "build_target": "amd64-generic"
+                }
+            },
+            "variantHash": "6d35426b9fce79e2",
+            "status": "EXONERATED",
+            "sourcesId": "a5165284865bd2dac42337e8"
+        },
+        {
+            "testId": "tast.session.OwnershipTaken",
+            "variant": {
+                "def": {
+                    "build_target": "amd64-generic"
+                }
+            },
+            "variantHash": "6d35426b9fce79e2",
+            "status": "UNEXPECTEDLY_SKIPPED"
+        }
+    ],
+    "sources": {
+        "a5165284865bd2dac42337e8": {
+            "gitilesCommit": {
+                "host": "chrome-internal.googlesource.com",
+                "project": "chromeos/manifest-internal",
+                "ref": "refs/heads/snapshot",
+                "commitHash": "93cf925c8cd052ebbe6133a8cef885d92c56cdc5",
+                "position": "92279"
+            },
+            "changelists": [
+                {
+                    "host": "chromium-review.googlesource.com",
+                    "project": "chromiumos/overlays/chromiumos-overlay",
+                    "change": "5138795",
+                    "patchset": "2"
+                }
+            ]
+        }
+    }
+}

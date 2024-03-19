@@ -5,7 +5,7 @@
 # found in the LICENSE file.
 
 """Functions for exonerating test failures."""
-
+import traceback
 from collections import defaultdict
 from collections import namedtuple
 from typing import Dict, List, Optional, Tuple
@@ -1007,6 +1007,6 @@ class ExonerateApi(recipe_api.RecipeApi):
           pres.logs['all_stats'] = str(overall_stats)
           self.m.easy.set_properties_step(failed_test_stats_v2=overall_stats)
         except Exception as e:  # pylint: disable=broad-except
-          pres.step_text = 'Error occurred when running auto exoneration v2'
-          pres.logs['error'] = str(e)
+          pres.step_text = f'Error occurred when running auto exoneration v2: {str(e)}'
+          pres.logs['exception'] = traceback.format_exc()
           pres.status = self.m.step.WARNING

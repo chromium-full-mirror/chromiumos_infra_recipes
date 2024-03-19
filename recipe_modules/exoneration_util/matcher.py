@@ -80,7 +80,7 @@ class TestVariantMatcher:
     # Build an index from protos
     for variant in variants_list:
       key = self._get_variant_key(variant)
-      index[key] = sources_map[variant.sources_id]
+      index[key] = sources_map.get(variant.sources_id, None)
 
     # Look up sources from the index and populate for each variant dict
     for variant_dict in test_variants:

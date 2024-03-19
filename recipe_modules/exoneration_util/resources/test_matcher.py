@@ -14,6 +14,7 @@ from ..matcher import TestVariantMatcher  # pylint: disable=relative-beyond-top-
 
 file_path_single_source = './exoneration_util/resources/test_data.json'
 file_path_multiple_sources = './exoneration_util/resources/test_data_multiple_sources.json'
+file_path_missing_sources = './exoneration_util/resources/test_data_missing_sources.json'
 
 
 class TestMatcher(unittest.TestCase):
@@ -61,6 +62,18 @@ class TestMatcher(unittest.TestCase):
                      'aaaa')
     self.assertEqual(result[1]['sources']['gitilesCommit']['commitHash'],
                      'bbbb')
+
+  def test_match_missing_sources(self):
+
+    def query_func(page_token=None):  # pylint: disable=unused-argument
+      return self.load_data(file_path_missing_sources)
+
+    test_variants = self.get_variants()
+    matcher = TestVariantMatcher(query_func)
+    result = matcher.match_sources(test_variants)
+    self.assertEqual(len(result), 1)
+    self.assertEqual(result[0]['sources']['gitilesCommit']['commitHash'],
+                     '93cf925c8cd052ebbe6133a8cef885d92c56cdc5')
 
   def test_match_paging(self):
 
