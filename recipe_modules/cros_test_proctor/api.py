@@ -202,6 +202,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[failures.Failure]: failures encountered running tests
     """
     with self.m.step.nest('run tests') as pres:
+      # Filter Bazel builders.
+      # TODO(b/330338112): Add test planning support for Bazel builders.
+      need_tests_builds = [
+          b for b in need_tests_builds
+          if not self.m.cros_test_plan_v2.is_bazel_builder(b.builder.builder)
+      ]
+
       if not need_tests_builds:
         pres.step_text = 'no builds to test'
         pres.properties['no_tests_needed'] = True

@@ -85,7 +85,6 @@ class StarlarkPackage:
                                               json_format.MessageToJson(
                                                   other.template_parameters))
 
-
 class CrosTestPlanV2Api(recipe_api.RecipeApi):
   """A module for generating and parsing test plans for CTP v2."""
 
@@ -117,6 +116,15 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         return mc
 
     return None
+
+  def is_bazel_builder(self, builder_name: str) -> bool:
+    """Returns whether builder_name is a Bazel builder.
+
+    Bazel builders are filtered out of testing right now, this is a simple filter
+    that just works on the name. In the long-term, Bazel builders will need to
+    be differentiated from Portage builders in test planning.
+    """
+    return '-bazel-' in builder_name
 
   def enabled_on_changes(self, gerrit_changes):
     """Returns true if test planning v2 is enabled on gerrit_changes.
@@ -587,11 +595,11 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       testable_builders = sorted(self.m.step.active_result.stdout.split())
 
-      # Bazel builders should not be considered testable right now, and
-      # because the test planning works based on the build target rather than
-      # the builder name there's not a great way to implement that logic. For
-      # now we simply filter all builders containing `-bazel-` out of this list.
-      testable_builders = [b for b in testable_builders if not '-bazel-' in b]
+      # Bazel builders should not be considered testable right now.
+      # TODO(b/330338112): Add test planning support for Bazel builders.
+      testable_builders = [
+          b for b in testable_builders if not self.is_bazel_builder(b)
+      ]
 
       pres.logs['testable_builders'] = testable_builders
 

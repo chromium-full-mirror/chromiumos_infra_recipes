@@ -5270,11 +5270,11 @@ Returns:
 
 Functions for end-to-end test planning.
 
-#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#89)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestPlanV2Api](/recipe_modules/cros_test_plan_v2/api.py#88)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#299)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#307)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5284,16 +5284,16 @@ Args:
     doesn't already exist, and the schema will be updated if it doesn't
     match the DirBQRow schema.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#121)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#129)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#106)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#105)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#433)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#441)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the test_plan Go infra binary to get HWTestPlans.
 
@@ -5310,7 +5310,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#537)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#545)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the test_plan Go infra binary to get a list of testable builders.
 
@@ -5325,9 +5325,17 @@ Args:
 Returns:
   A list of the names of the testable builders.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#96)(self):**
+&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#95)(self):**
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#223)(self, gerrit_changes):**
+&mdash; **def [is\_bazel\_builder](/recipe_modules/cros_test_plan_v2/api.py#120)(self, builder_name: str):**
+
+Returns whether builder_name is a Bazel builder.
+
+Bazel builders are filtered out of testing right now, this is a simple filter
+that just works on the name. In the long-term, Bazel builders will need to
+be differentiated from Portage builders in test planning.
+
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#231)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -5338,7 +5346,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#204)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#212)(self, directory: str):**
 
 Call test_plan validate on directory.
 
@@ -5422,7 +5430,7 @@ Functions for sending requests and processing results from cros test platform.
 
 &emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#65)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#605)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#612)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -5477,7 +5485,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#476)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#483)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
 
 Schedule all tests from the test_plan.
 
