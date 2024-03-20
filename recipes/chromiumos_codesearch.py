@@ -133,7 +133,8 @@ def RunSteps(api, properties):
       kzip_path = api.codesearch.create_and_upload_kythe_index_pack(
           commit_hash=codesearch_mirror_revision,
           commit_timestamp=int(codesearch_mirror_revision_timestamp or
-                               api.time.time()))
+                               api.time.time()),
+          clang_target_arch=target_architecture)
 
       # Check out the generated files repo and sync the generated files
       # into this checkout.

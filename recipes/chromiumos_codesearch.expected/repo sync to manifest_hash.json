@@ -5753,6 +5753,8 @@
       "chromium.googlesource.com/chromiumos/codesearch//main",
       "--project",
       "chromiumos",
+      "--clang_target_arch",
+      "amd64",
       "--out_dir",
       "src/out/amd64-generic"
     ],
