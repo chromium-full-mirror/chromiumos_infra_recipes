@@ -5275,7 +5275,7 @@ Functions for end-to-end test planning.
 
 A module for generating and parsing test plans for CTP v2.
 
-&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#307)(self, table: str):**
+&mdash; **def [dirmd\_update](/recipe_modules/cros_test_plan_v2/api.py#297)(self, table: str):**
 
 Call test_plan chromeos-dirmd-update.
 
@@ -5285,16 +5285,16 @@ Args:
     doesn't already exist, and the schema will be updated if it doesn't
     match the DirBQRow schema.
 
-&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#129)(self, gerrit_changes):**
+&mdash; **def [enabled\_on\_changes](/recipe_modules/cros_test_plan_v2/api.py#119)(self, gerrit_changes):**
 
 Returns true if test planning v2 is enabled on gerrit_changes.
 
 Config controlling what changes are enabled is in the ProjectMigrationConfig
 of this module's properties.
 
-&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#105)(self):**
+&emsp; **@property**<br>&mdash; **def [generate\_ctpv1\_format](/recipe_modules/cros_test_plan_v2/api.py#95)(self):**
 
-&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#441)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
+&mdash; **def [generate\_hw\_test\_plans](/recipe_modules/cros_test_plan_v2/api.py#431)(self, starlark_packages: List[StarlarkPackage], generate_test_plan_request: Optional[GenerateTestPlanRequest]=None):**
 
 Runs the test_plan Go infra binary to get HWTestPlans.
 
@@ -5311,7 +5311,7 @@ Returns:
   A list of generated HWTestPlans or GenerateTestPlanResponse if
     generate_ctpv1_format is true.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#545)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_plan_v2/api.py#535)(self, starlark_packages: List[StarlarkPackage], builds: List[Build]):**
 
 Runs the test_plan Go infra binary to get a list of testable builders.
 
@@ -5326,9 +5326,7 @@ Args:
 Returns:
   A list of the names of the testable builders.
 
-&mdash; **def [initialize](/recipe_modules/cros_test_plan_v2/api.py#95)(self):**
-
-&mdash; **def [is\_bazel\_builder](/recipe_modules/cros_test_plan_v2/api.py#120)(self, builder_name: str):**
+&mdash; **def [is\_bazel\_builder](/recipe_modules/cros_test_plan_v2/api.py#110)(self, builder_name: str):**
 
 Returns whether builder_name is a Bazel builder.
 
@@ -5336,7 +5334,7 @@ Bazel builders are filtered out of testing right now, this is a simple filter
 that just works on the name. In the long-term, Bazel builders will need to
 be differentiated from Portage builders in test planning.
 
-&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#231)(self, gerrit_changes):**
+&mdash; **def [relevant\_plans](/recipe_modules/cros_test_plan_v2/api.py#221)(self, gerrit_changes):**
 
 Call test_plan relevant-plans.
 
@@ -5347,7 +5345,7 @@ Args:
 Returns:
   A list of relevant SourceTestPlans
 
-&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#212)(self, directory: str):**
+&mdash; **def [validate](/recipe_modules/cros_test_plan_v2/api.py#202)(self, directory: str):**
 
 Call test_plan validate on directory.
 

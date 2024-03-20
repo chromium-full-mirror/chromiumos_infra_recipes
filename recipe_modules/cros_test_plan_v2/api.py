@@ -92,16 +92,6 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     super().__init__(*args, **kwargs)
     self._properties = properties
 
-  def initialize(self):
-    default_ref = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
-
-    docker_image_name = (
-        self._properties.platform_test_plan_docker_image or 'testplan')
-    docker_tag = (self._properties.platform_test_plan_docker_tag or default_ref)
-    self._docker_image = '{}:{}'.format(docker_image_name, docker_tag)
-    self._migration_configs = self._properties.migration_configs
-    self._test_plan_path = None
-
   @property
   def generate_ctpv1_format(self):
     return self._properties.generate_ctpv1_format
@@ -111,7 +101,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
     Returns None if no MigrationConfig is found.
     """
-    for mc in self._migration_configs:
+    for mc in self._properties.migration_configs:
       if mc.host == host and re.match('^{}$'.format(mc.project), project):
         return mc
 

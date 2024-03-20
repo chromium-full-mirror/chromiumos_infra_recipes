@@ -8,17 +8,8 @@ package recipe_modules.chromeos.cros_test_plan_v2;
 
 // NEXT ID: 8
 message CrosTestPlanV2Properties {
-  reserved 1 to 2;
-
-  // Name of the Docker image to use for the platform-owned half of test plan.
-  // The image name should be an image under gcr.io/chromeos-bot. Defaults to
-  // "testplan".
-  string platform_test_plan_docker_image = 3;
-
-  // Tag to pull platform_test_plan_docker_image.
-  // Defaults to "staging" or "prod", based on the
-  // cros_infra_config.is_staging property.
-  string platform_test_plan_docker_tag = 4;
+  reserved 1 to 4;
+  reserved "platform_test_plan_docker_image", "platform_test_plan_docker_tag";
 
   // Configure changes in a project to be migrated to v2 test planning.
   // NEXT ID: 11
