@@ -2010,7 +2010,8 @@
     "cmd": [],
     "name": "process branch release-R100-14526.B.init sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using cached value: False@@@"
     ]
   },
   {

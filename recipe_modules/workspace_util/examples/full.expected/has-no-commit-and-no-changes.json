@@ -2210,7 +2210,10 @@
   },
   {
     "cmd": [],
-    "name": "detect toolchain change (2)"
+    "name": "detect toolchain change (2)",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@using cached value: False@@@"
+    ]
   },
   {
     "name": "$result"

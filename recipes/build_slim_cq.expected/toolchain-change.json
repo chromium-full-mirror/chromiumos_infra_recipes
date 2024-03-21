@@ -3354,7 +3354,8 @@
     "cmd": [],
     "name": "init sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using cached value: True@@@"
     ]
   },
   {
@@ -3373,7 +3374,8 @@
     "cmd": [],
     "name": "update sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using cached value: True@@@"
     ]
   },
   {

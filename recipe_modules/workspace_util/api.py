@@ -185,6 +185,8 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest(name or
                           'detect toolchain change') as step_presentation:
       if self.toolchain_cls_applied is not None:
+        step_presentation.step_text = (
+            f'using cached value: {self.toolchain_cls_applied}')
         return self.toolchain_cls_applied
 
       if not self.patch_sets:

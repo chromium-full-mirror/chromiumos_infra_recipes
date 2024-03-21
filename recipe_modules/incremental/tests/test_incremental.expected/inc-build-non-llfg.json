@@ -678,7 +678,8 @@
     "cmd": [],
     "name": "update sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using cached value: False@@@"
     ]
   },
   {
@@ -1988,7 +1989,8 @@
     "cmd": [],
     "name": "init sdk (2).detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using cached value: False@@@"
     ]
   },
   {
@@ -1999,7 +2001,8 @@
     "cmd": [],
     "name": "update sdk (2).detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@using cached value: False@@@"
     ]
   },
   {

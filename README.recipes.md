@@ -11691,7 +11691,7 @@ Args:
 Yields:
   A context manager which syncs the workspace path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#222)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#224)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
 
 Return a context with manifest groups checked out to cwd.
 

@@ -3193,7 +3193,8 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.update sdk.detect toolchain change",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@using cached value: False@@@"
     ]
   },
   {
