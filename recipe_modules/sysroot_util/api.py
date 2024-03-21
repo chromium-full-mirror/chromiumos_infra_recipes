@@ -227,6 +227,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         remoteexec_config = None
         if self.m.remoteexec.enable_logs_upload:
           remoteexec_config = common_pb2.RemoteexecConfig(
+              reproxy_cfg_file=self.m.remoteexec.reproxy_cfg_file,
               log_dir=common_pb2.SyncedDir(
                   dir=str(self.m.path.mkdtemp(prefix='remoteexec-logs-'))))
 

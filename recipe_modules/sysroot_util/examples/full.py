@@ -402,9 +402,12 @@ def GenTests(api):
 
   yield api.test(
       'remoteexec-logs-upload',
-      api.properties(**{
-          '$chromeos/remoteexec': RemoteexecProperties(enable_logs_upload=True)
-      }))
+      api.properties(
+          **{
+              '$chromeos/remoteexec':
+                  RemoteexecProperties(enable_logs_upload=True,
+                                       reproxy_cfg_file='reproxy_release.cfg')
+          }))
 
   yield api.test(
       'factory-image-without-create-netboot-endpoint',

@@ -78,7 +78,7 @@ def GenTests(api):
                   RemoteexecProperties(
                       enable_logs_upload=True,
                       reclient_version='release',
-                      reproxy_cfg_file='[START_DIR]/cipd/rbe',
+                      reproxy_cfg_file='reproxy_release.cfg',
                   )
           }))
 
@@ -89,7 +89,7 @@ def GenTests(api):
               '$chromeos/remoteexec':
                   RemoteexecProperties(
                       reclient_version='release',
-                      reproxy_cfg_file='[START_DIR]/cipd/rbe',
+                      reproxy_cfg_file='reproxy_release.cfg',
                   )
           }),
   )
