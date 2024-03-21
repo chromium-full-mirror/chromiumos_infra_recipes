@@ -526,6 +526,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
       total_shards = CrosTestShardingAPI._MAX_SHARDS
     other_makespans = [0, 2700]
     security_bucket = None
+    shards = []
     tests_to_bucket = list(test_suite.test_cases.test_cases)
     # TODO (b/277945083): Hard code to group tast.security tests together.
     # Remove once long term solution is implemented.
@@ -536,15 +537,64 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
       security_bucket_makespan = CrosTestShardingAPI._get_bucket_execution_time(
           security_tests)
       other_makespans.append(security_bucket_makespan)
+      shards += security_bucket
       total_shards -= 1
 
     # Different ways to approach sharding. Shard based on some
     # constraint in space (total_shards) or time (other_makespan).
-    shards = CrosTestShardingAPI._shard_constrained(tests_to_bucket,
-                                                    total_shards,
-                                                    max(other_makespans + [0]))
-    if security_bucket:
-      shards += security_bucket
+    shards += CrosTestShardingAPI._shard_constrained(tests_to_bucket,
+                                                     total_shards,
+                                                     max(other_makespans + [0]))
+    return shards
+
+  def optimized_shard_allocation_deps(self, test_buckets, suite_name, board,
+                                      max_number_of_shards):
+    # Update TestCase.test_times
+    self._get_test_timing_information(suite_name, board)
+    with self.m.step.nest('Calculating Dep Shards') as step:
+      if max_number_of_shards == 0:
+        max_number_of_shards = CrosTestShardingAPI._MAX_SHARDS
+      timing_per_bucket = []
+      total_makespan = 0
+
+      # ALGO to determine shards per dep
+      for bucket in test_buckets:
+        bucket_execution_time = CrosTestShardingAPI._get_bucket_execution_time(
+            bucket)
+        total_makespan += bucket_execution_time
+        timing_per_bucket.append(bucket_execution_time)
+      approximate_time_per_shard = total_makespan / max_number_of_shards
+      shards_per_bucket = []
+      total_requested_shard_count = 0
+      for bucket_time in timing_per_bucket:
+        requested_shard_count = round(bucket_time / approximate_time_per_shard)
+        total_requested_shard_count += requested_shard_count
+        shards_per_bucket.append(requested_shard_count)
+
+      leftover_shard_count = max_number_of_shards - total_requested_shard_count
+      shard_information = f'max_number_of_shards:{max_number_of_shards}\n' \
+                          f'total_requested_shard_count:{total_requested_shard_count}\n' \
+                          f'leftover_shard_count:{leftover_shard_count}\n' \
+                          f'approximate_time_per_shard:{approximate_time_per_shard}\n' \
+                          f''
+      step.logs['shard_information'] = shard_information
+
+    ##  TODO: add leftover_shards to the longest running dep
+    # list [ [test_cases]
+    with self.m.step.nest('Generating Dep Shards') as step:
+      shards = []
+      shards_information = ''
+      # pylint: disable=consider-using-enumerate
+      for i in range(len(test_buckets)):
+        makespan = timing_per_bucket[i] // len(test_buckets[i])
+        shards += CrosTestShardingAPI._shard_constrained(
+            test_buckets[i], shards_per_bucket[i], makespan)
+        shards_information += f'\nbucket id: {i}\n' \
+                              f'- bucket makespan: {makespan}\n' \
+                              f'- shards generated: {len(shards[-1])}\n'
+
+      step.logs['shard buildout'] = shards_information
+
     return shards
 
   @staticmethod
@@ -649,10 +699,9 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
     makespan = requested_makespan
     if requested_shard_count != 0 and requested_makespan != 0:
       makespan = 0
+    if requested_shard_count == 0:
+      requested_shard_count = 1
     shard_count = requested_shard_count
-    # total_test_time = sum([test_case.execution_time for test_case in test_cases])
-    # if makespan == 0:
-    #   makespan = math.ceil(total_test_time / shard_count)
 
     # Allocate the shards
     shards = [Shard(makespan) for _ in range(shard_count)]
@@ -691,6 +740,47 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
     #  remove empty shards
     shards[:] = filterfalse(lambda shard: shard.empty(), shards)
     return shards
+
+  @staticmethod
+  def bucket_by_dependencies(test_cases, suite_name):
+    """Creates a list of buckets grouping test_cases by their dependencies.
+
+    Args:
+      * test_cases: List[test_case].
+      * suite_name: string.
+
+    Returns: List[List[test_case]].
+    """
+    bucket = {}
+
+    skip_deps = False
+    # Currently due to the size of these suites, sharding them into buckets on
+    # deps could result in dozens to hundreds of devices, including those
+    # with exceptionally high pending time. For now, they will be ignored,
+    # like they have been for the past decade.
+    if suite_name in {
+        'bvt-tast-cq', 'bvt-tast-cq-hw', 'bvt-tast-cq-hw-agnostic',
+        'bvt-tast-informational', 'cq-medium', 'bvt-tast-criticalstaging'
+    }:  # pragma: no cover
+      skip_deps = True
+    for test_case in test_cases:
+      # TODO (b/277945083): Hard code to group tast.security tests together.
+      # Remove once long term solution is implemented.
+      if 'tast.security' in test_case.id.value:  # pragma: no cover
+        security_bucket = '__SECURITY__'
+        if security_bucket not in bucket:
+          bucket[security_bucket] = []
+        bucket[security_bucket].append(test_case)
+        continue
+
+      deps = frozenset()
+      if not skip_deps:
+        deps = frozenset(list(dep.value for dep in test_case.dependencies))
+      if deps in bucket:
+        bucket[deps].append(test_case)
+      else:
+        bucket[deps] = [test_case]
+    return list(bucket.values())
 
 
 def _get_test_sub_name(test_name):

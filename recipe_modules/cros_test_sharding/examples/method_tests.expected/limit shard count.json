@@ -6,7 +6,7 @@
       "@@@STEP_LOG_LINE@StepLog@Test Timing Query:@@@",
       "@@@STEP_LOG_LINE@StepLog@Performing query SELECT  test, avg_duration FROM@@@",
       "@@@STEP_LOG_LINE@StepLog@  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like @@@",
-      "@@@STEP_LOG_LINE@StepLog@  'any'  and t.suite like 'bvt-generic-security' @@@",
+      "@@@STEP_LOG_LINE@StepLog@  'any'  and t.suite like 'bvt-generic' @@@",
       "@@@STEP_LOG_LINE@StepLog@Using cmd: bq query --format=csv --max_rows=10000 --project_id chromeos-test-platform-data --dataset_id analytics --nouse_legacy_sql@@@",
       "@@@STEP_LOG_LINE@StepLog@test_timing_rows:@@@",
       "@@@STEP_LOG_END@StepLog@@@"
@@ -25,7 +25,7 @@
       "--nouse_legacy_sql"
     ],
     "name": "Updating test timing information.Query for test timing information",
-    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'any'  and t.suite like 'bvt-generic-security' ",
+    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'any'  and t.suite like 'bvt-generic' ",
     "timeout": 70,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -35,10 +35,10 @@
     "cmd": [],
     "name": "Calculating Dep Shards",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@shard_information@max_number_of_shards:15@@@",
-      "@@@STEP_LOG_LINE@shard_information@total_requested_shard_count:15@@@",
+      "@@@STEP_LOG_LINE@shard_information@max_number_of_shards:2@@@",
+      "@@@STEP_LOG_LINE@shard_information@total_requested_shard_count:2@@@",
       "@@@STEP_LOG_LINE@shard_information@leftover_shard_count:0@@@",
-      "@@@STEP_LOG_LINE@shard_information@approximate_time_per_shard:0.13333333333333333@@@",
+      "@@@STEP_LOG_LINE@shard_information@approximate_time_per_shard:4.5@@@",
       "@@@STEP_LOG_END@shard_information@@@"
     ]
   },
@@ -49,7 +49,15 @@
       "@@@STEP_LOG_LINE@shard buildout@@@@",
       "@@@STEP_LOG_LINE@shard buildout@bucket id: 0@@@",
       "@@@STEP_LOG_LINE@shard buildout@- bucket makespan: 1@@@",
-      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 4@@@",
+      "@@@STEP_LOG_LINE@shard buildout@@@@",
+      "@@@STEP_LOG_LINE@shard buildout@bucket id: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- bucket makespan: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 3@@@",
+      "@@@STEP_LOG_LINE@shard buildout@@@@",
+      "@@@STEP_LOG_LINE@shard buildout@bucket id: 2@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- bucket makespan: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 2@@@",
       "@@@STEP_LOG_END@shard buildout@@@"
     ]
   },
@@ -60,7 +68,7 @@
       "@@@STEP_LOG_LINE@StepLog@Test Timing Query:@@@",
       "@@@STEP_LOG_LINE@StepLog@Performing query SELECT  test, avg_duration FROM@@@",
       "@@@STEP_LOG_LINE@StepLog@  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like @@@",
-      "@@@STEP_LOG_LINE@StepLog@  'any'  and t.suite like 'bvt-generic-security' @@@",
+      "@@@STEP_LOG_LINE@StepLog@  'any'  and t.suite like 'bvt-generic' @@@",
       "@@@STEP_LOG_LINE@StepLog@Using cmd: bq query --format=csv --max_rows=10000 --project_id chromeos-test-platform-data --dataset_id analytics --nouse_legacy_sql@@@",
       "@@@STEP_LOG_LINE@StepLog@test_timing_rows:@@@",
       "@@@STEP_LOG_END@StepLog@@@"
@@ -79,7 +87,7 @@
       "--nouse_legacy_sql"
     ],
     "name": "Updating test timing information (2).Query for test timing information",
-    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'any'  and t.suite like 'bvt-generic-security' ",
+    "stdin": "SELECT  test, avg_duration FROM\n  chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like \n  'any'  and t.suite like 'bvt-generic' ",
     "timeout": 70,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"

@@ -483,7 +483,7 @@
     "name": "enumerate CFT tests.Shard test cases",
     "tags": {
       "shard_count": "2",
-      "unique_dependencies_count": "0"
+      "unique_dependencies_count": "1"
     },
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -556,6 +556,30 @@
     "timeout": 70,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment.Calculating Dep Shards",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@shard_information@max_number_of_shards:5@@@",
+      "@@@STEP_LOG_LINE@shard_information@total_requested_shard_count:5@@@",
+      "@@@STEP_LOG_LINE@shard_information@leftover_shard_count:0@@@",
+      "@@@STEP_LOG_LINE@shard_information@approximate_time_per_shard:0.4@@@",
+      "@@@STEP_LOG_END@shard_information@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment.Generating Dep Shards",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@shard buildout@@@@",
+      "@@@STEP_LOG_LINE@shard buildout@bucket id: 0@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- bucket makespan: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 1@@@",
+      "@@@STEP_LOG_END@shard buildout@@@"
     ]
   },
   {

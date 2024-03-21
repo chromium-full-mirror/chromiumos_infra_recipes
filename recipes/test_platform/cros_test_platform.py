@@ -935,24 +935,19 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
     api.random.seed(seed)
     autotest_invocations = []
     for test_suite in test_suites:
-      test_buckets = []
-      if (suite_name in {
-          'bvt-tast-cq', 'bvt-tast-cq-hw', 'bvt-tast-cq-hw-agnostic',
-          'cq-medium'}) \
-          and \
-          ('chromeos.cros_infra_config.optimized_shard_allocation' in
-           api.cros_infra_config.experiments or
-           CrosTestPlatformProperties.OPTIMIZED_SHARDING in
-           properties.experiments):
+      test_buckets = api.cros_test_sharding.bucket_by_dependencies(
+          list(test_suite.test_cases.test_cases), suite_name)
+      if ('chromeos.cros_infra_config.optimized_shard_allocation'
+          in api.cros_infra_config.experiments or
+          CrosTestPlatformProperties.OPTIMIZED_SHARDING
+          in properties.experiments):
         with api.m.step.nest('Optimized Sharding Experiment') as optimized_step:
           build_target = _reconstruct_build_target(request)
           optimized_step.logs[
               'metadata'] = f'suite_name:{suite_name}\nbuild_target/board:{build_target}\ntotal_shards:{total_shards}'
-          shards = api.cros_test_sharding.optimized_shard_allocation(
-              test_suite, suite_name, build_target, total_shards)
+          shards = api.cros_test_sharding.optimized_shard_allocation_deps(
+              test_buckets, suite_name, build_target, total_shards)
       else:
-        test_buckets = _bucket_by_dependencies(
-            list(test_suite.test_cases.test_cases), suite_name)
         shards = _shard_test_buckets(api, test_buckets, total_shards,
                                      max_in_shard)
       step.tags['shard_count'] = str(len(shards))
@@ -1017,47 +1012,6 @@ def _build_autotest_invocations(test_suites, suite_name, args):
           test_args=args)
       autotest_invocations.append(autotest_invocation)
   return autotest_invocations
-
-
-def _bucket_by_dependencies(test_cases, suite_name):
-  """Creates a list of buckets grouping test_cases by their dependencies.
-
-  Args:
-    * test_cases: List[test_case].
-    * suite_name: string.
-
-  Returns: List[List[test_case]].
-  """
-  bucket = {}
-
-  skipDeps = False
-  # Currently due to the size of these suites, sharding them into buckets on
-  # deps could result in dozens to hundreds of devices, including those
-  # with exceptionally high pending time. For now, they will be ignored,
-  # like they have been for the past decade.
-  if suite_name in {
-      'bvt-tast-cq', 'bvt-tast-cq-hw', 'bvt-tast-cq-hw-agnostic',
-      'bvt-tast-informational', 'cq-medium', 'bvt-tast-criticalstaging'
-  }:  # pragma: no cover
-    skipDeps = True
-  for test_case in test_cases:
-    # TODO (b/277945083): Hard code to group tast.security tests together.
-    # Remove once long term solution is implemented.
-    if 'tast.security' in test_case.id.value:  # pragma: no cover
-      security_bucket = '__SECURITY__'
-      if security_bucket not in bucket:
-        bucket[security_bucket] = []
-      bucket[security_bucket].append(test_case)
-      continue
-
-    deps = frozenset()
-    if not skipDeps:
-      deps = frozenset(list(dep.value for dep in test_case.dependencies))
-    if deps in bucket:
-      bucket[deps].append(test_case)
-    else:
-      bucket[deps] = [test_case]
-  return list(bucket.values())
 
 
 def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
