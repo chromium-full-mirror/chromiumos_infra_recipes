@@ -1693,7 +1693,7 @@
   },
   {
     "cmd": [],
-    "name": "get latest build version.query-sludge",
+    "name": "get latest build version.query-tatl",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -1711,16 +1711,53 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"sludge-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tatl-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
     ],
     "infra_step": true,
-    "name": "get latest build version.query-sludge.buildbucket.search",
+    "name": "get latest build version.query-tatl.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.3-3\"}, \"chromeos_version\": \"R80-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.2-2\"}, \"chromeos_version\": \"R80-1.2.2\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.1-1\"}, \"chromeos_version\": \"R80-1.2.1\"}}, \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-sludge/R80-1.2.0-0\"}, \"chromeos_version\": \"R80-1.2.0\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.10-10\"}, \"chromeos_version\": \"R80-1.2.10\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.8-8\"}, \"chromeos_version\": \"R80-1.2.8\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.6-6\"}, \"chromeos_version\": \"R80-1.2.6\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tatl/R80-1.2.5-5\"}, \"chromeos_version\": \"R80-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@",
+      "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
+      "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
+      "@@@STEP_LINK@3@https://cr-buildbucket.appspot.com/build/3@@@",
+      "@@@STEP_LINK@4@https://cr-buildbucket.appspot.com/build/4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get latest build version.query-tael",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1000",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"tael-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"1969-12-30T12:00:00Z\"}, \"status\": \"SUCCESS\"}"
+    ],
+    "infra_step": true,
+    "name": "get latest build version.query-tael.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"1\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.9-9\"}, \"chromeos_version\": \"R80-1.2.9\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"2\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.7-7\"}, \"chromeos_version\": \"R80-1.2.7\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"3\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.5-5\"}, \"chromeos_version\": \"R80-1.2.5\"}}, \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"id\": \"4\", \"input\": {\"gitilesCommit\": {\"ref\": \"refs/heads/main\"}}, \"output\": {\"properties\": {\"artifacts\": {\"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"postsubmit-tael/R80-1.2.3-3\"}, \"chromeos_version\": \"R80-1.2.3\"}}, \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@1@https://cr-buildbucket.appspot.com/build/1@@@",
       "@@@STEP_LINK@2@https://cr-buildbucket.appspot.com/build/2@@@",
@@ -1951,7 +1988,7 @@
     "name": "upreving pin for branch main.try uprev version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@skipping uprev for chromeos-dtc-vm on main, version unchanged@@@"
+      "@@@STEP_TEXT@skipping uprev for termina-dlc on main, version unchanged@@@"
     ]
   },
   {
@@ -1962,8 +1999,8 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "80.1.2.3",
-      "[CLEANUP]/chromiumos_workspace/src/private-overlays/project-wilco-private/chromeos-base/chromeos-dtc-vm/VERSION-PIN"
+      "80.1.2.5",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/termina-dlc/VERSION-PIN"
     ],
     "infra_step": true,
     "name": "upreving pin for branch main.try uprev version file.version file",

@@ -352,26 +352,7 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
 
 
 def GenTests(api: RecipeTestApi):
-  sludge_properties = json_format.MessageToDict(
-      UprevGuestVmPinProperties(
-          version_file=('src/private-overlays/project-wilco-private/'
-                        'chromeos-base/chromeos-dtc-vm/VERSION-PIN'),
-          vm_board_images=[
-              VmBoardImage(
-                  board='sludge',
-                  destination_gs_bucket='chromeos-localmirror-private',
-                  destination_gs_path='distfiles/sludge',
-              )
-          ], builder_type=bc.Id.POSTSUBMIT,
-          user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
-          group_acls=['koolkids@google.com:READ']))
-
-  sludge_builds = _generate_postsubmit_build_set([3, 2, 1, 0], 'sludge')
-
   buildbucket_search_step = 'get latest build version.query-{}.buildbucket.search'
-
-  mock_sludge_build_search = api.buildbucket.simulated_search_results(
-      sludge_builds, step_name=buildbucket_search_step.format('sludge'))
 
   termina_properties = json_format.MessageToDict(
       UprevGuestVmPinProperties(
@@ -477,13 +458,6 @@ def GenTests(api: RecipeTestApi):
                                                      'release-R108-15183.B'))
 
   yield api.test(
-      'uprev-sludge',
-      api.properties(**sludge_properties),
-      api.git.diff_check(True),
-      mock_sludge_build_search,
-  )
-
-  yield api.test(
       'uprev-termina',
       api.properties(**termina_properties),
       api.git.diff_check(True),
@@ -530,27 +504,27 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-version-file',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(versionFile=''),
       status='FAILURE',
   )
 
   yield api.test(
       'no-vm-board-images',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(vmBoardImages=[]),
       status='FAILURE',
   )
 
   yield api.test(
       'no-board',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
               VmBoardImage(
                   board='',
-                  destination_gs_bucket='chromeos-localmirror-private',
-                  destination_gs_path='distfiles/sludge',
+                  destination_gs_bucket='termina-component-testing',
+                  destination_gs_path='uprev-test/amd64',
               ))
       ]),
       status='FAILURE',
@@ -558,13 +532,13 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-destination-gs-bucket',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
               VmBoardImage(
-                  board='sludge',
+                  board='tatl',
                   destination_gs_bucket='',
-                  destination_gs_path='distfiles/sludge',
+                  destination_gs_path='uprev-test/amd64',
               ))
       ]),
       status='FAILURE',
@@ -572,12 +546,12 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'no-destination-gs-path',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(vmBoardImages=[
           json_format.MessageToDict(
               VmBoardImage(
-                  board='sludge',
-                  destination_gs_bucket='chromeos-localmirror-private',
+                  board='tatl',
+                  destination_gs_bucket='termina-component-testing',
                   destination_gs_path='',
               ))
       ]),
@@ -586,33 +560,35 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'unknown-build-type',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(builderType=123),
       status='FAILURE',
   )
 
   yield api.test(
       'no-version-diff',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.git.diff_check(False),
-      mock_sludge_build_search,
+      mock_tatl_build_search_success,
+      mock_tael_build_search_success,
   )
 
   yield api.test(
       'no-latest-postsubmit-build',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.buildbucket.simulated_search_results(
           [],
-          step_name='get latest build version.query-sludge.buildbucket.search'),
+          step_name='get latest build version.query-tatl.buildbucket.search'),
       status='FAILURE',
   )
 
   yield api.test(
       'no-acls',
-      api.properties(**sludge_properties),
+      api.properties(**termina_properties),
       api.properties(userAcls=[], groupAcls=[]),
       api.git.diff_check(True),
-      mock_sludge_build_search,
+      mock_tatl_build_search_success,
+      mock_tael_build_search_success,
   )
 
 
