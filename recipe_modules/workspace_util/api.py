@@ -145,6 +145,11 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       self._patch_sets.extend(patch_sets)
       if not self._keep_all_changes:
         self.m.src_state.gerrit_changes = self._applied_changes
+      # New changes were applied, so we may have to re-check for toolchain
+      # changes. Don't bother if this is already a toolchain CL.
+      if not self.toolchain_cls_applied:
+        self.m.cros_relevance.toolchain_cls_applied = None
+
 
   def checkout_change(self, change: Optional[GerritChange] = None,
                       name: str = 'checkout gerrit change') -> None:

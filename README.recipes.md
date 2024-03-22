@@ -808,6 +808,7 @@
   * [validate_dirmd](#recipes-validate_dirmd) &mdash; Recipe to validate DIR_METADATA files in the ChromeOS source tree.
   * [vmlab:examples/full](#recipes-vmlab_examples_full)
   * [workspace_util:examples/full](#recipes-workspace_util_examples_full)
+  * [workspace_util:examples/late_toolchain_patch](#recipes-workspace_util_examples_late_toolchain_patch) &mdash; Tests for workspace_util when toolchain changes are applied late.
   * [workspace_util:examples/manifest_branch](#recipes-workspace_util_examples_manifest_branch)
   * [workspace_util:examples/manifest_groups](#recipes-workspace_util_examples_manifest_groups)
   * [workspace_util:tests/only_checked_out_projects](#recipes-workspace_util_tests_only_checked_out_projects)
@@ -4263,7 +4264,7 @@ Args:
 Returns:
   PlannedBuilders: Necessary and skipped builders as a tuple.
 
-&emsp; **@toolchain_cls_applied.setter**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#59)(self, value: bool):**
+&emsp; **@toolchain_cls_applied.setter**<br>&mdash; **def [toolchain\_cls\_applied](/recipe_modules/cros_relevance/api.py#59)(self, value: Optional[bool]):**
 ### *recipe_modules* / [cros\_resultdb](/recipe_modules/cros_resultdb)
 
 [DEPS](/recipe_modules/cros_resultdb/__init__.py#7): [cros\_infra\_config](#recipe_modules-cros_infra_config), [exonerate](#recipe_modules-exonerate), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -11638,7 +11639,7 @@ Args:
     because of Cq-Depend grouping); the changes will be discarded instead
     of failing during application.
 
-&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#149)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
+&mdash; **def [checkout\_change](/recipe_modules/workspace_util/api.py#154)(self, change: Optional[GerritChange]=None, name: str='checkout gerrit change'):**
 
 Check out a gerrit change using the gerrit refs/changes/... workflow.
 
@@ -11650,7 +11651,7 @@ Args:
   change: Change to check out.
   name: Step name.
 
-&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#167)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
+&mdash; **def [detect\_toolchain\_cls](/recipe_modules/workspace_util/api.py#172)(self, chroot: Chroot, test_value: Optional[bool]=None, name: Optional[str]=None):**
 
 Check for toolchain changes.
 
@@ -11697,7 +11698,7 @@ Args:
 Yields:
   A context manager which syncs the workspace path.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#224)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [sync\_to\_manifest\_groups](/recipe_modules/workspace_util/api.py#229)(self, manifest_groups: List[str], local_manifests: Optional[List[LocalManifest]]=None, cache_path_override: Optional[Path]=None, gitiles_commit: Optional[GitilesCommit]=None, manifest_branch: Optional[str]=None):**
 
 Return a context with manifest groups checked out to cwd.
 
@@ -17369,6 +17370,16 @@ files in projects touched by the input CLs.
 
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/full.py#35)(api: RecipeApi, properties: TestInputProperties):**
+### *recipes* / [workspace\_util:examples/late\_toolchain\_patch](/recipe_modules/workspace_util/examples/late_toolchain_patch.py)
+
+[DEPS](/recipe_modules/workspace_util/examples/late_toolchain_patch.py#20): [cros\_source](#recipe_modules-cros_source), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for workspace_util when toolchain changes are applied late.
+
+Intended for flows like incremental builders. See b/329271972.
+
+&mdash; **def [RunSteps](/recipe_modules/workspace_util/examples/late_toolchain_patch.py#32)(api: RecipeApi, properties: TestInputProperties):**
 ### *recipes* / [workspace\_util:examples/manifest\_branch](/recipe_modules/workspace_util/examples/manifest_branch.py)
 
 [DEPS](/recipe_modules/workspace_util/examples/manifest_branch.py#15): [cros\_cache](#recipe_modules-cros_cache), [cros\_source](#recipe_modules-cros_source), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]

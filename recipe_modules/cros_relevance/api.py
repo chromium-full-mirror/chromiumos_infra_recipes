@@ -7,7 +7,7 @@
 """Module for determining if a build is unnecessary."""
 
 from collections import namedtuple
-from typing import List
+from typing import List, Optional
 
 from google.protobuf import json_format
 
@@ -49,7 +49,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     self._toolchain_cls_applied = None
 
   @property
-  def toolchain_cls_applied(self):
+  def toolchain_cls_applied(self) -> Optional[bool]:
     """Whether there are toolchain CLs applied to the source tree."""
     if (self._test_data.enabled and
         self._test_data.get('toolchain_cls_applied', None) is not None):
@@ -57,7 +57,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
     return self._toolchain_cls_applied
 
   @toolchain_cls_applied.setter
-  def toolchain_cls_applied(self, value: bool):
+  def toolchain_cls_applied(self, value: Optional[bool]):
     self._toolchain_cls_applied = value
 
   def run_build_planner(self, builder_configs, gerrit_changes, gitiles_commit,
