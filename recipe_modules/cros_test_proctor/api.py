@@ -257,6 +257,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_results = self._collect_tests(test_tasks, timeout=self.timeout)
         # Record test results.
         passed_test_names = []
+        passed_test_names.extend(exonerable_vm_suites_names)
+        passed_test_names.extend(exonerable_hw_suites_names)
         crit_failure_test_names = []
         non_crit_failure_test_names = []
         for test_result in (test_results.tast_vm + test_results.skylab +
@@ -286,17 +288,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         pres.properties['no_tests_needed'] = True
 
     with self.m.step.nest('check test results'):
-      with self.m.step.nest('pre-exoneration'):
-        old_exonerated_hw_results, old_exonerated_hw_tests = self.m.exonerate.exonerate_hwtests(
-            previously_failed_now_exonerable_hw_results)
-        passed_test_names += old_exonerated_hw_tests
-
-        old_exonerated_vm_results, old_exonerated_vm_tests = self.m.exonerate.exonerate_vmtests(
-            previously_failed_now_exonerable_vm_builds)
-        passed_test_names += old_exonerated_vm_tests
-        # Clear failed tests because they were from prev execution.
-        self.m.exonerate.clear_failed_tests()
-
       with self.m.step.nest('manual exoneration'):
         manually_exonerated_hw_results, manually_exonerated_hw_tests = (
             self.m.exonerate.exonerate_hwtests(test_results.skylab))
@@ -331,10 +322,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           passed_test_names += auto_exonerated_gce_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
-      test_results = test_results._replace(skylab=auto_exonerated_hw_results +
-                                           old_exonerated_hw_results)
-      test_results = test_results._replace(tast_vm=auto_exonerated_vm_results +
-                                           old_exonerated_vm_results)
+      test_results = test_results._replace(
+          skylab=auto_exonerated_hw_results +
+          previously_failed_now_exonerable_hw_results)
+      test_results = test_results._replace(
+          tast_vm=auto_exonerated_vm_results +
+          previously_failed_now_exonerable_vm_builds)
       test_results = test_results._replace(tast_gce=auto_exonerated_gce_results)
       self.m.exonerate.populate_exoneration_markdown()
 

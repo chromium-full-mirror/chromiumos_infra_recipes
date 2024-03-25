@@ -425,6 +425,37 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "get previous failed and now exonerable suites.exonerate vm tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated camera.TakesGreatPhotos on target@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated camera.TakesGreatPhotos on target@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@camera.TakesGreatPhotos:\t['target']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get previous failed and now exonerable suites.exonerate hw tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@configs@arc.Boot: ['betty']@@@",
+      "@@@STEP_LOG_LINE@configs@camera.TakesGreatPhotos: ['target']@@@",
+      "@@@STEP_LOG_LINE@configs@test1: []@@@",
+      "@@@STEP_LOG_LINE@configs@test2: []@@@",
+      "@@@STEP_LOG_LINE@configs@test3: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test4: ['build_target_name']@@@",
+      "@@@STEP_LOG_LINE@configs@test6: ['betty']@@@",
+      "@@@STEP_LOG_END@configs@@@",
+      "@@@STEP_LOG_LINE@exoneration logs@Exonerated camera.TakesGreatPhotos on target@@@",
+      "@@@STEP_LOG_END@exoneration logs@@@",
+      "@@@STEP_LOG_LINE@exonerated tests@camera.TakesGreatPhotos:\t['target']@@@",
+      "@@@STEP_LOG_END@exonerated tests@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

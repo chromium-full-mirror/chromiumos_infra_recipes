@@ -20,6 +20,7 @@ DEPS = [
     'cros_history',
     'cros_test_plan',
     'exonerate',
+    'naming',
     'skylab_results',
 ]
 
@@ -28,22 +29,23 @@ DEPS = [
 def RunSteps(api):
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
   api.exonerate.load_configs()
-  result = api.exonerate.get_prev_failed_now_exonerable_test_results(
+  vms, hws = api.exonerate.get_prev_failed_now_exonerable_test_results(
       test_plan, api.properties['dry_run_exonerate_retried_suites'])
 
-  # Just for dry_run_exonerate_retried_suites
-  if api.properties['dry_run_exonerate_retried_suites']:
-    api.assertions.assertEqual(result, ([], []))
-
-  hw_res = api.exonerate.get_failed_now_exonerable_hw_tests_results([])
-  api.assertions.assertEqual(hw_res, [])
-  api.exonerate.clear_failed_tests()
-
+  api.assertions.assertCountEqual(
+      api.properties['expected_exonerated_vm_suites'],
+      [api.naming.get_vm_test_title(x) for x in vms])
+  api.assertions.assertCountEqual(
+      api.properties['expected_exonerated_hw_suites'],
+      [api.naming.get_skylab_result_title(x) for x in hws])
 
 def GenTests(api):
 
   yield api.test(
-      'no_hist', api.properties(dry_run_exonerate_retried_suites=False),
+      'no_hist',
+      api.properties(dry_run_exonerate_retried_suites=False,
+                     expected_exonerated_hw_suites=[],
+                     expected_exonerated_vm_suites=[]),
       api.buildbucket.simulated_search_results(
           [api.cros_history.empty_build_with_test_build_info('min_build')],
           step_name=('get previous failed and now exonerable suites'
@@ -55,7 +57,9 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.properties(
-          dry_run_exonerate_retried_suites=False, **{
+          dry_run_exonerate_retried_suites=False,
+          expected_exonerated_vm_suites=['test_name_4', 'test_name_5'],
+          expected_exonerated_hw_suites=['htarget.hw.some-other-suite'], **{
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
@@ -103,7 +107,9 @@ def GenTests(api):
   yield api.test(
       'filter-out-previously-exonerated',
       api.properties(
-          dry_run_exonerate_retried_suites=False, **{
+          dry_run_exonerate_retried_suites=False,
+          expected_exonerated_hw_suites=[],
+          expected_exonerated_vm_suites=['test_name_4'], **{
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
@@ -150,7 +156,9 @@ def GenTests(api):
   yield api.test(
       'basic_dry_run_exonerate_retried_suites',
       api.properties(
-          dry_run_exonerate_retried_suites=dry_run_exonerate_retried_suites, **{
+          dry_run_exonerate_retried_suites=dry_run_exonerate_retried_suites,
+          expected_exonerated_hw_suites=[], expected_exonerated_vm_suites=[],
+          **{
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
@@ -193,7 +201,9 @@ def GenTests(api):
   yield api.test(
       'just_one_vm',
       api.properties(
-          dry_run_exonerate_retried_suites=False, **{
+          dry_run_exonerate_retried_suites=False,
+          expected_exonerated_hw_suites=[],
+          expected_exonerated_vm_suites=['test_name_1'], **{
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
@@ -219,7 +229,10 @@ def GenTests(api):
   yield api.test(
       'two_hw',
       api.properties(
-          dry_run_exonerate_retried_suites=False, **{
+          dry_run_exonerate_retried_suites=False,
+          expected_exonerated_hw_suites=[
+              'htarget.hw.bvt-cq', 'htarget.hw.some-other-suite'
+          ], expected_exonerated_vm_suites=[], **{
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),

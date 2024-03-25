@@ -351,14 +351,16 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return filtered_results, new_status
 
-  def exonerate_hwtests(self, hw_test_results):
+  def exonerate_hwtests(
+      self, hw_test_results: List[SkylabResult]
+  ) -> Tuple[List[SkylabResult], List[str]]:
     """Exonerate the list of HW Test failures based on configs.
 
     Args:
-      hw_test_results([Skylab_Result]): list of failures from the proctor.
+      hw_test_results: list of failures from the proctor.
 
     Returns:
-      [Skylab_Result] with exonerated tests modified and [str] names of
+      [SkylabResult] with exonerated tests modified and [str] names of
       tests that should be treated as success.
     """
     if not self._enable_exoneration:
@@ -464,7 +466,9 @@ class ExonerateApi(recipe_api.RecipeApi):
       new_status = common_pb2.SUCCESS
     return new_test_cases, new_status
 
-  def exonerate_vmtests(self, vm_builds):
+  def exonerate_vmtests(
+      self, vm_builds: List[build_pb2.Build]
+  ) -> Tuple[List[build_pb2.Build], List[str]]:
     """Exonerate the list of VM Test failures based on configs.
 
     Args:
@@ -857,11 +861,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           's' if len(ex_hws) > 1 else '')
 
     def _log_results(ex_vms, ex_hws):
-      vm_suites_names = sorted(
-          {self.m.naming.get_vm_test_title(build) for build in ex_vms})
-      hw_suites_names = sorted({
-          str(skylab_res.task.test.common.display_name) for skylab_res in ex_hws
-      })
+      vm_suites_names = sorted(ex_vms)
+      hw_suites_names = sorted(ex_hws)
       presentation.logs['exonerable tests'] = (
           'Test Suites that previously failed '
           'but now exonerable \n') + 'VM test suites:\n ' + '\n '.join(
@@ -873,52 +874,39 @@ class ExonerateApi(recipe_api.RecipeApi):
 
       vm_test_results, hw_test_results = self.m.cros_history.get_previous_test_results(
           test_plan)
+      passed_tests = self.m.cros_history.get_passed_tests()
 
-      exonerable_vms = self.get_failed_now_exonerable_vm_test_builds(
+      # Exonerate VM test results.
+      vm_test_results, exonerated_vm_suites = self.exonerate_vmtests(
           vm_test_results)
-      exonerable_hw_res = self.get_failed_now_exonerable_hw_tests_results(
+      exonerated_vm_suites = [
+          x for x in exonerated_vm_suites if x not in passed_tests
+      ]
+      exonerated_vm_test_results = [
+          x for x in vm_test_results
+          if self.m.naming.get_vm_test_title(x) in exonerated_vm_suites
+      ]
+
+      # Exonerate HW test results.
+      hw_test_results, exonerated_hw_suites = self.exonerate_hwtests(
           hw_test_results)
-      presentation.step_text = _get_step_text(exonerable_vms, exonerable_hw_res)
-      _log_results(exonerable_vms, exonerable_hw_res)
+      exonerated_hw_suites = [
+          x for x in exonerated_hw_suites if x not in passed_tests
+      ]
+      exonerated_hw_test_results = [
+          x for x in hw_test_results
+          if self.m.naming.get_skylab_result_title(x) in exonerated_hw_suites
+      ]
+
+      # Clear failed tests because they were from prev execution.
+      self.clear_failed_tests()
+
+      presentation.step_text = _get_step_text(exonerated_vm_suites,
+                                              exonerated_hw_suites)
+      _log_results(exonerated_vm_suites, exonerated_hw_suites)
       if dry_run:
         return [], []
-      return exonerable_vms, exonerable_hw_res
-
-  def get_failed_now_exonerable_vm_test_builds(
-      self, vm_test_builds: List[build_pb2.Build]) -> List[build_pb2.Build]:
-    """Get the results from the previous failed VM test builds that can now be exonerated.
-
-    Args:
-      vm_test_builds: The previous VM test builds to try to exonerate.
-
-    Returns:
-      A list of the exonerable VM test builds.
-    """
-    passed_tests = self.m.cros_history.get_passed_tests()
-    exonerable_vm_results = [
-        build for build in vm_test_builds
-        if self.is_vm_test_build_exonerable(build) and
-        self.m.naming.get_vm_test_title(build) not in passed_tests
-    ]
-    return exonerable_vm_results
-
-  def get_failed_now_exonerable_hw_tests_results(
-      self, hw_test_results: List[SkylabResult]) -> List[SkylabResult]:
-    """Get the results from the previous failed hardware tests that can now be exonerated.
-
-    Args:
-      hw_test_results: The previous VM test builds to try to exonerate.
-
-    Returns:
-      A list of the exonerable hardware test results.
-    """
-    passed_tests = self.m.cros_history.get_passed_tests()
-    exonerable_hw_results = [
-        result for result in hw_test_results
-        if self.is_hw_result_exonerable(result) and
-        self.m.naming.get_skylab_result_title(result) not in passed_tests
-    ]
-    return exonerable_hw_results
+      return exonerated_vm_test_results, exonerated_hw_test_results
 
   def auto_exoneration_analysis_v2(self, failed_tests: Set[FailedTest] = None,
                                    fake_data=None) -> None:

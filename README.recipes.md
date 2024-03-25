@@ -5435,7 +5435,7 @@ Functions for sending requests and processing results from cros test platform.
 
 &emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#65)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#612)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#605)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -5490,7 +5490,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#483)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#476)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
 
 Schedule all tests from the test_plan.
 
@@ -6078,7 +6078,7 @@ Functions for exonerating test failures.
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#45)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#649)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#653)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -6089,7 +6089,7 @@ Args:
 Returns: A boolean indicating if auto exoneration was enabled without dry_run
 and did not exceed any of the limits.
 
-&mdash; **def [auto\_exoneration\_analysis\_v2](/recipe_modules/exonerate/api.py#923)(self, failed_tests: Set[FailedTest]=None, fake_data=None):**
+&mdash; **def [auto\_exoneration\_analysis\_v2](/recipe_modules/exonerate/api.py#911)(self, failed_tests: Set[FailedTest]=None, fake_data=None):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -6109,18 +6109,18 @@ Clear failed_tests entries.
 
 enable excludes config's use.
 
-&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#354)(self, hw_test_results):**
+&mdash; **def [exonerate\_hwtests](/recipe_modules/exonerate/api.py#354)(self, hw_test_results: List[SkylabResult]):**
 
 Exonerate the list of HW Test failures based on configs.
 
 Args:
-  hw_test_results([Skylab_Result]): list of failures from the proctor.
+  hw_test_results: list of failures from the proctor.
 
 Returns:
-  [Skylab_Result] with exonerated tests modified and [str] names of
+  [SkylabResult] with exonerated tests modified and [str] names of
   tests that should be treated as success.
 
-&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#404)(self, test_case, build_target):**
+&mdash; **def [exonerate\_vm\_testcase](/recipe_modules/exonerate/api.py#406)(self, test_case, build_target):**
 
 Exonerates a single test case based on configs.
 
@@ -6131,7 +6131,7 @@ Args:
 
 Returns: test case dictionary changed based on the decision.
 
-&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#434)(self, all_test_cases, build_target):**
+&mdash; **def [exonerate\_vm\_testcases](/recipe_modules/exonerate/api.py#436)(self, all_test_cases, build_target):**
 
 Exonerates VM test cases based on configs.
 
@@ -6143,7 +6143,7 @@ Args:
 Returns: list of test cases modified based on configs and the new
   overall status(common_pb2.status).
 
-&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#467)(self, vm_builds):**
+&mdash; **def [exonerate\_vmtests](/recipe_modules/exonerate/api.py#469)(self, vm_builds: List[build_pb2.Build]):**
 
 Exonerate the list of VM Test failures based on configs.
 
@@ -6164,11 +6164,11 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#615)(self, failure_rates: TestVariantFailureRateAnalysis):**
+&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#619)(self, failure_rates: TestVariantFailureRateAnalysis):**
 
 Returns FailedTestStats for the given LUCI Analysis failure rates.
 
-&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#576)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#580)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
 
 Get the number of failures in the last 10 independant runs from LUCI Analysis.
 
@@ -6177,27 +6177,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_failed\_now\_exonerable\_hw\_tests\_results](/recipe_modules/exonerate/api.py#905)(self, hw_test_results: List[SkylabResult]):**
-
-Get the results from the previous failed hardware tests that can now be exonerated.
-
-Args:
-  hw_test_results: The previous VM test builds to try to exonerate.
-
-Returns:
-  A list of the exonerable hardware test results.
-
-&mdash; **def [get\_failed\_now\_exonerable\_vm\_test\_builds](/recipe_modules/exonerate/api.py#887)(self, vm_test_builds: List[build_pb2.Build]):**
-
-Get the results from the previous failed VM test builds that can now be exonerated.
-
-Args:
-  vm_test_builds: The previous VM test builds to try to exonerate.
-
-Returns:
-  A list of the exonerable VM test builds.
-
-&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#588)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#592)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
 
 Get the flake count & percent of the test for the last 24 hr period.
 
@@ -6207,7 +6187,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#840)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#844)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -6219,7 +6199,7 @@ Returns:
   A tuple containing the list of exonerable VM test builds and the list
   of exonerable HW test results.
 
-&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#555)(self, test_id: str, board: str, build_target: str, model: str):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#559)(self, test_id: str, board: str, build_target: str, model: str):**
 
 Create test_variant dict for LUCI Analysis from inputs.
 
@@ -6235,7 +6215,7 @@ Returns: A dict that contains the test & variant info.
 
 Returns whether exoneration is enabled.
 
-&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#525)(self, test_result):**
+&mdash; **def [is\_exonerated](/recipe_modules/exonerate/api.py#529)(self, test_result):**
 
 Whether the test_result was exonerated.
 
@@ -6244,7 +6224,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#733)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None, exonerate_prejob_failures: Optional[bool]=False):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#737)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None, exonerate_prejob_failures: Optional[bool]=False):**
 
 Checks to see if hw result is exonerable.
 
@@ -6259,7 +6239,7 @@ Returns:
   True if and only if the result is a failure AND exonerable.
   Note that it will return False if result is a success.
 
-&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#788)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None, exonerate_unexpected_skips: bool=False):**
+&mdash; **def [is\_vm\_test\_build\_exonerable](/recipe_modules/exonerate/api.py#792)(self, vm_build: build_pb2.Build, exoneration_configs_override: Optional[Dict]=None, exonerate_unexpected_skips: bool=False):**
 
 Checks to see if the VM test is exonerable.
 
@@ -6291,7 +6271,7 @@ Returns the max number of tests to auto exonerate.
 
 Returns the max number of tests to auto exonerate on a single target.
 
-&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#541)(self):**
+&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#545)(self):**
 
 Populate markdown style info about suites that were exonerated.
 
@@ -14483,10 +14463,10 @@ Unit test auto exoneration v2 (dry run) logic.
 &mdash; **def [RunSteps](/recipe_modules/exonerate/examples/generate_failed_test_stats.py#25)(api):**
 ### *recipes* / [exonerate:examples/get\_prev\_failed\_now\_exon](/recipe_modules/exonerate/examples/get_prev_failed_now_exon.py)
 
-[DEPS](/recipe_modules/exonerate/examples/get_prev_failed_now_exon.py#14): [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/exonerate/examples/get_prev_failed_now_exon.py#14): [cros\_history](#recipe_modules-cros_history), [cros\_test\_plan](#recipe_modules-cros_test_plan), [exonerate](#recipe_modules-exonerate), [naming](#recipe_modules-naming), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/get_prev_failed_now_exon.py#28)(api):**
+&mdash; **def [RunSteps](/recipe_modules/exonerate/examples/get_prev_failed_now_exon.py#29)(api):**
 ### *recipes* / [exonerate:examples/non\_critical\_hwtests](/recipe_modules/exonerate/examples/non_critical_hwtests.py)
 
 [DEPS](/recipe_modules/exonerate/examples/non_critical_hwtests.py#14): [exonerate](#recipe_modules-exonerate), [skylab\_results](#recipe_modules-skylab_results), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
