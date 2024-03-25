@@ -22,6 +22,7 @@ def RunSteps(api):
                              'some-cipd-label')
 
   with api.step.nest('callsite-execute-luciexe'):
+    api.cros_test_runner.is_dynamic()
     api.cros_test_runner.is_enabled()
     api.cros_test_runner.execute_luciexe()
     api.cros_test_runner.ensure_cros_test_runner()

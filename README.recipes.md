@@ -5529,17 +5529,23 @@ Args:
 
 Module for issuing cros_test_runner commands
 
-&mdash; **def [cipd\_package\_label](/recipe_modules/cros_test_runner/api.py#60)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/cros_test_runner/api.py#69)(self):**
 
 Return the CTP CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_cros\_test\_runner](/recipe_modules/cros_test_runner/api.py#45)(self):**
+&mdash; **def [ensure\_cros\_test\_runner](/recipe_modules/cros_test_runner/api.py#54)(self):**
 
 Ensure the cros_test_runner CLI is installed.
 
-&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#28)(self):**
+&mdash; **def [execute\_luciexe](/recipe_modules/cros_test_runner/api.py#37)(self):**
 
 Execute work via cros_test_runner luciexe binary.
+
+&mdash; **def [is\_dynamic](/recipe_modules/cros_test_runner/api.py#28)(self):**
+
+Checks if cros_test_runner contains the dynamic TRv2 request.
+
+Returns: bool
 
 &mdash; **def [is\_enabled](/recipe_modules/cros_test_runner/api.py#21)(self):**
 
@@ -16863,7 +16869,7 @@ Returns:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2127)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2128)(api, properties):**
 
 Entrypoint to the script
 

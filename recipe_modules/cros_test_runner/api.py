@@ -25,6 +25,15 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
     """
     return self._cipd_label is not None
 
+  def is_dynamic(self):
+    """Checks if cros_test_runner contains the dynamic TRv2 request.
+
+    Returns: bool
+    """
+    build = build_pb2.Build()
+    build.CopyFrom(self.m.buildbucket.build)
+    return 'cros_test_runner_dynamic_request' in build.input.properties
+
   def execute_luciexe(self):
     """Execute work via cros_test_runner luciexe binary."""
     self.ensure_cros_test_runner()

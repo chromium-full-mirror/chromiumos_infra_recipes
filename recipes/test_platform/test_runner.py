@@ -2091,8 +2091,9 @@ def run_and_upload(api, properties):
   # Set max_threads to 1 for whole test_runner build. Details: b/270152591.
   api.cipd.max_threads = 1
 
-  if properties.cft_is_enabled and properties.cft_test_request.run_via_trv2 and api.cros_test_runner.is_enabled(
-  ):  # pragma: nocover
+  if properties.cft_is_enabled and api.cros_test_runner.is_enabled() and (
+      api.cros_test_runner.is_dynamic() or
+      properties.cft_test_request.run_via_trv2):  # pragma: nocover
     try:
       # Use cros_test_runner binary rather than the normal test_runner workflow.
       result = api.cros_test_runner.execute_luciexe()
