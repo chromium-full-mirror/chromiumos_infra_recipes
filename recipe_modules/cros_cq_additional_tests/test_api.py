@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Mocks for testing the cros_test_plan module."""
+
 from typing import Any, Dict
 
 from google.protobuf import json_format
@@ -71,6 +73,7 @@ class CrosCqAdditionalTestsTestApi(recipe_test_api.RecipeTestApi):
                     skylab_board=board,
                     pool=pool,
                     hw_test_suite_type=HwTestCfg.TAST,
+                    run_via_cft=True,
                 ),
             ],
         ),

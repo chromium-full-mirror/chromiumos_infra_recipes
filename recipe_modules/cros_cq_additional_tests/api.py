@@ -306,4 +306,5 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
         skylab_board=board,
         pool=pool,
         hw_test_suite_type=HwTestCfg.TAST,
+        run_via_cft=True,
     )
