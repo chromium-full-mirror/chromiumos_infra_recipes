@@ -1068,11 +1068,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # Missed lookup even after fallback for *-snapshot.
     return ret
 
-  def run_follow_on_orchestrator(self):
+  def run_follow_on_orchestrator(self, check_failures=False):
     """Run the follow_on_orchestrator, if any.  Wait if necessary."""
     follower = self.config.orchestrator.follow_on_orchestrator
     if not self.builds_status.fatal_failures and follower.name:
       self.schedule_wait_build(follower.name, follower.await_completion,
+                               check_failures=check_failures,
                                step_name='run follow on orchestrator')
 
   def schedule_wait_build(self, builder, await_completion=False,

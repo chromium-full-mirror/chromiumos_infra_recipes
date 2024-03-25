@@ -81,7 +81,7 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
       )
 
   # Launch any specified follow on orchestrator.
-  api.orch_menu.run_follow_on_orchestrator()
+  api.orch_menu.run_follow_on_orchestrator(check_failures=True)
 
 
 def GenTests(api: RecipeTestApi):
@@ -139,3 +139,17 @@ def GenTests(api: RecipeTestApi):
       collect_builds=[pointless_child_build], bucket='toolchain',
       builder='artifact-generate-orchestrator', with_history=True,
       git_footers=[])
+
+  failing_follow_on = build_pb2.Build(
+      builder={
+          'builder': 'artifact-verify-orchestrator',
+          'bucket': 'toolchain',
+      }, status='FAILURE', critical=True)
+  yield api.orch_menu.test(
+      'orchestrator-with-failing-followon', data.ctp_normal,
+      api.properties(process_child='benchmark-afdo-process'),
+      api.post_process(post_process.DropExpectation),
+      collect_builds=data.builds, process_child=data.process_child,
+      follow_on_orch=failing_follow_on, bucket='toolchain',
+      builder='artifact-generate-orchestrator', with_history=True,
+      git_footers=[], status='FAILURE')

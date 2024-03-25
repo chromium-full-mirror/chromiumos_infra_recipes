@@ -14020,6 +14020,29 @@
   },
   {
     "cmd": [],
+    "name": "run follow on orchestrator.build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run follow on orchestrator.build results.irrelevant critical build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@all irrelevant critical builds succeeded@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run follow on orchestrator.build results.irrelevant critical build results.artifact-verify-orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172515000@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator"
   },
   {

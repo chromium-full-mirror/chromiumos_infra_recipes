@@ -1876,6 +1876,17 @@
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "toolchain",
+        "name": "artifact-verify-orchestrator",
+        "type": "TOOLCHAIN"
+      }
+    },
+    {
       "artifacts": {
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
