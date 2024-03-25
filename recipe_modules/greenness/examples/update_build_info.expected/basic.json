@@ -6,9 +6,7 @@
       "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ...@@@",
       "@@@STEP_LOG_END@looking@@@",
       "@@@STEP_LOG_LINE@timed out@Timed out trying to find greenness for snapshot for commit .@@@",
-      "@@@STEP_LOG_END@timed out@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([])@@@",
-      "@@@STEP_LOG_END@last snapshot greenness@@@"
+      "@@@STEP_LOG_END@timed out@@@"
     ]
   },
   {

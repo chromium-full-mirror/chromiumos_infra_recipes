@@ -21,7 +21,7 @@ DEPS = [
 
 
 # Test data.
-BUILDER_GREENNESS = {'eve-postsubmit': {'buildMetric': '100', 'metric': '98'}}
+BUILDER_GREENNESS = {'eve-postsubmit': {'buildMetric': '100'}}
 TARGET_LOCAL_GREENNESS = {
     'eve':
         GreennessTuple(score=90, build_score=95, critical=True, relevant=True)
@@ -53,7 +53,6 @@ def RunSteps(api):
         pres,
         end_bbid=test_end_bbid,
         use_local_greenness=api.properties.get('use_local_greenness'),
-        wait_for_complete=api.properties.get('wait_for_complete'),
     )
     expected_builder_greenness = api.properties['expected_builder_greenness']
     api.assertions.assertEqual(expected_builder_greenness, builder_greenness)
@@ -116,17 +115,6 @@ def GenTests(api):
       'with-local-greenness',
       api.properties(expected_builder_greenness=TARGET_LOCAL_GREENNESS,
                      use_local_greenness=True),
-      api.buildbucket.simulated_search_results([
-          build_pb2.Build(id=123, status=common_pb2.SUCCESS,
-                          output=BUILD_OUTPUT, input=BUILD_INPUT),
-      ], 'get snapshot greenness.buildbucket.search'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'wait-for-complete',
-      api.properties(expected_builder_greenness=BUILDER_GREENNESS,
-                     wait_for_complete=True),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
