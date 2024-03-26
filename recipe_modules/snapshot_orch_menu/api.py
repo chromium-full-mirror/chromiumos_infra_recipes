@@ -286,7 +286,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       with self.m.failures.ignore_exceptions():
         with self.m.step.nest('update local greenness') as pres:
           should_update = self.m.looks_for_green.is_green_for_local()
-          pres.step_text = str(should_update)
+          should_update_new = self.m.greenness.is_green_for_local()
+          pres.step_text = f'Old: {should_update}, New: {should_update_new}'
           if should_update:
             self._push_manifest_refs(
                 self._properties.update_manifest_refs.build)

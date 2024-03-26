@@ -2831,7 +2831,7 @@
     "cmd": [],
     "name": "update local greenness",
     "~followup_annotations": [
-      "@@@STEP_TEXT@True@@@"
+      "@@@STEP_TEXT@Old: True, New: True@@@"
     ]
   },
   {

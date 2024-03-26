@@ -426,6 +426,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
       return found_disallow
 
+  # TODO(b/331215467): Remove when fully transitioned to using
+  # `is_green_for_local()` defined in the greenness module.
   def is_green_for_local(self) -> bool:
     """Returns whether the current snapshot is green for local builds.
 

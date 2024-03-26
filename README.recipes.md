@@ -588,6 +588,7 @@
   * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
   * [greenness:tests/get_aggregate_builder_local_greenness](#recipes-greenness_tests_get_aggregate_builder_local_greenness) &mdash; Test the get_aggregate_builder_local_greenness function.
+  * [greenness:tests/is_green_for_local](#recipes-greenness_tests_is_green_for_local) &mdash; Test the is_green_for_local function.
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
   * [incremental:tests/test_incremental](#recipes-incremental_tests_test_incremental) &mdash; Recipe for testing the incremental recipe_module.
   * [ipc:examples/falsy_attrs](#recipes-ipc_examples_falsy_attrs)
@@ -8314,7 +8315,7 @@ A module to calculate greenness metric.
 
 &emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#50)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#328)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#343)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8332,6 +8333,15 @@ Args:
 
 Raises:
   StepFailure if snapshot_builder_names is empty.
+
+&mdash; **def [is\_green\_for\_local](/recipe_modules/greenness/api.py#328)(self):**
+
+Returns whether the current snapshot is green for local builds.
+
+If there are irrelevant builders for the current snapshot, the greenness
+score from the last relevant build is used. It is assumed that
+builder_greenness_dict is prepopulated (i.e. update_build_info was
+previously called); otherwise, a false positive will be returned.
 
 &emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#54)(self):**
 
@@ -8765,7 +8775,7 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#470)(self, current_build: build_pb2.Build):**
+&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#472)(self, current_build: build_pb2.Build):**
 
 Get the child builds of the current build.
 
@@ -8789,7 +8799,7 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#429)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#431)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
@@ -8807,7 +8817,7 @@ the microseconds to use seconds as level of precision.
 
 &emsp; **@related_changes_to_apply.setter**<br>&mdash; **def [related\_changes\_to\_apply](/recipe_modules/looks_for_green/api.py#113)(self, related_changes_to_apply):**
 
-&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#481)(self, builders_to_be_scheduled: List[str]):**
+&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#483)(self, builders_to_be_scheduled: List[str]):**
 
 Change LFG lookback based on which builders are about to run & broken_until entries.
 
@@ -10701,7 +10711,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#76)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#300)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#301)(self, should_update: bool):**
 
 Outputs info about local greenness.
 
@@ -10719,7 +10729,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#502)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#503)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10737,7 +10747,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#308)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#309)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
@@ -15151,6 +15161,14 @@ Test updating build info for local greenness.
 Test the get_aggregate_builder_local_greenness function.
 
 &mdash; **def [RunSteps](/recipe_modules/greenness/tests/get_aggregate_builder_local_greenness.py#20)(api):**
+### *recipes* / [greenness:tests/is\_green\_for\_local](/recipe_modules/greenness/tests/is_green_for_local.py)
+
+[DEPS](/recipe_modules/greenness/tests/is_green_for_local.py#10): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Test the is_green_for_local function.
+
+&mdash; **def [RunSteps](/recipe_modules/greenness/tests/is_green_for_local.py#19)(api):**
 ### *recipes* / [gs\_step\_logging:examples/full](/recipe_modules/gs_step_logging/examples/full.py)
 
 [DEPS](/recipe_modules/gs_step_logging/examples/full.py#11): [gs\_step\_logging](#recipe_modules-gs_step_logging), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
