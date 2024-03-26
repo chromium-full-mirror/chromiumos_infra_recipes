@@ -225,11 +225,14 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       def _InstallPackagesRequest(dryrun=False):
         """Helper to make InstallPackagesRequest."""
         remoteexec_config = None
-        if self.m.remoteexec.enable_logs_upload:
+        if self.m.remoteexec.reproxy_cfg_file:
+          remoteexec_log_dir = None
+          if self.m.remoteexec.enable_logs_upload:
+            remoteexec_log_dir = common_pb2.SyncedDir(
+                dir=str(self.m.path.mkdtemp(prefix='remoteexec-logs-')))
           remoteexec_config = common_pb2.RemoteexecConfig(
               reproxy_cfg_file=self.m.remoteexec.reproxy_cfg_file,
-              log_dir=common_pb2.SyncedDir(
-                  dir=str(self.m.path.mkdtemp(prefix='remoteexec-logs-'))))
+              log_dir=remoteexec_log_dir)
 
         snapshot_shas = self.m.cros_source.fetch_snapshot_shas(count=5)
         is_private = config.artifacts.prebuilts == builder_config_pb2.BuilderConfig.Artifacts.PRIVATE
