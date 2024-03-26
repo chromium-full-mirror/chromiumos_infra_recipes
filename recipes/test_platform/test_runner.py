@@ -603,6 +603,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * chameleon_type: Chameleon type. If multiple labels exist in swarming bot
         dimensions, they will be concatenated by ",",
         e.g. "CHAMELEON_TYPE_HDMI,CHAMELEON_TYPE_V3"
+    * qs_account: Quota Scheduler account to use for DUT pool,
+        e.g. "unmanaged_p2".
+    * ctp_fwd_task_name: Suite scheduler config name,
+        e.g. "Bluetooth_Sa_Perbuild".
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -622,6 +626,14 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   declared_name = api.cros_tags.get_values('display_name')
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
+
+  qs_account = api.cros_tags.get_values('qs_account')
+  if qs_account:
+    base_tags.append(('qs_account', qs_account[0]))
+
+  ctp_fwd_task_name = api.cros_tags.get_values('ctp-fwd-task-name')
+  if ctp_fwd_task_name:
+    base_tags.append(('ctp_fwd_task_name', ctp_fwd_task_name[0]))
 
   # Get the testplan id (name) from the buildbucket tags.
   testplan_id = api.cros_tags.get_values('test-plan-id')
@@ -3578,6 +3590,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'suite': 'fake-suite',
               'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
               'test-plan-id': 'ltl_testplan',
+              'qs_account': 'unmanaged_p2',
+              'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
