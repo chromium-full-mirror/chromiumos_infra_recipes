@@ -390,6 +390,7 @@
   * [cros_resultdb:tests/upload](#recipes-cros_resultdb_tests_upload)
   * [cros_resultdb:tests/upload_board_model](#recipes-cros_resultdb_tests_upload_board_model)
   * [cros_resultdb:tests/upload_custom_realm](#recipes-cros_resultdb_tests_upload_custom_realm)
+  * [cros_resultdb:tests/upload_with_invalid_tags](#recipes-cros_resultdb_tests_upload_with_invalid_tags)
   * [cros_schedule:examples/full](#recipes-cros_schedule_examples_full)
   * [cros_schedule:examples/get_chrome_branch](#recipes-cros_schedule_examples_get_chrome_branch)
   * [cros_schedule:examples/utils](#recipes-cros_schedule_examples_utils)
@@ -4286,7 +4287,7 @@ utilities.
 
 Module for chromium tests on skylab to upload result to Result DB.
 
-&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#566)(self, invocation_ids):**
+&mdash; **def [apply\_exonerated\_exonerations](/recipe_modules/cros_resultdb/api.py#598)(self, invocation_ids):**
 
 Exonerate already exonerated test failures for the given invocations.
 
@@ -4294,7 +4295,7 @@ Args:
   invocation_ids (list(str)): The ids of the invocation whose results we
     should try to exonerate.
 
-&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#476)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
+&mdash; **def [apply\_exonerations](/recipe_modules/cros_resultdb/api.py#508)(self, invocation_ids, default_behavior=Request.Params.TestExecutionBehavior.BEHAVIOR_UNSPECIFIED, behavior_overrides_map=None, variant_filter=None):**
 
 Exonerate unexpected test failures for the given invocations.
 
@@ -4392,7 +4393,7 @@ Args:
 Returns:
   Path to the test results file on the drone server.
 
-&mdash; **def [report\_filtered\_test\_cases](/recipe_modules/cros_resultdb/api.py#702)(self, test_names, base_variant, base_tags=None, reason='filtered'):**
+&mdash; **def [report\_filtered\_test\_cases](/recipe_modules/cros_resultdb/api.py#736)(self, test_names, base_variant, base_tags=None, reason='filtered'):**
 
 Upload test results for filtered test cases to ResultDB.
 
@@ -4405,7 +4406,7 @@ Args:
       results.
   base_tags (list[tuples]): List of tags to attach to the test results.
 
-&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#620)(self, test_names, base_variant, base_tags=None):**
+&mdash; **def [report\_missing\_test\_cases](/recipe_modules/cros_resultdb/api.py#652)(self, test_names, base_variant, base_tags=None):**
 
 Upload test results for missing test cases to ResultDB. These missing
 test cases should have run but did not unexpectedly, so their result
@@ -13859,6 +13860,12 @@ Unit tests for the run_build_planner function.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/upload_custom_realm.py#20)(api):**
+### *recipes* / [cros\_resultdb:tests/upload\_with\_invalid\_tags](/recipe_modules/cros_resultdb/tests/upload_with_invalid_tags.py)
+
+[DEPS](/recipe_modules/cros_resultdb/tests/upload_with_invalid_tags.py#9): [cros\_resultdb](#recipe_modules-cros_resultdb), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json]
+
+
+&mdash; **def [RunSteps](/recipe_modules/cros_resultdb/tests/upload_with_invalid_tags.py#17)(api):**
 ### *recipes* / [cros\_schedule:examples/full](/recipe_modules/cros_schedule/examples/full.py)
 
 [DEPS](/recipe_modules/cros_schedule/examples/full.py#11): [cros\_schedule](#recipe_modules-cros_schedule), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/time][recipe_engine/recipe_modules/time]

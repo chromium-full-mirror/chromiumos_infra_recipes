@@ -334,6 +334,37 @@ class ResultDBCommand(recipe_api.RecipeApi):
         return v
     return ''
 
+  def _remove_invalid_tags(self, base_tags):
+    """Remove the invalid RDB tags.
+
+    Valid tags should follow the following requirements:
+    - Tag key regex: ^[a-z][a-z0-9_]*(/[a-z][a-z0-9_]*)*$
+    - Tag value max length: 256
+
+    See StringPair message for more details:
+    https://source.chromium.org/chromium/infra/infra_superproject/+/main:infra/go/src/go.chromium.org/luci/resultdb/proto/v1/common.proto;l=56-64
+
+    Args:
+      base_tags (list): A list of tags for the build.
+    """
+    if base_tags is None:
+      return
+
+    invalid_tags = {}
+    tag_pattern = '^[a-z][a-z0-9_]*(/[a-z][a-z0-9_]*)*$'
+    for tag in base_tags.copy():
+      k, v = tag
+      if not re.match(tag_pattern, k) or len(v) > 256:
+        base_tags.remove(tag)
+        invalid_tags[k] = v
+
+    if len(invalid_tags) == 0:
+      return
+
+    with self.m.step.nest('remove invalid rdb tags') as presentation:
+      presentation.logs['invalid_tags'] = invalid_tags
+      presentation.status = 'WARNING'
+
   def _upload(self, config, testhaus_url=None):
     """Call the ResultDB module to upload test result
 
@@ -415,6 +446,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       realm = self._get_hardware_realm(config)
 
     # wrap it with rdb-stream
+    self._remove_invalid_tags(base_tags)
     cmd = self.m.resultdb.wrap(
         rdb_cmd,
         base_tags=base_tags,
@@ -638,6 +670,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     variant = ParseDict({'def': base_variant},
                         common_pb2.Variant()) if base_variant else None
+
+    self._remove_invalid_tags(base_tags)
     tags = [
         common_pb2.StringPair(key=tag[0], value=tag[1]) for tag in base_tags
     ] if base_tags else None
@@ -721,6 +755,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
 
     variant = ParseDict({'def': base_variant},
                         common_pb2.Variant()) if base_variant else None
+
+    self._remove_invalid_tags(base_tags)
     tags = [
         common_pb2.StringPair(key=tag[0], value=tag[1]) for tag in base_tags
     ] if base_tags else None
