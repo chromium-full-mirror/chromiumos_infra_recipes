@@ -21,7 +21,7 @@
   * [cloud_pubsub](#recipe_modules-cloud_pubsub) &mdash; APIs for using Cloud Pub/Sub.
   * [code_coverage](#recipe_modules-code_coverage) &mdash; Recipe definition for code coverage recipe.
   * [conductor](#recipe_modules-conductor) &mdash; API wrapping the conductor tool.
-  * [cq_fault_attribution](#recipe_modules-cq_fault_attribution)
+  * [cq_fault_attribution](#recipe_modules-cq_fault_attribution) &mdash; A module for attributed failures based on snapshot build comparisons.
   * [cros_artifacts](#recipe_modules-cros_artifacts) &mdash; API for uploading CrOS build artifacts to Google Storage.
   * [cros_branch](#recipe_modules-cros_branch) &mdash; API wrapping the cros branch tool.
   * [cros_build_api](#recipe_modules-cros_build_api) &mdash; API for working with the protobuf-based Build API.
@@ -2640,16 +2640,18 @@ Initializes the module.
 [DEPS](/recipe_modules/cq_fault_attribution/__init__.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-#### **class [CqFailureAttributionApi](/recipe_modules/cq_fault_attribution/api.py#65)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+A module for attributed failures based on snapshot build comparisons.
+
+#### **class [CqFailureAttributionApi](/recipe_modules/cq_fault_attribution/api.py#68)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for ascribing build and test failure attributes based on
 snapshot build comparisons.
 
-&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#104)(self):**
+&emsp; **@property**<br>&mdash; **def [cq\_test\_failure\_attributes](/recipe_modules/cq_fault_attribution/api.py#107)(self):**
 
 Returns determined failure attributes
 
-&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#109)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#112)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
 
 Compares test failures between a snapshot and CQ build, and assigns
 failure attributes and a flakiness status to each failure if a comparison

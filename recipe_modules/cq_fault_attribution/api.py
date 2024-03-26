@@ -3,6 +3,9 @@
 # Copyright 2023 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
+
+"""A module for attributed failures based on snapshot build comparisons."""
+
 import re
 
 from typing import Any, Dict, List, Set, Tuple
@@ -120,9 +123,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       """
     with self.m.failures.ignore_exceptions():
       with self.m.step.nest('set fault attributes'):
-        if (not self._enable_fault_attribution and 'chromeos.cros_infra_config.cq_fault_attribution'
-            not in self.m.cros_infra_config.experiments) or not \
-            orch_supports_fault_attribution:
+        if (not self._enable_fault_attribution or
+            not orch_supports_fault_attribution):
           return self.cq_test_failure_attributes
 
         # names of tests that failed across hw, vm and gce tests.
@@ -315,8 +317,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.SUCCESS_FOUND
 
         return
-      elif all(snapshot_test_result.status == TestStatus.FAIL
-               for snapshot_test_result in snapshot_test_results):
+      if all(snapshot_test_result.status == TestStatus.FAIL
+             for snapshot_test_result in snapshot_test_results):
         if any(
             re.sub(IGNORED_FAILURE_REASON_TEXT, '', snapshot_test_result
                    .failure_reason.primary_error_message) == failure_reason
@@ -355,7 +357,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
               EMPTY_MODEL
             self._passed_hw_tests.add((test_id, build_target, model))
             continue
-          elif test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
+          if test_case.verdict not in VERDICTS_REQUIRING_FAULT_ATTRIBUTION:
             continue
           # test_case.name here is analogous to the test_id substring in
           # the rdb test_result name.
