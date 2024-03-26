@@ -370,6 +370,23 @@
       "@@@STEP_LOG_LINE@response@                }@@@",
       "@@@STEP_LOG_LINE@response@              ]@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          },@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"testCase\": {@@@",
+      "@@@STEP_LOG_LINE@response@              \"id\": {@@@",
+      "@@@STEP_LOG_LINE@response@                \"value\": \"foo-test2\"@@@",
+      "@@@STEP_LOG_LINE@response@              },@@@",
+      "@@@STEP_LOG_LINE@response@              \"dependencies\": [@@@",
+      "@@@STEP_LOG_LINE@response@                {@@@",
+      "@@@STEP_LOG_LINE@response@                  \"value\": \"foo-dep:bar\"@@@",
+      "@@@STEP_LOG_LINE@response@                }@@@",
+      "@@@STEP_LOG_LINE@response@              ],@@@",
+      "@@@STEP_LOG_LINE@response@              \"buildDependencies\": [@@@",
+      "@@@STEP_LOG_LINE@response@                {@@@",
+      "@@@STEP_LOG_LINE@response@                  \"value\": \"foo,!bar\"@@@",
+      "@@@STEP_LOG_LINE@response@                }@@@",
+      "@@@STEP_LOG_LINE@response@              ]@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -444,7 +461,12 @@
     "name": "enumerate CFT tests.useflag based test pruning - foo-build-target",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@No tests filtered/removed@@@"
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@{@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@  \"filtered tests\": [@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@    \"foo-test2\"@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@  ]@@@",
+      "@@@STEP_LOG_LINE@filtered&#x2f;removed tests@}@@@",
+      "@@@STEP_LOG_END@filtered&#x2f;removed tests@@@"
     ]
   },
   {

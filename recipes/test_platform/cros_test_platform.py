@@ -650,15 +650,78 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
   filtered_test_cases = []
   removed_test_cases = []
   for test_case in test_cases:
-    if not test_case.build_dependencies or any(
-        build_dep.value in tast_use_flag_list
-        for build_dep in test_case.build_dependencies):
+    if not test_case.build_dependencies or _check_if_any_test_hw_dep_qualify(
+        test_case.build_dependencies, tast_use_flag_list):
       filtered_test_cases.append(test_case)
     else:
       removed_test_cases.append(test_case.id.value)  # pragma: nocover
   return ctr_test_suite.TestSuite(
       test_cases=ctr_test_case.TestCaseList(
           test_cases=filtered_test_cases)), removed_test_cases
+
+
+def _check_if_any_test_hw_dep_qualify(build_dependencies, tast_use_flag_list):
+  """Checks if any test buildDep qualifies
+
+    Args:
+    * api: (object): See RunSteps documentation.
+    * build_dependencies: build_dependencies from test case metadata
+    * tast_use_flag_list: List if use flags on DUT.
+
+  Returns: bool
+  """
+  for build_dep_expr in build_dependencies:
+    if _check_if_test_hw_dep_qualify(build_dep_expr.value,
+                                     tast_use_flag_list):  # pragma: nocover
+      return True
+  return False
+
+
+def _check_if_test_hw_dep_qualify(build_dep_expr, tast_use_flag_list):
+  """Checks if a given test buildDep qualifies
+
+    Args:
+    * api: (object): See RunSteps documentation.
+    * build_dep_expr: build_dep_expr
+    * tast_use_flag_list: List if use flags on DUT.
+
+  Returns: bool
+  """
+  include_flags, exclude_flags = _create_include_and_exclude_use_flag_list(
+      build_dep_expr)
+  # Check if all items in include_flags are present in tast_use_flag_list
+  for flag in include_flags:
+    if flag not in tast_use_flag_list:
+      return False
+
+  # Check if any items in exclude_flags are present in tast_use_flag_list
+  for flag in exclude_flags:  # pragma: nocover
+    if flag in tast_use_flag_list:
+      return False
+
+  return True  # pragma: nocover
+
+
+def _create_include_and_exclude_use_flag_list(build_dep_expr):
+  """Converts a build_dep_expr to include & exclude flags list
+
+    Args:
+    * api: (object): See RunSteps documentation.
+    * build_dep_expr: build_dep_expr
+
+  Returns: List[string],List[string]
+  """
+  include_flags = []
+  exclude_flags = []
+
+  expression = build_dep_expr.split(',')
+  for item in expression:
+    if item and item[0] == '!':
+      exclude_flags.append(item[1:])
+    else:
+      include_flags.append(item)
+
+  return include_flags, exclude_flags
 
 
 def _test_suites_with_filtered_tests(api, r, build_target, test_suites):
@@ -2342,6 +2405,23 @@ def _generic_cft_enumerate_response(api):
                             "dependencies": [
                                 {
                                     "value": "foo-dep:bar"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        "test_case": {
+                            "id": {
+                                "value": "foo-test2"
+                            },
+                            "dependencies": [
+                                {
+                                    "value": "foo-dep:bar"
+                                }
+                            ],
+                            "build_dependencies": [
+                                {
+                                    "value": "foo,!bar"
                                 }
                             ]
                         }
