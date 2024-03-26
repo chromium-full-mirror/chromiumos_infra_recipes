@@ -7,12 +7,12 @@ syntax = "proto3";
 package recipe_modules.chromeos.cq_fault_attribution.tests;
 
 message DisabledFaultAttributionProperties {
+  reserved 2;
   int32 expected_size = 1;
-  bool is_cq_orch = 2;
 }
 
 message OutOfTestRangeProperties {
+  reserved 2;
   int32 expected_size = 1;
-  bool is_cq_orch = 2;
   bool has_failed_tests = 3;
 }

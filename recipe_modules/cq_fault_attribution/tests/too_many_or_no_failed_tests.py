@@ -98,8 +98,7 @@ def RunSteps(api, properties):
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
         MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
                       tast_gce=[]),
-        orch_snapshot,
-        properties.is_cq_orch)
+        orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions),
       properties.expected_size)
@@ -108,15 +107,15 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.test(
       'too-many-failed-unique-tests',
-      api.properties(expected_size=0, is_cq_orch=True, has_failed_tests=True),
+      api.properties(expected_size=0, has_failed_tests=True),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
           }))
   yield api.test(
-      'no-failed-tests',
-      api.properties(expected_size=0, is_cq_orch=True, has_failed_tests=False),
+      'no-failed-tests', api.properties(expected_size=0,
+                                        has_failed_tests=False),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':

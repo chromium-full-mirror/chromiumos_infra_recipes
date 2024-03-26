@@ -2652,7 +2652,7 @@ snapshot build comparisons.
 
 Returns determined failure attributes
 
-&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#112)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit, orch_supports_fault_attribution: bool):**
+&mdash; **def [set\_cq\_fault\_attribute\_properties](/recipe_modules/cq_fault_attribution/api.py#112)(self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit):**
 
 Compares test failures between a snapshot and CQ build, and assigns
 failure attributes and a flakiness status to each failure if a comparison
@@ -5438,7 +5438,7 @@ Functions for sending requests and processing results from cros test platform.
 
 &emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#60)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#525)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#524)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -5462,7 +5462,7 @@ Args:
 Returns:
   The names of the builder whose images may be tested in this CQ run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#165)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False, supports_fault_attribution=False, build_target_critical_allowlist=None):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#165)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False, build_target_critical_allowlist=None):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -5493,7 +5493,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#397)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#396)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
 
 Schedule all tests from the test_plan.
 
@@ -9118,14 +9118,14 @@ A module with steps used by orchestrators.
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1317)(self, relevant_child_builder_names: List[str]=None):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1316)(self, relevant_child_builder_names: List[str]=None):**
 
 Add child information to output property of current build.
 
 Args:
   relevant_builder_names: List of relevant child builders.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1157)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1156)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -9140,7 +9140,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#171)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1364)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1363)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 

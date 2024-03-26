@@ -490,7 +490,7 @@ def RunSteps(api):
       MetaTestTuple(
           skylab=hw_tests, autotest_vm=[], tast_vm=vm_tests, tast_gce=[
               failed_gce_build, failed_gce_build_missing_failed_test_cases
-          ]), orch_snapshot, True)
+          ]), orch_snapshot)
 
   expected_snapshot_comparison_properties = \
     create_expected_snapshot(

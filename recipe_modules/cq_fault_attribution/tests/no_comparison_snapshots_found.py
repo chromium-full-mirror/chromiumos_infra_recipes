@@ -60,8 +60,7 @@ def RunSteps(api):
   cq_test_failure_attributes = \
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
-      orch_snapshot,
-      True)
+      orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
 
@@ -71,8 +70,7 @@ def RunSteps(api):
   cq_test_failure_attributes = \
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
-      orch_snapshot,
-      True)
+      orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
 

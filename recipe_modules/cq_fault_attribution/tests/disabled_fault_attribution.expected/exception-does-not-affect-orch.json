@@ -82,17 +82,19 @@
   },
   {
     "cmd": [],
-    "name": "ignored exception",
+    "name": "set fault attributes.ignored exception",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@caught exception@InfraFailure(\"Infra Failure: Step('set fault attributes.buildbucket.search (3)') (retcode: 1)\")@@@",
       "@@@STEP_LOG_END@caught exception@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set caught_exceptions",
+    "name": "set fault attributes.set caught_exceptions",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"InfraFailure(\\\"Infra Failure: Step('set fault attributes.buildbucket.search (3)') (retcode: 1)\\\")\"}@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"set fault attributes.ignored exception\": \"InfraFailure(\\\"Infra Failure: Step('set fault attributes.buildbucket.search (3)') (retcode: 1)\\\")\"}@@@"
     ]
   },
   {

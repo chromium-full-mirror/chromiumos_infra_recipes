@@ -12620,13 +12620,6 @@
   },
   {
     "cmd": [],
-    "name": "check test results.fault attribution.set fault attributes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "check test results.set passed_tests",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

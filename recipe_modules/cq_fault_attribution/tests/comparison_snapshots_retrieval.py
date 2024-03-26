@@ -98,7 +98,7 @@ def RunSteps(api):
 
   api.cq_fault_attribution.set_cq_fault_attribute_properties(
       MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
-                    tast_gce=[]), orch_snapshot, True)
+                    tast_gce=[]), orch_snapshot)
 
 
 def GenTests(api):

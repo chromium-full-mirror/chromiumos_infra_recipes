@@ -165,7 +165,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
                   enable_history, run_async=False, container_metadata=None,
                   require_stable_devices=False, use_test_plan_v2=False,
-                  supports_fault_attribution=False,
                   build_target_critical_allowlist=None):
     """Runs the test platform for a given bunch of builds.
 
@@ -328,7 +327,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       with self.m.step.nest('fault attribution'):
         self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
-            test_results, snapshot, supports_fault_attribution)
+            test_results, snapshot)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)

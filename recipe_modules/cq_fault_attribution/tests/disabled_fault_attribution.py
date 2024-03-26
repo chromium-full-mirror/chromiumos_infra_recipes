@@ -95,8 +95,7 @@ def RunSteps(api, properties):
     api.cq_fault_attribution.set_cq_fault_attribute_properties(
         MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
                       tast_gce=[]),
-        orch_snapshot,
-        properties.is_cq_orch)
+        orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions),
       properties.expected_size)
@@ -104,8 +103,7 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   yield api.test(
-      'fault-attribution-disabled',
-      api.properties(expected_size=0, is_cq_orch=True),
+      'fault-attribution-disabled', api.properties(expected_size=0),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':
@@ -114,8 +112,7 @@ def GenTests(api):
           }))
 
   yield api.test(
-      'fault-attribution-enabled',
-      api.properties(expected_size=1, is_cq_orch=True),
+      'fault-attribution-enabled', api.properties(expected_size=1),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':
@@ -131,8 +128,7 @@ def GenTests(api):
                          step_name='set fault attributes.rdb query'))
 
   yield api.test(
-      'exception-does-not-affect-orch',
-      api.properties(expected_size=0, is_cq_orch=True),
+      'exception-does-not-affect-orch', api.properties(expected_size=0),
       api.properties(
           **{
               '$chromeos/cq_fault_attribution':
@@ -145,11 +141,3 @@ def GenTests(api):
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search (2)'),
       api.step_data('set fault attributes.buildbucket.search (3)', retcode=1))
-
-  yield api.test(
-      'not-cq-orch', api.properties(expected_size=0, is_cq_orch=False),
-      api.properties(
-          **{
-              '$chromeos/cq_fault_attribution':
-                  CqFaultAttributionApiProperties(enable_fault_attribution=True)
-          }))

@@ -110,8 +110,9 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     return self._cq_test_failure_attributes
 
   def set_cq_fault_attribute_properties(
-      self, test_results: MetaTestTuple, orch_snapshot: GitilesCommit,
-      orch_supports_fault_attribution: bool
+      self,
+      test_results: MetaTestTuple,
+      orch_snapshot: GitilesCommit,
   ) -> CqTestFailureFaultAttributionStats:
     """Compares test failures between a snapshot and CQ build, and assigns
       failure attributes and a flakiness status to each failure if a comparison
@@ -121,40 +122,39 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         test_results: HW and VM test results.
         orch_snapshot: The manifest snapshot at the orchestrator level.
       """
-    with self.m.failures.ignore_exceptions():
-      with self.m.step.nest('set fault attributes'):
-        if (not self._enable_fault_attribution or
-            not orch_supports_fault_attribution):
-          return self.cq_test_failure_attributes
+    if not self._enable_fault_attribution:
+      return self.cq_test_failure_attributes
+    with self.m.step.nest(
+        'set fault attributes'), self.m.failures.ignore_exceptions():
 
-        # names of tests that failed across hw, vm and gce tests.
-        failed_test_names = self._get_failed_test_names(
-            test_results.skylab, test_results.tast_vm + test_results.tast_gce)
-        if len(failed_test_names) > TEST_QUERY_LIMIT or \
-            len(failed_test_names) == 0:
-          # Too many failed tests to query for, or none.
-          return self.cq_test_failure_attributes
+      # names of tests that failed across hw, vm and gce tests.
+      failed_test_names = self._get_failed_test_names(
+          test_results.skylab, test_results.tast_vm + test_results.tast_gce)
+      if len(failed_test_names) > TEST_QUERY_LIMIT or \
+          len(failed_test_names) == 0:
+        # Too many failed tests to query for, or none.
+        return self.cq_test_failure_attributes
 
-        # Comparison snapshots ordered in descending order of start_time
-        comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
-        if not comparison_snapshots:
-          # No snapshots available for comparison. Skip fault attribution.
-          return self.cq_test_failure_attributes
+      # Comparison snapshots ordered in descending order of start_time
+      comparison_snapshots = self._get_comparison_snapshots(orch_snapshot)
+      if not comparison_snapshots:
+        # No snapshots available for comparison. Skip fault attribution.
+        return self.cq_test_failure_attributes
 
-        fault_attributed_build_targets = self._get_cq_fault_attributes(
-            comparison_snapshots, failed_test_names)
+      fault_attributed_build_targets = self._get_cq_fault_attributes(
+          comparison_snapshots, failed_test_names)
 
-        if fault_attributed_build_targets:
-          self._cq_test_failure_attributes.test_failure_attributions.extend(
-              fault_attributed_build_targets)
-          self._cq_test_failure_attributes.compared_snapshots.extend(
-              list(
-                  map(self._get_snapshot_properties_object,
-                      comparison_snapshots)))
-          self.m.failures.set_test_variant_to_fault_attribute(
-              self._test_properties_to_fault_attribute)
-          self.m.easy.set_properties_step(
-              cq_fault_attributions=self._cq_test_failure_attributes)
+      if fault_attributed_build_targets:
+        self._cq_test_failure_attributes.test_failure_attributions.extend(
+            fault_attributed_build_targets)
+        self._cq_test_failure_attributes.compared_snapshots.extend(
+            list(
+                map(self._get_snapshot_properties_object,
+                    comparison_snapshots)))
+        self.m.failures.set_test_variant_to_fault_attribute(
+            self._test_properties_to_fault_attribute)
+        self.m.easy.set_properties_step(
+            cq_fault_attributions=self._cq_test_failure_attributes)
 
     return self.cq_test_failure_attributes
 
