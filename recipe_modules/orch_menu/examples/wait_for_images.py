@@ -200,18 +200,6 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
-      'updates-refs',
-      api.expect_exception('ValueError'),
-      api.post_check(
-          post_process.ResultReasonRE,
-          'currently plan_and_wait_for_images cannot be called when update_manifest_refs is set.'
-      ),
-      api.post_process(post_process.DropExpectation),
-      with_manifest_refs=True,
-      status='INFRA_FAILURE',
-  )
-
-  yield api.orch_menu.test(
       'times-out',
       schedule_output(api),
       api.buildbucket.simulated_collect_output(builds, 'collect'),

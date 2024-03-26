@@ -138,19 +138,6 @@ def GenTests(api):
     return {'$chromeos/orch_menu': kwargs}
 
   yield api.orch_menu.test(
-      'basic', data.ctp_normal,
-      api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/test.git push'),
-      api.step_data('update manifest ref refs/heads/test.git push', retcode=1),
-      api.step_data('update manifest ref refs/heads/test.git push (2)',
-                    retcode=1),
-      api.step_data('update manifest ref refs/heads/test.git push (3)',
-                    retcode=1), input_properties=orch_menu_properties(
-                        update_manifest_refs={'test': 'refs/heads/test'}),
-      builder='postsubmit-orchestrator', with_manifest_refs=True,
-      collect_builds=data.builds, with_history=True)
-
-  yield api.orch_menu.test(
       'release-orchestrator',
       data.ctp_normal,
       api.properties(
@@ -160,8 +147,6 @@ def GenTests(api):
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0')),
       ),
-      api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
       # Uprev logic should not run on ToT.
@@ -509,8 +494,6 @@ def GenTests(api):
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0'))),
       api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/test.git push'),
-      api.post_check(post_process.MustRun,
                      'set up orchestrator.schedule public build'),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', 'dry-run only'),
@@ -537,8 +520,6 @@ def GenTests(api):
                   status=common_pb2.SUCCESS,
                   summary_markdown='Full version: R99-1234.56.0')),
       ),
-      api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/test.git push'),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
       api.post_check(post_process.StepSuccess,
@@ -624,8 +605,6 @@ def GenTests(api):
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
-                     'update manifest ref refs/heads/test.git push'),
-      api.post_check(post_process.DoesNotRun,
                      'set up orchestrator.read git footers'),
       collect_builds=collect, input_properties=orch_menu_properties(
           update_manifest_refs={'test': 'refs/heads/test'}),
@@ -641,31 +620,11 @@ def GenTests(api):
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
-      api.post_check(post_process.DoesNotRun,
-                     'update manifest ref refs/heads/test.git push'),
       input_properties=orch_menu_properties(
           update_manifest_refs={'test': 'refs/heads/test'}),
       collect_builds=collect,
       with_manifest_refs=True,
       with_history=True,
-      status='FAILURE',
-  )
-
-  yield api.orch_menu.test(
-      'bad-ref',
-      api.properties(FullProperties(expect_missing_config=True)),
-      input_properties=orch_menu_properties(
-          update_manifest_refs={'start': 'missing-ref-heads'}),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
-  )
-
-  yield api.orch_menu.test(
-      'bad-failure-ratio',
-      api.properties(FullProperties(expect_missing_config=True)),
-      input_properties=orch_menu_properties(
-          update_manifest_refs={'max_build_failure_ratio': 1.1}),
-      # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
 

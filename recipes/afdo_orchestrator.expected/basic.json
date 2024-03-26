@@ -2670,7 +2670,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results",
+    "name": "check build results.build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@1 build failed, 2 succeeded@@@",
@@ -2679,7 +2679,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.arm-generic-cq",
+    "name": "check build results.build results.irrelevant critical build results.arm-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
@@ -2688,7 +2688,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.amd64-generic-cq",
+    "name": "check build results.build results.irrelevant critical build results.amd64-generic-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
@@ -2696,7 +2696,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.atlas-cq",
+    "name": "check build results.build results.irrelevant critical build results.atlas-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"

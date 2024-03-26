@@ -130,7 +130,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    self._update_manifest_refs = False
     self._external_gitiles_commit = None
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
@@ -217,26 +216,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return json_format.MessageToDict(
         ChromeProperties(version=self.chromium_src_ref_cl_tag))
 
-  def _get_manifest_info(self, external=False):
-    """Return information about a manifest repo.
-
-    Args:
-      external (bool): Whether the external manifest is wanted.
-
-    Returns:
-      None, or an object with attributes:
-        name (str): display name for the manifest repo.
-        gitiles_commit (GitilesCommit): commit for the repo.
-        path (Path): Path to the checked out repo.
-        url (str): URL for the repo.
-    """
-    manifest = self.m.src_state.internal_manifest
-    commit = self.gitiles_commit
-    if external:
-      manifest = self.m.src_state.external_manifest
-      commit = self._external_gitiles_commit
-    return _manifest_info(manifest.relpath, commit, manifest.path, manifest.url)
-
   @contextlib.contextmanager
   def setup_orchestrator(self):
     """Initial setup steps for the orchestrator.
@@ -255,7 +234,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     with self.m.bot_cost.build_cost_context(), \
         self.m.cros_source.checkout_overlays_context():
       with self.m.step.nest('set up orchestrator') as presentation:
-        self._validate_properties()
         config = self.m.cros_source.configure_builder(
             self.m.buildbucket.gitiles_commit,
             self.m.buildbucket.build.input.gerrit_changes)
@@ -266,12 +244,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
         use_external = self.gitiles_commit.project == 'chromiumos/manifest'
         external_commit = self.m.cros_source.checkout_manifests(
             is_staging=self.m.cros_infra_config.is_staging,
-            checkout_internal=not use_external,
-            checkout_external=self._update_manifest_refs or use_external)
+            checkout_internal=not use_external, checkout_external=use_external)
         self._external_gitiles_commit = external_commit
-
-        # We cannot push manifest refs to unpinned branches.
-        self._update_manifest_refs &= (external_commit.id != '')
 
         is_staging = self.m.cros_infra_config.is_staging
 
@@ -301,9 +275,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
             pass
 
       if config:
-        # Update the start ref to indicate we've begun processing the snapshot.
-        self._push_manifest_refs(self._properties.update_manifest_refs.start)
-
         if self.gerrit_changes:
           # Limit to staging and cq-orchestrator for now. We'll want to ask
           # the RBS team how tryjobs could be affected.
@@ -400,9 +371,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """
     # If there are any remaining children to collect, collect them now.
     self._collect_remaining_children(no_nest=no_nest_final_build_collect)
-
-    if not self.builds_status.fatal_failures:
-      self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
     with self.m.step.nest('clean up orchestrator'):
       # Recheck the BuilderConfigs at HEAD, one last time, to see if any
@@ -502,47 +470,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         b for b in builds if b.critical == common_pb2.YES and
         b.status == common_pb2.SUCCESS and self.cq_relevant(b)
     ])
-
-  def _validate_properties(self):
-    """Validate the orchestrator properties.
-
-    Raises:
-      StepFailure on errors.
-    """
-    # The only property we need to validate is update_manifest_refs, and we want
-    # to validate all of them.
-    for field, value in self._properties.update_manifest_refs.ListFields():
-      if field.name == 'max_build_failure_ratio':
-        if value < 0.0 or value > 1.0:
-          raise StepFailure('{} is out of range [0.0, 1.0] at {!r}'.format(
-              field.name, value))
-      else:
-        if not value.startswith('refs/heads/'):
-          raise StepFailure('%s ref %s is missing refs/heads/' %
-                            (field.name, value))
-      self._update_manifest_refs = True
-
-  def _push_manifest_refs(self, ref):
-    """Update the remote ref (if any).
-
-    If |ref| evaluates to False, do nothing.
-
-    Args:
-      ref (str): Ref to push to (possibly empty) or None
-    """
-    if self._update_manifest_refs and ref:
-      for external in False, True:
-        manifest = self._get_manifest_info(external)
-        with self.m.step.nest('update %s ref %s' % (manifest.name, ref)) as pres, \
-            self.m.context(cwd=manifest.path):
-          try:
-            self.m.git.push(manifest.url,
-                            '%s:%s' % (manifest.gitiles_commit.id, ref))
-          except self.m.step.StepFailure:
-            # Making this fail silently because newer snapshot orchestrator can
-            # update a ref before the older one.
-            pres.status = self.m.step.WARNING
-            pres.text = 'failed to push. continuing'
 
   def _non_critical_build_check(self, step_name, builds, failures):
     """Update failures based on the current criticality of the builders.
@@ -672,11 +599,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A list of builds that have produced images and are ready for testing.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
-      if self._update_manifest_refs:
-        raise ValueError(
-            'currently plan_and_wait_for_images cannot be called when update_manifest_refs is set.'
-        )
-
       child_specs = self._get_child_specs()
       collect_now, collect_after = self._filter_schedule_builds(
           pres, child_specs, extra_props=extra_child_props)
@@ -772,43 +694,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self.m.greenness.update_build_info(completed_builds)
     self.m.greenness.print_step()
 
-    # Use looks for green to determine if we should update the refs.
-    # These steps are only run on snapshot-orchestrator.
-    if self._update_manifest_refs and self._properties.update_manifest_refs.build:
-      with self.m.failures.ignore_exceptions():
-        with self.m.step.nest('update local greenness') as pres:
-          should_update = self.m.looks_for_green.is_green_for_local()
-          pres.step_text = str(should_update)
-          if should_update:
-            self._push_manifest_refs(
-                self._properties.update_manifest_refs.build)
-            # TODO: b/304592527 - Remove line below once green is set to
-            # automatically track stable
-            self._push_manifest_refs('refs/heads/green')
-          self.output_local_greenness(should_update)
-
     return self._builds_status
-
-  def output_local_greenness(self, should_update: bool) -> None:
-    """Outputs info about local greenness."""
-    local_greenness_output_dict = {}
-    local_greenness_output_dict['updated'] = should_update
-    local_greenness_output_dict[
-        'greenness'] = self.m.greenness.local_greenness_dict
-    self.m.easy.set_properties_step(local_greenness=local_greenness_output_dict)
-
-  def ps_relevant(self, build: build_pb2.Build) -> bool:
-    """Whether the postsubmit child build was critical and relevant.
-
-    Args:
-      build: The child build.
-    """
-    for tag in build.tags:
-      if tag.key == 'relevance':
-        return tag.value == 'relevant'
-
-    # If relevance tag is not set, assume relevance
-    return True
 
   def cq_relevant(self, build: build_pb2.Build) -> bool:
     """Whether the CQ child build was critical and relevant.
@@ -848,22 +734,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         ]
         self.m.easy.set_properties_step(
             testing_toolchain=any(cq_toolchain_outputs))
-      elif self.config.id.type in [
-          BuilderConfig.Id.POSTSUBMIT, BuilderConfig.Id.SNAPSHOT
-      ]:
-        self._relevant_child_builder_names = [
-            x.builder.builder
-            for x in self._builds_status.completed_builds
-            if self.ps_relevant(x)
-        ]
-        ps_relevant_critical_builds = [
-            x.builder.builder
-            for x in self._builds_status.completed_builds
-            if self.ps_relevant(x) and self.m.buildbucket.is_critical(x)
-        ]
-        if not ps_relevant_critical_builds:
-          self.m.easy.set_properties_step(all_critical_builds_irrelevant=True)
-          self.m.easy.set_properties_step(sheriff_ignore_build=True)
 
       # Add the newly completed builds to build_status.
       failures = self.m.failures.get_build_results(

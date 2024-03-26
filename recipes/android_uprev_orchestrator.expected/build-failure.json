@@ -3658,7 +3658,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results",
+    "name": "check build results.build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@1 build failed, 0 succeeded@@@",
@@ -3667,7 +3667,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.amd64-generic-postsubmit",
+    "name": "check build results.build results.irrelevant critical build results.amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
@@ -3676,15 +3676,15 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant non-critical build results",
+    "name": "check build results.build results.irrelevant non-critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@all relevant non-critical builds succeeded@@@"
+      "@@@STEP_TEXT@all irrelevant non-critical builds succeeded@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant non-critical build results.amd64-generic-postsubmit",
+    "name": "check build results.build results.irrelevant non-critical build results.amd64-generic-postsubmit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"

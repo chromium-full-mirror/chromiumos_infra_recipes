@@ -60,44 +60,6 @@ def GenTests(api):
       tags=api.cros_tags.tags(**{'relevance': 'not relevant'})).message
 
   yield api.test(
-      'postsubmit', api.buildbucket.ci_build(builder='postsubmit-orchestrator'),
-      api.properties(
-          CollectAndCheckBuildResultsProperties(
-              input_builds=[
-                  successful,
-                  failure,
-                  irrelevant,
-              ],
-          )))
-
-  yield api.test(
-      'snapshot-mixed-relevancy',
-      api.buildbucket.ci_build(builder='snapshot-orchestrator'),
-      api.post_check(post_process.PropertiesDoNotContain,
-                     'sheriff_ignore_build'),
-      api.post_check(post_process.PropertiesDoNotContain,
-                     'all_critical_builds_irrelevant'),
-      api.properties(
-          CollectAndCheckBuildResultsProperties(
-              input_builds=[
-                  successful,
-                  failure,
-                  irrelevant,
-              ],
-          )))
-
-  yield api.test(
-      'snapshot-all-irrelevant',
-      api.buildbucket.ci_build(builder='snapshot-orchestrator'),
-      api.post_check(post_process.PropertyEquals,
-                     'all_critical_builds_irrelevant', True),
-      api.post_check(post_process.PropertyEquals, 'sheriff_ignore_build', True),
-      api.properties(
-          CollectAndCheckBuildResultsProperties(input_builds=[
-              irrelevant,
-          ])))
-
-  yield api.test(
       'cq', api.buildbucket.ci_build(builder='cq-orchestrator'),
       api.post_check(post_process.PropertyEquals, 'testing_toolchain', False),
       api.properties(

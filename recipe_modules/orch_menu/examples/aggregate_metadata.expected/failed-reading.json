@@ -2431,15 +2431,15 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results",
+    "name": "check build results.build results.irrelevant critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@all relevant critical builds succeeded@@@"
+      "@@@STEP_TEXT@all irrelevant critical builds succeeded@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.",
+    "name": "check build results.build results.irrelevant critical build results.",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
@@ -2447,7 +2447,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results. (2)",
+    "name": "check build results.build results.irrelevant critical build results. (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
@@ -2455,7 +2455,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results. (3)",
+    "name": "check build results.build results.irrelevant critical build results. (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
