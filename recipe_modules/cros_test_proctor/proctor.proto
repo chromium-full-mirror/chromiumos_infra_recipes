@@ -21,12 +21,5 @@ message ProctorProperties {
   // Whether to run exonerate_retried_suites in dry_run mode
   bool dry_run_exonerate_retried_suites = 4;
 
-  // List of hardware test suites that are allowed to run on snapshot. Snapshot
-  // computes the suites that run on postsubmit, and filters hardware suites
-  // against this list.
-  //
-  // Not relevant if cros_test_plan_v2 is used.
-  //
-  // Gets a default list of hardware suites if not specified.
-  repeated string snapshot_hw_test_allowlist = 5;
+  reserved 5;
 }

@@ -5433,11 +5433,11 @@ Returns:
 
 Functions for sending requests and processing results from cros test platform.
 
-#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#41)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosTestProctorApi](/recipe_modules/cros_test_proctor/api.py#37)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#65)(self):**
+&emsp; **@property**<br>&mdash; **def [builders\_tested\_in\_this\_run](/recipe_modules/cros_test_proctor/api.py#60)(self):**
 
-&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#605)(self, test_results):**
+&mdash; **def [get\_test\_failures](/recipe_modules/cros_test_proctor/api.py#525)(self, test_results):**
 
 Logs all test failures to the UI and raises on failed tests.
 
@@ -5446,7 +5446,7 @@ Args:
 Returns:
   list[Failure]: All failures discovered in the given run.
 
-&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_proctor/api.py#87)(self, gerrit_changes: List[GerritChange], builds: List[Build]):**
+&mdash; **def [get\_testable\_builders](/recipe_modules/cros_test_proctor/api.py#82)(self, gerrit_changes: List[GerritChange], builds: List[Build]):**
 
 Returns the names of the builders whose images may be tested in this run.
 
@@ -5461,7 +5461,7 @@ Args:
 Returns:
   The names of the builder whose images may be tested in this CQ run.
 
-&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#170)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False, supports_fault_attribution=False, build_target_critical_allowlist=None):**
+&mdash; **def [run\_proctor](/recipe_modules/cros_test_proctor/api.py#165)(self, need_tests_builds, snapshot, gerrit_changes, enable_history, run_async=False, container_metadata=None, require_stable_devices=False, use_test_plan_v2=False, supports_fault_attribution=False, build_target_critical_allowlist=None):**
 
 Runs the test platform for a given bunch of builds.
 
@@ -5492,7 +5492,7 @@ Args:
 Returns
   list[failures.Failure]: failures encountered running tests
 
-&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#476)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
+&mdash; **def [schedule\_tests](/recipe_modules/cros_test_proctor/api.py#397)(self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites, previously_failed_now_exonerable_vm_suites, timeout, snapshot=None, is_retry=False, run_async=False, container_metadata=None, require_stable_devices=False, build_target_critical_allowlist=None):**
 
 Schedule all tests from the test_plan.
 
@@ -5522,7 +5522,7 @@ Args:
 Returns:
   MetaTestTuple of lists of the tests scheduled.
 
-&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#77)(self, test_summary):**
+&emsp; **@test_summary.setter**<br>&mdash; **def [test\_summary](/recipe_modules/cros_test_proctor/api.py#72)(self, test_summary):**
 
 Set the test_summary for this build.
 

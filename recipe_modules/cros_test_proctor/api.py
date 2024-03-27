@@ -23,15 +23,11 @@ from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
-from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_api
 
 TEST_SUMMARY_KEY = 'test_summary'
-DEFAULT_SNAPSHOT_HWTEST_ALLOWLIST = [
-    'bvt-tast-cq', 'bvt-arc', 'bvt-tast-arc', 'bvt-inline', 'cq-medium'
-]
 
 # A Git footer that can be included in commit messages to tell the CQ run to
 # enable an experiment.
@@ -52,7 +48,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = []
     self._not_runnable_addtnl_tests = []
     self._dry_run_exonerate_retried_suites = properties.dry_run_exonerate_retried_suites
-    self._snapshot_hw_test_allowlist = properties.snapshot_hw_test_allowlist or DEFAULT_SNAPSHOT_HWTEST_ALLOWLIST
 
     # Map from (host, project) combo to the local dir the repo was cloned to.
     # This is used to cache the results of _fetch_starlark_files().
@@ -399,80 +394,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       return staging_prefix + build_target.name + '-tast-gce'
     return staging_prefix + build_target.name + '-tast-gce-informational'
 
-  def _get_non_informational(self, tast_unit):
-    test_cfg = tast_unit.tast_vm_test_cfg
-    filtered_tests = [
-        test for test in test_cfg.tast_vm_test
-        if 'informational' not in test.suite_name
-    ]
-    test_cfg.ClearField('tast_vm_test')
-    test_cfg.tast_vm_test.extend(filtered_tests)
-    return tast_unit
-
-  def _filter_tast_gce_informational(self, tast_gce_unit):
-    """Modifies test plan unit to not include informational tests."""
-    test_cfg = tast_gce_unit.tast_gce_test_cfg
-    filtered_tests = [
-        test for test in test_cfg.tast_gce_test
-        if 'informational' not in test.suite_name
-    ]
-    test_cfg.ClearField('tast_gce_test')
-    test_cfg.tast_gce_test.extend(filtered_tests)
-    return tast_gce_unit
-
-  def _filter_snapshot_hw_test_units(self, hw_test_units):
-    """Restrict to _snapshot_hw_test_allowlist only."""
-    filtered_hw_test_units = []
-    for test_unit in hw_test_units:
-      filtered_hw_test = []
-      for hw_test in test_unit.hw_test_cfg.hw_test:
-        # We were also filtering non-critical tests here. But, we
-        # need to test VMLab requests to amd64-generic & reven-vmtest.
-        # TODO(b/314981982): Turn it back on after VMLab is launched on everything.
-        if hw_test.suite in self._snapshot_hw_test_allowlist:
-          filtered_hw_test.append(hw_test)
-
-      if filtered_hw_test:
-        filtered_hw_test_units.append(
-            HwTestUnit(common=test_unit.common,
-                       hw_test_cfg=HwTestCfg(hw_test=filtered_hw_test)))
-
-    return filtered_hw_test_units
-
-  def _filter_snapshot_test_plan(self, test_plan):
-    """Filter tests out of test_plan selectively.
-
-    Args:
-      test_plan (GenerateTestPlanResponse): Test plan for the input builds.
-
-    Returns:
-      GenerateTestPlanResponse of tests that should run.
-    """
-    # Remove informational tast VM tests from test_plan.
-    if self.m.buildbucket.build.builder.builder == 'snapshot-orchestrator':
-      with self.m.step.nest('filter test plan') as pres:
-        non_informational_units = [
-            self._get_non_informational(unit)
-            for unit in test_plan.direct_tast_vm_test_units
-        ]
-        non_informational_gce_units = [
-            self._filter_tast_gce_informational(unit)
-            for unit in test_plan.tast_gce_test_units
-        ]
-        filtered_hw_test_units = self._filter_snapshot_hw_test_units(
-            test_plan.hw_test_units)
-
-        test_plan.ClearField('direct_tast_vm_test_units')
-        test_plan.ClearField('tast_gce_test_units')
-        test_plan.ClearField('hw_test_units')
-
-        test_plan.direct_tast_vm_test_units.extend(non_informational_units)
-        test_plan.tast_gce_test_units.extend(non_informational_gce_units)
-        test_plan.hw_test_units.extend(filtered_hw_test_units)
-        pres.logs['filtered test plan'] = str(test_plan)
-
-    return test_plan
-
   def schedule_tests(self, test_plan, passed_tests,
                      previously_failed_now_exonerable_hw_suites,
                      previously_failed_now_exonerable_vm_suites, timeout,
@@ -518,7 +439,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
               'tast_vm_tests_builder_ids': vm_tests_build_ids,
           })
 
-    test_plan = self._filter_snapshot_test_plan(test_plan)
     skylab_tasks = self._schedule_skylab_tests(
         test_plan,
         passed_tests,

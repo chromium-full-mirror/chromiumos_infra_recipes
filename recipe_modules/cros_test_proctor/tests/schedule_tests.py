@@ -117,39 +117,6 @@ def GenTests(api):
                      expected_tast_gce_test_names),
   )
 
-  # Snapshot-orchestrator should only run non-informational VM tests and HW
-  # tests in SNAPSHOT_HWTEST_SUITES.
-  expected_hw_test_names = [
-      'htarget.hw.bvt-cq',
-      'htarget.hw.bvt-inline',
-      'htarget.hw.some-suite',
-  ]
-  expected_tast_vm_test_names = [
-      'ttarget.tast.sweet_shard_1_of_2',
-      'ttarget.tast.sweet_shard_2_of_2',
-  ]
-  expected_tast_gce_test_names = [
-      'ttarget.tast_gce.sweet',
-  ]
-  yield api.test(
-      'snapshot-filter',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='snapshot-orchestrator'),
-      api.properties(
-          **{
-              '$chromeos/cros_test_proctor':
-                  ProctorProperties(snapshot_hw_test_allowlist=[
-                      'bvt-cq', 'bvt-inline', 'some-suite'
-                  ]),
-          }),
-      api.post_check(PropertyEquals, 'scheduled_hw_tests',
-                     expected_hw_test_names),
-      api.post_check(PropertyEquals, 'scheduled_tast_vm_tests',
-                     expected_tast_vm_test_names),
-      api.post_check(PropertyEquals, 'scheduled_tast_gce_tests',
-                     expected_tast_gce_test_names),
-  )
-
   # When bucket is `staging`, cros_infra_config.is_staging returns True.
   yield api.test(
       'schedule-staging-tast-vm-tests',
