@@ -17,6 +17,7 @@ from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.test.api.test_suite import TestSuite
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.buildbucket.proto.common import StringPair
 from PB.lab import license as license_pb2
 from PB.test_platform.request import Request
 from PB.test_platform.steps.execution import ExecuteResponse
@@ -148,6 +149,7 @@ class SkylabApi(recipe_api.RecipeApi):
     """
     bb_tags = self.m.cros_tags.tags(
         **bb_tags) if isinstance(bb_tags, dict) else bb_tags
+    bb_tags.append(StringPair(key='hide-in-gerrit', value='cros-test-platform'))
     # TODO(b/200175693): This logic also exists in build plan. Consider moving
     # to a common source.
     exps = self.m.cros_infra_config.experiments_for_child_build
