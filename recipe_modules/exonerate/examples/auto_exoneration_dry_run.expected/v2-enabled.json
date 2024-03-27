@@ -145,7 +145,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Error occurred when running auto exoneration v2: 'NoneType' object is not iterable@@@",
       "@@@STEP_LOG_LINE@exception@Traceback (most recent call last):@@@",
-      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[chromeos]/recipe_modules/exonerate/api.py\", line 963, in auto_exoneration_analysis_v2@@@",
+      "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[chromeos]/recipe_modules/exonerate/api.py\", line 975, in auto_exoneration_analysis_v2@@@",
       "@@@STEP_LOG_LINE@exception@    test_variant_position_list = self.m.exoneration_util.match_test_variants_sources(@@@",
       "@@@STEP_LOG_LINE@exception@                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^@@@",
       "@@@STEP_LOG_LINE@exception@  File \"RECIPE_REPO[chromeos]/recipe_modules/exoneration_util/api.py\", line 93, in match_test_variants_sources@@@",

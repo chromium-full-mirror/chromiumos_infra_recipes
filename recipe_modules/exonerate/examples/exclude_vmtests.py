@@ -55,6 +55,10 @@ def RunSteps(api):
   api.assertions.assertFalse(
       api.exonerate.is_vm_test_build_exonerable(vm_builds[0]))
 
+  api.assertions.assertTrue(
+      api.exonerate.is_vm_test_build_exonerable(
+          vm_builds[0], excludes_enabled_override=False))
+
 
 def GenTests(api):
   yield api.test(

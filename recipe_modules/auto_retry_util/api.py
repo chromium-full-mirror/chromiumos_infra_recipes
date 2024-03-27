@@ -253,9 +253,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     # api.expect_exception doesn't work on exceptions thrown from initialize, so
     # don't cover this case.
     self.m.cros_infra_config.determine_if_staging()
-    # TODO(b/314002402): Figure out how to only enable excludes for
-    # auto-exonerations.
-    self.m.exonerate.enable_excludes()
     if self.m.cros_infra_config.is_staging and self._enable_retries:  # pragma: nocover
       raise ValueError('enable_retries should not be set on staging builders')
 
@@ -1482,10 +1479,24 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       if suite in previously_passed_suites:
         continue
 
-      if self.m.exonerate.is_hw_result_exonerable(result, exon_configs):
+      # Manual exoneration.
+      # The excludes configs are not taken into account when doing
+      # manual exoneration. The excludes configs are meant as a guardrail to
+      # prevent auto-exoneration from submitting CLs which are failing critical
+      # tests. Manual exoneration gives sheriffs the option over forcing these
+      # tests to be exonerated.
+      if self.m.exonerate.is_hw_result_exonerable(
+          result, self.m.exonerate.manual_exoneration_configs,
+          excludes_enabled_override=False):
         exonerated_suites.add(suite)
+      # Auto exoneration.
       elif self.m.exonerate.is_hw_result_exonerable(
-          result, exon_configs, exonerate_prejob_failures=True):
+          result, exon_configs, excludes_enabled_override=True):
+        exonerated_suites.add(suite)
+      # Pre-job failure exoneration.
+      elif self.m.exonerate.is_hw_result_exonerable(
+          result, exon_configs, exonerate_prejob_failures=True,
+          excludes_enabled_override=True):
         exonerated_prejob_failure_suites.add(suite)
 
     # Prejob failures are only retryable if the experimental feature is enabled.
@@ -1547,10 +1558,24 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         if suite in previously_passed_suites:
           continue
 
-        if self.m.exonerate.is_vm_test_build_exonerable(result, exon_configs):
+        # Manual exoneration.
+        # The excludes configs are not taken into account when doing
+        # manual exoneration. The excludes configs are meant as a guardrail to
+        # prevent auto-exoneration from submitting CLs which are failing
+        # critical tests. Manual exoneration gives sheriffs the option over
+        # forcing these tests to be exonerated.
+        if self.m.exonerate.is_vm_test_build_exonerable(
+            result, self.m.exonerate.manual_exoneration_configs,
+            excludes_enabled_override=False):
           exonerated_suites.add(suite)
+        # Auto exoneration.
         elif self.m.exonerate.is_vm_test_build_exonerable(
-            result, exon_configs, exonerate_unexpected_skips=True):
+            result, exon_configs, excludes_enabled_override=True):
+          exonerated_suites.add(suite)
+        # Unexpected skips exoneration.
+        elif self.m.exonerate.is_vm_test_build_exonerable(
+            result, exon_configs, exonerate_unexpected_skips=True,
+            excludes_enabled_override=True):
           exonerated_unexpected_skip_suites.add(suite)
 
     # Only retry unexpected skips if the experiment is enabled and at least one

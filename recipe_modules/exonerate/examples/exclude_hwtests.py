@@ -72,6 +72,10 @@ def RunSteps(api):
   api.assertions.assertFalse(
       api.exonerate.is_hw_result_exonerable(hw_test_failures[0]))
 
+  api.assertions.assertTrue(
+      api.exonerate.is_hw_result_exonerable(hw_test_failures[0],
+                                            excludes_enabled_override=False))
+
 
 def GenTests(api):
   yield api.test(

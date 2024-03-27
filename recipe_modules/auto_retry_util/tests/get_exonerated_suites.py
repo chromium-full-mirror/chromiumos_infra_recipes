@@ -330,8 +330,27 @@ def GenTests(api):
   suite_excludes_cfg = test_disablement_pb2.ExcludeCfg(exclude_suites=[
       test_disablement_pb2.ExcludeCfg.ExcludeSuite(name='suite')
   ])
+
+  override_excludes_manual_exoneration_cfg = test_disablement_pb2.TestDisablementCfg(
+      disablements=[
+          test_disablement_pb2.TestDisablement(
+              name='fake.test', bug_ids=['123456'], dut_criteria=[
+                  test_disablement_pb2.TestDisablement.FilterCriterion(
+                      key='build_target', values=['target'])
+              ]),
+      ])
+
+  manual_exoneration_cfg = test_disablement_pb2.TestDisablementCfg(
+      disablements=[
+          test_disablement_pb2.TestDisablement(
+              name='not.fake.test', bug_ids=['123456'], dut_criteria=[
+                  test_disablement_pb2.TestDisablement.FilterCriterion(
+                      key='build_target', values=['target'])
+              ]),
+      ])
+
   yield api.test(
-      'excludes-suite',
+      'excludes-suite-when-auto-exonerated',
       api.test_util.test_orchestrator(
           cq=True, output_properties={
               'test_summary': test_summary,
@@ -341,6 +360,10 @@ def GenTests(api):
               }
           }).build,
       api.step_data(
+          'fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              manual_exoneration_cfg.SerializeToString())),
+      api.step_data(
           'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
           api.gitiles.make_encoded_file_from_bytes(
               suite_excludes_cfg.SerializeToString())),
@@ -348,6 +371,32 @@ def GenTests(api):
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
       api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'excludes-suite-does-not-affect-manual-exon',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              override_excludes_manual_exoneration_cfg.SerializeToString())),
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              suite_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(
+          expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -389,7 +438,7 @@ def GenTests(api):
       test_disablement_pb2.ExcludeCfg.ExcludeTest(name='fake.test')
   ])
   yield api.test(
-      'excludes-test-case',
+      'excludes-test-case-when-auto-exonerated',
       api.test_util.test_orchestrator(
           cq=True, output_properties={
               'test_summary': test_summary,
@@ -399,6 +448,10 @@ def GenTests(api):
               }
           }).build,
       api.step_data(
+          'fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              manual_exoneration_cfg.SerializeToString())),
+      api.step_data(
           'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
           api.gitiles.make_encoded_file_from_bytes(
               test_case_excludes_cfg.SerializeToString())),
@@ -406,6 +459,32 @@ def GenTests(api):
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
       api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'excludes-test-case-does-not-affect-manual-exon',
+      api.test_util.test_orchestrator(
+          cq=True, output_properties={
+              'test_summary': test_summary,
+              'test_tasks': {
+                  'skylab_builder_ids': [111],
+                  'tast_vm_tests_builder_ids': [222, 333]
+              }
+          }).build,
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/test_exoneration.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              override_excludes_manual_exoneration_cfg.SerializeToString())),
+      api.step_data(
+          'fetch HEAD:test/exoneration/generated/excludes.binaryproto',
+          api.gitiles.make_encoded_file_from_bytes(
+              test_case_excludes_cfg.SerializeToString())),
+      api.buildbucket.simulated_get_multi(
+          [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
+      api.buildbucket.simulated_get_multi(vm_builds),
+      api.properties(
+          expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
       api.post_process(post_process.DropExpectation),
   )
 

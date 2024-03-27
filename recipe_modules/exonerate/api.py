@@ -737,7 +737,8 @@ class ExonerateApi(recipe_api.RecipeApi):
   def is_hw_result_exonerable(
       self, hw_test_result: SkylabResult,
       exoneration_configs_override: Optional[Dict] = None,
-      exonerate_prejob_failures: Optional[bool] = False) -> bool:
+      exonerate_prejob_failures: Optional[bool] = False,
+      excludes_enabled_override: Optional[bool] = None) -> bool:
     """ Checks to see if hw result is exonerable.
 
     Args:
@@ -746,6 +747,8 @@ class ExonerateApi(recipe_api.RecipeApi):
           determining if the result is exonerable.
       exonerate_prejob_failures: Whether to exonerate prejob failures. These
           failures are not exonerable by default.
+      excludes_enabled_override: Whether to take into account the excludes
+          configs when exonerating. Overrides the module-level setting.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
@@ -760,6 +763,10 @@ class ExonerateApi(recipe_api.RecipeApi):
       return False
     if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
+
+    excludes_enabled = self._excludes_enabled
+    if excludes_enabled_override is not None:
+      excludes_enabled = excludes_enabled_override
 
     display_name = self.m.naming.get_skylab_result_title(hw_test_result)
     suite_name = self.m.rdb_util.get_suite(display_name)
@@ -779,9 +786,8 @@ class ExonerateApi(recipe_api.RecipeApi):
         test_name = self.m.exoneration_util.get_tastless_name(test_case.name)
         if test_case.verdict in (TaskState.VERDICT_UNSPECIFIED,
                                  TaskState.VERDICT_FAILED):
-          if self._excludes_enabled and (suite_name in self._excludes['suites']
-                                         or
-                                         test_name in self._excludes['tests']):
+          if excludes_enabled and (suite_name in self._excludes['suites'] or
+                                   test_name in self._excludes['tests']):
             return False
           if not self._is_test_name_exonerable(test_name, build_target,
                                                exoneration_configs_override):
@@ -792,7 +798,8 @@ class ExonerateApi(recipe_api.RecipeApi):
   def is_vm_test_build_exonerable(
       self, vm_build: build_pb2.Build,
       exoneration_configs_override: Optional[Dict] = None,
-      exonerate_unexpected_skips: bool = False) -> bool:
+      exonerate_unexpected_skips: bool = False,
+      excludes_enabled_override: Optional[bool] = None) -> bool:
     """Checks to see if the VM test is exonerable.
 
     Args:
@@ -802,6 +809,8 @@ class ExonerateApi(recipe_api.RecipeApi):
       exonerate_unexpected_skips: Whether to exonerate tests which were
           unexpectedly skipped. Unexpected skips are tests which did not run
           because an infrastructure issue interrupted the test execution.
+      excludes_enabled_override: Whether to take into account the excludes
+          configs when exonerating. Overrides the module-level setting.
 
     Returns:
       True if and only if the result is a failure AND exonerable.
@@ -823,6 +832,10 @@ class ExonerateApi(recipe_api.RecipeApi):
     if not (self._configs_loaded or exoneration_configs_override):
       self.load_configs()
 
+    excludes_enabled = self._excludes_enabled
+    if excludes_enabled_override is not None:
+      excludes_enabled = excludes_enabled_override
+
     display_name = self.m.naming.get_vm_test_title(vm_build)
     suite_name = self.m.rdb_util.get_suite(display_name)
     build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
@@ -832,9 +845,8 @@ class ExonerateApi(recipe_api.RecipeApi):
             'humanReadableSummary'
         ) == MISSING_TEST_FAILURE_SUMMARY and exonerate_unexpected_skips:
           continue
-        if self._excludes_enabled and (suite_name in self._excludes['suites'] or
-                                       test_case['name']
-                                       in self._excludes['tests']):
+        if excludes_enabled and (suite_name in self._excludes['suites'] or
+                                 test_case['name'] in self._excludes['tests']):
           return False
         if not self._is_test_name_exonerable(test_case['name'], build_target,
                                              exoneration_configs_override):

@@ -195,7 +195,7 @@ class ExonerationUtilApi(recipe_api.RecipeApi):
     Returns:
       A map of the same format as manual_configs but is updated to include autoex tests.
     """
-    updated_configs = manual_configs
+    updated_configs = manual_configs.copy()
     for failed_test in test_stats:
       if failed_test.automatically_exonerated and not failed_test.manually_exonerated:
         test_name = self.get_tastless_name(failed_test.test_id)
