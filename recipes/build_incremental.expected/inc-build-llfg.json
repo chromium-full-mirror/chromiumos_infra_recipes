@@ -5763,7 +5763,7 @@
       "git",
       "ls-remote",
       "[CLEANUP]/chromiumos_workspace/.repo/manifests",
-      "refs/remotes/origin/green"
+      "refs/remotes/origin/stable"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

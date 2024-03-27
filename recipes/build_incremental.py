@@ -135,7 +135,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           build_source=config.build.sdk_update.compile_source)
 
       # Get the prebuilts metadata to use with the current snapshot.
-      branch = 'green' if properties.use_llfg else 'snapshot'
+      branch = 'stable' if properties.use_llfg else 'snapshot'
       manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
       remotes = api.git.ls_remote([f'refs/remotes/origin/{branch}'],
                                   repo_url=manifest_dir)
