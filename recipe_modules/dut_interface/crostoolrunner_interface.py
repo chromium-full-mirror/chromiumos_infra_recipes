@@ -620,7 +620,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
               request = post_request.RunActivitiesRequest(requests=[
                   post_request.Request(
-                      get_fw_info_request=post_request.GetFWInfoRequest(),
+                      get_fw_info_request=post_request.GetFWInfoRequest()),
+                  post_request.Request(
                       get_gfx_info_request=post_request.GetGfxInfoRequest())
               ])
               post_process_request = ctr.CrosToolRunnerPostTestRequest(
