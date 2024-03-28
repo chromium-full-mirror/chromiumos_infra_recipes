@@ -458,6 +458,14 @@
   },
   {
     "cmd": [],
+    "name": "filter builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@need 8 new builds (filtered 0)@@@",
+      "@@@STEP_LOG_END@filter log@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter additional chrome pupr builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@no additional builds needed@@@"
@@ -490,14 +498,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "filter builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@need 8 new builds (filtered 0)@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -517,17 +517,13 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "cmd": [],
-    "name": "filter builds.resize LFG lookback window",
+    "name": "resize LFG lookback window",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@broken_until logs@LFG lookback window is now 10 hours@@@",
       "@@@STEP_LOG_END@broken_until logs@@@"
     ]
@@ -560,49 +556,45 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.resize LFG lookback window.buildbucket.search",
+    "name": "resize LFG lookback window.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green",
+    "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green",
+    "name": "looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "update src_state.gitiles_commit"
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "name": "update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
@@ -623,11 +615,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.gerrit-fetch-changes",
+    "name": "gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -685,10 +676,7 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.get affected paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "get affected paths"
   },
   {
     "cmd": [
@@ -721,18 +709,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.get affected paths.repo forall",
+    "name": "get affected paths.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@chromeos|src/chromeos|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"buildTargets\": [@@@",
       "@@@STEP_LOG_LINE@request@    {},@@@",
@@ -800,9 +787,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -833,9 +820,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -867,16 +854,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]

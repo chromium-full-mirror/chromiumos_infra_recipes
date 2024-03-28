@@ -1341,6 +1341,21 @@
   },
   {
     "cmd": [],
+    "name": "filter builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@need 1 new build (filtered 7)@@@",
+      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm64-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@atlas-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@cave-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_END@filter log@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter additional chrome pupr builds",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@additional builds@amd64-generic-cq needs to be scheduled@@@",
@@ -1458,21 +1473,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "filter builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@need 1 new build (filtered 7)@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm64-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@atlas-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@cave-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -1492,58 +1492,50 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "cmd": [],
-    "name": "filter builds.resize LFG lookback window",
+    "name": "resize LFG lookback window",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@broken_until logs@LFG lookback window is now 10 hours@@@",
       "@@@STEP_LOG_END@broken_until logs@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green",
+    "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green",
+    "name": "looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "update src_state.gitiles_commit"
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "name": "update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },

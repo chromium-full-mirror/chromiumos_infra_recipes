@@ -108,27 +108,24 @@ def GenTests(api):
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.find green snapshot'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.set green snapshot'),
-      api.post_check(
-          post_process.MustRun,
-          'filter builds.looks for green.find green snapshot.set looks_for_green'
-      ),
+                     'looks for green.set green snapshot'),
+      api.post_check(post_process.MustRun,
+                     'looks for green.find green snapshot.set looks_for_green'),
       api.post_check(
           post_process.DoesNotRun,
-          'filter builds.looks for green.checking mergability.resetting to original snapshot'
+          'looks for green.checking mergability.resetting to original snapshot'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -136,31 +133,32 @@ def GenTests(api):
   yield api.test(
       'use-complete-snapshot',
       api.cq(run_mode=api.cq.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(
-          ),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
-          **{'$chromeos/looks_for_green': {
-              'enable_looks_for_green': True,
-              'use_complete_snapshot': True
-          }},
-          expected_internal_sha=MODIFIED_INTERNAL_SHA, expected_external_sha=MODIFIED_EXTERNAL_SHA),
-      api.git_footers.simulated_get_footers([], 'filter builds.looks for green.check should look for green.check disallow looks for green'),
+          **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True,
+                  'use_complete_snapshot': True
+              }
+          }, expected_internal_sha=MODIFIED_INTERNAL_SHA,
+          expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check disallow looks for green'
+      ),
+      api.git_footers.simulated_get_footers(
+          [],
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.find green snapshot'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.set green snapshot'),
-      api.post_check(
-          post_process.MustRun,
-          'filter builds.looks for green.find green snapshot.set looks_for_green'
-      ),
+                     'looks for green.set green snapshot'),
+      api.post_check(post_process.MustRun,
+                     'looks for green.find green snapshot.set looks_for_green'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -175,37 +173,34 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.step_data(
-          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
+          'looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
           retcode=1),
       api.step_data(
-          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git merge',
+          'looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git merge',
           retcode=1),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.find green snapshot'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.set green snapshot'),
+                     'looks for green.set green snapshot'),
+      api.post_check(post_process.MustRun,
+                     'looks for green.find green snapshot.set looks_for_green'),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.find green snapshot.set looks_for_green'
+          'looks for green.checking mergability.sync to gitiles commit.repo sync'
       ),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.checking mergability.sync to gitiles commit.repo sync'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'filter builds.looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
+          'looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -221,34 +216,31 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.step_data(
-          'filter builds.looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
+          'looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
           retcode=1),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.find green snapshot'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.set green snapshot'),
+                     'looks for green.set green snapshot'),
+      api.post_check(post_process.MustRun,
+                     'looks for green.find green snapshot.set looks_for_green'),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.find green snapshot.set looks_for_green'
+          'looks for green.checking mergability.sync to gitiles commit.repo sync'
       ),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.checking mergability.sync to gitiles commit.repo sync'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'filter builds.looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
+          'looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -258,11 +250,10 @@ def GenTests(api):
       api.cq(run_mode=api.cq.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(),
-      api.post_check(
-          post_process.DoesNotRun,
-          'filter builds.looks for green.checking latest scored snapshot'),
       api.post_check(post_process.DoesNotRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.checking latest scored snapshot'),
+      api.post_check(post_process.DoesNotRun,
+                     'looks for green.find green snapshot'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -277,18 +268,17 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([
           'True'
-      ], 'filter builds.looks for green.check should look for green.check disallow looks for green'
+      ], 'looks for green.check should look for green.check disallow looks for green'
                                            ),
       api.post_check(post_process.StatusSuccess),
       api.post_check(
           post_process.MustRun,
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'filter builds.looks for green.checking latest scored snapshot'),
       api.post_check(post_process.DoesNotRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.checking latest scored snapshot'),
+      api.post_check(post_process.DoesNotRun,
+                     'looks for green.find green snapshot'),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -303,21 +293,19 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
       api.post_check(post_process.MustRun,
-                     'filter builds.looks for green.find green snapshot'),
+                     'looks for green.find green snapshot'),
       api.post_process(
-          post_process.LogContains, 'filter builds.looks for green',
-          'cq looks log',
+          post_process.LogContains, 'looks for green', 'cq looks log',
           ['No green snapshot found. Using latest minted snapshot.']),
       api.post_process(post_process.DropExpectation),
   )

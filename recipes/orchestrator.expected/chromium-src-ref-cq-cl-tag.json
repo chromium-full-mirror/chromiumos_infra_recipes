@@ -3980,15 +3980,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.filter builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@need 0 new builds (filtered 0)@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.set properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

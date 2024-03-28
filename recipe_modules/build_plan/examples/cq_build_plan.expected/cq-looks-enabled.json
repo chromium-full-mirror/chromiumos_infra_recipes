@@ -1215,6 +1215,20 @@
   },
   {
     "cmd": [],
+    "name": "filter builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@need 2 new builds (filtered 6)@@@",
+      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
+      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@cave-cq already passed@@@",
+      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
+      "@@@STEP_LOG_END@filter log@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "filter additional chrome pupr builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@no additional builds needed@@@"
@@ -1247,21 +1261,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "filter builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@need 2 new builds (filtered 6)@@@",
-      "@@@STEP_LOG_LINE@filter log@amd64-generic-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-cq is non-critical and this is a CQ rerun@@@",
-      "@@@STEP_LOG_LINE@filter log@arm-generic-pointless-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@cave-cq already passed@@@",
-      "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
-      "@@@STEP_LOG_END@filter log@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
@@ -1281,17 +1280,13 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "cmd": [],
-    "name": "filter builds.resize LFG lookback window",
+    "name": "resize LFG lookback window",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@broken_until logs@LFG lookback window is now 10 hours@@@",
       "@@@STEP_LOG_END@broken_until logs@@@"
     ]
@@ -1324,32 +1319,31 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.resize LFG lookback window.buildbucket.search",
+    "name": "resize LFG lookback window.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green",
+    "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green",
+    "name": "looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check disallow looks for green",
+    "name": "looks for green.check should look for green.check disallow looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@check disallow looks for green@Found Disallow-Looks-For-Green footers: []@@@",
       "@@@STEP_LOG_END@check disallow looks for green@@@"
     ]
@@ -1374,17 +1368,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.check disallow looks for green.read git footers",
+    "name": "looks for green.check should look for green.check disallow looks for green.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.ensure auth token",
+    "name": "looks for green.check should look for green.ensure auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1408,9 +1402,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.ensure auth token.Retrieve service_account auth token",
+    "name": "looks for green.check should look for green.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1437,9 +1431,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.ensure auth token.Write auth token to temp file",
+    "name": "looks for green.check should look for green.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -1462,16 +1456,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist",
+    "name": "looks for green.check should look for green.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/mergelist",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included",
+    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@all depended CLs are included@@@",
       "@@@STEP_LOG_LINE@bad_footers@@@@",
       "@@@STEP_LOG_END@bad_footers@@@"
@@ -1497,25 +1491,25 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included.read git footers",
+    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green.set looks_for_green",
+    "name": "looks for green.check should look for green.set looks_for_green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@looks_for_green@{}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.find green snapshot",
+    "name": "looks for green.find green snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@latest green@Found green snapshot:  with greenness 100 and 8 hours old.@@@",
       "@@@STEP_LOG_END@latest green@@@"
     ]
@@ -1548,10 +1542,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.find green snapshot.buildbucket.search",
+    "name": "looks for green.find green snapshot.buildbucket.search",
     "timeout": 60,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateBuildMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
@@ -1559,17 +1553,17 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.find green snapshot.set looks_for_green",
+    "name": "looks for green.find green snapshot.set looks_for_green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latestScored\": {\"approxSnapAgeHours\": 8, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}, \"status\": \"STATUS_RAN_OLDER\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.set green snapshot",
+    "name": "looks for green.set green snapshot",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1594,24 +1588,24 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.set green snapshot.read git footers",
+    "name": "looks for green.set green snapshot.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.checking mergability",
+    "name": "looks for green.checking mergability",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.checking mergability.sync to gitiles commit",
+    "name": "looks for green.checking mergability.sync to gitiles commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_EXCEPTION@@@"
     ]
   },
@@ -1643,41 +1637,38 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.looks for green.checking mergability.sync to gitiles commit.fetch :snapshot.xml",
+    "name": "looks for green.checking mergability.sync to gitiles commit.fetch :snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.ignored exception",
+    "name": "looks for green.ignored exception",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@caught exception@AssertionError('no repo root found')@@@",
       "@@@STEP_LOG_END@caught exception@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.set caught_exceptions",
+    "name": "looks for green.set caught_exceptions",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"filter builds.looks for green.ignored exception\": \"AssertionError('no repo root found')\"}@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"looks for green.ignored exception\": \"AssertionError('no repo root found')\"}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "update src_state.gitiles_commit"
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },

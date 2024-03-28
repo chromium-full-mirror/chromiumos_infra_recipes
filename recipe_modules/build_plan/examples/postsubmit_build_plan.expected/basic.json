@@ -40,58 +40,45 @@
   },
   {
     "cmd": [],
-    "name": "filter builds",
+    "name": "resize LFG lookback window",
     "~followup_annotations": [
-      "@@@STEP_TEXT@need 3 new builds (filtered 0)@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "filter builds.resize LFG lookback window",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@broken_until logs@LFG lookback window is now 10 hours@@@",
       "@@@STEP_LOG_END@broken_until logs@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green",
+    "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.looks for green.check should look for green",
+    "name": "looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "update src_state.gitiles_commit"
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set gitiles_commit",
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.update src_state.gitiles_commit.set_output_gitiles_commit",
+    "name": "update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },

@@ -320,148 +320,146 @@ class BuildPlanApi(recipe_api.RecipeApi):
               len(completed_builds), '' if len(completed_builds) == 1 else 's'))
 
       completed_builders = [build.builder.builder for build in completed_builds]
-      filtered_child_specs = []
-      for child_spec in necessary_child_specs:
-        # No need to retry previously-passed builds.
-        if child_spec.name in completed_builders:
-          filter_log.append(f'{child_spec.name} already passed')
-          count_skip_since_already_passed += 1
-          continue
-
-        # Do not retry slim builds if an equivalent standard build passed.
-        if child_spec.name.endswith('slim-cq'):
-          standard_builder_name = child_spec.name.replace('-slim-cq', '-cq')
-          if standard_builder_name in completed_builders:
-            filter_log.append(f'{standard_builder_name} already passed')
+      with self.m.step.nest('filter builds') as presentation:
+        filtered_child_specs = []
+        for child_spec in necessary_child_specs:
+          # No need to retry previously-passed builds.
+          if child_spec.name in completed_builders:
+            filter_log.append(f'{child_spec.name} already passed')
             count_skip_since_already_passed += 1
             continue
 
-        # Don't retry non-critical builds unless recycling is disabled.
-        child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child_spec.name)
-        force_rebuild = child_spec.name in forced_rebuilds or 'all' in forced_rebuilds
-        force_relevant = child_spec.name in forced_relevant
-        critical = child_builder_config.general.critical.value or force_relevant
-        if is_retry and not (critical or force_rebuild):
-          filter_log.append(
-              f'{child_spec.name} is non-critical and this is a CQ rerun')
-          count_skip_noncritical_on_rerun += 1
-          continue
+          # Do not retry slim builds if an equivalent standard build passed.
+          if child_spec.name.endswith('slim-cq'):
+            standard_builder_name = child_spec.name.replace('-slim-cq', '-cq')
+            if standard_builder_name in completed_builders:
+              filter_log.append(f'{standard_builder_name} already passed')
+              count_skip_since_already_passed += 1
+              continue
 
-        # If we made it this far, we need to schedule the build.
-        filtered_child_specs.append(child_spec)
+          # Don't retry non-critical builds unless recycling is disabled.
+          child_builder_config = self.m.cros_infra_config.get_builder_config(
+              child_spec.name)
+          force_rebuild = child_spec.name in forced_rebuilds or 'all' in forced_rebuilds
+          force_relevant = child_spec.name in forced_relevant
+          critical = child_builder_config.general.critical.value or force_relevant
+          if is_retry and not (critical or force_rebuild):
+            filter_log.append(
+                f'{child_spec.name} is non-critical and this is a CQ rerun')
+            count_skip_noncritical_on_rerun += 1
+            continue
 
-      necessary_child_specs = filtered_child_specs
+          # If we made it this far, we need to schedule the build.
+          filtered_child_specs.append(child_spec)
+
+        necessary_child_specs = filtered_child_specs
+
+        presentation.logs['filter log'] = sorted(filter_log)
+
+        # Don't include irrelevant builder configs or snapshot builds in this
+        # count for display, as they're mentioned in steps above.
+        count_total_filtered_builds = (
+            count_skip_for_source_rules + count_skip_since_already_passed +
+            count_skip_noncritical_on_rerun)
+        presentation.step_text = ('need {} new build{} (filtered {})'.format(
+            len(necessary_child_specs),
+            '' if len(necessary_child_specs) == 1 else 's',
+            count_total_filtered_builds))
 
       necessary_chrome_child_specs = self._get_necessary_chrome_child_specs(
           gerrit_changes, irrelevant_builders,
           [build.builder.builder for build in completed_builds])
 
-    # TODO(b/311037472): Rename this step.
-    with self.m.step.nest('filter builds') as presentation:
-      child_exps = self.m.cros_infra_config.experiments_for_child_build
-      footer_exps = self.m.git_footers.get_footer_values(
-          gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
-          step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
-      child_exps.update({x: True for x in footer_exps})
+    child_exps = self.m.cros_infra_config.experiments_for_child_build
+    footer_exps = self.m.git_footers.get_footer_values(
+        gerrit_changes, self.CROS_EXPERIMENTS_FOOTER,
+        step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
+    child_exps.update({x: True for x in footer_exps})
 
-      # Only do LFG logic if there are builds to schedule.
-      if necessary_child_specs or necessary_chrome_child_specs:
-        self.m.looks_for_green.resize_lfg_lookback(
-            [spec.name for spec in necessary_child_specs] +
-            [spec.name for spec in necessary_chrome_child_specs])
-        internal_snapshot, external_snapshot = self._choose_snapshots(
-            internal_snapshot, external_snapshot, gerrit_changes,
-            self.m.src_state.internal_manifest)
+    # Only do LFG logic if there are builds to schedule.
+    if necessary_child_specs or necessary_chrome_child_specs:
+      self.m.looks_for_green.resize_lfg_lookback(
+          [spec.name for spec in necessary_child_specs] +
+          [spec.name for spec in necessary_chrome_child_specs])
+      internal_snapshot, external_snapshot = self._choose_snapshots(
+          internal_snapshot, external_snapshot, gerrit_changes,
+          self.m.src_state.internal_manifest)
 
-      # TODO(b/316010599): Get data from cros-query experiment.
-      # Eventually, this will be taken into account when build planning.
-      # In order to simplify things, we are going to start with only first CQ
-      # attempts which do not configure additional builders via footer.
-      if not (is_retry or forced_relevant) and gerrit_changes:
-        _ = self.get_relevant_builder_configs([
-            self.m.cros_infra_config.get_builder_config(c.name)
-            for c in necessary_child_specs
-        ], gerrit_changes)
+    # TODO(b/316010599): Get data from cros-query experiment.
+    # Eventually, this will be taken into account when build planning.
+    # In order to simplify things, we are going to start with only first CQ
+    # attempts which do not configure additional builders via footer.
+    if not (is_retry or forced_relevant) and gerrit_changes:
+      _ = self.get_relevant_builder_configs([
+          self.m.cros_infra_config.get_builder_config(c.name)
+          for c in necessary_child_specs
+      ], gerrit_changes)
 
-      for child_spec in necessary_child_specs:
-        child_builder_config = self.m.cros_infra_config.get_builder_config(
-            child_spec.name)
-        force_relevant = child_spec.name in forced_relevant
-        critical = child_builder_config.general.critical.value or force_relevant
+    for child_spec in necessary_child_specs:
+      child_builder_config = self.m.cros_infra_config.get_builder_config(
+          child_spec.name)
+      force_relevant = child_spec.name in forced_relevant
+      critical = child_builder_config.general.critical.value or force_relevant
 
-        child_build_snapshot = internal_snapshot
-        if (child_builder_config.general.manifest ==
-            BuilderConfig.General.PUBLIC):
-          child_build_snapshot = external_snapshot
+      child_build_snapshot = internal_snapshot
+      if (child_builder_config.general.manifest == BuilderConfig.General.PUBLIC
+         ):
+        child_build_snapshot = external_snapshot
 
-        tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
-        if not critical and child_spec.name.endswith('-cq'):
-          tags.extend(
-              self.m.cros_tags.tags(
-                  **{'hide-in-gerrit': 'non-critical-builder'}))
-
-        if child_spec.bucket:
-          bucket = child_spec.bucket
-        elif self.m.led.led_build:
-          bucket = self.m.led.shadowed_bucket
-        else:
-          bucket = self.m.buildbucket.build.builder.bucket
-        can_outlive_parent = True
-        if (child_spec.collect_handling !=
-            BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
-          # If collect handling not set to NO_COLLECT, the child will be
-          # terminated if the orchestrator dies and the child is not finished.
-          can_outlive_parent = False
-
-        # Build the properties for the child.
-        properties = self.m.cq.props_for_child_build
-        properties.update(self.m.cros_infra_config.props_for_child_build)
-        if force_relevant:
-          properties.update({'force_relevant_build': True})
-
-        new_build_requests.append(
-            self.m.buildbucket.schedule_request(
-                gitiles_commit=child_build_snapshot, inherit_buildsets=False,
-                builder=child_spec.name, bucket=bucket,
-                gerrit_changes=gerrit_changes, critical=critical, tags=tags,
-                properties=properties, experiments=child_exps,
-                can_outlive_parent=can_outlive_parent))
-
-      presentation.logs['filter log'] = sorted(filter_log)
-
-      # Don't include irrelevant builder configs or snapshot builds in this
-      # count for display, as they're mentioned in steps above.
-      count_total_filtered_builds = (
-          count_skip_for_source_rules + count_skip_since_already_passed +
-          count_skip_noncritical_on_rerun)
-      presentation.step_text = ('need {} new build{} (filtered {})'.format(
-          len(new_build_requests), '' if len(new_build_requests) == 1 else 's',
-          count_total_filtered_builds))
-
-
-      # Schedule additional non-critical builds for chrome PUpr Uprev CLs.
-      for child_spec in necessary_chrome_child_specs:
-        builder = child_spec.name
-        builder_config = self.m.cros_infra_config.get_builder_config(builder)
-
-        child_build_snapshot = internal_snapshot
-        if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
-          child_build_snapshot = external_snapshot
-        tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+      tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+      if not critical and child_spec.name.endswith('-cq'):
         tags.extend(
-            self.m.cros_tags.tags(
-                **{'hide-in-gerrit': 'chrome-additional-builder'}))
-        properties = self.m.cq.props_for_child_build
-        properties.update(self.m.cros_infra_config.props_for_child_build)
+            self.m.cros_tags.tags(**{'hide-in-gerrit': 'non-critical-builder'}))
 
-        new_build_requests.append(
-            self.m.buildbucket.schedule_request(
-                gitiles_commit=child_build_snapshot, builder=builder,
-                bucket=child_spec.bucket, gerrit_changes=gerrit_changes,
-                critical=False, tags=tags, properties=properties,
-                experiments=child_exps))
-        self._additional_chrome_pupr_builders.append(builder)
+      if child_spec.bucket:
+        bucket = child_spec.bucket
+      elif self.m.led.led_build:
+        bucket = self.m.led.shadowed_bucket
+      else:
+        bucket = self.m.buildbucket.build.builder.bucket
+      can_outlive_parent = True
+      if (child_spec.collect_handling
+          != BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT):
+        # If collect handling not set to NO_COLLECT, the child will be
+        # terminated if the orchestrator dies and the child is not finished.
+        can_outlive_parent = False
+
+      # Build the properties for the child.
+      properties = self.m.cq.props_for_child_build
+      properties.update(self.m.cros_infra_config.props_for_child_build)
+      if force_relevant:
+        properties.update({'force_relevant_build': True})
+
+      new_build_requests.append(
+          self.m.buildbucket.schedule_request(
+              gitiles_commit=child_build_snapshot, inherit_buildsets=False,
+              builder=child_spec.name, bucket=bucket,
+              gerrit_changes=gerrit_changes, critical=critical, tags=tags,
+              properties=properties, experiments=child_exps,
+              can_outlive_parent=can_outlive_parent))
+
+    # Schedule additional non-critical builds for chrome PUpr Uprev CLs.
+    for child_spec in necessary_chrome_child_specs:
+      builder = child_spec.name
+      builder_config = self.m.cros_infra_config.get_builder_config(builder)
+
+      child_build_snapshot = internal_snapshot
+      if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
+        child_build_snapshot = external_snapshot
+      tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
+      tags.extend(
+          self.m.cros_tags.tags(
+              **{'hide-in-gerrit': 'chrome-additional-builder'}))
+      properties = self.m.cq.props_for_child_build
+      properties.update(self.m.cros_infra_config.props_for_child_build)
+
+      new_build_requests.append(
+          self.m.buildbucket.schedule_request(
+              gitiles_commit=child_build_snapshot, builder=builder,
+              bucket=child_spec.bucket, gerrit_changes=gerrit_changes,
+              critical=False, tags=tags, properties=properties,
+              experiments=child_exps))
+      self._additional_chrome_pupr_builders.append(builder)
 
     self.m.easy.set_properties_step(
         build_plan_skip_for_source_rules=count_skip_for_source_rules,

@@ -1194,13 +1194,6 @@
   },
   {
     "cmd": [],
-    "name": "filter additional chrome pupr builds",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@no additional builds needed@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "filter builds",
     "~followup_annotations": [
       "@@@STEP_TEXT@need 0 new builds (filtered 8)@@@",
@@ -1213,6 +1206,13 @@
       "@@@STEP_LOG_LINE@filter log@coral-cq build is not needed for changes@@@",
       "@@@STEP_LOG_LINE@filter log@eve-cq build is not needed for changes@@@",
       "@@@STEP_LOG_END@filter log@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "filter additional chrome pupr builds",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@no additional builds needed@@@"
     ]
   },
   {
@@ -1235,11 +1235,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n"
   },
   {
     "cmd": [
@@ -1258,11 +1255,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.gerrit-fetch-changes",
+    "name": "gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 1235, \"host\": \"chrome-internal-review.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": true, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1320,10 +1316,7 @@
   },
   {
     "cmd": [],
-    "name": "filter builds.get affected paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
+    "name": "get affected paths"
   },
   {
     "cmd": [
@@ -1356,18 +1349,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.get affected paths.repo forall",
+    "name": "get affected paths.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text@existent-project|src/existent-project|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"affectedPaths\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -1425,9 +1417,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.write input file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1458,9 +1450,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1492,16 +1484,16 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.read output file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "filter builds.call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
+    "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call response",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
       "@@@STEP_LOG_END@build api stdout@@@"
     ]

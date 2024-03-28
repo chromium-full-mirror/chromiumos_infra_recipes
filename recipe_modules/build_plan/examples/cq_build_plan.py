@@ -379,8 +379,7 @@ def GenTests(api):
       ),
       api.git_footers.simulated_get_footers([],
                                             'check disallow recycled builds'),
-      api.git_footers.simulated_get_footers(['named-exp-from-cl'],
-                                            'filter builds'),
+      api.git_footers.simulated_get_footers(['named-exp-from-cl']),
       api.cros_relevance.simulated_run_build_planner(
           necessary_builders=[
               'arm-generic-cq',
@@ -548,11 +547,11 @@ def GenTests(api):
       cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check disallow looks for green'
+          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
-          'filter builds.looks for green.check should look for green.check if all Cq-Depend CLs are included'
+          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -590,8 +589,7 @@ def GenTests(api):
                               start_time=test_start_timestamp,
                               end_time=test_end_timestamp)
           ],
-          step_name='filter builds.looks for green.find green snapshot.buildbucket.search'
-      ),
+          step_name='looks for green.find green snapshot.buildbucket.search'),
   )
 
   yield api.test(
@@ -630,7 +628,7 @@ def GenTests(api):
           'buildbucket.search'),
       api.post_check(
           post_process.DoesNotRun,
-          'filter builds.looks for green.check should look for green.check disallow looks for green.read git footers'
+          'looks for green.check should look for green.check disallow looks for green.read git footers'
       ),
   )
 
@@ -674,7 +672,7 @@ def GenTests(api):
           'buildbucket.search'),
       api.post_check(
           post_process.DoesNotRun,
-          'filter builds.looks for green.check should look for green.check disallow looks for green.read git footers'
+          'looks for green.check should look for green.check disallow looks for green.read git footers'
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -777,6 +775,5 @@ def GenTests(api):
           expected_completed_builds=[],
           expected_additional_chrome_pupr_builders=[],
       ),
-      api.post_check(post_process.DoesNotRun,
-                     'run builds.filter builds.looks for green'),
+      api.post_check(post_process.DoesNotRun, 'run builds.looks for green'),
   )

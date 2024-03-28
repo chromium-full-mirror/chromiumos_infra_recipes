@@ -5816,36 +5816,27 @@
   },
   {
     "cmd": [],
-    "name": "run builds.filter builds",
+    "name": "run builds.resize LFG lookback window",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@need 1 new build (filtered 0)@@@",
-      "@@@STEP_LOG_END@filter log@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run builds.filter builds.resize LFG lookback window",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@broken_until logs@LFG lookback window is now 10 hours@@@",
       "@@@STEP_LOG_END@broken_until logs@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run builds.filter builds.looks for green",
+    "name": "run builds.looks for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
       "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run builds.filter builds.looks for green.check should look for green",
+    "name": "run builds.looks for green.check should look for green",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@Looks for green not enabled@@@"
     ]
   },
