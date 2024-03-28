@@ -76,7 +76,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     process_child = kwargs.pop('process_child', None)
     process_child_timeout = kwargs.pop('process_child_timeout', False)
     follow_on_orch = kwargs.pop('follow_on_orch', None)
-    local_green_builds = kwargs.pop('local_green_builds', [])
     sheriff_rotations = kwargs.pop('sheriff_rotations', [])
 
     cq = kwargs.get('cq')
@@ -175,13 +174,6 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
           self.m.buildbucket.simulated_collect_output(
               [follow_on_orch],
               'run follow on orchestrator.collect'))  # pragma: nocover
-
-    if local_green_builds:
-      args.append(
-          self.m.buildbucket.simulated_search_results(
-              local_green_builds,
-              'update local greenness.check current snapshot build.buildbucket.search'
-          ))  # pragma: nocover
 
     # Call recipe_test_api.test().
     return super().test(name, ret, *args, status=status)
