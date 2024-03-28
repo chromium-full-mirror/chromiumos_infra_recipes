@@ -173,11 +173,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
                                                  bucket=config.id.bucket))
     return necessary_child_specs
 
-  def _get_necessary_chrome_builders(
+  def _get_necessary_chrome_child_specs(
       self, gerrit_changes: List[Optional[GerritChange]],
-      builders: List[Optional[str]],
-      completed_builders: List[Optional[str]]) -> List[Optional[str]]:
-    """Returns additional builders to schedule for chrome uprev changes.
+      builders: List[Optional[str]], completed_builders: List[Optional[str]]
+  ) -> List[Optional[BuilderConfig.Orchestrator.ChildSpec]]:
+    """Returns additional ChildSpecs to schedule for chrome uprev changes.
 
     Args:
       gerrit_changes: The changes under test. Used to determine if the CQ run is
@@ -185,14 +185,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
       builders: A list of builders to consider scheduling.
       completed_builders: A list of builders that already completed.
     """
-    necessary_chrome_builders = []
+    necessary_chrome_child_specs = []
     chrome_log = []
     with self.m.step.nest(
         'filter additional chrome pupr builds') as presentation:
       if not (len(gerrit_changes) == 1 and
               self.m.chrome.is_chrome_pupr_atomic_uprev(gerrit_changes[0])):
         presentation.step_text = 'no additional builds needed'
-        return necessary_chrome_builders
+        return necessary_chrome_child_specs
 
       for builder in sorted(builders):
         builder_config = self.m.cros_infra_config.get_builder_config(builder)
@@ -211,10 +211,14 @@ class BuildPlanApi(recipe_api.RecipeApi):
               f'{builder} not needed because it does not use prebuilts')
           continue
         chrome_log.append(f'{builder} needs to be scheduled')
-        necessary_chrome_builders.append(builder)
+        necessary_chrome_child_specs.append(
+            BuilderConfig.Orchestrator.ChildSpec(
+                name=builder, bucket=builder_config.id.bucket,
+                collect_handling=BuilderConfig.Orchestrator.ChildSpec.NO_COLLECT
+            ))
 
       presentation.logs['additional builds'] = sorted(chrome_log)
-      return necessary_chrome_builders
+      return necessary_chrome_child_specs
 
   def get_build_plan(
       self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
@@ -257,7 +261,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     forced_rebuilds = set()
     forced_relevant = []
 
-    necessary_chrome_builders = []
+    necessary_chrome_child_specs = []
 
     if gerrit_changes:
       any_public_changes = any(
@@ -349,7 +353,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
       necessary_child_specs = filtered_child_specs
 
-      necessary_chrome_builders = self._get_necessary_chrome_builders(
+      necessary_chrome_child_specs = self._get_necessary_chrome_child_specs(
           gerrit_changes, irrelevant_builders,
           [build.builder.builder for build in completed_builds])
 
@@ -362,10 +366,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
       child_exps.update({x: True for x in footer_exps})
 
       # Only do LFG logic if there are builds to schedule.
-      if necessary_child_specs or necessary_chrome_builders:
+      if necessary_child_specs or necessary_chrome_child_specs:
         self.m.looks_for_green.resize_lfg_lookback(
             [spec.name for spec in necessary_child_specs] +
-            necessary_chrome_builders)
+            [spec.name for spec in necessary_chrome_child_specs])
         internal_snapshot, external_snapshot = self._choose_snapshots(
             internal_snapshot, external_snapshot, gerrit_changes,
             self.m.src_state.internal_manifest)
@@ -437,7 +441,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
 
       # Schedule additional non-critical builds for chrome PUpr Uprev CLs.
-      for builder in necessary_chrome_builders:
+      for child_spec in necessary_chrome_child_specs:
+        builder = child_spec.name
         builder_config = self.m.cros_infra_config.get_builder_config(builder)
 
         child_build_snapshot = internal_snapshot
@@ -453,7 +458,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         new_build_requests.append(
             self.m.buildbucket.schedule_request(
                 gitiles_commit=child_build_snapshot, builder=builder,
-                bucket=builder_config.id.bucket, gerrit_changes=gerrit_changes,
+                bucket=child_spec.bucket, gerrit_changes=gerrit_changes,
                 critical=False, tags=tags, properties=properties,
                 experiments=child_exps))
         self._additional_chrome_pupr_builders.append(builder)
