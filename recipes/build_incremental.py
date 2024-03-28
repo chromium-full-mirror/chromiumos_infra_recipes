@@ -129,10 +129,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     try:
       api.workspace_util.apply_changes(changes=gerrit_changes,
                                        ignore_missing_projects=True)
-      # TODO(sfrolov): remove update_chroot call when cros_sdk revamp is ready.
-      api.cros_sdk.update_chroot(
-          toolchain_targets=[api.build_menu.build_target],
-          build_source=config.build.sdk_update.compile_source)
+      api.build_menu.setup_chroot()
 
       # Get the prebuilts metadata to use with the current snapshot.
       branch = 'stable' if properties.use_llfg else 'snapshot'
