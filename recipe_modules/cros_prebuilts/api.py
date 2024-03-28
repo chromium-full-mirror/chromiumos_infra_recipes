@@ -711,11 +711,9 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
         self._upload_metadata(target, profile, kind, gs_bucket, acls,
                               upload_uri)
 
-      if ('chromeos.publish.to.binhost_lookup_service'
-          in self.m.cros_infra_config.experiments):
-        # Upload binhost metadata to the `binhost_lookup_service`.
-        self._publish_binhost_metadata(target, profile, upload_uri, gs_bucket,
-                                       True, private)
+      # Upload binhost metadata to the `binhost_lookup_service`.
+      self._publish_binhost_metadata(target, profile, upload_uri, gs_bucket,
+                                     True, private)
 
   def upload_devinstall_prebuilts(self, target, sysroot, chroot, gs_bucket):
     """Upload binary devinstall prebuilts for build target to Google Storage.

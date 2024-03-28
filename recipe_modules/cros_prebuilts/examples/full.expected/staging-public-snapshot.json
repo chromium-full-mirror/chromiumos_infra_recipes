@@ -325,7 +325,10 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts"
+    "name": "upload prebuilts",
+    "~followup_annotations": [
+      "@@@STEP_EXCEPTION@@@"
+    ]
   },
   {
     "cmd": [],
@@ -2418,6 +2421,25 @@
     "name": "upload prebuilts.upload metadata.gsutil acl (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.publish binhost metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload prebuilts.publish binhost metadata.publish binhost metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Failed to publish binhost metadata to the binhost lookup service.@@@",
+      "@@@STEP_LOG_LINE@caught exception@InfraFailure('Must set pubsub_project_id')@@@",
+      "@@@STEP_LOG_END@caught exception@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {

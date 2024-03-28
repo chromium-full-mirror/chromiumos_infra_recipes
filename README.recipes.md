@@ -3845,7 +3845,7 @@ Args:
       name of build target, Value is the number of `max_uris` used for the
       build target. None for using the default value.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#749)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/cros_prebuilts/api.py#747)(self, target: BuildTarget, sysroot: Sysroot, chroot: Chroot, profile: Optional[Profile], kind: BuilderConfig.Id.Type, gs_bucket: str, private: bool):**
 
 Upload Chrome binary prebuilts for the build target to Google Storage.
 
@@ -3861,7 +3861,7 @@ Args:
 Raises:
   ValueError: If a gs bucket was not specified.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#720)(self, target, sysroot, chroot, gs_bucket):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/cros_prebuilts/api.py#718)(self, target, sysroot, chroot, gs_bucket):**
 
 Upload binary devinstall prebuilts for build target to Google Storage.
 
@@ -3871,7 +3871,7 @@ Args:
   chroot (chromiumos.common.Chroot): Chroot to work with.
   kind (BuilderConfig.Id.Type): Kind of prebuilts to upload.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/cros_prebuilts/api.py#786)(self, target: BuildTarget, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, profile: Optional[Profile]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/cros_prebuilts/api.py#784)(self, target: BuildTarget, chroot: Chroot, kind: BuilderConfig.Id.Type, gs_bucket: str, profile: Optional[Profile]=None):**
 
 Upload host binary prebuilts to Google Storage.
 
