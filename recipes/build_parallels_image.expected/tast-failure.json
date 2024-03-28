@@ -467,7 +467,7 @@
       "-artifact-directory",
       "[CLEANUP]/tast-results_tmp_1",
       "-testhaus-base-url",
-      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results",
+      "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-parallels-uprev-archive/build-parallels-image/8945511751514863184/first_results",
       "--",
       "echo"
     ],

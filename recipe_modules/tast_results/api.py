@@ -22,8 +22,7 @@ from PB.tast.test_result import TestResult
 
 GS_URI_PREFIX = 'gs://'
 PANTHEON_PREFIX = 'https://pantheon.corp.google.com/storage/browser'
-STAINLESS_LOG_PREFIX = 'https://stainless.corp.google.com/browse/'
-TESTHAUS_LOG_PREFIX = 'https://tests.chromeos.goog/p/chromeos/logs/browse/'
+TESTHAUS_LOG_PREFIX = 'https://tests.chromeos.goog/p/chromeos/logs/unified/'
 MILO_PREFIX = 'https://ci.chromium.org/b/'
 MISSING_TEST_FAILURE_SUMMARY = 'Test did not run'
 FAILURE_VERDICTS = [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]

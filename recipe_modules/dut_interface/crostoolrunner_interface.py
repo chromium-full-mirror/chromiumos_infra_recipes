@@ -1069,11 +1069,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
   def _get_updated_keyvals(metadata):
     """Gets the keyval from autotest and populates it with the latest URLs.
 
-    This keyval is required for stainless' test results view to link to the
+    This keyval is required for testhaus test results view to link to the
     test logs.
     - Autoserv drops keyvals in a file in the logs directory
     - tko/parse parses that file and injects keyvals in the TKO database
-    - Stainless table builder extracts this particular keyval and uses the value
+    - Testhaus extracts this particular keyval and uses the value
       to link to the archived logs.
 
     Args:
@@ -1084,7 +1084,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """
     keyvals = metadata.autotest_keyvals
     keyvals['synchronous_log_data_url'] = metadata.gs_url
-    keyvals['synchronous_log_data_stainless_url'] = metadata.stainless_logs_url
     keyvals['synchronous_log_data_testhaus_url'] = metadata.testhaus_logs_url
     if metadata.job_finished:
       keyvals['job_finished'] = str(metadata.job_finished)

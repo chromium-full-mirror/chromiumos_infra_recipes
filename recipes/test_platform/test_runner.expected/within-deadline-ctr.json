@@ -885,7 +885,7 @@
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -910,14 +910,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkEEKwjAQRelCxUBVuiyu3KeJrSJ4DC9QYhvaQJMJmbTSO3hLL2Jb1JW48i9mM/De55MticnKi9ZDUrZa97kqN0E8d1IgmGhNQrK0DjqFCszweATkUuGZsaJ2oCUg9RI9baBCVoDWYKg0HUv54Uh5SnnG+Cv0yxmzz7JTfA9q7+3EdW+mMKLpvSowEdaiBZ8MAmY/ZjZJrw5uKP9bZ7cgs2GAsk8pCcGpSg1V8pEc/ZzrCVQ8Ymo=\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJytkEEKwjAUROlCxQ9V6bK4cp8mtorgMbxAKU1MA01+SdJCl97S49iIuhJXzuJvBt78GdhCCitf9R4z3ms9lopvonRuReXQJGuIYdlZHJRTaCbjHsFFujOldWNRC3TEC+dJi9LRGrVGQ4QZaM4OR8JywgrKXiJfTtC+KE7pLWq87wI34Fz2pmcSUdLuk0afQb1RVyX4f3/YLWA2teZjTiBGq6QyVVsGcvJzowd6L14G\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs in Testhaus@https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {

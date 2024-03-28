@@ -164,13 +164,6 @@ class DUTResult():  # pragma: no cover
     """
 
   @abstractmethod
-  def get_stainless_log_url(self):
-    """Retrieve the url for stainless logs
-
-    Returns: str
-    """
-
-  @abstractmethod
   def get_testhaus_log_url(self):
     """Retrieve the URL for Testhaus logs
 

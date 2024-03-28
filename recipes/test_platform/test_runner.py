@@ -2363,7 +2363,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+    "testhaus_url": "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {
     "step": [
@@ -2395,7 +2395,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   },
   "log_data": {
     "gs_url": "gs://chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47",
-    "testhaus_url": "https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
+    "testhaus_url": "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/test-runner/prod/2022-09-02/fbfd7251-279f-4fc9-9613-e7e03e365a47"
   },
   "prejob": {
     "step": [

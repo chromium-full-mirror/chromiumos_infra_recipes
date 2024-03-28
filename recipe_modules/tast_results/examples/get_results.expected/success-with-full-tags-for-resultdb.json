@@ -254,7 +254,7 @@
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
       "-testhaus-base-url",
-      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
       "--",
       "echo"
     ],
@@ -661,7 +661,7 @@
       "-artifact-directory",
       "[CLEANUP]/test-results_tmp_1",
       "-testhaus-base-url",
-      "https://tests.chromeos.goog/p/chromeos/logs/browse/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
+      "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-vmtest-archive/reven-vmtest-direct-tast-vm/42/1_results",
       "--",
       "echo"
     ],

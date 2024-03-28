@@ -120,7 +120,6 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     """
     super().__init__(data)
     self.gs_url = None
-    self.stainless_url = None
     self.testhaus_url = None
 
   def is_failure(self):
@@ -143,15 +142,7 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     single test.
     """
     self.gs_url = metadata.gs_url
-    self.stainless_url = metadata.stainless_logs_url
     self.testhaus_url = metadata.testhaus_logs_url
-
-  def get_stainless_log_url(self):
-    """Retrieve the url for stainless logs
-
-    Returns: str
-    """
-    return self.stainless_url
 
   def get_testhaus_log_url(self):
     """Retrieve the url for Testhaus logs.
@@ -232,7 +223,6 @@ class CrosToolRunnerResult(dut_results.DUTResult):  # pragma: no cover
     if result:
       self.data = result.data
       self.gs_url = result.gs_url
-      self.stainless_url = result.stainless_url
       self.testhaus_url = result.testhaus_url
       self.prejob_response = result.prejob_response
       self.test_responses.extend(result.test_responses)

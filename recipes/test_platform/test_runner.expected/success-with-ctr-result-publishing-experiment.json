@@ -1322,7 +1322,7 @@
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/invocations/build:42\"@@@",
+      "@@@STEP_LOG_LINE@skylab_result@    \"testhausUrl\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/invocations/build:42\"@@@",
       "@@@STEP_LOG_LINE@skylab_result@  },@@@",
       "@@@STEP_LOG_LINE@skylab_result@  \"stateUpdate\": {@@@",
       "@@@STEP_LOG_LINE@skylab_result@    \"dutState\": \"ready\"@@@",
@@ -1347,14 +1347,14 @@
     "name": "execution steps.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJx9j8EKwjAQROlBxUBVPBZP3tO0VRH8DP2AEttQA002ZLeVfpJ/aSzqSZzDHmbhzQzbsIQtSHYEad0ZM5S6XkXJ1CuJYNdLFrO589Br1GDD4xGxc4MnIaqbB6MAOSkk3kKDogJjwHJle1FkecGzA8/3InuL/zgv5bvdMbnciNyI9R+ktLIdSFeYSufQAaWBL9w3WIyZVw93VELbHipJoWOwOt3Wp32xnbFJmFEPBWcxeN3oQCxf7PXf0U8igFUa\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJx9j00KwjAUhOlCxYA/dFlcuU9f/0ToCVx7gVKbmD5o8kqTFnoZz2or6kqcxWwGvplhBxawrSt7R6HotR4LFHsvWHaytGT8HduwddvRgBbJTMHDY1dlc4Cq7khLstxJ63hDykJFWpPh0gyQRHHCoxOPM4je4j9sVpym5+BSO9fO2Jlmww88VEQK2m8ZvHp6g3eUAtAMVJVuGmbh1mMj8iw5rthi2i7GhLMNdajQlE0xU/2/T59H41C2\"@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Results",
     "~followup_annotations": [
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/invocations/build:42@@@"
+      "@@@STEP_LINK@Logs in Testhaus@https://tests.chromeos.goog/p/chromeos/logs/unified/invocations/build:42@@@"
     ]
   },
   {

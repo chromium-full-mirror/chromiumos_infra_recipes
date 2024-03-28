@@ -144,7 +144,7 @@ class SkylabResultsTestApi(recipe_test_api.RecipeTestApi):
             },
             "taskUrl": "https://chromeos-swarming.appspot.com/task?id=471a63bc9c481010",
             "name": "cheets_NotificationTest",
-            "logUrl": "https://stainless.corp.google.com/browse/chromeos-autotest-results/swarming-471a63bc9c481010/",
+            "logUrl": "https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-autotest-results/swarming-471a63bc9c481010/",
             "testCases": [
                 {
                     "name": "tast",

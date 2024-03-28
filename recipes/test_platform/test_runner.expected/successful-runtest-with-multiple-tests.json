@@ -499,8 +499,7 @@
       "@@@STEP_LOG_LINE@request@      \"parent_job_id\": \"59dfe8555444e811\",@@@",
       "@@@STEP_LOG_LINE@request@      \"suite\": \"bvt-tast-informational\",@@@",
       "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@request@      \"synchronous_log_data_testhaus_url\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    \"imageStorageServer\": \"gs://chromeos-image-archive\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
@@ -537,7 +536,7 @@
       }
     },
     "name": "execution steps.multi_test_2.Phosphorus: run test.call `phosphorus`.run-test",
-    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostnames\": [\n    \"fake_host\"\n  ],\n  \"autotest\": {\n    \"name\": \"dummy_name\",\n    \"testArgs\": \"foo=bar\",\n    \"displayName\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\n    \"isClientTest\": true,\n    \"keyvals\": {\n      \"branch\": \"main\",\n      \"build\": \"bob-release/R102-14637.0.0\",\n      \"build_config\": \"bob-release\",\n      \"cidb_build_id\": \"5141110\",\n      \"datastore_parent_key\": \"('Build', 5141110)\",\n      \"label\": \"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\n      \"master_build_config\": \"master-release\",\n      \"parent_job_id\": \"59dfe8555444e811\",\n      \"suite\": \"bvt-tast-informational\",\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    },\n    \"imageStorageServer\": \"gs://chromeos-image-archive\"\n  },\n  \"deadline\": \"2012-05-14T12:53:27Z\",\n  \"containerImageInfo\": {}\n}",
+    "stdin": "{\n  \"config\": {\n    \"bot\": {\n      \"autotestDir\": \"/path/to/autotest\"\n    },\n    \"task\": {\n      \"resultsDir\": \"dummy-results-dir\",\n      \"testResultsDir\": \"dummy-results-dir/autoserv_test\"\n    },\n    \"logDataUploadStep\": {},\n    \"fetchCrashesStep\": {},\n    \"prejobStep\": {}\n  },\n  \"dutHostnames\": [\n    \"fake_host\"\n  ],\n  \"autotest\": {\n    \"name\": \"dummy_name\",\n    \"testArgs\": \"foo=bar\",\n    \"displayName\": \"bob-release/R102-14637.0.0-71034-8802911174428529793/bvt-inline/login_LoginSuccess\",\n    \"isClientTest\": true,\n    \"keyvals\": {\n      \"branch\": \"main\",\n      \"build\": \"bob-release/R102-14637.0.0\",\n      \"build_config\": \"bob-release\",\n      \"cidb_build_id\": \"5141110\",\n      \"datastore_parent_key\": \"('Build', 5141110)\",\n      \"label\": \"bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess\",\n      \"master_build_config\": \"master-release\",\n      \"parent_job_id\": \"59dfe8555444e811\",\n      \"suite\": \"bvt-tast-informational\",\n      \"synchronous_log_data_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n      \"synchronous_log_data_testhaus_url\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n    },\n    \"imageStorageServer\": \"gs://chromeos-image-archive\"\n  },\n  \"deadline\": \"2012-05-14T12:53:27Z\",\n  \"containerImageInfo\": {}\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -854,7 +853,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"autotest_result\": {},\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {},\n  \"state_update\": {}\n}",
+      "{\n  \"autotest_result\": {},\n  \"log_data\": {\n    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",\n    \"testhaus_url\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"\n  },\n  \"prejob\": {},\n  \"state_update\": {}\n}",
       "[CLEANUP]/tmp_tmp_1/test_runner_result.json"
     ],
     "infra_step": true,
@@ -877,8 +876,7 @@
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"autotest_result\": {},@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"log_data\": {@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@    \"gs_url\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"stainless_url\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@test_runner_result.json@    \"testhaus_url\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@test_runner_result.json@    \"testhaus_url\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  },@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"prejob\": {},@@@",
       "@@@STEP_LOG_LINE@test_runner_result.json@  \"state_update\": {}@@@",
@@ -1204,7 +1202,7 @@
     "name": "execution steps.multi_test_2.set output properties",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJy1zjEOwjAMBVDByMjYOyROWhBSj8ENQhSllZLYiq0i7sANuQy0okyM8IcvT/+5eWx358g9gB8q5oCsJLCohJHBY85YVCgTtMa2yhyVPYB5R32pObbrTvtpEKF5lsWNJQVm7bGSjogxhded4VLxyuG3bnPfrLCv66YrLt1k9KwdERPKwtNHhgX9xztP4Q9oug==\"@@@"
+      "@@@SET_BUILD_PROPERTY@compressed_result@\"eJyTusHIFZRebKWvn5xRlJ+bml+sW5JaXKKbk59erJ+cn5ubn6ebmlemb2RgaKRrYKpraKJvAAW6WAgQMDQ2NpdqZMwoKSkAmQsyrlgPZrpeen5+un4B3DZ9sEWleZlpmakp1HUDAHX7P+Q=\"@@@"
     ]
   },
   {
@@ -1347,12 +1345,11 @@
       "@@@STEP_LOG_LINE@JSON output@{@@@",
       "@@@STEP_LOG_LINE@JSON output@  \"logData\": {@@@",
       "@@@STEP_LOG_LINE@JSON output@    \"gsUrl\": \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"stainlessUrl\": \"https://stainless.corp.google.com/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\",@@@",
-      "@@@STEP_LOG_LINE@JSON output@    \"testhausUrl\": \"https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@JSON output@    \"testhausUrl\": \"https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
       "@@@STEP_LOG_LINE@JSON output@  }@@@",
       "@@@STEP_LOG_LINE@JSON output@}@@@",
       "@@@STEP_LOG_END@JSON output@@@",
-      "@@@STEP_LINK@Logs in Testhaus@https://cros-test-analytics.appspot.com/p/chromeos/logs/browse/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
+      "@@@STEP_LINK@Logs in Testhaus@https://tests.chromeos.goog/p/chromeos/logs/unified/chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337@@@"
     ]
   },
   {
