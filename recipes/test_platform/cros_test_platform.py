@@ -1578,7 +1578,7 @@ def add_container_metadata(api, requests, error_in_requests):
           metadata_url = r.params.metadata.container_metadata_url
           metadata = url_to_metadata_map[metadata_url]
           if metadata:
-            if build_target in metadata.containers:
+            if len(metadata.containers) == 1:
               r.params.execution_param.container_metadata.CopyFrom(metadata)
               step.presentation.logs[
                   'container metadata'] = json_format.MessageToJson(metadata)
@@ -2180,6 +2180,16 @@ def _mock_container_metadata_step(api, tag, build_target='foo-build-target'):
                   }
               }
           }),
+      ))
+
+
+def _mock_empty_container_metadata_step(api, tag,
+                                        build_target='foo-build-target'):
+  return api.step_data(
+      'retrieve container metadata'
+      '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
+      .format(tag=tag), stdout=api.raw_io.output(
+          json.dumps({'containers': {}}),
       ))
 
 
@@ -3869,20 +3879,10 @@ def GenTests(api):
                   'default': _test_request('foo'),
                   'cft-default': _cft_test_request('foo', 'build_target123')
               }, config=_test_config('foo'))),
-      _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
+      _mock_empty_container_metadata_step(api, 'foo',
+                                          'mismatched_build_target'),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'cft-test-execution-with-no-valid-container-metadata-for-build-target-request-only',
-      api.properties(
-          CrosTestPlatformProperties(
-              requests={
-                  'cft-default': _cft_test_request('foo', 'build_target123')
-              }, config=_test_config('foo'))),
-      _mock_container_metadata_step(api, 'foo', 'mismatched_build_target'),
       status='FAILURE',
   )
 

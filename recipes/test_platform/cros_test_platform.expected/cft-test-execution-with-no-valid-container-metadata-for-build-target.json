@@ -168,7 +168,7 @@
     "name": "retrieve container metadata.get container metadata from GS.gsutil cat gs://foo-container-metadata-url",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output@{\"containers\": {\"mismatched_build_target\": {\"images\": {\"some-service\": {\"digest\": \"123abc\"}}}}}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output@{\"containers\": {}}@@@",
       "@@@STEP_LOG_END@raw_io.output@@@"
     ]
   },
