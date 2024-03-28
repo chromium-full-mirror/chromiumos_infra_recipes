@@ -378,12 +378,12 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
     # Only do LFG logic if there are builds to schedule.
     if necessary_child_specs or necessary_chrome_child_specs:
-      self.m.looks_for_green.resize_lfg_lookback(
-          [spec.name for spec in necessary_child_specs] +
-          [spec.name for spec in necessary_chrome_child_specs])
+      necessary_builder_names = [
+          spec.name for spec in necessary_chrome_child_specs
+      ] + [spec.name for spec in necessary_child_specs]
       internal_snapshot, external_snapshot = self._choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
-          self.m.src_state.internal_manifest)
+          self.m.src_state.internal_manifest, necessary_builder_names)
 
     # TODO(b/316010599): Get data from cros-query experiment.
     # Eventually, this will be taken into account when build planning.
@@ -602,7 +602,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
   def _choose_snapshots(
       self, original_internal: GitilesCommit, original_external: GitilesCommit,
-      gerrit_changes: List[GerritChange], internal_manifest: ManifestProject
+      gerrit_changes: List[GerritChange], internal_manifest: ManifestProject,
+      necessary_builder_names: List[str]
   ) -> Tuple[GitilesCommit, GitilesCommit]:
     """Returns chosen manifest snapshot to run CQ with.
 
@@ -611,6 +612,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       original_external: Latest external manifest snapshot.
       gerrit_changes: List of changes to be tested by CQ.
       internal_manifest: Manifest project for the internal snapshot.
+      necessary_build_names: The names of the builders that will be scheduled.
 
     Returns:
       chosen_internal: The internal manifest snapshot that CQ will run with.
@@ -627,6 +629,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       cq_looks_enabled = self.m.looks_for_green.should_lfg(gerrit_changes)
       if cq_looks_enabled:
         cq_looks_log.append('CQ looks experiment enabled')
+        self.m.looks_for_green.resize_lfg_lookback(necessary_builder_names)
         suggested_internal = self.m.looks_for_green.find_green_snapshot()
         if not suggested_internal:
           cq_looks_log.append(
