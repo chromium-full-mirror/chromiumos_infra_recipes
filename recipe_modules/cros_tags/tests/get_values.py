@@ -6,7 +6,7 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-from PB.go.chromium.org.luci.swarming.proto.api.swarming import StringPair
+from PB.go.chromium.org.luci.buildbucket.proto.common import StringPair
 
 DEPS = [
     'recipe_engine/assertions',
