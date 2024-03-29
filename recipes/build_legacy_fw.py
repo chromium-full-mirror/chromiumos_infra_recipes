@@ -331,6 +331,18 @@ class FirmwareBuilder():
       self._firmware_version = versions['VERSION'][1:]
 
   def _setup_board_and_install_packages(self, build_target):
+    # Firmware branches before 14909 are raising a permission error when
+    # writing to /tmp within the chroot, so we'll force the write permission.
+    # Also, we don't have a good way to test when a path does not exist. See:
+    # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
+    # NB: this path construction is a hack and should be removed.
+    chroot_tmp_path = self.m.src_state.workspace_path.join('chroot/tmp')
+    if self.m.path.exists(chroot_tmp_path):  # pragma: nocover
+      chmod_cmd = [
+          'sudo', '-n', 'chmod', '-R', 'u=rwx,g=rwx,o=rwx,-t', chroot_tmp_path
+      ]
+      self.m.step('changing permissions of %s' % chroot_tmp_path, chmod_cmd,
+                  infra_step=True)
     board = build_target.name
     with self.m.step.nest('build {}'.format(board)):
       board_arg = '--board={}'.format(board)

@@ -422,8 +422,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     if not image_types:
       return None
 
-    if common_pb2.IMAGE_TYPE_FACTORY in image_types or common_pb2.IMAGE_TYPE_FIRMWARE in image_types:
-      # Factory and firmware branches before 14909 are raising a permission error when
+    if common_pb2.IMAGE_TYPE_FACTORY in image_types:
+      # Factory branches before 14909 are raising a permission error when
       # writing to /tmp within the chroot, so we'll force the write permission.
       # Also, we don't have a good way to test when a path does not exist. See:
       # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
