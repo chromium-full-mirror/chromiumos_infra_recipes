@@ -4479,7 +4479,7 @@
       "@@@STEP_LOG_LINE@request@        \"deadbeef00000000000000000000000000000004\"@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"timeoutTimestamp\": \"2012-05-15T00:53:45.500Z\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"timeoutTimestamp\": \"2012-05-14T20:53:45.500Z\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
@@ -4512,7 +4512,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"installRequest\": {\n    \"sysroot\": {\n      \"path\": \"/build/amd64-generic\",\n      \"buildTarget\": {\n        \"name\": \"amd64-generic\"\n      }\n    },\n    \"flags\": {\n      \"bazel\": true\n    },\n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\",\n      \"env\": {\n        \"useFlags\": [\n          {\n            \"flag\": \"chrome_internal\"\n          }\n        ]\n      },\n      \"outPath\": \"[CACHE]/cros_chroot/out\"\n    },\n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ],\n    \"resultPath\": {\n      \"path\": {\n        \"path\": \"[CLEANUP]/tmp_tmp_4\",\n        \"location\": 2\n      }\n    },\n    \"binhostLookupServiceData\": {\n      \"snapshotShas\": [\n        \"deadbeef00000000000000000000000000000000\",\n        \"deadbeef00000000000000000000000000000001\",\n        \"deadbeef00000000000000000000000000000002\",\n        \"deadbeef00000000000000000000000000000003\",\n        \"deadbeef00000000000000000000000000000004\"\n      ]\n    },\n    \"timeoutTimestamp\": \"2012-05-15T00:53:45.500Z\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"installRequest\": {\n    \"sysroot\": {\n      \"path\": \"/build/amd64-generic\",\n      \"buildTarget\": {\n        \"name\": \"amd64-generic\"\n      }\n    },\n    \"flags\": {\n      \"bazel\": true\n    },\n    \"chroot\": {\n      \"path\": \"[CACHE]/cros_chroot/chroot\",\n      \"env\": {\n        \"useFlags\": [\n          {\n            \"flag\": \"chrome_internal\"\n          }\n        ]\n      },\n      \"outPath\": \"[CACHE]/cros_chroot/out\"\n    },\n    \"useFlags\": [\n      {\n        \"flag\": \"chrome_internal\"\n      }\n    ],\n    \"resultPath\": {\n      \"path\": {\n        \"path\": \"[CLEANUP]/tmp_tmp_4\",\n        \"location\": 2\n      }\n    },\n    \"binhostLookupServiceData\": {\n      \"snapshotShas\": [\n        \"deadbeef00000000000000000000000000000000\",\n        \"deadbeef00000000000000000000000000000001\",\n        \"deadbeef00000000000000000000000000000002\",\n        \"deadbeef00000000000000000000000000000003\",\n        \"deadbeef00000000000000000000000000000004\"\n      ]\n    },\n    \"timeoutTimestamp\": \"2012-05-14T20:53:45.500Z\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4797,7 +4797,7 @@
       "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000004\"@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"timeoutTimestamp\": \"2012-05-15T00:53:50Z\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"timeoutTimestamp\": \"2012-05-14T20:53:50Z\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -4814,7 +4814,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"sysroot\": {\n    \"path\": \"/build/amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"flags\": {\n    \"useGoma\": true,\n    \"bazel\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ],\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"gomaApproach\": 4,\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\",\n    \"counterzFile\": \"counterz.binaryproto\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_5\",\n      \"location\": 2\n    }\n  },\n  \"binhostLookupServiceData\": {\n    \"snapshotShas\": [\n      \"deadbeef00000000000000000000000000000000\",\n      \"deadbeef00000000000000000000000000000001\",\n      \"deadbeef00000000000000000000000000000002\",\n      \"deadbeef00000000000000000000000000000003\",\n      \"deadbeef00000000000000000000000000000004\"\n    ]\n  },\n  \"timeoutTimestamp\": \"2012-05-15T00:53:50Z\"\n}",
+      "{\n  \"sysroot\": {\n    \"path\": \"/build/amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"amd64-generic\"\n    }\n  },\n  \"flags\": {\n    \"useGoma\": true,\n    \"bazel\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"useFlags\": [\n    {\n      \"flag\": \"chrome_internal\"\n    }\n  ],\n  \"gomaConfig\": {\n    \"gomaDir\": \"[START_DIR]/cipd/goma\",\n    \"gomaApproach\": 4,\n    \"logDir\": {\n      \"dir\": \"[CLEANUP]/goma-logs-_tmp_1\"\n    },\n    \"statsFile\": \"stats.binaryproto\",\n    \"counterzFile\": \"counterz.binaryproto\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_5\",\n      \"location\": 2\n    }\n  },\n  \"binhostLookupServiceData\": {\n    \"snapshotShas\": [\n      \"deadbeef00000000000000000000000000000000\",\n      \"deadbeef00000000000000000000000000000001\",\n      \"deadbeef00000000000000000000000000000002\",\n      \"deadbeef00000000000000000000000000000003\",\n      \"deadbeef00000000000000000000000000000004\"\n    ]\n  },\n  \"timeoutTimestamp\": \"2012-05-14T20:53:50Z\"\n}",
       "[CLEANUP]/build_api_messages_tmp_9/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4872,7 +4872,7 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.call build API script",
-    "timeout": 43200,
+    "timeout": 28800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -4983,7 +4983,7 @@
       "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000004\"@@@",
       "@@@STEP_LOG_LINE@published event@      ]@@@",
       "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"timeoutTimestamp\": \"2012-05-15T00:53:50Z\"@@@",
+      "@@@STEP_LOG_LINE@published event@    \"timeoutTimestamp\": \"2012-05-14T20:53:50Z\"@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"installPackagesResponse\": {},@@@",
       "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:53:51.500Z\",@@@",
@@ -4999,7 +4999,7 @@
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CugDCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSBBgBQAEiSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbDJgChVbU1RBUlRfRElSXS9jaXBkL2dvbWEgBCocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNRACWtIBCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAzCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA0YgYIntLG/QQSABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CugDCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSBBgBQAEiSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbDJgChVbU1RBUlRfRElSXS9jaXBkL2dvbWEgBCocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNRACWtIBCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAzCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA0YgYI3uHF/QQSABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -5034,7 +5034,7 @@
       }
     },
     "name": "install packages.call chromite.api.SysrootService/InstallPackages.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"CugDCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSBBgBQAEiSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbDJgChVbU1RBUlRfRElSXS9jaXBkL2dvbWEgBCocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNRACWtIBCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAzCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA0YgYIntLG/QQSABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"CugDCicKFC9idWlsZC9hbWQ2NC1nZW5lcmljEg8KDWFtZDY0LWdlbmVyaWMSBBgBQAEiSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0KhEKD2Nocm9tZV9pbnRlcm5hbDJgChVbU1RBUlRfRElSXS9jaXBkL2dvbWEgBCocChpbQ0xFQU5VUF0vZ29tYS1sb2dzLV90bXBfMTIRc3RhdHMuYmluYXJ5cHJvdG86FGNvdW50ZXJ6LmJpbmFyeXByb3RvShkKFwoTW0NMRUFOVVBdL3RtcF90bXBfNRACWtIBCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAxCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAyCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAzCihkZWFkYmVlZjAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDA0YgYI3uHF/QQSABoMCN+AxP0EEIDKte4BIgYI4YDE/QTQAtDsgNmu8bWSfNoCV2luc3RhbGwgcGFja2FnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuU3lzcm9vdFNlcnZpY2UvSW5zdGFsbFBhY2thZ2VzfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

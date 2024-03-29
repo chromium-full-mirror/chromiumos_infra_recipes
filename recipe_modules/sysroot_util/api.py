@@ -206,9 +206,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
     name = name or 'install packages'
     if timeout_sec == 'DEFAULT':
-      default_timeout_hours = 12 if bazel_build else 8
-      timeout_sec = (None if self.m.cros_sdk.long_timeouts else
-                     default_timeout_hours * 60 * 60)
+      timeout_sec = None if self.m.cros_sdk.long_timeouts else 8 * 60 * 60
 
     with self.m.step.nest(name) as presentation:
       toolchain_cls = self.m.workspace_util.toolchain_cls_applied
