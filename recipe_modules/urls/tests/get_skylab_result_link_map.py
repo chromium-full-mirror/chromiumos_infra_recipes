@@ -121,7 +121,7 @@ def GenTests(api):
                   ],
                   attempt=1,
               )
-          ], expected_link_map={}),
+          ], expected_link_map={'suite page': 'skylab.whatever'}),
       api.post_process(post_process.DropExpectation),
   )
 

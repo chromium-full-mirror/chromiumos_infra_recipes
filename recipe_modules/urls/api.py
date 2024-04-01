@@ -166,6 +166,8 @@ class UrlsApi(recipe_api.RecipeApi):
             task_result.name + self.get_state_suffix(task_result.state))
         link_map[task_name] = ctp_url
 
+    # If we get here and still do not have any links, return the suite page.
+    link_map = link_map or {'suite page': ctp_url}
     return link_map
 
   @staticmethod

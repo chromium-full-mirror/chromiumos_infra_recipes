@@ -13351,6 +13351,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13359,6 +13360,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13367,6 +13369,7 @@
     "name": "check test results.hw test results.htarget.hw.some-other-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -13375,7 +13378,8 @@
     "name": "check test results.hw test results.htarget.hw.some-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@failed but is not critical@@@"
+      "@@@STEP_TEXT@failed but is not critical@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
     ]
   },
   {
@@ -13722,7 +13726,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n- htarget.hw.bvt-inline\n\n- htarget.hw.some-other-suite\n\n1 non-critical build failed"
+      "humanReason": "3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.bvt-inline\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.some-other-suite\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n1 non-critical build failed"
     },
     "name": "$result"
   }

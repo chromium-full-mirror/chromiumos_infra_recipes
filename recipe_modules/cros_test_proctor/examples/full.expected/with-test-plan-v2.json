@@ -10166,6 +10166,7 @@
     "name": "check test results.hw test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -10183,6 +10184,7 @@
     "name": "check test results.hw test results.htarget.hw.some-other-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/1234@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
