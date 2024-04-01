@@ -2617,7 +2617,9 @@
       "--u",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "-b",
-      "stable"
+      "stable",
+      "-g",
+      "all"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

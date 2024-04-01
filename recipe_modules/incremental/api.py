@@ -115,7 +115,10 @@ class IncrementalApi(RecipeApi):
       with api.repo.m.depot_tools.on_path():
         api.step(
             'Apply LLFG manifest snapshot',
-            [repo_path, 'init', '--u', manifest_url, '-b', 'stable'],
+            [
+                repo_path, 'init', '--u', manifest_url, '-b', 'stable', '-g',
+                'all'
+            ],
         )
       api.repo.sync(
           jobs=REPO_SYNC_JOBS,

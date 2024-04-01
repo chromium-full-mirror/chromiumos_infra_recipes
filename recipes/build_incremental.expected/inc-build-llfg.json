@@ -5326,7 +5326,9 @@
       "--u",
       "https://chromium.googlesource.com/chromiumos/manifest",
       "-b",
-      "stable"
+      "stable",
+      "-g",
+      "all"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
