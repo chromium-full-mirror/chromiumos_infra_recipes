@@ -56,6 +56,18 @@ def GenTests(
   )
 
   yield api.test(
+      'ensure-broken-until-is-inclusive',
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response(end_time=5)],
+          step_name='check if build is broken.buildbucket.search'),
+      api.buildbucket.simulated_search_results(
+          [api.cros_history.build_with_uprev_response(end_time=5)],
+          step_name='check if build is broken.buildbucket.search (2)'),
+      api.properties(expected_result=True),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'no-annealing-build-found-1',
       api.buildbucket.simulated_search_results(
           [], step_name='check if build is broken.buildbucket.search'),

@@ -104,7 +104,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       if not build_annealing or not broken_until_annealing:
         return True
       return (broken_until_annealing.end_time.seconds
-              > build_annealing.end_time.seconds)
+              >= build_annealing.end_time.seconds)
 
   def hours_since_breakage(self, broken_until: str) -> Optional[int]:
     """Determine how long it has been since the tree was fixed.
