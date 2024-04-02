@@ -18,4 +18,4 @@ substitutions:
   _URL: https://chromium.googlesource.com/chromiumos/third_party/kernel
   _REF: beef0fabada
   _FETCH_DEPTH: '2'
-timeout: '1200s'
+timeout: '1800s'
