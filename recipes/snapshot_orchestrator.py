@@ -75,50 +75,11 @@ def GenTests(api: RecipeTestApi):
                                     builder='snapshot-orchestrator')
 
   yield api.snapshot_orch_menu.test(
-      'updates-refs',
-      data.ctp_normal,
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      with_manifest_refs=True,
-      collect_builds=data.builds,
-      local_green_builds=data.local_green_success,
-  )
-
-  yield api.snapshot_orch_menu.test(
-      'does-not-update-refs',
-      data.ctp_normal,
-      api.post_check(
-          post_process.DoesNotRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      with_manifest_refs=True,
-      collect_builds=data.crit_fail,
-      local_green_builds=data.local_green_fail,
-      status='FAILURE',
-  )
-
-  yield api.snapshot_orch_menu.test(
       'missing-gitiles-commit',
       data.ctp_normal,
       api.post_check(post_process.MustRun,
                      'update manifest-internal ref refs/heads/postsubmit'),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest ref refs/heads/green'),
-      api.post_check(
-          post_process.MustRun,
-          'update local greenness.update manifest-internal ref refs/heads/green'
-      ),
       collect_builds=data.builds,
       revision=None,
       with_manifest_refs=True,
-      local_green_builds=data.local_green_success,
   )

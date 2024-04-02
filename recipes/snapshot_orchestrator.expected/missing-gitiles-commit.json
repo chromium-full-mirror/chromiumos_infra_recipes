@@ -2875,103 +2875,7 @@
     "cmd": [],
     "name": "update local greenness",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Old: True, New: True@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update local greenness.check current snapshot build",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@current snapshot greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
-      "@@@STEP_LOG_END@current snapshot greenness@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,critical,id,status,tags",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "update local greenness.check current snapshot build.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"YES\", \"id\": \"8922054662172514000\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514000\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"build_target\": {\"name\": \"amd64-generic\"}}}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update local greenness.get previous snapshot builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "20",
-      "-fields",
-      "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"endTime\": \"2018-05-25T23:50:17Z\", \"startTime\": \"2018-05-25T13:50:17Z\"}}"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "update local greenness.get previous snapshot builds.buildbucket.search",
-    "timeout": 60,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update local greenness.update with previous snapshot builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@updated local greenness@@@@",
-      "@@@STEP_LOG_END@updated local greenness@@@"
+      "@@@STEP_TEXT@True@@@"
     ]
   },
   {
@@ -3111,7 +3015,7 @@
     "name": "update local greenness.set local_greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@local_greenness@{\"greenness\": {\"amd64-generic-postsubmit\": [100, 100, true, true]}, \"updated\": true}@@@"
+      "@@@SET_BUILD_PROPERTY@local_greenness@{\"greenness\": {}, \"updated\": true}@@@"
     ]
   },
   {

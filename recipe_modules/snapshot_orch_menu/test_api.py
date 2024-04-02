@@ -64,7 +64,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     collect_timeout = kwargs.pop('collect_timeout', None)
     collect_after_builds = kwargs.pop('collect_after_builds', [])
     follow_on_orch = kwargs.pop('follow_on_orch', None)
-    local_green_builds = kwargs.pop('local_green_builds', [])
     sheriff_rotations = kwargs.pop('sheriff_rotations', [])
 
     default_props = {
@@ -119,13 +118,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
               [follow_on_orch],
               'run follow on orchestrator.collect'))  # pragma: nocover
 
-    if local_green_builds:
-      args.append(
-          self.m.buildbucket.simulated_search_results(
-              local_green_builds,
-              'update local greenness.check current snapshot build.buildbucket.search'
-          ))  # pragma: nocover
-
     # Call recipe_test_api.test().
     return super().test(name, ret, *args, status=status)
 
@@ -168,8 +160,8 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'builds', 'history_builds',
         'after_builds', 'crit_fail', 'non_crit_fail', 'process_child',
-        'follow_on_orchestrator', 'mixed_build_results', 'local_green_success',
-        'local_green_fail', 'ctp_normal', 'ctp_failure'
+        'follow_on_orchestrator', 'mixed_build_results', 'ctp_normal',
+        'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -244,19 +236,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
                          status='SUCCESS', critical='NO'),
     ]
 
-    local_green_success = [
-        _child_build_msg('amd64-generic', build_id=8922054662172514000,
-                         status='SUCCESS', critical='YES', tags={
-                             'relevance': 'relevant',
-                         })
-    ]
-    local_green_fail = [
-        _child_build_msg('amd64-generic', build_id=8922054662172514000,
-                         status='FAILURE', critical='YES', tags={
-                             'relevance': 'relevant',
-                         })
-    ]
-
     values = [
         orchestrator,
         inflight_orchestrator,
@@ -268,8 +247,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         process_child,
         follow_on_orchestrator,
         mixed_build_results,
-        local_green_success,
-        local_green_fail,
     ]
 
     def _ctp_sched_resp(build_id):
