@@ -6120,6 +6120,7 @@
       "RECIPE_REPO[depot_tools]/gclient.py",
       "sync",
       "--verbose",
+      "--nohooks",
       "--reset",
       "--force",
       "--upstream",
