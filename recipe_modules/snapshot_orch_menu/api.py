@@ -522,7 +522,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     Returns:
       BuildsStatus updated with any test failures.
     """
-    build_target_critical_allowlist = []
     self.m.skylab.apply_qs_account_overrides(self.gerrit_changes)
     gerrit_changes = [] if ignore_gerrit_changes else self.gerrit_changes
 
@@ -548,7 +547,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         container_metadata=container_metadata,
         use_test_plan_v2=gerrit_changes and
         self.m.cros_test_plan_v2.enabled_on_changes(gerrit_changes),
-        build_target_critical_allowlist=build_target_critical_allowlist,
     )
     self._builds_status.update([], test_failures)
 
