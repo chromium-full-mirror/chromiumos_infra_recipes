@@ -88,11 +88,13 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not build_time_delta:
     raise StepFailure('build_time_delta input property is empty')
 
-  gerrit_changes = api.cros_infra_config.gerrit_changes
-  all_changes_are_private = gerrit_changes and all(
-      c.host != EXTERNAL_REVIEW_HOST for c in gerrit_changes)
+  all_gerrit_changes = api.cros_infra_config.gerrit_changes
+  all_changes_are_private = all_gerrit_changes and all(
+      c.host != EXTERNAL_REVIEW_HOST for c in all_gerrit_changes)
   builder_is_private = api.cros_infra_config.config.general.manifest == BuilderConfig.General.PRIVATE
-  gerrit_changes = [c for c in gerrit_changes if c.host == EXTERNAL_REVIEW_HOST]
+  public_gerrit_changes = [
+      c for c in all_gerrit_changes if c.host == EXTERNAL_REVIEW_HOST
+  ]
   if properties.run_relevancy_check:
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
     relevant = False
@@ -102,7 +104,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
           profile=common_pb2.Profile(name='base'))
       _builder_config = BuilderConfig(build_target=_build_target)
       relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
-          [_builder_config], gerrit_changes)
+          [_builder_config], public_gerrit_changes)
       relevant = bool(relevant_builder_configs)
     api.easy.set_properties_step(pointless_build=not relevant,
                                  relevant_build=relevant)
@@ -127,7 +129,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Attempt to build the current snapshot.
   if not failing_build_exception:
     try:
-      api.workspace_util.apply_changes(changes=gerrit_changes,
+      api.workspace_util.apply_changes(changes=all_gerrit_changes,
                                        ignore_missing_projects=True)
       api.build_menu.setup_chroot()
 
