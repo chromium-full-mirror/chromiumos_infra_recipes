@@ -66,6 +66,11 @@ def image_builder_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
+def autoreleaser_no_releasable_changes_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for autoreleaser builds with no releasable changes."""
+  return build.get('summaryMarkdown').startswith('No releasable changes found')
+
+
 def sdk_update_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for SDK update failures."""
   ignorable_summary_markdown_re = [
@@ -147,6 +152,9 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
                    [image_builder_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
                    num_builds=3),
+    StagingReCheck('chromeos', 'staging', r'staging-recipes_autoreleaser_infra',
+                   [autoreleaser_no_releasable_changes_exemption],
+                   num_builds=1),
     StagingReCheck('chromeos', 'staging', r'staging-RoboCrop'),
     StagingReCheck('chromeos', 'staging', r'staging_SourceCacheBuilder'),
     StagingReCheck('chromeos', 'staging', r'staging-StarDoctor'),
