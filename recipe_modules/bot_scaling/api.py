@@ -141,7 +141,7 @@ class BotScalingApi(recipe_api.RecipeApi):
         None if there were errors fetching them.
 
     Returns:
-      ScalingAction, comprehensive action to be taken by RoboCrop.
+      RoboCropAction, comprehensive action to be taken by RoboCrop.
     """
     scaling_actions = []
     missing_bot_fallbacks = []
@@ -181,7 +181,7 @@ class BotScalingApi(recipe_api.RecipeApi):
       configs(Configs): List of GCE Config objects.
 
     Returns:
-      ScalingAction, comprehensive action to be taken by RoboCrop.
+      ScalingAction, action to be taken on a single bot group by RoboCrop.
     """
     bots_requested = self.get_bot_request(demand,
                                           bot_policy.scaling_restriction)

@@ -711,7 +711,7 @@
   * [repo:tests/source_cache_feature_bypass](#recipes-repo_tests_source_cache_feature_bypass)
   * [repo:tests/tmp_manifest](#recipes-repo_tests_tmp_manifest)
   * [result_flow:examples/full](#recipes-result_flow_examples_full)
-  * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and CrOS pools.
+  * [robocrop](#recipes-robocrop) &mdash; Recipe for scaling bots in Chrome and ChromeOS pools.
   * [satlab:tests/basic](#recipes-satlab_tests_basic)
   * [satlab:tests/invalid_image](#recipes-satlab_tests_invalid_image)
   * [service_version:examples/full](#recipes-service_version_examples_full)
@@ -1256,7 +1256,7 @@ Args:
     None if there were errors fetching them.
 
 Returns:
-  ScalingAction, comprehensive action to be taken by RoboCrop.
+  RoboCropAction, comprehensive action to be taken by RoboCrop.
 
 &mdash; **def [get\_scaling\_action](/recipe_modules/bot_scaling/api.py#175)(self, demand, bot_policy, configs):**
 
@@ -1268,7 +1268,7 @@ Args:
   configs(Configs): List of GCE Config objects.
 
 Returns:
-  ScalingAction, comprehensive action to be taken by RoboCrop.
+  ScalingAction, action to be taken on a single bot group by RoboCrop.
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#276)(swarming_stats: SwarmingStats, bot_group: str):**
 
@@ -16194,12 +16194,52 @@ Instead, try to process the other projects, and THEN fail.
 &mdash; **def [RunSteps](/recipe_modules/result_flow/examples/full.py#23)(api):**
 ### *recipes* / [robocrop](/recipes/robocrop.py)
 
-[DEPS](/recipes/robocrop.py#18): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/robocrop.py#21): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-Recipe for scaling bots in Chrome and CrOS pools.
+Recipe for scaling bots in Chrome and ChromeOS pools.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#31)(api: RecipeApi, properties: RoboCropProperties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#34)(api: recipe_api.RecipeApi, properties: robocrop_pb2.RoboCropProperties):**
+
+&mdash; **def [execute\_robocrop\_action](/recipes/robocrop.py#152)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties, action: bot_scaling_pb2.RoboCropAction, original_gce_configs: gce_config_pb2.Configs):**
+
+Execute the given RoboCropAction on the given project.
+
+&mdash; **def [get\_current\_swarming\_stats](/recipes/robocrop.py#125)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
+
+Query Swarming for the current bot and task stats.
+
+&mdash; **def [get\_delta\_gce\_configs](/recipes/robocrop.py#178)(original_gce_configs: gce_config_pb2.Configs, updated_gce_configs: gce_config_pb2.Configs):**
+
+Calculate how much each VM group was changed by.
+
+Args:
+  original_gce_configs: The gce_configs before this build.
+  updated_gce_configs: The gce_configs resulting from this build.
+
+Returns:
+  A dict of {prefix: delta}, where "prefix" is a VM config's prefix, and
+  "delta" is a descriptive string of how that VM's current_amount changed.
+
+&mdash; **def [get\_gce\_configs](/recipes/robocrop.py#94)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
+
+Return the current GCE configs from gce_provider.
+
+&mdash; **def [get\_robocrop\_action](/recipes/robocrop.py#137)(api: recipe_api.RecipeApi, bot_policy: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs, swarming_stats: bot_scaling_api.SwarmingStats):**
+
+Determine the comprehensive scaling actions to take.
+
+&mdash; **def [get\_robocrop\_projects](/recipes/robocrop.py#42)(properties: robocrop_pb2.RoboCropProperties):**
+
+Find which projects this RoboCrop build should scale.
+
+&mdash; **def [scale\_bot\_groups\_for\_project](/recipes/robocrop.py#63)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties):**
+
+Do all the bot scaling for a single RoboCrop project.
+
+&mdash; **def [update\_bot\_policies](/recipes/robocrop.py#109)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs):**
+
+Update the bot policy configs to reflect ScalingRestriction values.
 ### *recipes* / [satlab:tests/basic](/recipe_modules/satlab/tests/basic.py)
 
 [DEPS](/recipe_modules/satlab/tests/basic.py#8): [satlab](#recipe_modules-satlab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path]
