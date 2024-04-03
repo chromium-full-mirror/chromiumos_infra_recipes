@@ -12,7 +12,6 @@ DEPS = [
 
 def RunSteps(api):
   api.cros_sdk.create_chroot()
-  api.cros_sdk.update_chroot()
 
 
 def GenTests(api):
