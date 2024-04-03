@@ -300,11 +300,12 @@ class FirmwareBuilder():
       if self.properties.chroot_outside:
         self.m.cros_sdk.link_chroot(self.m.src_state.workspace_path,
                                     self._chroot)
-      cmd = ['./update_chroot']
-      if self._is_after('6480.0.0'):
-        if not self.properties.disable_toolchain_boards:
-          cmd.extend(['--toolchain_boards', ','.join(self._boards)])
-      self.sdk_call('update SDK', cmd=cmd)
+      if not self._is_after('15840.0.0'):
+        cmd = ['./update_chroot']
+        if self._is_after('6480.0.0'):
+          if not self.properties.disable_toolchain_boards:
+            cmd.extend(['--toolchain_boards', ','.join(self._boards)])
+        self.sdk_call('update SDK', cmd=cmd)
       yield
     finally:
       if self.properties.chroot_outside:
