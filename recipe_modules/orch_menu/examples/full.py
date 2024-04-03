@@ -46,7 +46,6 @@ def RunSteps(api, properties):
   api.checkpoint.register()
 
   build = api.buildbucket.build
-  build.input.experiments.extend(properties.experiments)
   with api.orch_menu.setup_orchestrator() as config:
     api.assertions.assertEqual(config, api.orch_menu.config)
     if not config:
@@ -83,11 +82,6 @@ def RunSteps(api, properties):
         api.orch_menu.is_dry_run,
         api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
     )
-
-    if api.orch_menu.chromium_src_ref_cl_tag:
-      api.assertions.assertEqual(
-          api.orch_menu.chrome_module_child_props['version'],
-          api.orch_menu.chromium_src_ref_cl_tag)
 
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
@@ -788,19 +782,6 @@ def GenTests(api):
       cq=True,
   )
 
-  yield api.orch_menu.test(
-      'chromium-src-ref-cq-cl-tag', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      api.buildbucket.ci_build(
-          project='chromeos', bucket='postsubmit',
-          builder='postsubmit-orchestrator',
-          tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
-      collect_builds=data.builds)
-
   input_props = orch_menu_properties(
       update_manifest_refs={'test': 'refs/heads/test'})
   input_props.update({
@@ -946,9 +927,6 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'snapshot-orch-v2-test-planning',
-      api.properties(
-          FullProperties(
-              experiments=['chromeos.orch_menu.plan_tests_using_snapshot'])),
       api.buildbucket.simulated_search_results(
           [annealing_build_with_found_changes],
           'find changes in snapshot.buildbucket.search'),
@@ -965,6 +943,7 @@ def GenTests(api):
                        'enabling test planning v2'),
       api.post_process(post_process.DropExpectation),
       builder='snapshot-orchestrator',
+      experiments=['chromeos.orch_menu.plan_tests_using_snapshot'],
       input_properties={
           '$chromeos/cros_test_plan_v2': {
               'generate_ctpv1_format':
@@ -981,13 +960,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'snapshot-orch-v2-test-planning-annealing-not-found',
-      api.properties(
-          FullProperties(
-              experiments=['chromeos.orch_menu.plan_tests_using_snapshot'])),
       api.expect_exception('RuntimeError'),
       api.post_process(
           post_process.ResultReasonRE,
           'no annealing build found for snapshot_id snapshot-HEAD-SHA'),
       api.post_process(post_process.DropExpectation),
       builder='snapshot-orchestrator',
+      experiments=['chromeos.orch_menu.plan_tests_using_snapshot'],
   )

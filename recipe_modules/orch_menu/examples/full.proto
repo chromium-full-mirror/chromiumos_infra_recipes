@@ -9,13 +9,10 @@ package recipe_modules.chromeos.orch_menu.examples;
 import "go.chromium.org/luci/buildbucket/proto/build.proto";
 import "recipe_engine/result.proto";
 
+// NEXT ID: 11
 message FullProperties {
   // Whether to expect a missing config.
   bool expect_missing_config = 1;
-
-  // Test footers to pass to git_footers.  This is a newline separated string of
-  // footer values.
-  string test_footers = 2;
 
   // The expected value for completed_builds.
   repeated buildbucket.v2.Build expected_completed_builds = 3;
@@ -38,6 +35,5 @@ message FullProperties {
   // Whether to skip paygen.
   bool skip_paygen = 9;
 
-  // Any experiments to include.
-  repeated string experiments = 10;
+  reserved 2, 10;
 }

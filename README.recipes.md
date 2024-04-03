@@ -646,6 +646,7 @@
   * [orch_menu:tests/builds_status](#recipes-orch_menu_tests_builds_status)
   * [orch_menu:tests/categorize_builds](#recipes-orch_menu_tests_categorize_builds)
   * [orch_menu:tests/child_build_info](#recipes-orch_menu_tests_child_build_info) &mdash; Tests for the add_child_build_info_to_output_property function.
+  * [orch_menu:tests/chrome_module_child_props](#recipes-orch_menu_tests_chrome_module_child_props) &mdash; Unit tests for chrome_module_child_props().
   * [orch_menu:tests/collect](#recipes-orch_menu_tests_collect)
   * [orch_menu:tests/collect_and_check_build_results](#recipes-orch_menu_tests_collect_and_check_build_results)
   * [orch_menu:tests/no_necessary_builds](#recipes-orch_menu_tests_no_necessary_builds)
@@ -15622,6 +15623,14 @@ Tests for the plan_and_wait_for_images function.
 Tests for the add_child_build_info_to_output_property function.
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#25)(api):**
+### *recipes* / [orch\_menu:tests/chrome\_module\_child\_props](/recipe_modules/orch_menu/tests/chrome_module_child_props.py)
+
+[DEPS](/recipe_modules/orch_menu/tests/chrome_module_child_props.py#10): [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Unit tests for chrome_module_child_props().
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/chrome_module_child_props.py#19)(api):**
 ### *recipes* / [orch\_menu:tests/collect](/recipe_modules/orch_menu/tests/collect.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/collect.py#15): [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
