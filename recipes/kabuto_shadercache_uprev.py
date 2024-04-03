@@ -65,7 +65,6 @@ def RunSteps(api: RecipeApi,
   with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(timeout_sec=None)
-    api.cros_sdk.update_chroot(timeout_sec=None)
 
     return DoRunSteps(api, properties)
 
@@ -274,7 +273,7 @@ def GenTests(api: RecipeTestApi) -> None:
               '{"build_shader_cache": {"soft_timeout_seconds": 3}}',
               '--input-manifest-branch=release-R122-12345.B',
               'dlc-upload-and-uprev', '--updated-artifacts-path',
-              '[CLEANUP]/tmp_tmp_2'
+              '[CLEANUP]/tmp_tmp_1'
           ],
       ),
       api.post_process(post_process.DropExpectation),
