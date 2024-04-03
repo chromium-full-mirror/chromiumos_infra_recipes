@@ -6,9 +6,10 @@
 
 """Wrapper functions for calling the swarming CLI."""
 
-import typing
-from datetime import datetime
+import datetime
+from typing import Iterable, Optional
 
+from recipe_engine import config_types
 from recipe_engine import recipe_api
 
 _PKG_DEFAULT_REF = 'latest'
@@ -19,20 +20,29 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
-    self._cipd_bin = None
+
+    # Local path to the installed `swarming` CLI binary.
+    self._cipd_bin: Optional[config_types.Path] = None
+
+  def initialize(self) -> None:
+    """Perform one-time module setup.
+
+    This method is automatically called by the recipe engine once at the start
+    of every recipe that depends on this module.
+    """
+    self._ensure_cipd_bin()
 
   def _ensure_cipd_bin(self):
-    """Ensures the CIPD swarming client is installed."""
-    if not self._cipd_bin:
-      pkg_name = 'infra/tools/luci/swarming/${platform}'
-      pkg_ref = _PKG_DEFAULT_REF
-      with self.m.step.nest('ensure swarming bin from CIPD'):
-        with self.m.context(infra_steps=True):
-          cipd_dir = self.m.path['start_dir'].join('cipd')
-          pkgs = self.m.cipd.EnsureFile()
-          pkgs.add_package(pkg_name, pkg_ref)
-          self.m.cipd.ensure(cipd_dir, pkgs)
-          self._cipd_bin = cipd_dir.join('swarming')
+    """Ensure that the CIPD swarming client is installed."""
+    pkg_name = 'infra/tools/luci/swarming/${platform}'
+    pkg_ref = _PKG_DEFAULT_REF
+    with self.m.step.nest('ensure swarming bin from CIPD'):
+      with self.m.context(infra_steps=True):
+        cipd_dir = self.m.path['start_dir'].join('cipd')
+        pkgs = self.m.cipd.EnsureFile()
+        pkgs.add_package(pkg_name, pkg_ref)
+        self.m.cipd.ensure(cipd_dir, pkgs)
+        self._cipd_bin = cipd_dir.join('swarming')
 
   def _run_bin(self, name, cmd, test_stdout=None):
     """Return a swarming command step from the CIPD binary.
@@ -41,14 +51,13 @@ class SwarmingCli(recipe_api.RecipeApi):
       name: (str): name of the step.
       cmd (list[str]): swarming client subcommand to run.
     """
-    self._ensure_cipd_bin()
     return self.m.easy.stdout_json_step(name, [self._cipd_bin] + list(cmd),
                                         test_stdout=test_stdout,
                                         infra_step=True)
 
   def get_bot_counts(self, swarming_instance: str,
-                     dimensions: typing.Optional[typing.Iterable[str]] = None,
-                     bot_group: typing.Optional[str] = None):
+                     dimensions: Optional[Iterable[str]] = None,
+                     bot_group: Optional[str] = None):
     """Retrieves the count of bots from Swarming based on dimensions.
 
     Args:
@@ -72,7 +81,7 @@ class SwarmingCli(recipe_api.RecipeApi):
 
   def _swarming_time_to_datetime(self, time_str):
     format_str = '%Y-%m-%dT%H:%M:%S.%fZ'
-    return datetime.strptime(time_str, format_str)
+    return datetime.datetime.strptime(time_str, format_str)
 
   def get_max_pending_time(self, dimensions, lookback_hours, swarming_instance):
     """Retrieves the list of tasks from Swarming based on dimensions.
@@ -119,9 +128,9 @@ class SwarmingCli(recipe_api.RecipeApi):
         test_stdout=lambda: self.test_api.swarming_task_list_test_data(self.m))
     return step
 
-  def get_task_counts(self, dimensions: typing.Iterable[str], state: str,
+  def get_task_counts(self, dimensions: Iterable[str], state: str,
                       lookback_hours: int, swarming_instance: str,
-                      bot_group: typing.Optional[str] = None):
+                      bot_group: Optional[str] = None):
     """Retrieves the count of tasks from Swarming based on filters.
 
     Args:

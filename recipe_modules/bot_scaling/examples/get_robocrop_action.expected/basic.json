@@ -1,20 +1,5 @@
 [
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
-      "--format",
-      "text"
-    ],
-    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
-    "timeout": 180
-  },
-  {
     "cmd": [],
     "name": "ensure swarming bin from CIPD"
   },
@@ -47,6 +32,21 @@
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/infradata/config/+/HEAD/configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
+      "--format",
+      "text"
+    ],
+    "name": "fetch HEAD:configs/bot-scaling/generated/bot_policy_chromeos.binaryproto",
+    "timeout": 180
   },
   {
     "cmd": [

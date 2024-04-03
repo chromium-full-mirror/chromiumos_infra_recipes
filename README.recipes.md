@@ -10909,11 +10909,11 @@ Returns:
 
 Wrapper functions for calling the swarming CLI.
 
-#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SwarmingCli](/recipe_modules/swarming_cli/api.py#18)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that queries Swarming via the CLI.
 
-&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#49)(self, swarming_instance: str, dimensions: typing.Optional[typing.Iterable[str]]=None, bot_group: typing.Optional[str]=None):**
+&mdash; **def [get\_bot\_counts](/recipe_modules/swarming_cli/api.py#58)(self, swarming_instance: str, dimensions: Optional[Iterable[str]]=None, bot_group: Optional[str]=None):**
 
 Retrieves the count of bots from Swarming based on dimensions.
 
@@ -10923,7 +10923,7 @@ Args:
       Swarming.
   bot_group: The name of the bot group for which to get the count.
 
-&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#77)(self, dimensions, lookback_hours, swarming_instance):**
+&mdash; **def [get\_max\_pending\_time](/recipe_modules/swarming_cli/api.py#86)(self, dimensions, lookback_hours, swarming_instance):**
 
 Retrieves the list of tasks from Swarming based on dimensions.
 
@@ -10936,7 +10936,7 @@ Args:
 Returns:
   (float) Max pending time in hours.
 
-&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#122)(self, dimensions: typing.Iterable[str], state: str, lookback_hours: int, swarming_instance: str, bot_group: typing.Optional[str]=None):**
+&mdash; **def [get\_task\_counts](/recipe_modules/swarming_cli/api.py#131)(self, dimensions: Iterable[str], state: str, lookback_hours: int, swarming_instance: str, bot_group: Optional[str]=None):**
 
 Retrieves the count of tasks from Swarming based on filters.
 
@@ -10948,7 +10948,7 @@ Args:
   swarming_instance: The name of the Swarming instance to query.
   bot_group: The name of the bot group for which to get the count.
 
-&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#98)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
+&mdash; **def [get\_task\_list](/recipe_modules/swarming_cli/api.py#107)(self, dimensions, state, lookback_hours, swarming_instance, limit=None):**
 
 Retrieves the list of tasks from Swarming based on dimensions and state.
 
@@ -10959,6 +10959,13 @@ Args:
   swarming_instance(str): string containing the name of the Swarming
     instance to query.
   limit (int): Number of tasks to return.
+
+&mdash; **def [initialize](/recipe_modules/swarming_cli/api.py#27)(self):**
+
+Perform one-time module setup.
+
+This method is automatically called by the recipe engine once at the start
+of every recipe that depends on this module.
 ### *recipe_modules* / [sysroot\_archive](/recipe_modules/sysroot_archive)
 
 [DEPS](/recipe_modules/sysroot_archive/__init__.py#9): [cros\_build\_api](#recipe_modules-cros_build_api), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
