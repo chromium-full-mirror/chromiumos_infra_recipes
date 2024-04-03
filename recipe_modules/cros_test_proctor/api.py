@@ -281,7 +281,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         pres.step_text = ('no tests were necessary')
         pres.properties['no_tests_needed'] = True
 
-    with self.m.step.nest('check test results'):
+    with self.m.step.nest('check test results') as pres:
+      # Output a link to the CTP build. Some orchestrators (ie postsubmit)
+      # schedule multiple CTP builds; do not output a link in this case.
+      if not self._skylab_task_per_build_target and len(
+          test_results.skylab) > 0:
+        pres.links[
+            'cros_test_platform build'] = self.m.urls.get_skylab_task_url(
+                test_results.skylab[0].task)
       with self.m.step.nest('manual exoneration'):
         manually_exonerated_hw_results, manually_exonerated_hw_tests = (
             self.m.exonerate.exonerate_hwtests(test_results.skylab))

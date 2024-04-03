@@ -11922,7 +11922,10 @@
   },
   {
     "cmd": [],
-    "name": "check test results"
+    "name": "check test results",
+    "~followup_annotations": [
+      "@@@STEP_LINK@cros_test_platform build@https://cr-buildbucket.appspot.com/build/4321@@@"
+    ]
   },
   {
     "cmd": [],

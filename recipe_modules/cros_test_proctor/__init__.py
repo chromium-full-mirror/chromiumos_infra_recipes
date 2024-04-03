@@ -30,6 +30,7 @@ DEPS = [
     'skylab',
     'skylab_results',
     'src_state',
+    'urls',
 ]
 
 
