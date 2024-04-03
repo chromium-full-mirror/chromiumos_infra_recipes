@@ -253,7 +253,6 @@ class GeneratorRun:
       if self.properties.init_sdk:
         with self.m.context(cwd=self.workspace_path):
           self.m.cros_sdk.create_chroot()
-          self.m.cros_sdk.update_chroot()
 
       if not self.retry_only_run:
         self._modified_projects = self.create_local_uprev()
