@@ -607,6 +607,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "unmanaged_p2".
     * ctp_fwd_task_name: Suite scheduler config name,
         e.g. "Bluetooth_Sa_Perbuild".
+    * modem_type: modem type of a DUT,
+        e.g. "MODEM_TYPE_FIBOCOMM_L850GL".
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -729,6 +731,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
                                       api.buildbucket.swarming_bot_dimensions)
   if hwid_sku:
     base_tags.append(('hwid_sku', hwid_sku[0]))
+
+  modem_type = api.cros_tags.get_values('label-modem_type',
+                                        api.buildbucket.swarming_bot_dimensions)
+  if modem_type:
+    base_tags.append(('modem_type', modem_type[0]))
 
   cbx = api.cros_tags.get_values('label-cbx',
                                  api.buildbucket.swarming_bot_dimensions)
@@ -3604,6 +3611,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-carrier': 'fake-carrier',
               'label-cbx': 'True',
               'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
+              'label-modem_type': 'MODEM_TYPE_FIBOCOMM_L850GL',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
