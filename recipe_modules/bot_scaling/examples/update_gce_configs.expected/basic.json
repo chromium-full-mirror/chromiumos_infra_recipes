@@ -129,10 +129,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-first"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Update",
+    "name": "gce-provider.config.Update bot group prefix-first",
     "stdin": "{\"config\": {\"attributes\": {\"label\": {\"robocrop_bot_group\": \"cq0\"}}, \"currentAmount\": 15, \"prefix\": \"prefix-first\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -153,10 +153,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-second"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Update (2)",
+    "name": "gce-provider.config.Update bot group prefix-second",
     "stdin": "{\"config\": {\"attributes\": {\"label\": {\"robocrop_bot_group\": \"cq0\"}}, \"currentAmount\": 15, \"prefix\": \"prefix-second\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -177,10 +177,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-third"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Update (3)",
+    "name": "gce-provider.config.Update bot group prefix-third",
     "stdin": "{\"config\": {\"attributes\": {\"label\": {\"robocrop_bot_group\": \"cq0\"}}, \"currentAmount\": 12, \"prefix\": \"prefix-third\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -201,10 +201,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-fourth"
     ],
     "infra_step": true,
-    "name": "gce-provider.config.Update (4)",
+    "name": "gce-provider.config.Update bot group prefix-fourth",
     "stdin": "{\"config\": {\"attributes\": {\"label\": {\"robocrop_bot_group\": \"cq0\"}}, \"currentAmount\": 18, \"prefix\": \"prefix-fourth\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",

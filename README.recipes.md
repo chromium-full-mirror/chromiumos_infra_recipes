@@ -70,7 +70,7 @@
   * [factory_util](#recipe_modules-factory_util) &mdash; A module for util functions associated with factory builds.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
   * [future_utils](#recipe_modules-future_utils)
-  * [gce_provider](#recipe_modules-gce_provider)
+  * [gce_provider](#recipe_modules-gce_provider) &mdash; A module that interacts with GCE Provider.
   * [gcloud](#recipe_modules-gcloud) &mdash; API for gcloud commands.
   * [gerrit](#recipe_modules-gerrit) &mdash; APIs for managing Gerrit changes.
   * [git](#recipe_modules-git) &mdash; API for working with git.
@@ -6781,7 +6781,9 @@ Returns:
 [DEPS](/recipe_modules/gce_provider/__init__.py#6): [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
 
 
-#### **class [GceProvider](/recipe_modules/gce_provider/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+A module that interacts with GCE Provider.
+
+#### **class [GceProvider](/recipe_modules/gce_provider/api.py#28)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module that interacts with the GCE Provider config service.
 
@@ -6809,7 +6811,7 @@ Args:
   config(Config): GCE Provider config object
 
 Returns:
-  Config, GCE Provider Config defintion with updated values.
+  Config, GCE Provider Config definition with updated values.
 ### *recipe_modules* / [gcloud](/recipe_modules/gcloud)
 
 [DEPS](/recipe_modules/gcloud/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [overlayfs](#recipe_modules-overlayfs), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]

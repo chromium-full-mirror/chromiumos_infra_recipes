@@ -1047,10 +1047,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-first"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update",
+    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update bot group prefix-first",
     "stdin": "{\"config\": {\"amount\": {\"max\": 100, \"min\": 15}, \"attributes\": {\"disk\": [{\"image\": \"global/images/chromeos-bionic-20031500-6b26172a85c\", \"size\": \"750\"}], \"label\": {\"robocrop_bot_group\": \"cq\"}, \"machineType\": \"zones/{{.Zone}}/machineTypes/custom-32-65536\", \"metadata\": [{\"fromText\": \"\"}], \"minCpuPlatform\": \"Intel Broadwell\", \"networkInterface\": [{\"network\": \"global/networks/machine-provider-bot-network\"}], \"project\": \"chromeos-bot\", \"serviceAccount\": [{\"email\": \"test-email@developer.gserviceaccount.com\", \"scope\": [\"https://www.googleapis.com/auth/devstorage.full_control\", \"https://www.googleapis.com/auth/gerritcodereview\", \"https://www.googleapis.com/auth/logging.write\", \"https://www.googleapis.com/auth/monitoring\", \"https://www.googleapis.com/auth/pubsub\", \"https://www.googleapis.com/auth/userinfo.email\"]}], \"zone\": \"us-central1-b\"}, \"currentAmount\": 25, \"lifetime\": {\"seconds\": \"86400\"}, \"prefix\": \"prefix-first\", \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", \"swarming\": \"https://chromeos-swarming.appspot.com\"}, \"id\": \"prefix-first\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1114,10 +1114,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-second"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update (2)",
+    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update bot group prefix-second",
     "stdin": "{\"config\": {\"amount\": {\"max\": 100, \"min\": 15}, \"attributes\": {\"disk\": [{\"image\": \"global/images/chromeos-bionic-20031500-6b26172a85c\", \"size\": \"750\"}], \"label\": {\"robocrop_bot_group\": \"cq\"}, \"machineType\": \"zones/{{.Zone}}/machineTypes/custom-32-65536\", \"metadata\": [{\"fromText\": \"\"}], \"minCpuPlatform\": \"Intel Broadwell\", \"networkInterface\": [{\"network\": \"global/networks/machine-provider-bot-network\"}], \"project\": \"chromeos-bot\", \"serviceAccount\": [{\"email\": \"test-email@developer.gserviceaccount.com\", \"scope\": [\"https://www.googleapis.com/auth/devstorage.full_control\", \"https://www.googleapis.com/auth/gerritcodereview\", \"https://www.googleapis.com/auth/logging.write\", \"https://www.googleapis.com/auth/monitoring\", \"https://www.googleapis.com/auth/pubsub\", \"https://www.googleapis.com/auth/userinfo.email\"]}], \"zone\": \"us-central1-b\"}, \"currentAmount\": 30, \"lifetime\": {\"seconds\": \"86400\"}, \"prefix\": \"prefix-second\", \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", \"swarming\": \"https://chromeos-swarming.appspot.com\"}, \"id\": \"prefix-second\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1181,10 +1181,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-third"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update (3)",
+    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update bot group prefix-third",
     "stdin": "{\"config\": {\"amount\": {\"max\": 100, \"min\": 15}, \"attributes\": {\"disk\": [{\"image\": \"global/images/chromeos-bionic-20031500-6b26172a85c\", \"size\": \"750\"}], \"label\": {\"robocrop_bot_group\": \"cq\"}, \"machineType\": \"zones/{{.Zone}}/machineTypes/custom-32-65536\", \"metadata\": [{\"fromText\": \"\"}], \"minCpuPlatform\": \"Intel Broadwell\", \"networkInterface\": [{\"network\": \"global/networks/machine-provider-bot-network\"}], \"project\": \"chromeos-bot\", \"serviceAccount\": [{\"email\": \"test-email@developer.gserviceaccount.com\", \"scope\": [\"https://www.googleapis.com/auth/devstorage.full_control\", \"https://www.googleapis.com/auth/gerritcodereview\", \"https://www.googleapis.com/auth/logging.write\", \"https://www.googleapis.com/auth/monitoring\", \"https://www.googleapis.com/auth/pubsub\", \"https://www.googleapis.com/auth/userinfo.email\"]}], \"zone\": \"us-central1-b\"}, \"currentAmount\": 25, \"lifetime\": {\"seconds\": \"86400\"}, \"prefix\": \"prefix-third\", \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", \"swarming\": \"https://chromeos-swarming.appspot.com\"}, \"id\": \"prefix-third\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1248,10 +1248,10 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update"
+      "config.Configuration.Update bot group prefix-fourth"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update (4)",
+    "name": "scale bot groups for ChromeOS.update GCE Provider configs.gce-provider.config.Update bot group prefix-fourth",
     "stdin": "{\"config\": {\"amount\": {\"max\": 100, \"min\": 15}, \"attributes\": {\"disk\": [{\"image\": \"global/images/chromeos-bionic-20031500-6b26172a85c\", \"size\": \"750\"}], \"label\": {\"robocrop_bot_group\": \"cq\"}, \"machineType\": \"zones/{{.Zone}}/machineTypes/custom-32-65536\", \"metadata\": [{\"fromText\": \"\"}], \"minCpuPlatform\": \"Intel Broadwell\", \"networkInterface\": [{\"network\": \"global/networks/machine-provider-bot-network\"}], \"project\": \"chromeos-bot\", \"serviceAccount\": [{\"email\": \"test-email@developer.gserviceaccount.com\", \"scope\": [\"https://www.googleapis.com/auth/devstorage.full_control\", \"https://www.googleapis.com/auth/gerritcodereview\", \"https://www.googleapis.com/auth/logging.write\", \"https://www.googleapis.com/auth/monitoring\", \"https://www.googleapis.com/auth/pubsub\", \"https://www.googleapis.com/auth/userinfo.email\"]}], \"zone\": \"us-central1-b\"}, \"currentAmount\": 20, \"lifetime\": {\"seconds\": \"86400\"}, \"prefix\": \"prefix-fourth\", \"revision\": \"4414d646bb94ed7b9129aa980bdf0794cc5ebc59\", \"swarming\": \"https://chromeos-swarming.appspot.com\"}, \"id\": \"prefix-fourth\", \"updateMask\": {\"paths\": [\"config.current_amount\"]}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

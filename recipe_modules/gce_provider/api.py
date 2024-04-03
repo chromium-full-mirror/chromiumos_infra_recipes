@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
-
 # Copyright 2020 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
-from collections import namedtuple
+
+"""A module that interacts with GCE Provider."""
+
+import collections
 
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config, Configs
-#from PB.go.chromium.org.luci.gce.api.config.v1 import service as service_pb2
-
 from recipe_engine import recipe_api
 from google.protobuf import json_format
 
@@ -18,10 +18,11 @@ class NoneConfigFailure(recipe_api.StepFailure):
   """Error class for when GCE Provider returns None for a Configuration.Get"""
 
   def __init__(self, config_prefix):
-    super().__init__('No config found for prefix {}'.format(config_prefix))
+    super().__init__(f'No config found for prefix {config_prefix}')
 
 
-ConfigResponse = namedtuple('ConfigResponse', ['configs', 'missing_configs'])
+ConfigResponse = collections.namedtuple('ConfigResponse',
+                                        ['configs', 'missing_configs'])
 
 
 class GceProvider(recipe_api.RecipeApi):
@@ -29,7 +30,6 @@ class GceProvider(recipe_api.RecipeApi):
 
   Depends on 'prpc' binary available in $PATH:
   https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
-
   """
 
   def update_gce_config(self, bid, config):
@@ -40,7 +40,7 @@ class GceProvider(recipe_api.RecipeApi):
       config(Config): GCE Provider config object
 
     Returns:
-      Config, GCE Provider Config defintion with updated values.
+      Config, GCE Provider Config definition with updated values.
     """
     req = {
         'id': bid,
@@ -50,7 +50,7 @@ class GceProvider(recipe_api.RecipeApi):
         },
     }
     step = self._run(
-        'Update', req,
+        f'Update bot group {bid}', req,
         test_stdout=lambda: self.test_api.get_update_config_data(config))
     return json_format.ParseDict(step, Config(), ignore_unknown_fields=True)
 
