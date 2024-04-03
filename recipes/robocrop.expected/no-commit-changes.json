@@ -643,6 +643,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/swarming",
       "bots",
@@ -655,9 +662,9 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get bot count query result for cq",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get bot count query result for cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -686,9 +693,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get task count query result for cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
@@ -713,9 +720,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (2)",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get task count query result for cq (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
@@ -740,9 +747,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (3)",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get task count query result for cq (3)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -764,9 +771,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get task count query result for cq (4)",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get task count query result for cq (4)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]

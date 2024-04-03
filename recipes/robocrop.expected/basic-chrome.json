@@ -254,6 +254,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "scale bot groups for Chrome.get current swarming stats.query swarming for try-test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/swarming",
       "bots",
@@ -264,9 +271,9 @@
       "pool=chromium.tests.robocrop"
     ],
     "infra_step": true,
-    "name": "scale bot groups for Chrome.get current swarming stats.get bot count query result for try-test",
+    "name": "scale bot groups for Chrome.get current swarming stats.query swarming for try-test.get bot count query result for try-test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -286,9 +293,9 @@
       "pool:chromium.tests.robocrop"
     ],
     "infra_step": true,
-    "name": "scale bot groups for Chrome.get current swarming stats.get task count query result for try-test",
+    "name": "scale bot groups for Chrome.get current swarming stats.query swarming for try-test.get task count query result for try-test",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -308,9 +315,9 @@
       "pool:chromium.tests.robocrop"
     ],
     "infra_step": true,
-    "name": "scale bot groups for Chrome.get current swarming stats.get task count query result for try-test (2)",
+    "name": "scale bot groups for Chrome.get current swarming stats.query swarming for try-test.get task count query result for try-test (2)",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]

@@ -220,7 +220,7 @@ def GenTests(
       'bot-fallbacks',
       api.properties(commit_changes=True),
       api.override_step_data(
-          'scale bot groups for ChromeOS.get current swarming stats.get bot count query result for cq',
+          'scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get bot count query result for cq',
           retcode=1),
       api.post_check(
           post_process.MustRun,

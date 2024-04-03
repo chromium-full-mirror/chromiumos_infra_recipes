@@ -642,6 +642,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/swarming",
       "bots",
@@ -654,9 +662,9 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "scale bot groups for ChromeOS.get current swarming stats.get bot count query result for cq",
+    "name": "scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get bot count query result for cq",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@json.output (invalid)@@@",
       "@@@STEP_LOG_LINE@json.output (exception)@No JSON object could be decoded@@@",
       "@@@STEP_LOG_END@json.output (exception)@@@",
@@ -1303,7 +1311,7 @@
   },
   {
     "failure": {
-      "humanReason": "Infra Failure: Step('scale bot groups for ChromeOS.get current swarming stats.get bot count query result for cq') (retcode: 1)"
+      "humanReason": "Infra Failure: Step('scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get bot count query result for cq') (retcode: 1)"
     },
     "name": "$result"
   }

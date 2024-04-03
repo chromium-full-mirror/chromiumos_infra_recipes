@@ -34,6 +34,10 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "query swarming for cq0"
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/swarming",
       "bots",
@@ -42,8 +46,9 @@
       "-count"
     ],
     "infra_step": true,
-    "name": "get bot count query result for cq0",
+    "name": "query swarming for cq0.get bot count query result for cq0",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -61,8 +66,9 @@
       "RUNNING"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq0",
+    "name": "query swarming for cq0.get task count query result for cq0",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -80,8 +86,9 @@
       "PENDING"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq0 (2)",
+    "name": "query swarming for cq0.get task count query result for cq0 (2)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]

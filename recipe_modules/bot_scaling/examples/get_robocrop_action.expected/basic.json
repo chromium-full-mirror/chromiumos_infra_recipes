@@ -49,6 +49,10 @@
     "timeout": 180
   },
   {
+    "cmd": [],
+    "name": "query swarming for cq"
+  },
+  {
     "cmd": [
       "[START_DIR]/cipd/swarming",
       "bots",
@@ -61,8 +65,9 @@
       "bot_size=large"
     ],
     "infra_step": true,
-    "name": "get bot count query result for cq",
+    "name": "query swarming for cq.get bot count query result for cq",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"busy\": \"21\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
@@ -91,8 +96,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq",
+    "name": "query swarming for cq.get task count query result for cq",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
@@ -117,8 +123,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq (2)",
+    "name": "query swarming for cq.get task count query result for cq (2)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"count\": \"23\",@@@",
       "@@@STEP_LOG_LINE@json.output@  \"now\": \"2020-03-27T19:08:08.207587\"@@@",
@@ -143,8 +150,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq (3)",
+    "name": "query swarming for cq.get task count query result for cq (3)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]
@@ -166,8 +174,9 @@
       "bot_size:large"
     ],
     "infra_step": true,
-    "name": "get task count query result for cq (4)",
+    "name": "query swarming for cq.get task count query result for cq (4)",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@"
     ]

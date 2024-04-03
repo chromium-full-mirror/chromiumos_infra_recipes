@@ -298,27 +298,28 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       Bot and task stats fetched from Swarming.
     """
-    dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
-    bot_stats_hold = None
-    task_stats_hold = []
-    for dim in dimensions:
-      # Bot counts get duplicated, due to the way dimensions are associated,
-      # therefore we only need to count the first returned count.
-      if not bot_stats_hold:
-        bot_stats_hold = _bot_swarming_stats(
-            policy.bot_group,
-            self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim,
-                                               policy.bot_group),
-            policy.scaling_restriction.bot_floor,
-            policy.scaling_restriction.bot_ceiling)
-      for state in TASK_STATES:
-        task_stats_hold = _update_task_stats(
-            policy.bot_group, state, task_stats_hold,
-            self.m.swarming_cli.get_task_counts(dim, state,
-                                                policy.lookback_hours,
-                                                policy.swarming_instance,
-                                                policy.bot_group))
-    return SwarmingStats(bot_stats=bot_stats_hold, task_stats=task_stats_hold)
+    with self.m.step.nest(f'query swarming for {policy.bot_group}'):
+      dimensions = self.unpack_policy_dimensions(policy.swarming_dimensions)
+      bot_stats_hold = None
+      task_stats_hold = []
+      for dim in dimensions:
+        # Bot counts get duplicated, due to the way dimensions are associated,
+        # therefore we only need to count the first returned count.
+        if not bot_stats_hold:
+          bot_stats_hold = _bot_swarming_stats(
+              policy.bot_group,
+              self.m.swarming_cli.get_bot_counts(policy.swarming_instance, dim,
+                                                 policy.bot_group),
+              policy.scaling_restriction.bot_floor,
+              policy.scaling_restriction.bot_ceiling)
+        for state in TASK_STATES:
+          task_stats_hold = _update_task_stats(
+              policy.bot_group, state, task_stats_hold,
+              self.m.swarming_cli.get_task_counts(dim, state,
+                                                  policy.lookback_hours,
+                                                  policy.swarming_instance,
+                                                  policy.bot_group))
+      return SwarmingStats(bot_stats=bot_stats_hold, task_stats=task_stats_hold)
 
   def get_swarming_stats(self, bot_policy_config):
     """Determines the current Swarming stats per bot group.
