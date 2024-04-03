@@ -134,24 +134,22 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       api.build_menu.setup_chroot()
 
       # Get the prebuilts metadata to use with the current snapshot.
-      branch = 'stable' if properties.use_llfg else 'snapshot'
-      manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
-      remotes = api.git.ls_remote([f'refs/remotes/origin/{branch}'],
-                                  repo_url=manifest_dir)
-      current_commit_hash = remotes[0].hash if remotes else None
-      current_commit = GitilesCommit(
-          host=api.src_state.gitiles_commit.host,
-          project=api.src_state.gitiles_commit.project, id=current_commit_hash)
-      api.src_state.gitiles_commit = current_commit
-      package_indexes = api.cros_prebuilts.get_package_index_info(
-          config.artifacts.prebuilts_gs_bucket,
-          snapshot=current_commit if current_commit_hash else None)
+      if properties.use_llfg:
+        manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
+        remotes = api.git.ls_remote(['refs/remotes/origin/stable'],
+                                    repo_url=manifest_dir)
+        current_commit_hash = remotes[0].hash if remotes else None
+        current_commit = GitilesCommit(
+            host=api.src_state.gitiles_commit.host,
+            project=api.src_state.gitiles_commit.project,
+            id=current_commit_hash)
+        if current_commit_hash:
+          api.src_state.gitiles_commit = current_commit
 
       # b/321760005: toolchain files like `package.provided` may need to be
       # updated.
       api.build_menu.bootstrap_sysroot(config=config)
-      api.build_menu.install_packages(config=config,
-                                      package_indexes=package_indexes)
+      api.build_menu.install_packages(config=config)
     except StepFailure as sf:
       failing_build_exception = sf
 
