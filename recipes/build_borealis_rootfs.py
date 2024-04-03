@@ -69,7 +69,6 @@ def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
   with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(timeout_sec=None)
-    api.cros_sdk.update_chroot(timeout_sec=None)
 
     return DoRunSteps(api, properties)
 
@@ -327,7 +326,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_process(post_process.StepCommandContains,
                        'upload VM imaage.uprev_dlc', [
                            '--archive',
-                           'borealis-dlc-105.2012.05.14.125330.tar.xz',
+                           'borealis-dlc-105.2012.05.14.125327.tar.xz',
                        ]),
       api.post_process(post_process.DropExpectation),
   )

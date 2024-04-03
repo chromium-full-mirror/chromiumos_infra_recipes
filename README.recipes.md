@@ -12092,7 +12092,7 @@ Recipe for building a BuildTarget image for Bisector.
 
 Recipe for building a Borealis rootfs image.
 
-&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#77)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#76)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
 
 &mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#51)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
 ### *recipes* / [build\_chromiumos](/recipes/build_chromiumos.py)
