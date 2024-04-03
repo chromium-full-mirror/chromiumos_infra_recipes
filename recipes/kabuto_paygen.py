@@ -24,6 +24,7 @@ DEPS = [
     'depot_tools/depot_tools',
     'depot_tools/gsutil',
     'build_menu',
+    'cros_build_api',
     'cros_sdk',
     'cros_source',
     'easy',
@@ -70,7 +71,9 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
   with api.build_menu.configure_builder(commit=commit, missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(timeout_sec=None)
-    api.cros_sdk.update_chroot(timeout_sec=None)
+    # TODO(pobega): Drop this entirely once kabuto no longer supports <=M125.
+    if not api.cros_build_api.is_at_least_version(15838, 0, 0):
+      api.cros_sdk.update_chroot(timeout_sec=None)
 
     return DoRunSteps(api, properties)
 
