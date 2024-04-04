@@ -609,6 +609,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "Bluetooth_Sa_Perbuild".
     * modem_type: modem type of a DUT,
         e.g. "MODEM_TYPE_FIBOCOMM_L850GL".
+    * channel: the channel of the builds,
+        e.g. "BETA", "DEV", "CANARY", "STABLE".
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -636,6 +638,10 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   ctp_fwd_task_name = api.cros_tags.get_values('ctp-fwd-task-name')
   if ctp_fwd_task_name:
     base_tags.append(('ctp_fwd_task_name', ctp_fwd_task_name[0]))
+
+  channel = api.cros_tags.get_values('branch-trigger')
+  if channel:
+    base_tags.append(('channel', channel[0]))
 
   # Get the testplan id (name) from the buildbucket tags.
   testplan_id = api.cros_tags.get_values('test-plan-id')
@@ -3599,6 +3605,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'test-plan-id': 'ltl_testplan',
               'qs_account': 'unmanaged_p2',
               'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
+              'branch-trigger': 'DEV',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
