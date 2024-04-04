@@ -6,9 +6,12 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
+from google.protobuf import json_format
+
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -187,32 +190,60 @@ def GenTests(api):
   )
 
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
-  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
-      'aggregateMetric': 75,
-      'aggregateBuildMetric': 75,
-  }
-  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
-      'greenness': {
-          'builder2-snapshot': [0, 0, True, True],
-          'builder3-snapshot': [100, 100, True, True],
-          'builder5-snapshot': [100, 100, True, True],
-          'builder6-snapshot': [100, 100, True, True],
-      }
-  }
+  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties[
+      'greenness'] = json_format.MessageToDict(
+          greenness_pb2.AggregateGreenness(
+              aggregate_build_metric=75, aggregate_metric=75,
+              builder_greenness=[
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder2-snapshot',
+                      metric=0,
+                      build_metric=0,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder3-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder5-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder6-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+              ]))
 
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
-  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
-      'aggregateMetric': 100,
-      'aggregateBuildMetric': 100,
-  }
-  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
-      'greenness': {
-          'builder2-snapshot': [100, 100, True, True],
-          'builder3-snapshot': [100, 100, True, True],
-          'builder5-snapshot': [100, 100, True, True],
-          'builder6-snapshot': [100, 100, True, True]
-      }
-  }
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties[
+      'greenness'] = json_format.MessageToDict(
+          greenness_pb2.AggregateGreenness(
+              aggregate_build_metric=100, aggregate_metric=100,
+              builder_greenness=[
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder2-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder3-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder5-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder6-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+              ]))
 
   yield api.test(
       'wait-for-green-experiment-feature',

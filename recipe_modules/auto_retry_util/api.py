@@ -127,15 +127,15 @@ class WaitForGreenStats:
   # of builders that are retryable because they are now green.
   retryable_builders: List[str] = dataclasses.field(default_factory=list)
 
-  # The names of builders that failed for the CQ build, but do not have local
-  # greenness data published. This is possible because local greenness is not
-  # published for some builders, see LOCAL_EXCLUDE_VARIANTS in greenness/api.py.
+  # The names of builders that failed for the CQ build, but do not have
+  # greenness data published. This is possible because not all CQ builders have
+  # a snapshot equivalent (e.g. postsubmit testing for the buildtest builders
+  # runs in an informational workflow).
   # If there are builders that are now retryable (as defined by the
-  # retryable_builders field), assume that the ones without local greenness
-  # reported are also retryable.
+  # retryable_builders field), assume that the ones without greenness reported
+  # are also retryable.
   #
-  # TODO(b/303454780): Remove this once local greenness is published for all
-  # builders.
+  # TODO(b/299561567): See if we can address this.
   no_snapshot_data_retryable_builders: List[str] = dataclasses.field(
       default_factory=list)
 
@@ -399,21 +399,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             cq_run.
             id].wait_for_green_stats.retryable_builders = now_green_retryable_builders
 
-        # Local greenness is not published for some builders, see
-        # LOCAL_EXCLUDE_VARIANTS in greenness/api.py. As a workaround to prevent
-        # this missing data from blocking retries, if there are builders that
-        # are now retryable, assume that the ones without local greenness
-        # reported are also retryable.
+        # Some CQ builders do not have snapshot equivalents (e.g. postsubmit
+        # testing for the buildtest builders runs in an informational workflow).
+        # As a workaround to prevent this missing data from blocking retries, if
+        # there are builders that are now retryable, assume that the ones
+        # without local greenness reported are also retryable.
         #
-        # TODO(b/303454780): Remove this once local greenness is published for all
-        # builders.
+        # TODO(b/299561567): See if we can address this.
         if now_green_retryable_builders:
           current_greenness = self._latest_greenness if _lfg_skipped(
               cq_run) else self._lfg_greenness
           assert current_greenness, 'Must have found a current snapshot if now_green_retryable_builders is non-empty'
           no_snapshot_data_builders = [
               b for b in unsuccessful_builders
-              if _snapshot_builder(b) not in current_greenness.local_greenness
+              if _snapshot_builder(b) not in current_greenness.builder_greenness
           ]
           self.per_build_stats[
               cq_run.
@@ -631,10 +630,10 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       pres.step_text = f'{step_text_prefix}: using snapshot {current_greenness.commit_sha}'
       pres.logs['current greenness'] = str(current_greenness)
 
-      local_greenness = current_greenness.local_greenness
+      greenness = current_greenness.builder_greenness
       for builder in failed_on_snapshot_builders:
-        if builder in local_greenness and local_greenness[
-            builder].build_score == 100:
+        if builder in greenness and greenness[builder].get(
+            'buildMetric') == '100':
           now_green_builders.append(builder)
 
       pres.logs['now green builders'] = now_green_builders
@@ -688,7 +687,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
                 bucket='postsubmit',
                 builder='snapshot-orchestrator',
                 retries=0,
-                use_local_greenness=True,
             )
 
       builder_to_greenness = self._snapshot_greenness_cache[commit]
@@ -699,10 +697,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
               builder_to_greenness)
 
-      non_green_builders = {
-          b: g for b, g in builder_to_greenness.items() if g.build_score < 100
-      }
-      return non_green_builders.keys()
+      non_green_builders = [
+          b for b, g in builder_to_greenness.items()
+          if g.get('buildMetric') != '100'
+      ]
+      return non_green_builders
 
   def _get_sdk_failures(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns the names of builders that have SDK failures.

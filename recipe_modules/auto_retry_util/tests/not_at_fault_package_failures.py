@@ -5,9 +5,12 @@
 
 """Tests retrying package failures unrelated to the changes under test."""
 
+from google.protobuf import json_format
+
 from recipe_engine import post_process
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
@@ -36,15 +39,17 @@ def RunSteps(api):
 def GenTests(api):
 
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
-  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
-      'aggregateMetric': 100,
-      'aggregateBuildMetric': 100,
-  }
-  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
-      'greenness': {
-          'builder1-snapshot': [100, 100, True, True],
-      }
-  }
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties[
+      'greenness'] = json_format.MessageToDict(
+          greenness_pb2.AggregateGreenness(
+              aggregate_build_metric=100, aggregate_metric=100,
+              builder_greenness=[
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder1-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  )
+              ]))
 
   child_build_info = [
       {
@@ -202,15 +207,16 @@ def GenTests(api):
   )
 
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
-  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['greenness'] = {
-      'aggregateMetric': 75,
-      'aggregateBuildMetric': 75,
-  }
-  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties['local_greenness'] = {
-      'greenness': {
-          'builder1-snapshot': [0, 0, True, True],
-      }
-  }
+  FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties[
+      'greenness'] = json_format.MessageToDict(
+          greenness_pb2.AggregateGreenness(
+              aggregate_build_metric=0, aggregate_metric=0, builder_greenness=[
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder1-snapshot',
+                      metric=0,
+                      build_metric=0,
+                  )
+              ]))
 
   yield api.test(
       'unrelated-package-failure-but-red-on-snapshot',
