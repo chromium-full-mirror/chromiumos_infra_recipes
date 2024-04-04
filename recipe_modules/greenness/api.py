@@ -20,9 +20,6 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 GreennessTuple = collections.namedtuple(
     'GreennessTuple', ['score', 'build_score', 'critical', 'relevant'])
 
-# Builder variants to exclude for CQ.
-EXCLUDE_VARIANTS = ['-asan-', '-ubsan-', '-kernel-']
-
 # Builder variants to exclude for local greenness.
 LOCAL_EXCLUDE_VARIANTS = [
     '-asan-',
