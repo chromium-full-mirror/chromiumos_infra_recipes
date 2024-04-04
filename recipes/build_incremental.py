@@ -41,6 +41,7 @@ DEPS = [
     'incremental',
     'repo',
     'src_state',
+    'sysroot_util',
     'workspace_util',
 ]
 
@@ -132,6 +133,15 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       api.workspace_util.apply_changes(changes=all_gerrit_changes,
                                        ignore_missing_projects=True)
       api.build_menu.setup_chroot()
+      # If sysroot was deleted, there is no incrementality to test, so stop the
+      # build. Make this check mockable for testing.
+      check_sysroot_step = api.step(
+          'verify sysroot existence',
+          cmd=['test', '-d',
+               api.sysroot_util.sysroot.path], raise_on_failure=False)
+      if check_sysroot_step.retcode != 0:
+        return RawResult(status=common.SUCCESS,
+                         summary_markdown='All local state was cleaned.')
 
       # Get the prebuilts metadata to use with the current snapshot.
       if properties.use_llfg:
@@ -178,6 +188,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
+      api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
       api.post_check(post_process.MustRun, 'install packages'),
@@ -210,6 +221,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'use_llfg': True
           })),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
+      api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
       api.post_check(post_process.MustRun, 'install packages'),
@@ -239,6 +251,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': False})),
+      api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
@@ -289,6 +302,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'cop_enabled': True})),
+      api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -326,6 +340,25 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
       api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
       api.post_check(post_process.DoesNotRun, 'install packages'),
+      build_target='amd64-generic',
+      status='SUCCESS',
+  )
+
+  # Build with sysroot cleaned by setup_chroot.
+  yield api.build_menu.test(
+      'inc-sysroot-cleaned',
+      api.properties(
+          **{'$chromeos/cros_relevance': {
+              'force_postsubmit_relevance': True
+          }}),
+      api.buildbucket.ci_build(builder='cq-orchestrator'),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
+      api.step_data('verify sysroot existence', retcode=1),
+      api.post_check(post_process.MustRun, 'update sdk'),
+      api.post_check(post_process.MustRun, 'update sdk (2)'),
+      api.post_check(post_process.MustRun, 'install toolchain'),
+      api.post_check(post_process.DoesNotRun, 'install toolchain (2)'),
       build_target='amd64-generic',
       status='SUCCESS',
   )

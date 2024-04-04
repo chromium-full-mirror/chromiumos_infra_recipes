@@ -6365,6 +6365,27 @@
   },
   {
     "cmd": [
+      "test",
+      "-d",
+      "/build/amd64-generic"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "verify sysroot existence"
+  },
+  {
+    "cmd": [
       "git",
       "ls-remote",
       "[CLEANUP]/chromiumos_workspace/.repo/manifests",
