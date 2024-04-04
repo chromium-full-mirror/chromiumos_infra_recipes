@@ -275,7 +275,16 @@ class BotScalingApi(recipe_api.RecipeApi):
 
   @staticmethod
   def get_swarming_demand(swarming_stats: SwarmingStats, bot_group: str) -> int:
-    """Return the demand for bots in a bot group.
+    """Return the number of bots needed to cover current tasks in a bot group.
+
+    In general, we need enough bots to cover all scheduled tasks. If a bot is
+    busy, it can't pick up a scheduled task. This includes not only bots that
+    are running tasks, but also bots that are dead, quarantined, and so on.
+    Thus, the demand for bots is equal to ${the number of busy bots} plus ${the
+    number of pending tasks}.
+
+    Note: This count does NOT include the min_idle number of bots, which is
+    specified by the BotPolicy.
 
     Args:
       swarming_stats: Dataclass containing bot and task stats from Swarming.
@@ -284,10 +293,17 @@ class BotScalingApi(recipe_api.RecipeApi):
     Returns:
       The current demand for bots in the group.
     """
-    return sum(
-        (stat.count
-         for stat in swarming_stats.task_stats
-         if stat.bot_group == bot_group and stat.task_state in TASK_STATES))
+    num_busy_bots = 0
+    for bot_stat in swarming_stats.bot_stats:
+      if bot_stat.bot_group == bot_group:
+        num_busy_bots = bot_stat.busy
+        break
+    num_pending_tasks = 0
+    for task_stat in swarming_stats.task_stats:
+      if task_stat.bot_group == bot_group and task_stat.task_state == 'PENDING':
+        num_pending_tasks = task_stat.count
+        break
+    return num_busy_bots + num_pending_tasks
 
   def _make_swarming_calls(self, policy: BotPolicy) -> SwarmingStats:
     """Makes the individual Swarming calls via CLI.

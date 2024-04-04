@@ -164,7 +164,7 @@
   * [bot_scaling:examples/get_quota_usage](#recipes-bot_scaling_examples_get_quota_usage)
   * [bot_scaling:examples/get_robocrop_action](#recipes-bot_scaling_examples_get_robocrop_action)
   * [bot_scaling:examples/get_scaling_action](#recipes-bot_scaling_examples_get_scaling_action)
-  * [bot_scaling:examples/get_swarming_demand](#recipes-bot_scaling_examples_get_swarming_demand)
+  * [bot_scaling:examples/get_swarming_demand](#recipes-bot_scaling_examples_get_swarming_demand) &mdash; Test case for api.
   * [bot_scaling:examples/get_swarming_stats](#recipes-bot_scaling_examples_get_swarming_stats)
   * [bot_scaling:examples/update_bot_policy_config](#recipes-bot_scaling_examples_update_bot_policy_config)
   * [bot_scaling:examples/update_gce_configs](#recipes-bot_scaling_examples_update_gce_configs)
@@ -1204,7 +1204,7 @@ Args:
 Returns:
   int, number of bots to request.
 
-&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#348)(self, bot_policy_config):**
+&mdash; **def [get\_current\_gce\_config](/recipe_modules/bot_scaling/api.py#364)(self, bot_policy_config):**
 
 Retrieves the current configuration from GCE Provider service.
 
@@ -1216,7 +1216,7 @@ Returns:
   ConfigResponse (named_tuple), GCE Provider config definitions and missing
     configs.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#365)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_gce\_bots\_configured](/recipe_modules/bot_scaling/api.py#381)(region_restrictions: List[BotPolicy.RegionRestriction], config_map: Dict[(str, Config)]):**
 
 Sums the total number of configured bots per bot policy.
 
@@ -1272,7 +1272,16 @@ Returns:
 
 &emsp; **@staticmethod**<br>&mdash; **def [get\_swarming\_demand](/recipe_modules/bot_scaling/api.py#276)(swarming_stats: SwarmingStats, bot_group: str):**
 
-Return the demand for bots in a bot group.
+Return the number of bots needed to cover current tasks in a bot group.
+
+In general, we need enough bots to cover all scheduled tasks. If a bot is
+busy, it can't pick up a scheduled task. This includes not only bots that
+are running tasks, but also bots that are dead, quarantined, and so on.
+Thus, the demand for bots is equal to ${the number of busy bots} plus ${the
+number of pending tasks}.
+
+Note: This count does NOT include the min_idle number of bots, which is
+specified by the BotPolicy.
 
 Args:
   swarming_stats: Dataclass containing bot and task stats from Swarming.
@@ -1281,7 +1290,7 @@ Args:
 Returns:
   The current demand for bots in the group.
 
-&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#324)(self, bot_policy_config):**
+&mdash; **def [get\_swarming\_stats](/recipe_modules/bot_scaling/api.py#340)(self, bot_policy_config):**
 
 Determines the current Swarming stats per bot group.
 
@@ -1292,7 +1301,7 @@ Args:
 Returns:
   SwarmingStats: Dataclass containing bot and task stats.
 
-&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#408)(bot_policy_config: BotPolicyCfg):**
+&emsp; **@staticmethod**<br>&mdash; **def [reduce\_bot\_policy\_config\_for\_table](/recipe_modules/bot_scaling/api.py#424)(bot_policy_config: BotPolicyCfg):**
 
 Reduces bot_policy_config fields prior to sending to bb tables.
 
@@ -1302,7 +1311,7 @@ Args:
 Returns:
   Scaled-down config that only includes data needed for Plx.
 
-&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#461)(dimensions):**
+&emsp; **@staticmethod**<br>&mdash; **def [unpack\_policy\_dimensions](/recipe_modules/bot_scaling/api.py#477)(dimensions):**
 
 Method to iterate through dimensions and return possible combinations.
 
@@ -1312,7 +1321,7 @@ Args:
 Returns:
   list, product of all swarming dimensions for querying.
 
-&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#383)(bot_policy_config: BotPolicyCfg, configs: Configs):**
+&emsp; **@staticmethod**<br>&mdash; **def [update\_bot\_policy\_limits](/recipe_modules/bot_scaling/api.py#399)(bot_policy_config: BotPolicyCfg, configs: Configs):**
 
 Sums the min and max bot numbers per bot policy.
 
@@ -1324,7 +1333,7 @@ Returns:
   The original bot_policy_config, updated to reflect ScalingRestriction
   values.
 
-&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#432)(self, robocrop_actions, configs):**
+&mdash; **def [update\_gce\_configs](/recipe_modules/bot_scaling/api.py#448)(self, robocrop_actions, configs):**
 
 Updates each GCE Provider config that is actionable.
 
@@ -12019,10 +12028,29 @@ Unit tests for the drop_cpu_cores function.
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_scaling_action.py#22)(api):**
 ### *recipes* / [bot\_scaling:examples/get\_swarming\_demand](/recipe_modules/bot_scaling/examples/get_swarming_demand.py)
 
-[DEPS](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#10): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#14): [bot\_scaling](#recipe_modules-bot_scaling), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#18)(api):**
+Test case for api.bot_scaling.get_swarming_demand().
+
+&mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#43)(api: recipe_api.RecipeApi):**
+
+&mdash; **def [make\_irrelevant\_bot\_stats](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#20)(bot_group: str):**
+
+Return a BotStats object whose numbers don't matter.
+
+This will help us ensure that we only calculate demand for the bot group we
+care about, and ignore all others. The state numbers are so large that if we
+accidentally use them, it should be immediately obvious that something is
+wrong.
+
+&mdash; **def [make\_irrelevant\_task\_stats](/recipe_modules/bot_scaling/examples/get_swarming_demand.py#32)(bot_group: str, task_state: str):**
+
+Return a TaskStats object whose numbers don't matter.
+
+This will help us ensure that we only calculate demand for the bot group we
+care about, and ignore all others. The count number is so large that if we
+accidentally use it, it should be immediately obvious that something is wrong.
 ### *recipes* / [bot\_scaling:examples/get\_swarming\_stats](/recipe_modules/bot_scaling/examples/get_swarming_stats.py)
 
 [DEPS](/recipe_modules/bot_scaling/examples/get_swarming_stats.py#10): [bot\_scaling](#recipe_modules-bot_scaling), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
