@@ -116,21 +116,22 @@ def GenTests(api):
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search (2)'),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'set fault attributes.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "postsubmit-orchestrator", "project": "chromeos"}}'
-          ],
-      ),
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "postsubmit-orchestrator",\n            "project": "chromeos"\n          }'
+          ]),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'set fault attributes.buildbucket.search (2)',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/orchsnapshotcommitsha"}]}'
-          ],
-      ))
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },\n'\
+              '          "tags": [\n            {\n              "key": "buildset",\n       '\
+              '       "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/orchsnapshotcommitsha"\n            }\n          ]\n        }'
+          ])
+      )
 
   yield api.test(
       'lfg-snapshot-commit-sha',
@@ -146,18 +147,20 @@ def GenTests(api):
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search'),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'set fault attributes.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "postsubmit-orchestrator", "project": "chromeos"}}'
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "postsubmit-orchestrator",\n            "project": "chromeos"\n          }'
           ],
       ),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'set fault attributes.buildbucket.search (2)',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/lfgcommitsha"}]}'
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },\n'\
+              '          "tags": [\n            {\n              "key": "buildset",\n       '\
+              '       "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/lfgcommitsha"\n            }\n          ]\n        }'
           ],
       ))

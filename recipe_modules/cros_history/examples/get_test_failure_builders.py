@@ -31,7 +31,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'latest-has-no-failed-tests',
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_failed_tests(
               ['my-little-builder', 'your-little-builder'], build_id=2,
               create_time=12345),
@@ -42,7 +42,7 @@ def GenTests(api):
 
   yield api.test(
       'latest-has-failed-tests',
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_failed_tests(
               ['my-little-builder', 'your-little-builder'], build_id=1,
               create_time=12346),
@@ -56,7 +56,7 @@ def GenTests(api):
 
   yield api.test(
       'latest-missing-test-summary-field',
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           build_pb2.Build(id=1, create_time=timestamp_pb2.Timestamp(
               seconds=12346), start_time=timestamp_pb2.Timestamp(seconds=12347),
                           end_time=timestamp_pb2.Timestamp(seconds=12348),
@@ -68,6 +68,6 @@ def GenTests(api):
 
   yield api.test(
       'no-past-builds',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], 'find matching builds.buildbucket.search'),
       api.properties(**{'expected_builder_names': []}))

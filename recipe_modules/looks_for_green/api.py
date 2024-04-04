@@ -246,7 +246,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = bucket or self._greenness_bucket
     predicate.builder.builder = builder or self._greenness_builder
-    return self.m.buildbucket.search([predicate], limit=limit, fields=fields,
+    return self.m.buildbucket.search(predicate, limit=limit, fields=fields,
                                      timeout=60)
 
   def _parse_snapshot_result(self,

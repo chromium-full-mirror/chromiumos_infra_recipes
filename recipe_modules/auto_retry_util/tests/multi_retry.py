@@ -151,11 +151,12 @@ def GenTests(api):
       ], step_name='filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search'
                                               ),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}'
+            '"predicate": {\n          "builder": {\n            "bucket": "cq",\n            "builder": "cq-orchestrator",\n            "project": "chromeos"\n          },'\
+            '\n          "tags": [\n            {\n              "key": "cq_equivalent_cl_group_key",\n              "value": "group_key1"\n            },\n            {\n              "key": "cq_triggerer",\n              "value": "chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com"\n            }\n          ]\n        }'
           ]),
       api.post_process(post_process.DropExpectation),
   )
@@ -252,11 +253,12 @@ def GenTests(api):
       ], step_name='filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search'
                                               ),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'filter candidates.filter multi-retry eligible runs.find previous auto-retries for 11.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{\"builder\": {\"bucket\": \"cq\", \"builder\": \"cq-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"cq_equivalent_cl_group_key\", \"value\": \"group_key1\"}, {\"key\": \"cq_triggerer\", \"value\": \"chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com\"}]}'
+            '"predicate": {\n          "builder": {\n            "bucket": "cq",\n            "builder": "cq-orchestrator",\n            "project": "chromeos"\n          },'\
+            '\n          "tags": [\n            {\n              "key": "cq_equivalent_cl_group_key",\n              "value": "group_key1"\n            },\n            {\n              "key": "cq_triggerer",\n              "value": "chromeos-auto-retry@chromeos-bot.iam.gserviceaccount.com"\n            }\n          ]\n        }'
           ]),
       api.post_process(post_process.DropExpectation),
   )

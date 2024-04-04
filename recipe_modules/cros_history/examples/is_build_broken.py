@@ -33,10 +33,10 @@ def GenTests(
 ) -> Generator[recipe_test_api.TestData, None, None]:
   yield api.test(
       'build-is-not-broken',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=1)],
           step_name='check if build is broken.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=3)],
           step_name='check if build is broken.buildbucket.search (2)'),
       api.properties(expected_result=False),
@@ -45,10 +45,10 @@ def GenTests(
 
   yield api.test(
       'build-is-broken',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=5)],
           step_name='check if build is broken.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=3)],
           step_name='check if build is broken.buildbucket.search (2)'),
       api.properties(expected_result=True),
@@ -57,10 +57,10 @@ def GenTests(
 
   yield api.test(
       'ensure-broken-until-is-inclusive',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=5)],
           step_name='check if build is broken.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=5)],
           step_name='check if build is broken.buildbucket.search (2)'),
       api.properties(expected_result=True),
@@ -69,7 +69,7 @@ def GenTests(
 
   yield api.test(
       'no-annealing-build-found-1',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], step_name='check if build is broken.buildbucket.search'),
       api.properties(expected_result=True),
       api.post_process(post_process.DropExpectation),

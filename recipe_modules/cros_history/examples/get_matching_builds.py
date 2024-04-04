@@ -37,6 +37,6 @@ def GenTests(api):
   yield api.test(
       'basic', api.buildbucket.build(build_msg(400, create_time=400)),
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [build_msg(100, create_time=100)],
           'find matching builds.buildbucket.search'))

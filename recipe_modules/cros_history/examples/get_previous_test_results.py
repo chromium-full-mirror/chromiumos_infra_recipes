@@ -33,7 +33,7 @@ def GenTests(api):
 
   yield api.test(
       'no-previous-builds',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], step_name=('get previous test results'
                          '.find matching builds.buildbucket.search')),
       api.properties(expected_vm_results_count=0, expected_hw_results_count=0),
@@ -41,7 +41,7 @@ def GenTests(api):
 
   yield api.test(
       'build-without-prev-test-output-property',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.empty_build_with_test_build_info('test-builder')],
           step_name=('get previous test results'
                      '.find matching builds.buildbucket.search')),
@@ -50,7 +50,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_test_build_ids_properties(
               hw_ids=['1', '2'], vm_ids=['3', '4'])
       ], step_name=('get previous test results'

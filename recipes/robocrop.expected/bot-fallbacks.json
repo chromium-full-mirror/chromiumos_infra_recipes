@@ -791,23 +791,42 @@
   {
     "cmd": [
       "bb",
-      "ls",
+      "batch",
       "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "name": "scale bot groups for ChromeOS.compute scaling actions.estimate time between builds.search for builds in past hour",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}, \"predicate\": {\"builder\": {}, \"createTime\": {\"endTime\": \"1969-12-31T23:59:00Z\", \"startTime\": \"1969-12-31T22:59:00Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {},@@@",
+      "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"endTime\": \"1969-12-31T23:59:00Z\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"1969-12-31T22:59:00Z\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

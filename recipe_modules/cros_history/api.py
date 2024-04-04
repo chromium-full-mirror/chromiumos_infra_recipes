@@ -77,8 +77,12 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # should be fast.
     predicate = builds_service_pb2.BuildPredicate(tags=tags)
     predicate.builder.project = 'chromeos'
-    builds = self.m.buildbucket.search(
-        predicate, limit=1, url_title_fn=self.m.naming.get_build_title)
+    # This is actually a search with one predicate, to be consistent with
+    # _get_patch_history() which must use search_with_multiple_predicates()
+    # and to make setup tests easily, search_with_multiple_predicates()
+    # here as well.
+    builds = self.m.buildbucket.search_with_multiple_predicates(
+        [predicate], limit=1, url_title_fn=self.m.naming.get_build_title)
     if not builds:
       return None
     assert len(builds) == 1
@@ -481,7 +485,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
                     cq_equivalent_cl_group_key=group_key),
                 create_time=create_time, build=build_range))
 
-    builds = self.m.buildbucket.search(
+    builds = self.m.buildbucket.search_with_multiple_predicates(
         predicates, limit=limit, url_title_fn=self.m.naming.get_build_title)
 
     # Filter out builds that were run on a superset of the input patches.

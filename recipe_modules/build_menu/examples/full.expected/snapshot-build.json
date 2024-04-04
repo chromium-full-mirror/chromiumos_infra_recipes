@@ -4075,26 +4075,7 @@
     "cmd": [],
     "name": "postsubmit relevance check",
     "~followup_annotations": [
-      "@@@STEP_TEXT@build is not relevant@@@",
-      "@@@STEP_LOG_LINE@relevance log@Packages upreved by Annealing:@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-aogh, 0.0.1-r12845)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-apu-firmware, 0.0.1-r1429)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, mtk-vpu-firmware, 0.0.1-r1429)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-tests, 0.0.1-r1815)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, autotest-jetstream-libs, 0.0.1-r4377)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, actions, 0.0.1-r5146)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-wireless, 0.0.1-r4645)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-https-server, 0.0.1-r309)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-infra, 0.0.1-r4187)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-net, 0.0.1-r4118)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-security, 0.0.1-r4415)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, ap-daemons, 0.0.3-r7022)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(sys-boot, depthcharge, 0.0.1-r3403)@@@",
-      "@@@STEP_LOG_LINE@relevance log@(dev-util, hdctools, 0.0.1-r1446)@@@",
-      "@@@STEP_LOG_LINE@relevance log@Packages target depends on:@@@",
-      "@@@STEP_LOG_LINE@relevance log@(chromeos-base, chrome-icu, 1-r52)@@@",
-      "@@@STEP_LOG_LINE@relevance log@Packages that are relevant:@@@",
-      "@@@STEP_LOG_END@relevance log@@@"
+      "@@@STEP_TEXT@relevant because annealing build was not found@@@"
     ]
   },
   {
@@ -4129,23 +4110,71 @@
     "name": "postsubmit relevance check.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"Annealing\"}, \"endTime\": \"1970-01-01T00:00:00Z\", \"id\": \"123\", \"output\": {\"properties\": {\"compressed_uprev_response\": \"\\neJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\\n\\nTGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\\n\\nGFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\\n\\n8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\\n\\nUnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\\n\\nwftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\\n\\nOK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\\n\\nKZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\\n\\nq10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\\n\\n3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\\n\\nVtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\\n\\neQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\\n\\n\"}}}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@Annealing@https://cr-buildbucket.appspot.com/build/123@@@"
+      "@@@STEP_LOG_LINE@raw_io.output_text@{@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@    {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@          {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@              \"builder\": \"Annealing\"@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            },@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            \"endTime\": \"1970-01-01T00:00:00Z\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            \"id\": \"123\",@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            \"output\": {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@                \"compressed_uprev_response\": \"\\neJzVmEGL00AUx5mLlldF6UXJTVBRcDpNm7bx0yzTZNrMbtIJM5PWXgVB8LDqiqJ4EBQ8i+LnM93t\\n\\nTGLdYJF1k57mJX0z/XXmvTf/VzhB8BKRCVFkSbgkT/JBsoCn7CCIGZ1nKQkiKRKeJUIdLIU8UikN\\n\\nGFEyIKnkC6oZFgsmY7pSZGPghCstaYw3DmcrMKHwhCpGaIqpmEVmxL1ur+ti6fZ9b9hlk4zHIXxF\\n\\n8OWiqFIpDlmg8UzE4ZTPZ0xWgCX6CNM0w1MukyWVf76wqF7/ce2ki23SxV9IfyL4ftGkh0znR81o\\n\\nUnXWmRaaqbLj+lFVfmDBfdcGww8E3xoAHvPJudzr9wbbG4zHBvsNgleXjh1oLubKjAZr6Hojg/UR\\n\\nwftLx0rxkksWM6XKtt21UZH5nxF8qgEv0jpVWDGZz91+NpiDns2ltwhOaqDk86mk1rDb5/o26F4j\\n\\nOK4BbM70ZiigXL/mkFMsyCTXq7Jt8byivnxA8K4GvJCy5DRXrXkKN8By3Ov3DdwLBM//EU5HXIYH\\n\\nKZX5FhROhpWoVc4ihCYhS3UURFTOWNm2Ye/1BobmGYKn/4cmZAucaR6TKAy0ELGyRnGXFUWsUarF\\n\\nq10L7Kpa/NpJd1Ut/r6qFm8/Vcuomapl2GzV4u2FavGbqlpGTVQt42arFq/JqsVtlGrpN0S1mCLm\\n\\n3IerG/nQuf7bxjrXyn+COF24uX2Jb09olxp847/Y1X8Et6tussp5eT/uDOFWxU1SNW3dDzv38p99\\n\\nVtmr3Nb9qfMQ2qUqW7li3is6j+DGVrXbdoeiZ8u3vWWKT+WqeQvl3IUrZ9Wg2sv1N5gmMytd8/7C\\n\\neQBQpMm5nhuxn391uxTDnZaJcrveWoQ7d6BlwqvTMqFXOlpv9AupQxeD\\n\\n\"@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@              }@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@            }@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@          }@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@        ]@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@      }@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@    }@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@  ]@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@}@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"snapshot-HEAD-SHA\"}]}"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "postsubmit relevance check.buildbucket.search (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
     "name": "buildbucket.add_tags_to_current_build",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-in-gerrit\": [\"pointless\"], \"relevance\": [\"not relevant\"]}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "buildbucket.add_tags_to_current_build (2)",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"hide-in-gerrit\": [\"pointless\"], \"relevance\": [\"not relevant\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"relevant\"]}@@@"
     ]
   },
   {
@@ -8276,17 +8305,9 @@
   {
     "cmd": [
       "bb",
-      "ls",
+      "batch",
       "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "builder,id,output,status",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "luci_context": {
@@ -8302,9 +8323,40 @@
       }
     },
     "name": "set build cost.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output,status\"}, \"predicate\": {\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output,status\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"key\": \"parent_buildbucket_id\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"value\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {

@@ -95,10 +95,12 @@ def GenTests(api):
           'analyzing build results.get now green builders.get tot failure builders.buildbucket.search',
       ),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'analyzing build results.get now green builders.get tot failure builders.buildbucket.search',
+          'request',
           [
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/abc"}]}',
+            '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
+            '\n          "tags": [\n            {\n              "key": "buildset",\n              "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/abc"\n            }\n          ]\n        }'
           ],
       ),
       # Don't search for snapshot abc again.
@@ -114,10 +116,12 @@ def GenTests(api):
           'analyzing build results (3).get now green builders.get tot failure builders.buildbucket.search',
       ),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'analyzing build results (3).get now green builders.get tot failure builders.buildbucket.search',
+          'request',
           [
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "tags": [{"key": "buildset", "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/def"}]}',
+            '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
+            '\n          "tags": [\n            {\n              "key": "buildset",\n              "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/def"\n            }\n          ]\n        }'
           ],
       ),
       # Don't do a second call for the lfg snapshot.

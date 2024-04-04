@@ -108,13 +108,13 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
                 git_footers, 'run builds.check disallow recycled builds'))
       if cq and history_builds is not None:
         args.append(
-            self.m.buildbucket.simulated_search_results(
+            self.m.buildbucket.simulated_multi_predicates_search_results(
                 [x for x in history_builds if x.status == common_pb2.SUCCESS],
                 'run builds.get build history.get completed builds.'
                 'get change build history.buildbucket.search'))
       if inflight_orch is not None:
         args.append(
-            self.m.buildbucket.simulated_search_results(
+            self.m.buildbucket.simulated_multi_predicates_search_results(
                 inflight_orch, step_name='find inflight orchestrator.'
                 'find matching builds.buildbucket.search'))
         if inflight_orch:

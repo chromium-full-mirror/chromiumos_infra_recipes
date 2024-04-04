@@ -48,8 +48,15 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     build_predicate = builds_service_pb2.BuildPredicate(builder=builder,
                                                         status=status)
     # Use a very small fields set to reduce the load on Buildbucket.
+    # This is a search with a single predicate, but with the 10000 limit,
+    # it needs to handle pagination to properly use
+    # self.m.buildbucket.search().
+    # Use self.m.buildbucket.search_with_multiple_predicates() for now
+    # to keep the 10000 limit working.
     return len(
-        self.m.buildbucket.search(build_predicate, fields=('id',), limit=10000))
+        self.m.buildbucket.search_with_multiple_predicates([build_predicate],
+                                                           fields=('id',),
+                                                           limit=10000))
 
   def get_bucket_status(self, bucket: str) -> Dict[str, int]:
     """Return the number of builds in the bucket and their statuses.
@@ -136,7 +143,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     # Up to retries 30-minutes sleeps.
     # TODO(b/304548989): Use build_poller instead of sleeping.
     for i in range(retries + 1):
-      results = self.m.buildbucket.search([predicate], limit=1,
+      results = self.m.buildbucket.search(predicate, limit=1,
                                           fields={'output.properties'},
                                           timeout=60)
       if results:

@@ -43,7 +43,7 @@ def _build_with_changes(build):
 def GenTests(api):
   yield api.test(
       'patch-without-history', api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], 'get change build history.buildbucket.search'),
       api.properties(
           GetPassedBuildsProperties(input_build_patches=[
@@ -63,7 +63,7 @@ def GenTests(api):
                       'key': 'cq_equivalent_cl_group_key',
                       'value': 'GROUP_KEY'
                   }]))),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           _build_with_changes(
               build_pb2.Build(
                   id=123, builder=builder_common_pb2.BuilderID(builder='betty'),

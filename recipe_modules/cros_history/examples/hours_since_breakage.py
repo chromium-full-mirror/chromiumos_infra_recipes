@@ -35,7 +35,7 @@ def GenTests(
 ) -> Generator[recipe_test_api.TestData, None, None]:
   yield api.test(
       'basic',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=0)],
           step_name='buildbucket.search'),
       api.properties(expected_result=371388),
@@ -44,8 +44,8 @@ def GenTests(
 
   yield api.test(
       'no-annealing-build-found',
-      api.buildbucket.simulated_search_results([],
-                                               step_name='buildbucket.search'),
+      api.buildbucket.simulated_multi_predicates_search_results(
+          [], step_name='buildbucket.search'),
       api.properties(expected_result=0),
       api.post_process(post_process.DropExpectation),
   )

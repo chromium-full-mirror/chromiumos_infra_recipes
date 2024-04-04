@@ -46,7 +46,7 @@ def GenTests(api):
       api.properties(dry_run_exonerate_retried_suites=False,
                      expected_exonerated_hw_suites=[],
                      expected_exonerated_vm_suites=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.empty_build_with_test_build_info('min_build')],
           step_name=('get previous failed and now exonerable suites'
                      '.get previous test results'
@@ -63,7 +63,7 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
       ], step_name=('get previous failed and now exonerable suites'
@@ -113,7 +113,7 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [prev_orch],
           step_name=('get previous failed and now exonerable suites'
                      '.get previous test results'
@@ -138,10 +138,10 @@ def GenTests(api):
           step_name=('get previous failed and now exonerable suites'
                      '.get previous test results'
                      '.get tast vm tests from previous run')),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           prev_orch
       ], 'get previous failed and now exonerable suites.get change test history.find matching builds.buildbucket.search'
-                                              ),
+                                                               ),
       api.post_process(post_process.StepTextEquals,
                        'get previous failed and now exonerable suites',
                        'found 1 vm suite and 0 hw suite'),
@@ -162,7 +162,7 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
       ], step_name=('get previous failed and now exonerable suites'
@@ -207,7 +207,7 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_test_build_ids_properties(['1'], [])],
           step_name=('get previous failed and now exonerable suites'
                      '.get previous test results'
@@ -236,7 +236,7 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_test_build_ids_properties(['1', '2'],
                                                                 ['3', '4'])
       ], step_name=('get previous failed and now exonerable suites'

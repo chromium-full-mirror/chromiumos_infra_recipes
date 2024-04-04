@@ -51,7 +51,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
       ),
@@ -88,7 +88,7 @@ def GenTests(api):
       not_relevant_dep_graph)
   yield api.test(
       'not-relevant',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
       ),

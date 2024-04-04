@@ -61,7 +61,7 @@ def GenTests(api):
       api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
       api.cq(run_mode=api.cq.FULL_RUN),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
           'get previous test results.find matching builds.buildbucket.search'),
       api.buildbucket.simulated_get(

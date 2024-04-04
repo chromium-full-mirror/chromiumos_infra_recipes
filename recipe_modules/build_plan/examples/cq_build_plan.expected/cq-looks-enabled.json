@@ -1287,7 +1287,9 @@
     "cmd": [],
     "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
+      "@@@STEP_LOG_LINE@cq looks log@No green snapshot found. Using latest minted snapshot.@@@",
+      "@@@STEP_LOG_END@cq looks log@@@"
     ]
   },
   {
@@ -1511,24 +1513,16 @@
     "name": "looks for green.find green snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@latest green@Found green snapshot:  with greenness 100 and 8 hours old.@@@",
+      "@@@STEP_LOG_LINE@latest green@Found no snapshot of at least 80 greenness within the last 10 hours.@@@",
       "@@@STEP_LOG_END@latest green@@@"
     ]
   },
   {
     "cmd": [
       "bb",
-      "ls",
+      "batch",
       "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1000",
-      "-fields",
-      "end_time,id,input.gitiles_commit.id,output.properties,start_time,status",
-      "-predicate",
-      "{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-14T02:53:26Z\"}}"
+      "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1544,12 +1538,48 @@
       }
     },
     "name": "looks for green.find green snapshot.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"endTime,id,input.gitilesCommit.id,output.properties,startTime,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}, \"createTime\": {\"startTime\": \"2012-05-14T02:53:26Z\"}}}}]}",
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"endTime\": \"2012-05-14T12:10:27Z\", \"id\": \"123\", \"output\": {\"properties\": {\"commit\": {\"id\": \"sampleSnapshotSHA\"}, \"greenness\": {\"aggregateBuildMetric\": 100.0}}}, \"startTime\": \"2012-05-14T05:15:27Z\"}@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@",
-      "@@@STEP_LINK@123@https://cr-buildbucket.appspot.com/build/123@@@"
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"endTime\": \"2012-05-14T12:10:27Z\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"id\": \"123\",@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"output\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"commit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"sampleSnapshotSHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      },@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"greenness\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"aggregateBuildMetric\": 100@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  },@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"startTime\": \"2012-05-14T05:15:27Z\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"endTime,id,input.gitilesCommit.id,output.properties,startTime,status\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"snapshot-orchestrator\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"createTime\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"startTime\": \"2012-05-14T02:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@"
     ]
   },
   {
@@ -1557,120 +1587,7 @@
     "name": "looks for green.find green snapshot.set looks_for_green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"latestScored\": {\"approxSnapAgeHours\": 8, \"snapOrchBbid\": \"123\", \"snapOrchGreenness\": 100}, \"status\": \"STATUS_RAN_OLDER\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.set green snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "",
-      "--key",
-      "Cr-External-Snapshot"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "looks for green.set green snapshot.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.checking mergability",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.checking mergability.sync to gitiles commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+//snapshot.xml",
-      "--format",
-      "text",
-      "--accept-statuses",
-      "200,404"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "looks for green.checking mergability.sync to gitiles commit.fetch :snapshot.xml",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.ignored exception",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@caught exception@AssertionError('no repo root found')@@@",
-      "@@@STEP_LOG_END@caught exception@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.set caught_exceptions",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"looks for green.ignored exception\": \"AssertionError('no repo root found')\"}@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit"
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit.set gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"status\": \"STATUS_FOUND_NONE\"}@@@"
     ]
   },
   {

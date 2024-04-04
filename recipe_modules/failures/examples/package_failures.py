@@ -15,6 +15,7 @@ from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'failures',
     'test_util',
@@ -146,6 +147,7 @@ def GenTests(api):
       api.buildbucket.build(cq_build_message),
       # Failure when trying to compare to snapshot does not fail the build.
       api.step_data('one compile failure with attribution.buildbucket.search',
+                    api.raw_io.stream_output_text('there was a problem'),
                     retcode=1),
       api.buildbucket.simulated_search_results(
           [snapshot_build],

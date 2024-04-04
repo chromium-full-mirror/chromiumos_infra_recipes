@@ -143,10 +143,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -176,10 +176,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [], 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -210,10 +210,10 @@ def GenTests(api):
               'coral-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -243,10 +243,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
       api.post_check(post_process.LogEquals, 'check force relevance',
@@ -279,10 +279,10 @@ def GenTests(api):
               'coral-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -312,10 +312,10 @@ def GenTests(api):
               'coral-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -346,14 +346,14 @@ def GenTests(api):
               'coral-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_failed_tests(['coral-cq'])
       ], 'check disallow recycled builds.find matching builds.buildbucket.search'
-                                              ),
-      api.buildbucket.simulated_search_results(
+                                                               ),
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -387,10 +387,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -424,10 +424,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -458,10 +458,10 @@ def GenTests(api):
               'atlas-slim-cq',
               'cave-slim-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -507,10 +507,10 @@ def GenTests(api):
               'atlas-cq', 'arm-generic-cq', 'amd64-generic-cq',
               'amd64-generic-slim-cq'
           ]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
       api.post_check(post_process.LogContains,
@@ -530,7 +530,7 @@ def GenTests(api):
       api.cros_relevance.simulated_run_build_planner(
           necessary_builders=['eve-cq'],
           skipped_builders=['atlas-cq', 'arm-generic-cq', 'arm64-generic-cq']),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
   )
@@ -577,13 +577,13 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds[:4], 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds[:4], 'get build history.find matching builds.'
           'buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds=[
               build_pb2.Build(id=123, output=output,
                               start_time=test_start_timestamp,
@@ -620,10 +620,10 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
       api.post_check(
@@ -660,14 +660,14 @@ def GenTests(api):
               'atlas-cq',
               'cave-cq',
           ], skipped_builders=[]),
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_uprev_response(end_time=0)
       ], step_name='get build history.get completed builds.checking arm64-generic-cq.check if build is broken.buildbucket.search'
-                                              ),
-      api.buildbucket.simulated_search_results(
+                                                               ),
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.get completed builds.'
           'get change build history.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
       api.post_check(

@@ -57,7 +57,7 @@ def GenTests(api):
 
   yield api.test(
       'one-failure-no-forced-rebuilds',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{
@@ -67,7 +67,7 @@ def GenTests(api):
 
   yield api.test(
       'one-failure-all-forced-rebuilds',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{
@@ -77,7 +77,7 @@ def GenTests(api):
 
   yield api.test(
       'one-failure-one-force-rebuild',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get completed builds.get change build history.'
           'buildbucket.search'),
       api.properties(**{

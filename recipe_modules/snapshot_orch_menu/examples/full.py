@@ -291,7 +291,7 @@ def GenTests(api):
           FullProperties(experiments=[
               'chromeos.snapshot_orch_menu.plan_tests_using_snapshot'
           ])),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [annealing_build_with_found_changes],
           'find changes in snapshot.buildbucket.search'),
       api.post_process(

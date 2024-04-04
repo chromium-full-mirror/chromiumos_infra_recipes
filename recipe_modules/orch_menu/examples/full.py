@@ -927,7 +927,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'snapshot-orch-v2-test-planning',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [annealing_build_with_found_changes],
           'find changes in snapshot.buildbucket.search'),
       api.post_process(

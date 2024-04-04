@@ -37,7 +37,7 @@ def GenTests(api):
   yield api.test(
       'broken-until-snapshot',
       api.properties(expected_lookback_hours=10),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response(end_time=0)],
           step_name='resize LFG lookback window.buildbucket.search'),
       api.post_check(post_process.MustRun, 'resize LFG lookback window'),

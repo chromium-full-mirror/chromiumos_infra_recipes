@@ -136,11 +136,11 @@ def GenTests(api):
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'find green snapshot.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:28Z"}}'
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -195,11 +195,11 @@ def GenTests(api):
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'find green snapshot.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "staging", "builder": "staging-snapshot-orchestrator", "project": "chromeos"}, "createTime": {"startTime": "2021-02-19T14:10:28Z"}}'
+              '"predicate": {\n          "builder": {\n            "bucket": "staging",\n            "builder": "staging-snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
       api.post_process(post_process.DropExpectation),
@@ -218,11 +218,11 @@ def GenTests(api):
           builds=[green_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_process(
-          post_process.StepCommandContains,
+          post_process.LogContains,
           'find green snapshot.buildbucket.search',
+          'request',
           [
-              '-predicate',
-              '{"builder": {"bucket": "postsubmit", "builder": "snapshot-orchestrator", "project": "chromeos"}, "createTime": {"endTime": "2021-02-20T00:00:00Z", "startTime": "2021-02-19T14:00:00Z"}}'
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
       api.post_process(post_process.DropExpectation),

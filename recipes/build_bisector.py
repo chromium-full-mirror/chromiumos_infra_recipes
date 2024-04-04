@@ -125,7 +125,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Pointless postsubmit build.
   yield api.build_menu.test(
       'pointless-postsubmit-build',
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
       ))

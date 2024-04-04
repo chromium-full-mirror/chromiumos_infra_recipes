@@ -46,7 +46,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.buildbucket.simulated_search_results([
+      api.buildbucket.simulated_multi_predicates_search_results([
           build(123, 'eve-snapshot', 'eve'),
           build(231, 'bob-snapshot', 'bob'),
           build(312, 'cq-orchestrator', None)

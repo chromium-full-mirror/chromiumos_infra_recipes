@@ -102,7 +102,7 @@ def GenTests(api):
       'basic',
       api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [build], 'schedule skylab tests v2.'
           'create test requests.configure test-builder.'
           'find matching builds.buildbucket.search'),

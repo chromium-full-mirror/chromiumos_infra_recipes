@@ -400,7 +400,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     predicate_for_postsubmit_build_retrieval = builds_service_pb2.BuildPredicate(
         builder=POSTSUBMIT_PREDICATE_BUILDER_ID)
     retrieved_postsubmit_builds = self.m.buildbucket.search(
-        [predicate_for_postsubmit_build_retrieval],
+        predicate_for_postsubmit_build_retrieval,
         limit=POSTSUBMIT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
 
     tagValue = 'commit/gitiles/{}/{}/+/{}'.format(
@@ -411,7 +411,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     predicate_for_snapshot_build_retrieval.tags.append(
         StringPair(key='buildset', value=tagValue))
     retrieved_source_snapshot_build = self.m.buildbucket.search(
-        [predicate_for_snapshot_build_retrieval], limit=1, fields=fields,
+        predicate_for_snapshot_build_retrieval, limit=1, fields=fields,
         timeout=60)
 
     # retrieved_source_snapshot_build may not be defined if we are using the
@@ -430,8 +430,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
                         + 1
             )))
     previous_snapshot_builds = self.m.buildbucket.search(
-        [predicate_for_previous_snapshot_builds],
-        limit=SNAPSHOT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
+        predicate_for_previous_snapshot_builds, limit=SNAPSHOT_RETRIEVAL_LIMIT,
+        fields=fields, timeout=60)
     started_builds = list(
         filter(self._has_build_started,
                previous_snapshot_builds + retrieved_postsubmit_builds))

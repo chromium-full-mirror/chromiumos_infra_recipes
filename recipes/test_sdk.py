@@ -98,7 +98,7 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'not-relevant-postsubmit',
       api.buildbucket.ci_build(builder='host-packages-cq'),
-      api.buildbucket.simulated_search_results(
+      api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
       ),
