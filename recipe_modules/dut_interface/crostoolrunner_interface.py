@@ -578,9 +578,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         infos['gsc_rw'] = info.gsc_rw
       elif resp.WhichOneof('response') == 'get_gfx_info_response':
         step.presentation.logs['gfx'] = resp.get_gfx_info_response.gfx_labels
-        # TODO (b/267519521): Uncomment the 2 lines below once TH is ready.
-        # for k in resp.get_gfx_info_response.gfx_labels:
-        #   infos[k] = resp.get_gfx_info_response.gfx_labels[k]
+        for k in resp.get_gfx_info_response.gfx_labels:
+          infos[k] = resp.get_gfx_info_response.gfx_labels[k]
     step.presentation.logs['infos'] = infos
 
     return infos
