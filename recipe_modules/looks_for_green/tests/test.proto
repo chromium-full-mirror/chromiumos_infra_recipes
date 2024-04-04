@@ -43,4 +43,4 @@ message ShouldLfgProperties {
   string related_to_apply = 4;
 }
 
-message IsGreenForLocalProperties { bool expected_result = 1; }
+message ResizeLfgLookbackProperties { int32 expected_lookback_hours = 1; }

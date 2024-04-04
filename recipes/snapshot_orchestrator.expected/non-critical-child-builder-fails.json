@@ -2899,7 +2899,7 @@
     "name": "update local greenness.set local_greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@local_greenness@{\"greenness\": {}, \"updated\": true}@@@"
+      "@@@SET_BUILD_PROPERTY@local_greenness@{\"updated\": true}@@@"
     ]
   },
   {

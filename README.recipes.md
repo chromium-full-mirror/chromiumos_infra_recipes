@@ -586,7 +586,6 @@
   * [greenness:examples/update_build_info](#recipes-greenness_examples_update_build_info)
   * [greenness:examples/update_hwtest_info](#recipes-greenness_examples_update_hwtest_info)
   * [greenness:examples/update_irrelevant_scores](#recipes-greenness_examples_update_irrelevant_scores) &mdash; Tests for the update_irrelevant_scores function.
-  * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
   * [greenness:tests/get_aggregate_builder_greenness](#recipes-greenness_tests_get_aggregate_builder_greenness) &mdash; Test the get_aggregate_builder_greenness function.
   * [greenness:tests/is_green_for_local](#recipes-greenness_tests_is_green_for_local) &mdash; Test the is_green_for_local function.
@@ -622,7 +621,7 @@
   * [looks_for_green:tests/disallow_footer](#recipes-looks_for_green_tests_disallow_footer)
   * [looks_for_green:tests/find_green_snapshot](#recipes-looks_for_green_tests_find_green_snapshot)
   * [looks_for_green:tests/get_latest_snapshot_greenness](#recipes-looks_for_green_tests_get_latest_snapshot_greenness)
-  * [looks_for_green:tests/is_green_for_local](#recipes-looks_for_green_tests_is_green_for_local)
+  * [looks_for_green:tests/resize_lfg_lookback](#recipes-looks_for_green_tests_resize_lfg_lookback) &mdash; Tests for the resize_lfg_lookback function.
   * [looks_for_green:tests/should_lfg](#recipes-looks_for_green_tests_should_lfg) &mdash; Tests for the should_lfg function.
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
@@ -8326,9 +8325,9 @@ API providing a menu for calculating greenness metric.
 
 A module to calculate greenness metric.
 
-&emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#48)(self):**
+&emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#46)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_greenness](/recipe_modules/greenness/api.py#341)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_greenness](/recipe_modules/greenness/api.py#271)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8347,7 +8346,7 @@ Args:
 Raises:
   StepFailure if snapshot_builder_names is empty.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/greenness/api.py#326)(self):**
+&mdash; **def [is\_green\_for\_local](/recipe_modules/greenness/api.py#256)(self):**
 
 Returns whether the current snapshot is green for local builds.
 
@@ -8356,28 +8355,15 @@ score from the last relevant build is used. It is assumed that
 builder_greenness_dict is prepopulated (i.e. update_build_info was
 previously called); otherwise, a false positive will be returned.
 
-&emsp; **@property**<br>&mdash; **def [local\_greenness\_dict](/recipe_modules/greenness/api.py#52)(self):**
-
-&mdash; **def [populate\_local\_build\_info](/recipe_modules/greenness/api.py#150)(self, builds: List[build_pb2.Build]):**
-
-Populate the local greenness dict with build information.
-
-For local build greenness, we want to track by build target and variant
-rather than just build target (e.g. amd64-generic-asan is tracked
-separately from amd64-generic).
-
-Args:
-  builds: List of builds that have completed.
-
-&mdash; **def [print\_step](/recipe_modules/greenness/api.py#290)(self):**
+&mdash; **def [print\_step](/recipe_modules/greenness/api.py#220)(self):**
 
 Print comprehensive greenness info in a step.
 
-&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#297)(self):**
+&mdash; **def [publish\_step](/recipe_modules/greenness/api.py#227)(self):**
 
 Publish greenness to output properties.
 
-&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#107)(self, builds: List[build_pb2.Build]):**
+&mdash; **def [update\_build\_info](/recipe_modules/greenness/api.py#101)(self, builds: List[build_pb2.Build]):**
 
 Update greenness with build information.
 
@@ -8393,22 +8379,14 @@ Args:
     publish the build greenness before the test greenness; i.e. this should
     be set true if test greenness is required.
 
-&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#177)(self, results: List[SkylabResult]):**
+&mdash; **def [update\_hwtest\_info](/recipe_modules/greenness/api.py#144)(self, results: List[SkylabResult]):**
 
 Update greenness with HW test information.
 
 Args:
   results: Results of the HW test runs.
 
-&mdash; **def [update\_irrelevant\_builds\_scores](/recipe_modules/greenness/api.py#266)(self, builds: List[build_pb2.Build], greenness_dict: OrderedDict[(str, GreennessTuple)]):**
-
-Update build scores in the greenness dict for irrelevant builds.
-
-Args:
-  builds: List of builds that have completed.
-  greenness_dict: The greenness dict to update.
-
-&mdash; **def [update\_irrelevant\_scores](/recipe_modules/greenness/api.py#232)(self):**
+&mdash; **def [update\_irrelevant\_scores](/recipe_modules/greenness/api.py#186)(self):**
 
 Update scores in the greenness dict for irrelevant builds.
 
@@ -8418,7 +8396,7 @@ snapshot orchestrator to complete, and thus test scores may not be
 propagated forward. This function waits for the previous snapshot
 orchestrator to complete and propagates test scores forward.
 
-&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#209)(self, results: List[build_pb2.Build]):**
+&mdash; **def [update\_vmtest\_info](/recipe_modules/greenness/api.py#171)(self, results: List[build_pb2.Build]):**
 
 Update greenness with VM test information.
 
@@ -8788,10 +8766,6 @@ Args:
 Returns:
   Whether the disallow LFG footer is included and not set to false.
 
-&emsp; **@exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [get\_child\_builds](/recipe_modules/looks_for_green/api.py#472)(self, current_build: build_pb2.Build):**
-
-Get the child builds of the current build.
-
 &mdash; **def [get\_latest\_snapshot\_greenness](/recipe_modules/looks_for_green/api.py#285)(self, bucket: Optional[str]=None, builder: Optional[str]=None):**
 
 Returns the latest scored Snapshot.
@@ -8812,13 +8786,6 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/looks_for_green/api.py#431)(self):**
-
-Returns whether the current snapshot is green for local builds.
-
-If there are irrelevant builders for the current snapshot, look at previous
-snapshots to find the last relevant build and update the greenness scores.
-
 &emsp; **@lookback_hours.setter**<br>&mdash; **def [lookback\_hours](/recipe_modules/looks_for_green/api.py#94)(self, lookback_hours):**
 
 &emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#57)(self):**
@@ -8830,7 +8797,7 @@ the microseconds to use seconds as level of precision.
 
 &emsp; **@related_changes_to_apply.setter**<br>&mdash; **def [related\_changes\_to\_apply](/recipe_modules/looks_for_green/api.py#113)(self, related_changes_to_apply):**
 
-&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#483)(self, builders_to_be_scheduled: List[str]):**
+&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#429)(self, builders_to_be_scheduled: List[str]):**
 
 Change LFG lookback based on which builders are about to run & broken_until entries.
 
@@ -10742,7 +10709,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#495)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#493)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10760,7 +10727,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#308)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#306)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
@@ -15184,14 +15151,6 @@ Unittest noop update_build_info() when not publishing results
 Tests for the update_irrelevant_scores function.
 
 &mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_irrelevant_scores.py#68)(api):**
-### *recipes* / [greenness:examples/update\_local\_build\_info](/recipe_modules/greenness/examples/update_local_build_info.py)
-
-[DEPS](/recipe_modules/greenness/examples/update_local_build_info.py#8): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
-
-
-Test updating build info for local greenness.
-
-&mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_local_build_info.py#17)(api):**
 ### *recipes* / [greenness:examples/update\_vmtest\_info](/recipe_modules/greenness/examples/update_vmtest_info.py)
 
 [DEPS](/recipe_modules/greenness/examples/update_vmtest_info.py#9): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15477,12 +15436,14 @@ Runs the presubmit for a project with checkout per local manifest.
 
 
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#34)(api, properties):**
-### *recipes* / [looks\_for\_green:tests/is\_green\_for\_local](/recipe_modules/looks_for_green/tests/is_green_for_local.py)
+### *recipes* / [looks\_for\_green:tests/resize\_lfg\_lookback](/recipe_modules/looks_for_green/tests/resize_lfg_lookback.py)
 
-[DEPS](/recipe_modules/looks_for_green/tests/is_green_for_local.py#16): [cros\_history](#recipe_modules-cros_history), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/looks_for_green/tests/resize_lfg_lookback.py#11): [cros\_history](#recipe_modules-cros_history), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/is_green_for_local.py#70)(api, properties):**
+Tests for the resize_lfg_lookback function.
+
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/resize_lfg_lookback.py#22)(api, properties):**
 ### *recipes* / [looks\_for\_green:tests/should\_lfg](/recipe_modules/looks_for_green/tests/should_lfg.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/should_lfg.py#14): [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cq][recipe_engine/recipe_modules/cq], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]

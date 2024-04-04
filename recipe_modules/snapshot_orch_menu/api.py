@@ -301,8 +301,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     """Outputs info about local greenness."""
     local_greenness_output_dict = {}
     local_greenness_output_dict['updated'] = should_update
-    local_greenness_output_dict[
-        'greenness'] = self.m.greenness.local_greenness_dict
     self.m.easy.set_properties_step(local_greenness=local_greenness_output_dict)
 
   def ps_relevant(self, build: build_pb2.Build) -> bool:

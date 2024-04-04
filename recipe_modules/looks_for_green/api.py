@@ -426,60 +426,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
       return found_disallow
 
-  # TODO(b/331215467): Remove when fully transitioned to using
-  # `is_green_for_local()` defined in the greenness module.
-  def is_green_for_local(self) -> bool:
-    """Returns whether the current snapshot is green for local builds.
-
-    If there are irrelevant builders for the current snapshot, look at previous
-    snapshots to find the last relevant build and update the greenness scores.
-    """
-    current_build = self.m.buildbucket.build
-    with self.m.step.nest('check current snapshot build') as presentation:
-      current_child_builds = self.get_child_builds(current_build)
-      self.m.greenness.populate_local_build_info(current_child_builds)
-      presentation.logs['current snapshot greenness'] = str(
-          self.m.greenness.local_greenness_dict)
-
-    with self.m.step.nest('get previous snapshot builds'):
-      # Filter the last n builds to builds that were created before the current
-      # build.
-      prev_snapshot_builds = self._get_snapshots(
-          limit=2 * self._lookback_hours,
-          latest_start=current_build.create_time)
-
-    with self.m.step.nest(
-        'update with previous snapshot builds') as presentation:
-      update_log = ''
-      for snapshot in prev_snapshot_builds:
-        # Only update for irrelevant builders that have not yet been updated
-        # (i.e. build_score is -1).
-        if any(gt.build_score == -1 and gt.relevant is False
-               for gt in self.m.greenness.local_greenness_dict.values()):
-          prev_child_builds = self.get_child_builds(snapshot)
-          self.m.greenness.update_irrelevant_builds_scores(
-              prev_child_builds, self.m.greenness.local_greenness_dict)
-          update_log += (
-              'Updated greenness dict using snapshot: '
-              f'{snapshot.input.gitiles_commit.id}\n'
-              f'Updated greenness dict: {self.m.greenness.local_greenness_dict}\n'
-          )
-      presentation.logs['updated local greenness'] = update_log
-
-    return not any(gt.build_score != 100 and gt.critical is True
-                   for gt in self.m.greenness.local_greenness_dict.values())
-
-  @exponential_retry(retries=3, delay=datetime.timedelta(seconds=1))
-  def get_child_builds(self,
-                       current_build: build_pb2.Build) -> List[build_pb2.Build]:
-    """Get the child builds of the current build."""
-    predicate = builds_service_pb2.BuildPredicate(
-        tags=self.m.buildbucket.tags(
-            parent_buildbucket_id=str(current_build.id)))
-    predicate.builder.project = current_build.builder.project
-    fields = frozenset({'builder', 'critical', 'id', 'status', 'tags'})
-    return self.m.buildbucket.search(predicate, fields=fields)
-
   def resize_lfg_lookback(self, builders_to_be_scheduled: List[str]) -> None:
     """Change LFG lookback based on which builders are about to run & broken_until entries.
 
