@@ -2366,17 +2366,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.categorize builds by collect handling",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@COLLECT@amd64-generic-postsubmit@@@",
-      "@@@STEP_LOG_LINE@COLLECT@arm-generic-postsubmit@@@",
-      "@@@STEP_LOG_LINE@COLLECT@grunt-postsubmit@@@",
-      "@@@STEP_LOG_END@COLLECT@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

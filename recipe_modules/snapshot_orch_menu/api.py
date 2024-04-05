@@ -265,10 +265,11 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       (BuildsStatus): The current status of the builds.
     """
     with self.m.step.nest(run_step_name or 'run builds') as pres:
-      collect_now, collect_after = self._filter_schedule_builds(
+      collect_builds = self._filter_schedule_builds(
           pres, self._get_child_specs(), extra_props=extra_child_props)
 
-      completed_builds = list(self._collect_builds([b.id for b in collect_now]))
+      completed_builds = list(
+          self._collect_builds([b.id for b in collect_builds]))
       self.m.orch_menu.add_child_info_to_output_property(
           self._relevant_child_builder_names)
 
@@ -276,7 +277,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         completed_builds, results_step_name=results_step_name,
         check_critical_step_name=check_critical_step_name)
 
-    self._builds_status.update(running=collect_after)
     self.m.greenness.update_build_info(completed_builds)
     self.m.greenness.print_step()
 
@@ -385,9 +385,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         Value can be a callback function to be executed when applying the props.
 
     Returns:
-      (list[Build], list[Build]) Two lists of scheduled builds, the first
-        contains builds that have either completed or have COLLECT handling, the
-        second contains builds that have COLLECT_AFTER_HW_TEST handling.
+      A list of scheduled builds to be collected on.
     """
     _, new_build_requests = (
         self.m.build_plan.get_build_plan(
@@ -450,12 +448,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self.m.orch_menu.add_child_info_to_output_property(
         self._relevant_child_builder_names)
 
-    collect_when_dict = self.m.orch_menu.categorize_builds_by_collect_handling(
-        child_specs, new_builds)
-
-    return (collect_when_dict[BuilderConfig.Orchestrator.ChildSpec.COLLECT],
-            collect_when_dict[
-                BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST])
+    return new_builds
 
   def _collect_builds(self, build_ids):
     fields = self.m.buildbucket.DEFAULT_FIELDS | {'tags'}

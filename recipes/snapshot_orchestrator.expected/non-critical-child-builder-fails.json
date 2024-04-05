@@ -2422,18 +2422,6 @@
   },
   {
     "cmd": [],
-    "name": "run builds.categorize builds by collect handling",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@COLLECT_AFTER_HW_TEST@amd64-generic-snapshot@@@",
-      "@@@STEP_LOG_END@COLLECT_AFTER_HW_TEST@@@",
-      "@@@STEP_LOG_LINE@COLLECT@arm-generic-snapshot@@@",
-      "@@@STEP_LOG_LINE@COLLECT@grunt-snapshot@@@",
-      "@@@STEP_LOG_END@COLLECT@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "run builds.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2447,6 +2435,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
+      "8922054662172514000",
       "8922054662172514001",
       "8922054662172514002"
     ],
@@ -2490,7 +2479,7 @@
       }
     },
     "name": "run builds.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514002\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514000\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514001\"}}, {\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\", \"id\": \"8922054662172514002\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2608,6 +2597,12 @@
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"8922054662172514000\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,tags,updateTime\",@@@",
