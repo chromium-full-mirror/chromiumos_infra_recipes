@@ -339,6 +339,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_vmtest_info(test_results.tast_vm)
       self.m.greenness.update_vmtest_info(test_results.tast_gce)
+      self.m.greenness.update_hwtest_info(test_results.skylab)
       failures = self.get_test_failures(test_results)
       failures += self.m.failures.get_additional_hw_test_not_run_failures(
           self._not_runnable_addtnl_tests)

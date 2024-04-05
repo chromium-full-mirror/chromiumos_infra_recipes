@@ -16,7 +16,6 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'git_footers',
-    'greenness',
     'metadata',
     'skylab_results',
     'src_state',
