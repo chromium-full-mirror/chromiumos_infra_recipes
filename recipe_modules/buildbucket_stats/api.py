@@ -9,7 +9,9 @@ from collections import OrderedDict
 from typing import Dict, Optional
 
 from google.protobuf import struct_pb2
+from google.protobuf import json_format
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
@@ -233,19 +235,16 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     return greenness
 
   def reformat_greenness_dict(
-      self, list_value: struct_pb2.ListValue) -> Dict[str, Dict[str, str]]:
+      self, list_value: struct_pb2.ListValue
+  ) -> Dict[str, Dict[str, greenness_pb2.AggregateGreenness.Greenness]]:
     """Reformat ListValue to a dictionary, using builder as key.
 
     This makes buildbucket properties like builderGreenness easier to work with.
     """
     greenness_dict = {}
     for builder_dict in list_value:
-      # Use builder as key.
-      if 'builder' in builder_dict:
-        builder = builder_dict['builder']
-        greenness_dict[builder] = {}
-        # Add other values.
-        for k, v in builder_dict.items():
-          if k != 'builder':
-            greenness_dict[builder][k] = v
+      greenness = json_format.Parse(
+          json_format.MessageToJson(builder_dict),
+          greenness_pb2.AggregateGreenness.Greenness())
+      greenness_dict[greenness.builder] = greenness
     return greenness_dict

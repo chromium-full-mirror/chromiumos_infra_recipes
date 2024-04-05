@@ -9,6 +9,7 @@ import collections
 
 from typing import List, OrderedDict
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.taskstate import TaskState
@@ -129,18 +130,17 @@ class GreennessApi(recipe_api.RecipeApi):
       green_metric = 100 if build.status == common_pb2.SUCCESS else 0
       critical = build.critical == common_pb2.YES
       if self.m.cros_tags.has_entry('relevance', 'not relevant', build.tags):
-        score, build_score = 0, 0
         # Failure here should not be fatal to the build.
         with self.m.failures.ignore_exceptions():
           if last_greenness is None:
             last_greenness = self._get_last_greenness(wait_for_complete=False)
           # For irrelevant builders, carry forward greenness from last run.
           # If greenness dict is empty, it means the metric was 0 in the last run.
-          score = int(last_greenness.get(builder, {}).get('metric', 0))
-          build_score = int(
-              last_greenness.get(builder, {}).get('buildMetric', 0))
+          builder_greenness = last_greenness.get(
+              builder, greenness_pb2.AggregateGreenness.Greenness())
         self._builder_greenness_dict[builder] = GreennessTuple(
-            score=score, build_score=build_score, critical=critical,
+            score=builder_greenness.metric,
+            build_score=builder_greenness.build_metric, critical=critical,
             relevant=False)
       else:
         self._builder_greenness_dict[builder] = GreennessTuple(
@@ -251,7 +251,8 @@ class GreennessApi(recipe_api.RecipeApi):
           # If greenness dict is empty, it means the metric was 0 in the last run.
           # Only update score since build_score should have already been
           # propagated forward correctly.
-          score = int(last_greenness.get(builder, {}).get('metric', 0))
+          score = last_greenness.get(
+              builder, greenness_pb2.AggregateGreenness.Greenness()).metric
           self._builder_greenness_dict[builder] = GreennessTuple(
               score=score,
               build_score=greenness.build_score,

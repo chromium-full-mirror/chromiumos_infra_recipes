@@ -5,9 +5,19 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ababab...@@@",
       "@@@STEP_LOG_END@looking@@@",
-      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-postsubmit', {'buildMetric': '98', 'metric': '78'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-postsubmit', metric: 78@@@",
+      "@@@STEP_LOG_LINE@found@build_metric: 98@@@",
+      "@@@STEP_LOG_LINE@found@builder: \"eve-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@found@), ('eve-kernelnext-postsubmit', context: IRRELEVANT@@@",
+      "@@@STEP_LOG_LINE@found@builder: \"eve-kernelnext-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@found@)])@@@",
       "@@@STEP_LOG_END@found@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-postsubmit', {'buildMetric': '98', 'metric': '78'}), ('eve-kernelnext-postsubmit', {'context': 'IRRELEVANT'})])@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-postsubmit', metric: 78@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@build_metric: 98@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@), ('eve-kernelnext-postsubmit', context: IRRELEVANT@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-kernelnext-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@)])@@@",
       "@@@STEP_LOG_END@last snapshot greenness@@@"
     ]
   },

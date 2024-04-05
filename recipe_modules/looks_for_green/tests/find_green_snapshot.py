@@ -8,6 +8,7 @@
 
 from google.protobuf import timestamp_pb2
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
@@ -80,16 +81,14 @@ unscored_build = build_pb2.Build(id=123, input=build_input,
 
 
 expected_brya_greenness = {
-    'brya-snapshot': {
-        'buildMetric': '100',
-        'metric': '98'
-    }
+    'brya-snapshot':
+        greenness_pb2.AggregateGreenness.Greenness(build_metric=100, metric=98,
+                                                   builder='brya-snapshot')
 }
 expected_both_greenness = {
-    'eve-snapshot': {
-        'buildMetric': '90',
-        'metric': '80'
-    }
+    'eve-snapshot':
+        greenness_pb2.AggregateGreenness.Greenness(build_metric=90, metric=80,
+                                                   builder='eve-snapshot')
 }
 expected_both_greenness.update(expected_brya_greenness)
 

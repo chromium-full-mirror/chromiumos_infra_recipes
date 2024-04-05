@@ -632,8 +632,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
       greenness = current_greenness.builder_greenness
       for builder in failed_on_snapshot_builders:
-        if builder in greenness and greenness[builder].get(
-            'buildMetric') == '100':
+        if builder in greenness and greenness[builder].build_metric == 100:
           now_green_builders.append(builder)
 
       pres.logs['now green builders'] = now_green_builders
@@ -698,8 +697,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
               builder_to_greenness)
 
       non_green_builders = [
-          b for b, g in builder_to_greenness.items()
-          if g.get('buildMetric') != '100'
+          b for b, g in builder_to_greenness.items() if g.build_metric < 100
       ]
       return non_green_builders
 

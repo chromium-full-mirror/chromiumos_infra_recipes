@@ -8,6 +8,7 @@
 from collections import OrderedDict
 from recipe_engine import post_process
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 
@@ -21,7 +22,11 @@ DEPS = [
 
 
 # Test data.
-BUILDER_GREENNESS = {'eve-postsubmit': {'buildMetric': '100', 'metric': '98'}}
+BUILDER_GREENNESS = {
+    'eve-postsubmit':
+        greenness_pb2.AggregateGreenness.Greenness(builder='eve-postsubmit',
+                                                   build_metric=100, metric=98)
+}
 TARGET_LOCAL_GREENNESS = {
     'eve':
         GreennessTuple(score=90, build_score=95, critical=True, relevant=True)
@@ -55,14 +60,14 @@ def RunSteps(api):
         use_local_greenness=api.properties.get('use_local_greenness'),
         wait_for_complete=api.properties.get('wait_for_complete'),
     )
-    expected_builder_greenness = api.properties['expected_builder_greenness']
+    expected_builder_greenness = api.properties.get(
+        'expected_builder_greenness', BUILDER_GREENNESS)
     api.assertions.assertEqual(expected_builder_greenness, builder_greenness)
 
 
 def GenTests(api):
   yield api.test(
       'found',
-      api.properties(expected_builder_greenness=BUILDER_GREENNESS),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
@@ -72,7 +77,6 @@ def GenTests(api):
 
   yield api.test(
       'found-after-2-sleeps',
-      api.properties(expected_builder_greenness=BUILDER_GREENNESS),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, output=build_pb2.Build.Output(),
                           input=BUILD_INPUT),
@@ -103,8 +107,7 @@ def GenTests(api):
 
   yield api.test(
       'with-end-bbid',
-      api.properties(expected_builder_greenness=BUILDER_GREENNESS,
-                     end_bbid=100),
+      api.properties(end_bbid=100),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
@@ -125,8 +128,7 @@ def GenTests(api):
 
   yield api.test(
       'wait-for-complete',
-      api.properties(expected_builder_greenness=BUILDER_GREENNESS,
-                     wait_for_complete=True),
+      api.properties(wait_for_complete=True),
       api.buildbucket.simulated_search_results([
           build_pb2.Build(id=123, status=common_pb2.SUCCESS,
                           output=BUILD_OUTPUT, input=BUILD_INPUT),
