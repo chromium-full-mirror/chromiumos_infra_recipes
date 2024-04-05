@@ -338,8 +338,8 @@ class GreennessApi(recipe_api.RecipeApi):
     return not any(gt.build_score != 100 and gt.critical is True
                    for gt in local_build_greenness)
 
-  def get_aggregate_builder_local_greenness(
-      self, snapshot_commit: str, snapshot_builder_names: List[str]) -> int:
+  def get_aggregate_builder_greenness(self, snapshot_commit: str,
+                                      snapshot_builder_names: List[str]) -> int:
     """Get the aggregate greenness for the given builders on the given commit.
 
     Returns the average greenness score for the given builders on the given
@@ -361,24 +361,21 @@ class GreennessApi(recipe_api.RecipeApi):
       if not snapshot_builder_names:
         raise recipe_api.StepFailure('snapshot_builder_names cannot be empty')
 
-      local_greenness = self.m.buildbucket_stats.get_snapshot_greenness(
-          commit=snapshot_commit, retries=0, use_local_greenness=True,
-          pres=pres)
-      if not local_greenness:
+      greenness = self.m.buildbucket_stats.get_snapshot_greenness(
+          commit=snapshot_commit, retries=0, pres=pres)
+      if not greenness:
         pres.step_text = f'cound not find greeness for snapshot {snapshot_commit}'
         return 0
 
       running_greenness = 0
       missing_greenness = []
       for b in snapshot_builder_names:
-        build_greenness_tuple = local_greenness.get(b)
-
-        if not build_greenness_tuple:
+        if b not in greenness:
           missing_greenness.append(b)
           continue
+        builder_greenness = greenness[b]
 
-        build_greenness_tuple = GreennessTuple(*build_greenness_tuple)
-        running_greenness += build_greenness_tuple.build_score
+        running_greenness += builder_greenness.build_metric
 
       agg_greenness = int(running_greenness / len(snapshot_builder_names))
       step_text = f'greenness score: {agg_greenness}'

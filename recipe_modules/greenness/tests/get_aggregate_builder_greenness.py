@@ -3,9 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Test the get_aggregate_builder_local_greenness function."""
+"""Test the get_aggregate_builder_greenness function."""
+
+from google.protobuf import json_format
 
 from recipe_engine import post_process
+
+from PB.chromiumos import greenness as greenness_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -18,7 +22,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  agg_greenness = api.greenness.get_aggregate_builder_local_greenness(
+  agg_greenness = api.greenness.get_aggregate_builder_greenness(
       snapshot_commit='1234',
       snapshot_builder_names=api.properties['snapshot_builder_names'])
 
@@ -31,13 +35,25 @@ def GenTests(api):
   _bb_search_step_data = api.buildbucket.simulated_search_results([
       api.test_util.test_orchestrator(
           builder='snapshot-orchestrator', output_properties={
-              'local_greenness': {
-                  'greenness': {
-                      'builder1-snapshot': [100, 100, True, True],
-                      'builder2-snapshot': [0, 0, True, True],
-                      'builder3-snapshot': [50, 50, True, True],
-                  }
-              }
+              'greenness':
+                  json_format.MessageToDict(
+                      greenness_pb2.AggregateGreenness(builder_greenness=[
+                          greenness_pb2.AggregateGreenness.Greenness(
+                              builder='builder1-snapshot',
+                              build_metric=100,
+                              metric=100,
+                          ),
+                          greenness_pb2.AggregateGreenness.Greenness(
+                              builder='builder2-snapshot',
+                              build_metric=0,
+                              metric=0,
+                          ),
+                          greenness_pb2.AggregateGreenness.Greenness(
+                              builder='builder3-snapshot',
+                              build_metric=50,
+                              metric=50,
+                          ),
+                      ]))
           }).message
   ], 'get greenness for specified builders.buildbucket.search')
 

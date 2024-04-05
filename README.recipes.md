@@ -588,7 +588,7 @@
   * [greenness:examples/update_irrelevant_scores](#recipes-greenness_examples_update_irrelevant_scores) &mdash; Tests for the update_irrelevant_scores function.
   * [greenness:examples/update_local_build_info](#recipes-greenness_examples_update_local_build_info) &mdash; Test updating build info for local greenness.
   * [greenness:examples/update_vmtest_info](#recipes-greenness_examples_update_vmtest_info)
-  * [greenness:tests/get_aggregate_builder_local_greenness](#recipes-greenness_tests_get_aggregate_builder_local_greenness) &mdash; Test the get_aggregate_builder_local_greenness function.
+  * [greenness:tests/get_aggregate_builder_greenness](#recipes-greenness_tests_get_aggregate_builder_greenness) &mdash; Test the get_aggregate_builder_greenness function.
   * [greenness:tests/is_green_for_local](#recipes-greenness_tests_is_green_for_local) &mdash; Test the is_green_for_local function.
   * [gs_step_logging:examples/full](#recipes-gs_step_logging_examples_full)
   * [incremental:tests/test_incremental](#recipes-incremental_tests_test_incremental) &mdash; Recipe for testing the incremental recipe_module.
@@ -8317,7 +8317,7 @@ A module to calculate greenness metric.
 
 &emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#48)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/api.py#341)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_greenness](/recipe_modules/greenness/api.py#341)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -15168,14 +15168,14 @@ Test updating build info for local greenness.
 
 
 &mdash; **def [RunSteps](/recipe_modules/greenness/examples/update_vmtest_info.py#18)(api):**
-### *recipes* / [greenness:tests/get\_aggregate\_builder\_local\_greenness](/recipe_modules/greenness/tests/get_aggregate_builder_local_greenness.py)
+### *recipes* / [greenness:tests/get\_aggregate\_builder\_greenness](/recipe_modules/greenness/tests/get_aggregate_builder_greenness.py)
 
-[DEPS](/recipe_modules/greenness/tests/get_aggregate_builder_local_greenness.py#10): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/greenness/tests/get_aggregate_builder_greenness.py#14): [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-Test the get_aggregate_builder_local_greenness function.
+Test the get_aggregate_builder_greenness function.
 
-&mdash; **def [RunSteps](/recipe_modules/greenness/tests/get_aggregate_builder_local_greenness.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/greenness/tests/get_aggregate_builder_greenness.py#24)(api):**
 ### *recipes* / [greenness:tests/is\_green\_for\_local](/recipe_modules/greenness/tests/is_green_for_local.py)
 
 [DEPS](/recipe_modules/greenness/tests/is_green_for_local.py#10): [cros\_tags](#recipe_modules-cros_tags), [greenness](#recipe_modules-greenness), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
