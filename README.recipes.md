@@ -15234,7 +15234,7 @@ Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
 
 Recipe for generating a Kabuto payload.
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_paygen.py#73)(api: RecipeApi, properties: KabutoPaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/kabuto_paygen.py#74)(api: RecipeApi, properties: KabutoPaygenProperties):**
 
 &mdash; **def [RunSteps](/recipes/kabuto_paygen.py#45)(api: RecipeApi, properties: KabutoPaygenProperties):**
 ### *recipes* / [kabuto\_shadercache\_uprev](/recipes/kabuto_shadercache_uprev.py)
