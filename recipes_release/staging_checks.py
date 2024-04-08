@@ -66,6 +66,14 @@ def image_builder_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
+def build_firmware_exemption(build: Dict[str, Any]) -> bool:
+  """Exemption function for failures during the `build_firmware` step."""
+  if build.get('status') == 'INFRA_FAILURE':
+    return False
+  summary = build.get('summaryMarkdown', '')
+  return "Step('build firmware.call build API script')" in summary
+
+
 def autoreleaser_no_releasable_changes_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for autoreleaser builds with no releasable changes."""
   return build.get('summaryMarkdown').startswith('No releasable changes found')
@@ -149,7 +157,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     ], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit',
-                   [image_builder_exemption]),
+                   [image_builder_exemption, build_firmware_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
                    num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-recipes_autoreleaser_infra',
