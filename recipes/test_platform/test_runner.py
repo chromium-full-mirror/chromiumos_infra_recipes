@@ -611,6 +611,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "MODEM_TYPE_FIBOCOMM_L850GL".
     * channel: the channel of the builds,
         e.g. "BETA", "DEV", "CANARY", "STABLE".
+    * ufs_zone: UFS zone config,
+        e.g. "ZONE_SFO36_OS".
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -742,6 +744,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
                                         api.buildbucket.swarming_bot_dimensions)
   if modem_type:
     base_tags.append(('modem_type', modem_type[0]))
+
+  ufs_zone = api.cros_tags.get_values('ufs_zone',
+                                      api.buildbucket.swarming_bot_dimensions)
+  if ufs_zone:
+    base_tags.append(('ufs_zone', ufs_zone[0]))
 
   cbx = api.cros_tags.get_values('label-cbx',
                                  api.buildbucket.swarming_bot_dimensions)
@@ -3619,6 +3626,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-cbx': 'True',
               'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
               'label-modem_type': 'MODEM_TYPE_FIBOCOMM_L850GL',
+              'ufs_zone': 'ZONE_SFO36_OS',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),

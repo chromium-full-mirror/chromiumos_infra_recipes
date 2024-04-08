@@ -16907,7 +16907,7 @@ Returns:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2153)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2160)(api, properties):**
 
 Entrypoint to the script
 
@@ -16932,7 +16932,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1883)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1890)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -16944,7 +16944,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1594)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1601)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -16960,7 +16960,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1507)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1514)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -16976,7 +16976,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1478)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1485)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -16987,7 +16987,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [raise\_on\_trv2\_result](/recipes/test_platform/test_runner.py#2071)(api, res):**
+&mdash; **def [raise\_on\_trv2\_result](/recipes/test_platform/test_runner.py#2078)(api, res):**
 
 Decompress trv2 result and raise StepFailure on prejob or test failure.
 
@@ -16995,7 +16995,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * res - The step result.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2105)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2112)(api, properties):**
 
 Run test and upload results.
 
@@ -17032,7 +17032,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1953)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1960)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
