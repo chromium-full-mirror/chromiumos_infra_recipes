@@ -7,7 +7,7 @@
 
 import os
 import datetime
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple
 
 from google.protobuf import json_format
 
@@ -19,7 +19,6 @@ from PB.chromiumos.common import Chroot
 from PB.chromiumos.common import PackageIndexInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import Profile
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from recipe_engine import recipe_api
 
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
@@ -111,123 +110,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     kind_label = BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.version
     return f'host/amd64/{target_name}/{kind_label}-{version}-{build_id}/packages'
-
-  def _get_snapshot_package_index_info(self, snapshots, build_target, profile,
-                                       gs_bucket, test_data_dict=None):
-    """Get prebuilts metadata for snapshots.
-
-    Returns PackageIndexInfo entries for the newest available prebuilts for each
-    of the given build_targets.
-
-    Args:
-      snapshots (list[str]): List of snapshot git SHA strings, newest first.
-      build_target (BuildTarget): The BuildTarget to fetch.
-      profile (chromiumos.Profile): Profile to fetch.
-      gs_bucket (str): Google storage bucket where the prebuilts live.
-      test_data_dict (dict): Dictionary of test data:
-        test_data_dict[snapshot][target_name][file_name] = PackageIndexInfo
-
-    Returns:
-      (list[PackageIndexInfo]) The metadata for CreateSysrootService.
-    """
-    test_data_dict = test_data_dict or {}
-    test_snapshot_num = 5555
-    download_root = self.m.path.mkdtemp(prefix='metadata')
-    target = build_target.name
-    profile = self._profile_or_default(profile)
-
-    def _get_test_data(data, snapshot, target, profile):
-      return data.get(snapshot, {}).get(target, {}).get(profile, {})
-
-    ret = []
-    snapshots_found = 0
-
-    for snapshot in snapshots:
-      with self.m.step.nest('{}/{}/{}'.format(snapshot, target,
-                                              profile.name)) as presentation:
-        download_dir = download_root.join(snapshot, target, profile.name)
-        self.m.file.ensure_directory('ensure directory', download_dir)
-        uri = METADATA_GS_DIR_TMPL.format(gs_bucket=gs_bucket,
-                                          snapshot=snapshot, target=target,
-                                          profile=profile.name)
-        self.m.gsutil(['rsync', uri, download_dir], multithreaded=True)
-
-        listdir_test_data = []
-        if self._test_data.enabled:
-          for fname in _get_test_data(test_data_dict, snapshot, target,
-                                      profile.name):
-            self.m.path.mock_add_paths(download_dir.join(fname))
-            listdir_test_data.append(fname)
-
-        files = self.m.file.listdir('listdir', download_dir,
-                                    test_data=listdir_test_data)
-        presentation.step_text = ('found %d file%s' %
-                                  (len(files), 's' if len(files) != 1 else ''))
-        if files:
-          snapshots_found += 1
-          presentation.logs['files found'] = [
-              str(self.m.path.relpath(x, download_dir)) for x in files
-          ]
-          for meta in files:
-            name = self.m.path.basename(meta)
-            test_data = _get_test_data(
-                test_data_dict, snapshot, target, profile.name).get(
-                    name,
-                    PackageIndexInfo(
-                        snapshot_sha=snapshot,
-                        snapshot_number=test_snapshot_num,
-                        build_target=BuildTarget(name=target),
-                        location='gs://{}/testdata/{}'.format(gs_bucket, name)))
-            ret.append(
-                self.m.file.read_proto('read {}'.format(name), meta,
-                                       PackageIndexInfo, 'JSONPB',
-                                       test_proto=test_data))
-      test_snapshot_num -= 1
-      if snapshots_found >= self._send_snapshot_prebuilts:
-        break
-
-    return ret
-
-  def get_package_index_info(
-      self, gs_bucket: str, snapshot: Optional[GitilesCommit] = None,
-      build_target: Optional[BuildTarget] = None,
-      profile: Optional[Profile] = None, count: Optional[int] = None,
-      test_data_dict: Dict[Any, Any] = None,
-      name: Optional[str] = None) -> List[PackageIndexInfo]:
-    """Return the PackageIndexInfo for this build.
-
-    Args:
-      gs_bucket: Google storage bucket where the prebuilts live.
-      snapshot: The snapshot for this build, or None.
-      build_target: BuildTarget for the build, or None.
-      profile: Profile for the build, or None.
-      count: Number of snapshots to check, or None.
-      test_data_dict: Dictionary of test data, or None:
-        test_data_dict[snapshot_sha][target_name][profile_name] = PackageIndexInfo
-      name: Name for the step, or None.
-
-    Returns:
-      The metadata for CreateSysrootService.
-    """
-    if not self._send_snapshot_prebuilts:
-      return []
-
-    # Assume 2 snapshot per hour, we want 7 days worth of them.  We will walk
-    # back in time until we find $chromeos_prebuilts.send_snapshot_prebuilts
-    # snapshots that have any prebuilts.  (To account for the possibility of
-    # multiple builders with the same profile and different use flags.
-    count = count or 7 * 24 * 2
-    build_target = build_target or self.m.cros_infra_config.get_build_target()
-    profile = self._profile_or_default(profile)
-
-    with self.m.step.nest(name or 'find prebuilts'):
-      shas = self.m.cros_source.fetch_snapshot_shas(count, snapshot)
-      test_data_dict = (
-          test_data_dict or self.test_api.generate_snapshot_test_data_dict(
-              shas, build_target, profile, gs_bucket))
-
-      return self._get_snapshot_package_index_info(
-          shas, build_target, profile, gs_bucket, test_data_dict=test_data_dict)
 
   def _upload_metadata(self, build_target, profile, kind, gs_bucket, acls,
                        location):

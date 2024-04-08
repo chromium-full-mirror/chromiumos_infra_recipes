@@ -35,24 +35,23 @@ DEPS = [
 PROPERTIES = BuildBisectorProperties
 
 
-def RunSteps(api: RecipeApi,
-             properties: BuildBisectorProperties) -> Optional[RawResult]:
+def RunSteps(
+    api: RecipeApi,
+    properties: BuildBisectorProperties  # pylint: disable=unused-argument
+) -> Optional[RawResult]:
 
   api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config, properties)
+    return DoRunSteps(api, config)
 
 
-def DoRunSteps(api: RecipeApi, config: BuilderConfig,
-               properties: BuildBisectorProperties) -> Optional[RawResult]:
+def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   sysroot_archive = api.sysroot_archive.find_best_archive(
       api.build_menu.build_target)
   env_info = api.build_menu.setup_sysroot_and_determine_relevance(
-      sysroot_archive=sysroot_archive,
-      snapshot_commit=properties.snapshot_commit
-      if properties.HasField('snapshot_commit') else None)
+      sysroot_archive=sysroot_archive)
   if env_info.pointless:
     return RawResult(status=common.SUCCESS,
                      summary_markdown='Build was not relevant.')
@@ -320,12 +319,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               },
               '$chromeos/cros_relevance': {
                   'force_postsubmit_relevance': True
-              },
-              'snapshot_commit': {
-                  'host': 'test_host',
-                  'project': 'test_project',
-                  'ref': 'test_ref',
-                  'id': 'test_id'
               }
           }),
       api.post_check(post_process.MustRun, 'build images'),

@@ -7,7 +7,6 @@
 
 # pylint: disable=import-error
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties
 from recipe_engine.recipe_api import RecipeApi
 
@@ -99,14 +98,8 @@ class IncrementalApi(RecipeApi):
         toolchain_targets=[api.build_menu.build_target],
         build_source=config.build.sdk_update.compile_source,
     )
-    # Use the prebuilts metadata for the old manifest.
-    old_commit = GitilesCommit(
-        host=api.src_state.gitiles_commit.host,
-        project=api.src_state.gitiles_commit.project,
-        id=delta_hash,
-    )
-    api.build_menu.setup_sysroot(
-        snapshot_commit=old_commit if delta_hash else None)
+
+    api.build_menu.setup_sysroot()
     api.build_menu.bootstrap_sysroot(config)
     api.build_menu.install_packages(config)
 

@@ -36,11 +36,6 @@ PROPERTIES = FullProperties
 def RunSteps(api, properties):
   api.cros_infra_config.configure_builder()
 
-  api.assertions.assertEqual(
-      list(properties.expected_package_indexes),
-      api.cros_prebuilts.get_package_index_info(properties.gs_bucket,
-                                                profile=properties.profile))
-
   if properties.overridden_builder_config != BuilderConfig.Id.TYPE_UNSPECIFIED:
     builder_config = properties.overridden_builder_config
   else:
@@ -55,21 +50,9 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def make_package_indexes(gs_bucket, target, profile=None, count=4):
-    profile = profile or Profile()
-    p_name = profile.name or 'base'
-    shas = api.git.generate_test_ids(count=count)
-    data_dict = api.cros_prebuilts.generate_snapshot_test_data_dict(
-        shas, BuildTarget(name=target), profile, gs_bucket)
-    expected_package_indexes = []
-    for sha in shas[:4]:
-      expected_package_indexes.extend(data_dict[sha][target][p_name].values())
-    return expected_package_indexes
-
   def test_data(private=False, use_staging=False,
                 enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
-                commit_overlay_binhost=True, profile=None,
-                expected_package_indexes=None, dirty_source=False,
+                commit_overlay_binhost=True, profile=None, dirty_source=False,
                 max_binhost_uris=1, upload_metadata=True,
                 overridden_builder_config=None):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
@@ -79,12 +62,6 @@ def GenTests(api):
     expect_commit = (
         commit_overlay_binhost and not non_base_profile and not dirty_source)
 
-    if expected_package_indexes is None:
-      count = send_snapshot_prebuilts
-      expected_package_indexes = make_package_indexes(gs_bucket, target,
-                                                      profile=profile,
-                                                      count=count)
-
     ret = api.test_util.test_child_build(target, cq=False).build
     build_target = BuildTarget(name=target)
     test_props = FullProperties(
@@ -93,8 +70,6 @@ def GenTests(api):
                       out_path='/path/to/out'), private=private,
         gs_bucket=gs_bucket, profile=profile, dirty_source=dirty_source,
         overridden_builder_config=overridden_builder_config)
-    for x in expected_package_indexes:
-      test_props.expected_package_indexes.add().CopyFrom(x)
 
     ret += api.properties(test_props)
 

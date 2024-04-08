@@ -70,9 +70,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
     self._test_with_code_coverage = props.test_with_code_coverage
     self._test_with_rust_code_coverage = props.test_with_rust_code_coverage
     self._override_prebuilts_config = props.override_prebuilts_config
-    # Prebuilt information for the builder.  Created in setup_sysroot, used
-    # there and install_packages.
-    self._package_indexes = None
     self._force_empty_toolchain_targets = props.force_empty_toolchain_targets
     self._resultdb_gitiles_commit = None
 
@@ -497,16 +494,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self.m.cros_build_api.ToolchainService.SetupToolchains(request)
 
   def setup_sysroot_and_determine_relevance(self, with_sysroot=True,
-                                            snapshot_commit=None,
                                             sysroot_archive=None):
     """Setup the sysroot for the build and determine build relevance.
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
         (Some builders do not require a sysroot.)
-      snapshot_commit (GitilesCommit): The snapshot commit to use for getting
-        prebuilts metadata, or None to use the commit the builder is
-        configured with.
       sysroot_archive (str): The gs path of a sysroot archive, used to replace
         the whole sysroot folder.
 
@@ -517,20 +510,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
           list.
     """
     self.setup_sysroot(with_sysroot=with_sysroot,
-                       snapshot_commit=snapshot_commit,
                        sysroot_archive=sysroot_archive)
     return self.determine_relevance()
 
-  def setup_sysroot(self, with_sysroot=True, snapshot_commit=None,
-                    sysroot_archive=None):
+  def setup_sysroot(self, with_sysroot=True, sysroot_archive=None):
     """Sets up the sysroot for the build.
 
     Args:
       with_sysroot (bool): Whether to create a sysroot.  Default: True.
         (Some builders do not require a sysroot.)
-      snapshot_commit (GitilesCommit): The snapshot commit to use for getting
-        prebuilts metadata, or None to use the commit the builder is
-        configured with.
       sysroot_archive (str): The gs path of a sysroot archive, used to replace
         the whole sysroot folder.
     """
@@ -541,11 +529,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if with_sysroot:
       # TODO(crbug/1112425): config.build.portage_profile is migrating.
       profile = common_pb2.Profile(name=config.build.portage_profile.profile)
-      self._package_indexes = self.m.cros_prebuilts.get_package_index_info(
-          config.artifacts.prebuilts_gs_bucket, snapshot=snapshot_commit or
-          self.gitiles_commit, build_target=self.build_target, profile=profile)
       self.m.sysroot_util.create_sysroot(
-          self.build_target, profile, package_indexes=self._package_indexes,
+          self.build_target, profile,
           use_cq_prebuilts=artifacts.use_cq_prebuilts)
       if sysroot_archive:
         self.m.sysroot_archive.extract_sysroot_build(self.chroot,
@@ -669,7 +654,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def install_packages(self, config=None, packages=None, timeout_sec='DEFAULT',
                        name=None, force_all_deps=False, include_rev_deps=False,
-                       dryrun=False, package_indexes=None):
+                       dryrun=False):
     """Install packages as appropriate.
 
     The config determines whether to call install packages. If installing
@@ -685,8 +670,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       include_rev_deps (bool): Whether to also install reverse dependencies.
         Ignored if config specifies ALL_DEPENDENCIES or force_all_deps is True.
       dryrun (bool): Dryrun the install packages step.
-      package_indexes (list[PackageIndexInfo]): List of prebuilts metadata to be
-        used when installing packages.
 
     Returns:
       (bool): Whether to continue with the build.
@@ -705,11 +688,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                  package_name='implicit-system'))
     if self.m.cros_infra_config.should_run(install_packages.run_spec):
       with self.m.context(env={'DEPOT_TOOLS_COLLECT_METRICS': '0'}):
-        self.m.sysroot_util.install_packages(
-            config, self.dep_graph, relevant_packages,
-            artifact_build=self.artifact_build,
-            package_indexes=package_indexes or self._package_indexes,
-            timeout_sec=timeout_sec, name=name, dryrun=dryrun)
+        self.m.sysroot_util.install_packages(config, self.dep_graph,
+                                             relevant_packages,
+                                             artifact_build=self.artifact_build,
+                                             timeout_sec=timeout_sec, name=name,
+                                             dryrun=dryrun)
     self.packages_installed = not self.m.cros_infra_config.should_exit(
         install_packages.run_spec)
     return self.packages_installed

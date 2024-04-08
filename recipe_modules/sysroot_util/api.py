@@ -84,7 +84,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     return BuildSetupResponse.NEEDED if force_relevance else resp
 
   def create_sysroot(self, build_target, profile=None, chroot_current=True,
-                     replace=True, package_indexes=None, timeout_sec='DEFAULT',
+                     replace=True, timeout_sec='DEFAULT',
                      use_cq_prebuilts: bool = False, test_data=None, name=None):
     """Create the sysroot.
 
@@ -94,7 +94,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       chroot_current (bool): Whether the chroot is current.  (If not, it will be
         updated.
       replace (bool): Whether to replace an existing sysroot.
-      package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout (in seconds).  Default: None if a
         toolchain change is detected, otherwise 10 minutes.
       use_cq_prebuilts (bool): Whether to use CQ prebuilts.
@@ -105,7 +104,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
     Returns:
       Sysroot
     """
-    package_indexes = package_indexes or []
     test_data = test_data or json_format.MessageToJson(
         SysrootCreateResponse(
             sysroot=Sysroot(path='/build/%s' %
@@ -127,8 +125,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                          use_cq_prebuilts=use_cq_prebuilts)
       create_sysroot_response = self.m.cros_build_api.SysrootService.Create(
           SysrootCreateRequest(build_target=build_target, profile=profile,
-                               chroot=self.m.cros_sdk.chroot, flags=flags,
-                               package_indexes=package_indexes),
+                               chroot=self.m.cros_sdk.chroot, flags=flags),
           timeout=timeout_sec, test_output_data=test_data)
       self._sysroot = create_sysroot_response.sysroot
       return self.sysroot
@@ -175,8 +172,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       self.m.failures.set_compile_failed_packages(pres, pkgs)
 
   def install_packages(self, config, dep_graph, packages=None,
-                       artifact_build=False, package_indexes=None,
-                       timeout_sec='DEFAULT', name=None, dryrun=False):
+                       artifact_build=False, timeout_sec='DEFAULT', name=None,
+                       dryrun=False):
     """Install packages (possibly fetching Chrome source).
 
     Args:
@@ -185,14 +182,12 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       packages (list[PackageInfo]): list of packages to install.  Default: all
         packages for the build_target.
       artifact_build (bool): Whether to call update_for_artifact_build.
-      package_indexes (list[PackageIndexInfo]): Package indexes to use, or None.
       timeout_sec (int): Step timeout, in seconds, or None for default.
       name (str): Step name to use, or None for default name.
       dryrun (bool): Whether to dryrun the step such that we calculate the
         packages which would have been built, but do not install them.
     """
     packages = packages or []
-    package_indexes = package_indexes or []
     install_packages = config.build.install_packages
     skip_clean_package_dirs = install_packages.skip_clean_package_dirs
 
@@ -246,8 +241,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
-            packages=packages, package_indexes=package_indexes,
-            flags=InstallPackagesRequest.Flags(
+            packages=packages, flags=InstallPackagesRequest.Flags(
                 compile_source=install_packages.compile_source,
                 use_goma=self.m.cros_sdk.has_goma_config(),
                 toolchain_changed=toolchain_cls, dryrun=dryrun,
