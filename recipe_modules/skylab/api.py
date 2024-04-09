@@ -235,7 +235,10 @@ class SkylabApi(recipe_api.RecipeApi):
       """
       req = Request()
       req.params.hardware_attributes.model = uht.hw_test.skylab_model
-      req.params.hardware_attributes.require_stable_device = require_stable_devices
+      # If the request is for a specific model, don't set
+      # require_stable_devices. require_stable_devices is meant to prevent
+      # board-level requests from ending up on unstable models.
+      req.params.hardware_attributes.require_stable_device = not uht.hw_test.skylab_model and require_stable_devices
       req.params.time.maximum_duration.seconds = timeout.seconds
       image_path = uht.unit.common.build_payload.artifacts_gs_path
       image_bucket = uht.unit.common.build_payload.artifacts_gs_bucket

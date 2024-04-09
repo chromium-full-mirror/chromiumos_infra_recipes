@@ -12,4 +12,7 @@ message ScheduleSuitesProperties {
 
   // List of build targets to pass to `schedule_suites`.
   repeated string build_target_critical_allowlist = 2;
+
+  // Whether to pass require_stable_devices.
+  bool require_stable_devices = 3;
 }

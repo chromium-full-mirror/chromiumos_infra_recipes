@@ -105,7 +105,8 @@ def RunSteps(api, properties: ScheduleSuitesProperties):
           unit_hw_test_container,
       ], timeout=duration_pb2.Duration(seconds=3600),
       container_metadata=api.metadata.test_api.mock_metadata(target='target'),
-      build_target_critical_allowlist=build_target_critical_allowlist)
+      build_target_critical_allowlist=build_target_critical_allowlist,
+      require_stable_devices=properties.require_stable_devices)
 
   api.assertions.assertEqual(len(tasks), 5)
   api.assertions.assertCountEqual(
@@ -126,6 +127,44 @@ def GenTests(api):
 
   yield api.test('basic-cq', api.cq(run_mode=api.cq.FULL_RUN),
                  api.buildbucket.ci_build(builder='cq-orchestrator'))
+
+  def HardwareAttributesEquals(check, step_odict, step: str, log: str,
+                               display_name: str, expected: dict):
+    """Assert that a test's HardwareAttributes are equal to a given dict.
+
+    Args:
+      step - The step to check the log of.
+      log - The name of the log to check.
+      display_name - The name of the test to check.
+      expected - The expected value of the HardwareAttributes.
+
+    Usage:
+      yield (
+          TEST
+          + api.post_process(HardwareAttributesEquals, 'step-name', 'log-name', 'display-name', {'key': 'value'})
+      )
+    """
+    data = api.json.loads(step_odict[step].logs[log])
+    check(data['requests'][0]['scheduleBuild']['properties']['requests']
+          [display_name]['params']['hardwareAttributes'] == expected)
+
+  yield api.test(
+      'require-stable-devices',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.buildbucket.ci_build(builder='cq-orchestrator'),
+      api.properties(ScheduleSuitesProperties(require_stable_devices=True)),
+      # The first hwtest sets a specific model and should not set
+      # requireStableDevice; the second hwtest doesn't set a specific model, so
+      # should set requireStableDevice.
+      api.post_check(HardwareAttributesEquals,
+                     'schedule skylab tests v2.buildbucket.schedule', 'request',
+                     'my_first_little_hwtest', {
+                         'model': 'model',
+                     }),
+      api.post_check(HardwareAttributesEquals,
+                     'schedule skylab tests v2.buildbucket.schedule', 'request',
+                     'my_second_little_hwtest', {'requireStableDevice': True}),
+  )
 
   yield api.test(
       'build-target-allowlist-disabled',
