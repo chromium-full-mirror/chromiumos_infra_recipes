@@ -392,8 +392,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
             gerrit_changes=self.gerrit_changes,
             internal_snapshot=self.gitiles_commit,
             external_snapshot=self.external_gitiles_commit))
-    parent_step.presentation.step_text = ('{} new'.format(
-        len(new_build_requests)))
+    parent_step.step_text = ('{} new'.format(len(new_build_requests)))
 
     log_msg = ''
     new_builds = []

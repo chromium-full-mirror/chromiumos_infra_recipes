@@ -483,7 +483,7 @@ def _get_gerrit_changes(api, manifest_diffs):
             gerrit_change = api.gerrit.parse_gerrit_change(gerrit_change_url)
             gerrit_change.project = gerrit_change.project or diff.name
             gerrit_change_title = api.naming.get_commit_title(commit)
-            step.presentation.links[gerrit_change_title] = gerrit_change_url
+            step.links[gerrit_change_title] = gerrit_change_url
             gerrit_changes.append(gerrit_change)
             gerrit_commits.append(commit)
 

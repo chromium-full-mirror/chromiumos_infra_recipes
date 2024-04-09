@@ -789,7 +789,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             gerrit_changes=self.gerrit_changes,
             internal_snapshot=self.gitiles_commit,
             external_snapshot=self.external_gitiles_commit))
-    parent_step.presentation.step_text = ('{} new, {} recycled'.format(
+    parent_step.step_text = ('{} new, {} recycled'.format(
         len(new_build_requests), len(completed_builds)))
 
     log_msg = ''
@@ -992,7 +992,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       build = self.m.buildbucket.schedule([req], url_title_fn=title_fn)[0]
       build_id = build.id
       url = self.m.buildbucket.build_url(build_id=build_id)
-      pres.presentation.links[title_fn(build)] = url
+      pres.links[title_fn(build)] = url
 
       # Are we supposed to wait?
       if await_completion:
