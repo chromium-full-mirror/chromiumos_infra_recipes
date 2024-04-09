@@ -21,18 +21,6 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 GreennessTuple = collections.namedtuple(
     'GreennessTuple', ['score', 'build_score', 'critical', 'relevant'])
 
-# Builder variants to exclude for local greenness.
-LOCAL_EXCLUDE_VARIANTS = [
-    '-asan-',
-    # TODO(b/294303941): Remove once bazel is enabled for local developers.
-    '-bazel-',
-    '-cpp20-',
-    '-kernel-',
-    '-kernelnext',
-    '-ubsan-',
-    '-vm-optimized-',
-]
-
 
 class GreennessApi(recipe_api.RecipeApi):
   """A module to calculate greenness metric."""
@@ -40,6 +28,7 @@ class GreennessApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._publish_property = properties.publish_property
+    self._llfg_exclude_variants = properties.llfg_exclude_variants
     self._builder_greenness_dict: OrderedDict[
         str, GreennessTuple] = collections.OrderedDict()
 
@@ -263,7 +252,7 @@ class GreennessApi(recipe_api.RecipeApi):
     """
     local_build_greenness = [
         gt for (b, gt) in self._builder_greenness_dict.items()
-        if not self._is_excluded(b, LOCAL_EXCLUDE_VARIANTS)
+        if not self._is_excluded(b, self._llfg_exclude_variants)
     ]
     return not any(gt.build_score != 100 and gt.critical is True
                    for gt in local_build_greenness)

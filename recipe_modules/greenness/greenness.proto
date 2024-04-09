@@ -9,4 +9,7 @@ package recipe_modules.chromeos.greenness;
 message GreennessProperties {
   // Whether to publish greenness to an output property.
   bool publish_property = 1;
+
+  // Builder variants excluded for local greenness.
+  repeated string llfg_exclude_variants = 2;
 }

@@ -50,16 +50,24 @@ def GenTests(api):
 
   yield api.test(
       'is-green-for-local',
-      api.properties(**{'$chromeos/greenness': {
-          'publish_property': True
-      }}, failed_builds=False, expected_is_green_for_local=True),
+      api.properties(
+          **{
+              '$chromeos/greenness': {
+                  'publish_property': True,
+                  'llfg_exclude_variants': ['-kernelnext'],
+              }
+          }, failed_builds=False, expected_is_green_for_local=True),
       api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'is-not-green-for-local',
-      api.properties(**{'$chromeos/greenness': {
-          'publish_property': True
-      }}, failed_builds=True, expected_is_green_for_local=False),
+      api.properties(
+          **{
+              '$chromeos/greenness': {
+                  'publish_property': True,
+                  'llfg_exclude_variants': ['-kernelnext'],
+              }
+          }, failed_builds=True, expected_is_green_for_local=False),
       api.post_process(post_process.DropExpectation),
   )
