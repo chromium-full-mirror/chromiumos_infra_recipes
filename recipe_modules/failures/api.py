@@ -359,13 +359,13 @@ class FailuresApi(RecipeApi):
     packages.sort(key=lambda p: p[0].package_name)
     # Create top-level links to the list of failed packages as well as to the
     # Portage logs for the failed packages.
-    enclosing_step.presentation.logs['list of failed packages'] = map(
+    enclosing_step.logs['list of failed packages'] = map(
         self.m.naming.get_package_title, [p[0] for p in packages])
     for p in packages:
       if not p[1]:
         continue
-      enclosing_step.presentation.logs['%s/%s log' % (p[0].category,
-                                                      p[0].package_name)] = p[1]
+      enclosing_step.logs['%s/%s log' %
+                          (p[0].category, p[0].package_name)] = p[1]
 
     failed_package_names = [
         self.m.naming.get_package_title(p[0]) for p in packages
@@ -401,11 +401,11 @@ class FailuresApi(RecipeApi):
     package_failures = self._add_snapshot_fault_attribution(package_failures)
 
     self._package_failures.extend(package_failures)
-    enclosing_step.presentation.properties['package_failures'] = [
+    enclosing_step.properties['package_failures'] = [
         json_format.MessageToDict(p) for p in package_failures
     ]
-    enclosing_step.presentation.status = self.m.step.FAILURE
-    enclosing_step.presentation.step_text = step_text
+    enclosing_step.status = self.m.step.FAILURE
+    enclosing_step.step_text = step_text
     raise StepFailure(failure_message)
 
   def set_test_failed_packages(
