@@ -5,10 +5,11 @@
 
 """Functions implementing looks for green."""
 
-from collections import namedtuple
+import dataclasses
 import datetime
 from typing import Any, Dict, List, Optional
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
@@ -21,19 +22,35 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
+from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
-Snapshot = namedtuple('Snapshot', [
-    'bbid',
-    'commit_sha',
-    'start_time',
-    'end_time',
-    'agg_green',
-    'approx_snap_age_hours',
-    'builder_greenness',
-    'local_greenness',
-])
 
+@dataclasses.dataclass
+class Snapshot:
+  # The snapshot-orchestrator's buildbucket id.
+  bbid: str
+
+  # The commit SHA of the manifest-internal snapshot ref.
+  commit_sha: str
+
+  # The snapshot-orchestrator's start_time.
+  start_time: timestamp_pb2.Timestamp
+
+  # The snapshot-orchestrator's end_time.
+  end_time: timestamp_pb2.Timestamp
+
+  # The aggregate build score.
+  agg_green: int
+
+  # The approximate age of the snapshot.
+  approx_snap_age_hours: int
+
+  # Dict of per-builder greenness.
+  builder_greenness: Dict[str, greenness_pb2.AggregateGreenness.Greenness]
+
+  # Dict of per-builder local_greenness.
+  local_greenness: Dict[str, GreennessTuple]
 
 class LooksForGreenApi(recipe_api.RecipeApi):
   """A module to look for green snapshots."""
@@ -234,7 +251,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
   def _parse_snapshot_result(self,
                              snapshot_result: build_pb2.Build) -> Snapshot:
-    """Parse buildbucket return into Snapshot NamedTuple."""
+    """Parse buildbucket return into Snapshot."""
     start_time = datetime.datetime.utcfromtimestamp(
         snapshot_result.start_time.seconds)
     end_time = datetime.datetime.utcfromtimestamp(
