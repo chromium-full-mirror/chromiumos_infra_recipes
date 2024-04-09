@@ -6763,7 +6763,7 @@ A module that interacts with the GCE Provider config service.
 Depends on 'prpc' binary available in $PATH:
 https://godoc.org/go.chromium.org/luci/grpc/cmd/prpc
 
-&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#73)(self, ids):**
+&mdash; **def [get\_current\_config](/recipe_modules/gce_provider/api.py#74)(self, ids):**
 
 Function to retrieve the current config from GCE Provider.
 
@@ -14684,10 +14684,10 @@ Tests to verify future_utils error handling.
 &mdash; **def [RunSteps](/recipe_modules/future_utils/tests/wait_for_and_throw.py#17)(api):**
 ### *recipes* / [gce\_provider:examples/full](/recipe_modules/gce_provider/examples/full.py)
 
-[DEPS](/recipe_modules/gce_provider/examples/full.py#11): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/gce_provider/examples/full.py#12): [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/gce_provider/examples/full.py#19)(api):**
 ### *recipes* / [gce\_provider:tests/get\_current\_config](/recipe_modules/gce_provider/tests/get_current_config.py)
 
 [DEPS](/recipe_modules/gce_provider/tests/get_current_config.py#13): [deferrals](#recipe_modules-deferrals), [gce\_provider](#recipe_modules-gce_provider), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]

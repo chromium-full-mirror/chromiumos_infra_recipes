@@ -7,6 +7,7 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.go.chromium.org.luci.gce.api.config.v1.config import Config
+from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
@@ -27,4 +28,12 @@ def RunSteps(api):
 
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test(
+      'basic',
+      api.post_check(
+          post_process.StepCommandEquals,
+          'gce-provider.config.Update bot group prefix-first', [
+              'prpc', 'call', '-format=json', 'gce-provider.appspot.com',
+              'config.Configuration.Update'
+          ]),
+  )

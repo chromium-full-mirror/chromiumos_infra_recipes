@@ -148,7 +148,7 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update bot group prefix-first"
+      "config.Configuration.Update"
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update bot group prefix-first",
@@ -172,7 +172,7 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update bot group prefix-second"
+      "config.Configuration.Update"
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update bot group prefix-second",
@@ -196,7 +196,7 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update bot group prefix-third"
+      "config.Configuration.Update"
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update bot group prefix-third",
@@ -220,7 +220,7 @@
       "call",
       "-format=json",
       "gce-provider.appspot.com",
-      "config.Configuration.Update bot group prefix-fourth"
+      "config.Configuration.Update"
     ],
     "infra_step": true,
     "name": "gce-provider.config.Update bot group prefix-fourth",

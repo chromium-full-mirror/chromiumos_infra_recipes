@@ -50,8 +50,9 @@ class GceProvider(recipe_api.RecipeApi):
         },
     }
     step = self._run(
-        f'Update bot group {bid}', req,
-        test_stdout=lambda: self.test_api.get_update_config_data(config))
+        'Update', req,
+        test_stdout=lambda: self.test_api.get_update_config_data(config),
+        step_suffix=f' bot group {bid}')
     return json_format.ParseDict(step, Config(), ignore_unknown_fields=True)
 
   def _make_gce_config_call(self, prefix):
