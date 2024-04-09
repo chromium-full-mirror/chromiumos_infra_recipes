@@ -524,8 +524,7 @@
     "cmd": [],
     "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
-      "@@@STEP_LOG_END@cq looks log@@@"
+      "@@@STEP_TEXT@CQ looks not enabled. Using original snapshot@@@"
     ]
   },
   {
@@ -534,26 +533,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@Looks for green not enabled@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit"
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit.set gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"abc\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit.set_output_gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"abc\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {

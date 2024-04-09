@@ -305,7 +305,7 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'looks for green.find green snapshot'),
       api.post_process(
-          post_process.LogContains, 'looks for green', 'cq looks log',
-          ['No green snapshot found. Using latest minted snapshot.']),
+          post_process.StepTextEquals, 'looks for green',
+          'No green snapshot found. Using latest minted snapshot.'),
       api.post_process(post_process.DropExpectation),
   )

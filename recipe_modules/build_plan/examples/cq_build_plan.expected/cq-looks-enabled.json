@@ -1287,9 +1287,7 @@
     "cmd": [],
     "name": "looks for green",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks experiment enabled@@@",
-      "@@@STEP_LOG_LINE@cq looks log@No green snapshot found. Using latest minted snapshot.@@@",
-      "@@@STEP_LOG_END@cq looks log@@@"
+      "@@@STEP_TEXT@No green snapshot found. Using latest minted snapshot.@@@"
     ]
   },
   {

@@ -4575,8 +4575,7 @@
     "name": "run builds.looks for green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@cq looks log@CQ looks not enabled. Using original snapshot.@@@",
-      "@@@STEP_LOG_END@cq looks log@@@"
+      "@@@STEP_TEXT@CQ looks not enabled. Using original snapshot@@@"
     ]
   },
   {
