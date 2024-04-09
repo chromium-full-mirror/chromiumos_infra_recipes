@@ -1969,7 +1969,9 @@
     "cmd": [],
     "name": "check for merge conflicts",
     "~followup_annotations": [
-      "@@@STEP_TEXT@confirmed no merge conflicts@@@"
+      "@@@STEP_TEXT@confirmed no merge conflicts@@@",
+      "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium.googlesource.com', 'change_number': 1234, 'patch_set': 5}]), ('temp_dir', Path([CLEANUP], 'submittable_check'))])@@@",
+      "@@@STEP_LOG_END@req@@@"
     ]
   },
   {

@@ -605,6 +605,7 @@ class GerritApi(RecipeApi):
           'gerrit_changes': changes,
           'temp_dir': self.m.path['cleanup'].join('submittable_check'),
       }
+      presentation.logs['req'] = str(req.items())
       if test_output_data is None:
         test_output_data = self.test_api.test_changes_are_submittable
       result = self.m.support.call('git-test-submit', req,
