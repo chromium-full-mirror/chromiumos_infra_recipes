@@ -70,7 +70,7 @@ def _get_last_successful_ctp_prod_builds(api, replay_builder,
   try:
     with api.step.nest('get allowed pools for ctpv2') as step:
       ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
-      step.presentation.logs['allowed pools'] = '\n'.join(ctp2_pools)
+      step.logs['allowed pools'] = '\n'.join(ctp2_pools)
   # pylint: disable=broad-except
   except Exception:  # pragma: no cover
     pass

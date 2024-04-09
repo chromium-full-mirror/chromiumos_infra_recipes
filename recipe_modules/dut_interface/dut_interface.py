@@ -330,7 +330,7 @@ class DUTInterface():  # pragma: no cover
 
 
     # Add deadline information to the step logs.
-    step.presentation.logs[
+    step.logs[
         'deadline information'] = 'start: %s\nend: %s\ntotal_seconds: %s\n' % (
             self._format_time(current_time),
             self._format_time(deadline.soft_deadline), str(limit_seconds))
@@ -351,6 +351,6 @@ class DUTInterface():  # pragma: no cover
         deadline = self._properties.request.deadline
         current_time = self._api.time.time()
         if deadline.seconds < current_time:
-          step.presentation.status = self._api.step.FAILURE
+          step.status = self._api.step.FAILURE
           return False
       return True

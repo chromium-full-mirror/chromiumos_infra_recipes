@@ -112,7 +112,7 @@ def s_log(step, name, log):
   check_type('name', name, str)
   check_type('log', log, (str, type(None)))
   if log:
-    step.presentation.logs[name] = log
+    step.logs[name] = log
 
 
 def s_link(step, name, link):
@@ -148,7 +148,7 @@ def _set_step_status(api, step_name, summary, failure_condition=True,
   with api.step.nest(step_name) as step:
     log = None
     if failure_condition:
-      step.presentation.status = api.step.FAILURE
+      step.status = api.step.FAILURE
       log = summary
     s_log(step=step, name='summary', log=log)
     if fail_build and failure_condition:
@@ -965,7 +965,7 @@ def _prepare_resultdb_sources_file(api, properties):
           sources_url)
     except StepFailure as e:
       step.step_text = 'Source information not found'
-      step.presentation.status = api.step.SUCCESS
+      step.status = api.step.SUCCESS
       raise SourcesNotAvailableException(
           'sources.jsonpb file not found in GS.') from e
 
@@ -1378,7 +1378,7 @@ def _get_context_deadline(api, limit_seconds, step):
   # Set deadline to which ever value is sooner
   deadline.soft_deadline = builder_deadline if builder_deadline < deadline.soft_deadline else deadline.soft_deadline
 
-  step.presentation.logs[
+  step.logs[
       'result upload deadline info'] = 'start: %s\nend: %s\ntotal_seconds: %s\n' % (
           _format_time(current_time), _format_time(
               deadline.soft_deadline), str(limit_seconds))
@@ -1496,13 +1496,13 @@ def publish_to_result_flow(api, config, parent_request_uid,
   with api.step.nest('publish build ID') as step:
     with api.context(infra_steps=True):
       if not api.buildbucket.build.id:
-        step.presentation.step_summary_text = 'Skipped: Build ID not set'
+        step.step_summary_text = 'Skipped: Build ID not set'
         return
       if not config.result_flow_pubsub.topic:
-        step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
+        step.step_summary_text = 'Skipped: PubSub topic not set'
         return
       if not config.result_flow_pubsub.project:
-        step.presentation.step_summary_text = 'Skipped: PubSub project not set'
+        step.step_summary_text = 'Skipped: PubSub project not set'
         return
       api.result_flow.publish(
           project_id=config.result_flow_pubsub.project,

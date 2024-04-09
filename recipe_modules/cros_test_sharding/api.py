@@ -511,10 +511,10 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
               ValueError) as te:
         self.m.step.active_result.presentation.status = self.m.step.WARNING
         self.m.step.active_result.presentation.step_text = f'Failed to update timing information for suite_name:{suite_name}, board:{board}\n'
-        step.presentation.logs[
+        step.logs[
             'bQuery Exception'] = self.m.step.active_result.presentation.step_text + f': {te}'
         step_log += f'bq cmd IO Results:\nresult.stdout: {result.stdout} \n result.stderr: {result.stderr.strip()}'
-      step.presentation.logs['StepLog'] = step_log
+      step.logs['StepLog'] = step_log
     return TestCase.test_times
 
   def optimized_shard_allocation(self, test_suite, suite_name, board,

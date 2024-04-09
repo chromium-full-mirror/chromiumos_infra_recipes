@@ -146,12 +146,12 @@ def _validate_container_metadata_url(api, requests):
   with api.step.nest('container metadata url') as step:
     for t, r in requests.items():
       if r.params.run_via_cft and not r.params.metadata.container_metadata_url:
-        step.presentation.logs[
+        step.logs[
             t] = 'Error in container_metadata_url: %s' % 'container metadata url is required for CFT test request.'
         validation_error = True
 
     if validation_error:
-      step.presentation.status = api.step.FAILURE
+      step.status = api.step.FAILURE
   return validation_error
 
 
@@ -165,9 +165,8 @@ def _validate_software_dependencies(api, requests):
     for t, r in requests.items():
       errs = _invalid_software_dependencies(r.params.software_dependencies)
       if errs:
-        step.presentation.logs[
-            t] = 'Errors in software_dependencies: %s' % ', '.join(
-                sorted(errs))
+        step.logs[t] = 'Errors in software_dependencies: %s' % ', '.join(
+            sorted(errs))
         validation_error = True
   return validation_error
 
@@ -201,10 +200,9 @@ def _validate_timeouts(api, requests):
 
       request_timeout_s = request_timeout.ToTimedelta().total_seconds()
       if request_timeout_s > 0 and request_timeout_s >= max_timeout_s:
-        step.presentation.logs[
-            t] = 'Timeout (%s) is larger than maximum timeout (%s)' % (
-                request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
-        step.presentation.status = api.step.FAILURE
+        step.logs[t] = 'Timeout (%s) is larger than maximum timeout (%s)' % (
+            request_timeout.ToTimedelta(), max_timeout.ToTimedelta())
+        step.status = api.step.FAILURE
         validation_error = True
   return validation_error
 
@@ -220,8 +218,8 @@ def _validate_scheduling_params(api, requests):
       error = _get_scheduling_error(r)
       if error:
         validation_error = True
-        step.presentation.logs[t] = error
-        step.presentation.status = api.step.FAILURE
+        step.logs[t] = error
+        step.status = api.step.FAILURE
   return validation_error
 
 
@@ -476,7 +474,7 @@ def _enumerate_non_cft_tests(api, requests):
     for tag, response in sorted(enum_responses.tagged_responses.items()):
       _log_enumeration_errors(api, response, tag)
       name = 'autotest tests for %s' % tag
-      step.presentation.logs[name] = json.dumps(
+      step.logs[name] = json.dumps(
           _enumeration_log(response), separators=(',', ': '), indent=2,
           sort_keys=True)
     return dict(enum_responses.tagged_responses)
@@ -592,11 +590,11 @@ def _enumerate_cft_tests(api, properties, requests):
     for tag, response in sorted(tagged_responses.items()):
       _log_enumeration_errors(api, response, tag)
       name = 'autotest tests for %s' % tag
-      step.presentation.logs[name] = json.dumps(
+      step.logs[name] = json.dumps(
           _enumeration_log(response), separators=(',', ': '), indent=2,
           sort_keys=True)
 
-    step.presentation.logs['constructed cft enumeration response'] = json.dumps(
+    step.logs['constructed cft enumeration response'] = json.dumps(
         taggged_responses_json, separators=(',', ': '), indent=2,
         sort_keys=True)
 
@@ -751,7 +749,7 @@ def _test_suites_with_filtered_tests(api, r, build_target, test_suites):
         filtered_test_suites.append(filtered_test_suite)
         removed_test_cases.extend(removed_cases)
     if removed_cases:  # pragma: nocover
-      step.presentation.logs['filtered/removed tests'] = json.dumps(
+      step.logs['filtered/removed tests'] = json.dumps(
           {'filtered tests': removed_test_cases}, separators=(',', ': '),
           indent=2)
     else:
@@ -861,7 +859,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       build_number_matches = _extract_build_numbers_from_request(r)
       milestone = next(iter(build_number_matches))
       cfg = api.cros_infra_config.get_test_filter_config()
-      step.presentation.logs['cfg_used'] = json_format.MessageToJson(cfg)
+      step.logs['cfg_used'] = json_format.MessageToJson(cfg)
 
       req = _ctr_test_filter(test_suites, build_target, milestone, dryrun, cfg,
                              str(api.buildbucket.build.id), suite_name)
@@ -869,7 +867,7 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       # This will happen when a suite opts out.
       if not req:  # pragma: no cover
         return test_suites, []
-      step.presentation.logs['policy_used'] = json_format.MessageToJson(req)
+      step.logs['policy_used'] = json_format.MessageToJson(req)
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:  # pragma: no cover
         removed = [str(test) for test in pre_test_resp.response.removed_tests]
@@ -917,9 +915,8 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
         max_in_shard = 225
     if seed is None or seed == 0:
       seed = int(api.time.time())
-    step.presentation.logs['shard seed'] = json.dumps({'seed': seed},
-                                                      separators=(',', ': '),
-                                                      indent=2)
+    step.logs['shard seed'] = json.dumps({'seed': seed}, separators=(',', ': '),
+                                         indent=2)
     api.random.seed(seed)
     autotest_invocations = []
     for test_suite in test_suites:
@@ -934,7 +931,7 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
            properties.experiments):
         with api.m.step.nest('Optimized Sharding Experiment') as optimized_step:
           build_target = _reconstruct_build_target(request)
-          optimized_step.presentation.logs[
+          optimized_step.logs[
               'metadata'] = f'suite_name:{suite_name}\nbuild_target/board:{build_target}\ntotal_shards:{total_shards}'
           shards = api.cros_test_sharding.optimized_shard_allocation(
               test_suite, suite_name, build_target, total_shards)
@@ -943,14 +940,13 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
             list(test_suite.test_cases.test_cases), suite_name)
         shards = _shard_test_buckets(api, test_buckets, total_shards,
                                      max_in_shard)
-      step.presentation.tags['shard_count'] = str(len(shards))
-      step.presentation.tags['unique_dependencies_count'] = str(
-          len(test_buckets))
+      step.tags['shard_count'] = str(len(shards))
+      step.tags['unique_dependencies_count'] = str(len(test_buckets))
       for i, shard in enumerate(shards):
         shard_name = '%s-shard-%d' % (suite_name, i)
         test_names = [test_case.id.value for test_case in shard]
         shard_dependencies = _shard_dependencies(shard)
-        step.presentation.logs[shard_name] = json.dumps(
+        step.logs[shard_name] = json.dumps(
             {
                 'shardName': shard_name,
                 'dependencies': shard_dependencies,
@@ -1291,13 +1287,13 @@ def publish_to_result_flow(api, config, should_poll_for_completion=False):
   """
   with api.step.nest('publish build ID') as step:
     if not api.buildbucket.build.id:
-      step.presentation.step_summary_text = 'Skipped: Build ID not set'
+      step.step_summary_text = 'Skipped: Build ID not set'
       return
     if not config.pubsub.topic:
-      step.presentation.step_summary_text = 'Skipped: PubSub topic not set'
+      step.step_summary_text = 'Skipped: PubSub topic not set'
       return
     if not config.pubsub.project:
-      step.presentation.step_summary_text = 'Skipped: PubSub project not set'
+      step.step_summary_text = 'Skipped: PubSub project not set'
       return
     api.result_flow.publish(
         project_id=config.pubsub.project, topic_id=config.pubsub.topic,
@@ -1426,7 +1422,7 @@ def CheckIfCtpv2NeedsToRun(api, properties):
     try:
       with api.step.nest('get allowed pools for ctpv2') as step:
         ctp2_pools = api.cros_infra_config.get_ctp2_pools_config()
-        step.presentation.logs['allowed pools'] = '\n'.join(ctp2_pools)
+        step.logs['allowed pools'] = '\n'.join(ctp2_pools)
     # pylint: disable=broad-except
     except Exception:  # pragma: no cover
       pass
@@ -1524,14 +1520,11 @@ def _validate_request_error_and_turn_off_cft_if_necessary(
         del error_in_requests[tag]
 
       # Log the tags and set step tags to be used for queries
-      step.presentation.tags['cft_turned_off_tags_list'] = ','.join(
+      step.tags['cft_turned_off_tags_list'] = ','.join(cft_turned_off_tags_list)
+      step.logs['requests_for_which_cft_is_turned_off'] = '\n'.join(
           cft_turned_off_tags_list)
-      step.presentation.logs[
-          'requests_for_which_cft_is_turned_off'] = '\n'.join(
-              cft_turned_off_tags_list)
     else:
-      step.presentation.logs[
-          'summary'] = 'No requests were modified to turn off cft.'
+      step.logs['summary'] = 'No requests were modified to turn off cft.'
 
   return
 
@@ -1558,9 +1551,8 @@ def add_container_metadata(api, requests, error_in_requests):
   url_to_metadata_map = {}
   url_to_error_map = {}
   with api.step.nest('retrieve container metadata') as step:
-    step.presentation.logs[
-        'unique container metadata urls in request'] = '/n'.join(
-            unique_metadata_urls)
+    step.logs['unique container metadata urls in request'] = '/n'.join(
+        unique_metadata_urls)
     for url in unique_metadata_urls:
       url_to_metadata_map[url] = _get_container_metadata(
           api, url, url_to_error_map)
@@ -1580,8 +1572,8 @@ def add_container_metadata(api, requests, error_in_requests):
           if metadata:
             if len(metadata.containers) == 1:
               r.params.execution_param.container_metadata.CopyFrom(metadata)
-              step.presentation.logs[
-                  'container metadata'] = json_format.MessageToJson(metadata)
+              step.logs['container metadata'] = json_format.MessageToJson(
+                  metadata)
             else:
               error = "No container information found in container metadata for request '{}', build target '{}', container metadata url '{}'.".format(
                   t, build_target, metadata_url)
@@ -1591,7 +1583,7 @@ def add_container_metadata(api, requests, error_in_requests):
           if error:
             # mark this entry to be skipped so that enumeration and execution steps ignore this request.
             error_in_requests[t] = error
-            step.presentation.logs['container metadata error'] = error
+            step.logs['container metadata error'] = error
 
 
 def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
@@ -1616,7 +1608,7 @@ def _get_container_metadata(api, metadata_gs_url, url_to_error_map):
       metadata = json_format.Parse(res, ContainerMetadata())
     # pylint: disable=broad-except
     except Exception as ex:
-      step.presentation.logs['container metadata error'] = str(ex)
+      step.logs['container metadata error'] = str(ex)
       url_to_error_map[
           metadata_gs_url] = 'Error while retrieving container metadata from {}: {}'.format(
               metadata_gs_url, str(ex))
@@ -1649,7 +1641,7 @@ def _get_dut_use_flags(api, use_flag_gs_url):
       step.presentation.logs['tast use flags gs error'] = str(e)
       step.presentation.status = api.step.SUCCESS
       return None
-    step.presentation.logs['tast use flags list'] = res
+    step.logs['tast use flags list'] = res
   return res
 
 
@@ -1664,7 +1656,7 @@ def postprocess(api, requests, responses, skip_postprocess=True):
   with api.step.nest('postprocess') as step:
     # For partner build configs, don't schedule cros_test_postprocess builds.
     if skip_postprocess:
-      step.presentation.step_summary_text = 'Skipped: Postprocess disabled'
+      step.step_summary_text = 'Skipped: Postprocess disabled'
       return
     for tag, response in sorted(responses.items()):
       request = requests[tag]
@@ -1811,7 +1803,7 @@ def summarize(api, enumerations, responses, error_in_requests,
           classification = _classify_request_failure(
               response.consolidated_results)
           request_classifications[classification] += 1
-          step.presentation.status = api.step.FAILURE
+          step.status = api.step.FAILURE
 
     if failures:
       summary_lines = [
@@ -1859,7 +1851,7 @@ def _top_level_export_to_bigquery(api, force_export):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
-    step.presentation.logs['output'] = json_format.MessageToJson(responses)
+    step.logs['output'] = json_format.MessageToJson(responses)
     marshalled = api.skylab_results.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result
     # in a response tagged 'default'. Some clients that specify a single
@@ -1882,13 +1874,13 @@ def _log_enumeration_errors(api, enum, tag):
   if enum.error_summary:
     with api.step.nest('enumeration error') as step:
       step.logs['summary'] = '{} : {}'.format(tag, enum.error_summary)
-      step.presentation.status = api.step.FAILURE
+      step.status = api.step.FAILURE
 
 
 def _log_error_in_request(api, tag, error):
   with api.step.nest('container metadata error') as step:
     step.logs['summary'] = '{} : {}'.format(tag, error)
-    step.presentation.status = api.step.FAILURE
+    step.status = api.step.FAILURE
 
 
 # The odd-looking string.replaced items below are listed as such to aid in code
@@ -1928,7 +1920,7 @@ def _log_task_results(api, unsorted_task_results):
       with api.step.nest(task_state.replace('_', ' ')) as step:
         _emit_links(step, task_results)
         if task_state in _UNSUCCESSFUL_TASK_STATES:
-          step.presentation.status = api.step.FAILURE
+          step.status = api.step.FAILURE
 
 
 _PASSED_VERDICTS = [TaskState.VERDICT_PASSED, TaskState.VERDICT_PASSED_ON_RETRY]

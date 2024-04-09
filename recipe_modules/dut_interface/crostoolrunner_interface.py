@@ -303,10 +303,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
               self._api.cros_tool_runner.provision(provision_request))
 
           if prejob_response.any_provision_failed:
-            step.presentation.status = self._api.step.FAILURE
-            step.presentation.step_summary_text = prejob_response.failure_reason
-            step.presentation.tags[
-                'provision_failure'] = prejob_response.failure_reason
+            step.status = self._api.step.FAILURE
+            step.step_summary_text = prejob_response.failure_reason
+            step.tags['provision_failure'] = prejob_response.failure_reason
 
           return prejob_response
       except StepFailure as e:  # pragma: nocover
@@ -382,7 +381,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           self._api.cros_tool_runner.test(run_test_request))
 
       if test_response.any_test_failed:
-        step.presentation.status = self._api.step.FAILURE
+        step.status = self._api.step.FAILURE
 
       return test_response
 
@@ -955,7 +954,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         deadline = self._properties.cft_test_request.deadline
         current_time = self._api.time.time()
         if deadline.seconds < current_time:
-          step.presentation.status = self._api.step.FAILURE
+          step.status = self._api.step.FAILURE
           return False
     return True
 
@@ -1032,7 +1031,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
       if not tast_via_tauto:
         # If no tast_via_tauto in test cases, keep the responses as is.
-        step.presentation.logs[
+        step.logs[
             'Output'] = 'No tast_via_tauto found. So no processing required.'
         return cros_test_responses, cros_test_responses
 
