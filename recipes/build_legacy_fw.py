@@ -370,7 +370,7 @@ class FirmwareBuilder():
             '--skip_chroot_upgrade'
         ]
       if self._config.build.install_packages.compile_source:
-        cmd.append('--nousepkg')
+        cmd.append('--no-usepkg')
       # --withdebugsymbols was added to build_packages in 6302.0.0
       if self._is_after('6302.0.0'):
         cmd.append('--withdebugsymbols')

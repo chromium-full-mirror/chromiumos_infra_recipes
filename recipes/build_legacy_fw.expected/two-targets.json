@@ -2981,7 +2981,7 @@
       "--board=board1",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade",
-      "--nousepkg",
+      "--no-usepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],
@@ -3641,7 +3641,7 @@
       "--board=board2",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade",
-      "--nousepkg",
+      "--no-usepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],

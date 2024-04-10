@@ -3063,7 +3063,7 @@
       "--board=target",
       "--accept-licenses=@CHROMEOS",
       "--skip-chroot-upgrade",
-      "--nousepkg",
+      "--no-usepkg",
       "--withdebugsymbols",
       "virtual/chromeos-firmware"
     ],

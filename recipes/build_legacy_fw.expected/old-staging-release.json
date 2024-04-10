@@ -4002,7 +4002,7 @@
       "--board=target",
       "--accept_licenses=@CHROMEOS",
       "--skip_chroot_upgrade",
-      "--nousepkg",
+      "--no-usepkg",
       "virtual/chromeos-firmware"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
