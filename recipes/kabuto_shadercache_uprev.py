@@ -51,6 +51,8 @@ def RunSteps(api: RecipeApi,
   with api.step.nest('validate properties') as presentation:
     if not properties.uprev_info:
       raise StepFailure('must set uprev_info')
+    if not properties.borealis_remote_url:
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
     presentation.step_text = 'all properties good'
 
   with api.failures.ignore_exceptions():
@@ -196,9 +198,9 @@ def DoRunSteps(api: RecipeApi,
     # should checkout platform/borealis to it now.
     if properties.gerrit_cl_ref and api.build_menu.is_staging:
       with api.step.nest('Checkout Gerrit CL'):
-        remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
-        api.git.fetch(remote)
-        api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+        api.git.fetch(properties.borealis_remote_url)
+        api.git.fetch_ref(properties.borealis_remote_url,
+                          properties.gerrit_cl_ref)
         api.git.checkout('FETCH_HEAD', force=True)
     updated_artifacts_path = _SetupUpdatedArtifacts(api, properties.uprev_info)
     if api.cros_version.version.milestone >= _MILESTONE_USES_KABUTO_UPREV:

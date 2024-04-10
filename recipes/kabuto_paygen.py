@@ -55,6 +55,8 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
       raise StepFailure(
           'manifest_branch must not be set when using postsubmit build artifacts'
       )
+    if not properties.borealis_remote_url:
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
 
     presentation.step_text = 'all properties good'
 
@@ -79,9 +81,9 @@ def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
     # should checkout platform/borealis to it now.
     if properties.gerrit_cl_ref and api.build_menu.is_staging:
       with api.step.nest('Checkout Gerrit CL'):
-        remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
-        api.git.fetch(remote)
-        api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+        api.git.fetch(properties.borealis_remote_url)
+        api.git.fetch_ref(properties.borealis_remote_url,
+                          properties.gerrit_cl_ref)
         api.git.checkout('FETCH_HEAD', force=True)
     kabuto_cmd = ['./kabuto']
     # Override local Kabuto config if provided.

@@ -12197,7 +12197,7 @@ builder profiles.
 
 Recipe for building Borealis shadercache using Kabuto.
 
-&mdash; **def [DoRunSteps](/recipes/build_kabuto_shadercache.py#74)(api: RecipeTestApi, properties: BuildKabutoShadercacheProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_kabuto_shadercache.py#76)(api: RecipeTestApi, properties: BuildKabutoShadercacheProperties):**
 
 &mdash; **def [RunSteps](/recipes/build_kabuto_shadercache.py#60)(api: RecipeApi, properties: BuildKabutoShadercacheProperties):**
 ### *recipes* / [build\_legacy\_factory](/recipes/build_legacy_factory.py)
@@ -15200,7 +15200,7 @@ Recipe for building Kabuto payloads and launching Kabuto shadercache jobs.
 
 Recipe for generating a Kabuto payload.
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_paygen.py#74)(api: RecipeApi, properties: KabutoPaygenProperties):**
+&mdash; **def [DoRunSteps](/recipes/kabuto_paygen.py#76)(api: RecipeApi, properties: KabutoPaygenProperties):**
 
 &mdash; **def [RunSteps](/recipes/kabuto_paygen.py#45)(api: RecipeApi, properties: KabutoPaygenProperties):**
 ### *recipes* / [kabuto\_shadercache\_uprev](/recipes/kabuto_shadercache_uprev.py)
@@ -15210,11 +15210,11 @@ Recipe for generating a Kabuto payload.
 
 Recipe for uprev'ing shadercache DLC ebuilds
 
-&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#147)(api: RecipeApi):**
+&mdash; **def [CommitAndUploadCL](/recipes/kabuto_shadercache_uprev.py#149)(api: RecipeApi):**
 
 Commit changes and create a Gerrit CL in the current directory.
 
-&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#185)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
+&mdash; **def [DoRunSteps](/recipes/kabuto_shadercache_uprev.py#187)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 
 &mdash; **def [RunSteps](/recipes/kabuto_shadercache_uprev.py#49)(api: RecipeApi, properties: KabutoShadercacheUprevProperties):**
 ### *recipes* / [kernel\_checkconfig](/recipes/kernel_checkconfig.py)

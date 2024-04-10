@@ -42,4 +42,8 @@ message BuildKabutoShadercacheProperties {
   // Manual override for Kabuto config (kabuto.json)
   // Optional
   string kabuto_config_override = 9;
+
+  // URL to Git repo containing 'tools/kabuto'.
+  // Optional
+  string borealis_remote_url = 10;
 }

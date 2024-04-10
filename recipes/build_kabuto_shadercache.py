@@ -65,6 +65,8 @@ def RunSteps(api: RecipeApi,
       raise StepFailure('must set payload_gs_bucket')
     if not properties.payload_gs_path:
       raise StepFailure('must set payload_gs_path')
+    if not properties.borealis_remote_url:
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
 
     presentation.step_text = 'all properties good'
 
@@ -82,9 +84,8 @@ def DoRunSteps(api: RecipeTestApi,
   borealis_checkout = api.path.mkdtemp('borealis')
   with api.context(cwd=borealis_checkout):
     with api.step.nest('clone kabuto'):
-      remote = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
       # Clone Borealis, Kabuto is in borealis/tools/kabuto.
-      api.git.clone(remote)
+      api.git.clone(properties.borealis_remote_url)
       # Check out a manifest branch. Manifest branch has priority
       # over other Kabuto checkouts if multiple are provided.
       if properties.manifest_branch:
@@ -95,8 +96,9 @@ def DoRunSteps(api: RecipeTestApi,
       # Check out a specific Kabuto CL ref from Gerrit (staging only)
       elif properties.gerrit_cl_ref and api.build_menu.is_staging:
         with api.step.nest('Checkout Gerrit CL'):
-          api.git.fetch(remote)
-          api.git.fetch_ref(remote, properties.gerrit_cl_ref)
+          api.git.fetch(properties.borealis_remote_url)
+          api.git.fetch_ref(properties.borealis_remote_url,
+                            properties.gerrit_cl_ref)
           api.git.checkout('FETCH_HEAD', force=True)
 
     # Download Mesa headers for Kabuto to ingest.

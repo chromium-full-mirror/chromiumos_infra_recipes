@@ -10,4 +10,8 @@ message KabutoExportDlcInfoProperties {
   // Number of major ChromeOS versions to backtrack for export.
   // Optional.
   int32 major_version_backtrack_count = 1;
+
+  // URL to Git repo containing 'tools/kabuto'.
+  // Optional.
+  string borealis_remote_url = 2;
 }
