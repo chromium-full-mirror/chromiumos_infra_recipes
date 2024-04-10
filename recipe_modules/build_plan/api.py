@@ -5,7 +5,6 @@
 
 """Functions related to build planning."""
 
-from datetime import datetime
 from typing import List, Optional, Set, Tuple
 
 from PB.chromite.api import relevancy as relevancy_pb2
@@ -520,21 +519,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   '{} is skipped because its snapshot {} was broken until {}'
                   .format(builder, build_snapshot, broken_until_snapshot))
               continue
-          # We need to offset the original build's start_time to the most likely snapshot chosen.
-          # Won't be a thing once broken_before specifies snapshot instead.
-          lfg_offset = 4 * 60 * 60
-          # If the build ran before a known bug was fixed, don't reuse it.
-          if build.start_time.seconds - lfg_offset < builder_config.general.broken_before.seconds:
-            count_broken_before_rebuilds += 1
-            skip_log.append(
-                '{} is skipped because it was broken till {}UTC'.format(
-                    builder,
-                    datetime.utcfromtimestamp(
-                        builder_config.general.broken_before.seconds)))
-            # We are planning to switch broken_before to use snapshot instead of time.
-            # Temporarily, just disable lfg. b/314764930
-            self.m.looks_for_green.enable_looks_for_green = False
-            continue
 
           # Refresh the criticality of the builders.
           build.critical = (

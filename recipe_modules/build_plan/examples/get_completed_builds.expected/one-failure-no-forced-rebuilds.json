@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "get completed builds",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because it was broken till 2019-11-01 00:00:00UTC@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because its snapshot  was broken until SHA1@@@",
       "@@@STEP_LOG_END@skip log@@@",
       "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@1@@@"
     ]
@@ -88,6 +88,57 @@
     "name": "get completed builds.checking atlas-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "get completed builds.checking atlas-cq.check if build is broken",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"SHA1\"}]}"
+    ],
+    "infra_step": true,
+    "name": "get completed builds.checking atlas-cq.check if build is broken.buildbucket.search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "ls",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-json",
+      "-nopage",
+      "-n",
+      "1",
+      "-fields",
+      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
+      "-predicate",
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\"}]}"
+    ],
+    "infra_step": true,
+    "name": "get completed builds.checking atlas-cq.check if build is broken.buildbucket.search (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
