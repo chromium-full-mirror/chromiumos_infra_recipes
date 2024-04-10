@@ -17445,7 +17445,7 @@ Intended for flows like incremental builders. See b/329271972.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/eea30870b85500d8ee8261bbda79b550a7451393/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/eea30870b85500d8ee8261bbda79b550a7451393/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/eea30870b85500d8ee8261bbda79b550a7451393/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/6a1b360d365dea24a1e8eabacf911c600e798872/recipes/README.recipes.md#recipe_modules-codesearch
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/3607fe14f0d8a481b1328a60f2a602e9179b339d/recipes/README.recipes.md#recipe_modules-codesearch
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/09ec4880906a6aae1e8adc63212bd1259a817983/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/09ec4880906a6aae1e8adc63212bd1259a817983/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/09ec4880906a6aae1e8adc63212bd1259a817983/README.recipes.md#recipe_modules-bcid_reporter
