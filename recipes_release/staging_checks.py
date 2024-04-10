@@ -56,9 +56,15 @@ def orchestrator_exemption(build: Dict[str, Any]) -> bool:
 
 def image_builder_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for image builds."""
+  if build.get('status') == 'INFRA_FAILURE':
+    return False
+
   ignorable_summary_markdown_re = [
       re.compile(r'^failed unit tests for'),
       re.compile(r'^failed compilation for'),
+      re.compile(
+          r"^Step\('build images\.test images\.call chromite\.api\.ImageService/Test\.call build API script'\) \(retcode: 3\)$"
+      ),
   ]
   for regex in ignorable_summary_markdown_re:
     if regex.search(build.get('summaryMarkdown', '')):
