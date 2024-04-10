@@ -4620,7 +4620,7 @@
       "-u",
       "RECIPE_MODULE[recipe_engine::archive]/resources/extract.py",
       "--json-input",
-      "{\"archive_file\": \"[CLEANUP]/artifacts_tmp_1/../generated/coverage.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
+      "{\"archive_file\": \"[CLEANUP]/generated/coverage.tbz2\", \"include_files\": [], \"output\": \"[CLEANUP]/ccov-upload_tmp_1/out\", \"safe_mode\": true}",
       "--json-output",
       "/path/to/tmp/json"
     ],
