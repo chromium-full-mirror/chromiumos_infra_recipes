@@ -133,7 +133,7 @@ def _already_replayed_ctp_build_ids(api, replay_builder, time_range):
               'project': 'chromeos',
               'bucket': 'testplatform',
               'builder': replay_builder,
-          }, create_time=time_range), fields=['*'],
+          }, create_time=time_range), fields=['tags'],
       step_name='filter out already-replayed builds')
 
   replayed_prod_build_ids = []
