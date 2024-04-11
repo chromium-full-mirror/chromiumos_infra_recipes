@@ -45,11 +45,8 @@ def GenTests(api):
   output.properties['commit'] = {'id': 'sampleSHA'}
 
   yield api.test(
-      'success-but-scored',
-      api.properties(
-          **{'$chromeos/looks_for_green': {
-              'use_scored_over_minted': True,
-          }}, expected_greenness=100, expected_is_snap_orch_green=True),
+      'success',
+      api.properties(expected_greenness=100, expected_is_snap_orch_green=True),
       api.time.seed(TEST_SEED_TIME_SECONDS),
       api.buildbucket.simulated_search_results(
           builds=[
