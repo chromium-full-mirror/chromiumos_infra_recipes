@@ -8301,7 +8301,7 @@ A module to calculate greenness metric.
 
 &emsp; **@property**<br>&mdash; **def [builder\_greenness\_dict](/recipe_modules/greenness/api.py#35)(self):**
 
-&mdash; **def [get\_aggregate\_builder\_greenness](/recipe_modules/greenness/api.py#260)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
+&mdash; **def [get\_aggregate\_builder\_greenness](/recipe_modules/greenness/api.py#271)(self, snapshot_commit: str, snapshot_builder_names: List[str]):**
 
 Get the aggregate greenness for the given builders on the given commit.
 
@@ -8320,7 +8320,15 @@ Args:
 Raises:
   StepFailure if snapshot_builder_names is empty.
 
-&mdash; **def [is\_green\_for\_local](/recipe_modules/greenness/api.py#245)(self):**
+&mdash; **def [get\_local\_build\_greenness](/recipe_modules/greenness/api.py#257)(self, is_bazel: bool):**
+
+Returns a filtered list of greenness tuples for local builds.
+
+It is assumed that builder_greenness_dict is prepopulated (i.e.
+update_build_info was previously called); otherwise, an empty list will
+be returned.
+
+&mdash; **def [is\_green\_for\_local](/recipe_modules/greenness/api.py#245)(self, is_bazel: bool=False):**
 
 Returns whether the current snapshot is green for local builds.
 
@@ -10665,7 +10673,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#76)(self):**
 
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#300)(self, should_update: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#304)(self, should_update: bool, should_update_bazel: bool):**
 
 Outputs info about local greenness.
 
@@ -10683,7 +10691,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#492)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#498)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10701,7 +10709,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#306)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#312)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 

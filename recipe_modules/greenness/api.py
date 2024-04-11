@@ -242,7 +242,7 @@ class GreennessApi(recipe_api.RecipeApi):
           sum(critical_build_scores) / len(critical_build_scores))
     self.m.easy.set_properties_step(greenness=agg_greenness)
 
-  def is_green_for_local(self) -> bool:
+  def is_green_for_local(self, is_bazel: bool = False) -> bool:
     """Returns whether the current snapshot is green for local builds.
 
     If there are irrelevant builders for the current snapshot, the greenness
@@ -250,12 +250,23 @@ class GreennessApi(recipe_api.RecipeApi):
     builder_greenness_dict is prepopulated (i.e. update_build_info was
     previously called); otherwise, a false positive will be returned.
     """
-    local_build_greenness = [
-        gt for (b, gt) in self._builder_greenness_dict.items()
-        if not self._is_excluded(b, self._llfg_exclude_variants)
-    ]
+    local_build_greenness = self.get_local_build_greenness(is_bazel)
     return not any(gt.build_score != 100 and gt.critical is True
                    for gt in local_build_greenness)
+
+  def get_local_build_greenness(self, is_bazel: bool) -> List[GreennessTuple]:
+    """Returns a filtered list of greenness tuples for local builds.
+
+    It is assumed that builder_greenness_dict is prepopulated (i.e.
+    update_build_info was previously called); otherwise, an empty list will
+    be returned.
+    """
+    included_builders = [
+        (b, gt)
+        for (b, gt) in self._builder_greenness_dict.items()
+        if not self._is_excluded(b, self._llfg_exclude_variants)
+    ]
+    return [gt for (b, gt) in included_builders if ('-bazel-' in b) == is_bazel]
 
   def get_aggregate_builder_greenness(self, snapshot_commit: str,
                                       snapshot_builder_names: List[str]) -> int:
