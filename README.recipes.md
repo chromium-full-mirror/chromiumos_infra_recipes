@@ -16156,17 +16156,17 @@ Instead, try to process the other projects, and THEN fail.
 
 Recipe for scaling bots in Chrome and ChromeOS pools.
 
-&mdash; **def [RunSteps](/recipes/robocrop.py#34)(api: recipe_api.RecipeApi, properties: robocrop_pb2.RoboCropProperties):**
+&mdash; **def [RunSteps](/recipes/robocrop.py#43)(api: recipe_api.RecipeApi, properties: robocrop_pb2.RoboCropProperties):**
 
-&mdash; **def [execute\_robocrop\_action](/recipes/robocrop.py#152)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties, action: bot_scaling_pb2.RoboCropAction, original_gce_configs: gce_config_pb2.Configs):**
+&mdash; **def [execute\_robocrop\_action](/recipes/robocrop.py#168)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties, action: bot_scaling_pb2.RoboCropAction, original_gce_configs: gce_config_pb2.Configs):**
 
 Execute the given RoboCropAction on the given project.
 
-&mdash; **def [get\_current\_swarming\_stats](/recipes/robocrop.py#125)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
+&mdash; **def [get\_current\_swarming\_stats](/recipes/robocrop.py#139)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
 
 Query Swarming for the current bot and task stats.
 
-&mdash; **def [get\_delta\_gce\_configs](/recipes/robocrop.py#178)(original_gce_configs: gce_config_pb2.Configs, updated_gce_configs: gce_config_pb2.Configs):**
+&mdash; **def [get\_delta\_gce\_configs](/recipes/robocrop.py#194)(original_gce_configs: gce_config_pb2.Configs, updated_gce_configs: gce_config_pb2.Configs):**
 
 Calculate how much each VM group was changed by.
 
@@ -16178,23 +16178,30 @@ Returns:
   A dict of {prefix: delta}, where "prefix" is a VM config's prefix, and
   "delta" is a descriptive string of how that VM's current_amount changed.
 
-&mdash; **def [get\_gce\_configs](/recipes/robocrop.py#94)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
+&mdash; **def [get\_gce\_configs](/recipes/robocrop.py#108)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg):**
 
 Return the current GCE configs from gce_provider.
 
-&mdash; **def [get\_robocrop\_action](/recipes/robocrop.py#137)(api: recipe_api.RecipeApi, bot_policy: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs, swarming_stats: bot_scaling_api.SwarmingStats):**
+&mdash; **def [get\_robocrop\_action](/recipes/robocrop.py#152)(api: recipe_api.RecipeApi, bot_policy: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs, swarming_stats: bot_scaling_api.SwarmingStats):**
 
 Determine the comprehensive scaling actions to take.
 
-&mdash; **def [get\_robocrop\_projects](/recipes/robocrop.py#42)(properties: robocrop_pb2.RoboCropProperties):**
+&mdash; **def [get\_robocrop\_projects](/recipes/robocrop.py#54)(properties: robocrop_pb2.RoboCropProperties):**
 
 Find which projects this RoboCrop build should scale.
 
-&mdash; **def [scale\_bot\_groups\_for\_project](/recipes/robocrop.py#63)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties):**
+&mdash; **def [output\_project\_stats](/recipes/robocrop.py#218)(api: recipe_api.RecipeApi, all_project_stats: Dict[(str, ProjectStats)]):**
+
+Output swarming and robocrop statistics per scaled project.
+
+Args:
+  all_project_stats: Mapping of project name to swarming and robocrop stats.
+
+&mdash; **def [scale\_bot\_groups\_for\_project](/recipes/robocrop.py#75)(api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties):**
 
 Do all the bot scaling for a single RoboCrop project.
 
-&mdash; **def [update\_bot\_policies](/recipes/robocrop.py#109)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs):**
+&mdash; **def [update\_bot\_policies](/recipes/robocrop.py#123)(api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg, gce_configs: gce_config_pb2.Configs):**
 
 Update the bot policy configs to reflect ScalingRestriction values.
 ### *recipes* / [satlab:tests/basic](/recipe_modules/satlab/tests/basic.py)

@@ -31,13 +31,25 @@ DEPS = [
 PROPERTIES = robocrop_pb2.RoboCropProperties
 
 
+@dataclasses.dataclass
+class ProjectStats:
+  # The swarming bot and task stats for a project.
+  swarming_stats: bot_scaling_api.SwarmingStats
+
+  # The scaling actions taken by robocrop for a project.
+  actions: bot_scaling_pb2.RoboCropAction
+
+
 def RunSteps(api: recipe_api.RecipeApi,
              properties: robocrop_pb2.RoboCropProperties) -> None:
   with api.deferrals.raise_exceptions_at_end():
     projects = get_robocrop_projects(properties)
+    all_project_stats = {}
     for project in projects:
-      scale_bot_groups_for_project(api, project)
+      all_project_stats[project.application] = scale_bot_groups_for_project(
+          api, project)
 
+    output_project_stats(api, all_project_stats)
 
 def get_robocrop_projects(
     properties: robocrop_pb2.RoboCropProperties
@@ -61,7 +73,8 @@ def get_robocrop_projects(
 
 
 def scale_bot_groups_for_project(
-    api: recipe_api.RecipeApi, project: robocrop_pb2.ProjectProperties) -> None:
+    api: recipe_api.RecipeApi,
+    project: robocrop_pb2.ProjectProperties) -> ProjectStats:
   """Do all the bot scaling for a single RoboCrop project."""
   with api.step.nest(f'scale bot groups for {project.application}'):
     with api.step.nest('read bot policies'):
@@ -89,6 +102,7 @@ def scale_bot_groups_for_project(
 
     if swarming_fetch_error is not None:
       raise swarming_fetch_error
+    return ProjectStats(swarming_stats=swarming_stats, actions=robocrop_action)
 
 
 def get_gce_configs(
@@ -128,6 +142,7 @@ def get_current_swarming_stats(
   """Query Swarming for the current bot and task stats."""
   with api.step.nest('get current swarming stats') as pres:
     swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
+    # TODO(b/329139593): Clean up when consumers are using per-project stats.
     api.easy.set_properties_step(
         swarming_stats=dataclasses.astuple(swarming_stats))
     pres.logs['swarming_stats'] = str(swarming_stats)
@@ -143,6 +158,7 @@ def get_robocrop_action(
   with api.step.nest('compute scaling actions') as pres:
     robocrop_action = api.bot_scaling.get_robocrop_action(
         bot_policy, gce_configs, swarming_stats=swarming_stats)
+    # TODO(b/329139593): Clean up when consumers are using per-project stats.
     api.easy.set_properties_step(
         robocrop_action=json_format.MessageToDict(robocrop_action))
     pres.logs['robocrop_action'] = json_format.MessageToJson(robocrop_action)
@@ -197,6 +213,23 @@ def get_delta_gce_configs(
         difference = after - before
         delta_by_prefix[updated.prefix] = f'{before} -> {after}: {difference}'
   return delta_by_prefix
+
+
+def output_project_stats(api: recipe_api.RecipeApi,
+                         all_project_stats: Dict[str, ProjectStats]) -> None:
+  """Output swarming and robocrop statistics per scaled project.
+
+  Args:
+    all_project_stats: Mapping of project name to swarming and robocrop stats.
+  """
+  api.easy.set_properties_step(
+      'set project stats properties', project_swarming_stats={
+          project_name: dataclasses.astuple(project_stats.swarming_stats)
+          for (project_name, project_stats) in all_project_stats.items()
+      }, project_robocrop_action={
+          project_name: json_format.MessageToDict(project_stats.actions)
+          for (project_name, project_stats) in all_project_stats.items()
+      })
 
 
 def GenTests(

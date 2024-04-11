@@ -458,6 +458,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set project stats properties",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@project_robocrop_action@{\"Chrome\": {\"applResourceUtilization\": [{\"application\": \"chrome\", \"resourceUtilization\": [{\"cpus\": 120.0, \"diskGb\": 11250.0, \"maxCpus\": 800.0, \"memoryGb\": 480.0, \"region\": \"global\", \"vms\": 15}, {\"cpus\": 120.0, \"diskGb\": 11250.0, \"maxCpus\": 800.0, \"memoryGb\": 480.0, \"region\": \"us-central1-c\", \"vms\": 15}]}], \"scalingActions\": [{\"actionable\": \"NO\", \"application\": \"chrome\", \"botGroup\": \"try-test\", \"botMax\": 100, \"botMin\": 15, \"botType\": {\"botSize\": \"e2-standard-8\", \"coresPerBot\": 8.0, \"hourlyCost\": 0.0804, \"memoryGb\": 32.0}, \"botsRequested\": 15, \"estimatedSavings\": 1.1412779, \"regionalActions\": [{\"botsRequested\": 15, \"prefix\": \"chrome-robocrop-xenial-us-central1-c\", \"region\": \"us-central1-c\"}]}]}}@@@",
+      "@@@SET_BUILD_PROPERTY@project_swarming_stats@{\"Chrome\": [[[\"try-test\", 0, 0, 0, 0, 0, 15, 100]], [[\"try-test\", \"RUNNING\", 0], [\"try-test\", \"PENDING\", 0]]]}@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
