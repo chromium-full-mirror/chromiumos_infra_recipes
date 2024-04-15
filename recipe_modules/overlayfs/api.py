@@ -27,7 +27,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
     """Returns a Path to the base work directory for this module."""
     if self.random_work_path:
       return self.m.path.mkdtemp()
-    return self.m.path['cleanup'].join('overlayfs')
+    return self.m.path.cleanup_dir.join('overlayfs')
 
   def _set_cache_status(self, upperdir):
     """Returns bool of whether the path contains overlay directories."""
@@ -47,8 +47,8 @@ class OverlayfsApi(recipe_api.RecipeApi):
     for directory in overlay_directories:
       self.m.step(
           'cleanup overlayfs %s' % directory,
-          ['rm', '-rf', self.m.path['cache'].join(cache_name, directory)],
-          infra_step=True)
+          ['rm', '-rf',
+           self.m.path.cache_dir.join(cache_name, directory)], infra_step=True)
 
   def mount(self, name, lowerdir_path, mount_path, persist=False):
     """Mount an OverlayFS.
@@ -74,7 +74,7 @@ class OverlayfsApi(recipe_api.RecipeApi):
       with self.m.context(infra_steps=True):
         # Create overlayfs directories.
         if persist:
-          work_base = self.m.path['cache']
+          work_base = self.m.path.cache_dir
         else:
           work_base = self._base_work_path
         work_base = work_base.join(name)
@@ -125,8 +125,8 @@ class OverlayfsApi(recipe_api.RecipeApi):
     # But, 'workdir' needs to be empty for next mount.
     self.m.step(
         'cleanup overlayfs workdir',
-        ['sudo', 'rm', '-rf', self.m.path['cache'].join(name, 'workdir')],
-        infra_step=True)
+        ['sudo', 'rm', '-rf',
+         self.m.path.cache_dir.join(name, 'workdir')], infra_step=True)
 
     self._cleanup_unmount(name, mount_path)
 

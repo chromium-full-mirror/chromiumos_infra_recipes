@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for issuing result flow commands"""
+
 from google.protobuf import json_format
 
 from PB.test_platform.result_flow.common import PubSubConfig
@@ -16,7 +18,6 @@ from recipe_engine import recipe_api
 
 
 class ResultFlowCommand(recipe_api.RecipeApi):
-  """Module for issuing result flow commands"""
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -117,7 +118,7 @@ class ResultFlowCommand(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure result_flow'):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'result_flow')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'result_flow')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/result_flow/${platform}',
                          self._version)

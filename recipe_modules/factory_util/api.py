@@ -29,7 +29,7 @@ class FactoryUtilApi(recipe_api.RecipeApi):
       version_str = self.m.cros_version.version.legacy_version
       images_path = self.m.cros_source.workspace_path.join(
           f'src/build/images/{self.m.build_menu.build_target.name}/')
-      chroot_path = self.m.path['cache'].join('cros_chroot').join('chroot')
+      chroot_path = self.m.path.cache_dir.join('cros_chroot').join('chroot')
       bundle_path = chroot_path.join(
           f'build/{self.m.build_menu.build_target.name}/usr/local/factory/',
           'bundle')

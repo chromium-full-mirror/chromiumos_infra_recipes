@@ -93,7 +93,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
   @property
   def _code_coverage_root(self):
-    return self.m.path['start_dir'].join('code_coverage')
+    return self.m.path.start_dir.join('code_coverage')
 
   def upload_firmware_lcov(
       self, tarfile, step_name='upload code coverage data (firmware lcov)'):

@@ -17,7 +17,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  with api.context(cwd=api.path['cleanup']):
+  with api.context(cwd=api.path.cleanup_dir):
     # create_tmp_manifest should raise a StepFailure if there's no repo root
     # set up.
     try:

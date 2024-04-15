@@ -30,7 +30,7 @@ PROPERTIES = ImageBuilderProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path['start_dir'].join('repo')
+  repo_root = api.path.start_dir.join('repo')
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   with api.context(cwd=repo_root.join('manifest-internal')):
@@ -48,7 +48,7 @@ def RunSteps(api, properties):
                               preserving_proto_field_name=True)
 
     projects = list(properties.projects)
-    checkout_path = api.path['cleanup'].join('ensure')
+    checkout_path = api.path.cleanup_dir.join('ensure')
     if init_opts.get('manifest_name'):
       manifest_name = checkout_path.join(init_opts['manifest_name'])
       init_opts['manifest_name'] = manifest_name

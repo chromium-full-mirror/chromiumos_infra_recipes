@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+""" API for breakpad."""
+
 import os
 
 from recipe_engine.recipe_api import RecipeApi, StepFailure
@@ -23,7 +25,7 @@ class BreakpadApi(RecipeApi):
 
   @property
   def _breakpad_root(self):
-    return self.m.path['start_dir'].join('breakpad')
+    return self.m.path.start_dir.join('breakpad')
 
   @property
   def _minidump_stackwalk_path(self):

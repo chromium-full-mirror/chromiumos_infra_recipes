@@ -103,7 +103,7 @@ class CrosSourceApi(RecipeApi):
     """Initialization that follows all module loading."""
     # Check if there is already a workspace directory, and note that.
     # See b/188555398.
-    workspace = self.m.path['start_dir'].join('chromiumos_workspace')
+    workspace = self.m.path.start_dir.join('chromiumos_workspace')
     if self.m.path.exists(workspace):
       with self.m.step.nest('found pre-existing {}'.format(str(workspace))):
         self.m.easy.set_properties_step(preexisting_workspace=True)
@@ -203,7 +203,7 @@ class CrosSourceApi(RecipeApi):
     usually updated once at the beginning of a build and then mounted into the
     workspace path.
     """
-    return self.m.path['cache'].join(self._cache_name)
+    return self.m.path.cache_dir.join(self._cache_name)
 
   @property
   def workspace_path(self):
@@ -450,7 +450,7 @@ class CrosSourceApi(RecipeApi):
     ] or projects or ('groups' in init_opts), (
         'cannot sync full tree on small bot.')
 
-    with self.m.context(cwd=self.m.path['cleanup']):
+    with self.m.context(cwd=self.m.path.cleanup_dir):
       # There are a few things we want to make sure are set globally for git.
       # Do them here to help protect the named cache from corruption due to
       # off-branch objects being removed.

@@ -35,7 +35,7 @@ MANIFEST_REPO = 'https://chromium.googlesource.com/chromiumos/manifest'
 def latest_ref_info(api: recipe_api.RecipeApi, clone_dir: str, repo: str,
                     branch: str):
   """Return the hash and timestamp of the latest commit on a branch."""
-  clone_base_dir = api.context.cwd or api.path['cache'].join('builder')
+  clone_base_dir = api.context.cwd or api.path.cache_dir.join('builder')
   api.file.rmtree('Remove previous clone', clone_base_dir.join(clone_dir))
   with api.context(cwd=clone_base_dir):
     api.git('clone', '--depth=1', '-b', branch, repo, clone_dir,

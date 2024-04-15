@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for interacting with cros_test_runner."""
+
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -48,6 +50,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
                                      legacy_global_namespace=True,
                                      raise_on_failure=False)
       allowed_statuses = [self.m.step.SUCCESS, self.m.step.FAILURE]
+      # pylint: disable=protected-access
       self.m.step._raise_on_disallowed_statuses(result, allowed_statuses)
       return result
 
@@ -58,7 +61,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure cros_test_runner'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'cros_test_runner')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'cros_test_runner')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(self._cipd_package, self._cipd_label)

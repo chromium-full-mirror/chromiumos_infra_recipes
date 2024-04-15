@@ -17,7 +17,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  cwd = api.path['cleanup']
+  cwd = api.path.cleanup_dir
 
   with api.context(cwd=cwd):
     # diff_manifests_informational calls _find_root().  Use that to cover both
@@ -27,10 +27,10 @@ def RunSteps(api):
         cwd.join('manifest-internal/snapshot-b.xml'))
 
   # Next, call _find_root from a subdirectory.  Should not affect context.cwd.
-  cwd = api.path['cleanup'].join('test', 'dir', 'sub')
+  cwd = api.path.cleanup_dir.join('test', 'dir', 'sub')
   api.file.ensure_directory('test dir', cwd)
   expected = str(cwd)
-  api.path.mock_add_paths(api.path['cleanup'].join('.repo'))
+  api.path.mock_add_paths(api.path.cleanup_dir.join('.repo'))
   with api.context(cwd=cwd):
     api.repo._find_root()  # pylint: disable=protected-access
     api.assertions.assertEqual(expected, str(api.context.cwd))

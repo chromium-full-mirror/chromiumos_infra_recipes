@@ -17,7 +17,6 @@
 import os
 import re
 import string
-from typing import Any
 from typing import OrderedDict
 
 from PB.chromiumos import common as common_os
@@ -154,7 +153,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
   """Run steps."""
   api.easy.log_parent_step()
 
-  local_dir = api.path['cleanup']
+  local_dir = api.path.cleanup_dir
   non_release_signer_bucket = False
 
   with api.step.nest('determine is_staging') as presentation:

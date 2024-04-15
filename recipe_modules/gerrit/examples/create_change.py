@@ -25,7 +25,7 @@ def RunSteps(api):
   api.assertions.assertEqual(change.project, 'project')
   api.assertions.assertEqual(change.change, 123)
 
-  project_path = api.path['start_dir'].join('bar')
+  project_path = api.path.start_dir.join('bar')
   change = api.gerrit.create_change('bar', project_path=project_path)
   api.assertions.assertEqual(change.host, 'host-review.googlesource.com')
   api.assertions.assertEqual(change.project, 'bar')

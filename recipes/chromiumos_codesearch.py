@@ -50,12 +50,12 @@ def RunSteps(api, properties):
   experimental = properties.experimental
 
   # Get infra/infra.
-  cache_dir = api.path['cache'].join('builder')
+  cache_dir = api.path.cache_dir.join('builder')
   api.gclient.set_config('infra_superproject')
 
   # The codesearch recipe module relies on checkout path to be set.
   chromiumos_src_dir = api.cros_source.workspace_path.join('src')
-  api.path['checkout'] = chromiumos_src_dir
+  api.path.checkout_dir = chromiumos_src_dir
 
   commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
                          ref='refs/heads/snapshot',

@@ -26,7 +26,7 @@ def RunSteps(api, properties):
       api.assertions.assertRaises(ValueError):
     api.cros_source.ensure_synced_cache(
         manifest_url=properties.manifest_url,
-        cache_path_override=api.path['cache'].join(
+        cache_path_override=api.path.cache_dir.join(
             properties.cache_path_override)
         if properties.cache_path_override else None)
 

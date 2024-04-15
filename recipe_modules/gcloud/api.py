@@ -98,7 +98,7 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def snapshot_builder_mount_path(self):
     """Returns a Path to the base mount directory for cache builder."""
-    return self.m.path['cleanup'].join('snapshot')
+    return self.m.path.cleanup_dir.join('snapshot')
 
   @property
   def snapshot_mount_path(self):
@@ -115,7 +115,7 @@ class GcloudApi(recipe_api.RecipeApi):
     This is the path to the local version file that contains the image
     version that was used to create the local named cache.
     """
-    return self.m.path['cache'].join('infra_versions')
+    return self.m.path.cache_dir.join('infra_versions')
 
   @property
   def snapshot_suffix(self):

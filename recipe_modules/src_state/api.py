@@ -42,7 +42,6 @@ class SrcStateApi(recipe_api.RecipeApi):
     self._gitiles_commit = None
     self._gerrit_changes = None
     self._build_manifest = None
-    self._workspace_base = 'cleanup'
 
   @property
   def default_ref(self):
@@ -62,7 +61,7 @@ class SrcStateApi(recipe_api.RecipeApi):
     It will contain the base checkout and any modifications made by the build,
     and is discarded after the build.
     """
-    return self.m.path[self._workspace_base].join(common.WORKSPACE)
+    return self.m.path.cleanup_dir.join(common.WORKSPACE)
 
   @property
   def manifest_name(self):

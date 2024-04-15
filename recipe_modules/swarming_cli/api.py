@@ -38,7 +38,7 @@ class SwarmingCli(recipe_api.RecipeApi):
     pkg_ref = _PKG_DEFAULT_REF
     with self.m.step.nest('ensure swarming bin from CIPD'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd')
+        cipd_dir = self.m.path.start_dir.join('cipd')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(pkg_name, pkg_ref)
         self.m.cipd.ensure(cipd_dir, pkgs)

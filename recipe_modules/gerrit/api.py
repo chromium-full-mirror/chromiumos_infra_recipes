@@ -603,7 +603,7 @@ class GerritApi(RecipeApi):
         })
       req = {
           'gerrit_changes': changes,
-          'temp_dir': self.m.path['cleanup'].join('submittable_check'),
+          'temp_dir': self.m.path.cleanup_dir.join('submittable_check'),
       }
       presentation.logs['req'] = str(req.items())
       if test_output_data is None:

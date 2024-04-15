@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for dealing with chrome source."""
+
 import datetime
 import re
 
@@ -207,7 +209,7 @@ class ChromeApi(recipe_api.RecipeApi):
                   cache_dir=chrome_root.join('chrome_cache'),
                   override_version=cache_head, omit_version=not cache_head)
 
-    self._chrome_root = self.m.path['start_dir'].join('chrome')
+    self._chrome_root = self.m.path.start_dir.join('chrome')
     self._parallel_runner = self.m.future_utils.create_parallel_runner()
     self._parallel_runner.run_function_async(
         lambda cfg, _: _sync_chrome_source(cfg), config)

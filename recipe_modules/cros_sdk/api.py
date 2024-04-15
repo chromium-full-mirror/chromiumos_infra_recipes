@@ -63,7 +63,7 @@ class CrosSdkApi(RecipeApi):
 
   def initialize(self):
     """Cache the chroot path."""
-    self.configure(self.m.path['cache'])
+    self.configure(self.m.path.cache_dir)
 
   @property
   def force_off_toolchain_changed(self):

@@ -85,9 +85,9 @@ def RunSteps(api, properties):
   api.cros_release.set_output_properties()
   # For dlc_utils.get_dlc_artifacts.
   api.path.mock_add_paths(
-      api.path['cleanup'].join('artifacts_tmp_1/dlc/fake/dlc.img'))
+      api.path.cleanup_dir.join('artifacts_tmp_1/dlc/fake/dlc.img'))
   api.path.mock_add_paths(
-      api.path['cleanup'].join('artifacts_tmp_1/dlc/fake2/dlc.img'))
+      api.path.cleanup_dir.join('artifacts_tmp_1/dlc/fake2/dlc.img'))
 
   api.bot_scaling.drop_cpu_cores(min_cpus_left=16, max_drop_ratio=.50)
 

@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for interacting with cros_test_platform."""
+
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
@@ -120,7 +122,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # Simply use the same directory for the sub-build because I'm lazy and
       # because the intent is to unwrap the sub-build completely to replace this
       # parent build eventually.
-      sub_cwd = self.m.path['start_dir']
+      sub_cwd = self.m.path.start_dir
       input_json = sub_cwd.join('input.json')
       output_json = sub_cwd.join('output.json')
 
@@ -213,7 +215,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure cros_test_platform'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'cros_test_platform')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'cros_test_platform')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/cros_test_platform/${platform}',

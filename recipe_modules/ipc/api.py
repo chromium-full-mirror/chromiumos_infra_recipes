@@ -3,13 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""A module for inter-process communication."""
+
 from typing import Dict, List, Optional
 
 from recipe_engine import recipe_api
 
 
 class IPCApi(recipe_api.RecipeApi):
-  """A module for inter-process communication."""
 
   def initialize(self):
     self._args = None
@@ -70,7 +71,7 @@ class IPCApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure ipcpubsub exists'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'ipcpubsub')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'ipcpubsub')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/ipcpubsub/${version}', self._version)

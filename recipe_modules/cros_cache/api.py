@@ -26,7 +26,7 @@ class CrosCacheApi(recipe_api.RecipeApi):
       version_file (str): Version file name.
       version (str): Version to write to tracking file.
     """
-    version_file_path = self.m.path['cleanup'].join(version_file)
+    version_file_path = self.m.path.cleanup_dir.join(version_file)
     self.m.file.write_text('write version file', version_file_path, version)
     self.m.gsutil.upload(version_file_path, gs_bucket, version_file,
                          name='upload {}'.format(version_file))

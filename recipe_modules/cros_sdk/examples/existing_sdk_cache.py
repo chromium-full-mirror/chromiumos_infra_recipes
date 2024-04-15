@@ -18,10 +18,10 @@ DEPS = [
 
 
 def RunSteps(api):
-  workspace = api.path['cleanup'].join('workspace')
+  workspace = api.path.cleanup_dir.join('workspace')
 
   with api.cros_sdk.cleanup_context(checkout_path=workspace):
-    api.cros_sdk.configure(chroot_parent_path=api.path['cleanup'].join('test'))
+    api.cros_sdk.configure(chroot_parent_path=api.path.cleanup_dir.join('test'))
     api.assertions.assertEqual(api.cros_sdk.sdk_cache_state.version, 2)
 
 

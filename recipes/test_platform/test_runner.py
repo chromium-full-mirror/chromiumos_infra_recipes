@@ -2053,7 +2053,7 @@ def _trv2_post_processing(api):
     - On Drone bot: /home/chromeos-test/skylab_bots/f-v-d13.1401099833/w/ir/x/w
                     /recipe_cleanup/output_dirwbzlcct1/cros-test-bf71b245
                     /cros-test/results/tauto
-    Note that CWR a.k.a. api.path['start_dir'] is isolated for each build.
+    Note that CWR a.k.a. api.path.start_dir is isolated for each build.
     Random directory is created e.g. `recipe_cleanup/*`.
     TRv2 creates a unique folder for each docker container e.g. `cros-test-*`
     We simply use `**` to match any of those randomly named folders and rely on
@@ -2065,7 +2065,7 @@ def _trv2_post_processing(api):
     """
   with api.step.nest('Post processing test results') as step:  # pragma: nocover
     dirs = api.file.glob_paths(
-        'List test results directories for CTS archiver', api.path['start_dir'],
+        'List test results directories for CTS archiver', api.path.start_dir,
         os.path.join('**', 'cros-test', 'results', 'tauto'))
     if len(dirs) == 0:
       s_log(step, 'Skip processing', 'No directories found, skip CTS archiving')

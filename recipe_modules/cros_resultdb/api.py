@@ -499,7 +499,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     version = 'staging' if self.m.cros_infra_config.is_staging else 'prod'
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure result_adapter'):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'result_adapter')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'result_adapter')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('infra/tools/result_adapter/${platform}', version)
         self.m.cipd.ensure(cipd_dir, pkgs)

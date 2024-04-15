@@ -55,7 +55,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure ctpv2'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'ctpv2')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'ctpv2')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(self._cipd_package, self._cipd_label)

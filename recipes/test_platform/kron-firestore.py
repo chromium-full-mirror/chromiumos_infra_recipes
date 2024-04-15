@@ -26,7 +26,7 @@ def RunSteps(api, properties):
     None
   """
 
-  cipd_dir = api.path['start_dir'].join('cipd', 'kron')
+  cipd_dir = api.path.start_dir.join('cipd', 'kron')
 
   with api.step.nest('Ensure kron'):
     with api.context(infra_steps=True):

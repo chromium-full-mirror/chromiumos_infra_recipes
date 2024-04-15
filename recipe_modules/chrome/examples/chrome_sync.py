@@ -24,7 +24,7 @@ DEPS = [
 
 def RunSteps(api):
   with api.step.nest('chrome sync check'):
-    cache_path = api.path['cleanup'].join('snapshot_chrome')
+    cache_path = api.path.cleanup_dir.join('snapshot_chrome')
 
     # Manufacture the minimal builder config.
     config = BuilderConfig(

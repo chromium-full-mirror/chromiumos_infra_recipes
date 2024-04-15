@@ -23,7 +23,7 @@ PROPERTIES = ProjectInfosProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path['start_dir'].join('repo')
+  repo_root = api.path.start_dir.join('repo')
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   # Special case: If we have one project and no regexes, we can call

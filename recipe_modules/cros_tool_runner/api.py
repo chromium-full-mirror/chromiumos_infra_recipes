@@ -22,7 +22,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
-    if env_vars.SWARMING_BOT_ID.startswith("cloudbots-"):
+    if env_vars.SWARMING_BOT_ID.startswith('cloudbots-'):
       self._dut_hostname = env_vars.CLOUDBOTS_DUT_HOSTNAME
     else:
       self._dut_hostname = self._dut_hostname_from_bot_id(
@@ -238,7 +238,7 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure cros-tool-runner'):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'cros-tool-runner')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'cros-tool-runner')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/cros-tool-runner/${platform}',
                          self._version)

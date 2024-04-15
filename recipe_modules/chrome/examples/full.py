@@ -120,9 +120,9 @@ def RunSteps(api, properties):
   api.assertions.assertEqual(source_needed, properties.expected_builds_from)
   if source_needed:
     api.chrome.sync(
-        chrome_root=api.path['start_dir'].join('chrome'), chroot=chroot,
+        chrome_root=api.path.start_dir.join('chrome'), chroot=chroot,
         build_target=build_target, internal=not properties.external,
-        cache_dir=api.path['start_dir'].join('chrome').join('cache'),
+        cache_dir=api.path.start_dir.join('chrome').join('cache'),
         omit_version=api.properties.get('omit_version') or False)
 
 

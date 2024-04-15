@@ -848,7 +848,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           files_by_artifact, failed_artifacts = result
       except Exception as e:
         self.m.disk_usage.track(step_name='track disk usage', depth=2,
-                                d=self.m.path['cache'])
+                                d=self.m.path.cache_dir)
         raise e
 
       if not files_by_artifact:

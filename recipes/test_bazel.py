@@ -25,7 +25,7 @@ def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), api.build_menu.setup_workspace():
     api.cros_build_api.TestService.BazelTest(
         BazelTestRequest(
-            bazel_output_user_root=str(api.path['cache'].join('bazel'))),
+            bazel_output_user_root=str(api.path.cache_dir.join('bazel'))),
         name='run bazel tests')
 
 

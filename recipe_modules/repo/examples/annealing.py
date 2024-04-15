@@ -30,7 +30,7 @@ PROPERTIES = AnnealingProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path['start_dir'].join('repo')
+  repo_root = api.path.start_dir.join('repo')
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   with api.context(cwd=repo_root.join('manifest-internal')):
@@ -47,7 +47,7 @@ def RunSteps(api, properties):
                               preserving_proto_field_name=True)
 
     projects = list(properties.projects)
-    checkout_path = api.path['cleanup'].join('ensure')
+    checkout_path = api.path.cleanup_dir.join('ensure')
     repo_state_path = checkout_path.join('.recipes_state.json')
     api.path.mock_add_paths(repo_state_path)
     api.repo.ensure_synced_checkout(checkout_path, manifest_url,

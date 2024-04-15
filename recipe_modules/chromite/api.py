@@ -58,11 +58,11 @@ class ChromiteApi(recipe_api.RecipeApi):
 
   @property
   def chromite_path(self):
-    return self.m.path['start_dir'].join('chromite')
+    return self.m.path.start_dir.join('chromite')
 
   @property
   def depot_tools_path(self):
-    return self.m.path['start_dir'].join('depot_tools')
+    return self.m.path.start_dir.join('depot_tools')
 
   @property
   def chromite_branch(self):
@@ -207,7 +207,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('system_python'):
       # Create a directory to hold a symlink to the system python binary.
-      python_bin = self.m.path['start_dir'].join('python_bin')
+      python_bin = self.m.path.start_dir.join('python_bin')
       self.m.file.ensure_directory('create_dir', python_bin)
 
       # Remove any old symlinks.
@@ -265,8 +265,9 @@ class ChromiteApi(recipe_api.RecipeApi):
 
     cbb_args = []
     cbb_args.extend(
-        ['--buildroot', self.m.path['cleanup'].join('snapshot', 'chromeos')])
-    cbb_args.extend(['--workspace', self.m.path['cleanup'].join('workspace')])
+        ['--buildroot',
+         self.m.path.cleanup_dir.join('snapshot', 'chromeos')])
+    cbb_args.extend(['--workspace', self.m.path.cleanup_dir.join('workspace')])
     cbb_args.extend(['--source_cache'])
 
     if self.c.chromite_branch:
@@ -299,7 +300,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     # scripts that call "//update_depot_tools" (e.g., "gclient") from trying
     # to self-update from their pinned version (crbug.com/736890).
     ctx = {
-        'cwd': self.m.path['start_dir'],
+        'cwd': self.m.path.start_dir,
         'env_suffixes': {
             'PATH': [self.depot_tools_path]
         },

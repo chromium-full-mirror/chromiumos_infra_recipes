@@ -16,7 +16,7 @@ PROPERTIES = PVSRunScriptProperties
 
 
 def RunSteps(api, properties):
-  cipd_path = api.path['start_dir'].join('cipd')
+  cipd_path = api.path.start_dir.join('cipd')
 
   with api.step.nest('ensure reqdbtool'):
     pkgs = api.cipd.EnsureFile()

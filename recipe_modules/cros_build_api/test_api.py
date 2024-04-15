@@ -47,7 +47,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       An absolute, qualified recipes path.
     """
-    return str(self.m.path['start_dir'].join(subpath))
+    return str(self.m.path.start_dir.join(subpath))
 
   def src_path(self, path: str) -> str:
     """Return the given path in the source tree checkout.
@@ -75,7 +75,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       A dict representing a Path, like what the build API would return.
     """
     return {
-        'path': str(self.m.path['cleanup'].join('my_tmp_dir', relative_path)),
+        'path': str(self.m.path.cleanup_dir.join('my_tmp_dir', relative_path)),
         'location': 2,  # chromiumos.Path.Location.OUTSIDE
     }
 
@@ -738,15 +738,17 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses['BuildSdkSubtools'] = jsonify(bundle_paths=[
         {
             'path':
-                str(self.m.path['cache'].join(
-                    'cros_chroot/out/sdk/tmp/cros-subtools/rustfmt')),
+                str(
+                    self.m.path.cache_dir.join(
+                        'cros_chroot/out/sdk/tmp/cros-subtools/rustfmt')),
             'location':
                 2,  # chromiumos.Path.Location.OUTSIDE
         },
         {
             'path':
-                str(self.m.path['cache'].join(
-                    'cros_chroot/out/sdk/tmp/cros-subtools/shellcheck')),
+                str(
+                    self.m.path.cache_dir.join(
+                        'cros_chroot/out/sdk/tmp/cros-subtools/shellcheck')),
             'location':
                 2,  # chromiumos.Path.Location.OUTSIDE
         },

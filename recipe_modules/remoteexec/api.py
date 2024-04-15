@@ -40,7 +40,7 @@ class RemoteexecApi(recipe_api.RecipeApi):
   def _ensure_reclient(self):
     with self.m.step.nest('ensure reclient binaries'), self.m.context(
         infra_steps=True):
-      reclient_dir = self.m.path['start_dir'].join('cipd', 'rbe')
+      reclient_dir = self.m.path.start_dir.join('cipd', 'rbe')
       pkgs = self.m.cipd.EnsureFile()
       pkgs.add_package('infra/rbe/client/${platform}',
                        str(self._reclient_version))

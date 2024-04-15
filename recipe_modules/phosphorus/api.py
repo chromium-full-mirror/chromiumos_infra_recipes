@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Module for issuing Phosphorus commands"""
+
 from google.protobuf import json_format
 
 from PB.test_platform.phosphorus.fetchcrashes import FetchCrashesRequest
@@ -28,7 +30,6 @@ from recipe_engine import recipe_api
 
 
 class PhosphorusCommand(recipe_api.RecipeApi):
-  """Module for issuing Phosphorus commands"""
 
   def __init__(self, properties, env_vars, **kwargs):
     super().__init__(**kwargs)
@@ -38,7 +39,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
-    if env_vars.SWARMING_BOT_ID.startswith("cloudbots-"):
+    if env_vars.SWARMING_BOT_ID.startswith('cloudbots-'):
       self._dut_hostname = env_vars.CLOUDBOTS_DUT_HOSTNAME
     else:
       self._dut_hostname = self._dut_hostname_from_bot_id(
@@ -163,7 +164,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure phosphorus'):
-        cipd_dir = self.m.path['start_dir'].join('cipd', 'phosphorus')
+        cipd_dir = self.m.path.start_dir.join('cipd', 'phosphorus')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/phosphorus/${platform}',
                          self._version)

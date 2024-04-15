@@ -11,7 +11,7 @@ from collections import namedtuple
 
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
-# api.path['cleanup'].join(WORKSPACE) is source root.
+# api.path.cleanup_dir.join(WORKSPACE) is source root.
 WORKSPACE = 'chromiumos_workspace'
 
 _project_info = namedtuple('project_info', ['host', 'project', 'relpath'])

@@ -26,7 +26,7 @@ PROPERTIES = ImageBuilderProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path['start_dir'].join('repo')
+  repo_root = api.path.start_dir.join('repo')
   api.path.mock_add_paths(repo_root.join('.repo'))
 
   with api.context(cwd=repo_root.join('manifest-internal')):

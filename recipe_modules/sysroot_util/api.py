@@ -273,7 +273,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           # recipe to pull it or update the SDK accordingly.
           if not bazel_build:
             # This will change the return from _InstallPackagesRequest().
-            chrome_root = self.m.path['start_dir'].join('chrome')
+            chrome_root = self.m.path.start_dir.join('chrome')
             self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
                                      step_name='populate chrome cache')
             self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
@@ -434,8 +434,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
         CreateImageResult(
             success=True, images=[
                 Image(
-                    type=x, path=str(self.m.path['start_dir'].join(
-                        self._image_type_to_fname(x))),
+                    type=x, path=str(
+                        self.m.path.start_dir.join(
+                            self._image_type_to_fname(x))),
                     build_target=self.sysroot.build_target) for x in image_types
             ]))
 

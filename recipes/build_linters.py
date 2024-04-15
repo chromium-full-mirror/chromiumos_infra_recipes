@@ -141,7 +141,7 @@ def _SyncChromeSources(api, config):
   recipe does not call that so we call the logic directly.
   """
   with api.step.nest('Sync Chrome sources'):
-    chrome_root = api.path['start_dir'].join('chrome')
+    chrome_root = api.path.start_dir.join('chrome')
     api.chrome.cache_sync(cache_path=chrome_root, sync=False,
                           step_name='populate chrome cache')
     api.chrome.sync(chrome_root, api.cros_sdk.chroot,
