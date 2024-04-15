@@ -2296,19 +2296,23 @@
   },
   {
     "cmd": [
-      "python3",
+      "vpython3",
       "-u",
-      "RECIPE_MODULE[recipe_engine::json]/resources/read.py",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
       "[CLEANUP]/tmp_tmp_1/release/timeline_configuration.json",
-      "/path/to/tmp/json"
+      "/path/to/tmp/"
     ],
+    "infra_step": true,
     "name": "generate binary config.update configured release time.read json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"time\": \"2021-04-06T16:00:40Z\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
+      "@@@STEP_LOG_LINE@timeline_configuration.json@{@@@",
+      "@@@STEP_LOG_LINE@timeline_configuration.json@  \"time\": \"2021-04-06T16:00:40Z\"@@@",
+      "@@@STEP_LOG_LINE@timeline_configuration.json@}@@@",
+      "@@@STEP_LOG_END@timeline_configuration.json@@@"
     ]
   },
   {
