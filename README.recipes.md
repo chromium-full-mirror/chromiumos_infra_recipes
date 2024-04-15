@@ -17460,7 +17460,7 @@ Intended for flows like incremental builders. See b/329271972.
 [depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/495b23b39aaba2ca3b55dd27cadc523f1cb17ee6/recipes/README.recipes.md#recipe_modules-gitiles
 [depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/495b23b39aaba2ca3b55dd27cadc523f1cb17ee6/recipes/README.recipes.md#recipe_modules-gsutil
 [depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/495b23b39aaba2ca3b55dd27cadc523f1cb17ee6/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/2f2e9b2fb405fb9c96afb17aba1f9c4f4e2ab82b/recipes/README.recipes.md#recipe_modules-codesearch
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/040b039316219a006208ab6047bc29cd2e91b6b1/recipes/README.recipes.md#recipe_modules-codesearch
 [recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/00ae0edcf18f8fc84fee4d9d8cdcbed899435895/README.recipes.md#recipe_modules-archive
 [recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/00ae0edcf18f8fc84fee4d9d8cdcbed899435895/README.recipes.md#recipe_modules-assertions
 [recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/00ae0edcf18f8fc84fee4d9d8cdcbed899435895/README.recipes.md#recipe_modules-bcid_reporter
