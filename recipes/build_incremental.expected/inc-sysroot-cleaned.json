@@ -2320,11 +2320,6 @@
       "[CLEANUP]/tmp_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2352,11 +2347,6 @@
       "origin/snapshot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -2380,11 +2370,6 @@
       ""
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -2410,9 +2395,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
@@ -2453,9 +2435,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
@@ -2505,11 +2484,6 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2567,11 +2541,6 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -2606,11 +2575,6 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2662,11 +2626,6 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2698,11 +2657,6 @@
       "[CACHE]/cros_chroot/sdk_cache_state.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2758,11 +2712,6 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2794,9 +2743,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -2833,9 +2779,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -2918,9 +2861,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -2968,11 +2908,6 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3003,11 +2938,6 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3092,11 +3022,6 @@
       "[CLEANUP]/build_api_messages_tmp_2/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3128,9 +3053,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3166,9 +3088,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3260,9 +3179,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3336,11 +3252,6 @@
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3372,9 +3283,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3410,9 +3318,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3500,9 +3405,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3568,11 +3470,6 @@
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3604,9 +3501,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3641,9 +3535,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3729,11 +3620,6 @@
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3765,9 +3651,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3803,9 +3686,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3892,9 +3772,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -3941,11 +3818,6 @@
       "200,404"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -3977,11 +3849,6 @@
       "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4017,9 +3884,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
@@ -4064,9 +3928,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
@@ -4121,11 +3982,6 @@
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4184,11 +4040,6 @@
       "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4224,9 +4075,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "DEPOT_TOOLS_UPDATE": [
         "0"
       ],
@@ -4266,11 +4114,6 @@
       "amd64-generic"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": "project:ci"
@@ -4324,11 +4167,6 @@
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4360,9 +4198,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4398,9 +4233,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4481,9 +4313,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4528,11 +4357,6 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4610,11 +4434,6 @@
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4646,9 +4465,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4685,9 +4501,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4771,9 +4584,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -4821,11 +4631,6 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4855,11 +4660,6 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4890,11 +4690,6 @@
       "[CLEANUP]/chromiumos_workspace/chroot"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -4979,11 +4774,6 @@
       "[CLEANUP]/build_api_messages_tmp_8/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -5015,9 +4805,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -5053,9 +4840,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -5147,9 +4931,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -5184,11 +4965,6 @@
       "/build/amd64-generic"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": "project:ci"

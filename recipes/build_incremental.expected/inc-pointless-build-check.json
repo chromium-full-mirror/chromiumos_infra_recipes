@@ -2317,11 +2317,6 @@
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2382,11 +2377,6 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ]
-    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2418,9 +2408,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]
@@ -2455,9 +2442,6 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
-      "CROS_CLEAN_OUTDATED_PKGS": [
-        "0"
-      ],
       "PATH": [
         "[CLEANUP]/chromiumos_workspace/chromite/bin"
       ]

@@ -57,14 +57,7 @@ def RunSteps(api: RecipeApi,
     api.build_menu.setup_workspace(cherry_pick_changes=False,
                                    ignore_changes=True):
 
-    # Disable cros clean-outdated-pkgs via ENV var, if necessary.
-    cop_enabled = properties.cop_enabled
-    if not cop_enabled:
-      with api.context(env_suffixes={'CROS_CLEAN_OUTDATED_PKGS': '0'}):
-        return DoRunSteps(api, config, properties)
-    else:
-      return DoRunSteps(api, config, properties)
-
+    return DoRunSteps(api, config, properties)
 
 def DoRunSteps(api: RecipeApi, config: BuilderConfig,
                properties: IncrementalProperties) -> Optional[RawResult]:
@@ -187,7 +180,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
@@ -220,38 +212,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'build_time_delta': '7.days.ago',
               'use_llfg': True
           })),
-      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun,
                      'Disable cros clean-outdated-pkgs'),
-      api.post_check(post_process.MustRun, 'install packages'),
-      api.post_check(post_process.MustRun, 'update sdk (2)'),
-      api.post_check(post_process.MustRun, 'install packages (2)'),
-      api.post_check(post_process.DoesNotRun, 'update sdk (3)'),
-      api.post_check(post_process.DoesNotRun, 'install packages (3)'),
-      api.post_check(post_process.DoesNotRun, 'build images'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
-      api.post_check(post_process.DoesNotRun, 'run ebuild tests (2)'),
-      api.post_check(post_process.DoesNotRun, 'upload artifacts'),
-      api.post_check(post_process.DoesNotRun,
-                     'upload artifacts.publish artifacts'),
-      api.post_check(post_process.PropertyEquals, 'error_type',
-                     ErrorType.UNKNOWN),
-      build_target='amd64-generic',
-      status='SUCCESS',
-  )
-
-  # Normal Build without cros clean-outdated-pkgs.
-  yield api.build_menu.test(
-      'inc-build-no-cop',
-      api.properties(
-          **{'$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          }}),
-      api.properties(
-          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.properties(IncrementalProperties(**{'cop_enabled': False})),
-      api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.MustRun, 'install packages'),
       api.post_check(post_process.MustRun, 'update sdk (2)'),
       api.post_check(post_process.MustRun, 'install packages (2)'),
@@ -278,7 +241,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
@@ -301,7 +263,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           }}),
       api.properties(
           IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
-      api.properties(IncrementalProperties(**{'cop_enabled': True})),
       api.step_data('verify sysroot existence', retcode=0),
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
