@@ -401,7 +401,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
                    replace: bool = False, uprev_packages: bool = True,
                    setup_toolchains_if_no_update: bool = True,
-                   force_no_chroot_upgrade: Optional[bool] = None) -> bool:
+                   force_no_chroot_upgrade: Optional[bool] = None,
+                   no_delete_out_dir: Optional[bool] = False) -> bool:
     """Setup the chroot for the builder.
 
     Args:
@@ -416,6 +417,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         config), then it will setup toolchains instead.
       force_no_chroot_upgrade: If True, chroot update is skipped, regardless of
         the builder config.
+      no_delete_out_dir: If True, `out` directory will be preserved.
 
     Returns:
       Whether the build is relevant.
@@ -449,7 +451,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT', replace=replace)
+          no_chroot_timeout else 'DEFAULT', replace=replace,
+          no_delete_out_dir=no_delete_out_dir)
       self._chroot_created = True
 
       if self._should_update_chroot() and not force_no_chroot_upgrade:

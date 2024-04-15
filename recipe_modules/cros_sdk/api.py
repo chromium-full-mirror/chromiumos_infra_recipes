@@ -434,7 +434,8 @@ class CrosSdkApi(RecipeApi):
 
   def create_chroot(self, version=None, bootstrap=False, sdk_version=None,
                     timeout_sec='DEFAULT', test_data=None,
-                    test_toolchain_cls=None, name=None, replace=False):
+                    test_toolchain_cls=None, name=None, replace=False,
+                    no_delete_out_dir=False):
     """Initialize the chroot and link it into the workspace.
 
     Create a chroot if one does not already exist in the chroot path. If one
@@ -455,6 +456,7 @@ class CrosSdkApi(RecipeApi):
       name (str): Step name.  Default: 'init sdk'.
       replace (boolean): Whether to replace the chroot if it already exists.
           Default: False.
+      no_delete_out_dir (boolean): If True, `out` directory will be preserved.
 
     Returns:
       chromiumos_pb2.Chroot protobuf for the chroot.
@@ -480,9 +482,9 @@ class CrosSdkApi(RecipeApi):
         # TODO(b/266878468): drop no_use_image.
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(
-                flags=CreateSdkRequest.Flags(no_replace=no_replace,
-                                             no_use_image=True,
-                                             bootstrap=bootstrap),
+                flags=CreateSdkRequest.Flags(
+                    no_replace=no_replace, no_use_image=True,
+                    bootstrap=bootstrap, no_delete_out_dir=no_delete_out_dir),
                 chroot=self.chroot, sdk_version=sdk_version,
                 skip_chroot_upgrade=True, ccache_disable=True),
             timeout=timeout_sec, test_output_data=test_data)

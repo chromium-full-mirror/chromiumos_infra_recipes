@@ -125,7 +125,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     try:
       api.workspace_util.apply_changes(changes=all_gerrit_changes,
                                        ignore_missing_projects=True)
-      api.build_menu.setup_chroot()
+      api.build_menu.setup_chroot(no_delete_out_dir=True)
       # If sysroot was deleted, there is no incrementality to test, so stop the
       # build. Make this check mockable for testing.
       check_sysroot_step = api.step(
