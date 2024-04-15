@@ -564,7 +564,12 @@ class CrosSdkApi(RecipeApi):
       # See if any of the changes affect the toolchain.
       toolchain_cls = self.m.workspace_util.detect_toolchain_cls(
           self.chroot, test_value=test_toolchain_cls)
-      if build_source or toolchain_cls:
+
+      builder_config = self.m.cros_infra_config.config_or_default
+      use_snapshot_binhosts = builder_config.id.type == BuilderConfig.Id.CQ
+      force_update = builder_config.build.sdk_update.sdknext
+
+      if build_source or toolchain_cls or force_update:
         self.mark_sdk_as_dirty()
         self._long_timeouts = True
       if self.force_off_toolchain_changed:
@@ -572,14 +577,14 @@ class CrosSdkApi(RecipeApi):
         toolchain_cls = False
       if timeout_sec == 'DEFAULT':
         timeout_sec = 24 * 60 * 60 if self._long_timeouts else 180 * 60
-      use_snapshot_binhosts = self.m.cros_infra_config.config_or_default.id.type == BuilderConfig.Id.CQ
 
       chroot_without_use_flags = self.chroot
       chroot_without_use_flags.env.ClearField('use_flags')
       request = UpdateSdkRequest(
           chroot=chroot_without_use_flags, toolchain_targets=toolchain_targets,
           flags=UpdateSdkRequest.Flags(build_source=build_source,
-                                       toolchain_changed=toolchain_cls),
+                                       toolchain_changed=toolchain_cls,
+                                       force_update=force_update),
           result_path=common.ResultPath(
               path=common.Path(
                   path=str(self.m.path.mkdtemp()),

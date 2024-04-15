@@ -970,14 +970,6 @@
   },
   {
     "cmd": [],
-    "name": "update sdk.set sdk_state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "update sdk.read builder configs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -1000,6 +992,14 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update sdk.set sdk_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
     ]
   },
   {
