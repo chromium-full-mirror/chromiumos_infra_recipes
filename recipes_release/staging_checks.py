@@ -114,17 +114,6 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
-def vm_test_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for VM test builds that have a legitimate test failure"""
-  ignorable_summary_markdown_re = [
-      re.compile(r'\d+ vm tests? failed'),
-  ]
-  for regex in ignorable_summary_markdown_re:
-    if regex.search(build.get('summaryMarkdown', '')):
-      return True
-  return False
-
-
 # TODO(b/299105459): Remove once paygen local signing is stable.
 def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for paygen-orchs/paygen builds from the prototype
@@ -148,9 +137,6 @@ def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
 
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
-    StagingReCheck('chromeos', 'staging',
-                   r'staging-amd64-generic-direct-tast-vm',
-                   [vm_test_exemption]),
     StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
                    [image_builder_exemption], num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
