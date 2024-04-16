@@ -1,0 +1,25 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.suite_sync;
+
+// Properties for the suite_sync recipe, determines what suites to sync and
+// whether or not it should be automatically merged.
+message SuiteSyncProperties {
+  // if true do not CQ+2/BOT+1 the commit instead upload the CL then abandon
+  // the change, used for testing without actually merging.
+  bool dry_run = 1;
+  message SuiteConfig {
+    // Name of the suite to sync (must be valid autotest suite and centralized
+    // suite)
+    string suite = 1;
+    // subdir relative to config/test/suites_sets/suite_sets where the starlark
+    // file for the suite is located, centralized suite is expected to be in
+    // this dir named as <suite>.star
+    string subdir = 2;
+  }
+  repeated SuiteConfig suite_configs = 2;
+};
