@@ -15,7 +15,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'recipe_engine/step',
     'recipe_engine/swarming',
@@ -66,7 +66,7 @@ def RunSteps(api: RecipeApi, properties: PresubmitCqProperties):
       exe_cipd_version = api.buildbucket.INHERIT
 
   with api.step.nest('run {}'.format(builder)) as presentation:
-    child_props = api.cq.props_for_child_build
+    child_props = api.cv.props_for_child_build
     child_props.update(api.cros_infra_config.props_for_child_build)
     child_props.update(input_props)
 
@@ -81,7 +81,7 @@ def RunSteps(api: RecipeApi, properties: PresubmitCqProperties):
 
     try:
       output = api.buildbucket.collect_builds(
-          [child.id], step_name='collect', timeout=60 * 60 * 2,
+          [child.id], step_name='collect', timeout=60 * 60 * 2, interval=5,
           url_title_fn=api.naming.get_build_title)[child.id]
     except StepFailure:
       # If the child builder takes more than the given timeout, collect_builds

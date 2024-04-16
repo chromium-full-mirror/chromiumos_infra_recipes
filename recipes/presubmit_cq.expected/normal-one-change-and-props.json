@@ -135,7 +135,7 @@
       "-host",
       "cr-buildbucket.appspot.com",
       "-interval",
-      "60s",
+      "5s",
       "8922054662172514000"
     ],
     "infra_step": true,
