@@ -163,7 +163,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         pres.step_text = 'Looks for green not enabled'
         return False
       # Only look for green in CQ.
-      if not self.m.cq.active:
+      if not self.m.cv.active:
         pres.step_text = 'Skipping looks for green outside of CQ'
         return False
       disallow = self.found_disallow_lfg_footer(gerrit_changes)

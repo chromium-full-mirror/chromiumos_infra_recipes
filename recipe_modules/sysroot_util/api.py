@@ -291,7 +291,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           # Since we don't need chrome source, delete the checkout.
           self.m.chrome.delete_chrome_checkout()
 
-      if self.m.cq.active:
+      if self.m.cv.active:
         self.m.android.uprev_if_unstable_ebuild_changed(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
             patch_sets=self.m.workspace_util.patch_sets)

@@ -18,7 +18,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'recipe_engine/step',
     'build_plan',
@@ -99,7 +99,7 @@ def GenTests(api):
 
   yield api.test(
       'switch-to-green',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -132,7 +132,7 @@ def GenTests(api):
 
   yield api.test(
       'use-complete-snapshot',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{
@@ -164,7 +164,7 @@ def GenTests(api):
 
   yield api.test(
       'change-incompatible-with-older-snap',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -207,7 +207,7 @@ def GenTests(api):
 
   yield api.test(
       'change-had-to-be-merged-onto-older-snap',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -247,7 +247,7 @@ def GenTests(api):
 
   yield api.test(
       'lfg-disabled',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(),
       api.post_check(post_process.DoesNotRun,
@@ -259,7 +259,7 @@ def GenTests(api):
 
   yield api.test(
       'lfg-disallow-footer',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -284,7 +284,7 @@ def GenTests(api):
 
   yield api.test(
       'no-green',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {

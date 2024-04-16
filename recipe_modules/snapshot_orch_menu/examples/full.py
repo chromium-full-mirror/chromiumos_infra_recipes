@@ -20,7 +20,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/properties',

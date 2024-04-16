@@ -12,7 +12,7 @@ DEPS = [
     'recipe_engine/swarming',
     'build_menu',
     'code_coverage',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
 ]
 
 

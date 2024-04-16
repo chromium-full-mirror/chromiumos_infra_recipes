@@ -47,7 +47,7 @@ from RECIPE_MODULES.chromeos.repo import api as repo_api
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -246,7 +246,7 @@ class GeneratorRun:
         return self.make_summary('ignore by policy')
       self.checkout_branch(policy_info)
 
-      if self.m.cq.active or self.m.src_state.gerrit_changes:
+      if self.m.cv.active or self.m.src_state.gerrit_changes:
         self.cherry_pick_gerrit_changes()
         self.prevent_production_changes()
 
@@ -905,7 +905,7 @@ def GenTests(
       _props(),
       api.scheduler(triggers=[chromite_gitiles_trigger]),
       api.git.diff_check(True),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.post_check(post_process.MustRun, 'prevent production changes'),
       api.test_util.test_build(revision=None, extra_changes=[],
                                created_by='project:chromiumos').build,

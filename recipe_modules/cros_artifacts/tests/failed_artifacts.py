@@ -14,7 +14,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/assertions',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'cros_artifacts',
     'cros_build_api',
@@ -92,7 +92,7 @@ def GenTests(api):
 
   yield api.test(
       'some-failed-cq-dry-run',
-      api.cq(run_mode=api.cq.DRY_RUN),
+      api.cv(run_mode=api.cv.DRY_RUN),
       api.cros_build_api.set_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
           SOME_FAILED_RESPONSE),

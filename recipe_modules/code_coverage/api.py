@@ -512,7 +512,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         gs_artifact_bucket (str): artifact bucket (eg. chromeos-image-archive).
         gs_artifact_path (str): artifact bucket path (eg. builderName/version-builderID).
     """
-    if self._cq_builder or self.m.cq.active or absolute_cs_settings is None:
+    if self._cq_builder or self.m.cv.active or absolute_cs_settings is None:
       return
 
     with self.m.step.nest(
@@ -583,7 +583,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       return
 
     # Make sure we are triggered by the CQ builder.
-    if not (self._cq_builder or self.m.cq.active):
+    if not (self._cq_builder or self.m.cv.active):
       return
 
     with self.m.step.nest('upload incremental coverage to gerrit'):
@@ -654,7 +654,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
         project_name_to_use (str): name of the project.
         absolute_chromium_settings (CoverageFileSettings): settings for uploading coverage.
     """
-    if self._cq_builder or self.m.cq.active or absolute_chromium_settings is None:
+    if self._cq_builder or self.m.cv.active or absolute_chromium_settings is None:
       return
 
     # Do not update coverage information of asked to skip.

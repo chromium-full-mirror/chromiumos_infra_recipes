@@ -166,7 +166,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
   @property
   def is_dry_run(self):
-    return self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN
+    return self.m.cv.active and self.m.cv.run_mode == self.m.cv.DRY_RUN
 
   @property
   def builds_status(self):
@@ -979,7 +979,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # from our builder config, rather than buildbucket properties.  Pass the
       # actual answers to schedule_request.
       props = self.m.cros_infra_config.props_for_child_build
-      props.update(self.m.cq.props_for_child_build)
+      props.update(self.m.cv.props_for_child_build)
       props.update(properties or {})
       tags = self.m.cros_tags.make_schedule_tags(self.gitiles_commit)
       exps = self.m.cros_infra_config.experiments_for_child_build
@@ -1377,7 +1377,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           category.
     """
     with self.m.step.nest('categorize builds by collect handling') as pres:
-      if (self.m.cq.active and self.gerrit_changes and
+      if (self.m.cv.active and self.gerrit_changes and
           self.m.cros_test_plan_v2.enabled_on_changes(self.gerrit_changes)):
         collect_when_dict = self._categorize_builds_by_collect_handling_using_coverage_rules(
             builds)
@@ -1412,7 +1412,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
       A dict mapping CollectHandling to the list of builds which fall into that
           category.
     """
-    if self.m.cq.active and self.gerrit_changes:
+    if self.m.cv.active and self.gerrit_changes:
       forced_testable_builders = self.m.cros_cq_additional_tests.get_additional_test_builders(
           builds, self.gerrit_changes)
     else:

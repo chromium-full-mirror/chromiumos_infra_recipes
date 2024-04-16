@@ -20,7 +20,7 @@ from PB.recipe_modules.chromeos.cros_history.examples.get_passed_builds import (
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'cros_history',
 ]
@@ -42,7 +42,7 @@ def _build_with_changes(build):
 
 def GenTests(api):
   yield api.test(
-      'patch-without-history', api.cq(run_mode=api.cq.FULL_RUN),
+      'patch-without-history', api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.simulated_multi_predicates_search_results(
           [], 'get change build history.buildbucket.search'),
       api.properties(
@@ -54,7 +54,7 @@ def GenTests(api):
               input_target_patches=[common_pb2.GerritChange(change=2341)])))
 
   yield api.test(
-      'passed-builds-with-history', api.cq(run_mode=api.cq.FULL_RUN),
+      'passed-builds-with-history', api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.build(
           _build_with_changes(
               build_pb2.Build(

@@ -139,7 +139,7 @@ class CrosVersionApi(RecipeApi):
           taken against tip-of-branch for the version bump CL.
     """
     with self.m.step.nest('bump version') as pres:
-      if self.m.cq.active and not dry_run:
+      if self.m.cv.active and not dry_run:
         raise StepFailure('CQ must set dry_run')
 
       overlay_path = self.m.src_state.workspace_path.join(

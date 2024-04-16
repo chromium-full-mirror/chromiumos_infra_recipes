@@ -15,7 +15,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/cipd',
     'recipe_engine/raw_io',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/archive',
     'recipe_engine/time',
     'depot_tools/gsutil',

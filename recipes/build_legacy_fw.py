@@ -26,7 +26,7 @@ from recipe_engine import recipe_api
 DEPS = [
     'recipe_engine/bcid_reporter',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -206,9 +206,9 @@ class FirmwareBuilder():
           yield
 
   def _bump_version(self, buildspec_gs_path=None):
-    dry_run = self._is_staging or self.m.cq.active
+    dry_run = self._is_staging or self.m.cv.active
     self.m.cros_version.bump_version(dry_run=dry_run)
-    if self.m.cq.active:
+    if self.m.cv.active:
       with self.m.step.nest('CQ run: not pushing buildspec'):
         return
 
@@ -229,7 +229,7 @@ class FirmwareBuilder():
       # uprev older branches until such time as they have a long-term answer.
       # This is not true for other chromite commands.
       self._ensure_chromite_main()
-      push = not bool(self.m.cq.active or self._is_staging or
+      push = not bool(self.m.cv.active or self._is_staging or
                       self.m.src_state.gerrit_changes)
       drop_file = self.m.path.mkstemp()
       manifest = 0 if not self._config else self._config.general.manifest
@@ -542,7 +542,7 @@ class FirmwareBuilder():
               if staging else 'gs://chromeos-releases')
       profile = lambda x: ['--profile={}'.format(x)] if x else []
       has_dest_bucket = self._is_after('13682.0.0')
-      dry_run = self.m.cq.active or not self.properties.bump_version
+      dry_run = self.m.cv.active or not self.properties.bump_version
       dry_run = dry_run or (staging and not has_dest_bucket)
 
       image_dir = 'gs://{}/{}/{}'.format(

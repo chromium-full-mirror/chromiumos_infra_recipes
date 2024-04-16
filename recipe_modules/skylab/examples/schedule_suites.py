@@ -22,7 +22,7 @@ from recipe_engine.post_process_inputs import Step
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/json',
     'recipe_engine/properties',
     'cros_test_plan',
@@ -125,7 +125,7 @@ def GenTests(api):
   yield api.test('basic',
                  api.buildbucket.ci_build(builder='release-main-orchestrator'))
 
-  yield api.test('basic-cq', api.cq(run_mode=api.cq.FULL_RUN),
+  yield api.test('basic-cq', api.cv(run_mode=api.cv.FULL_RUN),
                  api.buildbucket.ci_build(builder='cq-orchestrator'))
 
   def HardwareAttributesEquals(check, step_odict, step: str, log: str,
@@ -150,7 +150,7 @@ def GenTests(api):
 
   yield api.test(
       'require-stable-devices',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.ci_build(builder='cq-orchestrator'),
       api.properties(ScheduleSuitesProperties(require_stable_devices=True)),
       # The first hwtest sets a specific model and should not set

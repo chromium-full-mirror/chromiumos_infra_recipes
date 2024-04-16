@@ -21,7 +21,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/properties',
@@ -80,7 +80,7 @@ def RunSteps(api, properties):
 
     api.assertions.assertEqual(
         api.orch_menu.is_dry_run,
-        api.cq.active and api.cq.run_mode == api.cq.DRY_RUN,
+        api.cv.active and api.cv.run_mode == api.cv.DRY_RUN,
     )
 
     # It's hard to set buildbucket properties for these tests so we

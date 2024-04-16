@@ -13,7 +13,7 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/json',
     'recipe_engine/properties',
     'cros_test_plan',

@@ -61,7 +61,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/cipd',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'recipe_engine/random',
     'recipe_engine/raw_io',
@@ -530,7 +530,7 @@ def _enumerate_cft_tests(api, properties, requests):
       test_suites = _test_suites_with_filtered_tests(api, r, build_target,
                                                      test_suites)
       if tag_criteria and (tag_criteria.tags or tag_criteria.tag_excludes):
-        if api.cq.active:
+        if api.cv.active:
           dry_run = True
           if ('chromeos.cros_infra_config.filtering_enabled'
               in api.cros_infra_config.experiments):
@@ -1432,7 +1432,7 @@ def CheckIfCtpv2NeedsToRun(api, properties):
 
 def RunCtpv1(api, properties):
   _top_level_export_to_bigquery(api, properties.force_export)
-  if api.cq.active:
+  if api.cv.active:
     api.easy.set_properties_step(is_retry=api.cros_history.is_retry)
 
   # Push Build ID to Pubsub to notify the subscribers that a new CTP
@@ -2175,8 +2175,7 @@ def _mock_container_metadata_step(api, tag, build_target='foo-build-target'):
       ))
 
 
-def _mock_empty_container_metadata_step(api, tag,
-                                        build_target='foo-build-target'):
+def _mock_empty_container_metadata_step(api, tag):
   return api.step_data(
       'retrieve container metadata'
       '.get container metadata from GS.gsutil cat gs://{tag}-container-metadata-url'
@@ -2888,7 +2887,7 @@ def GenTests(api):
       'end-to-end-execution-cq-retry',
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.cros_history.is_retry(True),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
@@ -2902,7 +2901,7 @@ def GenTests(api):
       'end-to-end-execution-cq-first-attempt',
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(requests={'default': _test_request('foo')},
                                      config=_test_config('foo'))),
@@ -3481,7 +3480,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-cft-suite-with-filtered-tests-with-passed-tasks',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3504,7 +3503,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-cft-suite-with-unfiltered-tests-with-passed-tasks',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           CrosTestPlatformProperties(
               requests={
@@ -3871,8 +3870,7 @@ def GenTests(api):
                   'default': _test_request('foo'),
                   'cft-default': _cft_test_request('foo', 'build_target123')
               }, config=_test_config('foo'))),
-      _mock_empty_container_metadata_step(api, 'foo',
-                                          'mismatched_build_target'),
+      _mock_empty_container_metadata_step(api, 'foo'),
       _generic_enumerate_response(api),
       _generic_passing_execute_response(api),
       status='FAILURE',

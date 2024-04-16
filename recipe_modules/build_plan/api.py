@@ -424,7 +424,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         can_outlive_parent = False
 
       # Build the properties for the child.
-      properties = self.m.cq.props_for_child_build
+      properties = self.m.cv.props_for_child_build
       properties.update(self.m.cros_infra_config.props_for_child_build)
       if force_relevant:
         properties.update({'force_relevant_build': True})
@@ -449,7 +449,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       tags.extend(
           self.m.cros_tags.tags(
               **{'hide-in-gerrit': 'chrome-additional-builder'}))
-      properties = self.m.cq.props_for_child_build
+      properties = self.m.cv.props_for_child_build
       properties.update(self.m.cros_infra_config.props_for_child_build)
 
       new_build_requests.append(

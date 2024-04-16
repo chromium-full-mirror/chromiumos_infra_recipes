@@ -37,7 +37,7 @@ from recipe_engine.recipe_api import StepFailure
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -65,7 +65,7 @@ PROPERTIES = AnnealingProperties
 
 def RunSteps(api, properties):
   commit = api.src_state.gitiles_commit
-  cq_run = api.cq.active
+  cq_run = api.cv.active
   # If we have a commit.ref, then this must be a CQ run.
   assert cq_run or not commit.ref, 'GitilesCommit provided for non-CQ run'
 
@@ -77,7 +77,7 @@ def RunSteps(api, properties):
   is_staging = not properties.publish_uprevs
   workspace_path = api.src_state.workspace_path
   prior_internal = prior_external = diffs = None
-  dry_run = api.cq.active or properties.dry_run
+  dry_run = api.cv.active or properties.dry_run
   manifest_ref = properties.manifest_ref
   if not manifest_ref:
     raise StepFailure('must set manifest ref')
@@ -93,10 +93,10 @@ def RunSteps(api, properties):
     api.cros_source.ensure_synced_cache(is_staging=is_staging)
 
     with api.context(cwd=internal_manifest.path):
-      if not api.cq.active:
+      if not api.cv.active:
         api.cros_source.checkout_tip_of_tree()
 
-      if api.cq.active and not commit.id:
+      if api.cv.active and not commit.id:
         # CQ run, but no commit given.  Grab the most recent |manifest_ref|.
         # This may be different from a provided GitilesCommit, but that is OK.
         ref = commit.ref or 'refs/heads/{}'.format(manifest_ref)
@@ -976,7 +976,7 @@ def GenTests(api):
       api.buildbucket.try_build(project='chromeos',
                                 git_repo=api.src_state.internal_manifest.url,
                                 git_ref='refs/heads/snapshot'),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot'),
           **api.binhost_lookup_service.input_properties),
@@ -1007,7 +1007,7 @@ def GenTests(api):
       api.buildbucket.try_build(project='chromeos',
                                 git_repo=api.src_state.internal_manifest.url,
                                 git_ref='refs/heads/snapshot'),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data('recreating older run.read git footers',
                     stdout=api.raw_io.output('')),
@@ -1018,7 +1018,7 @@ def GenTests(api):
 
   # CQ without bb commit: manifest changes, but no gerrit change to go with it.
   yield api.test(
-      'cq-build-no-commit', api.cq(run_mode=api.cq.FULL_RUN),
+      'cq-build-no-commit', api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           AnnealingProperties(manifest_ref='snapshot'),
           **api.binhost_lookup_service.input_properties),
@@ -1209,7 +1209,7 @@ def GenTests(api):
       api.buildbucket.try_build(project='chromeos',
                                 git_repo=api.src_state.internal_manifest.url,
                                 git_ref='refs/heads/snapshot'),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(AnnealingProperties(manifest_ref='snapshot')),
       api.step_data(
           'generate external manifest', stdout=api.raw_io.output_text(

@@ -158,7 +158,7 @@ class SkylabApi(recipe_api.RecipeApi):
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     exps.update({x: True for x in footer_exps})
 
-    props = self.m.cq.props_for_child_build
+    props = self.m.cv.props_for_child_build
     props.update({'requests': tagged_requests})
     # If the orchestrator is watched by a sheriff rotation, populate in CTP.
     if 'sheriff_rotations' in self.m.buildbucket.build.input.properties:

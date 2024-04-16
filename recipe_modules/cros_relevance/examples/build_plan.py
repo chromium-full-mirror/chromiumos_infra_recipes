@@ -18,7 +18,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/properties',
     'cros_relevance',
@@ -92,7 +92,7 @@ def GenTests(api):
       ])
   yield api.test(
       'with-gerrit-changes',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(gerrit_changes=[gerrit_change]),
       api.properties(
           BuildPlanTest(

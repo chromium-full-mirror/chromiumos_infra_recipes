@@ -7,7 +7,7 @@
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'cros_tags',
 ]

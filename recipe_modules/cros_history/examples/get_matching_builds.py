@@ -12,7 +12,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'cros_history',
 ]
 
@@ -36,7 +36,7 @@ def GenTests(api):
 
   yield api.test(
       'basic', api.buildbucket.build(build_msg(400, create_time=400)),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.simulated_multi_predicates_search_results(
           [build_msg(100, create_time=100)],
           'find matching builds.buildbucket.search'))

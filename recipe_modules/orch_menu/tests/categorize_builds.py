@@ -14,7 +14,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'git_footers',
@@ -92,7 +92,7 @@ def GenTests(api):
   # Should categorize using CoverageRules.
   yield api.test(
       'cq',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{
@@ -120,7 +120,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-force-testable-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{
@@ -161,7 +161,7 @@ def GenTests(api):
   # non-critical builds before end-to-end testing.
   yield api.test(
       'cq-get-testable-failure',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{
@@ -191,7 +191,7 @@ def GenTests(api):
   # ChildSpecs.
   yield api.test(
       'cq-v2-planning-not-enabled',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
       api.post_check(
           post_process.DoesNotRun,
@@ -201,7 +201,7 @@ def GenTests(api):
 
   yield api.test(
       'cq-v1-planning-with-force-relevant-testable-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(builder='cq-orchestrator'),
       api.properties(
           **{

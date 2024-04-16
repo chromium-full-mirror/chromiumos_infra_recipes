@@ -17,7 +17,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -152,7 +152,7 @@ def GenTests(api: RecipeTestApi):
       api.src_state.workspace_path.join(
           'src/chromeos/manifest-internal/default.xml'))
   common_args = [
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.post_check(post_process.DoesNotRun,
                      'test branch_util for chromiumos/manifest')
   ]

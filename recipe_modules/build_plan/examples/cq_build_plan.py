@@ -22,7 +22,7 @@ from google.protobuf import timestamp_pb2
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'build_plan',
@@ -121,7 +121,7 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -153,7 +153,7 @@ def GenTests(api):
 
   yield api.test(
       'all-internal-changes',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(gerrit_changes=[
           common_pb2.GerritChange(
               host='chrome-internal-review.googlesource.com', project='p1',
@@ -186,7 +186,7 @@ def GenTests(api):
 
   yield api.test(
       'force-relevant',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -220,7 +220,7 @@ def GenTests(api):
 
   yield api.test(
       'force-relevant-non-default',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           builder='staging-cq-orchestrator'),
       api.properties(
@@ -255,7 +255,7 @@ def GenTests(api):
 
   yield api.test(
       'force-rebuild-non-critical-builder',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -289,7 +289,7 @@ def GenTests(api):
 
   yield api.test(
       'forced-rebuilds-all',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -322,7 +322,7 @@ def GenTests(api):
 
   yield api.test(
       'forced-rebuilds-test-failures',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
@@ -360,7 +360,7 @@ def GenTests(api):
 
   yield api.test(
       'experiments',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           experiments=['named-experiment-from-cq']),
       api.properties(
@@ -398,7 +398,7 @@ def GenTests(api):
   config_ref = 'refs/changes/33/433/1'
   yield api.test(
       'with-config',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(
           bucket='staging', builder='staging-cq-orchestrator'),
       api.properties(
@@ -434,7 +434,7 @@ def GenTests(api):
 
   yield api.test(
       'slim-eligible',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_experiments=[],
@@ -468,7 +468,7 @@ def GenTests(api):
 
   yield api.test(
       'chrome-pupr-additional-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(experiments=[]),
       api.properties(
           expected_build_requests=[
@@ -521,7 +521,7 @@ def GenTests(api):
 
   yield api.test(
       'chrome-pupr-no-additional-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(experiments=[]),
       api.properties(
           expected_build_requests=['eve-cq'],
@@ -543,7 +543,7 @@ def GenTests(api):
   test_end_timestamp = timestamp_pb2.Timestamp(seconds=1336997427)
   yield api.test(
       'cq-looks-enabled',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.git_footers.simulated_get_footers(
           [],
@@ -594,7 +594,7 @@ def GenTests(api):
 
   yield api.test(
       'broken-until',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           **{'$chromeos/looks_for_green': {
@@ -636,7 +636,7 @@ def GenTests(api):
   yield api.test(
       'no-pruning',
       cq_orchestrator_build_with_gerrit_change(),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.post_check(post_process.DoesNotRun,
                      'check for projects outside manifest'),
       api.properties(
@@ -664,7 +664,7 @@ def GenTests(api):
 
   yield api.test(
       'basic-with-project-outside-manifest',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.step_data(
           'check for projects outside manifest.check if project non-existent-project exists.repo info',
           stderr=api.raw_io.output_text(
@@ -682,7 +682,7 @@ def GenTests(api):
 
   yield api.test(
       'basic-with-project-inside-manifest',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.step_data(
           'check for projects outside manifest.check if project existent-project exists.repo info',
           stderr=api.raw_io.output_text('')),
@@ -707,7 +707,7 @@ def GenTests(api):
 
   yield api.test(
       'no-necessary-builds',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.step_data(
           'check for projects outside manifest.check if project existent-project exists.repo info',
           stderr=api.raw_io.output_text('')),

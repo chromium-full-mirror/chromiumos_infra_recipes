@@ -10,7 +10,7 @@ from PB.recipe_modules.chromeos.build_plan.build_plan import BuildPlanProperties
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/led',
     'recipe_engine/step',
     'recipe_engine/swarming',

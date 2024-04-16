@@ -8,7 +8,7 @@ from PB.recipe_modules.chromeos.cros_test_proctor.proctor import ProctorProperti
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/path',
     'recipe_engine/step',
     'recipe_engine/swarming',

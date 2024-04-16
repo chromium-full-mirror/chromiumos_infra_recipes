@@ -13,7 +13,7 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'cros_version',
 ]

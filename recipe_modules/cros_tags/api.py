@@ -112,10 +112,10 @@ class CrosTagsApi(recipe_api.RecipeApi):
       (str) cq_equivalent_cl_group_key, or None
     """
     # If CQ is not active, then this tag should be ignored.
-    if not self.m.cq.active:
+    if not self.m.cv.active:
       return None
     try:
-      return self.m.cq.equivalent_cl_group_key
+      return self.m.cv.equivalent_cl_group_key
     except ValueError:
       # CQ (or more likely, our tests) did not set a value.
       pass
@@ -129,10 +129,10 @@ class CrosTagsApi(recipe_api.RecipeApi):
       (str) cq_cl_group_key, or None
     """
     # If CQ is not active, then this tag should be ignored.
-    if not self.m.cq.active:
+    if not self.m.cv.active:
       return None
     try:
-      return self.m.cq.cl_group_key
+      return self.m.cv.cl_group_key
     except ValueError:
       # CQ (or more likely, our tests) did not set a value.
       pass

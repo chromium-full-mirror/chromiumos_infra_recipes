@@ -9,7 +9,7 @@ from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevan
 DEPS = [
     'cros_build_api',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',

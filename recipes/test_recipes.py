@@ -24,7 +24,7 @@ from PB.recipes.chromeos.test_recipes import TestRecipesProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/json',
@@ -293,7 +293,7 @@ def _launch_verifiers(api: RecipeApi, verifiers: Dict[str, VerifierRunInfo],
           if api._test_data.enabled:  # pylint: disable=protected-access
             build.infra.backend.task.id.id = 'fake-id-{}'.format(idx + 1)
 
-          build.input.properties.update(api.cq.props_for_child_build)
+          build.input.properties.update(api.cv.props_for_child_build)
           led_result = led_result.then('edit', '-p', 'dry_run=true')
           task_dims = api.buildbucket.backend_task_dimensions_from_build(build)
           if _bad_bot_size(task_dims):
@@ -633,7 +633,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'basic',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -677,7 +677,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'two-changes',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -708,7 +708,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'two-changes-mixed-repos',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -739,7 +739,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'skipped-builder',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -769,7 +769,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'one-verifier-failure',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -798,7 +798,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'collect-failure',
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -824,7 +824,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'invalid-skip-builder-footer',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       # Specify two builders to run.
       api.properties(
           TestRecipesProperties(verifiers=[{
@@ -846,7 +846,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'no-successful-builds',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       get_non_skipped_builders_test_data(),
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
       status='FAILURE',
@@ -854,13 +854,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.test(
       'no_gerrit_changes',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       status='FAILURE',
   )
 
   yield api.test(
       'invalid-builders',
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           TestRecipesProperties(verifiers=[{
               'name': 'production-builder',
@@ -872,7 +872,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   yield api.test(
       'recipes-py-test-failure',
       try_build(project='chromeos', bucket='infra', builder='test-recipes'),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.step_data('run ./recipes.py tests', retcode=1),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',

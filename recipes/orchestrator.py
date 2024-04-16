@@ -37,7 +37,7 @@ DEPS = [
     'signing',
     'skylab',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
 ]
 
@@ -119,7 +119,7 @@ def DoRunSteps(api: RecipeApi):
       if run_step:
         # If we're a release orchestrator AND cq-active then we shouldn't run
         # tests, the release orch is being used as a CQ verifier.
-        if not (api.orch_menu.is_release_orchestrator and api.cq.active):
+        if not (api.orch_menu.is_release_orchestrator and api.cv.active):
           # Don't want to run tests on the public orchestrator, and unlike other
           # orchestrators without testing we can't run the test plan generator because
           # it requires access to internal repos.
@@ -238,7 +238,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.orch_menu.test('release-orchestrator-cq',
                            api.post_check(post_process.DoesNotRun, 'run_tests'),
-                           api.cq(run_mode=api.cq.FULL_RUN),
+                           api.cv(run_mode=api.cv.FULL_RUN),
                            api.post_process(post_process.DropExpectation),
                            builder='release-main-orchestrator')
 

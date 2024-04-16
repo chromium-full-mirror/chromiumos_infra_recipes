@@ -14,7 +14,7 @@ from PB.recipe_modules.chromeos.cros_tags.examples.test import (
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'cros_tags',
 ]
@@ -84,7 +84,7 @@ def GenTests(api):
   equiv = '01f806668b9e02978b40f699340d5ad7c0da85fb4446d3421c41e790'
   group = '099ed4f822eaff88f1f0d0cae8c40f09e212b0672c2497afe9f88449'
   yield api.test(
-      'basic', api.cq(run_mode=api.cq.FULL_RUN),
+      'basic', api.cv(run_mode=api.cv.FULL_RUN),
       api.properties(
           TestInputProperties(cq_cl_group_key=group,
                               cq_equivalent_cl_group_key=equiv)),
@@ -94,7 +94,7 @@ def GenTests(api):
                                   cq_equivalent_cl_group_key=equiv)))
 
   yield api.test(
-      'no-group-key-tags', api.cq(run_mode=api.cq.FULL_RUN),
+      'no-group-key-tags', api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(project='chromeos', bucket='cq',
                                 builder='cq-orchestrator'))
 

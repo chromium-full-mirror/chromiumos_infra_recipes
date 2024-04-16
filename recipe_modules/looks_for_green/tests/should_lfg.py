@@ -14,7 +14,7 @@ from PB.recipe_modules.chromeos.looks_for_green.tests.test import ShouldLfgPrope
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/json',
     'recipe_engine/properties',
     'gerrit',
@@ -67,7 +67,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
@@ -80,7 +80,7 @@ def GenTests(api):
   yield api.test(
       'lfg-disabled',
       api.properties(expected_should_lfg=False),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.post_check(
           post_process.DoesNotRun,
           'check should look for green.check disallow looks for green'),
@@ -98,7 +98,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           ['True'],
           'check should look for green.check disallow looks for green'),
@@ -116,7 +116,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers([
@@ -148,7 +148,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(
@@ -170,7 +170,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.gerrit.set_is_merge_commit(
@@ -191,7 +191,7 @@ def GenTests(api):
                   'enable_looks_for_green': True
               },
           }),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
           [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers(

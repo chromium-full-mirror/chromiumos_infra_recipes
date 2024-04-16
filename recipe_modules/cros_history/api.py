@@ -380,7 +380,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # declaring a match.
     with self.m.step.nest('find matching builds') as presentation:
       # This intentionally uses build.input.gerrit_changes, rather than
-      # self.m.cq.ordered_gerrit_changes, because the buildbucket search
+      # self.m.cv.ordered_gerrit_changes, because the buildbucket search
       # relies on that ordering of changes.
       builds = self._get_patch_history(patches=build.input.gerrit_changes,
                                        builder=build.builder, statuses=statuses,

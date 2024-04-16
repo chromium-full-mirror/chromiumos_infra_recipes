@@ -218,7 +218,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         previously_failed_now_exonerable_vm_builds = []
         is_retry = False
         if enable_history and gerrit_changes:
-          is_retry = (self.m.cq.active and self.m.cros_history.is_retry)
+          is_retry = (self.m.cv.active and self.m.cros_history.is_retry)
           previously_passed_tests = self.m.cros_history.get_passed_tests()
           previously_failed_now_exonerable_vm_builds, previously_failed_now_exonerable_hw_results = self.m.exonerate.get_prev_failed_now_exonerable_test_results(
               test_plan, self._dry_run_exonerate_retried_suites)
@@ -862,7 +862,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return result
 
   def _with_props_for_child_build(self, properties):
-    """Merge 'properties' and 'api.cq.props_for_child_build'.
+    """Merge 'properties' and 'api.cv.props_for_child_build'.
 
     Should be used to insert 'props_for_child_build' into properties being passed
     to a Buildbucket request.
@@ -874,7 +874,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       The merged dict.
     """
-    properties.update(self.m.cq.props_for_child_build)
+    properties.update(self.m.cv.props_for_child_build)
     return properties
 
   def _previous_test_results(self) -> Dict[str, ExecuteResponse]:
@@ -887,7 +887,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       The ExecuteResponses.tagged_response from the latest invocation.
     """
     previous_test_results = {}
-    if not self.m.cq.active:
+    if not self.m.cv.active:
       return previous_test_results
 
     with self.m.step.nest('get previous test results') as presentation:

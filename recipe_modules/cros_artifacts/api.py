@@ -957,7 +957,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
-      if self.m.cq.active and self.m.cq.run_mode == self.m.cq.DRY_RUN:
+      if self.m.cv.active and self.m.cv.run_mode == self.m.cv.DRY_RUN:
         if failed_artifacts:
           raise StepFailure(
               f'Failed to generate: {", ".join(failed_artifacts)}')

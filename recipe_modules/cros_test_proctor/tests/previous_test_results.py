@@ -19,7 +19,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/properties',
     'cros_history',
     'cros_test_proctor',
@@ -60,7 +60,7 @@ def GenTests(api):
       'basic',
       api.buildbucket.try_build(
           experiments=['chromeos.skylab.direct_tast_testing']),
-      api.cq(run_mode=api.cq.FULL_RUN),
+      api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
           'get previous test results.find matching builds.buildbucket.search'),

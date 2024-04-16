@@ -10,7 +10,7 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 DEPS = {
     'depot_tools_gerrit': 'depot_tools/gerrit',
     'buildbucket': 'recipe_engine/buildbucket',
-    'cq': 'recipe_engine/cq',
+    'cv': 'recipe_engine/cv',
     'step': 'recipe_engine/step',
     'time': 'recipe_engine/time',
     'buildbucket_stats': 'buildbucket_stats',

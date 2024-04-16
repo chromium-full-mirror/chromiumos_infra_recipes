@@ -22,7 +22,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/properties',
     'cros_history',
@@ -136,7 +136,7 @@ def GenTests(api):
 
   yield api.test(
       'tests-with-history', cq_orchestrator_build_with_gerrit_change(),
-      api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
+      api.cv(run_mode=api.cv.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
           FullProperties(need_tests_builds=[
@@ -161,7 +161,7 @@ def GenTests(api):
 
   yield api.test(
       'with_additional_test_runs', cq_orchestrator_build_with_gerrit_change(),
-      api.cq(run_mode=api.cq.FULL_RUN), api.cros_history.is_retry(True),
+      api.cv(run_mode=api.cv.FULL_RUN), api.cros_history.is_retry(True),
       api.properties(enable_history=True),
       api.properties(
           FullProperties(need_tests_builds=[

@@ -16,7 +16,7 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/cq',
+    'recipe_engine/cv',
     'recipe_engine/raw_io',
     'recipe_engine/properties',
     'cros_artifacts',
@@ -101,12 +101,12 @@ def GenTests(api):
                      'upload artifacts.publish artifacts'))
 
   yield api.test(
-      'dry-run', api.cq(run_mode=api.cq.DRY_RUN), api.buildbucket.try_build(),
+      'dry-run', api.cv(run_mode=api.cv.DRY_RUN), api.buildbucket.try_build(),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'))
 
   yield api.test(
-      'firmware-cq', api.cq(run_mode=api.cq.FULL_RUN),
+      'firmware-cq', api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',

@@ -136,7 +136,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           b.name for b in result.skip_for_global_build_irrelevance
       ]
       run_when_rules_skipped = [b.name for b in result.skip_for_run_when_rules]
-      if not self.m.cq.active:
+      if not self.m.cv.active:
         return PlannedBuilders(
             necessary=necessary,
             global_irrelevance_skipped=global_irrelevance_skipped,

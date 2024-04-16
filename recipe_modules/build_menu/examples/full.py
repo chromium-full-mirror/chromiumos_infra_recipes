@@ -582,7 +582,7 @@ def GenTests(api):
               GerritChange(host='chrome-internal-review.googlesource.com',
                            project='project-a', change=1235)
           ]),
-      api.properties(**{'$recipe_engine/cq': {
+      api.properties(**{'$recipe_engine/cv': {
           'active': True
       }}),
       api.cros_build_api.set_api_return('get package dependencies',
@@ -620,7 +620,7 @@ def GenTests(api):
                   },
               },
           }, iteration=1),
-      api.properties(**{'$recipe_engine/cq': {
+      api.properties(**{'$recipe_engine/cv': {
           'active': True
       }}),
       api.post_process(post_process.StepTextEquals, 'run ebuild tests',
@@ -648,7 +648,7 @@ def GenTests(api):
               },
           }, iteration=1),
       api.cros_relevance.toolchain_cls_applied(True),
-      api.properties(**{'$recipe_engine/cq': {
+      api.properties(**{'$recipe_engine/cv': {
           'active': True
       }}),
       api.post_process(post_process.StepTextEquals, 'run ebuild tests',
