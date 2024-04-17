@@ -176,7 +176,6 @@ class FirmwareBuilder():
       self._config = config
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
-        self._uprev()
         self._old_setup_board = self.m.path.exists(
             self.m.src_state.workspace_path.join('src/scripts/setup_board'))
 
@@ -184,6 +183,8 @@ class FirmwareBuilder():
           self._bump_version(
               buildspec_gs_path=self.properties.buildspec_gs_path)
         self._bcs_version = self.m.cros_version.version
+        # Uprev after bumping the version. See http://b/331850204#comment6.
+        self._uprev()
 
         entries = {
             'boards': self._boards,
