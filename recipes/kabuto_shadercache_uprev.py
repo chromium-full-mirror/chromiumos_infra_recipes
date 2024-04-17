@@ -152,13 +152,23 @@ def CommitAndUploadCL(api: RecipeApi) -> None:
     _CreateGerritCL(api)
 
 
-def _GenerateAndUploadProvenance(api: RecipeApi, dlc_assets_file: str) -> None:
+def _GenerateAndUploadProvenance(api: RecipeApi, dlc_assets_file: str,
+                                 dlc_hashes_file: str) -> None:
   """Generate and upload Snoopy provenance using Kabuto's dlc_assets.json."""
-  dlc_assets = _ReadDlcAssetsFile(api, dlc_assets_file)
-  for local_file in dlc_assets:
-    gs_uri = dlc_assets[local_file]
-    file_hash = _GenerateProvenance(api, local_file)
-    _UploadProvenance(api, file_hash, gs_uri)
+  # TODO(davidriley): Once all branches are generating the hashes file
+  # it should be safe to remove the _ReadDlcAssetsFile/_GenerateProvenance
+  # paths.
+  if api.path.exists(dlc_hashes_file):
+    dlc_hashes = _ReadDlcHashesFile(api, dlc_hashes_file)
+    for gs_uri in dlc_hashes:
+      file_hash = dlc_hashes[gs_uri]
+      _UploadProvenance(api, file_hash, gs_uri)
+  else:
+    dlc_assets = _ReadDlcAssetsFile(api, dlc_assets_file)
+    for local_file in dlc_assets:
+      gs_uri = dlc_assets[local_file]
+      file_hash = _GenerateProvenance(api, local_file)
+      _UploadProvenance(api, file_hash, gs_uri)
 
 
 def _ReadDlcAssetsFile(api: RecipeApi, dlc_assets_file: str) -> list:
@@ -166,7 +176,7 @@ def _ReadDlcAssetsFile(api: RecipeApi, dlc_assets_file: str) -> list:
 
   dlc_assets/snoopy.json is generated during the DLC uprev process. It contains
   a dict in which the keys are the path to the local 'dlc.img' file and the
-  value is the Google Storage URL for that file.  """
+  value is the Google Storage URL for that file."""
   test_data = '{"/path/to/dlc.img": "gs://bucket/dlc-imgs/dlc.img"}'
   dlc_assets_raw = api.file.read_text(f'Read {dlc_assets_file}',
                                       dlc_assets_file, test_data=test_data)
@@ -174,9 +184,21 @@ def _ReadDlcAssetsFile(api: RecipeApi, dlc_assets_file: str) -> list:
   return dlc_assets
 
 
+def _ReadDlcHashesFile(api: RecipeApi, dlc_hashes_file: str) -> list:
+  """Read Kabuto's DLC assets hashes file.
+
+  dlc_assets/snoopy_hash.json is generated during the DLC uprev process. It
+  contains a dict in which the keys are the path to the Google Storage URL
+  to the 'dlc.img' file and the value is the sha256 hash for that file."""
+  test_data = {'gs://bucket/dlc-imgs/dlc.img': 'deadbeef'}
+  dlc_hashes = api.file.read_json(f'Read {dlc_hashes_file}', dlc_hashes_file,
+                                  test_data=test_data)
+  return dlc_hashes
+
+
 def _GenerateProvenance(api: RecipeApi, file: str) -> str:
   """Generate and return the hash of a file to be reported to Snoopy."""
-  return api.file.file_hash(file, test_data='deadbeef')
+  return api.file.file_hash(file, test_data='deadbeef2')
 
 
 def _UploadProvenance(api: RecipeApi, file_hash: str, gs_uri: str) -> None:
@@ -233,7 +255,9 @@ def DoRunSteps(api: RecipeApi,
     if not api.cros_infra_config.is_staging:
       with api.step.nest('Generate DLC provenance'):
         dlc_assets_file = api.path.join(kabuto_path, 'dlc_assets/snoopy.json')
-        _GenerateAndUploadProvenance(api, dlc_assets_file)
+        dlc_hashes_file = api.path.join(kabuto_path,
+                                        'dlc_assets/snoopy_hash.json')
+        _GenerateAndUploadProvenance(api, dlc_assets_file, dlc_hashes_file)
         api.bcid_reporter.report_stage('upload-complete')
 
   partner_overlay_path = chroot_path.join(
@@ -256,6 +280,15 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'basic',
       api.properties(**good_props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
+  )
+
+  yield api.test(
+      'no-snoopy-hash',
+      api.properties(**good_props),
   )
 
   props = good_props.copy()
@@ -267,6 +300,10 @@ def GenTests(api: RecipeTestApi) -> None:
       'kabuto-config-override',
       api.cros_version.workspace_version('R122-12345.0.0'),
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(
           post_process.StepCommandContains,
           'Upload and uprev',
@@ -286,6 +323,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'missing-uprev-info',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(post_process.DropExpectation),
       # TODO(pobega): change this to test the chroot creation step instead.
       api.post_check(post_process.DoesNotRun, 'Upload and uprev'),
@@ -297,6 +338,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'use-cl-ref',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.buildbucket.generic_build(bucket='staging'),
       api.post_check(post_process.MustRun, 'Checkout Gerrit CL.git fetch'),
       api.post_process(
@@ -328,6 +373,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'skip-cl-ref-prod',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_check(post_process.DoesNotRun, 'Checkout Gerrit CL'),
       api.post_process(post_process.DropExpectation),
   )
@@ -337,6 +386,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'branched-manifest',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_check(post_process.MustRun,
                      'configure builder.cros_infra_config.gitiles-fetch-ref'),
       api.post_process(
@@ -354,6 +407,10 @@ def GenTests(api: RecipeTestApi) -> None:
       'use-old-uprev-method',
       api.cros_version.workspace_version('R113-45678.0.0'),
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(
           post_process.StepCommandContains,
           'Upload and uprev',
@@ -369,6 +426,10 @@ def GenTests(api: RecipeTestApi) -> None:
       'use-new-uprev-method',
       api.cros_version.workspace_version('R122-12345.0.0'),
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(
           post_process.StepCommandContains,
           'Upload and uprev',
@@ -387,6 +448,10 @@ def GenTests(api: RecipeTestApi) -> None:
       'no-input-manifest-branch-before-122',
       api.cros_version.workspace_version('R118-12345.0.0'),
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(
           post_process.StepCommandContains,
           'Upload and uprev',
@@ -399,6 +464,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'prod-build',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.post_process(post_process.LogContains,
                        'upload CL to gerrit.set labels on CL 1', 'labels',
                        ['Bot-Commit+1,Commit-Queue+2']),
@@ -410,6 +479,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'staging-build',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.buildbucket.generic_build(bucket='staging'),
       api.post_process(post_process.DoesNotRun,
                        'upload CL to gerrit.set labels on CL 1', 'labels'),
@@ -421,6 +494,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'no-changed-files',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.step_data('commit dlc changes.git status',
                     stdout=api.raw_io.output_text('')),
       api.post_check(post_process.DoesNotRun, 'commit dlc changes.git commit'),
@@ -432,6 +509,10 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'changed-files',
       api.properties(**props),
+      api.path.exists(
+          api.src_state.workspace_path.join(
+              'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
+      ),
       api.step_data(
           'commit dlc changes.git status',
           stdout=api.raw_io.output_text(' M kabuto-example-r1.ebuild')),
