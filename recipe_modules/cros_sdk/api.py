@@ -593,6 +593,7 @@ class CrosSdkApi(RecipeApi):
       try:
         response = self.m.cros_build_api.SdkService.Update(
             request, timeout=timeout_sec, test_output_data=test_data)
+        pres.properties['skipped'] = response.skipped
         # Check if the SdkService/Update call failed to compile any packages.
         # If so, output the failed package data and then raise an exception.
         # Context: If a package failed to compile, the Build API call will have

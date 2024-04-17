@@ -3764,7 +3764,10 @@
   },
   {
     "cmd": [],
-    "name": "update sdk"
+    "name": "update sdk",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@skipped@false@@@"
+    ]
   },
   {
     "cmd": [],

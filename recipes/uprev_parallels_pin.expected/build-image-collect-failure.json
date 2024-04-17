@@ -3224,7 +3224,8 @@
     "cmd": [],
     "name": "build chromiumos with upreved Parallels.update sdk",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@skipped@false@@@"
     ]
   },
   {

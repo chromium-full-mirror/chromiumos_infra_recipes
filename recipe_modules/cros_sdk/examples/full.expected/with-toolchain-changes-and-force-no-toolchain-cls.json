@@ -957,7 +957,8 @@
     "cmd": [],
     "name": "update sdk",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Forcing toolchain_changed=False@@@"
+      "@@@STEP_TEXT@Forcing toolchain_changed=False@@@",
+      "@@@SET_BUILD_PROPERTY@skipped@false@@@"
     ]
   },
   {
