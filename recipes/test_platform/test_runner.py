@@ -609,10 +609,14 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "Bluetooth_Sa_Perbuild".
     * modem_type: modem type of a DUT,
         e.g. "MODEM_TYPE_FIBOCOMM_L850GL".
-    * channel: the channel of the builds,
+    * channel: The channel of the builds,
         e.g. "BETA", "DEV", "CANARY", "STABLE".
     * ufs_zone: UFS zone config,
         e.g. "ZONE_SFO36_OS".
+    * dlm_sku_id: Identifier set in VPD at factory on new devices which
+        correlates to an entry in DLM device SKUs table, should be an integer
+        value in the string,
+        eg: "12345"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -749,6 +753,11 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
                                       api.buildbucket.swarming_bot_dimensions)
   if ufs_zone:
     base_tags.append(('ufs_zone', ufs_zone[0]))
+
+  dlm_sku_id = api.cros_tags.get_values('label-dlm_sku_id',
+                                        api.buildbucket.swarming_bot_dimensions)
+  if dlm_sku_id:
+    base_tags.append(('dlm_sku_id', dlm_sku_id[0]))
 
   cbx = api.cros_tags.get_values('label-cbx',
                                  api.buildbucket.swarming_bot_dimensions)
@@ -3626,6 +3635,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'label-cbx': 'True',
               'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
               'label-modem_type': 'MODEM_TYPE_FIBOCOMM_L850GL',
+              'label-dlm_sku_id': '1234',
               'ufs_zone': 'ZONE_SFO36_OS',
           }),
       api.properties(result_format='tast'),
