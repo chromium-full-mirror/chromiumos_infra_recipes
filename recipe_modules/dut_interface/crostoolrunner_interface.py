@@ -7,6 +7,9 @@
 
 from collections import namedtuple
 from collections import defaultdict
+
+import base64
+import json
 import traceback
 
 from google.protobuf import json_format
@@ -69,6 +72,7 @@ class CrosToolRunnerTestMetadata(dut_interface.DUTTestMetadata
     self.autotest_keyvals = autotest_keyvals
     self.load_response = interface.load_skylab_local_state(
         test=test, test_id=test_id)
+    self.test_suites = cft_test_request.test_suites
 
     undesignated_duts = [
         dut for topology in self.load_response.lab_dut_topology
@@ -371,7 +375,12 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
         ]
 
-      execution_metadata_anypb = self.get_execution_metadata()
+      execution_metadata_anypb = None
+      execution_metadata = self.get_execution_metadata()
+      if execution_metadata:
+        execution_metadata_anypb = Any()
+        execution_metadata_anypb.Pack(execution_metadata)
+
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, companion_duts=companion_dut_devices,
@@ -686,14 +695,23 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           test_case_metadata_list)
       presentation.logs['test_case_metadata_list'] = test_case_metadata_json
 
+      execution_metadata = self.get_execution_metadata()
+      presentation.logs['execution_metadata'] = json_format.MessageToJson(
+          execution_metadata)
+
       # Process tauto tests
       if skylab_test_results:
         skylab_test_runner_result = Skylab_Result(
             autotest_result=Skylab_Result.Autotest(
                 test_cases=skylab_test_results))
         temp_dir = self._api.path.mkdtemp()
+
+        config = {}
+        if self._is_chromium_test(execution_metadata):
+          config = self._extract_chromium_resultdb_config(execution_metadata)
+
         autotest_rdb_config = self._autotest_results_rdb_config(
-            skylab_test_runner_result,
+            config, skylab_test_runner_result,
             temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
             test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
             metadata, skip_board_model_check, visibility_mode, custom_realm)
@@ -802,7 +820,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return config
 
   def _autotest_results_rdb_config(
-      self, test_runner_result, test_runner_result_file_path,
+      self, config, test_runner_result, test_runner_result_file_path,
       test_metadata_file_content, test_metadata_file_path, metadata,
       skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
@@ -810,6 +828,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """Build rdb config for tauto test results.
 
     Args:
+      config (dict): RDB base config wrapping all ResultDB upload parameters.
       test_runner_result (Skylab_Result): skylab test runner results.
       test_runner_result_file_path (str): path to test runner results file.
       test_metadata_file_content (str): CFT test metadata file contents.
@@ -824,17 +843,28 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     self._api.file.write_proto('write skylab_test_runner result',
                                test_runner_result_file_path, test_runner_result,
                                'JSONPB')
-    config = {
-        'result_format': 'skylab-test-runner',
-        'base_variant': metadata.rdb_base_variant,
-        'base_tags': metadata.rdb_base_tags,
-        'sources_file': metadata.rdb_sources_file,
-        'result_file': test_runner_result_file_path,
-        'artifact_directory': None,
-        'skip_board_model_check': skip_board_model_check,
-        'visibility_mode': visibility_mode,
-        'custom_realm': custom_realm
-    }
+
+    config['result_format'] = 'skylab-test-runner'
+    config['result_file'] = test_runner_result_file_path
+    config['artifact_directory'] = None
+    config['skip_board_model_check'] = skip_board_model_check
+    config['visibility_mode'] = visibility_mode
+    config['custom_realm'] = custom_realm
+
+    # Only one of 'sources', 'sources_file' and 'inherit_sources' can be set at
+    # the same time.
+    if 'sources' not in config and 'sources_file' not in config and 'inherit_sources' not in config:
+      config['sources_file'] = metadata.rdb_sources_file
+
+    base_tags = config.get('base_tags', [])
+    for tags in metadata.rdb_base_tags:
+      base_tags.append(tags)
+    config['base_tags'] = base_tags
+
+    base_variant = config.get('base_variant', {})
+    for k, v in metadata.rdb_base_variant:
+      base_variant[k] = v
+    config['base_variant'] = base_variant
 
     if test_metadata_file_content:
       self._api.file.write_text('write skylab_test_runner CFT test metadata',
@@ -843,6 +873,64 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       config['test_metadata_file'] = test_metadata_file_path
 
     return config
+
+  def _is_chromium_test(self, execution_metadata):
+    """Checks if the current test run is for chromium test.
+
+    Args:
+      execution_metadata (ExecutionMetadata): test execution metadata.
+
+    Returns: True if the current test run is for chromium test.
+    """
+    args = execution_metadata.args
+    if args is None or len(args) == 0:
+      return False
+
+    # Chromium tests in Skylab set the resultdb_settings flag in the test args.
+    # This validation logic is aligned with the non-CFT flow in test_runner.
+    for arg in args:
+      if arg.flag == 'resultdb_settings':
+        return True
+
+    return False
+
+  def _extract_chromium_resultdb_config(self, execution_metadata):
+    """Extract resultdb config from test_args for chromium test results.
+
+    Extracts resultdb config from test_args. Also constructs a list of string
+    tuples [(key, value)] as is expected by resultdb.wrap().
+
+    Args:
+      execution_metadata (ExecutionMetadata): test execution metadata.
+
+    Returns: A dictionary wrapping all ResultDB upload parameters.
+
+    Raises: ValueError: If resultdb config are not found in the test_args.
+    """
+    args = execution_metadata.args
+    if args is None or len(args) == 0:
+      return {}
+
+    args_dict = {}
+    for arg in args:
+      args_dict[arg.flag] = arg.value
+
+    rdb_settings = base64.b64decode(args_dict.get('resultdb_settings', ''))
+    if not rdb_settings:
+      raise ValueError('test_args should contain resultdb_settings to '
+                       'upload result to resultdb. Got %s')
+
+    rdb_config = json.loads(rdb_settings.decode())
+    rdb_config['base_tags'] = [
+        tuple(tag.split(':', 1)) for tag in rdb_config.get('base_tags', [])
+    ]
+
+    with self._api.step.nest(
+        'extracted resultdb config from test_args for chromium test') as step:
+      step.presentation.logs['base_rdb_config_for_chromium_test'] = json.dumps(
+          rdb_config, indent=4)
+
+    return rdb_config
 
   def _get_missing_tast_tests_from_keyval(self, base_dir):
     """Get missing tast test names from keyval.
@@ -1171,10 +1259,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     metadata based on it.
 
     Returns:
-      Anypb: test execution metadata packed inside.
+      ExecutionMetadata: test execution metadata.
     """
     metadata_anypb = None
-    execution_metadata = None
     if len(self.cft_test_request.test_suites) == 0:
       return metadata_anypb
 
@@ -1191,9 +1278,4 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     for arg in first_test.execution_metadata.args:
       args.append(arg)
 
-    execution_metadata = Test_Execution_Metadata.ExecutionMetadata(args=args)
-    if execution_metadata:
-      metadata_anypb = Any()
-      metadata_anypb.Pack(execution_metadata)
-
-    return metadata_anypb
+    return Test_Execution_Metadata.ExecutionMetadata(args=args)

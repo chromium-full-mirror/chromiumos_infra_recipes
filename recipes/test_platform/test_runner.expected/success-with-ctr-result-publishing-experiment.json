@@ -1040,7 +1040,24 @@
       "@@@STEP_LOG_LINE@test_case_metadata_list@    {}@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@  ]@@@",
       "@@@STEP_LOG_LINE@test_case_metadata_list@}@@@",
-      "@@@STEP_LOG_END@test_case_metadata_list@@@"
+      "@@@STEP_LOG_END@test_case_metadata_list@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@{@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@  \"args\": [@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    {@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"flag\": \"buildartifactsurl\",@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"value\": \"gs://chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000/\"@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    },@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    {@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"flag\": \"bug_id\",@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"value\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    },@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    {@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"flag\": \"qual_run_id\",@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@      \"value\": \"1712172839652\"@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@    }@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@  ]@@@",
+      "@@@STEP_LOG_LINE@execution_metadata@}@@@",
+      "@@@STEP_LOG_END@execution_metadata@@@"
     ]
   },
   {
