@@ -52,6 +52,18 @@ class Snapshot:
   # Dict of per-builder local_greenness.
   local_greenness: Dict[str, GreennessTuple]
 
+  # The aggregate build score for the requested builders. If specific builders
+  # were not requested, then this will be equal to agg_green.
+  requested_builders_agg_green: int
+
+  # Optional, the subset of builders considered when aggregating greenness.
+  requested_builders: Optional[List[str]] = None
+
+  # Any builders which were requested but did not have greenness published.
+  # Only relevant if requested_builders is non-empty.
+  requested_builders_missing_from_snapshot: Optional[List[str]] = None
+
+
 class LooksForGreenApi(recipe_api.RecipeApi):
   """A module to look for green snapshots."""
 
@@ -249,8 +261,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self.m.buildbucket.search(predicate, limit=limit, fields=fields,
                                      timeout=60)
 
-  def _parse_snapshot_result(self,
-                             snapshot_result: build_pb2.Build) -> Snapshot:
+  def _parse_snapshot_result(
+      self, snapshot_result: build_pb2.Build,
+      requested_builders: Optional[List[str]] = None) -> Snapshot:
     """Parse buildbucket return into Snapshot."""
     start_time = datetime.datetime.utcfromtimestamp(
         snapshot_result.start_time.seconds)
@@ -266,6 +279,21 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           out_props['greenness']['builderGreenness'])
     except ValueError:
       builder_greenness = {}
+
+    if requested_builders:
+      missing_builders = []
+      running_greenness = 0
+      for b in requested_builders:
+        if b not in builder_greenness:
+          missing_builders.append(b)
+          continue
+        running_greenness += builder_greenness[b].build_metric
+      requested_builders_agg_green = int(running_greenness /
+                                         len(requested_builders))
+    else:
+      requested_builders_agg_green = agg_green
+      missing_builders = None
+
     local_greenness = self.m.buildbucket_stats.parse_local_greenness(out_props)
     approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
     return Snapshot(
@@ -274,6 +302,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         start_time=start_time,
         end_time=end_time,
         agg_green=agg_green,
+        requested_builders_agg_green=requested_builders_agg_green,
+        requested_builders=requested_builders,
+        requested_builders_missing_from_snapshot=missing_builders,
         approx_snap_age_hours=approx_snap_age_hours,
         builder_greenness=builder_greenness,
         local_greenness=local_greenness,
@@ -362,13 +393,16 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Return None if no green snapshot exists.
     """
     green_results = list(
-        filter(lambda d: d.agg_green >= self._greenness_threshold,
-               parsed_results))
+        filter(
+            lambda d: d.requested_builders_agg_green >= self.
+            _greenness_threshold, parsed_results))
     if not green_results:
       return None
-    max_greenness = max([r.agg_green for r in parsed_results])
+    max_greenness = max(
+        [r.requested_builders_agg_green for r in parsed_results])
     greenest_results = list(
-        filter(lambda d: d.agg_green == max_greenness, green_results))
+        filter(lambda d: d.requested_builders_agg_green == max_greenness,
+               green_results))
     latest_snap = max(greenest_results, key=lambda k: k.start_time)
     return latest_snap
 
@@ -377,6 +411,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       latest_start: Optional[timestamp_pb2.Timestamp] = None,
       bucket: Optional[str] = None,
       builder: Optional[str] = None,
+      requested_snapshot_builders: Optional[List[str]] = None,
   ) -> Optional[Snapshot]:
     """Find a green snapshot within the lookback period if one exists.
 
@@ -389,6 +424,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         self._greenness_bucket.
       builder: If specified, the builder to search for. Defaults to
         self._greenness_builder.
+      requested_snapshot_builders: Optional, a list of builders to consider when
+        aggregating greenness.
 
     Returns:
       A green snapshot, if one was found.
@@ -398,7 +435,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                                     builder=builder)
       parsed_results = []
       for result in results:
-        parsed_results.append(self._parse_snapshot_result(result))
+        parsed_results.append(
+            self._parse_snapshot_result(result, requested_snapshot_builders))
       green = self._get_latest_greenest_snapshot(parsed_results)
       if green:
         presentation.logs['latest green'] = (

@@ -20,6 +20,9 @@ message FindGreenSnapshotProperties {
   string expected_commit_sha = 4;
   string expected_builder_greenness = 5;
   string latest_start = 6;
+  repeated string requested_snapshot_builders = 7;
+  int32 expected_requested_builders_greenness = 8;
+  repeated string expected_requested_builders_missing_from_snapshot = 9;
 }
 
 message GetLatestSnapshotGreennessProperties {
