@@ -857,6 +857,12 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if carrier:
     base_tags.append(('carrier', carrier[0]))
 
+  partner_config = properties.common_config.partner_config
+  if partner_config and partner_config.account_id:
+    # Sets the partner account id from the common_config.
+    # This value is set in the partner luci config file.
+    base_tags.append(('account_id', str(partner_config.account_id)))
+
   return base_tags
 
 
@@ -3644,6 +3650,63 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
       # upload.
       _request_properties_with_test_exec_behavior(
           TestExecutionBehavior.NON_CRITICAL, 'tast.critical-system-shard-2'),
+      _mock_load_step(),
+      _successful_prejob_step(),
+      _successful_run_test_step(),
+      _successful_fetch_crashes_step(),
+      _successful_logs_archive_step(),
+      # Reads rich info for the ResultDB upload.
+      _autotest_keyval_file_step_data(),
+      _crossystem_keyval_file_step_data(),
+      _gsctool_keyval_file_step_data(),
+      _servo_keyval_file_step_data(),
+      _kernel_log_file_step_data(),
+      # Enables the ResultDB upload.
+      _tast_test_result_file_step_data(),
+      _mock_autotest_wrapper_tast_result(),
+      _autotest_wrapper_tast_result_file_step_data(),
+      _successful_resultdb_upload_step(),
+  )
+
+  yield api.test(
+      'success-with-resultdb-tast-partner-accound-id',
+      _set_build(
+          bid=42, tags={
+              'label-board': 'fake-board',
+              'label-model': 'fake-model',
+              'build': 'fake-board-cq/R11-123.45',
+              'suite': 'fake-suite',
+              'display_name': 'fake-board-cq/R11-123.45/fake-suite/fake-test',
+              'test-plan-id': 'ltl_testplan',
+              'qs_account': 'unmanaged_p2',
+              'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
+              'branch-trigger': 'DEV',
+          }, swarming_tags={
+              'drone': 'fake-drone-1234',
+              'drone_server': 'fakeserver1-row2-drone3',
+              'dut_name': 'fakedut1-row2-rack3-host4',
+              'pool': 'ChromeOSSkylab',
+              'label-wifi_chip': 'marvell',
+              'label-wifi_router_models': 'gale',
+              'label-hwid_sku': 'katsu_MT8183_0B',
+              'label-pool': 'DUT_POOL_QUOTA',
+              'label-carrier': 'fake-carrier',
+              'label-cbx': 'True',
+              'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
+              'label-modem_type': 'MODEM_TYPE_FIBOCOMM_L850GL',
+              'ufs_zone': 'ZONE_SFO36_OS',
+          }),
+      api.properties(result_format='tast'),
+      _misc_properties(),
+      # Sets Tast test name in the test request for Autotest wrapper result
+      # upload.
+      _request_properties_with_test_exec_behavior(
+          TestExecutionBehavior.NON_CRITICAL, 'tast.critical-system-shard-2'),
+      api.properties(
+          TestRunnerProperties(
+              common_config={'partner_config': {
+                  'account_id': 4
+              }})),
       _mock_load_step(),
       _successful_prejob_step(),
       _successful_run_test_step(),
