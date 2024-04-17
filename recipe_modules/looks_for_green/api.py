@@ -22,7 +22,6 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import LooksForG
 from google.protobuf import timestamp_pb2
 
 from recipe_engine import recipe_api
-from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 
@@ -48,9 +47,6 @@ class Snapshot:
 
   # Dict of per-builder greenness.
   builder_greenness: Dict[str, greenness_pb2.AggregateGreenness.Greenness]
-
-  # Dict of per-builder local_greenness.
-  local_greenness: Dict[str, GreennessTuple]
 
   # The aggregate build score for the requested builders. If specific builders
   # were not requested, then this will be equal to agg_green.
@@ -294,7 +290,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       requested_builders_agg_green = agg_green
       missing_builders = None
 
-    local_greenness = self.m.buildbucket_stats.parse_local_greenness(out_props)
     approx_snap_age_hours = self.calc_approx_snap_age_hours(start_time)
     return Snapshot(
         bbid=snapshot_result.id,
@@ -307,7 +302,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         requested_builders_missing_from_snapshot=missing_builders,
         approx_snap_age_hours=approx_snap_age_hours,
         builder_greenness=builder_greenness,
-        local_greenness=local_greenness,
     )
 
   def _set_snapshot_stats(

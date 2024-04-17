@@ -20,7 +20,6 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
 
-from RECIPE_MODULES.chromeos.greenness.api import GreennessTuple
 
 DEMAND_STATUSES = [common_pb2.SCHEDULED, common_pb2.STARTED]
 
@@ -86,34 +85,10 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         status_map[common_pb2.Status.Name(status)] for status in DEMAND_STATUSES
     ])
 
-  def parse_local_greenness(self, properties: struct_pb2.Struct) -> OrderedDict:
-    """Parse the local_greenness output properties.
-
-    Args:
-      properties: Output properties from a build containing a 'local_greenness'
-        output property. This property should contain a 'greenness' key, which
-        is a dict from builder name to GreennessTuple. If this property isn't
-        set, an empty dict is returned.
-
-    Returns:
-      An OrderedDict mapping from builder name to GreennessTuple. If the
-        local_greenness output property isn't found, the dict is empty.
-    """
-    snapshot_greenness = OrderedDict()
-
-    if 'local_greenness' in properties.fields and 'greenness' in properties[
-        'local_greenness'].fields:
-      for builder, greenness_tuple in properties['local_greenness'][
-          'greenness'].items():
-        snapshot_greenness[builder] = GreennessTuple(*greenness_tuple.items())
-
-    return snapshot_greenness
-
   def _poll_and_get_greenness(
       self,
       predicate: builds_service_pb2.BuildPredicate,
       retries: int,
-      use_local_greenness: bool,
   ) -> OrderedDict:
     """Returns greenness for the specified build, if found.
 
@@ -131,14 +106,10 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
       retries: Number of times to retry the query. There is a 30 minute sleep
         before each retry. This allows polling until the specified orchestrator
         publishes greenness.
-      use_local_greenness: If true, parse the 'local_greenness' output property
-        instead of the 'greenness' output property.
 
     Returns:
-      An ordered dict mapping builder -> Greenness message as a dict. If
-        use_local_greenness is true, the values are the Greenness tuple defined in
-        greenness/api.py instead of the Greenness message. Dict will be empty if
-        no greenness is found.
+      An ordered dict mapping builder -> Greenness message as a dict. Dict will
+        be empty if no greenness is found.
     """
     # Up to retries 30-minutes sleeps.
     # TODO(b/304548989): Use build_poller instead of sleeping.
@@ -150,11 +121,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
         result = results[0]
         # Ensure build greenness in last snapshot run is complete.
         output_props = result.output.properties
-        if use_local_greenness:
-          snapshot_greenness = self.parse_local_greenness(output_props)
-          if snapshot_greenness:
-            return snapshot_greenness
-        elif 'greenness' in output_props.fields and 'builderGreenness' in output_props[
+        if 'greenness' in output_props.fields and 'builderGreenness' in output_props[
             'greenness'].fields:
           snapshot_greenness = OrderedDict(
               self.reformat_greenness_dict(
@@ -177,7 +144,6 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
       builder: Optional[str] = None,
       end_bbid: Optional[int] = None,
       retries: int = 9,
-      use_local_greenness: bool = False,
       wait_for_complete: bool = False,
   ) -> OrderedDict:
     """Returns greeneness for the specified commit, if found.
@@ -199,18 +165,14 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
       retries: Number of times to retry the query. There is a 30 minute sleep
         before each retry. This allows polling until the specified orchestrator
         publishes greenness.
-      use_local_greenness: If true, parse the 'local_greenness' output property
-        instead of the 'greenness' output property.
       wait_for_complete: If true, wait until the build is completed. Otherwise,
         wait until the build publishes the build greenness output property. Note
         that the build will publish the build greenness before the test
         greenness; i.e. this should be set true if test greenness is required.
 
     Returns:
-      An ordered dict mapping builder -> Greenness message as a dict. If
-        use_local_greenness is true, the values are the Greenness tuple defined in
-        greenness/api.py instead of the Greenness message. Dict will be empty if
-        no greenness is found.
+      An ordered dict mapping builder -> Greenness message as a dict. Dict will
+        be empty if no greenness is found.
     """
     pres.logs[
         'looking'] = f'Trying to find greenness for snapshot for commit {commit}...'
@@ -229,8 +191,7 @@ class BuildbucketStatsApi(recipe_api.RecipeApi):
     if wait_for_complete:
       predicate.status = common_pb2.ENDED_MASK
 
-    greenness = self._poll_and_get_greenness(predicate, retries,
-                                             use_local_greenness)
+    greenness = self._poll_and_get_greenness(predicate, retries)
 
     if greenness:
       pres.logs[
