@@ -584,7 +584,7 @@
       "@@@STEP_LOG_LINE@request@  },@@@",
       "@@@STEP_LOG_LINE@request@  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\",@@@",
       "@@@STEP_LOG_LINE@request@  \"metadata\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"@type\": \"type.googleapis.com/chromiumos.test.api.AutotestExecutionMetadata\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"@type\": \"type.googleapis.com/chromiumos.test.api.ExecutionMetadata\",@@@",
       "@@@STEP_LOG_LINE@request@    \"args\": [@@@",
       "@@@STEP_LOG_LINE@request@      {@@@",
       "@@@STEP_LOG_LINE@request@        \"flag\": \"buildartifactsurl\",@@@",
@@ -692,7 +692,7 @@
       }
     },
     "name": "execution steps.CrosToolRunner: run test.call `cros-tool-runner`.test",
-    "stdin": "{\n  \"testSuites\": [\n    {\n      \"name\": \"arc-cts-vm\",\n      \"testCaseIds\": {\n        \"testCaseIds\": [\n          {\n            \"value\": \"tauto.cheets_CTS_R.internal.arm.CtsPdf\"\n          },\n          {\n            \"value\": \"tast.example.Fail\"\n          },\n          {\n            \"value\": \"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ],\n  \"primaryDut\": {\n    \"dut\": {\n      \"id\": {\n        \"value\": \"fake_dut\"\n      },\n      \"chromeos\": {\n        \"ssh\": {\n          \"address\": \"8.8.8.8\",\n          \"port\": 22\n        },\n        \"dutModel\": {\n          \"buildTarget\": \"betty\",\n          \"modelName\": \"betty\"\n        }\n      },\n      \"cacheServer\": {\n        \"address\": {\n          \"address\": \"0.0.0.0\",\n          \"port\": 8080\n        }\n      }\n    },\n    \"containerMetadataKey\": \"betty\"\n  },\n  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\",\n  \"metadata\": {\n    \"@type\": \"type.googleapis.com/chromiumos.test.api.AutotestExecutionMetadata\",\n    \"args\": [\n      {\n        \"flag\": \"buildartifactsurl\",\n        \"value\": \"gs://chromeos-image-archive/betty-postsubmit/R123-12345.0.0-123456-80000000000/\"\n      }\n    ]\n  }\n}",
+    "stdin": "{\n  \"testSuites\": [\n    {\n      \"name\": \"arc-cts-vm\",\n      \"testCaseIds\": {\n        \"testCaseIds\": [\n          {\n            \"value\": \"tauto.cheets_CTS_R.internal.arm.CtsPdf\"\n          },\n          {\n            \"value\": \"tast.example.Fail\"\n          },\n          {\n            \"value\": \"tast.example.Pass\"\n          }\n        ]\n      }\n    }\n  ],\n  \"primaryDut\": {\n    \"dut\": {\n      \"id\": {\n        \"value\": \"fake_dut\"\n      },\n      \"chromeos\": {\n        \"ssh\": {\n          \"address\": \"8.8.8.8\",\n          \"port\": 22\n        },\n        \"dutModel\": {\n          \"buildTarget\": \"betty\",\n          \"modelName\": \"betty\"\n        }\n      },\n      \"cacheServer\": {\n        \"address\": {\n          \"address\": \"0.0.0.0\",\n          \"port\": 8080\n        }\n      }\n    },\n    \"containerMetadataKey\": \"betty\"\n  },\n  \"artifactDir\": \"[CLEANUP]/output_dir_tmp_1\",\n  \"metadata\": {\n    \"@type\": \"type.googleapis.com/chromiumos.test.api.ExecutionMetadata\",\n    \"args\": [\n      {\n        \"flag\": \"buildartifactsurl\",\n        \"value\": \"gs://chromeos-image-archive/betty-postsubmit/R123-12345.0.0-123456-80000000000/\"\n      }\n    ]\n  }\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

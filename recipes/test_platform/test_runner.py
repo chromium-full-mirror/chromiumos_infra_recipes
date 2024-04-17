@@ -2900,6 +2900,15 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
             },
         },
         'test_suites': [{
+            'execution_metadata': {
+                'args': [{
+                    'flag': 'bug_id',
+                    'value': '12345'
+                }, {
+                    'flag': 'qual_run_id',
+                    'value': '1712172839652'
+                }]
+            },
             'name': 'suite1',
             'test_case_ids': {
                 'test_case_ids': [{

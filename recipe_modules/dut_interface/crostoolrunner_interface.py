@@ -371,12 +371,11 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
         ]
 
-      test_execution_metadata_anypb = self.get_test_execution_metadata()
+      execution_metadata_anypb = self.get_execution_metadata()
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, companion_duts=companion_dut_devices,
-          artifact_dir=metadata.artifact_dir,
-          metadata=test_execution_metadata_anypb)
+          artifact_dir=metadata.artifact_dir, metadata=execution_metadata_anypb)
       test_response = self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
 
@@ -1167,7 +1166,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     # We shouldn't hit here ever, but for safe we return False if it happens.
     return False
 
-  def get_test_execution_metadata(self):
+  def get_execution_metadata(self):
     """Checks the first test case harness type and creates test execution
     metadata based on it.
 
@@ -1175,29 +1174,26 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       Anypb: test execution metadata packed inside.
     """
     metadata_anypb = None
-    test_execution_metadata = None
+    execution_metadata = None
     if len(self.cft_test_request.test_suites) == 0:
       return metadata_anypb
 
-    first_test = self.cft_test_request.test_suites[
-        0].test_case_ids.test_case_ids[0].value
+    args = []
     gcs_path = self.cft_test_request.primary_dut.provision_state.system_image.system_image_path.path
     if gcs_path:
       if not gcs_path.endswith('/'):
         gcs_path = gcs_path + '/'
-      if first_test.startswith('tast'):
-        arg = Test_Execution_Metadata.Arg(flag='buildartifactsurl',
-                                          value=gcs_path)
-        test_execution_metadata = Test_Execution_Metadata.TastExecutionMetadata(
-            args=[arg])
-      elif first_test.startswith('tauto'):
-        tauto_arg = Test_Execution_Metadata.AutotestExecutionMetadata.Arg(
-            flag='buildartifactsurl', value=gcs_path)
-        test_execution_metadata = Test_Execution_Metadata.AutotestExecutionMetadata(
-            args=[tauto_arg])
+      args.append(
+          Test_Execution_Metadata.Arg(flag='buildartifactsurl', value=gcs_path))
 
-    if test_execution_metadata:
+    # Adds the original execution metadata.
+    first_test = self.cft_test_request.test_suites[0]
+    for arg in first_test.execution_metadata.args:
+      args.append(arg)
+
+    execution_metadata = Test_Execution_Metadata.ExecutionMetadata(args=args)
+    if execution_metadata:
       metadata_anypb = Any()
-      metadata_anypb.Pack(test_execution_metadata)
+      metadata_anypb.Pack(execution_metadata)
 
     return metadata_anypb
