@@ -313,9 +313,19 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   def _set_snapshot_stats(
       self,
       snapshot_stats: Snapshot,
+      suggested: bool = False,
   ) -> None:
-    """Set output stats using LooksForGreenStats proto fields."""
-    stats = self._stats.latest_scored
+    """Set output stats using LooksForGreenStats proto fields.
+
+    When suggested is True, populate stats for the snapshot that CQ Looks
+    recommends to use. Otherwise, populate state for the latest snapshot that
+    has go/greenness properties set.
+    """
+    if not suggested:
+      stats = self._stats.latest_scored
+    else:
+      stats = self._stats.suggested
+
     stats.snap_orch_greenness = snapshot_stats.agg_green
     stats.approx_snap_age_hours = snapshot_stats.approx_snap_age_hours
     stats.snap_orch_bbid = snapshot_stats.bbid
@@ -443,7 +453,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             f'Found green snapshot: {green.commit_sha} with '
             f'greenness {green.agg_green} and {green.approx_snap_age_hours} '
             'hours old.')
-        self._set_snapshot_stats(green)
+        self._set_snapshot_stats(green, suggested=True)
         self._stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
         self.m.easy.set_properties_step(looks_for_green=self.stats)
       else:
