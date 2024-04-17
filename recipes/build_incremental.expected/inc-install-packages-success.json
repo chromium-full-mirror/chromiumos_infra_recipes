@@ -6070,6 +6070,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Old build failed."
   }
 ]

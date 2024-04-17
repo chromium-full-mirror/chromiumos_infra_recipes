@@ -167,6 +167,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # the upload succeeded, raise that exception.
   if failing_build_exception and old_build_successful:
     raise failing_build_exception  # pylint: disable=raising-bad-type
+  if not old_build_successful:
+    return RawResult(status=common.SUCCESS,
+                     summary_markdown='Old build failed.')
   return None
 
 
