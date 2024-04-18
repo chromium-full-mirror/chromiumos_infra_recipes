@@ -390,18 +390,19 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
             ))
     return reqs
 
-  def run_paygen_builders(
-      self,
-      paygen_reqs: List[PaygenProperties.PaygenRequest],
-      paygen_mpa: Optional[bool] = False,
-      use_split_paygen: bool = False,
-  ) -> List[Build]:
+  def run_paygen_builders(self,
+                          paygen_reqs: List[PaygenProperties.PaygenRequest],
+                          paygen_mpa: Optional[bool] = False,
+                          use_split_paygen: bool = False,
+                          max_bb_elements: int = 200) -> List[Build]:
     """Launch paygen builders to generate payloads and run configured tests.
 
     Args:
       paygen_reqs: Protos containing the payloads to generate and the corresponding tests to launch.
       paygen_mpa: Use the MPA bot pool builder.
       use_split_paygen: Whether to use the new split paygen flow.
+      max_bb_elements: number of elements per buildbucket call. Default is 200
+        but for testing we can use a smaller number.
 
     Returns:
       A list of completed builds.
@@ -437,7 +438,7 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       return split_reqs
 
     # Run the buildbucket requests and return the build results.
-    split_reqs = _split_large_requests(schedule_requests)
+    split_reqs = _split_large_requests(schedule_requests, max_bb_elements)
     with self.m.step.nest('running children'):
       builds = []
       for req_chunk in split_reqs:

@@ -25,8 +25,9 @@ DEPS = [
 
 
 def RunSteps(api: RecipeApi):
-  # Test 201 gen requests (higher than bb.schedule's chunk size max of 200).
-  gen_requests = api.paygen_orchestration.test_api.EXAMPLE_GEN_REQUESTS * 201
+  # Test 3 gen requests (higher than bb.schedule's chunk size max of 2 that we
+  # will pass in).
+  gen_requests = api.paygen_orchestration.test_api.EXAMPLE_GEN_REQUESTS * 3
 
   paygen_requests = [
       PaygenProperties.PaygenRequest(generation_request=gen_request)
@@ -36,10 +37,11 @@ def RunSteps(api: RecipeApi):
   paygen_mpa = api.properties.thaw()['paygen_mpa']
   api.paygen_orchestration.run_paygen_builders(paygen_requests,
                                                paygen_mpa=paygen_mpa,
-                                               use_split_paygen=True)
+                                               use_split_paygen=True,
+                                               max_bb_elements=2)
 
 
-test_bbids = [str(8922054662172514000 + i) for i in range(805)]
+test_bbids = [str(8922054662172514000 + i) for i in range(8)]
 
 
 def GenTests(api: RecipeTestApi):
@@ -106,7 +108,7 @@ def GenTests(api: RecipeTestApi):
           }),
       # Don't return one of the original builds (8922054662172514000).
       api.conductor.set_collect_output(
-          [str(8922054662172514001 + i) for i in range(804)],
+          [str(8922054662172514001 + i) for i in range(7)],
           step_name='running children'),
       api.post_process(post_process.DropExpectation))
 
