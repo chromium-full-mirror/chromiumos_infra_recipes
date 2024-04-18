@@ -85,6 +85,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           'DOCKER_DRONE_IMAGE',
           'DOCKER_DRONE_SERVER_NAME',
 
+          # Satlab Envvars.
+          'SERVOD_CONTAINER_LABEL',
+
           # Resource limits for docker.
           'DRONE_AGENT_BOT_BLKIO_READ_BPS',
           'DRONE_AGENT_BOT_BLKIO_WRITE_BPS',
