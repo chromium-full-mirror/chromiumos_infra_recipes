@@ -321,6 +321,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       stats = self._stats.suggested
 
     stats.snap_orch_greenness = snapshot_stats.agg_green
+    if snapshot_stats.requested_builders:
+      stats.requested_builders_greenness = snapshot_stats.requested_builders_agg_green
     stats.approx_snap_age_hours = snapshot_stats.approx_snap_age_hours
     stats.snap_orch_bbid = snapshot_stats.bbid
     stats.snap_commit_sha = snapshot_stats.commit_sha

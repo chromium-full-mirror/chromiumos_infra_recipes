@@ -60,6 +60,10 @@ message LooksForGreenStats {
     // snapshot-orchestrator.
     int32 snap_orch_greenness = 2;
 
+    // The aggregate greenness for the requested builders. If specific builders
+    // were not requested, then this will be 0.
+    int32 requested_builders_greenness = 6;
+
     // BBID of snapshot-orchestrator.
     int64 snap_orch_bbid = 3;
 
