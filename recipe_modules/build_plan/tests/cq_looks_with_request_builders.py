@@ -158,7 +158,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
               LooksForGreenStats(
-                  status='STATUS_RAN_OLDER',
+                  status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
                       requested_builders_greenness=100,
@@ -179,7 +179,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
               LooksForGreenStats(
-                  status='STATUS_RAN_OLDER',
+                  status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
                       approx_snap_age_hours=3,
@@ -200,7 +200,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
               LooksForGreenStats(
-                  status='STATUS_RAN_OLDER',
+                  status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=66,
                       requested_builders_greenness=100,
@@ -220,7 +220,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
               LooksForGreenStats(
-                  status='STATUS_RAN_OLDER',
+                  status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
                       approx_snap_age_hours=3,
@@ -238,6 +238,7 @@ def GenTests(api):
       api.post_process(
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
-              LooksForGreenStats(status='STATUS_FOUND_NONE'))),
+              LooksForGreenStats(lookback_hours=10,
+                                 status='STATUS_FOUND_NONE'))),
       api.post_process(post_process.DropExpectation),
   )

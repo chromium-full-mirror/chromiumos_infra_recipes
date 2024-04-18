@@ -1541,6 +1541,14 @@
   },
   {
     "cmd": [],
+    "name": "looks for green.resize LFG lookback window.set looks_for_green",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"lookbackHours\": 10.0}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "looks for green.find green snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1618,7 +1626,7 @@
     "name": "looks for green.find green snapshot.set looks_for_green",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"status\": \"STATUS_FOUND_NONE\"}@@@"
+      "@@@SET_BUILD_PROPERTY@looks_for_green@{\"lookbackHours\": 10.0, \"status\": \"STATUS_FOUND_NONE\"}@@@"
     ]
   },
   {

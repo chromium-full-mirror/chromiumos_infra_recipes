@@ -81,4 +81,9 @@ message LooksForGreenStats {
 
   // Outcome of the Looks logic.
   LooksForGreenStatus status = 3;
+
+  // The amount of hours looked back when searching for a green snapshot.
+  // This may be less than the input lookback_hours if the CQ run needed to
+  // account for broken_until updates and when depended-on CLs were merged.
+  float lookback_hours = 4;
 }

@@ -119,6 +119,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
   @lookback_hours.setter
   def lookback_hours(self, lookback_hours):
     self._lookback_hours = lookback_hours
+    self._stats.lookback_hours = self._lookback_hours
+    self.set_stats()
 
   @property
   def _greenness_bucket(self) -> str:
@@ -194,15 +196,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           return False
         hours_since_submission = (self.m.time.utcnow() -
                                   submit_time).total_seconds() / (60 * 60)
-        self._lookback_hours = min(self._lookback_hours,
-                                   hours_since_submission - 1)
+        self.lookback_hours = min(self.lookback_hours,
+                                  hours_since_submission - 1)
         pres.logs['reduced_lookback'] = '\n'.join([
             f'One of the depended CLs was submitted {hours_since_submission:.2f} hours ago.',
             'Since it can take up to 30 mins from submission for Annealing to kick off and',
             '10-15 mins for annealing to complete, lookback should be atleast an hour less.',
-            f'lfg lookback is now {self._lookback_hours:.2f} hours.',
+            f'lfg lookback is now {self.lookback_hours:.2f} hours.',
         ])
-        pres.text = f'lfg lookback is now {self._lookback_hours:.2f} hours.'
+        pres.text = f'lfg lookback is now {self.lookback_hours:.2f} hours.'
       self.set_stats()
 
     return True
@@ -242,14 +244,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - int(self._lookback_hours * 60 * 60),
+                  seconds=latest_seconds - int(self.lookback_hours * 60 * 60),
               ), end_time=latest_start))
     else:
       latest_seconds = self.seconds_utc
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - int(self._lookback_hours * 60 * 60),
+                  seconds=latest_seconds - int(self.lookback_hours * 60 * 60),
               )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = bucket or self._greenness_bucket
@@ -456,7 +458,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         presentation.logs['latest green'] = (
             'Found no snapshot of at least '
             f'{self._greenness_threshold} greenness within the last '
-            f'{self._lookback_hours} hours.')
+            f'{self.lookback_hours} hours.')
         self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
         self.m.easy.set_properties_step(looks_for_green=self.stats)
       return green
@@ -508,9 +510,9 @@ class LooksForGreenApi(recipe_api.RecipeApi):
             global_hours_since_breakage = min(global_hours_since_breakage,
                                               hours_since_breakage)
 
-      self._lookback_hours = min(
-          self._lookback_hours,
+      self.lookback_hours = min(
+          self.lookback_hours,
           # Reduce by 30 mins to account for creation of the next snapshot.
           global_hours_since_breakage - 0.5)
-      log.append(f'LFG lookback window is now {self._lookback_hours} hours')
+      log.append(f'LFG lookback window is now {self.lookback_hours} hours')
       pres.logs['broken_until logs'] = log
