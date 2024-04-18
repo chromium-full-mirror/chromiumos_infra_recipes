@@ -9,14 +9,11 @@ import os
 import datetime
 from typing import Dict, List, Optional, Tuple
 
-from google.protobuf import json_format
-
 from PB.chromite.api import binhost as binhost_pb
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import BuildTarget
 from PB.chromiumos.common import Chroot
-from PB.chromiumos.common import PackageIndexInfo
 from PB.chromiumos.common import Path
 from PB.chromiumos.common import Profile
 from recipe_engine import recipe_api
@@ -37,7 +34,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
-    self._enable_snapshot_prebuilts = properties.enable_snapshot_prebuilts
     self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._commit_overlay_binhost = properties.commit_overlay_binhost
     self._max_binhost_uris = properties.max_binhost_uris
@@ -110,62 +106,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     kind_label = BuilderConfig.Id.Type.Name(kind).lower()
     version = self.m.cros_version.version
     return f'host/amd64/{target_name}/{kind_label}-{version}-{build_id}/packages'
-
-  def _upload_metadata(self, build_target, profile, kind, gs_bucket, acls,
-                       location):
-    """Upload metadata about the (uploaded) prebuilts.
-
-    Args:
-      build_target (BuildTarget): The build target.
-      profile (chromiumos.Profile): The profile for the build.
-      kind (BuilderConfig.Id.Type): The kind of prebuilts, e.g. POSTSUBMIT
-      gs_bucket (str): Google storage bucket to upload prebuilts to.
-      acls: (List[AclArg]): acls to apply to the uploaded metadata, will be
-          empty if the prebuilts are public.
-      location (str): The Google Storage URI where the prebuilts were uploaded.
-    """
-    with self.m.step.nest('upload metadata'):
-      version = self.m.cros_version.version
-      commit = self.m.cros_infra_config.gitiles_commit
-      target = build_target.name if build_target else 'Unknown'
-
-      metadata = PackageIndexInfo(snapshot_sha=commit.id, profile=profile,
-                                  snapshot_number=version.snapshot,
-                                  build_target=build_target, location=location)
-      metadata_file = self.m.path.mkdtemp(
-          prefix='metadata').join('PackageIndexInfo.json')
-
-      metadata_json = json_format.MessageToJson(metadata,
-                                                use_integers_for_enums=True)
-      self.m.file.write_text('write metadata', metadata_file,
-                             '%s\n' % metadata_json)
-
-      snapshot_strs = [commit.id]
-
-      with self.m.context(cwd=self.m.src_state.build_manifest.path):
-        snapshot_identifier = self.m.git_footers.from_ref(
-            commit.id, key='Cr-Snapshot-Identifier',
-            step_test_data=self.m.git_footers.test_api.step_test_data_factory(
-                '5555'))
-        if snapshot_identifier:
-          snapshot_strs.append('{}-id-{}'.format(self.m.src_state.manifest_name,
-                                                 snapshot_identifier[0]))
-      for snapshot_str in snapshot_strs:
-        tmpl = os.path.join(METADATA_GS_DIR_TMPL, METADATA_GS_FILE_TMPL)
-        uri = tmpl.format(
-            build_id=self._build_id,
-            builder=self.m.buildbucket.build.builder.builder,
-            gs_bucket=gs_bucket,
-            kind=BuilderConfig.Id.Type.Name(kind).lower(),
-            profile=profile.name,
-            snapshot=snapshot_str,
-            target=target,
-        )
-        self.m.gsutil(['cp', metadata_file, uri])
-        cmd = ['acl', 'ch']
-        self._add_acls(acls, cmd)
-        cmd.append(uri)
-        self.m.gsutil(cmd)
 
   def _publish_binhost_metadata(self, build_target: BuildTarget,
                                 profile: Profile, gs_uri: str,
@@ -589,9 +529,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
 
       # Default to `base` profile when it is not explicitly specified.
       profile = self._profile_or_default(profile)
-      if self._enable_snapshot_prebuilts:
-        self._upload_metadata(target, profile, kind, gs_bucket, acls,
-                              upload_uri)
 
       # Upload binhost metadata to the `binhost_lookup_service`.
       self._publish_binhost_metadata(target, profile, upload_uri, gs_bucket,

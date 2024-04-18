@@ -382,7 +382,6 @@ def GenTests(api):
                                  'force_postsubmit_relevance': True
                              },
                              '$chromeos/cros_prebuilts': {
-                                 'enable_snapshot_prebuilts': True,
                                  'send_snapshot_prebuilts': 1,
                              },
                          })

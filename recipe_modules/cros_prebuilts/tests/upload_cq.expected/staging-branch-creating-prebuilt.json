@@ -2148,209 +2148,6 @@
   },
   {
     "cmd": [],
-    "name": "upload prebuilts.upload metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"snapshotSha\": \"snapshot-HEAD-SHA\",\n  \"snapshotNumber\": 101,\n  \"buildTarget\": {\n    \"name\": \"target\"\n  },\n  \"location\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",\n  \"profile\": {\n    \"name\": \"base\"\n  }\n}\n",
-      "[CLEANUP]/metadata_tmp_1/PackageIndexInfo.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.write metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@{@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotSha\": \"snapshot-HEAD-SHA\",@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"snapshotNumber\": 101,@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"target\"@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  },@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"location\": \"gs://prebuilts_gs_bucket/board/target/cq-R99-1234.56.0-101-8945511751514863184/packages\",@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  \"profile\": {@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@    \"name\": \"base\"@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@  }@@@",
-      "@@@STEP_LOG_LINE@PackageIndexInfo.json@}@@@",
-      "@@@STEP_LOG_END@PackageIndexInfo.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
-      "--key",
-      "Cr-Snapshot-Identifier"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "[CLEANUP]/metadata_tmp_1/PackageIndexInfo.json",
-      "gs://prebuilts_gs_bucket/snapshot/snapshot-HEAD-SHA/target/base/amd64-generic-cq-8945511751514863184-cq.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.gsutil cp",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "acl",
-      "ch",
-      "arg1",
-      "value1",
-      "arg2",
-      "value2",
-      "gs://prebuilts_gs_bucket/snapshot/snapshot-HEAD-SHA/target/base/amd64-generic-cq-8945511751514863184-cq.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.gsutil acl",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "[CLEANUP]/metadata_tmp_1/PackageIndexInfo.json",
-      "gs://prebuilts_gs_bucket/snapshot/external-id-5555/target/base/amd64-generic-cq-8945511751514863184-cq.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.gsutil cp (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "acl",
-      "ch",
-      "arg1",
-      "value1",
-      "arg2",
-      "value2",
-      "gs://prebuilts_gs_bucket/snapshot/external-id-5555/target/base/amd64-generic-cq-8945511751514863184-cq.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload prebuilts.upload metadata.gsutil acl (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "upload prebuilts.publish binhost metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -2487,7 +2284,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic\"\n    ],\n    \"bot-config\": \"amd64-generic-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:33\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false\n}",
-      "[CLEANUP]/metadata_tmp_2/metadata.json"
+      "[CLEANUP]/metadata_tmp_1/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -2564,7 +2361,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/metadata_tmp_2/metadata.json",
+      "[CLEANUP]/metadata_tmp_1/metadata.json",
       "gs://chromeos-throwaway/amd64-generic-cq/R99-1234.56.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,

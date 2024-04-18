@@ -50,11 +50,9 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def test_data(private=False, use_staging=False,
-                enable_snapshot_prebuilts=True, send_snapshot_prebuilts=4,
+  def test_data(private=False, use_staging=False, send_snapshot_prebuilts=4,
                 commit_overlay_binhost=True, profile=None, dirty_source=False,
-                max_binhost_uris=1, upload_metadata=True,
-                overridden_builder_config=None):
+                max_binhost_uris=1, overridden_builder_config=None):
     gs_bucket = 'staging-prebuilt-bucket' if use_staging else 'prebuilt-bucket'
     target = 'amd64-generic'
 
@@ -77,7 +75,6 @@ def GenTests(api):
         '$chromeos/cros_prebuilts':
             CrosPrebuiltsProperties(
                 use_staging_branch=use_staging,
-                enable_snapshot_prebuilts=enable_snapshot_prebuilts,
                 send_snapshot_prebuilts=send_snapshot_prebuilts,
                 commit_overlay_binhost=commit_overlay_binhost,
                 max_binhost_uris=max_binhost_uris)
@@ -90,11 +87,6 @@ def GenTests(api):
 
     ret += api.properties(**props)
 
-    check = (
-        MustRun if upload_metadata and enable_snapshot_prebuilts and
-        not dirty_source else DoesNotRun)
-    ret += api.post_check(check, 'upload prebuilts.upload metadata')
-    ret += api.post_check(check, 'upload prebuilts.upload metadata.gsutil acl')
     check = MustRun if expect_commit else DoesNotRun
     ret += api.post_check(check, 'upload prebuilts.update binhost conf file')
     if expect_commit:
@@ -105,32 +97,28 @@ def GenTests(api):
 
   for private in False, True:
     for use_staging in False, True:
-      for enable_snapshot_prebuilts in False, True:
-        for send_snapshot_prebuilts in 0, 1:
-          name = '%s%s%s%s' % (
-              'staging-' if use_staging else '',
-              'private' if private else 'public',
-              '-snapshot' if enable_snapshot_prebuilts else '',
-              '-send' if send_snapshot_prebuilts else '',
-          )
-          yield api.test(
-              name,
-              test_data(private, use_staging, enable_snapshot_prebuilts,
-                        send_snapshot_prebuilts),
-              api.post_check(
-                  MustRun,
-                  'upload prebuilts.update binhost conf file.create change'
-                  '.update ref.gerrit transaction'),
-              api.step_data(
-                  ('upload prebuilts.update binhost conf file.create change'
-                   '.update ref.gerrit transaction.git push'),
-                  stderr=api.raw_io.output_text(
-                      ('remote:   https://chromium-review.googlesource'
-                       '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
+      for send_snapshot_prebuilts in 0, 1:
+        name = '%s%s%s' % (
+            'staging-' if use_staging else '',
+            'private' if private else 'public',
+            '-send' if send_snapshot_prebuilts else '',
+        )
+        yield api.test(
+            name, test_data(private, use_staging, send_snapshot_prebuilts),
+            api.post_check(
+                MustRun,
+                'upload prebuilts.update binhost conf file.create change'
+                '.update ref.gerrit transaction'),
+            api.step_data(
+                ('upload prebuilts.update binhost conf file.create change'
+                 '.update ref.gerrit transaction.git push'),
+                stderr=api.raw_io.output_text(
+                    ('remote:   https://chromium-review.googlesource'
+                     '.com/c/chromiumos/infra/recipes/+/123 git_txn: test'))))
 
   yield api.test(
       'update-retry-exhaustion',
-      test_data(upload_metadata=False),
+      test_data(),
       api.step_data(
           'upload prebuilts.update binhost conf file.create change.'
           'update ref.gerrit transaction.diff check.git diff', retcode=1),
@@ -173,8 +161,7 @@ def GenTests(api):
       'release-build-type',
       test_data(
           profile=Profile(name='generic_build'),
-          overridden_builder_config=BuilderConfig.Id.RELEASE,
-          upload_metadata=False),
+          overridden_builder_config=BuilderConfig.Id.RELEASE),
       api.expect_exception('ValueError'),
       status='INFRA_FAILURE',
   )
