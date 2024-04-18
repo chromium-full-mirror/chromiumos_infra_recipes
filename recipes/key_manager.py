@@ -28,6 +28,7 @@ DEPS = [
     'cros_build_api',
     'cros_debug',
     'cros_try',
+    'easy',
     'gerrit',
     'git',
     'signing',
@@ -105,6 +106,8 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
           str(release_keys_path), project_path=release_keys_path,
           non_repo_checkout=True, reviewers=reviewers,
           ccs=[invoker] if invoker else [])
+      api.easy.set_properties_step(
+          keyset_commit=api.gerrit.parse_gerrit_change_url(change))
       # Abandon dry run changes so they don't accidentally get submitted.
       if create_premp_keys_request.dry_run:
         api.gerrit.abandon_change(change)
