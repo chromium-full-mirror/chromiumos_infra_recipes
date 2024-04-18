@@ -13,6 +13,10 @@ from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.build_plan.tests.cq_looks import \
   CqLooksProperties
+from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
+  LooksForGreenStatus
+from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
+
 from recipe_engine import post_process
 
 DEPS = [
@@ -127,6 +131,7 @@ def GenTests(api):
           post_process.DoesNotRun,
           'looks for green.checking mergability.resetting to original snapshot'
       ),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -159,6 +164,7 @@ def GenTests(api):
                      'looks for green.set green snapshot'),
       api.post_check(post_process.MustRun,
                      'looks for green.find green snapshot.set looks_for_green'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -202,6 +208,8 @@ def GenTests(api):
           post_process.MustRun,
           'looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
       ),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -242,6 +250,8 @@ def GenTests(api):
           post_process.MustRun,
           'looks for green.checking mergability.resetting to original snapshot.sync to gitiles commit.repo sync'
       ),
+      api.post_check(LooksStatusEquals,
+                     LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -307,5 +317,6 @@ def GenTests(api):
       api.post_process(
           post_process.StepTextEquals, 'looks for green',
           'No green snapshot found. Using latest minted snapshot.'),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
       api.post_process(post_process.DropExpectation),
   )

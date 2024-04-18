@@ -692,6 +692,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
           )
           presentation.step_text = 'Found green snapshot.'
         except recipe_api.StepFailure:
+          self.m.looks_for_green.stats.status = (
+              LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK)
+          self.m.looks_for_green.set_stats()
           presentation.step_text = 'Failed to cherry-pick on green snapshot. Using original snapshot.'
           chosen_internal.id = original_internal_id
           chosen_external.id = original_external_id
