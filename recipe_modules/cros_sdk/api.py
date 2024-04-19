@@ -530,6 +530,27 @@ class CrosSdkApi(RecipeApi):
         raise failing_build_exception
 
   def cleanup_sysroot(self):
+    # Unmount the bazel cache bind-mount before calling SdkService.Clean.
+    # It attempts to delete the whole cache directory and fails if it
+    # contains mount points.
+    self.m.step(
+        'unmount bazel cache dir',
+        [
+            'sudo',
+            '-n',
+            'umount',
+            '--lazy',
+            self.m.cros_source.workspace_path / '.cache/bazel',
+        ],
+        infra_step=True,
+        # Ignore errors caused when the bind-mount does not exist or has been
+        # already unmounted. Even if we fail to unmount the existing bind-mount
+        # for some runtime errors, it is okay to suppress them because the
+        # following SdkService.Clean will report an error and makes the whole
+        # step fail anyway.
+        ok_ret='any',
+    )
+
     with self.m.step.nest('removing sysroot'):
       self.m.cros_build_api.SdkService.Clean(
           CleanSdkRequest(chroot=self.chroot))

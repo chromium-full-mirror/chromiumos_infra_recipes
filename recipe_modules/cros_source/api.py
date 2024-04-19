@@ -469,6 +469,7 @@ class CrosSourceApi(RecipeApi):
     # by touching it before we sync the cache and create the overlayfs
     if cache_path == self.workspace_path and not self._workspace_mounted:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self._prepare_bazel_cache()
       self.m.path.mock_add_paths(self.workspace_path / '.repo')
       self._workspace_mounted = True
 
@@ -540,8 +541,32 @@ class CrosSourceApi(RecipeApi):
     # Finally, create the workspace overlay.
     if cache_path != self.workspace_path:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
+      self._prepare_bazel_cache()
       self.m.path.mock_add_paths(self.workspace_path / '.repo')
       self._workspace_mounted = True
+
+  def _prepare_bazel_cache(self):
+    """Prepares the cache directory for Bazel.
+
+    This function must be called immediately after mounting the overlayfs for
+    the workspace directory. Since Bazel uses $workspace_dir/.cache/bazel for
+    the output directory and it must not be on overlayfs, this function
+    bind-mounts a non-overlayfs directory to the output directory path.
+    """
+    real_dir = self.m.path.cache_dir.join('bazel-cache')
+    mount_dir = self.workspace_path.join('.cache/bazel')
+    self.m.file.ensure_directory('ensure bazel cache dir', real_dir)
+    self.m.file.ensure_directory('ensure bazel cache mountpoint', mount_dir)
+    # Note that we don't need to unmount this bind-mount explicitly because it
+    # is recursively unmounted when the parent overlayfs is unmounted.
+    self.m.step('bind mount bazel cache dir', [
+        'sudo',
+        '-n',
+        'mount',
+        '--bind',
+        real_dir,
+        mount_dir,
+    ], infra_step=True)
 
   def _gitiles_branch(self, ref):
     """Return the branch for a gitiles_commit.ref"""

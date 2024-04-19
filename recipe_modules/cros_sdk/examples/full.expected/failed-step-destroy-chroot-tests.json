@@ -786,6 +786,20 @@
     "name": "clean up SDK chroot"
   },
   {
+    "cmd": [
+      "sudo",
+      "-n",
+      "umount",
+      "--lazy",
+      "[CLEANUP]/chromiumos_workspace/.cache/bazel"
+    ],
+    "infra_step": true,
+    "name": "clean up SDK chroot.unmount bazel cache dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "clean up SDK chroot.removing sysroot",
     "~followup_annotations": [

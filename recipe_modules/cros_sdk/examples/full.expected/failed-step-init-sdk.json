@@ -300,6 +300,20 @@
     ]
   },
   {
+    "cmd": [
+      "sudo",
+      "-n",
+      "umount",
+      "--lazy",
+      "[CLEANUP]/chromiumos_workspace/.cache/bazel"
+    ],
+    "infra_step": true,
+    "name": "init sdk.InitSDK failure.unmount bazel cache dir",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "init sdk.InitSDK failure.removing sysroot",
     "~followup_annotations": [
