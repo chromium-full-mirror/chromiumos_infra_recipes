@@ -115,7 +115,7 @@ def CopyVersionedDatabase(api: RecipeApi, source: str):
             '--if-generation-match=0',
             '--predefined-acl=publicRead',
         ],
-        ok_ret=(0, PRECONDITION_FAILURE),
+        ok_ret=(0, 1, PRECONDITION_FAILURE),
     )
 
 
