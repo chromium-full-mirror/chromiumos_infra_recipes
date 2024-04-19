@@ -1442,10 +1442,10 @@ def RunCtpv1(api, properties):
   with api.context(infra_steps=True):
     # {tag: error(str)} dict that will store error msg for respective tag.
     error_in_requests = {}
+    _stage_builds_for_partners(api, requests)
     add_container_metadata(api, requests, error_in_requests)
     _validate_request_error_and_turn_off_cft_if_necessary(
         api, requests, error_in_requests)
-    _stage_builds_for_partners(api, requests)
     enumerations = enumerate_tests(api, properties, requests, error_in_requests)
     responses, suite_execution_logs = execute(
         api, properties,
