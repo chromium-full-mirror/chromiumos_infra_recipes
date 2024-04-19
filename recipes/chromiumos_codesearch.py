@@ -63,7 +63,7 @@ def RunSteps(api, properties):
 
   # Set up and build ChromiumOS.
   with api.build_menu.configure_builder(commit=commit) as config, \
-      api.build_menu.setup_workspace_and_chroot(replace=True):
+      api.build_menu.setup_workspace_and_chroot():
 
     config.build.use_flags.append(
         common_pb2.UseFlag(flag='compilation_database'))

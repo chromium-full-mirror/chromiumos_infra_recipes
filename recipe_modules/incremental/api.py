@@ -88,7 +88,6 @@ class IncrementalApi(RecipeApi):
     api.build_menu.setup_chroot(
         no_chroot_timeout=False,
         bootstrap=False,
-        replace=False,
         uprev_packages=False,
         force_no_chroot_upgrade=True,
         setup_toolchains_if_no_update=False,

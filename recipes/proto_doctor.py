@@ -230,7 +230,7 @@ class ProtoDoctorRun:
           manifest_branch=self.current_branch,
       )
       self.m.repo.sync(projects=list(PROJECTS_TO_CHECKOUT))
-      self.m.cros_sdk.create_chroot(replace=True)
+      self.m.cros_sdk.create_chroot()
 
   def _wait_for_open_cls(self) -> None:
     """Block until all open ProtoDoctor CLs on the branch are done with CQ.

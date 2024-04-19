@@ -40,7 +40,7 @@ CONFIG_PROJECT = 'chromiumos/config'
 def RunSteps(api: RecipeApi, properties: SuiteSyncProperties):
   with api.build_menu.configure_builder(missing_ok=True):
     with api.build_menu.setup_workspace_and_chroot(
-        bootstrap_chroot=True, replace=True, force_no_chroot_upgrade=True):
+        bootstrap_chroot=True, force_no_chroot_upgrade=True):
       run_suite_sync(api, properties)
 
 

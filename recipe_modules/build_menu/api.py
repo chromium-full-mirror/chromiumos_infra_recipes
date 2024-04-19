@@ -338,7 +338,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @contextlib.contextmanager
   def setup_workspace_and_chroot(
       self, no_chroot_timeout: bool = False, cherry_pick_changes: bool = True,
-      bootstrap_chroot: bool = False, replace: bool = False,
+      bootstrap_chroot: bool = False,
       force_no_chroot_upgrade: Optional[bool] = None) -> Iterator[bool]:
     """Setup the workspace and chroot for the builder.
 
@@ -350,14 +350,12 @@ class BuildMenuApi(recipe_api.RecipeApi):
         checkout using cherry-pick. If set to False, will directly checkout
         the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
-      replace: Whether to replace the chroot if it already exists.
       force_no_chroot_upgrade: Whether to prevent the chroot upgrading at all.
     Returns:
       Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
       yield self.setup_chroot(no_chroot_timeout, bootstrap=bootstrap_chroot,
-                              replace=replace,
                               force_no_chroot_upgrade=force_no_chroot_upgrade)
 
   @contextlib.contextmanager
@@ -399,7 +397,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
   def setup_chroot(self, no_chroot_timeout: bool = False,
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
-                   replace: bool = False, uprev_packages: bool = True,
+                   uprev_packages: bool = True,
                    setup_toolchains_if_no_update: bool = True,
                    force_no_chroot_upgrade: Optional[bool] = None,
                    no_delete_out_dir: Optional[bool] = False) -> bool:
@@ -410,7 +408,6 @@ class BuildMenuApi(recipe_api.RecipeApi):
       sdk_version: Specific SDK version to include in the sdk CreateRequest:
         for example, 2022.01.20.073008.
       bootstrap: Whether to bootstrap the chroot.
-      replace: Whether to replace the chroot if it already exists.
       uprev_packages: Whether to uprev packages.
       setup_toolchains_if_no_update: If True, and the function skips updating
         the chroot (whether due to the `update` kwarg or due to the builder
@@ -441,18 +438,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
           in self.m.cros_infra_config.experiments):
         self.m.chrome.sync_chrome_async(config, self.build_target)
 
-      # If skipping chroot upgrade is requested, always replace the chroot.
-      # This is a fast operation (~1 minute), and it prevents us from using a
-      # chroot which may have already been updated.
-      if not self._should_update_chroot() or force_no_chroot_upgrade:
-        replace = True
-
       self.m.cros_sdk.create_chroot(
           version=config.general.sdk_cache_version, bootstrap=bootstrap,
           sdk_version=sdk_version,
           timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT', replace=replace,
-          no_delete_out_dir=no_delete_out_dir)
+          no_chroot_timeout else 'DEFAULT', no_delete_out_dir=no_delete_out_dir)
       self._chroot_created = True
 
       if self._should_update_chroot() and not force_no_chroot_upgrade:

@@ -9,7 +9,6 @@ import contextlib
 import dataclasses
 from typing import Dict, List
 
-from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
@@ -312,129 +311,9 @@ class CrosSdkApi(RecipeApi):
       self.m.cros_build_api.SdkService.Delete(
           DeleteSdkRequest(chroot=self.chroot))
 
-  def _is_chroot_usable(self, cache_state: SdkCacheState, version: int,
-                        step_presentation: StepPresentation) -> bool:
-    """Determine whether the cached version of the chroot can be reused.
-
-    Compare the config's sdk version and manifest branch to the ones in the
-    given SdkCacheState. If they are the same the cached chroot can be reused.
-
-    Args:
-      cache_state: The state of the cached chroot.
-      version: Required SDK cache version.
-      step_presentation: The parent step presentation. This is used for adding
-          logs to the UI.
-
-    Returns:
-      Boolean indicating if the chroot can be reused.
-    """
-    step_presentation.logs[
-        'sdk cache version'] = 'Version in config: %d\nVersion on disk: %d' % (
-            version, cache_state.version)
-    step_presentation.logs[
-        'sdk manifest url'] = 'Url in config: %s\nUrl on disk: %s' % (
-            self.m.src_state.build_manifest.url, cache_state.manifest_url)
-    step_presentation.logs[
-        'sdk manifest branch'] = 'Branch in config: %s\nBranch on disk: %s' % (
-            self.m.cros_source.manifest_branch or
-            'snapshot', cache_state.manifest_branch)
-    step_presentation.logs[
-        'sdk snapshot hash'] = 'Snapshot hash in config: %s\nSnapshot hash on disk: %s' % (
-            self.m.src_state.gitiles_commit.id, cache_state.snapshot_hash)
-
-    if self._test_data.enabled:
-      reuse = self._test_data.get('is_chroot_usable', None)
-      if reuse:
-        return reuse.pop(0)
-
-    # There is no cached SDK.
-    if not cache_state.snapshot_hash:
-      step_presentation.step_text = 'not reusable: no cached SDK'
-      return False
-
-    if version != cache_state.version:
-      step_presentation.step_text = 'not reusable: different version requested'
-      return False
-
-    manifest_branch = self.m.cros_source.manifest_branch or 'snapshot'
-    if manifest_branch != cache_state.manifest_branch:
-      step_presentation.step_text = (
-          'not reusable: created with a different manifest branch')
-      return False
-
-    # Check ancestory if the current build and cached SDK use the same manifest.
-    if self.m.src_state.build_manifest.url == cache_state.manifest_url:
-      with self.m.context(cwd=self.m.src_state.build_manifest.path):
-        if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                   head=self.m.src_state.gitiles_commit.id):
-          step_presentation.step_text = (
-              'reusable: reusing SDK created from the same manifest')
-          return True
-
-        step_presentation.step_text = 'not reusable: cannot downrev the SDK'
-        return False
-
-    # A build using the internal manifest can reuse a cached SDK that was built
-    # with the external manifest. The ancestory check will be done using the
-    # corresponding external snapshot commit.
-    elif (self.m.src_state.build_manifest.url ==
-          self.m.src_state.internal_manifest.url and
-          cache_state.manifest_url == self.m.src_state.external_manifest.url):
-
-      try:
-        # Reusing the SDK is best effort and this should not fail the build.
-        external_commit = self.m.cros_source.get_external_snapshot_commit(
-            self.m.src_state.build_manifest.path,
-            self.m.src_state.gitiles_commit.id)
-        # Since this builder only syncs the internal manifest, the external
-        # manifest checkout will most likely be stale. The checkout needs to
-        # be synced to the appropriate snapshot in order to call git merge-base.
-        self.m.cros_source.checkout_external_manifest(external_commit,
-                                                      force=False)
-      except StepFailure:
-        step_presentation.step_text = (
-            'not reusable: could not get external snapshot commit')
-        return False
-
-      with self.m.context(cwd=self.m.src_state.external_manifest.path):
-        if self.m.git.is_reachable(cache_state.snapshot_hash.strip(),
-                                   head=external_commit):
-          step_presentation.step_text = (
-              'reusable: reusing SDK created from a compatible manifest')
-          return True
-
-        step_presentation.step_text = 'not reusable: cannot downrev the SDK'
-        return False
-
-    else:
-      step_presentation.step_text = (
-          'not reusable: created with an incompatible manifest')
-      return False
-
-  def _check_sdk_cache_state(self, version):
-    """Check if any cached SDK can be reused for the build.
-
-    Args:
-      version (int): Required SDK cache version, if any. Some recipes do not
-          care what version the SDK is, they just need any SDK.
-
-    Returns:
-      reuse (bool): Whether a cached version of the chroot can be reused for the
-          build.
-    """
-    with self.m.step.nest('check SDK in named cache') as presentation:
-      reuse = self._is_chroot_usable(self.sdk_cache_state, version,
-                                     presentation)
-      if reuse:
-        presentation.properties['sdk_cache'] = 'cros_chroot'
-      else:
-        presentation.properties['sdk_cache'] = 'none'
-
-      return reuse
-
   def create_chroot(self, version=None, bootstrap=False, sdk_version=None,
                     timeout_sec='DEFAULT', test_data=None,
-                    test_toolchain_cls=None, name=None, replace=False,
+                    test_toolchain_cls=None, name=None,
                     no_delete_out_dir=False):
     """Initialize the chroot and link it into the workspace.
 
@@ -454,8 +333,6 @@ class CrosSdkApi(RecipeApi):
           None to use the default in cros_build_api/test_api.py.
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (str): Step name.  Default: 'init sdk'.
-      replace (boolean): Whether to replace the chroot if it already exists.
-          Default: False.
       no_delete_out_dir (boolean): If True, `out` directory will be preserved.
 
     Returns:
@@ -472,22 +349,17 @@ class CrosSdkApi(RecipeApi):
         if timeout_sec == 'DEFAULT':
           timeout_sec = None if bootstrap else 180 * 60
 
-        # Determine whether a cached root could be reused.
-        # If we're requesting a specific SDK version, we probably want to
-        # rebuild the chroot regardless.
-        no_replace = self._check_sdk_cache_state(
-            version) and not sdk_version and not replace
         # SdkService/Create will create a chroot if one does not already exist
         # or no_replace is False.
         # TODO(b/266878468): drop no_use_image.
         response = self.m.cros_build_api.SdkService.Create(
             CreateSdkRequest(
                 flags=CreateSdkRequest.Flags(
-                    no_replace=no_replace, no_use_image=True,
-                    bootstrap=bootstrap, no_delete_out_dir=no_delete_out_dir),
-                chroot=self.chroot, sdk_version=sdk_version,
-                skip_chroot_upgrade=True, ccache_disable=True),
-            timeout=timeout_sec, test_output_data=test_data)
+                    no_use_image=True, bootstrap=bootstrap,
+                    no_delete_out_dir=no_delete_out_dir), chroot=self.chroot,
+                sdk_version=sdk_version, skip_chroot_upgrade=True,
+                ccache_disable=True), timeout=timeout_sec,
+            test_output_data=test_data)
         presentation.logs['sdk version'] = str(response.version.version)
         self._chroot_initialized = True
         self.link_chroot(self.m.cros_source.workspace_path)
@@ -643,9 +515,6 @@ class CrosSdkApi(RecipeApi):
             self.unlink_chroot(checkout_path or
                                self.m.cros_source.workspace_path)
             self.swarming_chmod_chroot()
-
-            if not self._test_data.get('is_chroot_usable', []) == []:
-              raise StepFailure('not all input test data used')
           else:
             self._delete_chroot(name='ensure no rogue SDK')
 

@@ -7,7 +7,6 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.chromiumos import common
-from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_sdk.examples.test import TestInputProperties
 from PB.recipe_modules.chromeos.goma.goma import GomaProperties
@@ -98,19 +97,6 @@ def GenTests(api):
                       goma_approach=common.GomaConfig.RBE_PROD,
                   ),
           }))
-
-  yield api.test(
-      'versioned',
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
-      api.step_data(
-          'init sdk.check SDK in named cache.read sdk cache state json',
-          api.file.read_proto(SdkCacheState(version=2))))
 
   yield api.test(
       'with-changes',
@@ -221,20 +207,6 @@ def GenTests(api):
       api.step_data('link chroot in workspace.ensure workspace', retcode=1),
       # TODO (b/275363240): audit this test.
       status='INFRA_FAILURE',
-  )
-
-  yield api.test(
-      'remaining-test-data',
-      api.cros_sdk.is_chroot_usable([False, True]),
-      api.properties(
-          **{
-              '$chromeos/goma':
-                  GomaProperties(
-                      goma_approach=common.GomaConfig.RBE_PROD,
-                  ),
-          }),
-      api.post_check(post_process.StepFailure, 'clean up SDK chroot'),
-      status='FAILURE',
   )
 
   yield api.test(

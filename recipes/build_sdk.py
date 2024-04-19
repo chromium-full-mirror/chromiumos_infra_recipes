@@ -200,7 +200,7 @@ class BuildSDKRun:
          self.m.deferrals.raise_exceptions_at_end():
       with self.m.deferrals.defer_exceptions([StepFailure]), \
           self.m.build_menu.setup_workspace_and_chroot(
-            bootstrap_chroot=True, replace=True, force_no_chroot_upgrade=True):
+            bootstrap_chroot=True, force_no_chroot_upgrade=True):
         result = yield config
       with self.m.deferrals.defer_exceptions([StepFailure]):
         self.m.build_menu.upload_artifacts(config,
