@@ -1,6 +1,63 @@
 {
   "builderConfigs": [
     {
+      "id": {
+        "name": "chromite-postsubmit",
+        "type": "POSTSUBMIT",
+        "bucket": "postsubmit"
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "runWhen": {
+          "mode": "ONLY_RUN_ON_FILE_MATCH",
+          "filePatterns": [
+            "chromite/**",
+            "infra/chromite-HEAD/**"
+          ]
+        },
+        "sdkCacheVersion": 1,
+        "manifest": "PRIVATE"
+      },
+      "artifacts": {
+        "prebuilts": "NONE",
+        "artifactsInfo": {}
+      },
+      "chrome": {
+        "internal": true
+      },
+      "build": {
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ],
+        "applyGerritChanges": true,
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "RUN"
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_TEST",
+            "IMAGE_TYPE_BASE"
+          ],
+          "verifyImageSizeDelta": true
+        },
+        "installPackages": {
+          "runSpec": "RUN",
+          "disableGoma": true,
+          "dependencies": "ALL_DEPENDENCIES"
+        }
+      },
+      "unitTests": {
+        "ebuildsRunSpec": "RUN",
+        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+      },
+      "updateChroot": {
+        "runSpec": "RUN"
+      }
+    },
+    {
       "artifacts": {
         "artifactsInfo": {
           "image": {

@@ -47,13 +47,10 @@ def GenTests(api: RecipeTestApi):
   yield test(
       'postsubmit',
       builder='chromite-postsubmit',
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
   )
 
   yield test(
       'builder-no-longer-exists',
       builder='none',
-      # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
