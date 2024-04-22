@@ -6499,6 +6499,11 @@
   },
   {
     "cmd": [
+      "RECIPE_REPO[depot_tools]/cros_sdk",
+      "--chroot",
+      "[CACHE]/cros_chroot/chroot",
+      "--out-dir",
+      "[CACHE]/cros_chroot/out",
       "test",
       "-d",
       "/build/amd64-generic"

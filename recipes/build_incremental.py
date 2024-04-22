@@ -128,10 +128,10 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       api.build_menu.setup_chroot(no_delete_out_dir=True, replace=True)
       # If sysroot was deleted, there is no incrementality to test, so stop the
       # build. Make this check mockable for testing.
-      check_sysroot_step = api.step(
+      # TODO(b:336325163): replace with a bapi call.
+      check_sysroot_step = api.cros_sdk(
           'verify sysroot existence',
-          cmd=['test', '-d',
-               api.sysroot_util.sysroot.path], raise_on_failure=False)
+          ['test', '-d', api.sysroot_util.sysroot.path], raise_on_failure=False)
       if check_sysroot_step.retcode != 0:
         api.cros_sdk.mark_sdk_as_dirty()
         api.build_menu._sdk_reuse_checked = True  # pylint: disable=protected-access
