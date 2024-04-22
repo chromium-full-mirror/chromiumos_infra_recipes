@@ -70,11 +70,6 @@ def GenTests(api):
       'aggregateMetric': 100,
       'aggregateBuildMetric': 100,
   }
-  GREENNESS_PUBLISHED_SNAPSHOT_BUILD.output.properties['local_greenness'] = {
-      'greenness': {
-          'builder1-snapshot': [100, 100, True, True]
-      }
-  }
 
   yield api.test(
       'greenness cache used',
