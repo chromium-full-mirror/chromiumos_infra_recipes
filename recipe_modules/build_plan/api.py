@@ -107,9 +107,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       relevant_bazel_builder_configs = []
       if any(gc.project == 'chromiumos/bazel' for gc in gerrit_changes):
         relevant_bazel_builder_configs = [
-            bc for bc in builder_configs
-            if bc.build.build_images.build_images_orchestrator ==
-            BuilderConfig.BuildOrchestrator.BAZEL
+            bc for bc in builder_configs if '-bazel-' in bc.id.name
         ]
 
       self.cros_query_relevant_builder_configs = [

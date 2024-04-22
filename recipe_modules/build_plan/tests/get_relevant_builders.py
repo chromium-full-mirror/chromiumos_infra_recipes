@@ -69,7 +69,8 @@ def GenTests(api):
           name='a', profile=common_pb2.Profile(name='OTHER')))
 
   target_a_bazel_builder_config = builder_config_pb2.BuilderConfig(
-      id=builder_config_pb2.BuilderConfig.Id(bucket='cq', name='target-a-cq',
+      id=builder_config_pb2.BuilderConfig.Id(bucket='cq',
+                                             name='target-a-bazel-cq',
                                              type='CQ'),
       build=builder_config_pb2.BuilderConfig.Build(
           build_images=builder_config_pb2.BuilderConfig.Build.BuildImages(
