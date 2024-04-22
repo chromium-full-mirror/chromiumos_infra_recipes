@@ -87,16 +87,28 @@ def GenTests(api):
 
   # Mock builder configs.
   test_configs = builder_config_pb2.BuilderConfigs()
-  test_configs.builder_configs.add().id.name = 'target-1-cq'
-  test_configs.builder_configs.add().id.name = 'target-2-cq'
-  test_configs.builder_configs.add().id.name = 'target-2-slim-cq'
-  test_configs.builder_configs.add().id.name = 'target-3-cq'
-  test_configs.builder_configs.add().id.name = 'target-4-cq'
-  test_configs.builder_configs.add().id.name = 'staging-target-a-cq'
-  test_configs.builder_configs.add().id.name = 'staging-target-b-cq'
-  test_configs.builder_configs.add().id.name = 'staging-target-b-slim-cq'
-  # This target is not in snapshot.
-  test_configs.builder_configs.add().id.name = 'target-5-cq'
+  critical_cq_child_builders = [
+      'target-1-cq',
+      'target-2-cq',
+      'target-2-slim-cq',
+      'target-3-cq',
+      'target-4-cq',
+      'target-5-cq',  # Target is not in snapshot.
+      'staging-target-a-cq',
+      'staging-target-b-cq',
+      'staging-target-b-slim-cq',
+  ]
+  non_critical_cq_child_builders = [
+      'target-6-cq',  # Target is not in snapshot.
+  ]
+  for b in critical_cq_child_builders:
+    tc = test_configs.builder_configs.add()
+    tc.id.name = b
+    tc.general.critical.value = True
+  for b in non_critical_cq_child_builders:
+    tc = test_configs.builder_configs.add()
+    tc.id.name = b
+    tc.general.critical.value = False
 
   snap_orch = test_configs.builder_configs.add()
   snap_orch.id.name = 'snapshot-orchestrator'
@@ -223,6 +235,26 @@ def GenTests(api):
                   status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
+                      approx_snap_age_hours=3,
+                      snap_orch_bbid=111,
+                      snap_commit_sha='aaaa',
+                  )))),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'cq-build-not-in-snapshot-is-non-crit-uses-targeted',
+      api.cq(run_mode=api.cq.FULL_RUN),
+      api.properties(input_child_spec_names=['target-1-cq', 'target-6-cq']),
+      _step_test_data(),
+      api.post_process(
+          post_process.PropertyEquals, 'looks_for_green',
+          json_format.MessageToDict(
+              LooksForGreenStats(
+                  status='STATUS_RAN_OLDER',
+                  suggested=LooksForGreenStats.SnapshotStats(
+                      snap_orch_greenness=75,
+                      requested_builders_greenness=100,
                       approx_snap_age_hours=3,
                       snap_orch_bbid=111,
                       snap_commit_sha='aaaa',

@@ -376,14 +376,20 @@ class BuildPlanApi(recipe_api.RecipeApi):
         step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
     child_exps.update({x: True for x in footer_exps})
 
-    # Only do LFG logic if there are builds to schedule.
-    if necessary_child_specs or necessary_chrome_child_specs:
-      necessary_builder_names = [
-          spec.name for spec in necessary_chrome_child_specs
-      ] + [spec.name for spec in necessary_child_specs]
+    # Only do LFG logic if are any critical or chrome prebuilt builders to
+    # schedule.
+    lfg_builder_names = []
+    for b in necessary_child_specs:
+      critical = self.m.cros_infra_config.get_builder_config(
+          b.name).general.critical.value
+      if (critical or b.name in forced_relevant):
+        lfg_builder_names.append(b.name)
+    lfg_builder_names += [b.name for b in necessary_chrome_child_specs]
+
+    if lfg_builder_names:
       internal_snapshot, external_snapshot = self._choose_snapshots(
           internal_snapshot, external_snapshot, gerrit_changes,
-          self.m.src_state.internal_manifest, necessary_builder_names)
+          self.m.src_state.internal_manifest, lfg_builder_names)
 
     # TODO(b/316010599): Get data from cros-query experiment.
     # Eventually, this will be taken into account when build planning.
