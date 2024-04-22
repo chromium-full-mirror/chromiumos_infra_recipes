@@ -9,7 +9,7 @@ import datetime
 import typing
 from typing import Any, Dict, List, Optional, Tuple, Union
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
 from google.protobuf.json_format import Parse
 from google.protobuf.json_format import ParseDict
 from google.protobuf import message
@@ -668,6 +668,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         # The url can be constructed from output.properties.config_ref:
         # ('+/%s/%s' % (CHROME_OS_REPO_URL, self._config_ref, filename))
         presentation.logs['builder config'] = str(config)
+        presentation.logs['builder_config_json'] = MessageToJson(config)
         # If the build's criticality is not explicitly set do so now.
         self.set_build_criticality(override=False)
       else:

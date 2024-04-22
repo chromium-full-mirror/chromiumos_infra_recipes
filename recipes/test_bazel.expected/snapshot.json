@@ -24,7 +24,20 @@
       "@@@STEP_LOG_LINE@builder config@}@@@",
       "@@@STEP_LOG_LINE@builder config@build {@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@{@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"bazel-test-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"SNAPSHOT\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": false,@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"manifest\": \"PRIVATE\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"build\": {}@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@}@@@",
+      "@@@STEP_LOG_END@builder_config_json@@@"
     ]
   },
   {

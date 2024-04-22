@@ -258,7 +258,22 @@
       "@@@STEP_LOG_LINE@builder config@build {@@@",
       "@@@STEP_LOG_LINE@builder config@  apply_gerrit_changes: true@@@",
       "@@@STEP_LOG_LINE@builder config@}@@@",
-      "@@@STEP_LOG_END@builder config@@@"
+      "@@@STEP_LOG_END@builder config@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@{@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"chromite-cq\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"CQ\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": true,@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"manifest\": \"PRIVATE\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"build\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"applyGerritChanges\": true@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  }@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@}@@@",
+      "@@@STEP_LOG_END@builder_config_json@@@"
     ]
   },
   {
