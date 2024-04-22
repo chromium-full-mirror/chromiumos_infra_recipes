@@ -251,7 +251,7 @@ def GenTests(api):
           post_process.PropertyEquals, 'looks_for_green',
           json_format.MessageToDict(
               LooksForGreenStats(
-                  status='STATUS_RAN_OLDER',
+                  status='STATUS_RAN_OLDER', lookback_hours=10,
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
                       requested_builders_greenness=100,
