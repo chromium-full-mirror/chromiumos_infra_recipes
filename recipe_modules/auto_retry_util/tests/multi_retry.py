@@ -114,7 +114,7 @@ def GenTests(api):
         status='FAILURE',
         create_time=11,
         end_time=13,
-        input_properties={'$recipe_engine/cq': {
+        input_properties={'$recipe_engine/cv': {
             'runMode': 'FULL_RUN'
         }},
         output_properties={'has_child_failures': True},

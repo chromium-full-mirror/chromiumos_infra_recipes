@@ -26,7 +26,7 @@ DEPS = [
 
 def RunSteps(api):
   build = api.buildbucket.build
-  build.input.properties['$recipe_engine/cq'] = {
+  build.input.properties['$recipe_engine/cv'] = {
       'runMode': api.properties.get('runMode', 'FULL_RUN')
   }
   builds = [build]

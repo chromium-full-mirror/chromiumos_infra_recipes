@@ -918,7 +918,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     Args:
       build: The build for which to determine whether it is a dry run.
     """
-    return build.input.properties['$recipe_engine/cq'][
+    return build.input.properties['$recipe_engine/cv'][
         'runMode'] == self.m.cv.DRY_RUN
 
   def _get_auto_retry_counts(self,

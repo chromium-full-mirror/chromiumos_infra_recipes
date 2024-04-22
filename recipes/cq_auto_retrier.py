@@ -201,7 +201,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       build_id=1111,
       create_time=1111,
       input_properties={
-          '$recipe_engine/cq': {
+          '$recipe_engine/cv': {
               'runMode': 'FULL_RUN'
           }
       },
@@ -224,7 +224,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   retryable_build_orch_dry_run = build_pb2.Build()
   retryable_build_orch_dry_run.CopyFrom(retryable_build_orch)
-  retryable_build_orch_dry_run.input.properties['$recipe_engine/cq'][
+  retryable_build_orch_dry_run.input.properties['$recipe_engine/cv'][
       'runMode'] = 'DRY_RUN'
 
   no_builds_or_tests_orch = build_pb2.Build()
@@ -247,7 +247,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   retryable_test_orch = api.test_util.test_orchestrator(
       cq=True, status='FAILURE', build_id=2222, create_time=2222,
       input_properties={
-          '$recipe_engine/cq': {
+          '$recipe_engine/cv': {
               'runMode': 'FULL_RUN'
           }
       }, output_properties={
@@ -691,7 +691,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       build_id=1111,
       create_time=1111,
       input_properties={
-          '$recipe_engine/cq': {
+          '$recipe_engine/cv': {
               'runMode': 'FULL_RUN'
           }
       },
@@ -771,7 +771,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       build_id=1111,
       create_time=1111,
       input_properties={
-          '$recipe_engine/cq': {
+          '$recipe_engine/cv': {
               'runMode': 'FULL_RUN'
           }
       },
