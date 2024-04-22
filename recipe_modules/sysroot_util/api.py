@@ -239,6 +239,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           timeout_timestamp = timestamp_pb2.Timestamp()
           timeout_timestamp.FromDatetime(timeout_datetime)
 
+        bazel_use_remote_execution = install_packages.bazel_use_remote_execution
         return InstallPackagesRequest(
             chroot=self.m.cros_sdk.chroot, sysroot=self.sysroot,
             packages=packages, flags=InstallPackagesRequest.Flags(
@@ -246,7 +247,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 use_goma=self.m.cros_sdk.has_goma_config(),
                 toolchain_changed=toolchain_cls, dryrun=dryrun,
                 bazel=bazel_build,
-                skip_clean_package_dirs=skip_clean_package_dirs),
+                skip_clean_package_dirs=skip_clean_package_dirs,
+                bazel_use_remote_execution=bazel_use_remote_execution),
             use_flags=additional_use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             remoteexec_config=remoteexec_config,
