@@ -4852,7 +4852,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "testing config doesn't exist for this build target, see go/onboard-to-rubik"
+      "humanReason": "testing config doesn't exist for this build target, see go/cros-release-onboarding-guide"
     },
     "name": "$result"
   }

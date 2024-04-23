@@ -125,7 +125,7 @@ def RunSteps(api, properties):
                 api.cros_test_plan.generate_target_test_requirements_config()
               except Exception as e:
                 raise StepFailure(
-                    "testing config doesn't exist for this build target, see go/onboard-to-rubik"
+                    "testing config doesn't exist for this build target, see go/cros-release-onboarding-guide"
                 ) from e
 
             return DoRunSteps(api, config, properties)
