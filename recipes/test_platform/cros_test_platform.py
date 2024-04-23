@@ -342,7 +342,7 @@ def _stage_builds_for_partners(api, requests):
     * api (object): See RunSteps documentation.
     * requests: {tag: test_platform.Request} dict.
   """
-  builds, bucket = _extract_builds_to_stage(requests)
+  builds, bucket, cft = _extract_builds_to_stage(requests)
   if not builds:
     return
   with api.step.nest('staging requested build(s)'):
@@ -352,6 +352,12 @@ def _stage_builds_for_partners(api, requests):
           api.satlab.stage_build(build, bucket)
       except:  # pylint: disable=W0702
         continue
+    if cft:
+      # TODO(b/335835318) Replace this sleep step with call to MoblabAPI
+      # check Staging status once MoblabAPI is updated to include container
+      # staging status.
+      with api.step.nest('waiting for staging of cft containers'):
+        api.time.sleep(120, with_step=True)
 
 
 def _extract_builds_to_stage(requests):
@@ -364,14 +370,17 @@ def _extract_builds_to_stage(requests):
   """
   builds = set()
   bucket = None
+  cft = False
   for _, r in requests.items():
     bucket = _extract_bucket_from_request(r)
     if bucket and bucket != 'chromeos-image-archive':
       build = _extract_build_from_request(r)
       if build:
         builds.add(build)
+      if r.params.run_via_cft:
+        cft = True
   # just use the last bucket since they in theory should be the same.
-  return builds, bucket
+  return builds, bucket, cft
 
 
 # pylint: disable=inconsistent-return-statements
@@ -3887,6 +3896,27 @@ def GenTests(api):
                           software_deps=_different_bucket_software_deps('foo')),
               }, config=_test_config('foo'))),
       _generic_enumerate_response(api),
+      _generic_passing_execute_response(api),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'test-different-bucket-cft',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'foo',
+                          software_deps=_different_bucket_software_deps('foo')),
+              }, config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'foo'),
+      _generic_cft_enumerate_response(api),
       _generic_passing_execute_response(api),
       status='SUCCESS',
   )
