@@ -1,0 +1,166 @@
+[
+  {
+    "cmd": [],
+    "name": "upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"/base/dir/autoserv_test\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"test_suite\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"fake-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ],@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {@@@",
+      "@@@STEP_LOG_LINE@config@        \"board\": \"board\",@@@",
+      "@@@STEP_LOG_LINE@config@        \"build\": \"board-cq/R11-123.45\",@@@",
+      "@@@STEP_LOG_LINE@config@        \"test_suite\": \"fake-suite\"@@@",
+      "@@@STEP_LOG_LINE@config@    },@@@",
+      "@@@STEP_LOG_LINE@config@    \"invocation_artifacts_upload_to_rdb\": true,@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"/base/dir/autoserv_test/tast/results/streamed_results.jsonl\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\"@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "upload test results to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} prod",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-var",
+      "board:board",
+      "-var",
+      "build:board-cq/R11-123.45",
+      "-var",
+      "test_suite:fake-suite",
+      "-tag",
+      "test_suite:fake-suite",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "/base/dir/autoserv_test/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "/base/dir/autoserv_test",
+      "-testhaus-base-url",
+      "http://localhost/testhaus/url",
+      "-enable-invocation-artifacts-upload",
+      "true",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateInvocation",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:ci"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "mark resultdb invocation for bigquery export",
+    "stdin": "{\"invocation\": {\"bigqueryExports\": [{\"dataset\": \"resultdb\", \"project\": \"cros-test-analytics\", \"table\": \"test_results\", \"testResults\": {}}], \"name\": \"invocations/build:8945511751514863184\"}, \"updateMask\": \"bigqueryExports\"}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"invocation\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"bigqueryExports\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@      {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"dataset\": \"resultdb\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"project\": \"cros-test-analytics\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"table\": \"test_results\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"testResults\": {}@@@",
+      "@@@STEP_LOG_LINE@json.input@      }@@@",
+      "@@@STEP_LOG_LINE@json.input@    ],@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"name\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  },@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"updateMask\": \"bigqueryExports\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]

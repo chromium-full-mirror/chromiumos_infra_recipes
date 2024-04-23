@@ -419,6 +419,16 @@ class ResultDBCommand(recipe_api.RecipeApi):
           testhaus_url,
       ]
 
+    # Upload invocation level artifacts if either the config or the builder
+    # experiments contain the flag.
+    if config.get(
+        'invocation_artifacts_upload_to_rdb'
+    ) or 'chromeos.cros_infra_config.invocation_artifacts_upload_to_rdb' in self.m.cros_infra_config.experiments:
+      result_adapter += [
+          '-enable-invocation-artifacts-upload',
+          'true',
+      ]
+
     # Skylab tests are running in a SSP container, hence the artifact
     # path has a constant prefix of the container. Instruct the result
     # adapters to ignore it.

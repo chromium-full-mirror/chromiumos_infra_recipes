@@ -111,6 +111,29 @@ def GenTests(api):
   )
 
   yield api.test(
+      'basic-tast-with-invocation-artifacts-upload',
+      api.buildbucket.ci_build(
+          tags=api.cros_tags.tags(**{
+              'label-board': 'board',
+              'build': 'board-cq/R11-123.45'
+          })),
+      api.properties(
+          rdb_config=api.json.dumps({
+              'result_format': 'tast',
+              'base_tags': [('test_suite', 'fake-suite')],
+              'base_variant': {
+                  'test_suite': 'fake-suite',
+                  'board': 'board',
+                  'build': 'board-cq/R11-123.45',
+              },
+              'invocation_artifacts_upload_to_rdb': True,
+          })),
+      api.post_process(post_process.StepSuccess, 'upload test results to rdb'),
+      api.post_process(post_process.MustRun,
+                       'upload test results to rdb.run rdb'),
+  )
+
+  yield api.test(
       'basic-per-model-realm',
       api.buildbucket.ci_build(),
       api.properties(
