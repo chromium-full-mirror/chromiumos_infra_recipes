@@ -306,13 +306,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
       return
 
     with self.m.failures.ignore_exceptions(), self.m.step.nest(
-        'find related CLs'):
+        'find related CLs') as pres:
       all_related_changes = OrderedDict()
       for change in self.gerrit_changes:
         # Note: this might include duplicates.
         all_related_changes[
             change.change] = self.m.gerrit.gerrit_related_changes(change)
-      self.m.easy.set_properties_step(related_changes=all_related_changes)
+      pres.logs['related_changes'] = str(all_related_changes)
       to_apply = self.m.cros_source.related_changes_to_apply(
           self.gerrit_changes, all_related_changes)
       self.m.looks_for_green.related_changes_to_apply = to_apply

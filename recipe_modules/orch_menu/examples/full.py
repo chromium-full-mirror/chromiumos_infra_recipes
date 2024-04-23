@@ -898,8 +898,6 @@ def GenTests(api):
       api.gerrit.set_gerrit_related_changes(RELATED_OUTPUT,
                                             step_name='find related CLs'),
       api.post_check(post_process.MustRun,
-                     'find related CLs.set related_changes'),
-      api.post_check(post_process.MustRun,
                      'find related CLs.set related_changes_to_apply'),
       api.post_process(post_process.DropExpectation), cq=True,
       collect_builds=collect, history_builds=data.history_builds,
