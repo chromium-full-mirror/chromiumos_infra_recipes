@@ -667,7 +667,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       if config:
         # The url can be constructed from output.properties.config_ref:
         # ('+/%s/%s' % (CHROME_OS_REPO_URL, self._config_ref, filename))
-        presentation.logs['builder config'] = str(config)
         presentation.logs['builder_config_json'] = MessageToJson(config)
         # If the build's criticality is not explicitly set do so now.
         self.set_build_criticality(override=False)
