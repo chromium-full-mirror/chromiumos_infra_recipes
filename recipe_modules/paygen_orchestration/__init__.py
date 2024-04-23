@@ -10,6 +10,7 @@ from PB.recipe_modules.chromeos.paygen_orchestration.paygen_orchestration import
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/led',
+    'recipe_engine/random',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'depot_tools/gsutil',

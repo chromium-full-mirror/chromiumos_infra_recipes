@@ -13,7 +13,7 @@ import math
 from copy import deepcopy
 from typing import Any, Dict, List, NewType, Optional
 
-from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToDict, MessageToJson
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.payload import DLCImage as DLCImage_pb2
@@ -438,8 +438,18 @@ class PaygenOrchestrationApi(recipe_api.RecipeApi):
       return split_reqs
 
     # Run the buildbucket requests and return the build results.
+    max_bb_elements = 3 if self.m.cros_infra_config.is_staging else max_bb_elements
     split_reqs = _split_large_requests(schedule_requests, max_bb_elements)
-    with self.m.step.nest('running children'):
+    with self.m.step.nest('running children') as pres:
+      # Run a pseudorandom batch of paygenies in staging for efficient coverage.
+      if self.m.cros_infra_config.is_staging:
+        pres.logs['all requests'] = [
+            MessageToJson(sr) for sr in schedule_requests
+        ]
+        pres.step_text = (
+            'running a subset of paygenies in staging (reduced from '
+            f'{len(schedule_requests)} to {max_bb_elements})')
+        split_reqs = [split_reqs[self.m.random.randint(0, len(split_reqs) - 1)]]
       builds = []
       for req_chunk in split_reqs:
         builds.extend(

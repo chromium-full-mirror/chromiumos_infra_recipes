@@ -66,8 +66,13 @@ def GenTests(api: RecipeTestApi):
                      'json.output', ['\"bucket\": \"try-dev\"']),
       api.post_process(post_process.DropExpectation))
 
+  expected_collect_command = [
+      'bb', 'collect', '-host', 'cr-buildbucket.appspot.com', '-interval',
+      '60s', '8922054662172514000', '8922054662172514001', '8922054662172514002'
+  ]
   yield api.test(
-      'basic-led-real-build', api.properties(paygen_mpa=False),
+      'basic-led-real-build',
+      api.properties(paygen_mpa=False),
       api.buildbucket.build(
           api.buildbucket.ci_build_message(project='chromeos',
                                            bucket='staging.shadow',
@@ -77,6 +82,12 @@ def GenTests(api: RecipeTestApi):
       }}),
       api.post_check(post_process.LogContains, 'running children.schedule',
                      'json.output', ['\"bucket\": \"staging\"']),
+      # Ensure we schedule only up to 3 paygenies in staging.
+      api.post_check(
+          post_process.StepTextEquals, 'running children',
+          'running a subset of paygenies in staging (reduced from 13 to 3)'),
+      api.post_check(post_process.StepCommandEquals,
+                     'running children.collect.wait', expected_collect_command),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
