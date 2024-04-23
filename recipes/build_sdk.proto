@@ -9,8 +9,8 @@ package recipes.chromeos.build_sdk;
 import "recipes/chromeos/generator.proto";
 
 message BuildSDKProperties {
-  // Whether to build the SDK with the llvm-next USE flag
-  bool use_llvm_next = 1;
+  // Defunct: used to be whether to build the SDK with the llvm-next flag.
+  reserved 1;
 
   // Override the default version, which is used for GS:// filepaths.
   // Default: Build start timestamp, formatted as "%Y.%m.%d.%H%M%S"

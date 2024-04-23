@@ -61,13 +61,10 @@ SDK_BUILD_TARGET = 'amd64-host'
 # SDK_ARCH is the architecture of the SDK_BUILD_TARGET.
 SDK_ARCH = 'amd64'
 
-# LLVM_NEXT_USE_FLAG is the name of the USE flag for llvm-next builds.
-LLVM_NEXT_USE_FLAG = 'llvm-next'
-
 # Google storage buckets for uploads: i.e., what comes after 'gs://'.
 # Both of these are for the production builder.
-# The staging builders and the llvm-next builders upload to staging buckets,
-# which are identical but with a 'staging-' prefix.
+# The staging builders upload to staging buckets, which are identical but with
+# a 'staging-' prefix.
 SDK_BUCKET = 'chromiumos-sdk'
 PREBUILTS_BUCKET = 'chromeos-prebuilt'
 
@@ -229,8 +226,6 @@ class BuildSDKRun:
         chroot=self.m.cros_sdk.chroot,
         result_path=self.m.cros_build_api.new_result_path(),
     )
-    if self.properties.use_llvm_next:
-      request.use_flags.add(flag=LLVM_NEXT_USE_FLAG)
     response = self.m.cros_build_api.SdkService.BuildSdkToolchain(request)
     self._toolchain_tarball_paths = []
     for generated_file in response.generated_files:
@@ -443,13 +438,9 @@ class BuildSDKRun:
     """Return a bucket for uploading based on whether this is a staging builder.
 
     The staging builder deliberately doesn't have write access to most buckets.
-    Thus, the staging builder should upload to staging buckets instead.
-
-    Likewise, the llvm-next builder creates SDKs and prebuilts that provide a
-    useful signal for a short time, but shouldn't actually be used in
-    production. It should upload to the staging buckets too, to keep the prod
-    bucket clean and to take advantage of the staging buckets' shorter artifact
-    retention policy.
+    Thus, the staging builder should upload to staging buckets instead. The
+    artifacts in staging buckets also have shorter lifetimes, which is
+    advantageous for test-only binaries.
 
     Args:
       prod_bucket: The bucket to return if this is a prod builder.
@@ -457,7 +448,7 @@ class BuildSDKRun:
     Returns:
       A bucket name (without the gs:// prefix).
     """
-    if self.m.build_menu.is_staging or self.properties.use_llvm_next:
+    if self.m.build_menu.is_staging:
       return f'staging-{prod_bucket}'
     return prod_bucket
 
@@ -730,27 +721,6 @@ def GenTests(
       ]),
       api.post_check(post_process.LogDoesNotContain, 'schedule uprev',
                      'request', ['"branch_policies":']),
-  )
-
-  yield api.test(
-      'llvm-next',
-      api.properties(use_llvm_next=True, launch_pupr=True),
-      *_assert_uploads_to_staging_buckets(api),
-      api.post_check(post_process.StepSuccess,
-                     'call chromite.api.SdkService/BuildSdkToolchain'),
-      api.post_check(post_process.LogContains,
-                     'call chromite.api.SdkService/BuildSdkToolchain',
-                     'request', [f'"flag": "{LLVM_NEXT_USE_FLAG}"']),
-      api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
-          '"bucket": "pupr"',
-          '"builder": "chromiumos-sdk-pupr-generator"',
-          '"sdkVersion": "1970.01.01.000000"',
-          '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
-          '"binhostGsBucket": "gs://staging-chromeos-prebuilt"',
-          '"sdkGsBucket": "gs://staging-chromiumos-sdk"',
-          '"ref": "refs/heads/main',
-      ]),
-      api.post_process(post_process.DropExpectation),
   )
 
   yield api.build_menu.test(
