@@ -11,6 +11,7 @@ import copy
 from google.protobuf import json_format
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_engine.result import RawResult
@@ -92,39 +93,81 @@ def GenTests(api):
   def snapshot_orch_menu_properties(**kwargs):
     return {'$chromeos/snapshot_orch_menu': kwargs}
 
-  yield api.snapshot_orch_menu.test(
-      'basic', data.ctp_normal,
-      api.post_check(post_process.MustRun,
-                     'update manifest ref refs/heads/test.git push'),
-      api.step_data('update manifest ref refs/heads/test.git push', retcode=1),
-      api.step_data('update manifest ref refs/heads/test.git push (2)',
-                    retcode=1),
-      api.step_data('update manifest ref refs/heads/test.git push (3)',
-                    retcode=1), input_properties=snapshot_orch_menu_properties(
-                        update_manifest_refs={'test': 'refs/heads/test'}),
-      builder='postsubmit-orchestrator', with_manifest_refs=True,
-      collect_builds=data.builds, with_history=True)
+  lfg_props = api.properties(
+      **{'$chromeos/greenness': {
+          'publish_property': True
+      }})
 
-  original_build = build_pb2.Build(id=8922054662172514001, status='FAILURE')
-  original_build.input.properties['recipe'] = 'orchestrator'
-  original_build.output.properties[
-      'buildspec_gs_uri'] = 'gs://chromeos-manifest-versions/foo/1.xml'
-  original_build.output.properties['child_builds'] = [
-      '8922054662172514002', '8922054662172514003'
-  ]
+  collect, collect_after = api.snapshot_orch_menu.orch_child_builds(
+      'snapshot-orchestrator', '-snapshot')
+  green_build_results = collect + collect_after
+  schedule_builds_test_data = []
+  for build in green_build_results:
+    schedule_builds_test_data.append(
+        api.buildbucket.simulated_schedule_output(
+            builds_service_pb2.BatchResponse(responses=[{
+                'schedule_build': build
+            }]),
+            'run builds.schedule new builds.{}'.format(build.builder.builder)))
+  yield api.snapshot_orch_menu.test(
+      'basic',
+      data.ctp_normal,
+      lfg_props,
+      *schedule_builds_test_data,
+      builder='snapshot-orchestrator',
+      with_manifest_refs=True,
+      collect_builds=green_build_results,
+      with_history=True,
+  )
+
+  collect, collect_after = api.snapshot_orch_menu.orch_child_builds(
+      'snapshot-orchestrator', '-snapshot')
+  green_build_results = collect + collect_after
+  schedule_builds_test_data = []
+  for build in green_build_results:
+    schedule_builds_test_data.append(
+        api.buildbucket.simulated_schedule_output(
+            builds_service_pb2.BatchResponse(responses=[{
+                'schedule_build': build
+            }]),
+            'run builds.schedule new builds.{}'.format(build.builder.builder)))
+
 
   collect, _ = api.snapshot_orch_menu.orch_child_builds(
       'postsubmit-orchestrator', '-postsubmit')
+
   yield api.snapshot_orch_menu.test(
-      'branch', data.ctp_normal, api.cros_source.snapshot_xml_exists(False),
+      'postsubmit-orch',
+      data.ctp_normal,
+      lfg_props,
+      api.post_check(post_process.MustRun,
+                     'update manifest ref refs/heads/postsubmit.git push'),
+      api.step_data('update manifest ref refs/heads/postsubmit.git push',
+                    retcode=1),
+      api.step_data('update manifest ref refs/heads/postsubmit.git push (2)',
+                    retcode=1),
+      api.step_data('update manifest ref refs/heads/postsubmit.git push (3)',
+                    retcode=1),
+      builder='postsubmit-orchestrator',
+      with_manifest_refs=True,
+      collect_builds=collect,
+      with_history=True,
+  )
+
+  yield api.snapshot_orch_menu.test(
+      'branch',
+      data.ctp_normal,
+      lfg_props,
+      api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
-                     'update manifest ref refs/heads/test.git push'),
+                     'update manifest ref refs/heads/green.git push'),
       api.post_check(post_process.DoesNotRun,
                      'set up orchestrator.read git footers'),
-      collect_builds=collect, input_properties=snapshot_orch_menu_properties(
-          update_manifest_refs={'test': 'refs/heads/test'}),
-      with_manifest_refs=True, with_history=True,
-      sheriff_rotations=['chromeos'])
+      collect_builds=collect,
+      with_manifest_refs=True,
+      with_history=True,
+      sheriff_rotations=['chromeos'],
+  )
 
   summary = ('3 out of 3 hw tests failed\n\n- htarget.hw.bvt-cq:'
              '\n\n- htarget.hw.bvt-inline:'
@@ -132,15 +175,14 @@ def GenTests(api):
   yield api.snapshot_orch_menu.test(
       'test-failure',
       data.ctp_failure,
+      lfg_props,
       api.properties(
           FullProperties(
               use_extra_props=True,
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
       api.post_check(post_process.DoesNotRun,
-                     'update manifest ref refs/heads/test.git push'),
-      input_properties=snapshot_orch_menu_properties(
-          update_manifest_refs={'test': 'refs/heads/test'}),
+                     'update manifest ref refs/heads/green.git push'),
       collect_builds=collect,
       with_manifest_refs=True,
       with_history=True,
@@ -149,31 +191,31 @@ def GenTests(api):
 
   yield api.snapshot_orch_menu.test(
       'bad-ref',
+      lfg_props,
       api.properties(FullProperties(expect_missing_config=True)),
       input_properties=snapshot_orch_menu_properties(
           update_manifest_refs={'start': 'missing-ref-heads'}),
-      # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
 
   yield api.snapshot_orch_menu.test(
       'bad-failure-ratio',
+      lfg_props,
       api.properties(FullProperties(expect_missing_config=True)),
       input_properties=snapshot_orch_menu_properties(
           update_manifest_refs={'max_build_failure_ratio': 1.1}),
-      # TODO (b/275363240): audit this test.
       status='FAILURE',
   )
 
   yield api.snapshot_orch_menu.test(
-      'required-missing-config',
+      'required-missing-config', lfg_props,
       api.properties(FullProperties(expect_missing_config=True)),
       builder='no-config', with_manifest_refs=True)
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
   # Collect times out
   yield api.snapshot_orch_menu.test(
-      'collect-children-timeout', data.ctp_normal,
+      'collect-children-timeout', data.ctp_normal, lfg_props,
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(
@@ -183,10 +225,7 @@ def GenTests(api):
                     retcode=1), collect_builds=data.builds,
       collect_timeout=True, with_manifest_refs=True, with_history=True)
 
-
-  input_props = snapshot_orch_menu_properties(
-      update_manifest_refs={'test': 'refs/heads/test'})
-  input_props.update({
+  input_props = {
       '$chromeos/cros_test_plan_v2': {
           'migration_configs': [{
               'host': 'chromium.googlesource.com',
@@ -195,7 +234,7 @@ def GenTests(api):
               'branch_allowlist_regexps': ['.*'],
           },]
       }
-  })
+  }
 
   gerrit_changes = [
       GerritChange(
@@ -211,6 +250,7 @@ def GenTests(api):
       'generate_ctpv1_format'] = True
   yield api.snapshot_orch_menu.test(
       'ctp2-enabled-generate-ctpv1-format',
+      lfg_props,
       api.gerrit.set_gerrit_fetch_changes_response(
           'check test planning v2 enabled',
           gerrit_changes,
@@ -239,6 +279,7 @@ def GenTests(api):
              '\n\n- htarget.hw.some-other-suite:')
   yield api.snapshot_orch_menu.test(
       'ctp2-enabled-generate-ctpv1-format-test-failure',
+      lfg_props,
       api.properties(
           FullProperties(
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
@@ -287,6 +328,7 @@ def GenTests(api):
 
   yield api.snapshot_orch_menu.test(
       'snapshot-orch-v2-test-planning',
+      lfg_props,
       api.properties(
           FullProperties(experiments=[
               'chromeos.snapshot_orch_menu.plan_tests_using_snapshot'
@@ -323,6 +365,7 @@ def GenTests(api):
 
   yield api.snapshot_orch_menu.test(
       'snapshot-orch-v2-test-planning-annealing-not-found',
+      lfg_props,
       api.properties(
           FullProperties(experiments=[
               'chromeos.snapshot_orch_menu.plan_tests_using_snapshot'

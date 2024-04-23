@@ -2953,8 +2953,23 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict()@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('grunt-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.logging irrelevant builder greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "print greenness.set greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"amd64-generic-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"arm-generic-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"grunt-postsubmit\", \"metric\": \"100\"}]}@@@"
     ]
   },
   {
@@ -12371,8 +12386,23 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('amd64-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('arm-generic-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('grunt-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.print greenness.logging irrelevant builder greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "clean up orchestrator.print greenness.set greenness",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"amd64-generic-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"arm-generic-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"grunt-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"test-builder\", \"metric\": \"100\"}]}@@@"
     ]
   },
   {

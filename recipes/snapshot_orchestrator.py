@@ -14,6 +14,7 @@ from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
+    'recipe_engine/properties',
     'build_menu',
     'orch_menu',
     'snapshot_orch_menu',
@@ -57,26 +58,34 @@ def DoRunSteps(api: RecipeApi):
 def GenTests(api: RecipeTestApi):
 
   data = api.snapshot_orch_menu.standard_test_data()
+  lfg_props = api.properties(
+      **{'$chromeos/greenness': {
+          'publish_property': True
+      }})
 
-  yield api.snapshot_orch_menu.test('basic', data.ctp_normal, with_history=True,
+  yield api.snapshot_orch_menu.test('basic', data.ctp_normal, lfg_props,
+                                    with_history=True,
                                     collect_builds=data.builds,
                                     with_manifest_refs=True,
                                     builder='postsubmit-orchestrator')
 
   yield api.snapshot_orch_menu.test('critical-child-builder-fails',
-                                    data.ctp_normal, with_manifest_refs=True,
+                                    data.ctp_normal, lfg_props,
+                                    with_manifest_refs=True,
                                     collect_builds=data.crit_fail,
                                     status='FAILURE',
                                     builder='snapshot-orchestrator')
 
   yield api.snapshot_orch_menu.test('non-critical-child-builder-fails',
-                                    data.ctp_normal, with_manifest_refs=True,
+                                    data.ctp_normal, lfg_props,
+                                    with_manifest_refs=True,
                                     collect_builds=data.non_crit_fail,
                                     builder='snapshot-orchestrator')
 
   yield api.snapshot_orch_menu.test(
       'missing-gitiles-commit',
       data.ctp_normal,
+      lfg_props,
       api.post_check(post_process.MustRun,
                      'update manifest-internal ref refs/heads/postsubmit'),
       collect_builds=data.builds,
