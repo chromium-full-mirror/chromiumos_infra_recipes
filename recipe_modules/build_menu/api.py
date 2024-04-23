@@ -928,6 +928,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return 'gs://{gs_bucket}/{gs_path}'.format(gs_bucket=gs_bucket,
                                                gs_path=gs_path)
 
+  def _should_run_cft_cache_build(self, builder_config) -> bool:
+    """
+    Determines whether the CFT cache build should be triggered.
+
+    Checks if the experiment is enabled and excludes public boards.
+    """
+    public = builder_config.general.manifest == BuilderConfig.General.PUBLIC
+    is_experiment_enabled = 'chromeos.build_cq.cft_cache_build' in self.m.cros_infra_config.experiments
+    return is_experiment_enabled and not public
+
   def _read_container_info_gcs_file(
       self, gs_path) -> Optional[BuildTestServiceContainersResponse]:
     """Read the file content, returns cached test service container based on file status
@@ -1080,7 +1090,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
           interval = 1 * 30 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 1
 
-          cft_cache_build_enabled = 'chromeos.build_cq.cft_cache_build' in self.m.cros_infra_config.experiments
+          cft_cache_build_enabled = self._should_run_cft_cache_build(
+              builder_config)
 
           response = None
           # check if container info exists for parent builder in gcs. Skips building if found or creates fresh containers.

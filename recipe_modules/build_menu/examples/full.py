@@ -171,6 +171,7 @@ def GenTests(api):
       ),
       step_data_no_cached_container_gcs(api),
       cq=True,
+      build_target='atlas',
       experiments=['chromeos.build_cq.cft_cache_build'],
   )
 
@@ -186,6 +187,7 @@ def GenTests(api):
       step_data_complete_ls_attempt_1,
       step_data_complete_cat_attempt_1,
       cq=True,
+      build_target='atlas',
       experiments=['chromeos.build_cq.cft_cache_build'],
   )
 
@@ -205,6 +207,7 @@ def GenTests(api):
       step_data_ls_attempt_3,
       step_data_cat_attempt_3,
       cq=True,
+      build_target='atlas',
       experiments=['chromeos.build_cq.cft_cache_build'],
   )
 
