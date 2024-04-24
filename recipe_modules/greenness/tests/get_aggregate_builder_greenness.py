@@ -76,7 +76,7 @@ def GenTests(api):
       api.post_process(
           post_process.StepTextEquals,
           'get greenness for specified builders',
-          'greenness score: 0. Unable to find local greenness for 1 target(s)',
+          'greenness score: 0. Unable to find greenness for 1 target(s)',
       ),
       _bb_search_step_data,
       api.post_process(post_process.DropExpectation),

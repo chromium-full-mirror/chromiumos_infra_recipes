@@ -403,7 +403,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         # testing for the buildtest builders runs in an informational workflow).
         # As a workaround to prevent this missing data from blocking retries, if
         # there are builders that are now retryable, assume that the ones
-        # without local greenness reported are also retryable.
+        # without greenness reported are also retryable.
         #
         # TODO(b/299561567): See if we can address this.
         if now_green_retryable_builders:

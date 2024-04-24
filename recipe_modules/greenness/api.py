@@ -311,7 +311,7 @@ class GreennessApi(recipe_api.RecipeApi):
       step_text = f'greenness score: {agg_greenness}'
 
       if missing_greenness:
-        step_text += f'. Unable to find local greenness for {len(missing_greenness)} target(s)'
+        step_text += f'. Unable to find greenness for {len(missing_greenness)} target(s)'
         pres.logs['missing greenness'] = sorted(missing_greenness)
 
       pres.step_text = step_text
