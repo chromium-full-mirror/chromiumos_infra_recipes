@@ -34,7 +34,6 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
     self._use_staging_branch = properties.use_staging_branch
-    self._send_snapshot_prebuilts = properties.send_snapshot_prebuilts
     self._commit_overlay_binhost = properties.commit_overlay_binhost
     self._max_binhost_uris = properties.max_binhost_uris
     if not self._max_binhost_uris:

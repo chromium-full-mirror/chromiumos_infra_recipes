@@ -60,8 +60,7 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_prebuilts':
-                  CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
-                                          commit_overlay_binhost=False)
+                  CrosPrebuiltsProperties(commit_overlay_binhost=False)
           }),
       cq=True,
   )
@@ -72,7 +71,6 @@ def GenTests(api):
           **{
               '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(use_staging_branch=True,
-                                          send_snapshot_prebuilts=True,
                                           commit_overlay_binhost=False)
           }),
       cq=True,
@@ -84,8 +82,7 @@ def GenTests(api):
       api.properties(
           **{
               '$chromeos/cros_prebuilts':
-                  CrosPrebuiltsProperties(send_snapshot_prebuilts=True,
-                                          commit_overlay_binhost=True)
+                  CrosPrebuiltsProperties(commit_overlay_binhost=True)
           }),
       api.expect_exception('ValueError'),
       cq=True,
@@ -99,7 +96,6 @@ def GenTests(api):
           **{
               '$chromeos/cros_prebuilts':
                   CrosPrebuiltsProperties(use_staging_branch=True,
-                                          send_snapshot_prebuilts=True,
                                           commit_overlay_binhost=True)
           }), api.expect_exception('ValueError'), cq=True,
       status='INFRA_FAILURE')

@@ -12,12 +12,8 @@ message CrosPrebuiltsProperties {
   // the staging environment.
   bool use_staging_branch = 1;
 
-  // Whether to save package_index_files for a snapshot.
-  bool enable_snapshot_prebuilts = 2;
-
-  // How many distinct snapshots for which to pass
-  // package_index_files to SysrootService/Create.  By default, none are sent.
-  uint32 send_snapshot_prebuilts = 3;
+  reserved 2, 3;
+  reserved "enable_snapshot_prebuilts", "send_snapshot_prebuilts";
 
   // Whether to commit BINHOST.conf to git overlay.
   bool commit_overlay_binhost = 4;
