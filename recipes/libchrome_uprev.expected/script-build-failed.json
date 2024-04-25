@@ -3793,6 +3793,26 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "rmtree",
+      "[START_DIR]/chrome"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
+    "env": {
+      "DEPOT_TOOLS_COLLECT_METRICS": "0"
+    },
+    "infra_step": true,
+    "name": "verify uprev commit.install packages.deleting chrome checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "push uprev commit"
   },
@@ -3829,7 +3849,6 @@
       "@@@STEP_LOG_LINE@request@{@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"chromeDir\": \"[START_DIR]/chrome\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
@@ -3846,7 +3865,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"chromeDir\": \"[START_DIR]/chrome\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_11/input_proto.json"
     ],
     "infra_step": true,

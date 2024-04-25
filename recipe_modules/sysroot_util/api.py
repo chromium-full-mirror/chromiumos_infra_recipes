@@ -310,50 +310,57 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             self.m.cros_sdk.chroot, config.artifacts, force_relevance=True,
             name='prepare artifacts final')
       install_pkg_request = _InstallPackagesRequest(dryrun=dryrun)
-      response = self.m.cros_build_api.SysrootService.InstallPackages(
-          install_pkg_request,
-          response_lambda=self.m.cros_build_api.failed_pkg_data_names,
-          pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
-          timeout=timeout_sec)
+      response = None
+      pkgs = None
+      try:
+        response = self.m.cros_build_api.SysrootService.InstallPackages(
+            install_pkg_request,
+            response_lambda=self.m.cros_build_api.failed_pkg_data_names,
+            pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs,
+            timeout=timeout_sec)
 
-      # Remove ~60-100GB of chrome incremental build artifacts.
-      if ('chromeos.sysroot_util.clean_incrementals'
-          in self.m.cros_infra_config.experiments):
-        if ebuild_chrome:
-          clean_request = CleanRequest(incrementals=True)
-          _ = self.m.cros_build_api.SdkService.Clean(clean_request)
+        # Remove ~60-100GB of chrome incremental build artifacts.
+        if ('chromeos.sysroot_util.clean_incrementals'
+            in self.m.cros_infra_config.experiments):
+          if ebuild_chrome:
+            clean_request = CleanRequest(incrementals=True)
+            _ = self.m.cros_build_api.SdkService.Clean(clean_request)
 
-      # Process goma response to upload logs, stats, and counterz.
-      if self.m.cros_sdk.has_goma_config():
-        self.m.goma.process_artifacts(
-            response, install_pkg_request.goma_config.log_dir.dir,
-            self.sysroot.build_target.name, self.m.cros_infra_config.is_staging)
-
-      if self.m.remoteexec.enable_logs_upload:
-        with self.m.step.nest('process reclient artifacts'):
-          self.m.remoteexec.process_artifacts(
-              response,
-              install_pkg_request.remoteexec_config.log_dir.dir,
+        # Process goma response to upload logs, stats, and counterz.
+        if self.m.cros_sdk.has_goma_config():
+          self.m.goma.process_artifacts(
+              response, install_pkg_request.goma_config.log_dir.dir,
               self.sysroot.build_target.name,
-              self.m.cros_infra_config.is_staging,
-          )
+              self.m.cros_infra_config.is_staging)
 
-      pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
-                                                   response)
-      # If we have a chrome checkout and the prop to disable cleanup is not off,
-      # clean up the chrome cache checkout.
-      if (chrome_root and not self._disable_chrome_source_purge):
-        self.m.file.rmtree('deleting chrome checkout', chrome_root)
-        # Set the chrome root to None so it isn't used later.
-        self.m.cros_sdk.set_chrome_root(None)
+      finally:
+        # Attempt to upload artifacts on failure for debugging.
+        if response:
+          if self.m.remoteexec.enable_logs_upload:
+            with self.m.step.nest('process reclient artifacts'):
+              self.m.remoteexec.process_artifacts(
+                  response,
+                  install_pkg_request.remoteexec_config.log_dir.dir,
+                  self.sysroot.build_target.name,
+                  self.m.cros_infra_config.is_staging,
+              )
 
-      cl_affected_packages = []
-      if pkgs and self.m.workspace_util.patch_sets:
-        cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
-            self.sysroot, self.m.cros_sdk.chroot,
-            self.m.workspace_util.patch_sets, include_rev_deps=True)
-      self.m.failures.set_compile_failed_packages(presentation, pkgs,
-                                                  cl_affected_packages)
+          pkgs = self.m.cros_build_api.failed_pkg_logs(install_pkg_request,
+                                                       response)
+        # If we have a chrome checkout and the prop to disable cleanup is not off,
+        # clean up the chrome cache checkout.
+        if (chrome_root and not self._disable_chrome_source_purge):
+          self.m.file.rmtree('deleting chrome checkout', chrome_root)
+          # Set the chrome root to None so it isn't used later.
+          self.m.cros_sdk.set_chrome_root(None)
+
+        cl_affected_packages = []
+        if pkgs and self.m.workspace_util.patch_sets:
+          cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
+              self.sysroot, self.m.cros_sdk.chroot,
+              self.m.workspace_util.patch_sets, include_rev_deps=True)
+        self.m.failures.set_compile_failed_packages(presentation, pkgs,
+                                                    cl_affected_packages)
 
   def create_netboot_image(self) -> None:
     """Create a netboot image for the factory build."""
