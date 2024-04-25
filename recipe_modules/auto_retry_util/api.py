@@ -381,44 +381,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           if b.replace('-slim-cq', '-cq') not in active_cq_verifiers
       ]
       retryable_failure_builders.extend(removed_verifier_failure_builders)
+      outstanding_failure_builders = [
+          b for b in unsuccessful_builders
+          if b not in retryable_failure_builders
+      ]
 
-      if self.is_experimental_feature_enabled(
-          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
-        now_green_builders = self._get_now_green_builders(cq_run)
-        # now_green_builders are snapshot builders, but unsucessful_builders are
-        # cq builders. Convert them with _snapshot_builder when matching them.
-        now_green_retryable_builders = [
-            b for b in unsuccessful_builders
-            if _snapshot_builder(b) in now_green_builders
-        ]
-        if now_green_retryable_builders:
-          self._experimental_retries[cq_run.id].add(
-              EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
-        retryable_failure_builders.extend(now_green_retryable_builders)
-        self.per_build_stats[
-            cq_run.
-            id].wait_for_green_stats.retryable_builders = now_green_retryable_builders
-
-        # Some CQ builders do not have snapshot equivalents (e.g. postsubmit
-        # testing for the buildtest builders runs in an informational workflow).
-        # As a workaround to prevent this missing data from blocking retries, if
-        # there are builders that are now retryable, assume that the ones
-        # without greenness reported are also retryable.
-        #
-        # TODO(b/299561567): See if we can address this.
-        if now_green_retryable_builders:
-          current_greenness = self._latest_greenness if _lfg_skipped(
-              cq_run) else self._lfg_greenness
-          assert current_greenness, 'Must have found a current snapshot if now_green_retryable_builders is non-empty'
-          no_snapshot_data_builders = [
-              b for b in unsuccessful_builders
-              if _snapshot_builder(b) not in current_greenness.builder_greenness
-          ]
-          self.per_build_stats[
-              cq_run.
-              id].wait_for_green_stats.no_snapshot_data_retryable_builders = no_snapshot_data_builders
-          retryable_failure_builders.extend(no_snapshot_data_builders)
-
+      retryable_failure_builders.extend(
+          self._waits_for_green_retryable_builders(
+              cq_run, outstanding_failure_builders))
       if self.is_experimental_feature_enabled(
           EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES, cq_run):
         not_at_fault_builders = self._get_not_cl_affected_package_failure_builders(
@@ -473,6 +443,58 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return (successful_builders, retryable_failure_builders,
             outstanding_failure_builders)
+
+  def _waits_for_green_retryable_builders(
+      self, cq_run: build_pb2.Build,
+      outstanding_failure_builders: List[str]) -> List[str]:
+    """Returns the builders which failed with a ToT issue that is now resolved.
+
+    Args:
+      cq_run: The CQ run to analyze.
+      outstanding_failure_builders: The names of the builders with outstanding
+          failures.
+    """
+    retryable_builders = []
+    if not self.is_experimental_feature_enabled(
+        EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
+      return retryable_builders
+
+    now_green_builders = self._get_now_green_builders(cq_run)
+    # now_green_builders are snapshot builders, but unsucessful_builders are
+    # cq builders. Convert them with _snapshot_builder when matching them.
+    now_green_retryable_builders = [
+        b for b in outstanding_failure_builders
+        if _snapshot_builder(b) in now_green_builders
+    ]
+    if now_green_retryable_builders:
+      self._experimental_retries[cq_run.id].add(
+          EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
+    self.per_build_stats[
+        cq_run.
+        id].wait_for_green_stats.retryable_builders = now_green_retryable_builders
+    retryable_builders.extend(now_green_retryable_builders)
+
+    # Some CQ builders do not have snapshot equivalents (e.g. postsubmit
+    # testing for the buildtest builders runs in an informational workflow).
+    # As a workaround to prevent this missing data from blocking retries, if
+    # there are builders that are now retryable, assume that the ones
+    # without greenness reported are also retryable.
+    #
+    # TODO(b/299561567): See if we can address this.
+    if now_green_retryable_builders:
+      current_greenness = self._latest_greenness if _lfg_skipped(
+          cq_run) else self._lfg_greenness
+      assert current_greenness, 'Must have found a current snapshot if now_green_retryable_builders is non-empty'
+      no_snapshot_data_builders = [
+          b for b in outstanding_failure_builders
+          if _snapshot_builder(b) not in current_greenness.builder_greenness
+      ]
+      self.per_build_stats[
+          cq_run.
+          id].wait_for_green_stats.no_snapshot_data_retryable_builders = no_snapshot_data_builders
+      retryable_builders.extend(no_snapshot_data_builders)
+
+    return retryable_builders
 
   def analyze_test_results(
       self, cq_run: build_pb2.Build) -> Tuple[List[str], List[str], List[str]]:
