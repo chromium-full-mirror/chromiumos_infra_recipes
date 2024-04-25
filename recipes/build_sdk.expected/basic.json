@@ -5,13 +5,6 @@
   },
   {
     "cmd": [],
-    "name": "set version",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@version@\"1970.01.01.000000\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "configure builder"
   },
   {
@@ -2021,6 +2014,24 @@
     ]
   },
   {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "read git footers"
+  },
+  {
+    "cmd": [],
+    "name": "set version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@version@\"1970.01.01.999\"@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "build sdk board"
   },
@@ -2234,7 +2245,7 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"sdkVersion\": \"1970.01.01.000000\"@@@",
+      "@@@STEP_LOG_LINE@request@  \"sdkVersion\": \"1970.01.01.999\"@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -2254,7 +2265,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sdkVersion\": \"1970.01.01.000000\"\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sdkVersion\": \"1970.01.01.999\"\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2443,14 +2454,14 @@
       "public-read",
       "-r",
       "[START_DIR]/chromiumos/out/var/lib/portage/pkgs",
-      "gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages"
+      "gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload host prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages@@@"
     ]
   },
   {
@@ -2474,14 +2485,14 @@
       "public-read",
       "-r",
       "[START_DIR]/chromiumos/build/amd64-host/packages",
-      "gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages"
+      "gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload target prebuilts.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@"
+      "@@@STEP_LINK@gsutil.upload@https://console.cloud.google.com/storage/browser/chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages@@@"
     ]
   },
   {
@@ -2510,14 +2521,14 @@
       "-a",
       "public-read",
       "[CLEANUP]/my_tmp_dir/foo.tar.xz",
-      "gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz"
+      "gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload sdk toolchain tarballs.upload foo.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz@@@"
     ]
   },
   {
@@ -2539,14 +2550,14 @@
       "-a",
       "public-read",
       "[CLEANUP]/my_tmp_dir/bar.tar.xz",
-      "gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz"
+      "gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload prebuilts.upload sdk toolchain tarballs.upload bar.tar.xz.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz@@@"
     ]
   },
   {
@@ -2572,14 +2583,14 @@
       "-a",
       "public-read",
       "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
-      "gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz"
+      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload sdk tarball and manifest.upload sdk tarball.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz@@@"
     ]
   },
   {
@@ -2601,26 +2612,26 @@
       "-a",
       "public-read",
       "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest",
-      "gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest"
+      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload sdk tarball and manifest.upload sdk manifest.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest@@@"
     ]
   },
   {
     "cmd": [],
     "name": "report uploads",
     "~followup_annotations": [
-      "@@@STEP_LINK@sdk_tarball@gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz@@@",
-      "@@@STEP_LINK@sdk_manifest@gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest@@@",
-      "@@@STEP_LINK@host_prebuilts@gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages@@@",
-      "@@@STEP_LINK@target_prebuilts@gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages@@@",
-      "@@@STEP_LINK@toolchain_prebuilts_foo@gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz@@@",
-      "@@@STEP_LINK@toolchain_prebuilts_bar@gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz@@@"
+      "@@@STEP_LINK@sdk_tarball@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz@@@",
+      "@@@STEP_LINK@sdk_manifest@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest@@@",
+      "@@@STEP_LINK@host_prebuilts@gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages@@@",
+      "@@@STEP_LINK@target_prebuilts@gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages@@@",
+      "@@@STEP_LINK@toolchain_prebuilts_foo@gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz@@@",
+      "@@@STEP_LINK@toolchain_prebuilts_bar@gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz@@@"
     ]
   },
   {
@@ -2628,7 +2639,7 @@
     "name": "report uploads.set uploaded_files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@uploaded_files@{\"host_prebuilts\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.000000/packages\", \"sdk_manifest\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz.Manifest\", \"sdk_tarball\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz\", \"target_prebuilts\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.000000/packages\", \"toolchain_prebuilts_bar\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.000000.tar.xz\", \"toolchain_prebuilts_foo\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.000000.tar.xz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@uploaded_files@{\"host_prebuilts\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"sdk_manifest\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest\", \"sdk_tarball\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz\", \"target_prebuilts\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\", \"toolchain_prebuilts_bar\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"toolchain_prebuilts_foo\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\"}@@@"
     ]
   },
   {
@@ -2641,7 +2652,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "schedule uprev",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chromiumos-sdk-pupr-generator\"}, \"canOutliveParent\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"$chromeos/pupr_local_uprev\": {\"sdkUprevSpec\": {\"binhostGsBucket\": \"gs://chromeos-prebuilt\", \"sdkGsBucket\": \"gs://chromiumos-sdk\", \"sdkVersion\": \"1970.01.01.000000\", \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.000000.tar.xz\"}}, \"triggers\": [{\"gitiles\": {\"ref\": \"refs/heads/main\"}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chromiumos-sdk-pupr-generator\"}, \"canOutliveParent\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"$chromeos/pupr_local_uprev\": {\"sdkUprevSpec\": {\"binhostGsBucket\": \"gs://chromeos-prebuilt\", \"sdkGsBucket\": \"gs://chromiumos-sdk\", \"sdkVersion\": \"1970.01.01.999\", \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.999.tar.xz\"}}, \"triggers\": [{\"gitiles\": {\"ref\": \"refs/heads/main\"}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
@@ -2676,8 +2687,8 @@
       "@@@STEP_LOG_LINE@request@            \"sdkUprevSpec\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"binhostGsBucket\": \"gs://chromeos-prebuilt\",@@@",
       "@@@STEP_LOG_LINE@request@              \"sdkGsBucket\": \"gs://chromiumos-sdk\",@@@",
-      "@@@STEP_LOG_LINE@request@              \"sdkVersion\": \"1970.01.01.000000\",@@@",
-      "@@@STEP_LOG_LINE@request@              \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.000000.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@request@              \"sdkVersion\": \"1970.01.01.999\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.999.tar.xz\"@@@",
       "@@@STEP_LOG_LINE@request@            }@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"triggers\": [@@@",
@@ -2975,6 +2986,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Built SDK version [1970.01.01.000000](https://storage.googleapis.com/chromiumos-sdk/cros-sdk-1970.01.01.000000.tar.xz).\nLaunched SDK uprev build: https://cr-buildbucket.appspot.com/build/8922054662172514000"
+    "summaryMarkdown": "Built SDK version [1970.01.01.999](https://storage.googleapis.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz).\nLaunched SDK uprev build: https://cr-buildbucket.appspot.com/build/8922054662172514000"
   }
 ]

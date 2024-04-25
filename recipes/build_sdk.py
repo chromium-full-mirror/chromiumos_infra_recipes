@@ -34,6 +34,7 @@ from recipe_engine.recipe_api import StepFailure
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/properties',
@@ -47,6 +48,7 @@ DEPS = [
     'cros_sdk',
     'deferrals',
     'easy',
+    'git_footers',
     'key_value_store',
     'src_state',
     'util',
@@ -70,7 +72,7 @@ PREBUILTS_BUCKET = 'chromeos-prebuilt'
 
 # DEFAULT_VERSION is a parsing of the buildbucket API's default start_time.
 # Unless overridden, test cases will create SDKs with this version.
-DEFAULT_VERSION = '1970.01.01.000000'
+DEFAULT_VERSION = '1970.01.01.999'
 
 
 def RunSteps(
@@ -111,20 +113,25 @@ class BuildSDKRun:
     self._sdk_manifest_path: Optional[config_types.Path] = None
     self._toolchain_tarball_paths: Optional[List[config_types.Path]] = None
 
-    self.m.easy.set_properties_step(version=self.version)
-
   @functools.cached_property
   def version(self) -> str:
     """Return the SDK version created by this build.
 
-    Typically, SDK builds are versioned according to the build start time.
-    For example, '2023.03.14.159265'.
-    However, this can be overridden by input properties.
+    Typically, SDK builds are versioned according to the build start date and
+    snapshot number.  For example, '2024.04.25.65374'.  However, this can be
+    overridden by input properties.
+
+    Prior to 2024-04-25, versions were numbered with a timestamp in HHMMSS
+    format in place of the snapshot number.
     """
     if self.properties.version:
       return self.properties.version
-    return self.m.buildbucket.build.start_time.ToDatetime().strftime(
-        '%Y.%m.%d.%H%M%S')
+    with self.m.context(cwd=self.m.src_state.build_manifest.path):
+      snapshot_num = self.m.git_footers.position_num(
+          self.m.src_state.gitiles_commit.id, 999)
+    date_stamp = self.m.buildbucket.build.start_time.ToDatetime().strftime(
+        '%Y.%m.%d')
+    return f'{date_stamp}.{snapshot_num}'
 
   @property
   def _sdk_bucket(self) -> str:
@@ -169,6 +176,7 @@ class BuildSDKRun:
     """Run the main logic for this builder."""
     # Determine which commit
     with self._setup_with_auto_artifact_upload():
+      self.m.easy.set_properties_step(version=self.version)
       self._build_sdk_packages()
       self._build_toolchain()
       self._create_sdk_tarball()
@@ -713,8 +721,8 @@ def GenTests(
       api.post_check(post_process.LogContains, 'schedule uprev', 'request', [
           '"bucket": "pupr"',
           '"builder": "chromiumos-sdk-pupr-generator"',
-          '"sdkVersion": "1970.01.01.000000"',
-          '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.000000.tar.xz"',
+          '"sdkVersion": "1970.01.01.999"',
+          '"toolchainTemplate": "1970/01/%(target)s-1970.01.01.999.tar.xz"',
           '"binhostGsBucket": "gs://chromeos-prebuilt"',
           '"sdkGsBucket": "gs://chromiumos-sdk"',
           '"ref": "refs/heads/main',
