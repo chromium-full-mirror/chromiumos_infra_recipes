@@ -477,6 +477,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           failures.
     """
     retryable_builders = []
+
+    # Exit early if there are no outstanding build failures.
+    if not outstanding_failure_builders:
+      return retryable_builders
+
     if not self.is_experimental_feature_enabled(
         EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
       return retryable_builders

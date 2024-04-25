@@ -32,7 +32,8 @@ def RunSteps(api):
               'builder': 'builder1-cq'
           },
           'status': 'FAILURE',
-          'relevant': True
+          'relevant': True,
+          'collect_value': 'COLLECT',
       },
   ]
 
