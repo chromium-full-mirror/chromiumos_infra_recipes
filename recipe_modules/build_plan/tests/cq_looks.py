@@ -112,10 +112,6 @@ def GenTests(api):
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
-          'looks for green.check should look for green.check disallow looks for green'
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
           'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
@@ -149,10 +145,6 @@ def GenTests(api):
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
       api.git_footers.simulated_get_footers(
           [],
-          'looks for green.check should look for green.check disallow looks for green'
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
           'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
@@ -176,10 +168,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
@@ -221,10 +209,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],
@@ -300,10 +284,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check disallow looks for green'
       ),
       api.git_footers.simulated_get_footers(
           [],

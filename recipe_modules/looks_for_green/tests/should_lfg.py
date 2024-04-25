@@ -69,8 +69,6 @@ def GenTests(api):
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
-      api.git_footers.simulated_get_footers(
           [],
           'check should look for green.check if all Cq-Depend CLs are included'
       ),
@@ -117,8 +115,6 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
       api.git_footers.simulated_get_footers([
           'chromium:123456'
       ], 'check should look for green.check if all Cq-Depend CLs are included'),
@@ -150,8 +146,6 @@ def GenTests(api):
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
-      api.git_footers.simulated_get_footers(
           [],
           'check should look for green.check if all Cq-Depend CLs are included'
       ),
@@ -171,8 +165,6 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
       api.gerrit.set_is_merge_commit(
           gerrit_change_1.change, gerrit_change_1.host, True,
           parent_step_name='check should look for green'),
@@ -192,11 +184,6 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green'),
-      api.git_footers.simulated_get_footers(
-          [], 'check should look for green.check disallow looks for green',
-          step_number=2),
       # Cherry pick commit.
       api.gerrit.set_is_merge_commit(
           gerrit_change_1.change, gerrit_change_1.host, False,

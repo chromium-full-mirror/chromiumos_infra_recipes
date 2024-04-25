@@ -476,7 +476,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     with self.m.step.nest('check disallow looks for green') as presentation:
       found_disallow = False
       git_footers = self.m.git_footers.get_footer_values(
-          gerrit_changes, self.DISALLOW_LOOKS_FOR_GREEN_FOOTER)
+          gerrit_changes, self.DISALLOW_LOOKS_FOR_GREEN_FOOTER,
+          step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
       presentation.logs['check disallow looks for green'] = (
           f'Found {self.DISALLOW_LOOKS_FOR_GREEN_FOOTER} footers: '
           f'{sorted(git_footers)}')

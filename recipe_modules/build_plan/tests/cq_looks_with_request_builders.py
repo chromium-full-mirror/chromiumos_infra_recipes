@@ -144,10 +144,6 @@ def GenTests(api):
         })
     ret += api.git_footers.simulated_get_footers(
         [],
-        'looks for green.check should look for green.check disallow looks for green'
-    )
-    ret += api.git_footers.simulated_get_footers(
-        [],
         'looks for green.check should look for green.check if all Cq-Depend CLs are included'
     )
     # Step data searching for getting snapshots from buildbucket.
