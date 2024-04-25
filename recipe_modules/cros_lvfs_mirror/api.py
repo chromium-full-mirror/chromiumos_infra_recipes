@@ -19,12 +19,12 @@ class LvfsMirror(recipe_api.RecipeApi):
     """
     self._mirror_address = mirror_address
     self._gs_uri = gs_uri
-    self._local_cache = self.m.path.cache_dir.join('lvfs')
+    self._local_cache = self.m.path.cache_dir / 'lvfs'
 
   def _get_list_of_gs_files(self):
     """Get list of file paths from Google Storage bucket"""
     gsutil_ls_cmd = ['ls', '-r', self.m.path.join(self.gs_uri, '*.cab')]
-    gs_file_list_path = self.m.path.cache_dir.join('gs.txt')
+    gs_file_list_path = self.m.path.cache_dir / 'gs.txt'
     gsutil_ls_stdout = self.m.raw_io.output_text(leak_to=gs_file_list_path)
     self.m.gsutil(cmd=gsutil_ls_cmd, name='List files in %s' % self.gs_uri,
                   stdout=gsutil_ls_stdout)

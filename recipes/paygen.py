@@ -129,7 +129,7 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
       with api.step.nest('running paygen operations in parallel') as pres:
         # Artifacts need to be placed within the chromiumos checkout so that
         # the BAPI can find them.
-        artifact_result_path_base = api.cros_source.workspace_path.join(
+        artifact_result_path_base = api.cros_source.workspace_path.joinpath(
             'artifacts')
 
         # Function to do a single paygen, given a request object.
@@ -281,7 +281,7 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
         cache_path_override=api.src_state.workspace_path,
     )
 
-    config_path = api.cros_source.workspace_path.join('src/config-internal')
+    config_path = api.cros_source.workspace_path / 'src/config-internal'
 
     # Repo leaves directories around... See: project.py "DeleteWorktree".
     api.step('remove repo cruft', ['rm', '-rf', config_path])

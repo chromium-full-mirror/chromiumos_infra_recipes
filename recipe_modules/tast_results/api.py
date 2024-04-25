@@ -145,7 +145,7 @@ class TastResultsApi(recipe_api.RecipeApi):
     try:
       list_of_results = self.m.file.read_text(
           'read streamed_results.jsonl',
-          test_results_path.join('streamed_results.jsonl'),
+          test_results_path / 'streamed_results.jsonl',
           test_data=self.test_api.test_streamed_results_jsonl).splitlines()
       # Handle empty streamed_results.jsonl file.
       list_of_results = [self.m.json.loads(x) for x in list_of_results or []]
@@ -519,7 +519,7 @@ class TastResultsApi(recipe_api.RecipeApi):
 
     config = {
         'result_format': 'tast',
-        'result_file': test_results_path.join('streamed_results.jsonl'),
+        'result_file': test_results_path / 'streamed_results.jsonl',
         'artifact_directory': self.m.path.abspath(test_results_path),
         'base_variant': self._generate_resultdb_variant_def(),
         'base_tags': self._generate_resultdb_base_tags(tag, suite_name),

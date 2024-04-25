@@ -347,7 +347,7 @@
       "                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/examples/full.py\", line 43, in RunSteps",
       "    api.cros_prebuilts.upload_target_prebuilts(properties.build_target,",
-      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 493, in upload_target_prebuilts",
+      "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 492, in upload_target_prebuilts",
       "    binhost_key = self._binhost_key(kind)",
       "                  ^^^^^^^^^^^^^^^^^^^^^^^",
       "  File \"RECIPE_REPO[chromeos]/recipe_modules/cros_prebuilts/api.py\", line 145, in _binhost_key",

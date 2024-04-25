@@ -18,7 +18,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  with api.context(cwd=api.src_state.workspace_path.join('src/project')):
+  with api.context(cwd=api.src_state.workspace_path / 'src/project'):
     api.git_txn.update_ref('remote', lambda: None, ref='ref', retries=1)
     api.git_txn.update_ref('remote', lambda: False, ref='ref')
 

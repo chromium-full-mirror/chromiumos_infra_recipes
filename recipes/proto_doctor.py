@@ -317,7 +317,7 @@ class ProtoDoctorRun:
       request = api_service.CompileProtoRequest()
       response = self.m.cros_build_api.ApiService.CompileProto(request)
       modified_paths = [f.path for f in response.modified_files]
-      chromite_path = self._workspace_path.join('chromite')
+      chromite_path = self._workspace_path / 'chromite'
       with self.m.context(cwd=chromite_path):
         chromite = self.m.repo.project_info(
             # Use the absolute path to disambiguate from chromite-HEAD.
@@ -348,7 +348,7 @@ class ProtoDoctorRun:
       modified_paths: A list of modified files to commit within the project.
       subject: The first line to write in the new commit.
     """
-    with self.m.context(cwd=self._workspace_path.join(project.path)):
+    with self.m.context(cwd=self._workspace_path / project.path):
       self.m.repo.start('proto-doctor', [project.path])
       self.m.git.add(modified_paths)
       message = self._create_commit_message(subject)
@@ -361,7 +361,7 @@ class ProtoDoctorRun:
       subject: The first line to write in the new commit.
     """
     url = self.m.buildbucket.build_url()
-    with self.m.context(cwd=self._workspace_path.join('infra', 'proto')):
+    with self.m.context(cwd=self._workspace_path.joinpath('infra', 'proto')):
       infra_proto_hash = self.m.easy.stdout_step(
           'get infra/proto commit hash',
           ['git', 'rev-parse', 'HEAD'],
@@ -384,7 +384,7 @@ class ProtoDoctorRun:
     ccs = self._get_ccs_for_project(project)
     change = self.m.gerrit.create_change(
         # Use the absolute project path to avoid any ambiguity.
-        project=self._workspace_path.join(project.path),
+        project=self._workspace_path / project.path,
         ccs=ccs,
         ref=self.current_ref,
         hashtags=[HASHTAG])

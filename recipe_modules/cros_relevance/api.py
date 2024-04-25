@@ -92,8 +92,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
             bbcommon_pb2.GerritChange.SerializeToString(gc))
 
       messages_path = self.m.path.mkdtemp(prefix='build-plan-')
-      input_bin_file = messages_path.join('input.binaryproto')
-      output_bin_file = messages_path.join('output.binaryproto')
+      input_bin_file = messages_path / 'input.binaryproto'
+      output_bin_file = messages_path / 'output.binaryproto'
       presentation.logs['planner_input'] = json_format.MessageToJson(request)
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request.SerializeToString())
@@ -347,8 +347,8 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
           Pointless Build Checker
     """
     messages_path = self.m.path.mkdtemp(prefix='pointless-build-')
-    input_bin_file = messages_path.join('input.binaryproto')
-    output_bin_file = messages_path.join('output.binaryproto')
+    input_bin_file = messages_path / 'input.binaryproto'
+    output_bin_file = messages_path / 'output.binaryproto'
     step_presentation.logs['relevance_input'] = str(check_request)
     self.m.file.write_raw('write input binaryproto', input_bin_file,
                           check_request.SerializeToString())

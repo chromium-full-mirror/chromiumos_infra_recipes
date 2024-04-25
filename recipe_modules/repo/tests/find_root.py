@@ -27,10 +27,10 @@ def RunSteps(api):
         cwd.join('manifest-internal/snapshot-b.xml'))
 
   # Next, call _find_root from a subdirectory.  Should not affect context.cwd.
-  cwd = api.path.cleanup_dir.join('test', 'dir', 'sub')
+  cwd = api.path.cleanup_dir.joinpath('test', 'dir', 'sub')
   api.file.ensure_directory('test dir', cwd)
   expected = str(cwd)
-  api.path.mock_add_paths(api.path.cleanup_dir.join('.repo'))
+  api.path.mock_add_paths(api.path.cleanup_dir / '.repo')
   with api.context(cwd=cwd):
     api.repo._find_root()  # pylint: disable=protected-access
     api.assertions.assertEqual(expected, str(api.context.cwd))

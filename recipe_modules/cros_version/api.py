@@ -68,7 +68,7 @@ class CrosVersionApi(RecipeApi):
       test_version = Version.from_string(test_version_str)
       test_snapshot = test_version.snapshot or self.test_api.test_snapshot
     with self.m.step.nest(name) as presentation:
-      version_path = self.m.src_state.workspace_path.join(CHROMEOS_VERSION_PATH)
+      version_path = self.m.src_state.workspace_path / CHROMEOS_VERSION_PATH
       contents = self.m.file.read_text('read chromeos_version.sh', version_path,
                                        test_data=test_data, include_log=False)
 
@@ -142,7 +142,7 @@ class CrosVersionApi(RecipeApi):
       if self.m.cv.active and not dry_run:
         raise StepFailure('CQ must set dry_run')
 
-      overlay_path = self.m.src_state.workspace_path.join(
+      overlay_path = self.m.src_state.workspace_path.joinpath(
           CHROMIUMOS_OVERLAY_REPO)
 
       with self.m.context(cwd=overlay_path):

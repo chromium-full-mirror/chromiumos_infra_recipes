@@ -203,7 +203,7 @@ def RunSteps(api, properties):
         with api.step.nest('check reachability') as reach_pres:
           downrevs = []
           for diff in manifest_diffs:
-            with api.context(cwd=workspace_path.join(diff.path)):
+            with api.context(cwd=workspace_path / diff.path):
               if (not api.git.is_reachable(diff.from_rev) and
                   diff.path not in properties.ignore_downrev_paths):
                 downrevs.append('{}: {} is not an ancestor of {}'.format(
@@ -463,7 +463,7 @@ def _get_gerrit_changes(api, manifest_diffs):
     gerrit_commits = []
     for diff in manifest_diffs:
       with api.step.nest(diff.path) as step, api.context(
-          cwd=api.src_state.workspace_path.join(diff.path)):
+          cwd=api.src_state.workspace_path / diff.path):
         commits = api.git.log(diff.from_rev, diff.to_rev, limit=30)
         for commit in commits:
           reviewed_on_footers = api.git_footers.from_message(

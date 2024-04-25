@@ -118,9 +118,9 @@ class ResultFlowCommand(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure result_flow'):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'result_flow')
+        cipd_dir = self.m.path.start_dir.joinpath('cipd', 'result_flow')
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/result_flow/${platform}',
                          self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
-        self._cmd = cipd_dir.join('result_flow')
+        self._cmd = cipd_dir / 'result_flow'

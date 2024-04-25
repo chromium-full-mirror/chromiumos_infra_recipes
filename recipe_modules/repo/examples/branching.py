@@ -23,8 +23,8 @@ PROPERTIES = BranchingProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path.start_dir.join('repo')
-  api.path.mock_add_paths(repo_root.join('.repo'))
+  repo_root = api.path.start_dir / 'repo'
+  api.path.mock_add_paths(repo_root / '.repo')
 
   with api.context(cwd=repo_root):
     sync_opts = json_format.MessageToDict(properties.sync_opts,

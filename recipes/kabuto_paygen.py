@@ -75,7 +75,7 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
 
 def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
   chroot_path = api.cros_source.workspace_path
-  kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
+  kabuto_path = chroot_path / 'src/platform/borealis/tools/kabuto'
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
     # If we are operating on a specific Gerrit CL ref on a staging builder we
     # should checkout platform/borealis to it now.

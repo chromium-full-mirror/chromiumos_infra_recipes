@@ -20,7 +20,7 @@ class CrosSdkApi(recipe_test_api.RecipeTestApi):
   def chroot(self, use_flags=(), chrome_root=None):
     """Return a chromiumos.common.Chroot."""
     env = common.Chroot.ChrootEnv(use_flags=use_flags) if use_flags else None
-    path = self.m.path.cache_dir.join('cros_chroot')
+    path = self.m.path.cache_dir / 'cros_chroot'
     # TODO(crbug/1215263): The Chroot() initialization can use str(path) once
     # the test_api supports str().
     abs_path = '/'.join([str(path.base)] + list(path.pieces or []))

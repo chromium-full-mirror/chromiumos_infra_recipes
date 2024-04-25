@@ -43,8 +43,8 @@ class CrosCqDependsApi(RecipeApi):
     found_commits = 0
     for manifest_diff in manifest_diffs:
       # For each manifest diff, get a log of commits at that path
-      with self.m.context(
-          cwd=self.m.cros_source.workspace_path.join(manifest_diff.path)):
+      with self.m.context(cwd=self.m.cros_source.workspace_path /
+                          manifest_diff.path):
         git_commits = self.m.git.log(manifest_diff.from_rev,
                                      manifest_diff.to_rev)
         for commit in git_commits:
@@ -152,7 +152,7 @@ class CrosCqDependsApi(RecipeApi):
                                                       empty_ok=True)
         for path in paths:
           # Ensure that rev exists in the git repo at that path. Fail otherwise.
-          with self.m.context(cwd=self.m.cros_source.workspace_path.join(path)):
+          with self.m.context(cwd=self.m.cros_source.workspace_path / path):
 
             # Check whether the dep is reachable locally.
             # If it's not, report an error, so that we

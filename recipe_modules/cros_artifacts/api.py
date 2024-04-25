@@ -1082,7 +1082,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       download_root = self.m.path.mkdtemp(prefix='%s-' % artifact_name)
       download_paths = []
       for gs_file_name in gs_file_names:
-        download_path = download_root.join(gs_file_name)
+        download_path = download_root / gs_file_name
         self.m.gsutil.download(gs_bucket,
                                self.m.path.join(gs_path,
                                                 gs_file_name), download_path)
@@ -1287,7 +1287,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       version = self.m.cros_version.version
 
       tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
-      tmp_file = tmp_dir.join('LATEST')
+      tmp_file = tmp_dir / 'LATEST'
       contents = str(version)
       self.m.file.write_raw('write "{}" to tmp LATEST file'.format(contents),
                             tmp_file, contents)

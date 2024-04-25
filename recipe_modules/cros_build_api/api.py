@@ -330,8 +330,8 @@ class CrosBuildApiApi(RecipeApi):
       commit = self.m.file.read_text(
           'read chromite version',
           self.repo_resource('infra', 'config', 'chromite-HEAD.version'))
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(chromite_location)):
+      with self.m.context(cwd=self.m.src_state.workspace_path /
+                          chromite_location):
         try:
           self.m.git.checkout(
               commit.strip(),
@@ -571,9 +571,9 @@ class CrosBuildApiApi(RecipeApi):
         presentation.step_text = step_text
 
       messages_path = self.m.path.mkdtemp(prefix='build_api_messages')
-      input_path = messages_path.join('input_proto.json')
-      output_path = messages_path.join('output_proto.json')
-      logfile_path = messages_path.join('build_log.txt')
+      input_path = messages_path / 'input_proto.json'
+      output_path = messages_path / 'output_proto.json'
+      logfile_path = messages_path / 'build_log.txt'
 
       # Write the input proto JSON to a temp file (which is how it's passed to
       # the build API) and record it to the step logs for debugging.
@@ -602,7 +602,7 @@ class CrosBuildApiApi(RecipeApi):
         self.reset_checkout()
 
       cmd.extend([
-          self.m.src_state.workspace_path.join(
+          self.m.src_state.workspace_path.joinpath(
               f'{chromite_location}/bin/build_api'), '--input-json', input_path,
           '--output-json', output_path, '--log-level', self._log_level, endpoint
       ])
@@ -614,7 +614,7 @@ class CrosBuildApiApi(RecipeApi):
       # build-api has explicit path references. For now, rely on the fact that
       # chromite-HEAD will only be used for signing, which will never call other
       # build-api calls internally, and use chromite_location for safety.
-      chromite_bin_dir = self.m.src_state.workspace_path.join('chromite/bin')
+      chromite_bin_dir = self.m.src_state.workspace_path / 'chromite/bin'
       with self.m.context(env_suffixes={'PATH': [chromite_bin_dir]}):
         try:
           output_proto = reflection.MakeClass(output_type)()

@@ -47,7 +47,7 @@ class DupItApi(recipe_api.RecipeApi):
     self._gs_distfiles_uri = gs_distfiles_uri
     self._tmp_distfile_lists_path = self.m.path.mkdtemp('distfile_lists')
     self._tmp_distfiles_path = self.m.path.mkdtemp('distfiles')
-    self._additional_regex_matches_file = self._tmp_distfile_lists_path.join(
+    self._additional_regex_matches_file = self._tmp_distfile_lists_path.joinpath(
         'additional_regex_matches_file.txt')
     self._ignore_missing_args = ignore_missing_args
     self._filter_missing_links = filter_missing_links
@@ -60,7 +60,7 @@ class DupItApi(recipe_api.RecipeApi):
     """Get relative, sorted list of distfile paths from Google Storage bucket"""
 
     # Get list of distfiles stored in gs, write to file.
-    gs_distfile_list_path = self._tmp_distfile_lists_path.join('gs.txt')
+    gs_distfile_list_path = self._tmp_distfile_lists_path / 'gs.txt'
     gsutil_ls_cmd = [
         'ls',
         '-r',
@@ -80,7 +80,7 @@ class DupItApi(recipe_api.RecipeApi):
     #   path/to/distfile1.tar.gz
     #   path/to/distfile2.tar.gz
     #   ...
-    gs_distfile_relative_list_path = self._tmp_distfile_lists_path.join(
+    gs_distfile_relative_list_path = self._tmp_distfile_lists_path.joinpath(
         'gs_relative.txt')
     cut_cmd = [
         'cut',
@@ -94,7 +94,7 @@ class DupItApi(recipe_api.RecipeApi):
     self.m.step(cmd=cut_cmd, name=cut_name, stdout=cut_stdout)
 
     # Ensure the list is sorted (for diffing).
-    gs_distfile_relative_sorted_list_path = self._tmp_distfile_lists_path.join(
+    gs_distfile_relative_sorted_list_path = self._tmp_distfile_lists_path.joinpath(
         'gs_relative_sorted.txt')
     sort_cmd = [
         'sort',
@@ -113,7 +113,7 @@ class DupItApi(recipe_api.RecipeApi):
     """Get relative, sorted list of distfile paths from Gentoo"""
 
     # Get list of gentoo distfiles, write to file.
-    gentoo_distfile_list_path = self._tmp_distfile_lists_path.join('gentoo.txt')
+    gentoo_distfile_list_path = self._tmp_distfile_lists_path / 'gentoo.txt'
     rsync_list_cmd = [
         'rsync',
         # List files.
@@ -148,7 +148,7 @@ class DupItApi(recipe_api.RecipeApi):
     #   foo.tar.gz
     #   bar.zip
     #   ...
-    gentoo_distfile_relative_list_path = self._tmp_distfile_lists_path.join(
+    gentoo_distfile_relative_list_path = self._tmp_distfile_lists_path.joinpath(
         'gentoo_relative.txt')
     awk_cmd = [
         'awk',
@@ -164,7 +164,7 @@ class DupItApi(recipe_api.RecipeApi):
 
     # Sort the file for diffing.
     gentoo_distfile_relative_sorted_list_path = (
-        self._tmp_distfile_lists_path.join('gentoo_relative_sorted.txt'))
+        self._tmp_distfile_lists_path / 'gentoo_relative_sorted.txt')
     sort_cmd = [
         'sort',
         gentoo_distfile_relative_list_path,
@@ -196,7 +196,7 @@ class DupItApi(recipe_api.RecipeApi):
     with self.m.step.nest('backfill gs distfiles topdir'):
       # Extract the set of files that exist in the distfiles/ topdir now.  e.g.
       #   foo.tar.gz
-      topfiles_txt = self._tmp_distfile_lists_path.join('gs_topfiles.txt')
+      topfiles_txt = self._tmp_distfile_lists_path / 'gs_topfiles.txt'
       topfiles_cmd = [
           'grep',
           '-v',
@@ -212,7 +212,7 @@ class DupItApi(recipe_api.RecipeApi):
       # Extract the set of files that exist in GLEP-0075 subdirs.  Ignore the
       # rest as we only care about the Gentoo mirror behavior.  e.g.
       #   ad/1.tar.gz
-      subfiles_txt = self._tmp_distfile_lists_path.join('gs_subfiles.txt')
+      subfiles_txt = self._tmp_distfile_lists_path / 'gs_subfiles.txt'
       subfiles_cmd = [
           'grep',
           '-E',
@@ -329,7 +329,7 @@ class DupItApi(recipe_api.RecipeApi):
       format as the 'distfiles' argument.
     """
     # Join and sort distfiles with regex filelist.
-    distfiles_regex_sorted = self._tmp_distfile_lists_path.join(
+    distfiles_regex_sorted = self._tmp_distfile_lists_path.joinpath(
         'new_regex_sorted.txt')
     sortuniq_cmd = [
         'sort',
@@ -351,7 +351,7 @@ class DupItApi(recipe_api.RecipeApi):
     # Determine distfiles in gentoo that are not in gs (new distfiles).
     gs_distfiles = self._get_list_of_gs_distfiles()
     gentoo_distfiles = self._get_list_of_gentoo_distfiles()
-    new_distfiles = self._tmp_distfile_lists_path.join('new.txt')
+    new_distfiles = self._tmp_distfile_lists_path / 'new.txt'
     comm_cmd = [
         'comm',
         '-13',
@@ -389,7 +389,7 @@ class DupItApi(recipe_api.RecipeApi):
     ]).strip()
     if symlinks:
       stdin = self.m.raw_io.input_text(symlinks)
-      new_symlinked = self._tmp_distfile_lists_path.join('new_symlinked.txt')
+      new_symlinked = self._tmp_distfile_lists_path / 'new_symlinked.txt'
       stdout = self.m.raw_io.output(leak_to=new_symlinked,
                                     name=self.m.path.basename(new_symlinked),
                                     add_output_log=True)
@@ -403,7 +403,7 @@ class DupItApi(recipe_api.RecipeApi):
       # (b/273524588) Remove leading `../` from paths. As of rsync 3.1.2 this
       # is no longer allowed since the files being received aren't the same as
       # those in the --files-from list.
-      fixed_symlinked = self._tmp_distfile_lists_path.join(
+      fixed_symlinked = self._tmp_distfile_lists_path.joinpath(
           'fixed_symlinked.txt')
       stdout = self.m.raw_io.output(leak_to=fixed_symlinked,
                                     name=self.m.path.basename(fixed_symlinked),

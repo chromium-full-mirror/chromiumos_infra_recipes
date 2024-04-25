@@ -76,11 +76,11 @@ class CrosSdkApi(RecipeApi):
       chroot_parent_path (Path): Parent for chroot directory.
     """
     with self.m.step.nest('configure chroot path'):
-      self._cache_path = chroot_parent_path.join('cros_chroot')
-      self._chroot_path = self._cache_path.join('chroot')
-      self._out_path = self._cache_path.join('out')
+      self._cache_path = chroot_parent_path / 'cros_chroot'
+      self._chroot_path = self._cache_path / 'chroot'
+      self._out_path = self._cache_path / 'out'
       self._sdk_cache_state = None
-      self._sdk_cache_state_file = self._cache_path.join('sdk_cache_state.json')
+      self._sdk_cache_state_file = self._cache_path / 'sdk_cache_state.json'
       self._chrome_root = None
       self._reclient_dir = None
       self._reproxy_cfg_file = None
@@ -408,7 +408,7 @@ class CrosSdkApi(RecipeApi):
       self.m.file.ensure_directory('ensure %s' % checkout_basename,
                                    checkout_path)
 
-      chroot_link = checkout_path.join('chroot')
+      chroot_link = checkout_path / 'chroot'
       if self.m.path.exists(chroot_link):
         self.m.file.remove('remove original chroot link', chroot_link)
 
@@ -544,7 +544,7 @@ class CrosSdkApi(RecipeApi):
 
     checkout_basename = self.m.path.basename(checkout_path)
     with self.m.step.nest('unlink chroot in %s' % checkout_basename):
-      chroot_link = checkout_path.join('chroot')
+      chroot_link = checkout_path / 'chroot'
       if self.m.path.exists(chroot_link):
         self.m.file.remove('remove original chroot link', chroot_link)
 
@@ -592,7 +592,7 @@ class CrosSdkApi(RecipeApi):
     Returns:
       A dict representing fields and values found in the file.
     """
-    filepath = self.m.cros_source.workspace_path.join(_SDK_VERSION_PROJECT_PATH)
+    filepath = self.m.cros_source.workspace_path / _SDK_VERSION_PROJECT_PATH
     lines = self.m.file.read_text(
         'read sdk_version.conf', filepath,
         test_data=_SDK_VERSION_CONF_TEST_DATA).strip().split('\n')

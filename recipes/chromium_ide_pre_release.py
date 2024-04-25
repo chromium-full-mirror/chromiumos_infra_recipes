@@ -41,9 +41,10 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
         api.git.checkout('v0.39.7')
         api.step('install node', ['sh', '-c', '. ./nvm.sh && nvm install 18'])
       version = api.step('locating node version',
-                         ['ls', nvmroot.join('versions/node')],
+                         ['ls', nvmroot / 'versions/node'],
                          stdout=api.raw_io.output_text()).stdout.strip()
-    nodebinpath = nvmroot.join('versions/node').join(version).join('bin')
+    nodebinpath = nvmroot.joinpath('versions/node').join(version).joinpath(
+        'bin')
 
   with api.context(
       env={'PATH': api.path.pathsep.join([str(nodebinpath), '%(PATH)s'])}):
@@ -55,7 +56,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
       commit = api.src_state.internal_manifest.as_gitiles_commit_proto
     with api.build_menu.configure_builder(missing_ok=True, commit=commit):
       with api.build_menu.setup_workspace():
-        project_dir = api.cros_source.workspace_path.join(
+        project_dir = api.cros_source.workspace_path.joinpath(
             'infra/ide/chromiumide')
 
         with api.context(cwd=project_dir):

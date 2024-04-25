@@ -26,10 +26,10 @@ PROPERTIES = ImageBuilderProperties
 
 
 def RunSteps(api, properties):
-  repo_root = api.path.start_dir.join('repo')
-  api.path.mock_add_paths(repo_root.join('.repo'))
+  repo_root = api.path.start_dir / 'repo'
+  api.path.mock_add_paths(repo_root / '.repo')
 
-  with api.context(cwd=repo_root.join('manifest-internal')):
+  with api.context(cwd=repo_root / 'manifest-internal'):
     init_opts = MessageToDict(properties.init_opts,
                               preserving_proto_field_name=True)
     init_opts['manifest_branch'] = 'snapshot'
@@ -37,7 +37,7 @@ def RunSteps(api, properties):
     sync_opts = MessageToDict(properties.sync_opts,
                               preserving_proto_field_name=True)
 
-    repo_state_path = repo_root.join('.recipes_state.json')
+    repo_state_path = repo_root / '.recipes_state.json'
     api.path.mock_add_paths(repo_state_path)
     api.repo.ensure_synced_checkout(repo_root, manifest_url,
                                     init_opts=init_opts, sync_opts=sync_opts,

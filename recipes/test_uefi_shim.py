@@ -37,7 +37,7 @@ def _calc_sha256_digest(api: RecipeApi, repo_dir: Path, name: str) -> str:
   """Calculate the SHA256 digest for the contents of the file at `name`."""
   # The shim binaries are fairly small (currently less than one MB) so
   # no need to chunk the read.
-  path = repo_dir.join(name)
+  path = repo_dir / name
   content = api.file.read_raw('read file ' + name, path, test_data=name)
   return hashlib.sha256(content).hexdigest()
 

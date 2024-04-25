@@ -66,7 +66,7 @@ def UploadTestResults(api, location, builder_name):
         try:
           rdb_cmd = [
               'vpython3',
-              cros_src_path.join('src/platform/ec/util/zephyr_to_resultdb.py'),
+              cros_src_path / 'src/platform/ec/util/zephyr_to_resultdb.py',
               '--result=' + str(test_results), '--upload=True'
           ]
           base_variant = {'builder_name': builder_name}
@@ -264,7 +264,7 @@ def CreateTi50TastArtifacts(api, location, config):
 def _read_chromiumos_sdk_pin(api, properties):
   if properties.chromiumos_sdk_pin_file:
     with api.step.nest('read chromiumos-sdk pin'):
-      filepath = api.src_state.workspace_path.join(
+      filepath = api.src_state.workspace_path.joinpath(
           properties.chromiumos_sdk_pin_file)
       return api.file.read_text('read {}'.format(filepath), filepath).strip()
   return None

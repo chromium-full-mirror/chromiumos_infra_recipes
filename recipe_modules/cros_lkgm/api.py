@@ -156,7 +156,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                           step_text=step_text)
         return
 
-    script_path = self.m.cros_source.workspace_path.join(
+    script_path = self.m.cros_source.workspace_path.joinpath(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
     cmd = [
         script_path,
@@ -182,7 +182,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         presentation.step_text = 'LKGM is not enabled. Do nothing.'
         return
 
-      script_path = self.m.cros_source.workspace_path.join(
+      script_path = self.m.cros_source.workspace_path.joinpath(
           'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
       cmd = [
           script_path,

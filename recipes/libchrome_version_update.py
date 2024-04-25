@@ -27,7 +27,7 @@ _LIBCHROME_ECLASS_PATH = 'eclass/libchrome-version.eclass'
 def get_latest_version(api: RecipeApi, project_dir: Path, pkg_group: str,
                        pkg_name: str) -> int:
   files = api.file.listdir(
-      'list %s ebuilds' % (pkg_name), project_dir.join(pkg_group, pkg_name),
+      'list %s ebuilds' % (pkg_name), project_dir.joinpath(pkg_group, pkg_name),
       test_data=[
           'files',
           'libchrome-9999.ebuild',
@@ -68,7 +68,7 @@ def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(disable_sdk=True, missing_ok=True,
                                         commit=commit):
     with api.build_menu.setup_workspace():
-      project_dir = api.cros_source.workspace_path.join(
+      project_dir = api.cros_source.workspace_path.joinpath(
           'src/third_party/chromiumos-overlay')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
@@ -76,7 +76,7 @@ def RunSteps(api: RecipeApi):
           update_eclass(api, project_dir, 'chromeos-base', 'libchrome')
           update_eclass(api, project_dir, 'chromeos-base', 'libbrillo')
           api.file.read_text('display new eclass',
-                             project_dir.join(_LIBCHROME_ECLASS_PATH))
+                             project_dir / _LIBCHROME_ECLASS_PATH)
           api.git.add([_LIBCHROME_ECLASS_PATH])
 
         if api.git.get_working_dir_diff_files():

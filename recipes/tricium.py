@@ -127,7 +127,7 @@ def _FullCheckout(api: RecipeApi):
           if project.branch and api.git.extract_branch(
               project.branch, project.branch) == api.git.extract_branch(
                   patch_set.branch, patch_set.branch):
-            project_path = workpath.join(project.path)
+            project_path = workpath / project.path
             break
         if not project_path:
           presentation.status = api.step.FAILURE

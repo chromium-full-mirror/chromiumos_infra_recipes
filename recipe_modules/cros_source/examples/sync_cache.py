@@ -28,7 +28,7 @@ def RunSteps(api, properties):
   api.cros_source.configure_builder(default_main=True)
   path = None
   if properties.cache_path_override:
-    path = api.path.cache_dir.join(properties.cache_path_override)
+    path = api.path.cache_dir / properties.cache_path_override
   manifest_branch = 'release-R90-13816.B'
   with api.cros_source.checkout_overlays_context():
     api.cros_source.ensure_synced_cache(

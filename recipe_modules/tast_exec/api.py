@@ -114,7 +114,7 @@ class TastExecApi(RecipeApi):
       self.m.git.clone(
           'https://chrome-internal.googlesource.com/chromeos/sshkeys',
           branch='main', target_path=sshkeys_dir, depth=1)
-      partner_key_path = sshkeys_dir.join('partner_testing_rsa')
+      partner_key_path = sshkeys_dir / 'partner_testing_rsa'
       self.add_ssh_key(partner_key_path)
 
   def download_tast(self, build_payload, test_artifacts_dir):
@@ -128,7 +128,7 @@ class TastExecApi(RecipeApi):
     """
     with self.m.step.nest('setup tast') as presentation:
       presentation.text = 'download tast executable'
-      sp_tar_file = test_artifacts_dir.join('autotest_server_package.tar.bz2')
+      sp_tar_file = test_artifacts_dir / 'autotest_server_package.tar.bz2'
       archive_path = os.path.join(build_payload.artifacts_gs_path,
                                   'autotest_server_package.tar.bz2')
       self.m.gsutil.download(build_payload.artifacts_gs_bucket, archive_path,
@@ -153,11 +153,11 @@ class TastExecApi(RecipeApi):
         image_archive_dir.
     """
     with self.m.step.nest('setup vm image'):
-      test_image_zip = vm_dir.join('image.zip')
-      test_image_dir = vm_dir.join('image')
-      vm_image_path = test_image_dir.join(VM_IMAGE_NAME)
-      qcow_image_path = test_image_dir.join(QCOW_IMG_NAME)
-      private_key_path = test_image_dir.join(PRIVATE_KEY_NAME)
+      test_image_zip = vm_dir / 'image.zip'
+      test_image_dir = vm_dir / 'image'
+      vm_image_path = test_image_dir / VM_IMAGE_NAME
+      qcow_image_path = test_image_dir / QCOW_IMG_NAME
+      private_key_path = test_image_dir / PRIVATE_KEY_NAME
       self.m.gsutil.download(
           build_payload.artifacts_gs_bucket,
           os.path.join(build_payload.artifacts_gs_path, 'image.zip'),
@@ -259,14 +259,14 @@ class TastExecApi(RecipeApi):
       A copy of TastInputs with potentially modified flags.
     """
     tast_inputs = tast_inputs.copy()
-    if self._flag_exists(
-        tast_inputs.test_artifacts_dir.join('tast'), 'systemservicestimeout'):
+    if self._flag_exists(tast_inputs.test_artifacts_dir / 'tast',
+                         'systemservicestimeout'):
       tast_inputs.run_args.append('-systemservicestimeout={}'.format(
           self._vm_system_services_timeout))
 
     # Check if the shardmethod flag exists before passing it in.
-    if not self._flag_exists(
-        tast_inputs.test_artifacts_dir.join('tast'), 'shardmethod'):
+    if not self._flag_exists(tast_inputs.test_artifacts_dir / 'tast',
+                             'shardmethod'):
       tast_inputs.shard_args = [
           x for x in tast_inputs.shard_args if not x.startswith('-shardmethod')
       ]
@@ -317,7 +317,7 @@ class TastExecApi(RecipeApi):
     """
     # Used by tast to determine where to download private bundles.
     tast_inputs = tast_inputs.copy()
-    tast_inputs.test_artifacts_dir = tast_inputs.test_artifacts_dir.join('tast')
+    tast_inputs.test_artifacts_dir = tast_inputs.test_artifacts_dir / 'tast'
     tests = self._list_tests(dut_name, tast_inputs)
     if tests:
       self._run_tests(dut_name, tast_inputs, test_results_dir)
@@ -361,7 +361,7 @@ class TastExecApi(RecipeApi):
     # Remove the tempdir.
     self.m.file.remove('remove temporary artifacts', VM_ARTIFACT_TEMPDIR)
     cmd = self._get_scp_cmd(host, port, VM_ARTIFACT_TARBALL,
-                            str(output_dir.join(ARTIFACT_TARBALL_NAME)))
+                            str(output_dir / ARTIFACT_TARBALL_NAME))
     self.m.step('download artifacts from VM', cmd, infra_step=True,
                 timeout=5 * 60)
 
@@ -373,17 +373,17 @@ class TastExecApi(RecipeApi):
                   ] if self._sshkeys_dir else []
 
     list_stdout = self.m.easy.stdout_step('tast list', [
-        str(tast_dir.join('tast')), \
+        str(tast_dir / 'tast'), \
         'list', \
         '-build=false', \
         private_bundles_str, \
         '-buildartifactsurl={}'.format(tast_inputs.build_artifacts_url()), \
         '-remotebundledir={}'.format(
-            str(tast_dir.join('bundles').join('remote'))), \
+            str(tast_dir.joinpath('bundles').joinpath('remote'))), \
         '-remotedatadir={}'.format(str(
-            tast_dir.join('data'))), \
+            tast_dir / 'data')), \
         '-remoterunner={}'.format(
-            str(tast_dir.join('remote_test_runner')))] + \
+            str(tast_dir / 'remote_test_runner'))] + \
     keydir_args + \
     tast_inputs.shard_args + \
     [dut_name] + \
@@ -396,7 +396,7 @@ class TastExecApi(RecipeApi):
   def _flag_exists(self, tast_dir, flag_name):
     if not self._tast_cli_supported_flags:
       tast_help_stdout = self.m.easy.stdout_step('tast help run', [
-          str(tast_dir.join('tast')), \
+          str(tast_dir / 'tast'), \
           'help', \
           'run'], test_stdout='-shardmethod\n-systemservicestimeout').decode('utf-8')
       self._tast_cli_supported_flags = [
@@ -420,7 +420,7 @@ class TastExecApi(RecipeApi):
                   ] if self._sshkeys_dir else []
 
     self.m.step('tast run', [
-        str(tast_dir.join('tast')), \
+        str(tast_dir / 'tast'), \
         '-verbose', \
         'run', \
         '-build=false', \
@@ -431,14 +431,14 @@ class TastExecApi(RecipeApi):
         '-continueafterfailure', \
         '-extrauseflags=tast_vm', \
         '-var=setup.FieldTrialConfig=disable',
-        '-defaultvarsdir={}'.format(str(tast_dir.join('vars'))), \
+        '-defaultvarsdir={}'.format(str(tast_dir / 'vars')), \
         '-resultsdir', str(test_results_dir), \
         '-remotebundledir={}'.format(
-            str(tast_dir.join('bundles').join('remote'))), \
+            str(tast_dir.joinpath('bundles').joinpath('remote'))), \
         '-remotedatadir={}'.format(str(
-            tast_dir.join('data'))), \
+            tast_dir / 'data')), \
         '-remoterunner={}'.format(
-            str(tast_dir.join('remote_test_runner')))] + \
+            str(tast_dir / 'remote_test_runner'))] + \
         keydir_args + \
         maybemissingvars_args + \
         tast_inputs.run_args + \
@@ -466,7 +466,7 @@ class TastExecApi(RecipeApi):
       kvm_monitor_file = self.m.path.mkstemp(prefix='kvm-monitor')
       kvm_monitor_serial_file = self.m.path.mkstemp(prefix='kvm-monitor-serial')
       overlay_dir = self.m.path.mkdtemp(prefix='image-overlay')
-      overlay_image_path = overlay_dir.join(QCOW_IMG_NAME)
+      overlay_image_path = overlay_dir / QCOW_IMG_NAME
 
       self._launch_vm(qcow_image_path, overlay_image_path, kvm_pid_file,
                       kvm_monitor_file, kvm_monitor_serial_file,

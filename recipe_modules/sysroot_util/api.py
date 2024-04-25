@@ -275,13 +275,13 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           # recipe to pull it or update the SDK accordingly.
           if not bazel_build:
             # This will change the return from _InstallPackagesRequest().
-            chrome_root = self.m.path.start_dir.join('chrome')
+            chrome_root = self.m.path.start_dir / 'chrome'
             self.m.chrome.cache_sync(cache_path=chrome_root, sync=False,
                                      step_name='populate chrome cache')
             self.m.chrome.sync(chrome_root, self.m.cros_sdk.chroot,
                                self.sysroot.build_target,
                                config.chrome.internal,
-                               cache_dir=chrome_root.join('chrome_cache'))
+                               cache_dir=chrome_root / 'chrome_cache')
             self.m.cros_sdk.set_chrome_root(chrome_root)
 
           if install_packages.use_remoteexec:
@@ -373,7 +373,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       # These path parts were created by manually evaluating the code in
       # CreateNetboot and hard-coding the current values.
-      scripts_dir = self.m.src_state.workspace_path.join('src/scripts')
+      scripts_dir = self.m.src_state.workspace_path / 'src/scripts'
       image_dir = f'/mnt/host/source/src/build/images/{board}/factory_shim'
 
       with self.m.context(cwd=scripts_dir):
@@ -424,7 +424,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       # Also, we don't have a good way to test when a path does not exist. See:
       # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
       # NB: this path construction is a hack and should be removed.
-      chroot_tmp_path = self.m.src_state.workspace_path.join('chroot/tmp')
+      chroot_tmp_path = self.m.src_state.workspace_path / 'chroot/tmp'
       if self.m.path.exists(chroot_tmp_path):  # pragma: nocover
         chmod_cmd = [
             'sudo', '-n', 'chmod', '-R', 'u=rwx,g=rwx,o=rwx,-t', chroot_tmp_path
@@ -437,7 +437,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             success=True, images=[
                 Image(
                     type=x, path=str(
-                        self.m.path.start_dir.join(
+                        self.m.path.start_dir.joinpath(
                             self._image_type_to_fname(x))),
                     build_target=self.sysroot.build_target) for x in image_types
             ]))

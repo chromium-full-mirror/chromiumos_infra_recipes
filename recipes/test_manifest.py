@@ -80,7 +80,7 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
               project_paths = api.cros_source.find_project_paths(
                   patch_set.project, patch_set.branch)
               for project_path in project_paths:
-                path = api.cros_source.workspace_path.join(project_path)
+                path = api.cros_source.workspace_path / project_path
                 with api.context(cwd=path):
                   head_commit = api.git.head_commit()
                   git_show_cmd = [
@@ -127,7 +127,7 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
     if projects:
       project_infos = api.repo.project_infos(projects=projects)
       for project_info in project_infos:
-        manifest_path = api.cros_source.workspace_path.join(
+        manifest_path = api.cros_source.workspace_path.joinpath(
             project_info.path, 'default.xml')
         branch = project_info.branch_name
         # Test cros branch on the listed projects, but only on the checked out
@@ -149,7 +149,7 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
 
 def GenTests(api: RecipeTestApi):
   internal_exists = api.path.exists(
-      api.src_state.workspace_path.join(
+      api.src_state.workspace_path.joinpath(
           'src/chromeos/manifest-internal/default.xml'))
   common_args = [
       api.cv(run_mode=api.cv.FULL_RUN),
@@ -168,7 +168,7 @@ def GenTests(api: RecipeTestApi):
       'with-manifest-changes',
       api.buildbucket.try_build(project='chromiumos/manifest'),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/chromiumos/manifest/default.xml')), *common_args)
 
   head_commit_no_changes = '''

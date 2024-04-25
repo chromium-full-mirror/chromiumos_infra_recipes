@@ -134,11 +134,11 @@ class ChromeApi(recipe_api.RecipeApi):
 
     """
     with self.m.step.nest(step_name):
-      src_dir = cache_path.join('src')
+      src_dir = cache_path / 'src'
       self.m.file.ensure_directory('ensure chrome src directory', src_dir)
       self.m.file.ensure_directory('ensure chrome cache directory',
-                                   cache_path.join('chrome_cache'))
-      config_exists = self.m.path.exists(src_dir.join('.gclient'))
+                                   cache_path / 'chrome_cache')
+      config_exists = self.m.path.exists(src_dir / '.gclient')
       with self.m.context(cwd=src_dir), \
           self.m.depot_tools.on_path():
         if not config_exists:
@@ -157,7 +157,7 @@ class ChromeApi(recipe_api.RecipeApi):
             '--reset-fetch-config',
         ]
         self.m.step('populate git cache',
-                    [self.m.depot_tools.root.join('git_cache.py')] + cache_cmd,
+                    [self.m.depot_tools.root / 'git_cache.py'] + cache_cmd,
                     infra_step=True)
         if sync:
           gclient_sync_cmd = [
@@ -184,9 +184,9 @@ class ChromeApi(recipe_api.RecipeApi):
     """
 
     def _get_cache_head() -> Optional[str]:
-      src_dir = self._chrome_root.join('chrome_cache').join(
+      src_dir = self._chrome_root.joinpath('chrome_cache').joinpath(
           'chromium.googlesource.com-chromium-src')
-      head_file = src_dir.join('HEAD')
+      head_file = src_dir / 'HEAD'
       regex = re.search(r'(?<=ref:\s)\S+',
                         self.m.file.read_text('read HEAD ref', head_file))
       if regex:
@@ -194,7 +194,7 @@ class ChromeApi(recipe_api.RecipeApi):
       else:
         return None
       return self.m.file.read_text('read HEAD hash',
-                                   src_dir.join(head_ref)).replace('\n', '')
+                                   src_dir / head_ref).replace('\n', '')
 
     def _sync_chrome_source(builder_config: BuilderConfig) -> None:
       with self.m.step.nest('sync chrome source async'):
@@ -206,10 +206,10 @@ class ChromeApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(chrome_cache_head=cache_head)
         self.sync(chrome_root, self.m.cros_sdk.chroot, build_target,
                   builder_config.chrome.internal,
-                  cache_dir=chrome_root.join('chrome_cache'),
+                  cache_dir=chrome_root / 'chrome_cache',
                   override_version=cache_head, omit_version=not cache_head)
 
-    self._chrome_root = self.m.path.start_dir.join('chrome')
+    self._chrome_root = self.m.path.start_dir / 'chrome'
     self._parallel_runner = self.m.future_utils.create_parallel_runner()
     self._parallel_runner.run_function_async(
         lambda cfg, _: _sync_chrome_source(cfg), config)
@@ -318,7 +318,7 @@ class ChromeApi(recipe_api.RecipeApi):
               # Reads what we just wrote for user consumption.
               gclient_text = (
                   self.m.file.read_text(
-                      'gclient contents', chrome_root.join('.gclient'),
+                      'gclient contents', chrome_root / '.gclient',
                       test_data='solutions = [ {"name":"src"}]'))
               pres.logs['gclient configuration'] = gclient_text.splitlines()
 

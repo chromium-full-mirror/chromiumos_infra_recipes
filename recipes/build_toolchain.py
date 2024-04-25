@@ -209,7 +209,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
     with api.step.nest('get binhost file revisions'):
       for filename in BINHOST_FILES:
         with api.context(
-            cwd=api.workspace_util.workspace_path.join(
+            cwd=api.workspace_util.workspace_path.joinpath(
                 os.path.dirname(filename))):
           result = api.step(f'get revision of {filename}', [
               'git',
@@ -381,7 +381,7 @@ def RunSteps(api: RecipeApi, properties: BuildToolchainProperties) -> None:
     with api.step.nest('check that binhost files are up-to-date'):
       for filename, rev in binhost_revs.items():
         dirname, basename = os.path.split(filename)
-        with api.context(cwd=api.workspace_util.workspace_path.join(dirname)):
+        with api.context(cwd=api.workspace_util.workspace_path / dirname):
           api.step(f'fetching latest source for {filename}', [
               'git',
               'fetch',

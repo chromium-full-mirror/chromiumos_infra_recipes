@@ -151,11 +151,11 @@ def create_portage_workaround(api):
   for program in ['reef', 'fizz']:
     _copy_baseboard(
         step_text='[%s] configuring public baseboard overlay' % program,
-        src_path=path_cros_repo.join(
+        src_path=path_cros_repo.joinpath(
             'src/overlays/baseboard-{}'.format(program),
             config_paths[program]['public_baseboard'],
         ),
-        dst_path=path_cros_repo.join(
+        dst_path=path_cros_repo.joinpath(
             'src/overlays/overlay-{}'.format(program),
             config_paths[program]['public_overlay'],
         ),
@@ -163,11 +163,11 @@ def create_portage_workaround(api):
 
     _copy_baseboard(
         step_text='[%s] configuring private baseboard overlay' % program,
-        src_path=path_cros_repo.join(
+        src_path=path_cros_repo.joinpath(
             'src/private-overlays/baseboard-{}-private'.format(program),
             config_paths[program]['private_baseboard'],
         ),
-        dst_path=path_cros_repo.join(
+        dst_path=path_cros_repo.joinpath(
             'src/private-overlays/overlay-{}-private'.format(program),
             config_paths[program]['private_overlay'],
         ),
@@ -249,7 +249,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
   def merge():
     """Execute merge operation on repo"""
 
-    path_project_repo = path_cros_repo.join('src/project/{}/{}'.format(
+    path_project_repo = path_cros_repo.joinpath('src/project/{}/{}'.format(
         config.program_name.lower(),
         config.project_name.lower(),
     ))
@@ -260,19 +260,19 @@ def config_merger(api, config, path_cros_repo, step_pres):
     if len(download_dirs) > 0:
       path_config_yaml = download_dirs[0]
 
-    path_imported = path_project_repo.join('imported')
-    path_generated = path_project_repo.join('generated')
+    path_imported = path_project_repo / 'imported'
+    path_generated = path_project_repo / 'generated'
 
     path_public_yaml = None
     if config.public_yaml_path:
-      path_public_yaml = path_cros_repo.join(
+      path_public_yaml = path_cros_repo.joinpath(
           PATH_CROS_OVERLAYS,
           config.public_yaml_path,
       )
 
     path_private_yaml = None
     if config.HasField('private_yaml'):
-      path_private_yaml = path_cros_repo.join(
+      path_private_yaml = path_cros_repo.joinpath(
           PATH_CROS_OVERLAYS_PRIVATE,
           split_overlay_project(api, config.private_yaml.repo).split('/')[-1],
           config.private_yaml.path,
@@ -280,7 +280,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
     path_hwid = None
     if config.hwid_key:
-      path_hwid = path_cros_repo.join(
+      path_hwid = path_cros_repo.joinpath(
           PATH_CROS_HWID,
           'v3/{}'.format(config.hwid_key),
       )
@@ -333,7 +333,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
       api.path.mock_add_paths(path_config_bundle)
 
       # Merge backfilled data into a ConfigBundle payload
-      cmd = [path_cros_repo.join(PATH_CROS_CONFIG, JOIN_SCRIPT_PATH)]
+      cmd = [path_cros_repo.joinpath(PATH_CROS_CONFIG, JOIN_SCRIPT_PATH)]
       cmd += ['--log', 'DEBUG']
       cmd += ['--project-name', config.project_name]
       cmd += ['--program-name', config.program_name]
@@ -365,7 +365,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
         api.step('Generate imported configuration', [
             'vpython3',
             '-vpython-spec',
-            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython'),
+            path_cros_repo.joinpath(PATH_CROS_CONFIG, '.vpython'),
             '-vpython-log-level',
             'info',
         ] + cmd + [
@@ -380,7 +380,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
         api.step('Generate joined configuration', [
             'vpython3',
             '-vpython-spec',
-            path_cros_repo.join(PATH_CROS_CONFIG, '.vpython'),
+            path_cros_repo.joinpath(PATH_CROS_CONFIG, '.vpython'),
             '-vpython-log-level',
             'info',
         ] + cmd + [
@@ -432,7 +432,7 @@ def backfill_project(api, config):
   project = config.project_name.lower()
 
   path_cros_repo = api.context.cwd
-  path_project_repo = path_cros_repo.join('src/project/{}/{}'.format(
+  path_project_repo = path_cros_repo.joinpath('src/project/{}/{}'.format(
       program, project))
 
   with api.step.nest('processing {}/{}'.format(program,
@@ -588,7 +588,7 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def mock_workspace_path(path):
-    return api.path.exists(api.src_state.workspace_path.join(path))
+    return api.path.exists(api.src_state.workspace_path / path)
 
   def generate_mock_build(include_artifacts=True, include_config_yaml=True,
                           include_gs_bucket=True):

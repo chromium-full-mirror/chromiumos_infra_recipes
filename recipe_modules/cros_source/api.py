@@ -103,7 +103,7 @@ class CrosSourceApi(RecipeApi):
     """Initialization that follows all module loading."""
     # Check if there is already a workspace directory, and note that.
     # See b/188555398.
-    workspace = self.m.path.start_dir.join('chromiumos_workspace')
+    workspace = self.m.path.start_dir / 'chromiumos_workspace'
     if self.m.path.exists(workspace):
       with self.m.step.nest('found pre-existing {}'.format(str(workspace))):
         self.m.easy.set_properties_step(preexisting_workspace=True)
@@ -203,7 +203,7 @@ class CrosSourceApi(RecipeApi):
     usually updated once at the beginning of a build and then mounted into the
     workspace path.
     """
-    return self.m.path.cache_dir.join(self._cache_name)
+    return self.m.path.cache_dir / self._cache_name
 
   @property
   def workspace_path(self):
@@ -469,7 +469,7 @@ class CrosSourceApi(RecipeApi):
     # by touching it before we sync the cache and create the overlayfs
     if cache_path == self.workspace_path and not self._workspace_mounted:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
-      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+      self.m.path.mock_add_paths(self.workspace_path / '.repo')
       self._workspace_mounted = True
 
     gitiles_commit = gitiles_commit or self.m.src_state.gitiles_commit
@@ -531,7 +531,7 @@ class CrosSourceApi(RecipeApi):
                   self.m.src_state.build_manifest,
                   self.m.src_state.external_manifest
               ]), key=lambda x: x.url):
-            with self.m.context(cwd=cache_path.join(man.relpath)):
+            with self.m.context(cwd=cache_path / man.relpath):
               step_name = 'sync {} branches'.format(man.project)
               self.m.git.remote_update(step_name=step_name)
 
@@ -540,7 +540,7 @@ class CrosSourceApi(RecipeApi):
     # Finally, create the workspace overlay.
     if cache_path != self.workspace_path:
       self.m.overlayfs.mount('workspace', self.cache_path, self.workspace_path)
-      self.m.path.mock_add_paths(self.workspace_path.join('.repo'))
+      self.m.path.mock_add_paths(self.workspace_path / '.repo')
       self._workspace_mounted = True
 
   def _gitiles_branch(self, ref):
@@ -784,7 +784,7 @@ class CrosSourceApi(RecipeApi):
     snapshot = snapshot or self.m.src_state.gitiles_commit
     manifest_dir = self.m.path.basename(snapshot.project)
 
-    with self.m.context(cwd=self.workspace_path.join(manifest_dir)):
+    with self.m.context(cwd=self.workspace_path / manifest_dir):
       return self.m.git.fetch_refs(
           'https://{}/{}'.format(snapshot.host, snapshot.project), snapshot.id,
           count=count)
@@ -822,7 +822,7 @@ class CrosSourceApi(RecipeApi):
 
       # Sync all branches of the internal manifest, so that we
       # can find branches.
-      with self.m.context(cwd=self.cache_path.join(manifest.relpath)):
+      with self.m.context(cwd=self.cache_path / manifest.relpath):
         step_name = 'sync {} branches'.format(manifest.project)
         self.m.git.remote_update(step_name=step_name)
 
@@ -843,7 +843,7 @@ class CrosSourceApi(RecipeApi):
             recovery_snapshot=self._recovery_snapshot)
         self.m.overlayfs.mount(self._cache_name, lower_dir, self.cache_path,
                                persist=True)
-        self.m.path.mock_add_paths(self.cache_path.join('.repo'))
+        self.m.path.mock_add_paths(self.cache_path / '.repo')
         # Explicitly do not mount the workspace overlay at this time, to prevent
         # recipes from accidentally trashing their view of the source tree by
         # accessing it before ensure_synced_cache() is called.
@@ -925,7 +925,7 @@ class CrosSourceApi(RecipeApi):
     """
     patch = self.m.gerrit.fetch_patch_sets([change])[0]
     project_path = self.find_project_paths(change.project, patch.branch)[0]
-    with self.m.context(cwd=self.workspace_path.join(project_path)):
+    with self.m.context(cwd=self.workspace_path / project_path):
       # Convert e.g. chromium-review.googlesource.com to e.g.
       # chromium.googlesource.com.
       remote_url = 'https://{}/{}'.format(
@@ -1035,7 +1035,7 @@ class CrosSourceApi(RecipeApi):
               target_path=manifests.intern.path,
               # TODO(b/266145294): Find out why it started failing when we pass
               # in reference.
-              # reference=self.cache_path.join(manifests.intern.relpath),
+              # reference=self.cache_path / manifests.intern.relpath,
               dissociate=True,
               timeout_sec=60 * 60)
           # Also, check out the correct branch of the internal manifest.
@@ -1304,7 +1304,7 @@ class CrosSourceApi(RecipeApi):
       is_abs_path (bool): Whether the project path is an absolute path. The
         default is False meaning the project_path is relative to the workspace.
     """
-    path = project_path if is_abs_path else self.workspace_path.join(
+    path = project_path if is_abs_path else self.workspace_path.joinpath(
         project_path)
     with self.m.context(cwd=path):
       commit = self.m.git.fetch_ref(patch.git_fetch_url, patch.git_fetch_ref)
@@ -1495,7 +1495,7 @@ class CrosSourceApi(RecipeApi):
     self.m.cas.download('download snapshot.xml from cas', digest=sc.digest,
                         output_dir=snapshot_dir)
     return self.m.file.read_text('read snapshot.xml',
-                                 snapshot_dir.join('snapshot.xml'),
+                                 snapshot_dir / 'snapshot.xml',
                                  test_data='<manifest></manifest>')
 
   def _get_manifest_from_gitiles(self, gitiles_commit, projects=None):

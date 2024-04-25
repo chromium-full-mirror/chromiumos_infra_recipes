@@ -93,7 +93,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
   @property
   def _code_coverage_root(self):
-    return self.m.path.start_dir.join('code_coverage')
+    return self.m.path.start_dir / 'code_coverage'
 
   def upload_firmware_lcov(
       self, tarfile, step_name='upload code coverage data (firmware lcov)'):
@@ -167,7 +167,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
         workdir = self.m.path.mkdtemp(prefix='ccov-upload')
         with self.m.context(cwd=workdir):
-          path_to_extracted_files = workdir.join('out')
+          path_to_extracted_files = workdir / 'out'
           self.m.archive.extract(
               f'untar {self.m.path.basename(tarfile)}',
               archive_file=str(tarfile),
@@ -263,7 +263,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
     """
     gs_path = self.m.path.join('active_version', board, ACTIVE_VERSION_FILENAME)
     with self.m.step.nest('verify active version'):
-      path = self.metadata_dir.join(ACTIVE_VERSION_FILENAME)
+      path = self.metadata_dir / ACTIVE_VERSION_FILENAME
       self.m.gsutil.download(E2E_COVERAGE_BUCKET_NAME, gs_path, path)
       contents = json.loads(
           self.m.file.read_text(name='read current active version', source=path,
@@ -393,9 +393,9 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                            ABSOLUTE_COVERAGE_CIPD_VERSION)
           self.m.cipd.ensure(self._code_coverage_root, pkgs)
 
-          self._incremental_coverage_tool = self._code_coverage_root.join(
+          self._incremental_coverage_tool = self._code_coverage_root.joinpath(
               INCREMENTAL_COVERAGE_CIPD_FILE)
-          self._absolute_coverage_tool = self._code_coverage_root.join(
+          self._absolute_coverage_tool = self._code_coverage_root.joinpath(
               ABSOLUTE_COVERAGE_CIPD_FILE)
 
   def _write_cleaned_coverage_file(self, path_to_coverage_file,
@@ -405,7 +405,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       return path_to_coverage_file
 
     tmp_dir = self.m.path.mkdtemp(prefix='cleaned-coverage')
-    cleaned_path_file = tmp_dir.join('cleaned.file')
+    cleaned_path_file = tmp_dir / 'cleaned.file'
 
     self.m.step(
         'writing cleaned coverage file',
@@ -484,7 +484,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                 coverage_data.append(file_data_copy)
 
         # Write out the results and return the path to the filtered file.
-        filtered_path_file = tmp_dir.join(f'filtered.file.{change}')
+        filtered_path_file = tmp_dir / f'filtered.file.{change}'
         self.m.file.write_json(
             'write filtered file', filtered_path_file, {
                 'data': [{

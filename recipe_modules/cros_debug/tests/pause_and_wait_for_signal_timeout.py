@@ -21,7 +21,7 @@ DEPS = [
 
 def RunSteps(api):
   path = api.path.mkdtemp()
-  api.path.mock_add_paths(path.join('resume'))
+  api.path.mock_add_paths(path / 'resume')
   api.cros_debug.pause_and_wait_for_signal(timeout=6 * 60 * 600,
                                            test_location_override=path)
 

@@ -17,8 +17,8 @@ DEPS = [
 
 def RunSteps(api):
   with api.step.nest('sync chrome'):
-    cache_path = api.path.cleanup_dir.join('snapshot_chrome')
-    with api.context(cwd=cache_path.join('src')):
+    cache_path = api.path.cleanup_dir / 'snapshot_chrome'
+    with api.context(cwd=cache_path / 'src'):
       api.chrome.cache_sync(cache_path=cache_path)
 
 

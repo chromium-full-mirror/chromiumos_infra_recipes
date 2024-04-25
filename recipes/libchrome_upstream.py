@@ -37,7 +37,7 @@ def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(disable_sdk=True, missing_ok=True,
                                         commit=commit):
     with api.build_menu.setup_workspace():
-      project_dir = api.cros_source.workspace_path.join(
+      project_dir = api.cros_source.workspace_path.joinpath(
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
@@ -46,13 +46,13 @@ def RunSteps(api: RecipeApi):
             chrome_cache_dir = api.path.mkdtemp()
             api.chrome.cache_sync(cache_path=chrome_cache_dir, sync=False,
                                   step_name='populate cached chrome')
-            chrome_cache_objects_dir = chrome_cache_dir.join(
+            chrome_cache_objects_dir = chrome_cache_dir.joinpath(
                 CHROMIUM_OBJECTS_CACHE)
-            git_objects_info_dir = project_dir.join('.git/objects/info')
+            git_objects_info_dir = project_dir / '.git/objects/info'
             api.file.ensure_directory('ensure .git/objects/info',
                                       git_objects_info_dir)
             api.file.write_text('create chrome git reference',
-                                git_objects_info_dir.join('alternates'),
+                                git_objects_info_dir / 'alternates',
                                 str(chrome_cache_objects_dir))
           api.step('git fetch chromium', [
               '/usr/bin/git', 'fetch',

@@ -47,7 +47,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       An absolute, qualified recipes path.
     """
-    return str(self.m.path.start_dir.join(subpath))
+    return str(self.m.path.start_dir / subpath)
 
   def src_path(self, path: str) -> str:
     """Return the given path in the source tree checkout.
@@ -58,7 +58,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     Returns:
       str: An absolute path to the source file.
     """
-    return str(self.m.src_state.workspace_path.join(path))
+    return str(self.m.src_state.workspace_path / path)
 
   def result_path(self, relative_path: str) -> Dict[str, Union[str, int]]:
     """Construct a common_pb2.Path dict that mimics a ResultPath result.
@@ -75,8 +75,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
       A dict representing a Path, like what the build API would return.
     """
     return {
-        'path': str(self.m.path.cleanup_dir.join('my_tmp_dir', relative_path)),
-        'location': 2,  # chromiumos.Path.Location.OUTSIDE
+        'path':
+            str(self.m.path.cleanup_dir.joinpath('my_tmp_dir', relative_path)),
+        'location':
+            2,  # chromiumos.Path.Location.OUTSIDE
     }
 
   @property
@@ -739,7 +741,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         {
             'path':
                 str(
-                    self.m.path.cache_dir.join(
+                    self.m.path.cache_dir.joinpath(
                         'cros_chroot/out/sdk/tmp/cros-subtools/rustfmt')),
             'location':
                 2,  # chromiumos.Path.Location.OUTSIDE
@@ -747,7 +749,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         {
             'path':
                 str(
-                    self.m.path.cache_dir.join(
+                    self.m.path.cache_dir.joinpath(
                         'cros_chroot/out/sdk/tmp/cros-subtools/shellcheck')),
             'location':
                 2,  # chromiumos.Path.Location.OUTSIDE

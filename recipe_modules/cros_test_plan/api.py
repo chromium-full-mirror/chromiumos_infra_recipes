@@ -67,8 +67,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           else:
             # Otherwise, assume we want config for the invoking builder.
             builders = [builder_name]
-        with self.m.context(
-            cwd=self.m.src_state.workspace_path.join(CONFIG_INTERNAL_CHECKOUT)):
+        with self.m.context(cwd=self.m.src_state.workspace_path /
+                            CONFIG_INTERNAL_CHECKOUT):
           cmd = ['./board_config/generate_test_config', ','.join(builders)]
 
           # If --branch is supported on this branch, use it.
@@ -122,8 +122,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
           request_proto)
 
       messages_path = self.m.path.mkdtemp(prefix='test-plan-')
-      input_bin_file = messages_path.join('input.binaryproto')
-      output_bin_file = messages_path.join('output.binaryproto')
+      input_bin_file = messages_path / 'input.binaryproto'
+      output_bin_file = messages_path / 'output.binaryproto'
       self.m.file.write_raw('write input binaryproto', input_bin_file,
                             request_proto.SerializeToString(deterministic=True))
 
@@ -156,7 +156,7 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
         ])
       if self._properties.generate_target_test_requirements_from_source:
         with self.m.context(cwd=self.m.src_state.workspace_path):
-          config_internal_path = self.m.src_state.workspace_path.join(
+          config_internal_path = self.m.src_state.workspace_path.joinpath(
               CONFIG_INTERNAL_CHECKOUT)
           cmd.extend(['--target_test_requirements_repo', config_internal_path])
           config = self.m.cros_infra_config.config

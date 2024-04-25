@@ -27,13 +27,13 @@ class VmlabApi(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure vmlab'):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'vmlab')
+        cipd_dir = self.m.path.start_dir.joinpath('cipd', 'vmlab')
         pkgs = self.m.cipd.EnsureFile()
         # TODO(fqj): Switch to other label. We don't have any other tags yet,
         # use latest for now temporarily.
         pkgs.add_package('chromiumos/infra/vmlab/${platform}', 'latest')
         self.m.cipd.ensure(cipd_dir, pkgs)
-        self._cmd = cipd_dir.join('vmlab')
+        self._cmd = cipd_dir / 'vmlab'
 
   def _run(self, arguments, test_data=''):
     """Installs vmlab and run commands.

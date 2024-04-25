@@ -18,8 +18,8 @@ DEPS = [
 def RunSteps(api):
   workspace_path = api.src_state.workspace_path
 
-  api.assertions.assertEqual(
-      api.path.cleanup_dir.join('chromiumos_workspace'), workspace_path)
+  api.assertions.assertEqual(api.path.cleanup_dir / 'chromiumos_workspace',
+                             workspace_path)
 
   try:
     # workspace_path is immutable.

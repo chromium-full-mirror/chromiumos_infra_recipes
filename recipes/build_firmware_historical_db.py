@@ -137,7 +137,7 @@ def UpdateHistoricalTokenDatabase(
   """
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
-    pw_tokenizer = cros_src_path.join(
+    pw_tokenizer = cros_src_path.joinpath(
         'src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py')
 
     with api.step.nest('Update Historical Token Database'):

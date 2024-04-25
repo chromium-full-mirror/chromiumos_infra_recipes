@@ -118,7 +118,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
     """
     self._ensure_cros_test_platform()
     with self.m.step.nest('call binary') as s:
-      cmd = self._cipd_dir.join('luciexe')
+      cmd = self._cipd_dir / 'luciexe'
       # Simply use the same directory for the sub-build because I'm lazy and
       # because the intent is to unwrap the sub-build completely to replace this
       # parent build eventually.
@@ -215,7 +215,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure cros_test_platform'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'cros_test_platform')
+        cipd_dir = self.m.path.start_dir.joinpath('cipd', 'cros_test_platform')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/cros_test_platform/${platform}',
@@ -223,7 +223,7 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
         self.m.cipd.ensure(cipd_dir, pkgs)
 
         self._cipd_dir = cipd_dir
-        self._cmd = cipd_dir.join('cros_test_platform')
+        self._cmd = cipd_dir / 'cros_test_platform'
 
   def cipd_package_version(self):
     """Return the CTP CIPD package version (e.g. prod/staging/latest)."""

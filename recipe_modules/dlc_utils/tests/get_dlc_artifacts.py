@@ -23,10 +23,8 @@ PROPERTIES = DlcUtilsTestProperties
 
 
 def RunSteps(api, properties):
-  api.path.mock_add_paths(
-      api.path.cleanup_dir.join('artifacts/dlc/found/dlc.img'))
-  api.path.mock_add_paths(
-      api.path.cleanup_dir.join('artifacts/dlc/found2/dlc.img'))
+  api.path.mock_add_paths(api.path.cleanup_dir / 'artifacts/dlc/found/dlc.img')
+  api.path.mock_add_paths(api.path.cleanup_dir / 'artifacts/dlc/found2/dlc.img')
 
   api.dlc_utils.artifacts_local_path = properties.dlc_path
 

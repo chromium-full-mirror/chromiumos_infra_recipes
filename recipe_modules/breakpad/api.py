@@ -25,11 +25,11 @@ class BreakpadApi(RecipeApi):
 
   @property
   def _breakpad_root(self):
-    return self.m.path.start_dir.join('breakpad')
+    return self.m.path.start_dir / 'breakpad'
 
   @property
   def _minidump_stackwalk_path(self):
-    return self._breakpad_root.join('minidump_stackwalk')
+    return self._breakpad_root / 'minidump_stackwalk'
 
   def _ensure_breakpad(self):
     """Ensure the breakpad CIPD package is installed."""
@@ -177,8 +177,7 @@ class BreakpadApi(RecipeApi):
               #  gs://chromeos-autotest-results/swarming-1234"
               test_result_basename = os.path.basename(test_result.gs_path)
               self.m.gsutil([
-                  'rsync', '-r',
-                  test_result.local_path.join(test_result_basename),
+                  'rsync', '-r', test_result.local_path / test_result_basename,
                   test_result.gs_path
               ], name='upload symbolicated files', multithreaded=True)
 

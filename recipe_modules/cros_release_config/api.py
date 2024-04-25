@@ -174,14 +174,14 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       with self.m.context(cwd=workpath):
         project_infos = self.m.repo.project_infos(projects=projects)
         for project in project_infos:
-          project_path[project.name] = workpath.join(project.path)
+          project_path[project.name] = workpath / project.path
 
     extra_text = ''
     with self.m.step.nest('update config'):
       config_path = project_path[self.CONFIG_PROJECT]
       with self.m.context(cwd=config_path):
         config_file = CONFIG if is_release_branch else STABILIZE_CONFIG
-        file_path = config_path.join(config_file)
+        file_path = config_path / config_file
 
         release_builders = self.m.file.read_proto('read {}'.format(config_file),
                                                   file_path, ReleaseBuilders,

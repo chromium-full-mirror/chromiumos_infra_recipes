@@ -120,7 +120,7 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
         snapshot_name = snapshot_name[:api.gcloud.gce_name_limit] if len(
             snapshot_name) > api.gcloud.gce_name_limit else snapshot_name
         disk = api.gcloud.gce_disk
-        mount_path = api.gcloud.snapshot_builder_mount_path.join(
+        mount_path = api.gcloud.snapshot_builder_mount_path.joinpath(
             cache.cache_name)
         try:
           if cache.command == SyncCommand.REPO:
@@ -147,7 +147,7 @@ def RunSteps(api: RecipeApi, properties: SourceCacheBuilderProperties):
                                               sync_opts=sync_opts,
                                               final_cleanup=True, sanitize=True)
               manifest_dir = 'manifest-versions-internal'
-              manifest_path = mount_path.join(manifest_dir)
+              manifest_path = mount_path / manifest_dir
               api.path.mock_add_paths(manifest_path)
               if api.path.exists(manifest_path):
                 api.file.rmtree(

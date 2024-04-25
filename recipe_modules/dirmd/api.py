@@ -26,13 +26,13 @@ class DirmdApi(recipe_api.RecipeApi):
       with self.m.context(infra_steps=True):
         # Install into a directory specific to dirmd, to avoid collisions with
         # other CIPD installations.
-        cipd_dir = self.m.path.start_dir.join('cipd_dirmd')
+        cipd_dir = self.m.path.start_dir / 'cipd_dirmd'
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(self._cipd_package, self._cipd_ref)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
-        self._dirmd_path = cipd_dir.join('dirmd')
+        self._dirmd_path = cipd_dir / 'dirmd'
 
   def validate_dir(self, directory: str) -> None:
     """Find and validate all DIR_METADATA files in a directory.

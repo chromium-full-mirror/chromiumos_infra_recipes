@@ -98,7 +98,7 @@ class GcloudApi(recipe_api.RecipeApi):
   @property
   def snapshot_builder_mount_path(self):
     """Returns a Path to the base mount directory for cache builder."""
-    return self.m.path.cleanup_dir.join('snapshot')
+    return self.m.path.cleanup_dir / 'snapshot'
 
   @property
   def snapshot_mount_path(self):
@@ -115,7 +115,7 @@ class GcloudApi(recipe_api.RecipeApi):
     This is the path to the local version file that contains the image
     version that was used to create the local named cache.
     """
-    return self.m.path.cache_dir.join('infra_versions')
+    return self.m.path.cache_dir / 'infra_versions'
 
   @property
   def snapshot_suffix(self):
@@ -496,7 +496,7 @@ class GcloudApi(recipe_api.RecipeApi):
     """
     with self.m.context(env={'VIRTUAL_ENV': '1'}):
       if recipe_mount:
-        recipe_mount_path = self.snapshot_builder_mount_path.join(mount_path)
+        recipe_mount_path = self.snapshot_builder_mount_path / mount_path
         self.m.file.ensure_directory('create mount path', recipe_mount_path)
       else:
         recipe_mount_path = '{}/{}'.format(self.snapshot_mount_path, mount_path)
@@ -1038,8 +1038,7 @@ class GcloudApi(recipe_api.RecipeApi):
     self.update_fstab(mount_path=recipe_mount_path, name=self._short_name)
     self.m.file.write_text(
         'write overlayfs branch file',
-        self.snapshot_version_path.join(self._overlay_branch_file),
-        self._branch)
+        self.snapshot_version_path / self._overlay_branch_file, self._branch)
     self.set_disk_autodelete(instance=self.infra_host, name=self._short_name,
                              zone=self._zone)
 
@@ -1058,7 +1057,7 @@ class GcloudApi(recipe_api.RecipeApi):
       try:
         overlayfs_branch = self.m.file.read_text(
             'read overlayfs branch',
-            self.snapshot_version_path.join(self._overlay_branch_file),
+            self.snapshot_version_path / self._overlay_branch_file,
             test_data='main')
       except self.m.step.StepFailure:
         self.m.step.active_result.presentation.status = 'SUCCESS'
@@ -1137,7 +1136,7 @@ class GcloudApi(recipe_api.RecipeApi):
         )
       # No cache case. In the case of break-glass, we treat it as a no-reuse.
       if not self._cache_mounted or self._dont_reuse_mounted_cache:
-        local_version_path = self.snapshot_version_path.join(self._version_file)
+        local_version_path = self.snapshot_version_path / self._version_file
         snapshot = self._create_new_cache_disk(
             cache_name, disk_type, recipe_mount,
             recovery_snapshot=recovery_snapshot)

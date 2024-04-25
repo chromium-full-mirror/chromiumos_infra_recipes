@@ -190,7 +190,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       package_index_files = []
       for b in response.binhosts:
         gs_bucket, gs_source = self._parse_binhost(b)
-        dest = binhosts_root.join(gs_source)
+        dest = binhosts_root / gs_source
         self.m.gsutil.download(gs_bucket, gs_source, dest)
         package_index_files.append(
             binhost_pb.PackageIndex(
@@ -292,8 +292,7 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
     binhost_path = self._get_binhost_path(binhosts[0][0], private, key)
     project = self.m.repo.project_info(
         project=self.m.path.dirname(binhost_path))
-    with self.m.context(
-        cwd=self.m.cros_source.workspace_path.join(project.path)):
+    with self.m.context(cwd=self.m.cros_source.workspace_path / project.path):
       branch = project.branch
       if branch:
         # The unit tests needs the ebuilds to be the same version we build them
@@ -428,8 +427,8 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
       sync_root = self.m.path.mkdtemp(prefix='prebuilts')
       symlink_tree = self.m.file.symlink_tree(sync_root)
       for relative_path in paths:
-        local_path = root.join(relative_path)
-        sync_path = symlink_tree.root.join(relative_path)
+        local_path = root / relative_path
+        sync_path = symlink_tree.root / relative_path
         symlink_tree.register_link(local_path, sync_path)
       symlink_tree.create_links('link files to upload')
       self.m.gsutil(['rsync', '-r', symlink_tree.root, uri],

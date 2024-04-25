@@ -206,7 +206,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       # For each repository, make the commit.
       for project, ebuilds in sorted(ebuilds_by_project.items()):
         name = self.m.path.basename(project.path)
-        root = self.workspace_path.join(project.path)
+        root = self.workspace_path / project.path
         uprevved_versions = sorted(set(e.version for e in ebuilds))
         additional_msg = '\n'.join(
             sorted(set(e.commit_info for e in ebuilds if e.commit_info)))
@@ -374,7 +374,7 @@ class PuprLocalUprevApi(recipe_api.RecipeApi):
       # For each repository, make the commit.
       for project in modified_projects:
         name = self.m.path.basename(project.path)
-        root = self.workspace_path.join(project.path)
+        root = self.workspace_path / project.path
         with self.m.step.nest(f'commit in {name}'), self.m.context(cwd=root):
           self.m.git.add(['.'])
           self.m.git.commit(commit_message)

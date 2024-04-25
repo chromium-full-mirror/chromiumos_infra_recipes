@@ -409,7 +409,7 @@ def set_version_pin(api: RecipeApi, properties: UprevParallelsPinProperties,
 
 def get_version_path(api: RecipeApi, properties: UprevParallelsPinProperties):
   """Gets the path of the VERSION-PIN file."""
-  return api.cros_source.workspace_path.join(properties.version_file)
+  return api.cros_source.workspace_path / properties.version_file
 
 
 def is_version_after(version: str, previous_version: str) -> bool:

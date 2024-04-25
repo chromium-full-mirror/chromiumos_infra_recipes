@@ -27,7 +27,7 @@ PROPERTIES = PauseAndWaitForSignalProperties
 def RunSteps(api, properties):
   path = api.path.mkdtemp()
   if properties.exists:
-    api.path.mock_add_paths(path.join('resume'))
+    api.path.mock_add_paths(path / 'resume')
   api.cros_debug.pause_and_wait_for_signal(
       timeout=10, override_led_launch_only_staging=properties.override,
       test_location_override=path)

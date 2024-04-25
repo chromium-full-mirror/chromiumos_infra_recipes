@@ -214,7 +214,7 @@ def DoRunSteps(api: RecipeApi,
     if not api.cros_infra_config.is_staging:
       api.bcid_reporter.report_stage('compile')
 
-  kabuto_path = chroot_path.join('src/platform/borealis/tools/kabuto')
+  kabuto_path = chroot_path / 'src/platform/borealis/tools/kabuto'
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
     # If we are operating on a specific Gerrit CL ref on a staging builder we
     # should checkout platform/borealis to it now.
@@ -260,7 +260,7 @@ def DoRunSteps(api: RecipeApi,
         _GenerateAndUploadProvenance(api, dlc_assets_file, dlc_hashes_file)
         api.bcid_reporter.report_stage('upload-complete')
 
-  partner_overlay_path = chroot_path.join(
+  partner_overlay_path = chroot_path.joinpath(
       'src/private-overlays/chromeos-partner-overlay')
   with api.context(cwd=partner_overlay_path), api.depot_tools.on_path():
     # A bit of debugging output to make issues easier to spot.
@@ -281,7 +281,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'basic',
       api.properties(**good_props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
   )
@@ -301,7 +301,7 @@ def GenTests(api: RecipeTestApi) -> None:
       api.cros_version.workspace_version('R122-12345.0.0'),
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(
@@ -324,7 +324,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'missing-uprev-info',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(post_process.DropExpectation),
@@ -339,7 +339,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'use-cl-ref',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.buildbucket.generic_build(bucket='staging'),
@@ -374,7 +374,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'skip-cl-ref-prod',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_check(post_process.DoesNotRun, 'Checkout Gerrit CL'),
@@ -387,7 +387,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'branched-manifest',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_check(post_process.MustRun,
@@ -408,7 +408,7 @@ def GenTests(api: RecipeTestApi) -> None:
       api.cros_version.workspace_version('R113-45678.0.0'),
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(
@@ -427,7 +427,7 @@ def GenTests(api: RecipeTestApi) -> None:
       api.cros_version.workspace_version('R122-12345.0.0'),
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(
@@ -449,7 +449,7 @@ def GenTests(api: RecipeTestApi) -> None:
       api.cros_version.workspace_version('R118-12345.0.0'),
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(
@@ -465,7 +465,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'prod-build',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.post_process(post_process.LogContains,
@@ -480,7 +480,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'staging-build',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.buildbucket.generic_build(bucket='staging'),
@@ -495,7 +495,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'no-changed-files',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.step_data('commit dlc changes.git status',
@@ -510,7 +510,7 @@ def GenTests(api: RecipeTestApi) -> None:
       'changed-files',
       api.properties(**props),
       api.path.exists(
-          api.src_state.workspace_path.join(
+          api.src_state.workspace_path.joinpath(
               'src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json')
       ),
       api.step_data(

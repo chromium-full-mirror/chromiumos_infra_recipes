@@ -172,7 +172,7 @@ def RunSteps(api: RecipeApi,
                                               modify_image=modify_image)
 
   # Create empty install target.
-  install_target_image_path = image_archive_dir.join('install_target.qcow2')
+  install_target_image_path = image_archive_dir / 'install_target.qcow2'
   api.step('create empty install image', [
       'qemu-img', 'create', '-f', 'qcow2',
       str(install_target_image_path), '24G'

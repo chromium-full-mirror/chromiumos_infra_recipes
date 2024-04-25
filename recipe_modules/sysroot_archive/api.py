@@ -69,7 +69,7 @@ class SysrootArchiveApi(recipe_api.RecipeApi):
           sysroot_archive_gs_path.removeprefix('gs://%s/' %
                                                self.sysroot_enabled.gs_bucket))
       tmp_dir = self.m.path.mkdtemp(prefix='sysroot-archive')
-      download_path = tmp_dir.join(
+      download_path = tmp_dir.joinpath(
           self.m.path.basename(sysroot_archive_gs_path))
       self.m.gsutil.download(
           self.sysroot_enabled.gs_bucket,

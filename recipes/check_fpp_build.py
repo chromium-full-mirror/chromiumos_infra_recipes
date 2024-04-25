@@ -14,10 +14,10 @@ DEPS = [
 def RunSteps(api):
   api.step('Clone source', [
       'git', 'clone', '--recurse-submodules', 'sso://nearby/fp-provider',
-      str(api.path.cleanup_dir.join('fp-provider'))
+      str(api.path.cleanup_dir / 'fp-provider')
   ])
   api.step('Build/Run tests', [
-      str(api.path.cleanup_dir.join('fp-provider', 'build.sh')), 'gLinux',
+      str(api.path.cleanup_dir.joinpath('fp-provider', 'build.sh')), 'gLinux',
       'run_tests'
   ])
 

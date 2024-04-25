@@ -111,7 +111,7 @@ class FirmwareBuilder():
     if properties.chroot_outside:
       self._chroot = self.m.path.mkdtemp().join('chroot')
     else:
-      self._chroot = self.m.src_state.workspace_path.join('chroot')
+      self._chroot = self.m.src_state.workspace_path / 'chroot'
     self._config = None
     self._bcs_version = None
     self._firmware_version = None
@@ -177,7 +177,7 @@ class FirmwareBuilder():
       with self.m.build_menu.setup_workspace(), \
           self.m.context(cwd=self.m.src_state.workspace_path):
         self._old_setup_board = self.m.path.exists(
-            self.m.src_state.workspace_path.join('src/scripts/setup_board'))
+            self.m.src_state.workspace_path / 'src/scripts/setup_board')
 
         if self.properties.bump_version:
           self._bump_version(
@@ -338,7 +338,7 @@ class FirmwareBuilder():
     # Also, we don't have a good way to test when a path does not exist. See:
     # http://cs/f:infra%2Frecipes%20path%5C.exists.*pragma
     # NB: this path construction is a hack and should be removed.
-    chroot_tmp_path = self.m.src_state.workspace_path.join('chroot/tmp')
+    chroot_tmp_path = self.m.src_state.workspace_path / 'chroot/tmp'
     if self.m.path.exists(chroot_tmp_path):  # pragma: nocover
       chmod_cmd = [
           'sudo', '-n', 'chmod', '-R', 'u=rwx,g=rwx,o=rwx,-t', chroot_tmp_path
@@ -405,8 +405,8 @@ class FirmwareBuilder():
       else:
         dest_path = self._chroot
         chroot_path = lambda x: '/' + self.m.path.relpath(x, dest_path)
-      root = dest_path.join(sysroot.path.strip('/'), 'firmware')
-      config_dir = dest_path.join(
+      root = dest_path.joinpath(sysroot.path.strip('/'), 'firmware')
+      config_dir = dest_path.joinpath(
           sysroot.path.strip('/'), 'usr/share/chromeos-config/yaml')
 
       private_dirs = self.m.file.glob_paths(
@@ -423,7 +423,7 @@ class FirmwareBuilder():
       if not source_list:
         raise NoFilesToUploadFailure('No firmware files to bundle')
 
-      tarball = out_path.join(_FIRMWARE_TARBALL_NAME)
+      tarball = out_path / _FIRMWARE_TARBALL_NAME
       chroot_tarball = chroot_path(tarball)
       # After /tmp's been migrated but before /build's been migrated we're
       # still executing in the chroot. The outpath given to us in this function
@@ -491,11 +491,11 @@ class FirmwareBuilder():
     # (though chroot/tmp has been migrated to out/tmp).
     elif self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
       tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
-      tmpdir = self.m.cros_sdk._out_path.join(  # pylint: disable=protected-access
+      tmpdir = self.m.cros_sdk._out_path.joinpath(  # pylint: disable=protected-access
           'tmp', self.m.path.basename(tmppath))
     else:
       tmppath = self.m.path.mkdtemp(prefix='firmware-bundle')
-      tmpdir = self._chroot.join('tmp', self.m.path.basename(tmppath))
+      tmpdir = self._chroot.joinpath('tmp', self.m.path.basename(tmppath))
 
     tarball = self._build_firmware_archive(sysroot, tmpdir)
     if tarball:
@@ -657,7 +657,7 @@ def GenTests(api):
     build = api.test_util.test_child_build('target', **kwargs).build
     return api.test(name, build, version, *args, status=status)
 
-  exists = lambda *x: api.path.exists(api.src_state.workspace_path.join(*x))
+  exists = lambda *x: api.path.exists(api.src_state.workspace_path.joinpath(*x))
 
   def StepCommandLacks(check, steps, name, arg):
     return check(arg not in steps[name].cmd)

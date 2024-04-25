@@ -76,7 +76,7 @@ def RunSteps(api: RecipeApi, properties: LocalManifestPresubmitProperties):
 
     project = api.repo.project_info(properties.project)
     workspace_path = api.src_state.workspace_path
-    project_path = workspace_path.join(project.path)
+    project_path = workspace_path / project.path
 
     with api.step.nest('prepare and execute presubmit'), \
         api.context(cwd=project_path):

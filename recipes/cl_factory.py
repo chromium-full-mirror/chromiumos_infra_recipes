@@ -179,7 +179,7 @@ def _make_changes(
   changes = []
   for info in cl_infos:
     with api.step.nest('working on project {}'.format(info.name)) as pres, \
-        api.context(cwd=api.cros_source.workspace_path.join(info.path)):
+        api.context(cwd=api.cros_source.workspace_path / info.path):
 
       _replace_strings(api, properties)
       _gen_config(api)
@@ -245,7 +245,7 @@ def _set_source_cq_depends(api: RecipeApi, changes: List[GerritChange],
     for info, change in zip(gc_infos, gerrit_changes):
       with api.step.nest('applying Cq-Depend to {}'
                          .format(info.name)), \
-          api.context(cwd=api.cros_source.workspace_path.join(info.path)):
+          api.context(cwd=api.cros_source.workspace_path / info.path):
 
         # For the change description commands to work we must be operating
         # on a tracking branch.

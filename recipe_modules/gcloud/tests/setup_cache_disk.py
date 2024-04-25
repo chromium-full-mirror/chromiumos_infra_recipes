@@ -79,7 +79,8 @@ def RunSteps(api, properties):
 def GenTests(api):
 
   def mock_directory(cache_name):
-    return api.path.exists(api.path.cache_dir.join(cache_name).join('upperdir'))
+    return api.path.exists(
+        api.path.cache_dir.joinpath(cache_name).joinpath('upperdir'))
 
   yield api.test(
       'basic',

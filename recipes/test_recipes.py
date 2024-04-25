@@ -124,7 +124,7 @@ def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
   """
   # Just use a temporary dir for the checkout, as it is small. Caching is
   # probably not worth the complexity (because changes are patched in).
-  recipes_workdir = api.path.cleanup_dir.join('recipes')
+  recipes_workdir = api.path.cleanup_dir / 'recipes'
 
   with api.step.nest('checkout recipes repo'):
     api.file.ensure_directory('ensure recipes workdir', recipes_workdir)
@@ -135,8 +135,7 @@ def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
       #
       # As a workaround, set the gclient cache dir to be a temporary dir, so it
       # won't cache.
-      cfg = api.gclient.make_config(
-          CACHE_DIR=api.path.cleanup_dir.join('gclient'))
+      cfg = api.gclient.make_config(CACHE_DIR=api.path.cleanup_dir / 'gclient')
       solution = cfg.solutions.add()
       solution.name = 'src'
       solution.url = RECIPE_REPO_URL
@@ -144,7 +143,7 @@ def _checkout_recipes_repo(api: RecipeApi) -> Generator[None, None, None]:
       api.gclient.checkout(gclient_config=cfg)
 
   # Yield a context that isn't in the checkout step, but is in the checkout dir.
-  with api.context(cwd=recipes_workdir.join('src')):
+  with api.context(cwd=recipes_workdir / 'src'):
     yield
 
 

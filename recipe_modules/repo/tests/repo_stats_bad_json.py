@@ -20,9 +20,8 @@ DEPS = [
 
 def RunSteps(api):
   init_opts = {'manifest_branch': 'snapshot'}
-  api.repo.ensure_synced_checkout(
-      api.path.cleanup_dir.join('ensure'), 'http://manifest_url',
-      init_opts=init_opts)
+  api.repo.ensure_synced_checkout(api.path.cleanup_dir / 'ensure',
+                                  'http://manifest_url', init_opts=init_opts)
 
 
 def GenTests(api):

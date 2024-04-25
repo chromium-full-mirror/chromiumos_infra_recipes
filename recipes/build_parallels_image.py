@@ -123,7 +123,7 @@ def build_vm_image(
   image_name = 'pre_pluginvm_image_{}_{}.zip'.format(
       properties.parallels_version,
       api.time.utcnow().strftime('%Y%m%d'))
-  image_path = image_dir.join(image_name)
+  image_path = image_dir / image_name
 
   # Invoke tast to build the VM image.
   invoke_tast(api, test_artifacts_dir, build_payload, image_path)
@@ -206,7 +206,7 @@ def invoke_tast(api: RecipeApi, test_artifacts_dir: Path,
         tast_results_dir)
 
     try:
-      src_path = tast_results_dir.join('tests').join(_TAST_NAME).join(
+      src_path = tast_results_dir.joinpath('tests').join(_TAST_NAME).joinpath(
           'PvmDefault.zip')
 
       # Move VM image out of the test results directory (to avoid it getting

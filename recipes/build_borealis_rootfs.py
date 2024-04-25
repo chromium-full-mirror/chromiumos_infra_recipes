@@ -78,7 +78,7 @@ def DoRunSteps(api: RecipeApi,
   checkout_path = api.cros_source.workspace_path
   chroot_path = api.build_menu.chroot.path
   out_dir = api.build_menu.chroot.out_path
-  borealis_path = checkout_path.join('src/platform/borealis')
+  borealis_path = checkout_path / 'src/platform/borealis'
   with api.context(cwd=borealis_path), api.depot_tools.on_path():
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.
@@ -151,7 +151,7 @@ def DoRunSteps(api: RecipeApi,
       return
 
     with api.step.nest('update VERSION-PIN') as presentation:
-      version_path = api.cros_source.workspace_path.join(
+      version_path = api.cros_source.workspace_path.joinpath(
           properties.version_file)
       package_path = api.path.dirname(version_path)
       version_basename = api.path.basename(version_path)
@@ -163,7 +163,7 @@ def DoRunSteps(api: RecipeApi,
       # Copy metadata.xml (written by tools/build_full.py).
       api.file.copy(
           'copy metadata.xml file',
-          borealis_path.join('metadata.xml'),
+          borealis_path / 'metadata.xml',
           metadata_path,
       )
 

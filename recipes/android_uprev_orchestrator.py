@@ -84,7 +84,7 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
   api.easy.set_properties_step(android_version=android_version)
 
   # Create a branch in the overlay project and sync to ToT.
-  overlay_path = api.cros_source.workspace_path.join(_OVERLAY_PATH)
+  overlay_path = api.cros_source.workspace_path / _OVERLAY_PATH
   with api.step.nest('create branch and sync overlay') as pres, \
       api.context(cwd=overlay_path):
     info = api.repo.project_info(project=overlay_path)

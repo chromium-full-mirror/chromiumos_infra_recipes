@@ -140,7 +140,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
       # Get the prebuilts metadata to use with the current snapshot.
       if properties.use_llfg:
-        manifest_dir = api.src_state.workspace_path.join('.repo', 'manifests')
+        manifest_dir = api.src_state.workspace_path.joinpath(
+            '.repo', 'manifests')
         remotes = api.git.ls_remote(['refs/remotes/origin/stable'],
                                     repo_url=manifest_dir)
         current_commit_hash = remotes[0].hash if remotes else None

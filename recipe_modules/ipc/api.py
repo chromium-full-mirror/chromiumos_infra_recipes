@@ -71,13 +71,13 @@ class IPCApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure ipcpubsub exists'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'ipcpubsub')
+        cipd_dir = self.m.path.start_dir.joinpath('cipd', 'ipcpubsub')
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/ipcpubsub/${version}', self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
-        self._bin = cipd_dir.join('ipcpubsub')
+        self._bin = cipd_dir / 'ipcpubsub'
 
   def _execute(self, subcommand: List[str], args: List[str],
                stdin_data: bytes = None) -> bytes:

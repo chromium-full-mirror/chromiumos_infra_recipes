@@ -70,13 +70,13 @@ class GomaApi(recipe_api.RecipeApi):
 
   @property
   def default_bqupload_dir(self) -> config_types.Path:
-    return self.m.path.cache_dir.join('goma', 'bqupload')
+    return self.m.path.cache_dir.joinpath('goma', 'bqupload')
 
   def _ensure_goma(self) -> None:
     """Ensure that the goma client is installed."""
     with self.m.step.nest('ensure goma client'), self.m.context(
         infra_steps=True):
-      goma_dir = self.m.path.start_dir.join('cipd', 'goma')
+      goma_dir = self.m.path.start_dir.joinpath('cipd', 'goma')
       pkgs = self.m.cipd.EnsureFile()
       pkgs.add_package('infra_internal/goma/client/${platform}',
                        str(self._client_version))

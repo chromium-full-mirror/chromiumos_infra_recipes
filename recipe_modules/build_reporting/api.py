@@ -536,7 +536,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('upload build report to GS') as presentation:
       tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
-      tmp_file = tmp_dir.join('build_report.json')
+      tmp_file = tmp_dir / 'build_report.json'
       build_report_json = MessageToJson(self._build_report)
       self.m.file.write_text('write buildreport json to tmp file', tmp_file,
                              build_report_json)

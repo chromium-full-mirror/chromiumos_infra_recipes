@@ -603,7 +603,7 @@ class GerritApi(RecipeApi):
         })
       req = {
           'gerrit_changes': changes,
-          'temp_dir': self.m.path.cleanup_dir.join('submittable_check'),
+          'temp_dir': self.m.path.cleanup_dir / 'submittable_check',
       }
       presentation.logs['req'] = str(req.items())
       if test_output_data is None:
@@ -674,7 +674,7 @@ class GerritApi(RecipeApi):
           raise StepFailure(
               'project {} does not exist in checkout and `project_path` was not supplied'
               .format(project))
-        cwd = self.m.src_state.workspace_path.join(project_info.path)
+        cwd = self.m.src_state.workspace_path / project_info.path
 
       with self.m.context(cwd=cwd):
         branch = None
@@ -839,8 +839,8 @@ class GerritApi(RecipeApi):
 
       if not ref.startswith('HEAD:'):
         ref = 'HEAD:%s' % ref
-      with self.m.context(
-          cwd=self.m.src_state.workspace_path.join(project_info.path)):
+      with self.m.context(cwd=self.m.src_state.workspace_path /
+                          project_info.path):
         self.m.git.rebase(force=True)
         self.m.git.push(project_info.remote, ref)
       return ref
@@ -849,7 +849,7 @@ class GerritApi(RecipeApi):
     """Return the path of the project associated with the gerrit_change."""
     with self.m.context(cwd=self.m.src_state.workspace_path):
       project_info = self.m.repo.project_info(gerrit_change.project)
-    return self.m.src_state.workspace_path.join(project_info.path)
+    return self.m.src_state.workspace_path / project_info.path
 
   def add_change_comment(self, gerrit_change: GerritChange, comment: str,
                          project_path: Optional[Path] = None):
@@ -1128,8 +1128,8 @@ class GerritApi(RecipeApi):
     """
     with self.m.step.nest('call gerrit_related_changes') as presentation:
       messages_path = self.m.path.mkdtemp(prefix='gerrit_related_changes_')
-      input_json_file = messages_path.join('input.json')
-      output_json_file = messages_path.join('output.json')
+      input_json_file = messages_path / 'input.json'
+      output_json_file = messages_path / 'output.json'
       input_json = {'change': gerrit_change.change, 'host': gerrit_change.host}
       self.m.file.write_text('write gerrit_related_changes input',
                              input_json_file, json.dumps(input_json))

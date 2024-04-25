@@ -46,7 +46,7 @@ def RunSteps(api):
   api.assertions.assertTrue(image_modified)
 
   vm_context = api.tast_exec.create_qemu_vm_context(
-      qcow_image, second_image_path=vm_dir.join('second_disk.bin'))
+      qcow_image, second_image_path=vm_dir / 'second_disk.bin')
 
   # Run with retry
   api.buildbucket.build.critical = common_pb2.YES

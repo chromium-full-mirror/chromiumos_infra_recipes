@@ -104,7 +104,7 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
         if project_info.path in checked_paths:
           continue
         checked_paths.add(project_info.path)
-        full_path = workpath.join(project_info.path)
+        full_path = workpath / project_info.path
         with api.step.nest('checking %s' % project_info.path) as presentation:
           # If we have a list of included projects, then exclude any projects
           # not on the list.
@@ -125,7 +125,7 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
 
           # All of the projects will have a branch defined by the manifest.
           branch = api.git.extract_branch(project_info.branch, None)
-          full_path = workpath.join(project_info.path)
+          full_path = workpath / project_info.path
           with api.context(cwd=full_path), api.depot_tools.on_path():
             # Several checks require that we have an upstream tracking branch.
             # This requires us to have a branch, which we don't yet have.
@@ -137,10 +137,10 @@ def _FullCheckout(api: RecipeApi, properties: PresubmitTestsProperties):
                   'git', 'branch', '--set-upstream-to',
                   '%s/%s' % (project_info.remote, branch)
               ])
-              api.path.mock_add_paths(full_path.join(properties.test_filename))
-              api.step('repo presubmit', [
-                  workpath.join('src/repohooks/pre-upload.py'), '--pre-submit'
-              ])
+              api.path.mock_add_paths(full_path / properties.test_filename)
+              api.step(
+                  'repo presubmit',
+                  [workpath / 'src/repohooks/pre-upload.py', '--pre-submit'])
             # The branch isn't merged, so we have to use -D.
             api.step('branch cleanup', ['git', 'branch', '-D', '__presubmit'])
 

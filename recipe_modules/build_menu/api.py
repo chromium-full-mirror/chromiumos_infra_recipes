@@ -1050,7 +1050,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       build_id = self.m.buildbucket.build.id or 'led'
       with self.m.step.nest('writing update to local file'):
         tmp_dir = self.m.path.mkdtemp(prefix='cft-builder-json')
-        file_path = tmp_dir.join(str(build_id) + '.json')
+        file_path = tmp_dir.joinpath(str(build_id) + '.json')
         self.m.file.write_json('Writing response', file_path,
                                container_build_update)
 

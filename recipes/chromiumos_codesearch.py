@@ -50,11 +50,11 @@ def RunSteps(api, properties):
   experimental = properties.experimental
 
   # Get infra/infra.
-  cache_dir = api.path.cache_dir.join('builder')
+  cache_dir = api.path.cache_dir / 'builder'
   api.gclient.set_config('infra_superproject')
 
   # The codesearch recipe module relies on checkout path to be set.
-  chromiumos_src_dir = api.cros_source.workspace_path.join('src')
+  chromiumos_src_dir = api.cros_source.workspace_path / 'src'
   api.path.checkout_dir = chromiumos_src_dir
 
   commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
@@ -89,7 +89,7 @@ def RunSteps(api, properties):
                       [str(workspace.join('chromite', 'bin')), '%(PATH)s'])
           }):
         api.step('run package_index_cros', [
-            package_index_cros_dir.join('main'),
+            package_index_cros_dir / 'main',
             '--debug',
             '--board',
             build_target,
@@ -100,7 +100,7 @@ def RunSteps(api, properties):
             '--build-dir',
             build_dir,
             '--compile-commands',
-            build_dir.join('compile_commands.json'),
+            build_dir / 'compile_commands.json',
         ] + list(packages))
 
       api.codesearch.set_config(
@@ -120,7 +120,7 @@ def RunSteps(api, properties):
       target_architecture = _get_target_architecture(api, build_target)
       api.codesearch.run_clang_tool(
           clang_dir=clang_dir, run_dirs=[
-              chromiumos_src_dir.join('platform2'),
+              chromiumos_src_dir / 'platform2',
           ], target_architecture=target_architecture)
 
       # Create the kythe index pack and upload it to google storage.
@@ -129,7 +129,7 @@ def RunSteps(api, properties):
       # chromiumos codesearch, write an empty json file.
       # TODO(gavinmak): Make gn_targets optional in package_index.
       api.file.write_json('write empty gn_targets.json file',
-                          build_dir.join('gn_targets.json'), {})
+                          build_dir / 'gn_targets.json', {})
       kzip_path = api.codesearch.create_and_upload_kythe_index_pack(
           commit_hash=codesearch_mirror_revision,
           commit_timestamp=int(codesearch_mirror_revision_timestamp or

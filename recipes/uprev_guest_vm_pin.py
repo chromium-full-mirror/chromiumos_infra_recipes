@@ -283,7 +283,7 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
         api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
                                         branch, sync_opts={'detach': True})
 
-        version_path = api.cros_source.workspace_path.join(
+        version_path = api.cros_source.workspace_path.joinpath(
             properties.version_file)
         package_path = api.path.dirname(version_path)
         package = api.path.basename(package_path)

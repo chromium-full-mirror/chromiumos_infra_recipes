@@ -50,15 +50,14 @@ def RunSteps(api: RecipeApi):
       targets=[BuildTarget(name='amd64-generic')]) as config:
     # automated_uprev.py needs chroot to test emerge libchrome.
     with api.build_menu.setup_workspace_and_chroot():
-      project_dir = api.cros_source.workspace_path.join(
+      project_dir = api.cros_source.workspace_path.joinpath(
           'src/platform/libchrome')
       with api.context(cwd=project_dir):
         project_info = api.repo.project_info()
 
         libchrome_revision = int(
             api.file.read_text('read libchrome BASE_VER',
-                               project_dir.join('BASE_VER'),
-                               test_data='123456'))
+                               project_dir / 'BASE_VER', test_data='123456'))
 
         outdated_changes = []
         with api.step.nest('identify outdated uprev commits') as presentation:

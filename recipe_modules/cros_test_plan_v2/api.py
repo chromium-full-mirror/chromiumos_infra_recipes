@@ -491,7 +491,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
         builder_configs_path = self._download_build_configs(input_path)
         args.extend(['-builderconfigs', builder_configs_path])
 
-        req_path = input_path.join('generatetestplanreq.binaryproto')
+        req_path = input_path / 'generatetestplanreq.binaryproto'
         self.m.file.write_raw(
             'write generatetestplanreq binaryproto', req_path,
             generate_test_plan_request.SerializeToString(deterministic=True))
@@ -564,7 +564,7 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       args.extend(self._get_args_for_starlark_pkgs(starlark_packages))
 
-      builds_input_path = input_path.join('builds.jsonl')
+      builds_input_path = input_path / 'builds.jsonl'
       builds_jsonl = '\n'.join([
           json_format.MessageToJson(b, indent=0).replace('\n', '')
           for b in builds

@@ -89,8 +89,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
         # path in the public repo.
         dirname, project_name = api.path.split(project_info.path)
         _, program_name = api.path.split(dirname)
-        dest_path = public_repo_path.join(program_name, project_name,
-                                          'sw_build_config')
+        dest_path = public_repo_path.joinpath(program_name, project_name,
+                                              'sw_build_config')
 
         # file.copytree will fail if the destination exists. Thus, remove
         # dest_path before doing the copy.
@@ -667,12 +667,12 @@ def GenTests(api):
 
   def mock_project_payloads(fname):
     return api.path.exists(
-        api.src_state.workspace_path.join(
+        api.src_state.workspace_path.joinpath(
             'src/project/galaxy/milkyway/generated/%s' % fname))
 
   def mock_program_payloads():
     return api.path.exists(
-        api.src_state.workspace_path.join(
+        api.src_state.workspace_path.joinpath(
             'src/program/galaxy/generated/config.jsonproto'))
 
   def flatten_step_data(value):

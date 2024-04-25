@@ -24,7 +24,7 @@ DEPS = [
 
 def RunSteps(api):
   with api.step.nest('chrome sync check'):
-    cache_path = api.path.cleanup_dir.join('snapshot_chrome')
+    cache_path = api.path.cleanup_dir / 'snapshot_chrome'
 
     # Manufacture the minimal builder config.
     config = BuilderConfig(
@@ -39,7 +39,7 @@ def RunSteps(api):
                         ])
                 ]),
             )))
-    with api.context(cwd=cache_path.join('src')):
+    with api.context(cwd=cache_path / 'src'):
       api.chrome.sync_chrome_async(config,
                                    build_target=BuildTarget(name='target'))
       api.chrome.wait_for_sync_chrome_source_async()

@@ -81,8 +81,8 @@ class ConductorApi(recipe_api.RecipeApi):
     bbids = [str(bbid) for bbid in bbids]
 
     messages_path = self.m.path.mkdtemp(prefix='conductor-')
-    input_json_file = messages_path.join('input.json')
-    output_json_file = messages_path.join('output.json')
+    input_json_file = messages_path / 'input.json'
+    output_json_file = messages_path / 'output.json'
     self.m.file.write_text('write input json', input_json_file,
                            json_format.MessageToJson(collect_config))
 

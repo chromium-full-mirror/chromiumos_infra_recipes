@@ -114,7 +114,7 @@ class GobinAPI(recipe_api.RecipeApi):
     with self.m.step.nest(
         f'find cipd instance for {package_shortname} for infra/infra commit {sha}'
     ) as presentation:
-      cipd_json_file = self.m.path.cleanup_dir.join('cipd.json')
+      cipd_json_file = self.m.path.cleanup_dir / 'cipd.json'
       self.m.step('cipd search', [
           'cipd', 'search', package_fullname, '-tag', f'git_revision:{sha}',
           '-json-output', cipd_json_file
@@ -276,13 +276,13 @@ class GobinAPI(recipe_api.RecipeApi):
               f'could not find instance for infra/infra commit {self._infra_infra_commit}'
           )
 
-        cipd_dir = self.m.path.start_dir.join(f'cipd/{package_shortname}')
+        cipd_dir = self.m.path.start_dir / f'cipd/{package_shortname}'
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(package_fullname, instance_id)
         self.m.cipd.ensure(cipd_dir, pkgs)
 
-        self._cipd_paths[package_fullname] = cipd_dir.join(package)
-        return str(cipd_dir.join(package))
+        self._cipd_paths[package_fullname] = cipd_dir / package
+        return str(cipd_dir / package)
 
   def call(self, package: str, cmd: List[str], step_name: str = None,
            **kwargs) -> step_data.StepData:

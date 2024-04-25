@@ -264,7 +264,7 @@ class RepoApi(recipe_api.RecipeApi):
             name='write local manifest',
             # If there is more than one local manifest, it needs a different
             # name.
-            dest=local_manifest_dir.join(
+            dest=local_manifest_dir.joinpath(
                 f'local_manifest_{i}.xml' if i else 'local_manifest.xml'),
             data=manifest_data,
         )
@@ -442,7 +442,7 @@ class RepoApi(recipe_api.RecipeApi):
     if repo_root is None:
       raise recipe_api.StepFailure('no repo root found')
 
-    manifest_path = repo_root.join('.repo', 'tmp_manifest')
+    manifest_path = repo_root.joinpath('.repo', 'tmp_manifest')
     self.m.file.write_raw('write manifest', manifest_path, manifest_data)
 
     return manifest_path
@@ -459,7 +459,7 @@ class RepoApi(recipe_api.RecipeApi):
     repo_root = self._find_root()
     assert repo_root is not None, 'no repo root found'
 
-    repo_manifests_path = repo_root.join('.repo', 'manifests')
+    repo_manifests_path = repo_root.joinpath('.repo', 'manifests')
     manifest_path = self.create_tmp_manifest(manifest_data)
     manifest_relpath = self.m.path.relpath(manifest_path, repo_manifests_path)
 
@@ -814,7 +814,7 @@ class RepoApi(recipe_api.RecipeApi):
       if use_merge_base:
         # Fetch the from_revision, since it may not be under refs/heads.
         with self.m.step.nest(f'validate {from_path}') as val_pres, \
-            self.m.context(cwd=repo_root.join(from_path)):
+            self.m.context(cwd=repo_root / from_path):
           # The git helper binary does retries of its own, so we do not need to.
           if not self.m.git.is_reachable(from_revision, to_revision):
             try:
@@ -850,7 +850,7 @@ class RepoApi(recipe_api.RecipeApi):
       step = self.m.step(name, [])
       step.presentation.step_text = 'manifest diff failed; no repo root found'
       return
-    manifests_dir = repo_root.join('.repo', 'manifests')
+    manifests_dir = repo_root.joinpath('.repo', 'manifests')
 
     cmd = [
         'diffmanifests',
@@ -942,7 +942,7 @@ class RepoApi(recipe_api.RecipeApi):
     Returns:
       Whether the sync succeeded.
     """
-    repo_state_path = root_path.join('.recipes_state.json')
+    repo_state_path = root_path / '.recipes_state.json'
     manifest_branch = init_opts.get('manifest_branch', '') if init_opts else ''
     # Get cache state
     if self.m.path.exists(repo_state_path) and not final_cleanup:
@@ -961,7 +961,7 @@ class RepoApi(recipe_api.RecipeApi):
     else:
       repo_state = RepoState(
           state=(RepoState.STATE_DIRTY if self.m.path.exists(
-              root_path.join('.repo')) else RepoState.STATE_CLEAN),
+              root_path / '.repo') else RepoState.STATE_CLEAN),
           manifest_branch=manifest_branch, manifest_url=manifest_url)
 
     # Output initial repo state
@@ -1056,9 +1056,9 @@ class RepoApi(recipe_api.RecipeApi):
           assert isinstance(manifest_name, Path)
           assert root_path.is_parent_of(manifest_name)
           init_opts['manifest_name'] = self.m.path.relpath(
-              manifest_name, root_path.join('.repo/manifests'))
+              manifest_name, root_path / '.repo/manifests')
           sync_opts['manifest_name'] = self.m.path.relpath(
-              manifest_name, root_path.join('.repo/manifests'))
+              manifest_name, root_path / '.repo/manifests')
 
         for retries in range(2):
           try:
@@ -1077,7 +1077,7 @@ class RepoApi(recipe_api.RecipeApi):
 
       # Verify that root_path/.repo exists, since repo will happily reuse a
       # repository in the cwd's ancestor directories.
-      assert self.m.path.exists(root_path.join('.repo')), '.repo not created!'
+      assert self.m.path.exists(root_path / '.repo'), '.repo not created!'
 
   def _binary_selfupdate(self, root_path: Path, verify_repo: bool) -> None:
     """Issue a repo selfupdate to update the binary.
@@ -1098,7 +1098,7 @@ class RepoApi(recipe_api.RecipeApi):
       # See b/243418745 for more info.
       if root_path:
         with self.m.context(
-            cwd=root_path.join('.repo', 'repo'), infra_steps=True):
+            cwd=root_path.joinpath('.repo', 'repo'), infra_steps=True):
           self.m.git.checkout(force=True)
       with self.m.context(cwd=root_path, infra_steps=True):
         cmd = ['selfupdate']

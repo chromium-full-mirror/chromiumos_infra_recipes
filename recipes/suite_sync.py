@@ -94,7 +94,7 @@ def sync_suite(api: RecipeApi, config: SuiteSyncProperties.SuiteConfig) -> None:
 
 def run_generate(api: RecipeApi) -> None:
   """Run the generate.sh script for centralized suites."""
-  suite_generation_bin = api.cros_source.workspace_path.join(
+  suite_generation_bin = api.cros_source.workspace_path.joinpath(
       'src/config/test/suite_sets/generate.sh')
   api.easy.step('running generate for centralized suites',
                 [suite_generation_bin])
@@ -107,7 +107,7 @@ def commit_uprev(api: RecipeApi, dryrun: bool = False) -> None:
     dryrun: If True change will be abandoned. Otherwise, it will
       be submitted to CQ and bot approved.
   """
-  project_dir = api.cros_source.workspace_path.join('src/config')
+  project_dir = api.cros_source.workspace_path / 'src/config'
   with api.context(cwd=project_dir):
     with api.step.nest('commit suite change') as presentation:
       if not api.git.diff_check('test/suite_sets'):

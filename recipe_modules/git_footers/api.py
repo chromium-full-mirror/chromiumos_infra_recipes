@@ -29,8 +29,8 @@ class GitFootersApi(recipe_api.RecipeApi):
                       self.test_api.step_test_data_factory('my-footer'))
     result = self.m.step(
         'read git footers',
-        ['vpython3', self.m.depot_tools.root.join('git_footers.py')] +
-        list(args), stdout=self.m.raw_io.output(), ok_ret=(0, 1), **kwargs)
+        ['vpython3', self.m.depot_tools.root / 'git_footers.py'] + list(args),
+        stdout=self.m.raw_io.output(), ok_ret=(0, 1), **kwargs)
 
     if result.retcode == 1:
       return None

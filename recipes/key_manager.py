@@ -45,15 +45,14 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
   with api.step.nest('set up dependencies'):
     api.git.clone(
         'https://chromium.googlesource.com/chromiumos/chromite/',
-        target_path=api.src_state.workspace_path.join('infra/chromite-HEAD'),
+        target_path=api.src_state.workspace_path / 'infra/chromite-HEAD',
         branch='main', single_branch=True)
 
-    api.git.clone(
-        'https://chromium.googlesource.com/chromiumos/chromite/',
-        target_path=api.src_state.workspace_path.join('infra/chromite'),
-        branch='main', single_branch=True)
+    api.git.clone('https://chromium.googlesource.com/chromiumos/chromite/',
+                  target_path=api.src_state.workspace_path / 'infra/chromite',
+                  branch='main', single_branch=True)
 
-    release_keys_path = api.src_state.workspace_path.join(
+    release_keys_path = api.src_state.workspace_path.joinpath(
         'src/platform/signing/keys')
     api.git.clone(
         'https://chrome-internal.googlesource.com/chromeos/platform/release-keys',

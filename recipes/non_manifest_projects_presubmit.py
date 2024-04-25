@@ -141,10 +141,10 @@ def _run_presubmits(api, full_path):
 
         test_presubmit_file = api.properties.get('test_presubmit_file',
                                                  'PRESUBMIT.py')
-        api.path.mock_add_paths(full_path.join(test_presubmit_file))
+        api.path.mock_add_paths(full_path / test_presubmit_file)
 
         # To start, this Recipe will only support running the PRESUBMIT.py file.
-        if api.path.exists(full_path.join('PRESUBMIT.py')):
+        if api.path.exists(full_path / 'PRESUBMIT.py'):
           api.step('git cl presubmit', ['git', 'cl', 'presubmit', '--verbose'])
         else:
           presentation.step_text = 'No PRESUBMIT file found.'

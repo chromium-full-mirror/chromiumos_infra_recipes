@@ -57,7 +57,7 @@ def RunSpiders(api: RecipeApi):
     output = api.cros_build_api.PortageExplorerService.RunSpiders(
         RunSpidersRequest(chroot=api.cros_sdk.chroot))
     messages_path = api.path.mkdtemp(prefix='run_spiders')
-    output_path = messages_path.join('output_proto.json')
+    output_path = messages_path / 'output_proto.json'
     output_json = json.dumps(json_format.MessageToDict(output), indent=2)
     api.file.write_text('portage explorer output', output_path, output_json)
     today = api.time.utcnow()

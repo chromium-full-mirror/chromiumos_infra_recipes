@@ -58,11 +58,11 @@ class ChromiteApi(recipe_api.RecipeApi):
 
   @property
   def chromite_path(self):
-    return self.m.path.start_dir.join('chromite')
+    return self.m.path.start_dir / 'chromite'
 
   @property
   def depot_tools_path(self):
-    return self.m.path.start_dir.join('depot_tools')
+    return self.m.path.start_dir / 'depot_tools'
 
   @property
   def chromite_branch(self):
@@ -129,7 +129,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     args = (args or [])[:]
     args.append(config)
 
-    cmd = [self.chromite_path.join('scripts', 'cbuildbot_launch')] + args
+    cmd = [self.chromite_path.joinpath('scripts', 'cbuildbot_launch')] + args
     kwargs['legacy_global_namespace'] = True
     return self.m.legacy_annotation(name, cmd, **kwargs)
 
@@ -152,7 +152,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     Used by the internal goma recipe.
     """
     if not chroot_cmd:
-      chroot_cmd = self.chromite_path.join('bin', 'cros_sdk')
+      chroot_cmd = self.chromite_path.joinpath('bin', 'cros_sdk')
 
     arg_list = (args or [])[:]
     for t in sorted((environ or {}).items()):
@@ -207,7 +207,7 @@ class ChromiteApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('system_python'):
       # Create a directory to hold a symlink to the system python binary.
-      python_bin = self.m.path.start_dir.join('python_bin')
+      python_bin = self.m.path.start_dir / 'python_bin'
       self.m.file.ensure_directory('create_dir', python_bin)
 
       # Remove any old symlinks.
@@ -264,10 +264,11 @@ class ChromiteApi(recipe_api.RecipeApi):
         self.c.cbb.chrome_version = self.m.buildbucket.gitiles_commit.id
 
     cbb_args = []
-    cbb_args.extend(
-        ['--buildroot',
-         self.m.path.cleanup_dir.join('snapshot', 'chromeos')])
-    cbb_args.extend(['--workspace', self.m.path.cleanup_dir.join('workspace')])
+    cbb_args.extend([
+        '--buildroot',
+        self.m.path.cleanup_dir.joinpath('snapshot', 'chromeos')
+    ])
+    cbb_args.extend(['--workspace', self.m.path.cleanup_dir / 'workspace'])
     cbb_args.extend(['--source_cache'])
 
     if self.c.chromite_branch:

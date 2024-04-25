@@ -132,7 +132,7 @@ def _run_filter_command_and_commit(api: RecipeApi, input_file: PathLike,
     input_file: Input file for filter_test_plan_by_availability.
     output_file: Output file for filter_test_plan_by_availability.
   """
-  filter_test_script = api.cros_source.workspace_path.join(
+  filter_test_script = api.cros_source.workspace_path.joinpath(
       FILTER_TESTS_BY_AVAILABILITY_PATH)
 
   filter_command = [
@@ -148,8 +148,8 @@ def _run_filter_command_and_commit(api: RecipeApi, input_file: PathLike,
   for dependency in [
       PAYLOAD_UTILS_PATH, INFRA_CONFIG_PATH, CONFIG_INTERNAL_PATH
   ]:
-    python_paths.append('{}'.format(
-        api.cros_source.workspace_path.join(dependency)))
+    python_paths.append('{}'.format(api.cros_source.workspace_path /
+                                    dependency))
 
   with api.context(
       env={
@@ -173,7 +173,7 @@ def _run_generate_command_and_commit(api: RecipeApi, input_file: PathLike,
     input_file: Input File for generate_test_plan_summary.
     output_file: Output file for generate_test_plan_summary.
   """
-  generate_test_plan_summary_script = api.cros_source.workspace_path.join(
+  generate_test_plan_summary_script = api.cros_source.workspace_path.joinpath(
       GENERATE_TEST_PLAN_SUMMARY_PATH)
 
   generate_command = [
@@ -223,7 +223,7 @@ def _find_test_plan_files(api: RecipeApi) -> List[str]:
   Returns:
     A compiled list of all test plan files.
   """
-  find_tests_script = api.cros_source.workspace_path.join(FIND_TESTS_PATH)
+  find_tests_script = api.cros_source.workspace_path / FIND_TESTS_PATH
 
   find_command = [
       find_tests_script,
@@ -280,7 +280,7 @@ Cr-Automation-Id: {}''' \
         projects=[INFRA_CONFIG_PATH, CONFIG_PATH, CONFIG_INTERNAL_PATH])
     api.cros_source.checkout_tip_of_tree()
 
-    config_internal = api.cros_source.workspace_path.join(CONFIG_INTERNAL_PATH)
+    config_internal = api.cros_source.workspace_path / CONFIG_INTERNAL_PATH
 
     # Update the repo atomically
     with api.context(cwd=config_internal):

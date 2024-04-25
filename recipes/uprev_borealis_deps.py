@@ -90,7 +90,7 @@ def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
     commit_message: Git commit message to use.
     branch_name: Name for the local branch for repo start
   """
-  borealis_repo_path = api.cros_source.workspace_path.join(_BOREALIS_REPO_PATH)
+  borealis_repo_path = api.cros_source.workspace_path / _BOREALIS_REPO_PATH
   changed_files = api.git.get_diff_files('HEAD')
   with api.step.nest('commit changes') as presentation, api.context(
       cwd=borealis_repo_path):
@@ -164,7 +164,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   checkout_path = api.cros_source.workspace_path
   chroot_path = api.build_menu.chroot.path
   out_dir = api.build_menu.chroot.out_path
-  borealis_path = checkout_path.join(_BOREALIS_REPO_PATH)
+  borealis_path = checkout_path / _BOREALIS_REPO_PATH
   with api.depot_tools.on_path(), api.context(cwd=borealis_path):
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.

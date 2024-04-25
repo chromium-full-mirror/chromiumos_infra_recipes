@@ -70,7 +70,7 @@ def RunSteps(api: RecipeApi):
       projects = api.repo.project_infos(projects=overlay_dirs)
       with api.deferrals.raise_exceptions_at_end():
         for project in sorted(set(projects)):
-          cwd = api.cros_source.workspace_path.join(project.path)
+          cwd = api.cros_source.workspace_path / project.path
           with api.context(cwd=cwd):
             with api.deferrals.defer_exceptions():
               api.git_txn.update_ref(project.remote, _add_and_commit,

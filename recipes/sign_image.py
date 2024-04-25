@@ -267,7 +267,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
         api.random.choice(string.ascii_letters) for n in range(8))
     insn_basename = 'ChromeOS-%s-%s-%s-%s.instructions' % (
         image_type_name, versionrev, properties.keyset, random_suffix)
-    local_insn = local_dir.join(insn_basename)
+    local_insn = local_dir / insn_basename
     insn_path = os.path.join(os.path.dirname(archive), insn_basename)
     rel_insn_path = gs.rel_path(insn_path)
 
@@ -284,7 +284,7 @@ def RunSteps(api: RecipeApi, properties: SignImageProperties):
       trigger_base = '50,' + rel_insn_path.replace('/', ',')
       trigger_path = gs.gs_path('tobesigned', trigger_base)
 
-      local_trigger = local_dir.join(trigger_base)
+      local_trigger = local_dir / trigger_base
       api.file.write_raw(name='trigger file', dest=local_trigger,
                          data=trigger_data)
       api.gsutil(['cp', local_trigger, trigger_path])

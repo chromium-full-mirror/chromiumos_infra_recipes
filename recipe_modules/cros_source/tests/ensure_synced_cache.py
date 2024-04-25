@@ -32,7 +32,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.cros_source.test(
       'basic', 'snapshot',
-      api.path.exists(api.path.start_dir.join('chromiumos_workspace')),
+      api.path.exists(api.path.start_dir / 'chromiumos_workspace'),
       api.properties(
           **
           {'$chromeos/repo': RepoProperties(disable_source_cache_health=True)}),

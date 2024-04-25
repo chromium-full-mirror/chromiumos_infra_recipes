@@ -50,7 +50,7 @@ class SrcStateApi(recipe_test_api.RecipeTestApi):
     It will contain the base checkout and any modifications made by the build,
     and is discarded after the build.
     """
-    return self.m.path.cleanup_dir.join(common.WORKSPACE)
+    return self.m.path.cleanup_dir / common.WORKSPACE
 
   @property
   def internal_manifest(self):

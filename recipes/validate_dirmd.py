@@ -67,7 +67,7 @@ def RunSteps(api):
         })
     for pi in project_infos:
       with api.step.nest('validate {}'.format(pi.name)):
-        full_path = api.workspace_util.workspace_path.join(pi.path)
+        full_path = api.workspace_util.workspace_path / pi.path
         kind = validation_kinds[0]
         try:
           api.dirmd.validate_dir(full_path)

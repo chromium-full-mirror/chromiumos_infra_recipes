@@ -533,7 +533,7 @@ class SigningApi(recipe_api.RecipeApi):
       result_path: The result_path passed to the signing call.
     """
     with self.m.step.nest('read cloudkms logs'):
-      kms_log_dir = result_path.join('cloudkms-logs')
+      kms_log_dir = result_path / 'cloudkms-logs'
       kms_log_files = self.m.file.listdir(f'list {kms_log_dir}', kms_log_dir)
       for log_file in kms_log_files:
         filename = self.m.path.basename(log_file)

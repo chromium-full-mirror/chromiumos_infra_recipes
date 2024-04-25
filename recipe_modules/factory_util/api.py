@@ -27,10 +27,11 @@ class FactoryUtilApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('uploading factory artifacts for older branch'):
       version_str = self.m.cros_version.version.legacy_version
-      images_path = self.m.cros_source.workspace_path.join(
+      images_path = self.m.cros_source.workspace_path.joinpath(
           f'src/build/images/{self.m.build_menu.build_target.name}/')
-      chroot_path = self.m.path.cache_dir.join('cros_chroot').join('chroot')
-      bundle_path = chroot_path.join(
+      chroot_path = self.m.path.cache_dir.joinpath('cros_chroot').joinpath(
+          'chroot')
+      bundle_path = chroot_path.joinpath(
           f'build/{self.m.build_menu.build_target.name}/usr/local/factory/',
           'bundle')
 
@@ -75,7 +76,7 @@ class FactoryUtilApi(recipe_api.RecipeApi):
   def compress_test_image(self, artifact_dir: str, images_path: Path,
                           version_str: str):
     """Compress artifacts for chromiumos_test_image.tar.xz"""
-    images_path = images_path.join(version_str)
+    images_path = images_path / version_str
     test_tar_path = self.m.path.join(artifact_dir,
                                      'chromiumos_test_image.tar.xz')
 
