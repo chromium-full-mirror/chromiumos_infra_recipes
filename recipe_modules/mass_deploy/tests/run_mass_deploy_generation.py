@@ -25,6 +25,7 @@ _METADATA_CANARY = {
     'gs://chromeos-releases/canary-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
             'channel': 'canary',
+            'type': 'recovery',
             'outputs': {
                 'chromeos_15487.0.0_reven_recovery_canary-channel_mp-v2.bin': {
                 },
@@ -44,6 +45,7 @@ _METADATA_DEV = {
     'gs://chromeos-releases/dev-channel/reven/15487.0.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
             'channel': 'dev',
+            'type': 'recovery',
             'outputs': {
                 'chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin': {},
                 'chromeos_15487.0.0_reven_recovery_dev-channel_mp-v2.bin.zip': {
@@ -59,12 +61,12 @@ _METADATA_DEV = {
 }
 
 _METADATA_BETA = {
-    'gs://chromeos-releases/beta-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions':
+    'gs://chromeos-releases/beta-channel/reven/15437.42.0/ChromeOS-recovery-R116-15437.42.0-reven.instructions':
         {
             'channel': 'beta',
             'outputs': {
-                'chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin': {},
-                'chromeos_15437.42.0_reven_recovery_beta-channel_mp-v2.bin.zip':
+                'chromeos_15487.0.0_reven_recovery_beta-channel_mp-v2.bin': {},
+                'chromeos_15487.0.0_reven_recovery_beta-channel_mp-v2.bin.zip':
                     {}
             },
             'release_directory': 'beta-channel/reven/15437.42.0',
@@ -77,14 +79,32 @@ _METADATA_BETA = {
 }
 
 _METADATA_STABLE = {
-    'gs://chromeos-releases/stable-channel/reven/15437.42.0/ChromeOS-recovery-R114-15437.42.0-reven.instructions':
+    'gs://chromeos-releases/stable-channel/reven/15437.42.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
         {
             'channel': 'stable',
+            'type': 'recovery',
             'outputs': {
-                'chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin': {
-                },
-                'chromeos_15437.42.0_reven_recovery_stable-channel_mp-v2.bin.zip':
+                'chromeos_15487.0.0.0_reven_recovery_stable-channel_mp-v2.bin':
+                    {},
+                'chromeos_15487.0.0_reven_recovery_stable-channel_mp-v2.bin.zip':
                     {}
+            },
+            'release_directory': 'stable-channel/reven/15437.42.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
+        }
+}
+
+_METADATA_FLEXOR = {
+    'gs://chromeos-releases/stable-channel/reven/15437.42.0/ChromeOS-flexor-R116-15487.0.0-reven.instructions':
+        {
+            'channel': 'stable',
+            'type': 'uefi-kernel',
+            'outputs': {
+                'flexor_15487.0.0_reven_stable-channel.bin': {},
             },
             'release_directory': 'stable-channel/reven/15437.42.0',
             'version': {
@@ -102,7 +122,7 @@ def RunSteps(api):
 
 def GenTests(api):
 
-  def _gen_metadata(channels, outputs_override=None):
+  def _gen_metadata(channels, outputs_override=None, include_flexor=False):
     """Piece together test data"""
     result = {}
     if 'canary' in channels:
@@ -119,10 +139,13 @@ def GenTests(api):
       for value in result.values():
         value['outputs'] = outputs
 
+    if include_flexor:
+      result.update(deepcopy(_METADATA_FLEXOR))
+
     return result
 
   yield api.test(
-      'basic',
+      'normal-release',
       api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.only run on stable builds'),
@@ -130,6 +153,9 @@ def GenTests(api):
                      'generate mass deploy builds.determine builder settings'),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.schedule mass deploy build'),
+      api.post_check(post_process.StepSummaryEquals,
+                     'generate mass deploy builds.schedule mass deploy build',
+                     'scheduled release-mass-deploy'),
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
@@ -165,18 +191,34 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation), status='FAILURE')
 
   yield api.test(
-      'release',
-      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
-      api.post_check(post_process.StepSummaryEquals,
-                     'generate mass deploy builds.schedule mass deploy build',
-                     'scheduled release-mass-deploy'),
-      api.post_process(post_process.DropExpectation))
-
-  yield api.test(
       'staging',
       api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
       api.buildbucket.generic_build(bucket='staging'),
       api.post_check(post_process.StepSummaryEquals,
                      'generate mass deploy builds.schedule mass deploy build',
                      'scheduled staging-release-mass-deploy'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'flexor-present-along-with-flex-release-build',
+      api.properties(
+          signing_metadata=_gen_metadata(['stable'], include_flexor=True)),
+      api.post_check(post_process.MustRun,
+                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(post_process.MustRun,
+                     'generate mass deploy builds.determine builder settings'),
+      api.post_check(post_process.MustRun,
+                     'generate mass deploy builds.schedule mass deploy build'),
+      api.post_check(post_process.StepSummaryEquals,
+                     'generate mass deploy builds.schedule mass deploy build',
+                     'scheduled release-mass-deploy'),
+      api.post_process(post_process.DropExpectation))
+
+  yield api.test(
+      'do-nothing-if-only-flexor-is-present',
+      api.properties(signing_metadata=_gen_metadata([], include_flexor=True)),
+      api.post_check(post_process.MustRun,
+                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(post_process.DoesNotRun,
+                     'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation))

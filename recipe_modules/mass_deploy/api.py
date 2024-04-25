@@ -12,10 +12,10 @@ from recipe_engine.recipe_api import StepFailure
 class MassDeployApi(recipe_api.RecipeApi):
 
   @staticmethod
-  def _select_stable_channel(signing_metadata):
-    """Returns just the metadata for the signed stable build, or None."""
+  def _select_stable_recovery_image(signing_metadata):
+    """Returns just the metadata for the signed stable recovery image, or None."""
     for metadata in signing_metadata.values():
-      if metadata['channel'] == 'stable':
+      if (metadata['channel'] == 'stable' and metadata['type'] == 'recovery'):
         return metadata
 
     return None
@@ -40,7 +40,8 @@ class MassDeployApi(recipe_api.RecipeApi):
     # We only build mass deploy images for stable.
     with self.m.step.nest('generate mass deploy builds'):
       with self.m.step.nest('only run on stable builds') as presentation:
-        stable_build_metadata = self._select_stable_channel(signing_metadata)
+        stable_build_metadata = self._select_stable_recovery_image(
+            signing_metadata)
         if stable_build_metadata is None:
           presentation.step_text = 'no stable build, stopping'
           return
