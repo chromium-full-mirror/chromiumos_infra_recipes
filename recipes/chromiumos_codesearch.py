@@ -53,10 +53,6 @@ def RunSteps(api, properties):
   cache_dir = api.path.cache_dir / 'builder'
   api.gclient.set_config('infra_superproject')
 
-  # The codesearch recipe module relies on checkout path to be set.
-  chromiumos_src_dir = api.cros_source.workspace_path / 'src'
-  api.path.checkout_dir = chromiumos_src_dir
-
   commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
                          ref='refs/heads/snapshot',
                          project='chromiumos/manifest')
@@ -103,6 +99,7 @@ def RunSteps(api, properties):
             build_dir / 'compile_commands.json',
         ] + list(packages))
 
+      chromiumos_src_dir = api.cros_source.workspace_path / 'src'
       api.codesearch.set_config(
           'chromiumos',
           PROJECT='chromiumos',
@@ -118,10 +115,9 @@ def RunSteps(api, properties):
 
       # Run the translation_unit tool in chromiumos/src dirs.
       target_architecture = _get_target_architecture(api, build_target)
-      api.codesearch.run_clang_tool(
-          clang_dir=clang_dir, run_dirs=[
-              chromiumos_src_dir / 'platform2',
-          ], target_architecture=target_architecture)
+      api.codesearch.run_clang_tool(clang_dir=clang_dir,
+                                    run_dirs=[chromiumos_src_dir / 'platform2'],
+                                    target_architecture=target_architecture)
 
       # Create the kythe index pack and upload it to google storage.
 
@@ -134,7 +130,8 @@ def RunSteps(api, properties):
           commit_hash=codesearch_mirror_revision,
           commit_timestamp=int(codesearch_mirror_revision_timestamp or
                                api.time.time()),
-          clang_target_arch=target_architecture)
+          clang_target_arch=target_architecture,
+          checkout_dir=chromiumos_src_dir)
 
       # Check out the generated files repo and sync the generated files
       # into this checkout.
