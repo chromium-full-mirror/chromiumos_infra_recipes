@@ -8192,7 +8192,8 @@
       "@@@STEP_LOG_LINE@request@  \"version\": \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@    \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"PUBLIC\"@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
       "@@@STEP_LOG_LINE@request@  \"labels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"@@@",
@@ -8212,7 +8213,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",\n  \"tags\": [\n    \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",\n  \"tags\": [\n    \"amd64-generic-snapshot.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PUBLIC\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
