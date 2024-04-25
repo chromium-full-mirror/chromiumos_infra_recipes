@@ -11,6 +11,7 @@ import copy
 from google.protobuf import json_format
 
 from PB.chromiumos.checkpoint import RetryStep
+from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -36,6 +37,7 @@ DEPS = [
     'git_footers',
     'orch_menu',
     'skylab',
+    'test_util',
 ]
 
 
@@ -647,6 +649,34 @@ def GenTests(api):
       builder='staging-cq-orchestrator',
       status='FAILURE',
   )
+
+  collect, collect_after = api.orch_menu.orch_child_builds(
+      'cq-orchestrator', '-cq')
+  yield api.orch_menu.test(
+      'cq-lfg', data.ctp_normal,
+      api.properties(
+          **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True,
+                  'greenness_threshold': 75
+              }
+          }),
+      api.buildbucket.simulated_search_results([
+          api.test_util.test_orchestrator(
+              builder='snapshot-orchestrator', output_properties={
+                  'greenness':
+                      json_format.MessageToDict(
+                          greenness_pb2.AggregateGreenness(
+                              aggregate_build_metric=100))
+              }).message
+      ], 'run builds.looks for green.find green snapshot.buildbucket.search'),
+      api.properties(
+          FullProperties(
+              expected_completed_builds=collect + collect_after,
+              expected_recipe_result=RawResult(status=common_pb2.SUCCESS),
+              expected_enable_history=True)), cq=True, collect_builds=collect,
+      history_builds=data.history_builds, collect_after_builds=collect_after,
+      with_history=True, git_footers=[])
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
   collect, collect_after = api.orch_menu.orch_child_builds(
