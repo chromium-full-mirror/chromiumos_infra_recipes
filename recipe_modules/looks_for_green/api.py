@@ -24,6 +24,8 @@ from google.protobuf import timestamp_pb2
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
+# The default lookback time.
+DEFAULT_LOOKBACK_HOURS = 10
 
 @dataclasses.dataclass
 class Snapshot:
@@ -71,7 +73,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                **kwargs: Any) -> None:
     super().__init__(**kwargs)
     self.enable_looks_for_green = properties.enable_looks_for_green
-    self._lookback_hours = properties.lookback_hours or 10
+    self._lookback_hours = properties.lookback_hours or DEFAULT_LOOKBACK_HOURS
     self._greenness_threshold = properties.greenness_threshold or 80
     self.use_complete_snapshot = properties.use_complete_snapshot
     self._stats = LooksForGreenStats()
@@ -216,6 +218,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       latest_start: Optional[timestamp_pb2.Timestamp] = None,
       bucket: Optional[str] = None,
       builder: Optional[str] = None,
+      lookback_hours: Optional[float] = None,
   ) -> List[build_pb2.Build]:
     """Get snapshot builds within the lookback period.
 
@@ -230,6 +233,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         self._greenness_bucket.
       builder: If specified, the builder to search for. Defaults to
         self._greenness_builder.
+      lookback_hours: The amount of time to lookback for a green snapshot.
+          If None, defaults to self.lookback_hours.
 
     Returns:
       Snapshot builds found within the lookback period.
@@ -238,20 +243,21 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         'id', 'input.gitiles_commit.id', 'output.properties', 'start_time',
         'end_time', 'status'
     })
+    lookback_hours = lookback_hours or self.lookback_hours
     # Look back from latest_start if specified, otherwise from current time.
     if latest_start:
       latest_seconds = latest_start.ToSeconds()
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - int(self.lookback_hours * 60 * 60),
+                  seconds=latest_seconds - int(lookback_hours * 60 * 60),
               ), end_time=latest_start))
     else:
       latest_seconds = self.seconds_utc
       predicate = builds_service_pb2.BuildPredicate(
           create_time=common_pb2.TimeRange(
               start_time=timestamp_pb2.Timestamp(
-                  seconds=latest_seconds - int(self.lookback_hours * 60 * 60),
+                  seconds=latest_seconds - int(lookback_hours * 60 * 60),
               )))
     predicate.builder.project = self.m.buildbucket.build.builder.project
     predicate.builder.bucket = bucket or self._greenness_bucket
@@ -420,6 +426,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       bucket: Optional[str] = None,
       builder: Optional[str] = None,
       requested_snapshot_builders: Optional[List[str]] = None,
+      lookback_hours: Optional[float] = None,
   ) -> Optional[Snapshot]:
     """Find a green snapshot within the lookback period if one exists.
 
@@ -434,13 +441,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         self._greenness_builder.
       requested_snapshot_builders: Optional, a list of builders to consider when
         aggregating greenness.
-
+      lookback_hours: Optional, the amount of time to lookback for a green
+        snapshot.
     Returns:
       A green snapshot, if one was found.
     """
     with self.m.step.nest('find green snapshot') as presentation:
       results = self._get_snapshots(latest_start=latest_start, bucket=bucket,
-                                    builder=builder)
+                                    builder=builder,
+                                    lookback_hours=lookback_hours)
       parsed_results = []
       for result in results:
         parsed_results.append(

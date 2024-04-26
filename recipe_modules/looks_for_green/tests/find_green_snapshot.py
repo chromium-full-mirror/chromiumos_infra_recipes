@@ -3,23 +3,29 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Unit tests for find_green_snapshot."""
 
+import typing
+
+from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
 from PB.chromiumos import greenness as greenness_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
 from PB.recipe_modules.chromeos.looks_for_green.tests.test import \
   FindGreenSnapshotProperties
+from RECIPE_MODULES.chromeos.looks_for_green.api import DEFAULT_LOOKBACK_HOURS
 from RECIPE_MODULES.chromeos.looks_for_green.test_utils import LooksStatusEquals
 from recipe_engine import post_process
+from recipe_engine import post_process_inputs
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
     'recipe_engine/time',
     'looks_for_green',
@@ -111,7 +117,9 @@ def RunSteps(api, properties):
     latest_start_ts = timestamp_pb2.Timestamp()
     latest_start_ts.FromJsonString(properties.latest_start)
     latest_start = latest_start_ts
-  snapshot = api.looks_for_green.find_green_snapshot(latest_start=latest_start)
+  lookback_hours = api.properties.get('lookback_hours')
+  snapshot = api.looks_for_green.find_green_snapshot(
+      latest_start=latest_start, lookback_hours=lookback_hours)
   if properties.expect_result:
     api.assertions.assertEqual(properties.expected_bbid, snapshot.bbid)
     api.assertions.assertEqual(expected_greenness, snapshot.agg_green)
@@ -123,12 +131,29 @@ def RunSteps(api, properties):
 
 
 def GenTests(api):
+
+  default_expected_time_range = common_pb2.TimeRange(
+      start_time=timestamp_pb2.Timestamp(seconds=TEST_SEED_TIME_SECONDS -
+                                         int(DEFAULT_LOOKBACK_HOURS * 60 * 60)))
+
+  def verify_bb_search_time_range(
+      check: typing.Callable[[bool], bool],
+      steps: typing.Dict[str, post_process_inputs.Step],
+      expected_time_range: common_pb2.TimeRange = default_expected_time_range
+  ) -> bool:
+    """Verify that the correct time range is used when finding a snapshot."""
+    data = api.json.loads(steps['find green snapshot.buildbucket.search'].stdin)
+    return check(
+        json_format.MessageToDict(expected_time_range) == data['requests'][0]
+        ['searchBuilds']['predicate']['createTime'])
+
   yield api.test(
       'success',
       api.properties(expect_result=True, expected_bbid=123,
                      expected_greenness=80, expected_commit_sha='ababab',
                      expected_builder_greenness='brya'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='cq-orchestrator'),
       api.buildbucket.simulated_search_results(
@@ -143,6 +168,7 @@ def GenTests(api):
               '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
+      api.post_check(verify_bb_search_time_range),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -162,10 +188,12 @@ def GenTests(api):
                      expected_greenness=98, expected_commit_sha='sample',
                      expected_builder_greenness='both'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
       api.buildbucket.simulated_search_results(
           builds=[green_build, green_build2],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_check(verify_bb_search_time_range),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -175,10 +203,12 @@ def GenTests(api):
                      expected_greenness=100, expected_commit_sha='sample',
                      expected_builder_greenness='brya'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
       api.buildbucket.simulated_search_results(
           builds=[green_build, green_build2, greenest_build],
           step_name='find green snapshot.buildbucket.search'),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_RAN_OLDER),
+      api.post_check(verify_bb_search_time_range),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -188,6 +218,7 @@ def GenTests(api):
                      expected_greenness=80, expected_commit_sha='ababab',
                      expected_builder_greenness='brya'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
       api.buildbucket.ci_build(project='chromeos', bucket='staging',
                                builder='staging-cq-orchestrator'),
       api.buildbucket.simulated_search_results(
@@ -202,16 +233,24 @@ def GenTests(api):
               '"predicate": {\n          "builder": {\n            "bucket": "staging",\n            "builder": "staging-snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
+      api.post_check(verify_bb_search_time_range),
       api.post_process(post_process.DropExpectation),
   )
 
+  latest_start_seconds = 1613779200
+  latest_start = timestamp_pb2.Timestamp(seconds=latest_start_seconds)
+  expected_time_range = common_pb2.TimeRange(
+      start_time=timestamp_pb2.Timestamp(seconds=latest_start_seconds -
+                                         (DEFAULT_LOOKBACK_HOURS * 60 * 60)),
+      end_time=latest_start)
   yield api.test(
       'latest-time',
       api.properties(expect_result=True, expected_bbid=123,
                      expected_greenness=80, expected_commit_sha='ababab',
-                     latest_start=timestamp_pb2.Timestamp(seconds=1613779200),
+                     latest_start=latest_start,
                      expected_builder_greenness='brya'),
       api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
                                builder='cq-orchestrator'),
       api.buildbucket.simulated_search_results(
@@ -225,5 +264,35 @@ def GenTests(api):
               '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'
           ],
       ),
+      api.post_check(verify_bb_search_time_range, expected_time_range),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  lookback_hours = 1
+  expected_time_range = common_pb2.TimeRange(
+      start_time=timestamp_pb2.Timestamp(seconds=TEST_SEED_TIME_SECONDS -
+                                         (lookback_hours * 60 * 60)))
+  yield api.test(
+      'lookback-hours',
+      api.properties(expect_result=True, expected_bbid=123,
+                     expected_greenness=80, expected_commit_sha='ababab',
+                     lookback_hours=lookback_hours,
+                     expected_builder_greenness='brya'),
+      api.time.seed(TEST_SEED_TIME_SECONDS),
+      api.time.step(0),
+      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
+                               builder='cq-orchestrator'),
+      api.buildbucket.simulated_search_results(
+          builds=[green_build],
+          step_name='find green snapshot.buildbucket.search'),
+      api.post_process(
+          post_process.LogContains,
+          'find green snapshot.buildbucket.search',
+          'request',
+          [
+              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'
+          ],
+      ),
+      api.post_check(verify_bb_search_time_range, expected_time_range),
       api.post_process(post_process.DropExpectation),
   )
