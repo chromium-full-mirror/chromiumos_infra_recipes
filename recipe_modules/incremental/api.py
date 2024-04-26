@@ -72,6 +72,8 @@ class IncrementalApi(RecipeApi):
               repo_path,
               'init',
               '--standalone-manifest',
+              '--groups',
+              'all',
               '--depth',
               1,
               f'file://{manifest_tempdir}/snapshot.xml',
@@ -112,14 +114,8 @@ class IncrementalApi(RecipeApi):
 
     # Attempt to checkout the current snapshot.
     if properties.use_llfg:
-      with api.repo.m.depot_tools.on_path():
-        api.step(
-            'Apply LLFG manifest snapshot',
-            [
-                repo_path, 'init', '--u', manifest_url, '-b', 'stable', '-g',
-                'all'
-            ],
-        )
+      with api.step.nest('Apply LLFG manifest snapshot'):
+        api.repo.init(manifest_url, manifest_branch='stable')
       api.repo.sync(
           jobs=REPO_SYNC_JOBS,
           force_sync=True,

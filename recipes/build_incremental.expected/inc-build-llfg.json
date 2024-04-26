@@ -2491,6 +2491,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--groups",
+      "all",
       "--depth",
       "1",
       "file://[CLEANUP]/tmp_tmp_2/snapshot.xml"
@@ -5262,15 +5264,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Apply LLFG manifest snapshot"
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
-      "--u",
+      "--manifest-url",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "-b",
+      "--manifest-branch",
       "stable",
-      "-g",
-      "all"
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5281,6 +5289,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:postsubmit"
@@ -5293,7 +5302,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Apply LLFG manifest snapshot"
+    "name": "Apply LLFG manifest snapshot.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [

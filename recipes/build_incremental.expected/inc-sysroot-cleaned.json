@@ -2391,6 +2391,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--groups",
+      "all",
       "--depth",
       "1",
       "file://[CLEANUP]/tmp_tmp_1/snapshot.xml"

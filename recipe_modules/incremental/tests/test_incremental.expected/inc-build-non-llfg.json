@@ -56,6 +56,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--groups",
+      "all",
       "--depth",
       "1",
       "file://[CLEANUP]/tmp_tmp_1/snapshot.xml"
@@ -1596,6 +1598,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "init",
       "--standalone-manifest",
+      "--groups",
+      "all",
       "--depth",
       "1",
       "file://[CLEANUP]/tmp_tmp_4/snapshot.xml"
@@ -2552,15 +2556,21 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Apply LLFG manifest snapshot"
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "init",
-      "--u",
+      "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "-b",
+      "--manifest-branch",
       "stable",
-      "-g",
-      "all"
+      "--groups",
+      "all",
+      "--repo-rev=stable",
+      "--verbose"
     ],
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2570,7 +2580,12 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Apply LLFG manifest snapshot"
+    "infra_step": true,
+    "name": "Apply LLFG manifest snapshot.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [
