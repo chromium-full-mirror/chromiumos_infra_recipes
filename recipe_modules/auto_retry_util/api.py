@@ -397,12 +397,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       retryable_failure_builders.extend(
           self._unrelated_package_failures_retryable_builders(
               cq_run, outstanding_failure_builders))
+      outstanding_failure_builders = [
+          b for b in unsuccessful_builders
+          if b not in retryable_failure_builders
+      ]
 
       # If there were any successful child builders, it means the SDK failures
       # are likely not the fault of the CL. Even pointless successful builds
       # needed to init and update the SDK. Add all the SDK failures as
       # retryable.
-      if self.is_experimental_feature_enabled(
+      # TODO(b/337243561): Determine if this retry mode is still necessary.
+      if outstanding_failure_builders and self.is_experimental_feature_enabled(
           EXPERIMENTAL_FEATURE_RETRY_SDK_FAILURES, cq_run
       ) and successful_builders and not NO_SDK_CHILD_BUILDERS.issuperset(
           successful_builders):
