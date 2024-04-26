@@ -389,23 +389,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       retryable_failure_builders.extend(
           self._waits_for_green_retryable_builders(
               cq_run, outstanding_failure_builders))
-      if self.is_experimental_feature_enabled(
-          EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES, cq_run):
-        not_at_fault_builders = self._get_not_cl_affected_package_failure_builders(
-            cq_run)
-        failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
-        if failed_on_snapshot_builders is not None:
-          not_at_fault_retryable_builders = [
-              b for b in not_at_fault_builders
-              # Builders which failed on snapshot should not be retried until
-              # "wait-for-green" kicks in.
-              if _snapshot_builder(b) not in failed_on_snapshot_builders and
-              b not in retryable_failure_builders
-          ]
-          if not_at_fault_retryable_builders:
-            self._experimental_retries[cq_run.id].add(
-                EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES)
-            retryable_failure_builders.extend(not_at_fault_retryable_builders)
+      outstanding_failure_builders = [
+          b for b in unsuccessful_builders
+          if b not in retryable_failure_builders
+      ]
+
+      retryable_failure_builders.extend(
+          self._unrelated_package_failures_retryable_builders(
+              cq_run, outstanding_failure_builders))
 
       # If there were any successful child builders, it means the SDK failures
       # are likely not the fault of the CL. Even pointless successful builds
@@ -443,6 +434,37 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return (successful_builders, retryable_failure_builders,
             outstanding_failure_builders)
+
+  def _unrelated_package_failures_retryable_builders(
+      self, cq_run: build_pb2.Build,
+      outstanding_failure_builders: List[str]) -> List[str]:
+    """Returns a list of builders with retryable unrelated package failures."""
+    retryable_builders = []
+
+    if not self.is_experimental_feature_enabled(
+        EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES, cq_run):
+      return retryable_builders
+
+    not_at_fault_builders = self._get_not_cl_affected_package_failure_builders(
+        cq_run, outstanding_failure_builders)
+
+    # Return early if there are no candidates.
+    if not not_at_fault_builders:
+      return retryable_builders
+
+    failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+    if failed_on_snapshot_builders is not None:
+      not_at_fault_retryable_builders = [
+          b for b in not_at_fault_builders
+          # Builders which failed on snapshot should not be retried until
+          # "wait-for-green" kicks in.
+          if _snapshot_builder(b) not in failed_on_snapshot_builders
+      ]
+      if not_at_fault_retryable_builders:
+        self._experimental_retries[cq_run.id].add(
+            EXPERIMENTAL_FEATURE_RETRY_NOT_AT_FAULT_PACKAGE_FAILURES)
+        retryable_builders = not_at_fault_retryable_builders
+    return retryable_builders
 
   def _waits_for_green_retryable_builders(
       self, cq_run: build_pb2.Build,
@@ -1816,13 +1838,22 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     return True
 
   def _get_not_cl_affected_package_failure_builders(
-      self, cq_run: build_pb2.Build) -> List[Optional[str]]:
-    """Get any builds which had unrelated package failures."""
+      self, cq_run: build_pb2.Build,
+      outstanding_failure_builders: List[str]) -> List[Optional[str]]:
+    """Returns builders which had unrelated package failures.
+
+    Args:
+      cq_run: The CQ run to analyze.
+      outstanding_failure_builders: The names of the builders with outstanding
+          failures.
+    """
     output_dict = json_format.MessageToDict(cq_run.output.properties)
     child_build_info = output_dict.get('child_build_info', [])
 
     builders = []
     for cbi in child_build_info:
+      if cbi['builder']['builder'] not in outstanding_failure_builders:
+        continue
       package_failures = [
           json_format.ParseDict(x, PackageFailure())
           for x in cbi.get('package_failures', [])
