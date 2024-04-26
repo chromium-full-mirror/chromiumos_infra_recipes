@@ -11,7 +11,6 @@ from typing import Generator, Optional
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties, ErrorType
 from PB.recipe_engine.result import RawResult
 
@@ -137,20 +136,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
         api.build_menu._sdk_reuse_checked = True  # pylint: disable=protected-access
         return RawResult(status=common.SUCCESS,
                          summary_markdown='All local state was cleaned.')
-
-      # Get the prebuilts metadata to use with the current snapshot.
-      if properties.use_llfg:
-        manifest_dir = api.src_state.workspace_path.joinpath(
-            '.repo', 'manifests')
-        remotes = api.git.ls_remote(['refs/remotes/origin/stable'],
-                                    repo_url=manifest_dir)
-        current_commit_hash = remotes[0].hash if remotes else None
-        current_commit = GitilesCommit(
-            host=api.src_state.gitiles_commit.host,
-            project=api.src_state.gitiles_commit.project,
-            id=current_commit_hash)
-        if current_commit_hash:
-          api.src_state.gitiles_commit = current_commit
 
       # b/321760005: toolchain files like `package.provided` may need to be
       # updated.

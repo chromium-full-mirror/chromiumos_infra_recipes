@@ -7,6 +7,7 @@
 
 # pylint: disable=import-error
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipe_modules.chromeos.incremental.incremental import IncrementalProperties
 from recipe_engine.recipe_api import RecipeApi
 
@@ -85,6 +86,13 @@ class IncrementalApi(RecipeApi):
         current_branch=True,
         force_remove_dirty=True,
     )
+    # Save ToT (or LFG) commit id, and set api.src_state.gitiles_commit to
+    # old one to request the correct binhost from the lookup service.
+    tot_gitiles_commit_id = api.src_state.gitiles_commit.id
+    gitiles_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
+                                   project=api.src_state.gitiles_commit.project,
+                                   id=delta_hash)
+    api.src_state.gitiles_commit = gitiles_commit
     api.build_menu.setup_chroot(
         no_chroot_timeout=False,
         bootstrap=False,
@@ -119,10 +127,25 @@ class IncrementalApi(RecipeApi):
           retry_fetches=3,
           force_remove_dirty=True,
       )
+      # Reset api.src_state.gitiles_commit to get the prebuilts for LLFG.
+      manifest_dir = api.src_state.workspace_path.joinpath('.repo', 'manifests')
+      remotes = api.git.ls_remote(['refs/remotes/origin/stable'],
+                                  repo_url=manifest_dir)
+      llfg_commit_id = remotes[0].hash if remotes else tot_gitiles_commit_id
+      llfg_commit = GitilesCommit(host=api.src_state.gitiles_commit.host,
+                                  project=api.src_state.gitiles_commit.project,
+                                  id=llfg_commit_id)
+      api.src_state.gitiles_commit = llfg_commit
     else:
       with api.context(cwd=api.cros_source.workspace_path):
         api.cros_source.sync_checkout(api.src_state.gitiles_commit,
                                       api.src_state.build_manifest.url)
+      # Reset api.src_state.gitiles_commit to get the prebuilts for ToT/LFG.
+      current_commit = GitilesCommit(
+          host=api.src_state.gitiles_commit.host,
+          project=api.src_state.gitiles_commit.project,
+          id=tot_gitiles_commit_id)
+      api.src_state.gitiles_commit = current_commit
 
     api.cros_sdk(
         'regenerate configs',

@@ -2662,6 +2662,18 @@
   },
   {
     "cmd": [],
+    "name": "update src_state.gitiles_commit"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit.set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\"\\n}\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "init sdk",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@sdk version@123@@@",
@@ -3982,7 +3994,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "snapshot-HEAD-SHA:"
+      ":"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env": {
@@ -4853,7 +4865,7 @@
       "git",
       "fetch",
       "https://chromium.googlesource.com/chromiumos/manifest",
-      "snapshot-HEAD-SHA:"
+      ":"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
     "env": {
@@ -5261,7 +5273,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chromium.googlesource.com/chromiumos/manifest/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chromium.googlesource.com/chromiumos/manifest/+//snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -5281,7 +5293,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to gitiles commit (2).fetch snapshot-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit (2).fetch :snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -5399,7 +5411,7 @@
       }
     },
     "name": "sync to gitiles commit (2).repo sync",
-    "timeout": 10800,
+    "timeout": 7200,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -5549,6 +5561,18 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit (2)"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit (2).set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chromium.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromiumos/manifest\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\"\\n}\"@@@"
     ]
   },
   {
@@ -8381,7 +8405,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chromium.googlesource.com\", \"project\": \"chromiumos/manifest\"}}@@@"
     ]
   },
   {
