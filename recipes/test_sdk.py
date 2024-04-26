@@ -42,15 +42,14 @@ DEPS = [
 
 def RunSteps(api: RecipeApi):
   with api.build_menu.configure_builder(), \
-      api.build_menu.setup_workspace_and_chroot():
+      api.build_menu.setup_workspace_and_chroot(force_update=True):
     dep_graph = api.build_menu.get_dep_graph_and_validate_sdk_reuse()
 
     # Exit early if there are no changes to the SDK.
     relevant = False
     if api.build_menu.gerrit_changes:
-      relevant = api.cros_sdk.sdk_is_dirty
-      api.easy.set_properties_step(pointless_build=not relevant,
-                                   relevant_build=relevant)
+      relevant = True
+      api.easy.set_properties_step(pointless_build=False, relevant_build=True)
     else:
       relevant = api.cros_relevance.postsubmit_relevance_check(
           api.build_menu.gitiles_commit, dep_graph.sdk)
@@ -87,13 +86,6 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-
-  yield api.test(
-      'not-relevant-cq',
-      api.buildbucket.try_build(builder='host-packages-cq'),
-      api.post_process(post_process.DoesNotRun, 'run SDK package unit tests'),
-  )
-
   # TODO (b/275363240): audit this test.
   yield api.test(
       'not-relevant-postsubmit',

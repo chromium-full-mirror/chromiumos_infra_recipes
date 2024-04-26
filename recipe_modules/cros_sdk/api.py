@@ -417,7 +417,7 @@ class CrosSdkApi(RecipeApi):
 
   def update_chroot(self, build_source=False, toolchain_targets=None,
                     timeout_sec='DEFAULT', test_data=None,
-                    test_toolchain_cls=None, name=None):
+                    test_toolchain_cls=None, name=None, force_update=False):
     """Update the chroot.
 
     Args:
@@ -431,6 +431,8 @@ class CrosSdkApi(RecipeApi):
           None to use the default in cros_build_api/test_api.py.
       test_toolchain_cls (bool): Test answer for detect_toolchain_cls.
       name (string): Step name.  Default: "update sdk".
+      force_update (bool): Pass force_update to the SdkService/Update call,
+          causing update_chroot to be called.
     """
     with self.m.step.nest(name or 'update sdk') as pres:
       # See if any of the changes affect the toolchain.
@@ -439,7 +441,7 @@ class CrosSdkApi(RecipeApi):
 
       builder_config = self.m.cros_infra_config.config_or_default
       use_snapshot_binhosts = builder_config.id.type == BuilderConfig.Id.CQ
-      force_update = builder_config.build.sdk_update.sdknext
+      force_update = force_update or builder_config.build.sdk_update.sdknext
 
       if build_source or toolchain_cls or force_update:
         self.mark_sdk_as_dirty()

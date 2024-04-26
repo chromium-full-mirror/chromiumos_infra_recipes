@@ -338,7 +338,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
   @contextlib.contextmanager
   def setup_workspace_and_chroot(
       self, no_chroot_timeout: bool = False, cherry_pick_changes: bool = True,
-      bootstrap_chroot: bool = False,
+      bootstrap_chroot: bool = False, force_update: bool = False,
       force_no_chroot_upgrade: Optional[bool] = None) -> Iterator[bool]:
     """Setup the workspace and chroot for the builder.
 
@@ -350,12 +350,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
         checkout using cherry-pick. If set to False, will directly checkout
         the changes using the gerrit fetch refs.
       bootstrap_chroot: Whether to bootstrap the chroot.
+      force_update: Pass force_update flag to chroot upgrade.
       force_no_chroot_upgrade: Whether to prevent the chroot upgrading at all.
     Returns:
       Whether the build is relevant.
     """
     with self.setup_workspace(cherry_pick_changes=cherry_pick_changes):
       yield self.setup_chroot(no_chroot_timeout, bootstrap=bootstrap_chroot,
+                              force_update=force_update,
                               force_no_chroot_upgrade=force_no_chroot_upgrade)
 
   @contextlib.contextmanager
@@ -399,6 +401,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
                    sdk_version: Optional[str] = None, bootstrap: bool = False,
                    uprev_packages: bool = True,
                    setup_toolchains_if_no_update: bool = True,
+                   force_update: bool = False,
                    force_no_chroot_upgrade: Optional[bool] = None,
                    no_delete_out_dir: Optional[bool] = False) -> bool:
     """Setup the chroot for the builder.
@@ -412,6 +415,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       setup_toolchains_if_no_update: If True, and the function skips updating
         the chroot (whether due to the `update` kwarg or due to the builder
         config), then it will setup toolchains instead.
+      force_update: Pass force_update to chroot update.
       force_no_chroot_upgrade: If True, chroot update is skipped, regardless of
         the builder config.
       no_delete_out_dir: If True, `out` directory will be preserved.
@@ -448,7 +452,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       if self._should_update_chroot() and not force_no_chroot_upgrade:
         self.m.cros_sdk.update_chroot(
             build_source=config.build.sdk_update.compile_source,
-            toolchain_targets=self._build_targets_for_toolchain_setup)
+            toolchain_targets=self._build_targets_for_toolchain_setup,
+            force_update=force_update)
       elif setup_toolchains_if_no_update:
         # Normally, update_chroot takes care of toolchain setup. If we skipped
         # update_chroot, make sure we still setup toolchains.
