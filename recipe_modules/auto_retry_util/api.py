@@ -471,6 +471,21 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         retryable_builders = not_at_fault_retryable_builders
     return retryable_builders
 
+  def _cq_retry_snapshot(self, cq_run: build_pb2.Build) -> Optional[Snapshot]:
+    """Return the Snapshot that the CQ retry would use."""
+    with self.m.step.nest('determine CQ retry snapshot') as pres:
+      if _lfg_skipped(cq_run):
+        current_greenness = self._latest_greenness
+        step_text_prefix = 'build skipped LFG, using latest scored snapshot'
+      else:
+        current_greenness = self._lfg_greenness
+        step_text_prefix = 'build used LFG, using current snapshot found by LFG'
+
+      step_text_suffix = ': no snapshot found' if not current_greenness else ''
+      pres.step_text = f'{step_text_prefix}{step_text_suffix}'
+
+      return current_greenness
+
   def _waits_for_green_retryable_builders(
       self, cq_run: build_pb2.Build,
       outstanding_failure_builders: List[str]) -> List[str]:
@@ -491,7 +506,12 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN, cq_run):
       return retryable_builders
 
-    now_green_builders = self._get_now_green_builders(cq_run)
+    # If we did not find a green snapshot, return early.
+    cq_retry_snapshot = self._cq_retry_snapshot(cq_run)
+    if not cq_retry_snapshot:
+      return retryable_builders
+
+    now_green_builders = self._get_now_green_builders(cq_run, cq_retry_snapshot)
     # now_green_builders are snapshot builders, but unsucessful_builders are
     # cq builders. Convert them with _snapshot_builder when matching them.
     now_green_retryable_builders = [
@@ -514,12 +534,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     #
     # TODO(b/299561567): See if we can address this.
     if now_green_retryable_builders:
-      current_greenness = self._latest_greenness if _lfg_skipped(
-          cq_run) else self._lfg_greenness
-      assert current_greenness, 'Must have found a current snapshot if now_green_retryable_builders is non-empty'
       no_snapshot_data_builders = [
           b for b in outstanding_failure_builders
-          if _snapshot_builder(b) not in current_greenness.builder_greenness
+          if _snapshot_builder(b) not in cq_retry_snapshot.builder_greenness
       ]
       self.per_build_stats[
           cq_run.
@@ -634,7 +651,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         builder='snapshot-orchestrator',
     )
 
-  def _get_now_green_builders(self, cq_run: build_pb2.Build) -> List[str]:
+  def _get_now_green_builders(self, cq_run: build_pb2.Build,
+                              cq_retry_snapshot: Snapshot) -> List[str]:
     """Returns builders that failed on cq_run's snapshot and are now passing at ToT.
 
     This function first finds the greenness for the snapshot that cq_run ran on
@@ -664,27 +682,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           cq_run.id].wait_for_green_stats.failed_builders_in_snapshot = list(
               failed_on_snapshot_builders)
 
-      # If the build skipped LFG, use the latest scored snapshot instead of the
-      # snapshot LFG would choose. They retry will actually end up using the
-      # latest minted snapshot, which is usually newer than the latest scored
-      # snapshot. However, we can use the latest scored snapshot as a proxy for
-      # the latest minted snapshot; this will work unless the relevant builders
-      # were re-broken between the latest scored and latest minted snapshots.
-      if _lfg_skipped(cq_run):
-        current_greenness = self._latest_greenness
-        step_text_prefix = 'build skipped LFG, using latest scored snapshot'
-      else:
-        current_greenness = self._lfg_greenness
-        step_text_prefix = 'build used LFG, using current snapshot found by LFG'
-
-      if not current_greenness:
-        pres.step_text = f'{step_text_prefix}: no snapshot found'
-        return []
-
-      pres.step_text = f'{step_text_prefix}: using snapshot {current_greenness.commit_sha}'
-      pres.logs['current greenness'] = str(current_greenness)
-
-      greenness = current_greenness.builder_greenness
+      greenness = cq_retry_snapshot.builder_greenness
       for builder in failed_on_snapshot_builders:
         if builder in greenness and greenness[builder].build_metric == 100:
           now_green_builders.append(builder)

@@ -73,7 +73,7 @@ def GenTests(api):
   }
 
   yield api.test(
-      'greenness cache used',
+      'greenness-cache-used',
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
           **{
@@ -83,6 +83,12 @@ def GenTests(api):
                           name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
                   ])
           }),
+      api.buildbucket.simulated_search_results(
+          [
+              GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
+          ],
+          'analyzing build results.determine CQ retry snapshot.find green snapshot.buildbucket.search',
+      ),
       # Search for snapshot abc returns a green snapshot.
       api.buildbucket.simulated_search_results(
           [
@@ -123,7 +129,7 @@ def GenTests(api):
       # Don't do a second call for the lfg snapshot.
       api.post_process(
           post_process.DoesNotRun,
-          'analyzing build results (2).get now green builders.find green snapshot',
+          'analyzing build results (2).determine CQ retry snapshot.find green snapshot',
       ),
       api.post_process(post_process.DropExpectation),
   )
@@ -152,7 +158,7 @@ def GenTests(api):
           [
               GREENNESS_MISSING_SNAPSHOT_BUILD,
           ],
-          'analyzing build results.get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results.determine CQ retry snapshot.find green snapshot.buildbucket.search',
       ),
       # Don't search for snapshot abc again, even though it wasn't found the first time.
       api.post_process(
