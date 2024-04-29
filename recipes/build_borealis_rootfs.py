@@ -31,6 +31,7 @@ DEPS = [
     'build_menu',
     'cros_sdk',
     'cros_source',
+    'easy',
     'gerrit',
     'git',
     'repo',
@@ -145,6 +146,8 @@ def DoRunSteps(api: RecipeApi,
         presentation.links['tarball'] = api.path.join(_PANTHEON_PREFIX,
                                                       bucket_url, path_url,
                                                       tast_archive_name)
+
+    api.easy.set_properties_step(borealis_version=version)
 
     # If the version_file is not set, skip updating the version_file
     if not properties.version_file:

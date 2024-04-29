@@ -1879,6 +1879,13 @@
   },
   {
     "cmd": [],
+    "name": "set borealis_version",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@borealis_version@\"2012.05.14.125327\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "update VERSION-PIN",
     "~followup_annotations": [
       "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/+/1@@@"
