@@ -644,7 +644,7 @@ def _get_tast_use_flags(api, r):
   return None  # pragma: nocover
 
 
-def _filter_test_cases(test_cases, tast_use_flag_list):
+def _filter_test_cases(api, test_cases, tast_use_flag_list):
   """Filter test cases based on tast use flags.
 
     Args:
@@ -658,7 +658,7 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
   removed_test_cases = []
   for test_case in test_cases:
     if not test_case.build_dependencies or _check_if_any_test_hw_dep_qualify(
-        test_case.build_dependencies, tast_use_flag_list):
+        api, test_case, tast_use_flag_list):
       filtered_test_cases.append(test_case)
     else:
       removed_test_cases.append(test_case.id.value)  # pragma: nocover
@@ -667,24 +667,25 @@ def _filter_test_cases(test_cases, tast_use_flag_list):
           test_cases=filtered_test_cases)), removed_test_cases
 
 
-def _check_if_any_test_hw_dep_qualify(build_dependencies, tast_use_flag_list):
+def _check_if_any_test_hw_dep_qualify(api, test_case, tast_use_flag_list):
   """Checks if any test buildDep qualifies
 
     Args:
     * api: (object): See RunSteps documentation.
-    * build_dependencies: build_dependencies from test case metadata
+    * test_case: single test case
     * tast_use_flag_list: List if use flags on DUT.
 
   Returns: bool
   """
-  for build_dep_expr in build_dependencies:
-    if _check_if_test_hw_dep_qualify(build_dep_expr.value,
-                                     tast_use_flag_list):  # pragma: nocover
-      return True
+  with api.step.nest('pruning for - %s' % test_case.name):
+    for build_dep_expr in test_case.build_dependencies:
+      if _check_if_test_hw_dep_qualify(api, build_dep_expr.value,
+                                       tast_use_flag_list):  # pragma: nocover
+        return True
   return False
 
 
-def _check_if_test_hw_dep_qualify(build_dep_expr, tast_use_flag_list):
+def _check_if_test_hw_dep_qualify(api, build_dep_expr, tast_use_flag_list):
   """Checks if a given test buildDep qualifies
 
     Args:
@@ -694,17 +695,22 @@ def _check_if_test_hw_dep_qualify(build_dep_expr, tast_use_flag_list):
 
   Returns: bool
   """
-  include_flags, exclude_flags = _create_include_and_exclude_use_flag_list(
-      build_dep_expr)
-  # Check if all items in include_flags are present in tast_use_flag_list
-  for flag in include_flags:
-    if flag not in tast_use_flag_list:
-      return False
+  with api.step.nest('expression - %s' % build_dep_expr) as step:
+    include_flags, exclude_flags = _create_include_and_exclude_use_flag_list(
+        build_dep_expr)
+    step.logs['include_flags'] = include_flags
+    step.logs['exclude_flags'] = include_flags
+    step.logs['use flag list'] = tast_use_flag_list
 
-  # Check if any items in exclude_flags are present in tast_use_flag_list
-  for flag in exclude_flags:  # pragma: nocover
-    if flag in tast_use_flag_list:
-      return False
+    # Check if all items in include_flags are present in tast_use_flag_list
+    for flag in include_flags:
+      if flag not in tast_use_flag_list:
+        return False
+
+    # Check if any items in exclude_flags are present in tast_use_flag_list
+    for flag in exclude_flags:  # pragma: nocover
+      if flag in tast_use_flag_list:
+        return False
 
   return True  # pragma: nocover
 
@@ -754,7 +760,7 @@ def _test_suites_with_filtered_tests(api, r, build_target, test_suites):
     for test_suite in test_suites:
       if test_suite and test_suite.test_cases:
         filtered_test_suite, removed_cases = _filter_test_cases(
-            test_suite.test_cases.test_cases, tast_use_flag_list)
+            api, test_suite.test_cases.test_cases, tast_use_flag_list)
         filtered_test_suites.append(filtered_test_suite)
         removed_test_cases.extend(removed_cases)
     if removed_cases:  # pragma: nocover
@@ -1640,9 +1646,10 @@ def _get_dut_use_flags(api, use_flag_gs_url):
     # Retrieve tast use flags and log any parsing errors that occur,
     # but don't allow it to fail the overall build.
     try:
-      cat_res = api.gsutil.cat(use_flag_gs_url, infra_step=True,
-                               name='cat {}'.format(use_flag_gs_url),
-                               stdout=api.raw_io.output(add_output_log=True))
+      cat_res = api.gsutil.cat(
+          use_flag_gs_url, infra_step=True,
+          name='cat {}'.format(use_flag_gs_url),
+          stdout=api.raw_io.output_text(add_output_log=True))
       res = cat_res.stdout.splitlines()
     # pylint: disable=broad-except
     except StepFailure as e:  #pragma: nocover

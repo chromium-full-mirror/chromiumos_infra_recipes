@@ -447,7 +447,26 @@
     "name": "enumerate CFT tests.useflag based test pruning - foo-build-target.get dut use flag from GS.gsutil cat gs://foo-metadata-url/tast_use_flags.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output@@@"
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.useflag based test pruning - foo-build-target.pruning for - ",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "enumerate CFT tests.useflag based test pruning - foo-build-target.pruning for - .expression - foo,!bar",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@include_flags@foo@@@",
+      "@@@STEP_LOG_END@include_flags@@@",
+      "@@@STEP_LOG_LINE@exclude_flags@foo@@@",
+      "@@@STEP_LOG_END@exclude_flags@@@",
+      "@@@STEP_LOG_END@use flag list@@@"
     ]
   },
   {
