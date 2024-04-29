@@ -171,7 +171,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     This is the entry point into the CrOS infra test platform via recipes.
 
     Args:
-      need_tests_builds (list[build]): builds that are eligible for testing,
+      need_tests_builds (list[Build]): builds that are eligible for testing,
           i.e. ones that didn't suffer build failures.
       snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
           the included builds were created.
@@ -267,7 +267,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                 self.m.naming.get_test_title(test_result))
 
         self.test_summary = self._generate_test_summary(
-            test_plan, previously_passed_tests.union(set(passed_test_names)))
+            test_plan, previously_passed_tests.union(set(passed_test_names)),
+            need_tests_builds)
 
       if crit_failure_test_names:
         pres.step_text = ('{} critical test(s) failed'.format(
@@ -793,12 +794,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           scheduled_tast_gce_tests=scheduled_test_names)
     return gce_tests
 
-  def _generate_test_summary(self, test_plan, passed_test_names):
+  def _generate_test_summary(self, test_plan, passed_test_names, test_builds):
     """Creates a summary of the test results.
 
     Args:
       test_plan (GenerateTestPlanResponse): The test plan.
       passed_test_names (list[str]): The names of the passed tests.
+      test_builds (list[Build]): Builds that are eligible for testing.
 
     Returns:
       test_summary (list[dict]):  A summary of tests, one item per test
@@ -809,19 +811,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # * Assist analysis of test results by dashboards with access to the
     #   buildbucket tables.
     test_summary = (
-        self._extract_test_summary(test_plan.hw_test_units, lambda unit: unit.
-                                   hw_test_cfg, lambda cfg: cfg.hw_test,
-                                   passed_test_names) +
         self._extract_test_summary(
-            test_plan.direct_tast_vm_test_units, lambda unit: unit.
-            tast_vm_test_cfg, lambda cfg: cfg.tast_vm_test, passed_test_names) +
+            test_plan.hw_test_units, lambda unit: unit.hw_test_cfg,
+            lambda cfg: cfg.hw_test, passed_test_names, test_builds) +
+        self._extract_test_summary(test_plan.direct_tast_vm_test_units,
+                                   lambda unit: unit.tast_vm_test_cfg,
+                                   lambda cfg: cfg.tast_vm_test,
+                                   passed_test_names, test_builds) +
         self._extract_test_summary(
             test_plan.tast_gce_test_units, lambda unit: unit.tast_gce_test_cfg,
-            lambda cfg: cfg.tast_gce_test, passed_test_names))
+            lambda cfg: cfg.tast_gce_test, passed_test_names, test_builds))
     return test_summary
 
   def _extract_test_summary(self, units, cfg_func, tests_func,
-                            passed_test_names):
+                            passed_test_names, test_builds):
     """Returns a summary of the tests within `units`.
 
     Args:
@@ -832,6 +835,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       tests_func (lambda): Lambda function that takes the *test_cfg field and
           returns the *test field holding the list of tests.
       passed_test_names (list[str]): The names of the passed tests.
+      test_builds (list[Build]): Builds that are eligible for testing.
 
     Returns:
       list[dict]: A summary of tests, one item per test.
@@ -851,15 +855,39 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
         result.append({
-            'name': name,
-            'board': board,
-            'model': model,
-            'builder_name': builder_name,
-            'build_target': build_target,
-            'critical': critical,
-            'status': status,
+            'name':
+                name,
+            'board':
+                board,
+            'model':
+                model,
+            'builder_name':
+                builder_name,
+            'build_target':
+                build_target,
+            'critical':
+                critical,
+            'status':
+                status,
+            'revision':
+                self._get_revision_for_builder(builder_name, test_builds),
         })
     return result
+
+  def _get_revision_for_builder(self, builder_name, test_builds):
+    """Gets the gitiles commit of the build used for testing.
+
+    Args:
+      builder_name (str): Name of the builder.
+      test_builds (list[Build]): Builds that are eligible for testing.
+
+    Returns:
+      str: The gitiles commit if found, otherwise, empty string.
+    """
+    for build in test_builds:
+      if build.builder.builder == builder_name:
+        return build.input.gitiles_commit.id
+    return ''
 
   def _with_props_for_child_build(self, properties):
     """Merge 'properties' and 'api.cv.props_for_child_build'.

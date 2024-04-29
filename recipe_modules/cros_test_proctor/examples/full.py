@@ -318,3 +318,12 @@ def GenTests(api):
       api.post_check(post_process.DoesNotRun, 'run tests.schedule tests'),
       api.post_check(post_process.DoesNotRun, 'run tests.collect tests'),
   )
+
+  builds = [
+      api.buildbucket.ci_build_message(builder='test-builder', status='SUCCESS')
+  ]
+
+  yield api.test(
+      'test-summary-revision',
+      api.properties(FullProperties(need_tests_builds=builds)),
+  )
