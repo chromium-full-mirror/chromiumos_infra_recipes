@@ -1054,7 +1054,7 @@ class RepoApi(recipe_api.RecipeApi):
           # manifest relative to .repo/manifests. It must be inside of the
           # root_path.
           assert isinstance(manifest_name, Path)
-          assert root_path.is_parent_of(manifest_name)
+          assert root_path in manifest_name.parents
           init_opts['manifest_name'] = self.m.path.relpath(
               manifest_name, root_path / '.repo/manifests')
           sync_opts['manifest_name'] = self.m.path.relpath(
