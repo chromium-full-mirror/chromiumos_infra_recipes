@@ -3738,6 +3738,18 @@
   },
   {
     "cmd": [],
+    "name": "update src_state.gitiles_commit (2)"
+  },
+  {
+    "cmd": [],
+    "name": "update src_state.gitiles_commit (2).set gitiles_commit",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\"\\n}\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "sync to gitiles commit (2)"
   },
   {
@@ -3748,7 +3760,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+//snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -3768,7 +3780,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to gitiles commit (2).fetch :snapshot.xml",
+    "name": "sync to gitiles commit (2).fetch snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -4036,18 +4048,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit (2)"
-  },
-  {
-    "cmd": [],
-    "name": "update src_state.gitiles_commit (2).set gitiles_commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\"\\n}\"@@@"
     ]
   },
   {
@@ -5254,7 +5254,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\"}}@@@"
     ]
   },
   {

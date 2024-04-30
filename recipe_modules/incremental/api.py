@@ -133,15 +133,15 @@ class IncrementalApi(RecipeApi):
                                   id=llfg_commit_id)
       api.src_state.gitiles_commit = llfg_commit
     else:
-      with api.context(cwd=api.cros_source.workspace_path):
-        api.cros_source.sync_checkout(api.src_state.gitiles_commit,
-                                      api.src_state.build_manifest.url)
       # Reset api.src_state.gitiles_commit to get the prebuilts for ToT/LFG.
       current_commit = GitilesCommit(
           host=api.src_state.gitiles_commit.host,
           project=api.src_state.gitiles_commit.project,
           id=tot_gitiles_commit_id)
       api.src_state.gitiles_commit = current_commit
+      with api.context(cwd=api.cros_source.workspace_path):
+        api.cros_source.sync_checkout(api.src_state.gitiles_commit,
+                                      api.src_state.build_manifest.url)
 
     api.cros_sdk(
         'regenerate configs',
