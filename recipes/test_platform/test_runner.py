@@ -3113,6 +3113,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
   def _test_case_result_resp_with_state_for_ctr(state, has_result_dir=True):
     test_case_result = ctr_api.test_case_result.TestCaseResult(
         test_case_id=ctr_api.test_case.TestCase.Id(value='tauto.dummy_id'),
+        test_harness=ctr_api.test_harness.TestHarness(
+            tauto=ctr_api.test_harness.TestHarness.Tauto()),
         result_dir_path=StoragePath(
             host_type=StoragePath.HostType.LOCAL,
             path='dummy-results-dir/subdir' if has_result_dir else ''),

@@ -706,17 +706,22 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                 test_cases=skylab_test_results))
         temp_dir = self._api.path.mkdtemp()
 
-        config = {}
         if self._is_chromium_test(execution_metadata):
-          config = self._extract_chromium_resultdb_config(execution_metadata)
-
-        autotest_rdb_config = self._autotest_results_rdb_config(
-            config, skylab_test_runner_result,
-            temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
-            test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
-            metadata, skip_board_model_check, visibility_mode, custom_realm)
-        self._api.cros_resultdb.upload(autotest_rdb_config,
-                                       str(metadata.testhaus_logs_url))
+          chromium_rdb_config = self._chromium_results_rdb_config(
+              execution_metadata, skylab_test_runner_result,
+              temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
+              test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
+              metadata, skip_board_model_check, visibility_mode, custom_realm)
+          self._api.cros_resultdb.upload(chromium_rdb_config,
+                                         str(metadata.testhaus_logs_url))
+        else:
+          autotest_rdb_config = self._autotest_results_rdb_config(
+              skylab_test_runner_result,
+              temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
+              test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
+              metadata, skip_board_model_check, visibility_mode, custom_realm)
+          self._api.cros_resultdb.upload(autotest_rdb_config,
+                                         str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
       for tast_result_dir in tast_results_dirs:
         temp_dir = self._api.path.mkdtemp()
@@ -820,7 +825,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return config
 
   def _autotest_results_rdb_config(
-      self, config, test_runner_result, test_runner_result_file_path,
+      self, test_runner_result, test_runner_result_file_path,
       test_metadata_file_content, test_metadata_file_path, metadata,
       skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
@@ -828,7 +833,6 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """Build rdb config for tauto test results.
 
     Args:
-      config (dict): RDB base config wrapping all ResultDB upload parameters.
       test_runner_result (Skylab_Result): skylab test runner results.
       test_runner_result_file_path (str): path to test runner results file.
       test_metadata_file_content (str): CFT test metadata file contents.
@@ -844,30 +848,80 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                                test_runner_result_file_path, test_runner_result,
                                'JSONPB')
 
-    config['result_format'] = 'skylab-test-runner'
+    config = {
+        'result_format': 'skylab-test-runner',
+        'base_variant': metadata.rdb_base_variant,
+        'base_tags': metadata.rdb_base_tags,
+        'sources_file': metadata.rdb_sources_file,
+        'result_file': test_runner_result_file_path,
+        'artifact_directory': None,
+        'skip_board_model_check': skip_board_model_check,
+        'visibility_mode': visibility_mode,
+        'custom_realm': custom_realm
+    }
+
+    if test_metadata_file_content:
+      self._api.file.write_text('write skylab_test_runner CFT test metadata',
+                                test_metadata_file_path,
+                                test_metadata_file_content)
+      config['test_metadata_file'] = test_metadata_file_path
+
+    return config
+
+  def _chromium_results_rdb_config(
+      self, execution_metadata, test_runner_result,
+      test_runner_result_file_path, test_metadata_file_content,
+      test_metadata_file_path, metadata, skip_board_model_check=False,
+      visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
+      custom_realm=''):
+    """Build rdb config for tauto test results.
+
+    Args:
+      execution_metadata (ExecutionMetadata): test execution metadata.
+      test_runner_result (Skylab_Result): skylab test runner results.
+      test_runner_result_file_path (str): path to test runner results file.
+      test_metadata_file_content (str): CFT test metadata file contents.
+      test_metadata_file_path (str): path to the CFT test metadata file.
+      metadata (CrosToolRunnerTestMetadata): test metadata for a single test_runner job.
+      skip_board_model_check (Boolean): Whether to skip verifying board-model realm exists.
+      visibility_mode (TestResultsVisibility): Intended visibility of test results.
+      custom_realm (string): Name of custom realm results should be published to.
+
+    Returns: ResultDB config dict for Chromium test results.
+    """
+    self._api.file.write_proto('write chromium test result',
+                               test_runner_result_file_path, test_runner_result,
+                               'JSONPB')
+
+    config = self._extract_base_chromium_resultdb_config(execution_metadata)
+
+    # Modify extracted configs for CFT env.
     config['result_file'] = test_runner_result_file_path
     config['artifact_directory'] = None
     config['skip_board_model_check'] = skip_board_model_check
     config['visibility_mode'] = visibility_mode
     config['custom_realm'] = custom_realm
 
+    # Populate Chromium tast tests with rich tags.
+    result_format = config.get('result_format')
+    if result_format == 'tast':
+      base_tags = config.get('base_tags', [])
+      for tags in metadata.rdb_base_tags:
+        base_tags.append(tags)
+      config['base_tags'] = base_tags
+
+      base_variant = config.get('base_variant', {})
+      for k, v in metadata.rdb_base_variant.items():
+        base_variant[k] = v
+      config['base_variant'] = base_variant
+
     # Only one of 'sources', 'sources_file' and 'inherit_sources' can be set at
     # the same time.
     if 'sources' not in config and 'sources_file' not in config and 'inherit_sources' not in config:
       config['sources_file'] = metadata.rdb_sources_file
 
-    base_tags = config.get('base_tags', [])
-    for tags in metadata.rdb_base_tags:
-      base_tags.append(tags)
-    config['base_tags'] = base_tags
-
-    base_variant = config.get('base_variant', {})
-    for k, v in metadata.rdb_base_variant:
-      base_variant[k] = v
-    config['base_variant'] = base_variant
-
     if test_metadata_file_content:
-      self._api.file.write_text('write skylab_test_runner CFT test metadata',
+      self._api.file.write_text('write chromium CFT test metadata',
                                 test_metadata_file_path,
                                 test_metadata_file_content)
       config['test_metadata_file'] = test_metadata_file_path
@@ -894,8 +948,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     return False
 
-  def _extract_chromium_resultdb_config(self, execution_metadata):
-    """Extract resultdb config from test_args for chromium test results.
+  def _extract_base_chromium_resultdb_config(self, execution_metadata):
+    """Extract base resultdb config from test_args for chromium test results.
 
     Extracts resultdb config from test_args. Also constructs a list of string
     tuples [(key, value)] as is expected by resultdb.wrap().

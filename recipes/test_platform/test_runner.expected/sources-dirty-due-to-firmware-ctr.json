@@ -765,6 +765,9 @@
       "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"pass\": {},@@@",
       "@@@STEP_LOG_LINE@response@      \"reason\": \"reason\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"testHarness\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"tauto\": {}@@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"startTime\": \"2045-02-03T00:00:00Z\",@@@",
       "@@@STEP_LOG_LINE@response@      \"duration\": \"3600s\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -1117,6 +1120,265 @@
     "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id.read keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@keyval@dummyKey=dummyVal@@@",
+      "@@@STEP_LOG_END@keyval@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {}\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/test_metadata.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: upload to rdb.write tast CFT test metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@{@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@    {}@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@  ]@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@}@@@",
+      "@@@STEP_LOG_END@test_metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/subdir/tast/results/artifact\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"multiduts\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"False\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"suite_task_id\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"parent-task-id0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"dummy-task-id0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-42-chromeos/test_runner/test_runner\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"buildbucket_builder\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"test_runner\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"2018-05-25 23:50:17.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"is_cft_run\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"True\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"image\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bob-release/R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"build\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"suite\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bvt-tast-informational\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bob-release\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"branch\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"main\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"main_builder_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"master-release\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ],@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
+      "@@@STEP_LOG_LINE@config@    \"custom_realm\": \"\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/subdir/tast/results/streamed_results.jsonl\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false,@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"test_metadata_file\": \"[CLEANUP]/tmp_tmp_1/test_metadata.json\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"visibility_mode\": 0@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.upload test results to rdb.ensure result_adapter",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/result_adapter",
+      "-ensure-file",
+      "infra/tools/result_adapter/${platform} prod",
+      "-max-threads",
+      "1",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: upload to rdb.upload test results to rdb.ensure result_adapter.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-prod------------\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/result_adapter/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "stream",
+      "-tag",
+      "branch:main",
+      "-tag",
+      "build:R102-14637.0.0",
+      "-tag",
+      "buildbucket_builder:test_runner",
+      "-tag",
+      "builder_name:bob-release",
+      "-tag",
+      "image:bob-release/R102-14637.0.0",
+      "-tag",
+      "is_cft_run:True",
+      "-tag",
+      "job_name:bb-42-chromeos/test_runner/test_runner",
+      "-tag",
+      "logs_url:gs://chromeos-test-logs/common-env/2012-05-14/00000000-0000-0000-0000-000000001337",
+      "-tag",
+      "main_builder_name:master-release",
+      "-tag",
+      "multiduts:False",
+      "-tag",
+      "queued_time:2018-05-25 23:50:17.000000 UTC",
+      "-tag",
+      "suite:bvt-tast-informational",
+      "-tag",
+      "suite_task_id:parent-task-id0",
+      "-tag",
+      "task_id:dummy-task-id0",
+      "-coerce-negative-duration",
+      "-exonerate-unexpected-pass",
+      "-sources-file",
+      "[CLEANUP]/source_metadata_tmp_1/sources.jsonpb",
+      "--",
+      "[START_DIR]/cipd/result_adapter/result_adapter",
+      "tast",
+      "-result-file",
+      "dummy-results-dir/subdir/tast/results/streamed_results.jsonl",
+      "-artifact-directory",
+      "dummy-results-dir/subdir/tast/results/artifact",
+      "-test-metadata-file",
+      "[CLEANUP]/tmp_tmp_1/test_metadata.json",
+      "-testhaus-base-url",
+      "https://tests.chromeos.goog/p/chromeos/logs/unified/invocations/build:42",
+      "--",
+      "echo"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:test_runner"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "execution steps.CrosToolRunner: upload to rdb.upload test results to rdb.run rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {

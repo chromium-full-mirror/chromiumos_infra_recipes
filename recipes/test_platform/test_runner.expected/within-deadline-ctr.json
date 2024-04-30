@@ -132,7 +132,10 @@
   },
   {
     "cmd": [],
-    "name": "execution steps"
+    "name": "execution steps",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
@@ -587,6 +590,9 @@
       "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"pass\": {},@@@",
       "@@@STEP_LOG_LINE@response@      \"reason\": \"reason\",@@@",
+      "@@@STEP_LOG_LINE@response@      \"testHarness\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"tauto\": {}@@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      \"startTime\": \"2045-02-03T00:00:00Z\",@@@",
       "@@@STEP_LOG_LINE@response@      \"duration\": \"3600s\"@@@",
       "@@@STEP_LOG_LINE@response@    }@@@",
@@ -769,7 +775,8 @@
       "@@@STEP_LOG_LINE@execution_metadata@    }@@@",
       "@@@STEP_LOG_LINE@execution_metadata@  ]@@@",
       "@@@STEP_LOG_LINE@execution_metadata@}@@@",
-      "@@@STEP_LOG_END@execution_metadata@@@"
+      "@@@STEP_LOG_END@execution_metadata@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -784,6 +791,123 @@
     "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "dummy-results-dir/subdir/keyval",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "name": "execution steps.CrosToolRunner: upload to rdb.tauto.dummy_id.read keyval file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@keyval@dummyKey=dummyVal@@@",
+      "@@@STEP_LOG_END@keyval@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {}\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_1/test_metadata.json"
+    ],
+    "infra_step": true,
+    "name": "execution steps.CrosToolRunner: upload to rdb.write tast CFT test metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@{@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@    {}@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@  ]@@@",
+      "@@@STEP_LOG_LINE@test_metadata.json@}@@@",
+      "@@@STEP_LOG_END@test_metadata.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "execution steps.CrosToolRunner: upload to rdb.upload test results to rdb",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@resultdb is not enabled on this builder@@@",
+      "@@@STEP_LOG_LINE@config@{@@@",
+      "@@@STEP_LOG_LINE@config@    \"artifact_directory\": \"dummy-results-dir/subdir/tast/results/artifact\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_tags\": [@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"multiduts\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"False\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"task_id\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"dummy-task-id0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"job_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bb-0-//\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"buildbucket_builder\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"queued_time\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"1970-01-01 00:00:00.000000 UTC\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"is_cft_run\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"True\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"image\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bob-release/R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"build\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"R102-14637.0.0\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"logs_url\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"gs://chromeos-test-logs/common-env/2045-02-03/00000000-0000-0000-0000-000000001337\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"suite\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bvt-tast-informational\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"builder_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"bob-release\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"branch\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"main\"@@@",
+      "@@@STEP_LOG_LINE@config@        ],@@@",
+      "@@@STEP_LOG_LINE@config@        [@@@",
+      "@@@STEP_LOG_LINE@config@            \"main_builder_name\",@@@",
+      "@@@STEP_LOG_LINE@config@            \"master-release\"@@@",
+      "@@@STEP_LOG_LINE@config@        ]@@@",
+      "@@@STEP_LOG_LINE@config@    ],@@@",
+      "@@@STEP_LOG_LINE@config@    \"base_variant\": {},@@@",
+      "@@@STEP_LOG_LINE@config@    \"custom_realm\": \"\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_file\": \"dummy-results-dir/subdir/tast/results/streamed_results.jsonl\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"result_format\": \"tast\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"skip_board_model_check\": false,@@@",
+      "@@@STEP_LOG_LINE@config@    \"sources_file\": \"[CLEANUP]/source_metadata_tmp_1/sources.jsonpb\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"test_metadata_file\": \"[CLEANUP]/tmp_tmp_1/test_metadata.json\",@@@",
+      "@@@STEP_LOG_LINE@config@    \"visibility_mode\": 0@@@",
+      "@@@STEP_LOG_LINE@config@}@@@",
+      "@@@STEP_LOG_END@config@@@",
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
