@@ -617,6 +617,9 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         correlates to an entry in DLM device SKUs table, should be an integer
         value in the string,
         eg: "12345"
+    * chameleon_connection_types: Chameleon connection types, which indicates
+        the connection port to the peripherals,
+        e.g. "CHAMELEON_CONNECTION_TYPE_USB"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -862,6 +865,13 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     # Sets the partner account id from the common_config.
     # This value is set in the partner luci config file.
     base_tags.append(('account_id', str(partner_config.account_id)))
+
+  chameleon_connection_types = api.cros_tags.get_values(
+      'label-chameleon_connection_types',
+      api.buildbucket.swarming_bot_dimensions)
+  if chameleon_connection_types:
+    base_tags.append(
+        ('chameleon_connection_types', ','.join(chameleon_connection_types)))
 
   return base_tags
 
@@ -3647,20 +3657,36 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
               'branch-trigger': 'DEV',
           }, swarming_tags={
-              'drone': 'fake-drone-1234',
-              'drone_server': 'fakeserver1-row2-drone3',
-              'dut_name': 'fakedut1-row2-rack3-host4',
-              'pool': 'ChromeOSSkylab',
-              'label-wifi_chip': 'marvell',
-              'label-wifi_router_models': 'gale',
-              'label-hwid_sku': 'katsu_MT8183_0B',
-              'label-pool': 'DUT_POOL_QUOTA',
-              'label-carrier': 'fake-carrier',
-              'label-cbx': 'True',
-              'label-chameleon_type': 'CHAMELEON_TYPE_HDMI',
-              'label-modem_type': 'MODEM_TYPE_FIBOCOMM_L850GL',
-              'label-dlm_sku_id': '1234',
-              'ufs_zone': 'ZONE_SFO36_OS',
+              'drone':
+                  'fake-drone-1234',
+              'drone_server':
+                  'fakeserver1-row2-drone3',
+              'dut_name':
+                  'fakedut1-row2-rack3-host4',
+              'pool':
+                  'ChromeOSSkylab',
+              'label-wifi_chip':
+                  'marvell',
+              'label-wifi_router_models':
+                  'gale',
+              'label-hwid_sku':
+                  'katsu_MT8183_0B',
+              'label-pool':
+                  'DUT_POOL_QUOTA',
+              'label-carrier':
+                  'fake-carrier',
+              'label-cbx':
+                  'True',
+              'label-chameleon_type':
+                  'CHAMELEON_TYPE_HDMI',
+              'label-modem_type':
+                  'MODEM_TYPE_FIBOCOMM_L850GL',
+              'label-dlm_sku_id':
+                  '1234',
+              'ufs_zone':
+                  'ZONE_SFO36_OS',
+              'label-chameleon_connection_types':
+                  'CHAMELEON_CONNECTION_TYPE_USB',
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
@@ -3759,7 +3785,11 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               # Duplicate chameleon_type labels.
               'label-chameleon_type': [
                   'CHAMELEON_TYPE_HDMI', 'CHAMELEON_TYPE_V3'
-              ]
+              ],
+              'label-chameleon_connection_types': [
+                  'CHAMELEON_CONNECTION_TYPE_USB',
+                  'CHAMELEON_CONNECTION_TYPE_HDMI'
+              ],
           }),
       api.properties(result_format='tast'),
       _misc_properties(),
