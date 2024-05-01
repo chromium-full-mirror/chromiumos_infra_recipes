@@ -1845,7 +1845,7 @@
       "{\"mesa_hash\": {\"volteer\": \"e1d21f72c12a3f9c8b84bcc55fd88b0849253523\", \"brya\": \"af3d0ce62bff0c7b567d07b7eee15a7668e35ab8\", \"guybrush\": \"a9c55e47e3254e976284695ae7c73b76b3c7113b\"}, \"game_id_to_board\": {}}",
       "[CLEANUP]/tmp_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1871,7 +1871,7 @@
       "[CLEANUP]/tmp_tmp_1",
       "/path/to/tmp/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1892,7 +1892,7 @@
       "util/shader-dlc-uprev/upload-and-uprev.py",
       "[CLEANUP]/tmp_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1925,12 +1925,12 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto/dlc_assets/snoopy_hash.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
-    "name": "Generate DLC provenance.Read [CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto/dlc_assets/snoopy_hash.json",
+    "name": "Generate DLC provenance.Read [CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto/dlc_assets/snoopy_hash.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@snoopy_hash.json@{@@@",

@@ -31,4 +31,8 @@ message KabutoShadercacheUprevProperties {
   // URL to Git repo containing 'tools/kabuto'.
   // Optional
   string borealis_remote_url = 6;
+
+  // Path (from chroot) to the directory containing Kabuto.
+  // Optional
+  string kabuto_path = 7;
 }

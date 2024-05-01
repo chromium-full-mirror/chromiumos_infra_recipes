@@ -56,7 +56,9 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
           'manifest_branch must not be set when using postsubmit build artifacts'
       )
     if not properties.borealis_remote_url:
-      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private'
+    if not properties.kabuto_path:
+      properties.kabuto_path = 'src/platform/borealis-private/tools/kabuto'
 
     presentation.step_text = 'all properties good'
 
@@ -75,7 +77,7 @@ def RunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
 
 def DoRunSteps(api: RecipeApi, properties: KabutoPaygenProperties) -> None:
   chroot_path = api.cros_source.workspace_path
-  kabuto_path = chroot_path / 'src/platform/borealis/tools/kabuto'
+  kabuto_path = chroot_path / properties.kabuto_path
   with api.context(cwd=kabuto_path), api.depot_tools.on_path():
     # If we are operating on a specific Gerrit CL ref on a staging builder we
     # should checkout platform/borealis to it now.
@@ -191,7 +193,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           [
               'git',
               'fetch',
-              'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+              'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private',
               'refs/changes/75/5888475/2:',
           ],
       ),

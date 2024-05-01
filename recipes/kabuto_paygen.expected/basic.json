@@ -1967,7 +1967,7 @@
       "./kabuto",
       "build-fossilize-tools"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1987,7 +1987,7 @@
       "in/",
       "fossilize_tool/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2010,7 +2010,7 @@
       "kabuto_payload-20120514125330500000.tar.xz",
       "gs://chromeos-localmirror-private/borealis/kabuto_payload-20120514125330500000.tar.xz"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis/tools/kabuto",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-private/tools/kabuto",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

@@ -137,6 +137,10 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
       paygen_input_props['gerrit_cl_ref'] = gerrit_cl_ref
     if kabuto_config_override:
       paygen_input_props['kabuto_config_override'] = kabuto_config_override
+    if properties.borealis_remote_url:
+      paygen_input_props['borealis_remote_url'] = properties.borealis_remote_url
+    if properties.kabuto_path:
+      paygen_input_props['kabuto_path'] = properties.kabuto_path
     # Launch the Kabuto paygen builder.
     paygen_build = _launch_builders(api, bucket, 'kabuto_paygen',
                                     api.build_menu.is_staging, 1,
@@ -164,6 +168,9 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     shadercache_input_props['gerrit_cl_ref'] = gerrit_cl_ref
   if kabuto_config_override:
     shadercache_input_props['kabuto_config_override'] = kabuto_config_override
+  if properties.borealis_remote_url:
+    shadercache_input_props[
+        'borealis_remote_url'] = properties.borealis_remote_url
 
   ### Build Kabuto shadercaches on sandboxed builders
   shadercache_builds = _launch_builders(api, bucket, 'build_kabuto_shadercache',
@@ -191,6 +198,10 @@ def RunSteps(api: RecipeApi, properties: KabutoOrchestratorProperties) -> None:
     uprev_input_props['gerrit_cl_ref'] = gerrit_cl_ref
   if kabuto_config_override:
     uprev_input_props['kabuto_config_override'] = kabuto_config_override
+  if properties.borealis_remote_url:
+    uprev_input_props['borealis_remote_url'] = properties.borealis_remote_url
+  if properties.kabuto_path:
+    uprev_input_props['kabuto_path'] = properties.kabuto_path
 
   ### Uprev the ebuilds with new shadercaches.
   _launch_builders(api, bucket, 'kabuto_shadercache_uprev',
@@ -236,6 +247,33 @@ def GenTests(api: RecipeTestApi) -> None:
   yield api.test(
       'kabuto-config-override',
       api.properties(**props),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['kabuto_path'] = 'src/platform/borealis-private/tools/kabuto'
+  props[
+      'borealis_remote_url'] = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private'
+  yield api.test(
+      'kabuto-passthru-props',
+      api.properties(**props),
+      api.post_check(
+          post_process.LogContains, 'paygen build.buildbucket.run.schedule',
+          'request', [
+              '"kabuto_path": "src/platform/borealis-private/tools/kabuto"',
+              '"borealis_remote_url": "https://chrome-internal.googlesource.com/chromeos/platform/borealis-private"'
+          ]),
+      api.post_check(
+          post_process.LogContains,
+          'shadercache build.buildbucket.run.schedule', 'request', [
+              '"borealis_remote_url": "https://chrome-internal.googlesource.com/chromeos/platform/borealis-private"'
+          ]),
+      api.post_check(
+          post_process.LogContains, 'uprev build.buildbucket.run.schedule',
+          'request', [
+              '"kabuto_path": "src/platform/borealis-private/tools/kabuto"',
+              '"borealis_remote_url": "https://chrome-internal.googlesource.com/chromeos/platform/borealis-private"'
+          ]),
       api.post_process(post_process.DropExpectation),
   )
 

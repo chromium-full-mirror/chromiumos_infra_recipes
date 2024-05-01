@@ -27,7 +27,7 @@ PYTHON_VERSION_COMPATIBILITY = 'PY3'
 def RunSteps(api: RecipeApi, properties: KabutoExportDlcInfoProperties) -> None:
   with api.step.nest('validate properties') as presentation:
     if not properties.borealis_remote_url:
-      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private'
     presentation.step_text = 'all properties good'
   borealis_checkout = api.path.mkdtemp('borealis')
   with api.context(cwd=borealis_checkout):

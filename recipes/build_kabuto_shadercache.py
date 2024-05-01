@@ -66,7 +66,7 @@ def RunSteps(api: RecipeApi,
     if not properties.payload_gs_path:
       raise StepFailure('must set payload_gs_path')
     if not properties.borealis_remote_url:
-      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis'
+      properties.borealis_remote_url = 'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private'
 
     presentation.step_text = 'all properties good'
 
@@ -293,7 +293,7 @@ def GenTests(api: RecipeTestApi) -> None:
           [
               'git',
               'fetch',
-              'https://chrome-internal.googlesource.com/chromeos/platform/borealis',
+              'https://chrome-internal.googlesource.com/chromeos/platform/borealis-private',
               'refs/changes/75/5888475/2:',
           ],
       ),

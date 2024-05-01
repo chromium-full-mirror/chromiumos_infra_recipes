@@ -14,7 +14,7 @@
     "cmd": [
       "git",
       "clone",
-      "https://chrome-internal.googlesource.com/chromeos/platform/borealis",
+      "https://chrome-internal.googlesource.com/chromeos/platform/borealis-private",
       "."
     ],
     "cwd": "[CLEANUP]/borealis_tmp_1",
