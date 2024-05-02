@@ -2097,31 +2097,38 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
     * api (RecipeScriptApi): Ubiquitous recipe api.
     * res - The step result.
   """
-  compressed_result = res.step.sub_build.output.properties['compressed_result']
-  decompressed_result = zlib.decompress(base64.b64decode(compressed_result))
-  result = Result()
-  result.ParseFromString(decompressed_result)
-  if result.prejob:
-    for s in result.prejob.step:
-      if s.verdict != Result.Prejob.Step.VERDICT_PASS:
-        raise api.step.StepFailure('prejob %s failed: %s' %
-                                   (s.name, s.human_readable_summary))
+  if 'compressed_result' in res.step.sub_build.output.properties:
+    compressed_result = res.step.sub_build.output.properties[
+        'compressed_result']
+    decompressed_result = zlib.decompress(base64.b64decode(compressed_result))
+    result = Result()
+    result.ParseFromString(decompressed_result)
+    if result.prejob:
+      for s in result.prejob.step:
+        if s.verdict != Result.Prejob.Step.VERDICT_PASS:
+          raise api.step.StepFailure('prejob %s failed: %s' %
+                                     (s.name, s.human_readable_summary))
 
-  # Collect test failures by verdict for better step failure text
-  failed_tests = {}
-  if result.autotest_result:
-    for test_case in result.autotest_result.test_cases:
-      if test_case.verdict in [
-          Result.Autotest.TestCase.VERDICT_PASS,
-      ]:
-        continue
-      if test_case.verdict not in failed_tests:
-        failed_tests[test_case.verdict] = []
-      failed_tests[test_case.verdict].append(test_case)
+    # Collect test failures by verdict for better step failure text
+    failed_tests = {}
+    if result.autotest_result:
+      for test_case in result.autotest_result.test_cases:
+        if test_case.verdict in [
+            Result.Autotest.TestCase.VERDICT_PASS,
+        ]:
+          continue
+        if test_case.verdict not in failed_tests:
+          failed_tests[test_case.verdict] = []
+        failed_tests[test_case.verdict].append(test_case)
 
-  # TODO(cdelagarza): Format test failures grouped by verdicts.
-  if failed_tests:
-    raise api.step.StepFailure('test failed')
+    # TODO(cdelagarza): Format test failures grouped by verdicts.
+    if failed_tests:
+      raise api.step.StepFailure('test failed')
+
+  if 'errorSummaryMarkdown' in res.step.sub_build.output.properties:
+    error_summary = res.step.sub_build.output.properties['errorSummaryMarkdown']
+    if error_summary:
+      raise api.step.StepFailure(error_summary)
 
 
 def run_and_upload(api, properties):
