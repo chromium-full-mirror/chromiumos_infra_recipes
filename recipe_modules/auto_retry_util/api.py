@@ -579,11 +579,14 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         status = t.get('status')
         critical = t.get('critical')
         builder_name = t.get('builder_name')
+        revision = t.get('revision')
 
         if (status == 'SUCCESS' or not critical or
             name in previously_passed_suites):
           successful_test_suite_names.append(name)
         elif builder_name not in active_cq_verifiers:
+          retryable_test_suite_names.append(name)
+        elif revision and self._is_broken_until_updated(builder_name, revision):
           retryable_test_suite_names.append(name)
         else:
           outstanding_failure_test_suite_names.append(name)
@@ -620,6 +623,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       forced_relevant_builders = list(
           cq_run.output.properties['found_force_relevant_targets'])
     return self._cq_orch_default_child_buiders + forced_relevant_builders
+
+  def _is_broken_until_updated(self, builder: str, revision: str) -> bool:
+    """Returns whether the specified builder has an updated broken_until.
+
+    Args:
+      builder: The builder name for which to analyze broken_until for.
+      revision: The revision used by the builder.
+  """
+    config = self.m.cros_infra_config.get_builder_config(builder)
+    broken_until_revision = config.general.broken_until
+    return self.m.cros_history.is_build_broken(revision, broken_until_revision)
 
   @functools.cached_property
   def _lfg_greenness(self) -> Optional[Snapshot]:

@@ -13,6 +13,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'buildbucket_stats',
+    'cros_history',
     'cros_infra_config',
     'cros_tags',
     'deferrals',

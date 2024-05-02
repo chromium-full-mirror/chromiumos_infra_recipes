@@ -16,6 +16,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'auto_retry_util',
+    'cros_history',
     'cros_infra_config',
     'test_util',
 ]
@@ -40,6 +41,10 @@ def GenTests(api):
   orch.id.name = 'cq-orchestrator'
   orch.orchestrator.child_specs.add().name = 'builder1'
   orch.orchestrator.child_specs.add().name = 'builder2'
+  builder1 = configs.builder_configs.add()
+  builder1.id.name = 'builder1'
+  builder2 = configs.builder_configs.add()
+  builder2.id.name = 'builder2'
 
   test_summary = [
       {
@@ -52,7 +57,8 @@ def GenTests(api):
           'builder_name': 'builder2',
           'status': 'FAILURE',
           'critical': True,
-          'name': 'builder2.tast_vm.suite'
+          'name': 'builder2.tast_vm.suite',
+          'revision': 'fake-revision',
       },
       # Non-critical counts as success.
       {
@@ -74,12 +80,43 @@ def GenTests(api):
       api.test_util.test_orchestrator(output_properties={
           'test_summary': test_summary
       }).build,
+      api.buildbucket.simulated_multi_predicates_search_results([
+          api.cros_history.build_with_uprev_response(end_time=0)
+      ], step_name='analyzing test results.check if build is broken.buildbucket.search'
+                                                               ),
+      api.buildbucket.simulated_multi_predicates_search_results([
+          api.cros_history.build_with_uprev_response(end_time=3)
+      ], step_name='analyzing test results.check if build is broken.buildbucket.search (2)'
+                                                               ),
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
           expected_success=[
               'builder1.hw.suite', 'builder2.tast_vm.non_crit_suite'
           ], expected_retryable=['builder3.tast_gce.suite'],
           expected_outstanding=['builder2.tast_vm.suite']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'broken-until-updated',
+      api.test_util.test_orchestrator(output_properties={
+          'test_summary': test_summary
+      }).build,
+      api.buildbucket.simulated_multi_predicates_search_results([
+          api.cros_history.build_with_uprev_response(end_time=3)
+      ], step_name='analyzing test results.check if build is broken.buildbucket.search'
+                                                               ),
+      api.buildbucket.simulated_multi_predicates_search_results([
+          api.cros_history.build_with_uprev_response(end_time=0)
+      ], step_name='analyzing test results.check if build is broken.buildbucket.search (2)'
+                                                               ),
+      api.cros_infra_config.override_builder_configs_test_data(configs),
+      api.properties(
+          expected_success=[
+              'builder1.hw.suite', 'builder2.tast_vm.non_crit_suite'
+          ], expected_retryable=[
+              'builder2.tast_vm.suite', 'builder3.tast_gce.suite'
+          ], expected_outstanding=[]),
       api.post_process(post_process.DropExpectation),
   )
 
