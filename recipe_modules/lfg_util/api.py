@@ -69,6 +69,36 @@ class LFGUtilApi(recipe_api.RecipeApi):
             [str(c) for c in not_included_changes])
       return not_included_changes
 
+  def get_parent_changes(self, merge_commit_cls: List[GerritChange],
+                         step_test_data=None) -> List[GerritChange]:
+    """Retrieve the changes corresponding to the parent commits.
+
+    Args:
+      merge_commit_cls: merge commit changes to find parents of.
+
+    Returns:
+      submitted changes corresponding to the parent commits of input changes.
+    """
+    parent_changes = []
+    with self.m.step.nest('get parent commits of merge CLs') as pres:
+      for change in merge_commit_cls:
+        host_url = 'https://{}'.format(change.host)
+        change_info = self.m.gerrit.get_changes(
+            host_url, query_params=[('change', str(change.change))],
+            o_params=['CURRENT_REVISION', 'ALL_COMMITS',
+                      'PARENTS'], step_test_data=step_test_data)[0]
+        pres.logs['change_info #{}'.format(change.change)] = str(change_info)
+        for _, rev_info in change_info['revisions'].items():
+          for parent_info in rev_info['parents_data']:
+            # If 'change_id' is not present, assume the parent is outside of CrOS tree.
+            if 'change_id' in parent_info:
+              parent_changes.append(
+                  GerritChange(host=change.host, project=change.project,
+                               change=parent_info['change_number'],
+                               patchset=parent_info['patch_set_number']))
+
+    return parent_changes
+
   def latest_submission_time(self, gerrit_changes: List[GerritChange],
                              step_test_data=None) -> datetime:
     """Find the last submitted change and return the submit time.

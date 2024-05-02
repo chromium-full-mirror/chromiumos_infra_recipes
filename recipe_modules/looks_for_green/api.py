@@ -155,6 +155,21 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     return self.m.depot_tools_gerrit.test_api.get_one_change_response_data(
         change_number=123, patchset=1, **kwargs)
 
+  def _test_parent_data(self):
+    kwargs = {}
+    parent = {
+        'patch_set_number': 2,
+        'change_number': 324328,
+        'change_id': 'alsdkfjaksdljfljjasdfwdfasdfawefw2134723'
+    }
+    kwargs['revisions'] = {
+        'asdjfhsdkhfkhk32y23797397': {
+            'parents_data': [parent]
+        }
+    }
+    return self.m.depot_tools_gerrit.test_api.get_one_change_response_data(
+        change_number=123, patchset=1, **kwargs)
+
   def should_lfg(self, gerrit_changes: List[GerritChange]) -> bool:
     """Returns whether looks for green logic should be run."""
     with self.m.step.nest('check should look for green') as pres:
@@ -172,10 +187,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         pres.step_text = 'Skipping looks for green due to disallow footer'
         self.set_stats()
         return False
-      has_merge_commit = any(
-          self.m.gerrit.is_merge_commit(c.change, c.host)
-          for c in gerrit_changes)
-      if has_merge_commit:
+      merge_commit_cls = [
+          c for c in gerrit_changes
+          if self.m.gerrit.is_merge_commit(c.change, c.host)
+      ]
+      if len(merge_commit_cls) > 0:
+        # This call is being tested in prod. Will be used when we can
+        # look for green on merge commits. b/338254730.
+        _ = self.m.lfg_util.get_parent_changes(
+            merge_commit_cls, step_test_data=self._test_parent_data)
         self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
         pres.step_text = 'Skipping looks for green due to merge commit'
         self.set_stats()
