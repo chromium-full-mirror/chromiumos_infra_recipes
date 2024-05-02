@@ -78,15 +78,15 @@ class OverlayfsApi(recipe_api.RecipeApi):
           work_base = self.m.path.cache_dir
         else:
           work_base = self._base_work_path
-        work_base = work_base.join(name)
-        upperdir_path = work_base.join('upperdir').join(name)
+        work_base = work_base / name
+        upperdir_path = work_base / 'upperdir' / name
         if persist:
           self.m.easy.set_properties_step(**{
               '{}_warm_cache'.format(name):
                   self._set_cache_status(upperdir_path)
           })
         self.m.file.ensure_directory('create upperdir', upperdir_path)
-        workdir_path = work_base.join('workdir').join(name)
+        workdir_path = work_base / 'workdir' / name
         self.m.file.ensure_directory('create workdir', workdir_path)
         self.m.file.ensure_directory('create mount path', mount_path)
 

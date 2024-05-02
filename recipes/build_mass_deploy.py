@@ -39,13 +39,12 @@ DEFAULT_IMAGE_SIZE_GIBIBYTES = 29
 def _download_signed_image(api, input_image):
   with api.step.nest('download signed image'):
     api.gsutil.download(RELEASE_BUCKET, input_image, 'image.zip')
-    api.archive.extract('unzip image archive',
-                        api.context.cwd.join('image.zip'),
-                        api.context.cwd.join('image_dir'))
+    api.archive.extract('unzip image archive', api.context.cwd / 'image.zip',
+                        api.context.cwd / 'image_dir')
 
     image_name, _ = api.path.splitext(input_image)
     image_name = api.path.basename(image_name)
-    decompressed_image = api.context.cwd.join('image_dir', image_name)
+    decompressed_image = api.context.cwd / 'image_dir' / image_name
     return decompressed_image
 
 
@@ -78,7 +77,7 @@ def _run_automatic_install(api, installer_image, output_image):
     api.file.copy('copy UEFI variables file',
                   api.path.join(ovmf_source_dir, ovmf_vars_source),
                   api.context.cwd)
-    ovmf_vars_file = api.context.cwd.join(ovmf_vars_source)
+    ovmf_vars_file = api.context.cwd / ovmf_vars_source
 
     api.step(
         'create UEFI variable to trigger automatic installation', cmd=[
@@ -135,7 +134,7 @@ def _compress_and_upload_mass_deploy_image(api, output_dir, gs_bucket, gs_dir):
   zip_name = api.path.basename(output_dir) + '.zip'
 
   output_zip = api.archive.package(output_dir).archive(
-      'compress mass deploy image', api.context.cwd.join(zip_name), 'zip')
+      'compress mass deploy image', api.context.cwd / zip_name, 'zip')
 
   with api.step.nest('upload mass deploy image'):
     # Construct path for new artifact, upload to GS.
@@ -196,7 +195,7 @@ def RunSteps(api, properties):
     output_dir = 'mass_deployable_image'
     if properties.milestone:
       output_dir += '_R' + properties.milestone
-    output_dir = api.context.cwd.join(output_dir)
+    output_dir = api.context.cwd / output_dir
     api.step('create output dir', cmd=['mkdir', output_dir])
 
     with api.failures.ignore_exceptions():

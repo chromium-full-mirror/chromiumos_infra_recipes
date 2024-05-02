@@ -73,7 +73,7 @@ def _get_signing_docker_pin(api: RecipeApi,
           'https://chrome-internal.googlesource.com/chromeos/crostools',
           depth=1)
       # Build the docker image.
-      with api.context(cwd=docker_checkout.join('signing_docker')):
+      with api.context(cwd=docker_checkout / 'signing_docker'):
         tag = str(api.time.ms_since_epoch())[0:8]
         image_with_tag = f'signing:{tag}'
         api.step('docker build',

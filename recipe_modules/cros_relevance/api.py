@@ -112,7 +112,7 @@ class CrosRelevanceApi(recipe_api.RecipeApi):
         presentation.step_text = 'running on manifest branch'
         cmd.extend([
             '--manifest_file',
-            self.m.src_state.build_manifest.path.join('default.xml')
+            self.m.src_state.build_manifest.path / 'default.xml'
         ])
 
       self.m.gobin.call('build_plan_generator', cmd, step_name='run planner',

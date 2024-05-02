@@ -150,7 +150,7 @@ class CrosSourceApi(RecipeApi):
   def branch_manifest_file(self):
     """Returns the Path to the manifest_file for this build."""
     return (self._branch_manifest_file or
-            self.m.src_state.internal_manifest.path.join('snapshot.xml'))
+            self.m.src_state.internal_manifest.path / 'snapshot.xml')
 
   @property
   def manifest_branch(self):
@@ -668,7 +668,7 @@ class CrosSourceApi(RecipeApi):
 
       # The branch we are on is either a snapshot branch (has a snapshot.xml
       # file), or it is an unpinned branch.
-      snapshot_xml = working_manifest.path.join('snapshot.xml')
+      snapshot_xml = working_manifest.path / 'snapshot.xml'
       self._branch_manifest_file = snapshot_xml
       if self._test_data.enabled and self._test_data.get(
           'snapshot_xml_exists', True):
@@ -680,12 +680,12 @@ class CrosSourceApi(RecipeApi):
           # external manifest corresponds to our commit.  Copy the mirrored
           # files into the public manifest, and leave the tree dirty.
           for m_file in self.mirrored_manifest_files:
-            i_path = i_manifest.path.join(m_file.src)
+            i_path = i_manifest.path / m_file.src
             if m_file.src != 'external_full.xml':
               self.m.path.mock_add_paths(i_path)
             if self.m.path.exists(i_path):
               self.m.file.copy('copy {}'.format(m_file.src), i_path,
-                               e_manifest.path.join(m_file.dest))
+                               e_manifest.path / m_file.dest)
 
         # Generate a manifest file, and save the path.
         manifest_file = self.m.path.mkstemp(prefix='manifest')
@@ -1045,8 +1045,8 @@ class CrosSourceApi(RecipeApi):
       def _copy_mirrored_files():
         for m_file in self.mirrored_manifest_files:
           # Copy the file from internal to external manifest and commit
-          i_path = manifests.intern.path.join(m_file.src)
-          e_path = manifests.extern.path.join(m_file.dest)
+          i_path = manifests.intern.path / m_file.src
+          e_path = manifests.extern.path / m_file.dest
           if m_file.src != 'external_full.xml':
             self.m.path.mock_add_paths(i_path)
           if self.m.path.exists(i_path):
@@ -1084,7 +1084,7 @@ class CrosSourceApi(RecipeApi):
 
       # The manifest file for repo init is 'default.xml' in the manifest
       # directory we are using for the build.
-      default_file = manifests.build.path.join('default.xml')
+      default_file = manifests.build.path / 'default.xml'
 
       with self.m.context(
           cwd=manifests.build.path), self.m.step.nest('push manifest'):
@@ -1531,14 +1531,13 @@ class CrosSourceApi(RecipeApi):
       self.checkout_branch(manifest.url, gitiles_commit.ref, projects=projects)
       self.m.git.fetch(manifest.remote, [gitiles_commit.id])
       self.m.git.checkout(gitiles_commit.id, force=True)
-      snapshot_path = manifest.path.join('snapshot.xml')
+      snapshot_path = manifest.path / 'snapshot.xml'
       # If the branch is pinned, use snapshot.xml, otherwise generate an
       # unpinned manifest and return that.
       return (self.m.file.read_raw('read local snapshot.xml', snapshot_path,
                                    test_data=testdata)
               if self.m.path.exists(snapshot_path) else self.m.repo.manifest(
-                  manifest_file=manifest.path.join('default.xml'),
-                  pinned=False))
+                  manifest_file=manifest.path / 'default.xml', pinned=False))
 
   def uprev_packages(self, workspace_path=None, build_targets=None,
                      timeout_sec=(10 * 60), name='uprev packages'):

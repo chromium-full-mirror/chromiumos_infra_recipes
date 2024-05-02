@@ -26,7 +26,7 @@ PROPERTIES = CheckoutManifestsProperties
 def RunSteps(api, properties):
 
   api.cros_source.configure_builder(default_main=True)
-  snapshot_xml = api.src_state.internal_manifest.path.join('snapshot.xml')
+  snapshot_xml = api.src_state.internal_manifest.path / 'snapshot.xml'
   # Before we checkout manifests, the branch_manifest_file shall be
   # snapshot.xml.
   api.assertions.assertEqual(api.cros_source.branch_manifest_file, snapshot_xml)

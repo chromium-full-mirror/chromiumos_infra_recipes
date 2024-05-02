@@ -211,14 +211,14 @@ class ChromiteApi(recipe_api.RecipeApi):
       self.m.file.ensure_directory('create_dir', python_bin)
 
       # Remove any old symlinks.
-      self.m.file.remove('remove_link', python_bin.join('python'))
-      self.m.file.remove('remove_link', python_bin.join('python2'))
+      self.m.file.remove('remove_link', python_bin / 'python')
+      self.m.file.remove('remove_link', python_bin / 'python2')
 
       # Create a symlink to the system python binary in that directory.
       self.m.file.symlink('create_link', '/usr/bin/python',
-                          python_bin.join('python'))
+                          python_bin / 'python')
       self.m.file.symlink('create_link', '/usr/bin/python2',
-                          python_bin.join('python2'))
+                          python_bin / 'python2')
 
     # python2 a context manager to insert that directory at the front of PATH.
     return self.m.context(env_prefixes={'PATH': [python_bin]})

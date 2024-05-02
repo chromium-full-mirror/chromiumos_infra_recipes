@@ -966,8 +966,8 @@ def _prepare_resultdb_sources_file(api, properties):
         raise SourcesNotAvailableException('CrOS build not found in request')
       build_url = 'gs://{}/{}'.format(chromeos_build_gcs_bucket, chromeos_build)
 
-    sources_local_path = api.path.mkdtemp(
-        prefix='source_metadata').join(SOURCES_FILE_NAME)
+    sources_local_path = api.path.join(
+        api.path.mkdtemp(prefix='source_metadata'), SOURCES_FILE_NAME)
 
     # Source information is stored with the build, at
     # /metadata/sources.jsonpb.
@@ -1088,7 +1088,7 @@ def _upload_autotest_wrapper_result_for_tast(api, test_metadata, result,
 
     # Writes the result to a file which can be parsed by result_adapter.
     temp_dir = api.path.mkdtemp()
-    test_result_file = temp_dir.join('autotest_wrapper_tast_result.json')
+    test_result_file = temp_dir / 'autotest_wrapper_tast_result.json'
     api.file.write_proto('write autotest wrapper result for tast',
                          test_result_file, autotest_result, 'JSONPB')
 
@@ -1207,7 +1207,7 @@ def _upload_to_resultdb(api, result, properties, interface, test_metadata):
 
       # Writes the result to a file which can be parsed by result_adapter.
       temp_dir = api.path.mkdtemp()
-      test_runner_result_file = temp_dir.join('test_runner_result.json')
+      test_runner_result_file = temp_dir / 'test_runner_result.json'
       api.file.write_proto('write skylab_test_runner result',
                            test_runner_result_file, autotest_result, 'JSONPB')
       result_format = 'skylab-test-runner'

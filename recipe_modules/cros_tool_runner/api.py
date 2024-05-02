@@ -241,12 +241,12 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
 
     with self.m.context(infra_steps=True):
       with self.m.step.nest('ensure cros-tool-runner'):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'cros-tool-runner')
+        cipd_dir = self.m.path.start_dir / 'cipd' / 'cros-tool-runner'
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package('chromiumos/infra/cros-tool-runner/${platform}',
                          self._version)
         self.m.cipd.ensure(cipd_dir, pkgs)
-        self._cmd = cipd_dir.join('cros-tool-runner')
+        self._cmd = cipd_dir / 'cros-tool-runner'
 
   def _dut_hostname_from_bot_id(self, swarming_bot_id):
     """Extract the DUT hostname from the env vars.

@@ -80,9 +80,10 @@ def RunSteps(api, properties):
 
     chromiumos_config_path = properties.chromiumos_config_checkout_path
 
-    generate_path = api.context.cwd.join(chromiumos_config_path, 'generate.sh')
-    checker_path = api.context.cwd.join(chromiumos_config_path,
-                                        'payload_utils/checker.py')
+    generate_path = api.path.join(api.context.cwd, chromiumos_config_path,
+                                  'generate.sh')
+    checker_path = api.path.join(api.context.cwd, chromiumos_config_path,
+                                 'payload_utils/checker.py')
 
     # mock_add_paths marks that the path exists for tests. The exists call
     # doesn't actually perform a Recipes step, it just calls the standard
@@ -103,15 +104,18 @@ def RunSteps(api, properties):
 
     api.step('generate proto bindings', [generate_path])
 
-    program_path = api.context.cwd.join(
+    program_path = api.path.join(
+        api.context.cwd,
         properties.program_config_bundle_checkout_path.repo_checkout_path,
         properties.program_config_bundle_checkout_path.config_path)
 
-    project_path = api.context.cwd.join(
+    project_path = api.path.join(
+        api.context.cwd,
         properties.project_config_bundle_checkout_path.repo_checkout_path,
         properties.project_config_bundle_checkout_path.config_path)
 
-    factory_dir = api.context.cwd.join(
+    factory_dir = api.path.join(
+        api.context.cwd,
         properties.project_config_bundle_checkout_path.repo_checkout_path,
         properties.factory_dir,
     )
@@ -129,8 +133,7 @@ def RunSteps(api, properties):
           '--program', program_path, '--project', project_path, '--factory_dir',
           factory_dir
       ]
-      vpython_spec_path = api.context.cwd.join(chromiumos_config_path,
-                                               '.vpython')
+      vpython_spec_path = api.context.cwd / chromiumos_config_path / '.vpython'
       api.step(
           'check constraints',
           [

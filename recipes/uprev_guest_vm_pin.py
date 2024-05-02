@@ -178,18 +178,17 @@ def CopyPostsubmitImage(api: RecipeApi, board: str, build: Build,
     build_artifact_path = str(build.output.properties['artifacts']['gs_path'])
     src_path = '{}/{}'.format(build_artifact_path, 'image.zip')
     api.gsutil.download(build_artifact_bucket, src_path, './')
-    api.archive.extract('unzip image archive',
-                        api.context.cwd.join('image.zip'),
-                        api.context.cwd.join('image'))
+    api.archive.extract('unzip image archive', api.context.cwd / 'image.zip',
+                        api.context.cwd / 'image')
 
-    base_image_path = api.context.cwd.join('image', _base_vm_name)
+    base_image_path = api.context.cwd / 'image' / _base_vm_name
     api.archive.package(base_image_path).archive(
-        'archive base guest VM', api.context.cwd.join(_base_vm_name + '.tbz'),
+        'archive base guest VM', api.context.cwd / f'{_base_vm_name}.tbz',
         'tbz')
 
-    test_image_path = api.context.cwd.join('image', _test_vm_name)
+    test_image_path = api.context.cwd / 'image' / _test_vm_name
     api.archive.package(test_image_path).archive(
-        'archive test guest VM', api.context.cwd.join(_test_vm_name + '.tbz'),
+        'archive test guest VM', api.context.cwd / f'{_test_vm_name}.tbz',
         'tbz')
 
     dst_bucket = vm_property_map[board].destination_gs_bucket

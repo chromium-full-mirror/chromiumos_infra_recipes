@@ -109,7 +109,7 @@ class FirmwareBuilder():
     self.properties = properties
     self._boards = [x.name for x in properties.build_targets]
     if properties.chroot_outside:
-      self._chroot = self.m.path.mkdtemp().join('chroot')
+      self._chroot = self.m.path.mkdtemp() / 'chroot'
     else:
       self._chroot = self.m.src_state.workspace_path / 'chroot'
     self._config = None
@@ -242,7 +242,7 @@ class FirmwareBuilder():
           'public' if manifest == BuilderConfig.General.PUBLIC else 'both'
       ]
       cmd = [
-          self._tot_chromite.join('bin/cros_mark_as_stable'), 'commit',
+          self._tot_chromite / 'bin/cros_mark_as_stable', 'commit',
           '--drop_file', drop_file
       ]
       if not push:
@@ -254,7 +254,7 @@ class FirmwareBuilder():
           test_data='sys-boot/depthcharge sys-apps/coreboot-utils')
 
       if push:
-        cmd = [self._tot_chromite.join('bin/cros_mark_as_stable'), 'push'
+        cmd = [self._tot_chromite / 'bin/cros_mark_as_stable', 'push'
               ] + uprev_args
         self.m.step('call cros_mark_as_stable push', cmd)
 
@@ -279,13 +279,13 @@ class FirmwareBuilder():
               },
           ])):
         if info.branch_name == 'main':
-          self._tot_chromite = workspace.join(info.path)
+          self._tot_chromite = workspace / info.path
           break
 
     if not self._tot_chromite:
-      self._tot_chromite = self.m.path.mkdtemp().join('chromite')
+      self._tot_chromite = self.m.path.mkdtemp() / 'chromite'
       self.m.git.clone(_CHROMITE_URL, target_path=self._tot_chromite,
-                       single_branch=True, reference=workspace.join('chromite'))
+                       single_branch=True, reference=workspace / 'chromite')
 
   @contextmanager
   def _setup_chroot(self):
@@ -500,9 +500,8 @@ class FirmwareBuilder():
     tarball = self._build_firmware_archive(sysroot, tmpdir)
     if tarball:
       dest_name = '{}/{}'.format(target, _FIRMWARE_TARBALL_NAME)
-      self.m.file.ensure_directory('create {}'.format(target),
-                                   outpath.join(target))
-      self.m.file.copy('bundle tarball', tarball, outpath.join(dest_name))
+      self.m.file.ensure_directory('create {}'.format(target), outpath / target)
+      self.m.file.copy('bundle tarball', tarball, outpath / dest_name)
       ret['FIRMWARE_TARBALL'].append(dest_name)
 
       info = metadata.objects.add()
@@ -515,7 +514,7 @@ class FirmwareBuilder():
     if metadata.objects:
       metadata_name = '{}/{}'.format(target, _FIRMWARE_METADATA_NAME)
       self.m.file.write_proto('write firmware metadata',
-                              outpath.join(metadata_name), metadata, 'JSONPB')
+                              outpath / metadata_name, metadata, 'JSONPB')
       ret['FIRMWARE_TARBALL_INFO'].append(metadata_name)
     return ret
 
@@ -552,7 +551,7 @@ class FirmwareBuilder():
                                                   build_target,
                                                   self._config.id.type), board)
       cmd = [
-          self._tot_chromite.join('bin', 'pushimage'), image_dir, '--yes',
+          self._tot_chromite / 'bin' / 'pushimage', image_dir, '--yes',
           '--board={}'.format(board),
           '--version={}'.format(self._bcs_version.legacy_version),
           '--buildroot', self.m.src_state.workspace_path

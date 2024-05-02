@@ -23,8 +23,8 @@ def RunSteps(api):
     # diff_manifests_informational calls _find_root().  Use that to cover both
     # cases in one test.
     api.repo.diff_manifests_informational(
-        cwd.join('manifest-internal/snapshot-a.xml'),
-        cwd.join('manifest-internal/snapshot-b.xml'))
+        cwd / 'manifest-internal/snapshot-a.xml',
+        cwd / 'manifest-internal/snapshot-b.xml')
 
   # Next, call _find_root from a subdirectory.  Should not affect context.cwd.
   cwd = api.path.cleanup_dir.joinpath('test', 'dir', 'sub')

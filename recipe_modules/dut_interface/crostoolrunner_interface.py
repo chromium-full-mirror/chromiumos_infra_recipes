@@ -723,7 +723,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         temp_dir = self._api.path.mkdtemp()
         tast_rdb_config = self._tast_results_rdb_config(
             tast_result_dir, test_case_metadata_json,
-            temp_dir.join(self.TEST_METADATA_JSON), metadata,
+            temp_dir / self.TEST_METADATA_JSON, metadata,
             skip_board_model_check, visibility_mode, custom_realm)
         self._api.cros_resultdb.upload(tast_rdb_config,
                                        str(metadata.testhaus_logs_url))

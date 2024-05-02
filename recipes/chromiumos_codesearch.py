@@ -67,16 +67,16 @@ def RunSteps(api, properties):
     workspace = api.cros_source.workspace_path
     with api.context(cwd=workspace):
       # package_index_cros requires chromite/ in a parent directory.
-      chromite_contrib = workspace.join('chromite', 'contrib')
-      package_index_cros_dir = chromite_contrib.join('package_index_cros')
+      chromite_contrib = workspace / 'chromite' / 'contrib'
+      package_index_cros_dir = chromite_contrib / 'package_index_cros'
 
       # Generate KZIP.
-      build_dir = workspace.join('src', 'out', build_target)
+      build_dir = workspace / 'src' / 'out' / build_target
       with api.context(
           cwd=package_index_cros_dir, env={
               'PATH':
                   api.path.pathsep.join(
-                      [str(workspace.join('chromite', 'bin')), '%(PATH)s'])
+                      [str(workspace / 'chromite' / 'bin'), '%(PATH)s'])
           }):
         api.step('run package_index_cros', [
             package_index_cros_dir / 'main',

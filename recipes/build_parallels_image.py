@@ -206,8 +206,7 @@ def invoke_tast(api: RecipeApi, test_artifacts_dir: Path,
         tast_results_dir)
 
     try:
-      src_path = tast_results_dir.joinpath('tests').join(_TAST_NAME).joinpath(
-          'PvmDefault.zip')
+      src_path = tast_results_dir / 'tests' / _TAST_NAME / 'PvmDefault.zip'
 
       # Move VM image out of the test results directory (to avoid it getting
       # uploaded with test logs) and rename it to its final name.

@@ -26,7 +26,7 @@ def RunSteps(api, properties):
     None
   """
 
-  cipd_dir = api.path.start_dir.join('cipd', 'kron')
+  cipd_dir = api.path.start_dir / 'cipd' / 'kron'
 
   with api.step.nest('Ensure kron'):
     with api.context(infra_steps=True):
@@ -39,7 +39,7 @@ def RunSteps(api, properties):
       api.cipd.ensure(cipd_dir, pkgs)
 
   with api.step.nest('Execute'):
-    cmd_path = cipd_dir.join('kron')
+    cmd_path = cipd_dir / 'kron'
     with api.context(cwd=cipd_dir, infra_steps=True):
       cmd = [cmd_path, 'firestore-sync']
 

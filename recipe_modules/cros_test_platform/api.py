@@ -123,8 +123,8 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
       # because the intent is to unwrap the sub-build completely to replace this
       # parent build eventually.
       sub_cwd = self.m.path.start_dir
-      input_json = sub_cwd.join('input.json')
-      output_json = sub_cwd.join('output.json')
+      input_json = sub_cwd / 'input.json'
+      output_json = sub_cwd / 'output.json'
 
       self.m.file.write_proto('write input', input_json, request, 'JSONPB')
 
@@ -175,13 +175,13 @@ class CrosTestPlatformCommand(recipe_api.RecipeApi):
           in properties.experiments):
         try:
           with self.m.step.nest('Read Execution Metrics'):
-            totalsDir = sub_cwd.join('metric_logs/totals')
-            perSuiteDir = sub_cwd.join('metric_logs/per_suites')
+            totalsDir = sub_cwd / 'metric_logs/totals'
+            perSuiteDir = sub_cwd / 'metric_logs/per_suites'
 
             # Read the final per suite report
             final_metrics = self.m.file.read_text(
-                'read suite execution final metrics',
-                totalsDir.join('final.csv'), include_log=False,
+                'read suite execution final metrics', totalsDir / 'final.csv',
+                include_log=False,
                 test_data='suiteName,totalTestExecutionSeconds,completed,exceededExecutionLimit\ndefault,0,True,False'
             )
 

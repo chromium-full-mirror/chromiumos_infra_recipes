@@ -164,7 +164,7 @@ def RunSteps(api, properties):
             _quit("project '%s' not found in project info!")
 
           with api.step.nest('checking change %d' % (cnt+1)) as presentation,\
-               api.context(cwd=api.context.cwd.join(project_paths[project])):
+               api.context(cwd=api.context.cwd / project_paths[project]):
 
             # Make sure that changed files are consistent, if we change a
             # -versions.txt, we better have made a change to the associated binary
@@ -198,7 +198,7 @@ def RunSteps(api, properties):
             ref_version, ref_hashes = parse_versions_file(
                 'read reference file',
                 api,
-                api.context.cwd.join(configured_repos[project]),
+                api.context.cwd / configured_repos[project],
             )
 
             # Check that hashes in modified versions file match reference file
@@ -208,7 +208,7 @@ def RunSteps(api, properties):
                 version, hashes = parse_versions_file(
                     'read modified file',
                     api,
-                    api.context.cwd.join(verfile),
+                    api.context.cwd / verfile,
                 )
 
                 with api.step.nest('check that FIT versions match'):

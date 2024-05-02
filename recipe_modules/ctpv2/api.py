@@ -40,7 +40,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
 
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
       build.ClearField(ofield)
-    cmd = self._cipd_dir.join('ctpv2')
+    cmd = self._cipd_dir / 'ctpv2'
     stepName = 'ctpv2 sub-build'
     if runningAsync:  # pragma: no cover
       stepName += ' (async)'
@@ -55,7 +55,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure ctpv2'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'ctpv2')
+        cipd_dir = self.m.path.start_dir / 'cipd' / 'ctpv2'
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(self._cipd_package, self._cipd_label)

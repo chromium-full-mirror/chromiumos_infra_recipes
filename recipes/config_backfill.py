@@ -294,7 +294,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
       # Copy public model.yaml to import.
       if path_public_yaml:
-        dst_path = path_imported.join('public_model.yaml')
+        dst_path = path_imported / 'public_model.yaml'
         api.file.copy(
             'copy public model.yaml',
             path_public_yaml,
@@ -304,7 +304,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
       # Copy private model.yaml to import.
       if path_private_yaml:
-        dst_path = path_imported.join('private_model.yaml')
+        dst_path = path_imported / 'private_model.yaml'
         api.file.copy(
             'copy private model.yaml',
             path_private_yaml,
@@ -314,7 +314,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
 
       # Copy the HWID database.
       if config.hwid_key:
-        dst_path = path_imported.join('hwid')
+        dst_path = path_imported / 'hwid'
         api.file.copy(
             'copy HWID database',
             path_hwid,
@@ -329,7 +329,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
       )
 
       # Mock existence of config bundle for tests
-      path_config_bundle = path_generated.join('config.jsonproto')
+      path_config_bundle = path_generated / 'config.jsonproto'
       api.path.mock_add_paths(path_config_bundle)
 
       # Merge backfilled data into a ConfigBundle payload
@@ -361,7 +361,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
           'GOOGLE_APPLICATION_CREDENTIALS': CLOUD_CREDS_PATH,
       }):
         # generate the import-only config (no merging with config.jsonproto)
-        path_imported_config = path_generated.join('imported.jsonproto')
+        path_imported_config = path_generated / 'imported.jsonproto'
         api.step('Generate imported configuration', [
             'vpython3',
             '-vpython-spec',
@@ -376,7 +376,7 @@ def config_merger(api, config, path_cros_repo, step_pres):
         api.git.add([path_imported_config])
 
         # generate joined config (with merging)
-        path_merged_config = path_generated.join('joined.jsonproto')
+        path_merged_config = path_generated / 'joined.jsonproto'
         api.step('Generate joined configuration', [
             'vpython3',
             '-vpython-spec',

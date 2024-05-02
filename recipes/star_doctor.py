@@ -279,7 +279,7 @@ def _clone_repos(api: RecipeApi) -> None:
   # We need the config dir to exist in the `config` directory next to
   # config-internal for the symlinks in config-internal to work.
   config_dir = api.path.abspath(
-      api.path.dirname(CONFIG_INTERNAL.checkout_path).join('config/'))
+      api.path.dirname(CONFIG_INTERNAL.checkout_path) / 'config')
   api.step('create {}'.format(config_dir), ['mkdir', config_dir])
   PUBLIC_CONFIG.shallow_clone(api, checkout_path=config_dir)
 

@@ -160,7 +160,7 @@ def RunSteps(api, properties):
         external_snapshot_ref = None
         # Generate the manifest from public repo
         snapshot_xml_extern = api.repo.manifest(
-            external_manifest.path.join('default.xml'), pinned=True,
+            external_manifest.path / 'default.xml', pinned=True,
             step_name='generate external manifest')
         # TODO(b/315001529): build shouldn't need this forever.
         snapshot_xml_extern = _remove_notice_node(
@@ -251,7 +251,7 @@ def RunSteps(api, properties):
           api.context(cwd=external_manifest.path):
         external_snapshot_commit = _publish_snapshot(
             api, external_manifest.url, manifest_ref, prior_external,
-            external_manifest.path.join('snapshot.xml'), snapshot_xml_extern,
+            external_manifest.path / 'snapshot.xml', snapshot_xml_extern,
             disable_gerrit=True, dry_run=dry_run,
             footers=[('Cr-Snapshot-Identifier', str(snapshot_identifier))])
         external_snapshot_ref = external_snapshot_commit.id
@@ -262,7 +262,7 @@ def RunSteps(api, properties):
       with api.step.nest('publish internal snapshot'):
         internal_snapshot_commit = _publish_snapshot(
             api, internal_manifest.url, manifest_ref, prior_internal,
-            internal_manifest.path.join('snapshot.xml'), snapshot_xml_intern,
+            internal_manifest.path / 'snapshot.xml', snapshot_xml_intern,
             gerrit_commits, properties.disable_gerrit_commits_in_commit_message,
             footers=[('Cr-External-Snapshot', external_snapshot_ref),
                      ('Cr-Snapshot-Identifier', str(snapshot_identifier))],
@@ -311,8 +311,8 @@ def _sync_manifest(api, _properties, manifest_ref, prior_internal,
     m_files = api.cros_source.mirrored_manifest_files
     e_paths = []
     for m_file in m_files:
-      i_path = internal_manifest.path.join(m_file.src)
-      e_path = external_manifest.path.join(m_file.dest)
+      i_path = internal_manifest.path / m_file.src
+      e_path = external_manifest.path / m_file.dest
       if m_file.src != 'external_full.xml':
         api.path.mock_add_paths(i_path)
       if api.path.exists(i_path):

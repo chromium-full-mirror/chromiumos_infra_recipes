@@ -3,11 +3,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Test case for ManifestProject.__hash__()."""
 
 DEPS = [
     'recipe_engine/assertions',
+    'recipe_engine/path',
     'src_state',
 ]
 
@@ -17,7 +17,9 @@ def RunSteps(api):
   HOST, HOST2 = 'my_host', 'my_host2'
   PROJECT, PROJECT2 = 'my_project', 'my_project2'
   REL_PATH, REL_PATH2 = 'my_rel_path', 'my_rel_path2'
-  WORKSPACE_PATH, WORKSPACE_PATH2 = 'my_workspace_path', 'my_workspace_path2'
+  tmpdir = api.path.mkdtemp()
+  WORKSPACE_PATH, WORKSPACE_PATH2 = (tmpdir / 'my_workspace_path',
+                                     tmpdir / 'my_workspace_path2')
   REF, REF2 = 'my_ref', 'my_ref2'
   GERRIT_HOST, GERRIT_HOST2 = 'my_gerrit_host', 'my_gerrit_host2'
 

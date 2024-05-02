@@ -43,7 +43,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
     build.CopyFrom(self.m.buildbucket.build)
     for ofield in ['output', 'status', 'summary_markdown', 'steps']:
       build.ClearField(ofield)
-    cmd = self._cipd_dir.join('cros_test_runner')
+    cmd = self._cipd_dir / 'cros_test_runner'
 
     with self.m.context():
       result = self.m.step.sub_build('cros_test_runner', [cmd], build,
@@ -61,7 +61,7 @@ class CrosTestRunnerCommand(recipe_api.RecipeApi):
 
     with self.m.step.nest('ensure cros_test_runner'):
       with self.m.context(infra_steps=True):
-        cipd_dir = self.m.path.start_dir.join('cipd', 'cros_test_runner')
+        cipd_dir = self.m.path.start_dir / 'cipd' / 'cros_test_runner'
 
         pkgs = self.m.cipd.EnsureFile()
         pkgs.add_package(self._cipd_package, self._cipd_label)

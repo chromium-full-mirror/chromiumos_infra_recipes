@@ -43,8 +43,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
       version = api.step('locating node version',
                          ['ls', nvmroot / 'versions/node'],
                          stdout=api.raw_io.output_text()).stdout.strip()
-    nodebinpath = nvmroot.joinpath('versions/node').join(version).joinpath(
-        'bin')
+    nodebinpath = nvmroot.joinpath('versions/node') / version / 'bin'
 
   with api.context(
       env={'PATH': api.path.pathsep.join([str(nodebinpath), '%(PATH)s'])}):

@@ -22,7 +22,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  download_path = api.path.mkdtemp(prefix='manifests-').join('download.xml')
+  download_path = api.path.mkdtemp(prefix='manifests-') / 'download.xml'
 
   api.cros_branch.create_from_file(download_path,
                                    branch=Branch(type=Branch.RELEASE))

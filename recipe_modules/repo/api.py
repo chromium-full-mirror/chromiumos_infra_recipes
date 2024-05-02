@@ -85,7 +85,7 @@ class RepoApi(recipe_api.RecipeApi):
     """Starting from cwd, find an ancestor with a '.repo' subdir."""
     candidate = self.m.context.cwd
     while candidate.pieces:
-      if self.m.path.exists(candidate.join('.repo')):
+      if self.m.path.exists(candidate / '.repo'):
         return candidate
       candidate = self.m.path.abs_to_path(self.m.path.dirname(candidate))
     return None
@@ -245,13 +245,13 @@ class RepoApi(recipe_api.RecipeApi):
       self._clear_git_locks()
 
     if self.m.context.cwd:
-      self.m.path.mock_add_paths(self.m.context.cwd.join('.repo'))
+      self.m.path.mock_add_paths(self.m.context.cwd / '.repo')
 
     if local_manifests is not None:
       # Local manifests should be installed under .repo/local_manifests/*.xml.
       # The .repo dir should be created by the above init.
-      assert self.m.path.exists(self.m.context.cwd.join('.repo'))
-      local_manifest_dir = self.m.context.cwd.join('.repo', 'local_manifests')
+      assert self.m.path.exists(self.m.context.cwd / '.repo')
+      local_manifest_dir = self.m.context.cwd / '.repo' / 'local_manifests'
       self.m.file.ensure_directory(name='ensure local manifest dir',
                                    dest=local_manifest_dir)
 
@@ -916,7 +916,7 @@ class RepoApi(recipe_api.RecipeApi):
   @property
   def manifest_gitiles_commit(self) -> git_api.GitilesCommit:
     """Return a Gitiles commit for the repo manifest."""
-    with self.m.context(cwd=self._find_root().join('.repo', 'manifests')):
+    with self.m.context(cwd=self._find_root() / '.repo' / 'manifests'):
       return self.m.git.gitiles_commit()
 
   def ensure_synced_checkout(self, root_path: Path, manifest_url: str,

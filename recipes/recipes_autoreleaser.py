@@ -98,7 +98,7 @@ def RunSteps(api: recipe_api.RecipeApi,
   with api.context(
       cwd=api.path.mkdtemp(prefix='autorelease'), infra_steps=True):
     _clone_recipes_repo(api)
-    release_script = api.context.cwd.join('release.sh')
+    release_script = api.context.cwd / 'release.sh'
 
     step_name = f"release bundle '{properties.bundle}'"
     args = [

@@ -34,7 +34,7 @@ def RunSteps(api):
   builder_config = BuilderConfig(id=BuilderConfig.Id(name='test'),)
 
   cwd = api.cros_source.workspace_path
-  repo_path = cwd.join('.repo')
+  repo_path = cwd / '.repo'
   api.file.ensure_directory('repo dir', repo_path)
 
   inc_props = IncrementalProperties(**{

@@ -316,8 +316,8 @@ def _gen_config(api: RecipeApi) -> None:
   Args:
     api: See RunSteps documentation.
   """
-  gen_config_path = api.context.cwd.join('config', 'bin', 'gen_config')
-  config_path = api.context.cwd.join('config.star')
+  gen_config_path = api.context.cwd / 'config' / 'bin' / 'gen_config'
+  config_path = api.context.cwd / 'config.star'
 
   api.path.mock_add_paths(gen_config_path)
   api.path.mock_add_paths(config_path)

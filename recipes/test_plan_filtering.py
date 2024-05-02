@@ -228,7 +228,7 @@ def _find_test_plan_files(api: RecipeApi) -> List[str]:
   find_command = [
       find_tests_script,
       '--repo',
-      '{}'.format(api.context.cwd.join(TEST_PLANS_PATH)),
+      '{}'.format(api.context.cwd / TEST_PLANS_PATH),
   ]
 
   step_result = api.step('find test plans', ['vpython3'] + find_command,

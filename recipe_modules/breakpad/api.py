@@ -59,8 +59,8 @@ class BreakpadApi(RecipeApi):
     Returns:
       A Path object pointing to the dir with the extracted symbols.
     """
-    debug_breakpad_local_path = self.m.path.mkdtemp(
-        prefix='image_archive').join(SYMBOLS_FILE_NAME)
+    debug_breakpad_local_path = self.m.path.join(
+        self.m.path.mkdtemp(prefix='image_archive'), SYMBOLS_FILE_NAME)
     try:
       self._download_and_log_gs_url(
           os.path.join(image_archive_path, SYMBOLS_FILE_NAME),
@@ -99,8 +99,8 @@ class BreakpadApi(RecipeApi):
     # `recipe_engine/path` module. To use it with the
     # `recipe_engine/file` module, it needs to be converted to a
     # Path object, which requires stripping the leading './'.
-    stackwalk_output_path = self.m.context.cwd.join(
-        dmp_file.lstrip('./') + '.txt')
+    stackwalk_output_path = self.m.path.join(self.m.context.cwd,
+                                             dmp_file.lstrip('./') + '.txt')
     self.m.file.write_raw('write .dmp.txt', stackwalk_output_path,
                           stackwalk_output)
     return stackwalk_output_path

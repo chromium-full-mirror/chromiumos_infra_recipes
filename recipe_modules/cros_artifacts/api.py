@@ -220,7 +220,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       files_by_artifact = {}
       if ArtifactsByService.Infra.ArtifactType.BUILD_MANIFEST in artifact_types:
         with self.m.step.nest('create manifest.xml artifact'):
-          outpath = outpath.join('manifest.xml')
+          outpath = outpath / 'manifest.xml'
 
           pinned_manifest_data = self.m.cros_source.pinned_manifest
           self.m.file.write_raw('write manifest.xml', outpath,
@@ -937,7 +937,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       # TODO(b/193131170): Switch to using updated ArtifactInfo fields.
       for fname in files_by_artifact.get('FIRMWARE_LCOV', []):
         with self.m.failures.ignore_exceptions():
-          self.m.code_coverage.upload_firmware_lcov(outpath.join(fname))
+          self.m.code_coverage.upload_firmware_lcov(outpath / fname)
 
       for fname in files_by_artifact.get('CODE_COVERAGE_E2E', []):
         self.m.code_coverage.update_e2e_metadata(
@@ -952,8 +952,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         cov_files['GO_COV'] = files_by_artifact.get('CODE_COVERAGE_GOLANG', [])
         for coverage_type, fnames in cov_files.items():
           for fname in fnames:
-            self.m.code_coverage.upload_code_coverage(
-                outpath.join(fname), coverage_type, gs_bucket, gs_path)
+            self.m.code_coverage.upload_code_coverage(outpath / fname,
+                                                      coverage_type, gs_bucket,
+                                                      gs_path)
 
       # Builders that publish artifacts should not recycyle dry-run builds,
       # since we treat them differently here.
@@ -1024,7 +1025,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
           filename,
       )
 
-      full_path = self.m.path.mkdtemp().join(filename)
+      full_path = self.m.path.mkdtemp() / filename
       self.m.file.write_proto('writing metadata', full_path, message, 'JSONPB')
 
       self.m.gsutil.upload(full_path, gs_bucket, gs_path,

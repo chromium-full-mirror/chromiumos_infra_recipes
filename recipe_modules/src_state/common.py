@@ -56,7 +56,7 @@ class ManifestProject:
     self.ref = ref or 'refs/heads/{}'.format(
         'main' if external else default_branch)
     self.gerrit_host = gerrit_host
-    self.path = workspace_path.join(relpath)
+    self.path = workspace_path / relpath
     self.url = 'https://{}/{}'.format(host, project)
 
   def __str__(self):

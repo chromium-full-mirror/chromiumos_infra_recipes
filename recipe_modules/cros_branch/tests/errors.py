@@ -19,7 +19,7 @@ DEPS = [
 
 
 def RunSteps(api):
-  download_path = api.path.mkdtemp(prefix='manifests-').join('download.xml')
+  download_path = api.path.mkdtemp(prefix='manifests-') / 'download.xml'
 
   with api.assertions.assertRaises(StepFailure):
     # Bad version string.

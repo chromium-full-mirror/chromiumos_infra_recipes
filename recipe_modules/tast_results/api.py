@@ -491,8 +491,8 @@ class TastResultsApi(recipe_api.RecipeApi):
     # /metadata/sources.jsonpb.
     sources_url = self.m.path.join(build_artifacts_url, 'metadata',
                                    SOURCES_FILE_NAME)
-    sources_local_path = self.m.path.mkdtemp(
-        prefix='source_metadata').join(SOURCES_FILE_NAME)
+    sources_local_path = self.m.path.join(
+        self.m.path.mkdtemp(prefix='source_metadata'), SOURCES_FILE_NAME)
     try:
       # Download the file from Google Stroage.
       self.m.gsutil.download_url(sources_url, sources_local_path,

@@ -66,7 +66,7 @@ def _replicate_public_config(api, _properties, project_infos, dry_run):
     See notes on _ACTIONS.
   """
   del dry_run
-  public_repo_path = api.context.cwd.join('src', 'project_public')
+  public_repo_path = api.context.cwd / 'src' / 'project_public'
 
   automation_id = 'config_postsubmit/replicate_public'
   message = \
@@ -77,8 +77,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 
   for project_info in project_infos:
     with api.step.nest(project_info.name):
-      public_config_path = api.context.cwd.join(project_info.path,
-                                                'public_sw_build_config')
+      public_config_path = (
+          api.context.cwd / project_info.path / 'public_sw_build_config')
       api.path.mock_add_paths(public_config_path)
       if api.path.exists(public_config_path):
         # Parse the program and project name out of the project repo path. It is
@@ -103,8 +103,8 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
 def _flatten_configs(api, properties, project_infos, dry_run):
   del dry_run
 
-  flatten_script = api.context.cwd.join(
-      'src/config/payload_utils/flatten_config_payload.py')
+  flatten_script = (
+      api.context.cwd / 'src/config/payload_utils/flatten_config_payload.py')
 
   allowed_projects = [
       project.repo_name for project in properties.allowed_projects
@@ -115,9 +115,9 @@ def _flatten_configs(api, properties, project_infos, dry_run):
   ]
 
   cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  vpython_spec = cwd.join('src/config/.vpython')
-  program_join_script = cwd.join('src/config/payload_utils/join_programs.py')
+  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
+  program_join_script = cwd / 'src/config/payload_utils/join_programs.py'
 
   joined_config = 'generated/joined.jsonproto'
   config_bundle = 'generated/config.jsonproto'
@@ -130,7 +130,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
     if not project_info.name in allowed_programs:
       continue
 
-    path = cwd.join(project_info.path, 'generated/config.jsonproto')
+    path = cwd / project_info.path / 'generated/config.jsonproto'
     if api.path.exists(path):
       files.append(path)
 
@@ -155,7 +155,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
       return
 
     with api.step.nest('processing %s' % project_info.name) as presentation,\
-         api.context(api.context.cwd.join(project_info.path)):
+         api.context(api.context.cwd / project_info.path):
 
       if not project_info.name in allowed_projects:
         presentation.step_summary_text = 'skipping, not in allowed projects'
@@ -163,11 +163,11 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
       # if no joined configuration (not backfilled), use the ConfigBundle
       input_config = joined_config
-      if not api.path.exists(api.context.cwd.join(input_config)):
+      if not api.path.exists(api.context.cwd / input_config):
         input_config = config_bundle
       presentation.step_text = input_config
 
-      full_input = api.context.cwd.join(input_config)
+      full_input = api.context.cwd / input_config
       if not api.path.exists(full_input):
         presentation.step_summary_text = '(does not exist)'
         return
@@ -193,7 +193,7 @@ def _flatten_configs(api, properties, project_infos, dry_run):
         program, project = project_info.name.split('/')[2:4]
         empty_flatten_payload.append([program, project])
 
-      flat_files.append(api.context.cwd.join(flat_config))
+      flat_files.append(api.context.cwd / flat_config)
 
   n_ts = api.bot_scaling.get_num_cores()
   parallel_runners = api.future_utils.create_parallel_runner(
@@ -214,11 +214,11 @@ def _flatten_configs(api, properties, project_infos, dry_run):
 
   # now merge and import into config-internal
   cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  vpython_spec = cwd.join('src/config/.vpython')
-  config_internal = cwd.join('src/config-internal')
-  output_path = config_internal.join('hw_design', flat_config)
-  binary_output_path = config_internal.join('hw_design', binary_flat_config)
+  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
+  config_internal = cwd / 'src/config-internal'
+  output_path = config_internal / 'hw_design' / flat_config
+  binary_output_path = config_internal / 'hw_design' / binary_flat_config
 
   with api.context(config_internal),\
        api.step.nest('aggregating flattened configs'):
@@ -272,9 +272,9 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
   config_project_info = api.repo.project_info('chromeos/config-internal')
 
   cwd = api.context.cwd
-  merge_script = cwd.join('src/config/payload_utils/aggregate_messages.py')
-  vpython_spec = cwd.join('src/config/.vpython')
-  config_internal = cwd.join('src/config-internal')
+  merge_script = cwd / 'src/config/payload_utils/aggregate_messages.py'
+  vpython_spec = cwd / 'src/config/.vpython'
+  config_internal = cwd / 'src/config-internal'
 
   def _merge_configs():
     # find all the input config files
@@ -291,9 +291,9 @@ def _aggregate_configs(api, properties, repo_project_infos, dry_run):
       # Project ConfigBundles are under 'generated/joined.jsonproto', program
       # ConfigBundles are under 'generated/config.jsonproto'.
       if repo_project_info.name in allowed_projects:
-        path = cwd.join(repo_project_info.path, 'generated/joined.jsonproto')
+        path = cwd / repo_project_info.path / 'generated/joined.jsonproto'
       elif repo_project_info.name in allowed_programs:
-        path = cwd.join(repo_project_info.path, 'generated/config.jsonproto')
+        path = cwd / repo_project_info.path / 'generated/config.jsonproto'
       else:
         continue  #pragma: nocover
 
@@ -333,9 +333,9 @@ Cr-Automation-Id: %s''' % (api.buildbucket.build_url(), automation_id)
     api.git_txn.update_ref(config_project_info.remote, _merge_configs,
                            ref=config_project_info.branch, dry_run=dry_run)
 
-  config_to_ufs_datastore = cwd.join(
-      'src/config/payload_utils/config_to_datastore.py')
-  vpython_spec = cwd.join('src/config/.vpython')
+  config_to_ufs_datastore = (
+      cwd / 'src/config/payload_utils/config_to_datastore.py')
+  vpython_spec = cwd / 'src/config/.vpython'
 
   ufs_env = properties.ufs_env or 'prod'
 
@@ -367,15 +367,15 @@ def _regenerate_suite_scheduler_configs(api, _properties, _project_infos,
   """
   del dry_run
 
-  config_internal = api.context.cwd.join('src/config-internal')
-  cfg_int_ss = config_internal.join('test/suite_scheduler')
+  config_internal = api.context.cwd / 'src/config-internal'
+  cfg_int_ss = config_internal / 'test/suite_scheduler'
 
   regenerated_files = [
-      cfg_int_ss.join('generated/suite_scheduler.cfg'),
-      cfg_int_ss.join('generated/lab_config.cfg'),
-      cfg_int_ss.join('generated/lab_config.ini'),
-      cfg_int_ss.join('generated/suite_scheduler.ini'),
-      cfg_int_ss.join('generated/rule_schedule_categories.ini'),
+      cfg_int_ss / 'generated/suite_scheduler.cfg',
+      cfg_int_ss / 'generated/lab_config.cfg',
+      cfg_int_ss / 'generated/lab_config.ini',
+      cfg_int_ss / 'generated/suite_scheduler.ini',
+      cfg_int_ss / 'generated/rule_schedule_categories.ini',
   ]
 
   message = '''Updating Suite Scheduler's generated rules.
@@ -410,9 +410,9 @@ def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
   """
   del dry_run
 
-  config_internal = api.context.cwd.join('src/config-internal')
-  config_internal_test = config_internal.join('test')
-  config_internal_test_plans = config_internal_test.join('plans')
+  config_internal = api.context.cwd / 'src/config-internal'
+  config_internal_test = config_internal / 'test'
+  config_internal_test_plans = config_internal_test / 'plans'
 
   message = '''Updating generated test plans.
 
@@ -495,9 +495,8 @@ def RunSteps(api, properties):
 
     # load all the repos defined in the DLM config.
     all_program_configs = api.file.read_json(
-        'reading DLM config',
-        api.context.cwd.join(
-            'infra/config/project_config/all_programs_config.json'))
+        'reading DLM config', api.context.cwd /
+        'infra/config/project_config/all_programs_config.json')
 
     names = set()
     for program in all_program_configs.get('programs', []):
