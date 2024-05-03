@@ -60,6 +60,7 @@ def RunSteps(api: recipe_api.RecipeApi,
   codesearch_dirname = '_'.join(codesearch_repo.split('/')[-2:])
   mirror_hash, mirror_unix_timestamp = latest_ref_info(api, codesearch_dirname,
                                                        codesearch_repo, 'main')
+
   manifest_repo = properties.manifest_repo or MANIFEST_REPO
   manifest_dirname = '_'.join(manifest_repo.split('/')[-2:])
   manifest_hash, _ = latest_ref_info(api, manifest_dirname, manifest_repo,
@@ -69,12 +70,15 @@ def RunSteps(api: recipe_api.RecipeApi,
   child_properties: Dict[str, Any] = {
       'codesearch_mirror_revision': mirror_hash,
       'codesearch_mirror_revision_timestamp': mirror_unix_timestamp,
-      'manifest_hash': manifest_hash,
   }
 
   api.scheduler.emit_trigger(
-      api.scheduler.BuildbucketTrigger(properties=child_properties),
-      project='chromeos', jobs=properties.child_jobs)
+      api.scheduler.GitilesTrigger(
+          repo=manifest_repo.removeprefix('https://'),
+          ref='refs/heads/snapshot',
+          revision=manifest_hash,
+          properties=child_properties,
+      ), project='chromeos', jobs=properties.child_jobs)
 
 
 # TODO(crbug/1284439): Add more tests.

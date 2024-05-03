@@ -10,7 +10,6 @@ package_index, and generates then uploads a KZIP to GS.
 
 from PB.chromite.api import sysroot as sysroot_pb2
 from PB.chromiumos import common as common_pb2
-from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 from PB.recipes.chromeos.chromiumos_codesearch import (
     ChromiumosCodesearchProperties)
 from recipe_engine import post_process
@@ -42,7 +41,6 @@ def RunSteps(api, properties):
   # Shorthand common variables.
   codesearch_mirror_revision = properties.codesearch_mirror_revision
   codesearch_mirror_revision_timestamp = properties.codesearch_mirror_revision_timestamp
-  manifest_hash = properties.manifest_hash
   build_target = api.build_menu.build_target.name
   corpus = properties.corpus
   packages = properties.packages
@@ -53,12 +51,8 @@ def RunSteps(api, properties):
   cache_dir = api.path.cache_dir / 'builder'
   api.gclient.set_config('infra_superproject')
 
-  commit = GitilesCommit(host='chromium.googlesource.com', id=manifest_hash,
-                         ref='refs/heads/snapshot',
-                         project='chromiumos/manifest')
-
   # Set up and build ChromiumOS.
-  with api.build_menu.configure_builder(commit=commit) as config, \
+  with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
 
     config.build.use_flags.append(
@@ -174,26 +168,28 @@ def GenTests(api):
 
   yield api.build_menu.test(
       'basic',
-      api.buildbucket.generic_build(builder='amd64-generic-codesearch'),
       api.properties(
           codesearch_mirror_revision='a' * 40,
           codesearch_mirror_revision_timestamp='1531887759',
-          manifest_hash='d3adb33f',
           corpus='chromium.googlesource.com/chromiumos/codesearch//main',
           packages=[
               'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
           ],
           sync_generated_files=True,
           experimental=False,
-      ))
+      ),
+      builder_name='amd64-generic-codesearch',
+      bucket='codesearch',
+      git_ref='refs/heads/snapshot',
+      git_repo='chromium.googlesource.com/chromiumos/manifest',
+      revision='d3adb33f',
+  )
 
   yield api.build_menu.test(
       'repo sync to manifest_hash',
-      api.buildbucket.generic_build(builder='amd64-generic-codesearch'),
       api.properties(
           codesearch_mirror_revision='a' * 40,
           codesearch_mirror_revision_timestamp='1531887759',
-          manifest_hash='d3adb33f',
           corpus='chromium.googlesource.com/chromiumos/codesearch//main',
           packages=[
               'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
@@ -208,4 +204,9 @@ def GenTests(api):
   "id": "d3adb33f",
   "ref": "refs/heads/snapshot"
 }'''),
+      builder_name='amd64-generic-codesearch',
+      bucket='codesearch',
+      git_ref='refs/heads/snapshot',
+      git_repo='chromium.googlesource.com/chromiumos/manifest',
+      revision='d3adb33f',
   )

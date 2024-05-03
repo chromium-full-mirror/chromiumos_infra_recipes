@@ -15,8 +15,7 @@ message ChromiumosCodesearchProperties {
   // in seconds since the UNIX epoch.
   string codesearch_mirror_revision_timestamp = 2;
 
-  // The snapshot revision to sync to.
-  string manifest_hash = 3;
+  reserved 3;
 
   // Which codesearch corpus is the target.
   string corpus = 4;
