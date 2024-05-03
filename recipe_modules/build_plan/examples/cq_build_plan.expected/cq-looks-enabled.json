@@ -1420,6 +1420,13 @@
   },
   {
     "cmd": [],
+    "name": "looks for green.check should look for green.get parent commits of merge CLs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

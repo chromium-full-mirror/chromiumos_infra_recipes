@@ -679,11 +679,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
             # This step will throw a StepFailure if changes cannot be applied
             # to chosen snapshot.
             self.m.workspace_util.apply_changes()
-            # If changes could not be cherry-picked, they will be merged instead.
-            # This is bad for LFG as only a single repo will be fast-forwarded and
-            # CQ will have to rebuild all of the fast-forwarded code. Instead
-            # skip LFG. b/322174445
-            if self.m.cros_source.git_strategy is GitStrategy.MERGE:
+            any_merge_commit = any(
+                self.m.gerrit.is_merge_commit(c.change, c.host)
+                for c in gerrit_changes)
+            # If changes could not be cherry-picked (and they are not merge commits),
+            # they will be merged instead. This is bad for LFG as only a single repo
+            # will be fast-forwarded and CQ will have to rebuild all of the fast-forwarded
+            # code. Instead skip LFG. b/322174445
+            if (not any_merge_commit and
+                self.m.cros_source.git_strategy is GitStrategy.MERGE):
               self.m.looks_for_green.stats.status = LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK
               self.m.looks_for_green.set_stats()
               raise recipe_api.StepFailure('CL(s) cannot be cherry-picked!')

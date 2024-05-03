@@ -151,7 +151,7 @@ def GenTests(api):
       'merge-commit',
       api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
-          expected_should_lfg=False, **{
+          expected_should_lfg=True, **{
               '$chromeos/looks_for_green': {
                   'enable_looks_for_green': True
               },
@@ -160,35 +160,6 @@ def GenTests(api):
       api.gerrit.set_is_merge_commit(
           gerrit_change_1.change, gerrit_change_1.host, True,
           parent_step_name='check should look for green'),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'cherry-pick-and-merge-commits',
-      api.buildbucket.try_build(
-          gerrit_changes=[gerrit_change_1, gerrit_change_2]),
-      api.properties(
-          expected_should_lfg=False, **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True
-              },
-          }),
-      api.cv(run_mode=api.cv.FULL_RUN),
-      # Cherry pick commit.
-      api.gerrit.set_is_merge_commit(
-          gerrit_change_1.change, gerrit_change_1.host, False,
-          parent_step_name='check should look for green'),
-      # Merge commit.
-      api.gerrit.set_is_merge_commit(
-          gerrit_change_2.change, gerrit_change_2.host, True,
-          parent_step_name='check should look for green'),
-      api.post_check(LooksStatusEquals,
-                     LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT),
-      # Should not continue after finding a merge commit.
-      api.post_check(post_process.DoesNotRun,
-                     'check should look for green.git log (3)'),
       api.post_process(post_process.DropExpectation),
   )
 

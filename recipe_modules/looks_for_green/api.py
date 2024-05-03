@@ -191,20 +191,14 @@ class LooksForGreenApi(recipe_api.RecipeApi):
           c for c in gerrit_changes
           if self.m.gerrit.is_merge_commit(c.change, c.host)
       ]
-      if len(merge_commit_cls) > 0:
-        # This call is being tested in prod. Will be used when we can
-        # look for green on merge commits. b/338254730.
-        _ = self.m.lfg_util.get_parent_changes(
-            merge_commit_cls, step_test_data=self._test_parent_data)
-        self._stats.status = LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT
-        pres.step_text = 'Skipping looks for green due to merge commit'
-        self.set_stats()
-        return False
+      merge_parent_changes = self.m.lfg_util.get_parent_changes(
+          merge_commit_cls, step_test_data=self._test_parent_data)
       not_included_cq_depend_cls = self.m.lfg_util.not_included_cq_depend_cls(
           gerrit_changes)
       depended_cls = (
           not_included_cq_depend_cls +
-          self.m.lfg_util.json_to_gerritchanges(self.related_changes_to_apply))
+          self.m.lfg_util.json_to_gerritchanges(self.related_changes_to_apply) +
+          merge_parent_changes)
       if depended_cls:
         submit_time = self.m.lfg_util.latest_submission_time(
             depended_cls, step_test_data=self._test_submission_data)
