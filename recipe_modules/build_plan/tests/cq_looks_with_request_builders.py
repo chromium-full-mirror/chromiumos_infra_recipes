@@ -142,10 +142,6 @@ def GenTests(api):
                 'greenness_threshold': 75
             }
         })
-    ret += api.git_footers.simulated_get_footers(
-        [],
-        'looks for green.check should look for green.check if all Cq-Depend CLs are included'
-    )
     # Step data searching for getting snapshots from buildbucket.
     ret += api.buildbucket.simulated_search_results(
         builds=[snapshot if not staging else staging_snapshot],

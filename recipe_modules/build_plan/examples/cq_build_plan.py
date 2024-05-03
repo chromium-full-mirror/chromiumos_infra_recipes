@@ -545,10 +545,6 @@ def GenTests(api):
       'cq-looks-enabled',
       api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
-      ),
       api.properties(
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True,

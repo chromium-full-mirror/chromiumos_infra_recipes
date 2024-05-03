@@ -36,7 +36,9 @@ class LFGUtilApi(recipe_api.RecipeApi):
       log_lines = []
       for change in gerrit_changes:
         git_footer_values = self.m.git_footers.get_footer_values(
-            gerrit_changes=[change], key='Cq-Depend')
+            gerrit_changes=[change], key='Cq-Depend',
+            step_test_data=self.m.git_footers.test_api.step_test_data_factory(
+                ''))
         for footer in git_footer_values:
           if ':' not in footer:
             if not footer.isnumeric():

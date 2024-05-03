@@ -66,3 +66,21 @@ def GenTests(api):
           parent_step_name='check if all Cq-Depend CLs are included'),
       api.post_process(post_process.DropExpectation)
       )
+
+  yield api.test(
+      'not-supported-host',
+      api.properties(expected_result=[], change_ids=[123, 456]),
+      api.git_footers.simulated_get_footers(
+          ['fake-host:456'],
+          parent_step_name='check if all Cq-Depend CLs are included'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'malformed',
+      api.properties(expected_result=[], change_ids=[123, 456]),
+      api.git_footers.simulated_get_footers(
+          ['not-a-valid-cq-dep-footer'],
+          parent_step_name='check if all Cq-Depend CLs are included'),
+      api.post_process(post_process.DropExpectation),
+  )

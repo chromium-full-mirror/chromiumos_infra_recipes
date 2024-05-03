@@ -110,10 +110,6 @@ def GenTests(api):
               'enable_looks_for_green': True
           }}, expected_internal_sha=MODIFIED_INTERNAL_SHA,
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
-      ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='looks for green.find green snapshot.buildbucket.search'),
@@ -143,10 +139,6 @@ def GenTests(api):
               }
           }, expected_internal_sha=MODIFIED_INTERNAL_SHA,
           expected_external_sha=MODIFIED_EXTERNAL_SHA),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
-      ),
       api.buildbucket.simulated_search_results(
           builds=[green_internal_build, red_build],
           step_name='looks for green.find green snapshot.buildbucket.search'),
@@ -168,10 +160,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.step_data(
           'looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
@@ -209,10 +197,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.step_data(
           'looks for green.checking mergability.cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
@@ -284,10 +268,6 @@ def GenTests(api):
           **{'$chromeos/looks_for_green': {
               'enable_looks_for_green': True
           }},
-      ),
-      api.git_footers.simulated_get_footers(
-          [],
-          'looks for green.check should look for green.check if all Cq-Depend CLs are included'
       ),
       api.buildbucket.simulated_search_results(
           builds=[red_build],

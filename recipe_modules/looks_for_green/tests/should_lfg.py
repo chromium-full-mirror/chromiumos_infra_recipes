@@ -68,10 +68,6 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.git_footers.simulated_get_footers(
-          [],
-          'check should look for green.check if all Cq-Depend CLs are included'
-      ),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -145,10 +141,6 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.git_footers.simulated_get_footers(
-          [],
-          'check should look for green.check if all Cq-Depend CLs are included'
-      ),
       api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
       api.step_data('check should look for green.gerrit changes',
                     api.json.output([])),
