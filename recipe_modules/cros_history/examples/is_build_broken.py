@@ -10,8 +10,6 @@ from typing import Generator
 
 from recipe_engine import post_process
 from recipe_engine import recipe_test_api
-from PB.recipe_modules.chromeos.cros_history.cros_history import \
-  IsBuildBrokenProperties
 
 DEPS = [
     'recipe_engine/assertions',
@@ -20,12 +18,10 @@ DEPS = [
     'cros_history',
 ]
 
-PROPERTIES = IsBuildBrokenProperties
 
-
-def RunSteps(api, properties):
+def RunSteps(api):
   result = api.cros_history.is_build_broken('sha1', 'sha2')
-  api.assertions.assertEqual(result, properties.expected_result)
+  api.assertions.assertEqual(result, api.properties.get('expected_result'))
 
 
 def GenTests(
@@ -71,6 +67,6 @@ def GenTests(
       'no-annealing-build-found-1',
       api.buildbucket.simulated_multi_predicates_search_results(
           [], step_name='check if build is broken.buildbucket.search'),
-      api.properties(expected_result=True),
+      api.properties(expected_result=None),
       api.post_process(post_process.DropExpectation),
   )

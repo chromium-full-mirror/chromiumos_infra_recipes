@@ -100,13 +100,13 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     Returns:
       Whether to recycle the build.
     """
-    with self.m.step.nest('check if build is broken'):
+    with self.m.step.nest('check if build is broken') as pres:
       broken_until_annealing = self.get_annealing_from_snapshot(
           broken_until_snapshot)
       build_annealing = self.get_annealing_from_snapshot(build_snapshot)
-      # If we can't find the annealing builds, don't reuse.
       if not build_annealing or not broken_until_annealing:
-        return True
+        pres.step_text = 'Could not find annealing builds for all revisions'
+        return None
       return (broken_until_annealing.end_time.seconds
               >= build_annealing.end_time.seconds)
 

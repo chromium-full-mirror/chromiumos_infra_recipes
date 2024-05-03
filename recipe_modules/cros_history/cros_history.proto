@@ -14,8 +14,5 @@ message CrosHistoryProperties {
   bool disable_group_key = 2;
 }
 
-// Used to unittest is_build_broken().
-message IsBuildBrokenProperties { bool expected_result = 1; }
-
 // Used to unittest HoursSinceBreakageProperties().
 message HoursSinceBreakageProperties { int32 expected_result = 1; }

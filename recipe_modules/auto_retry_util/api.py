@@ -642,7 +642,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
   """
     config = self.m.cros_infra_config.get_builder_config(builder)
     broken_until_revision = config.general.broken_until
-    return self.m.cros_history.is_build_broken(revision, broken_until_revision)
+    return bool(
+        self.m.cros_history.is_build_broken(revision, broken_until_revision))
 
   def _lfg_greenness(self, builders: List[str],
                      lookback_hours: float) -> Optional[Snapshot]:

@@ -543,7 +543,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
             build_snapshot = build.input.gitiles_commit.id
             is_build_broken = self.m.cros_history.is_build_broken(
                 build_snapshot, broken_until_snapshot)
-            if is_build_broken:
+            # If we were not able to find an annealing build for one of the
+            # snapshots, is_build_broken will return None.
+            # TODO(b/338615036): For now, do not recycle the build in this case.
+            if is_build_broken or is_build_broken is None:
               count_broken_before_rebuilds += 1
               skip_log.append(
                   '{} is skipped because its snapshot {} was broken until {}'

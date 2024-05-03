@@ -1521,7 +1521,8 @@
     "cmd": [],
     "name": "get build history.get completed builds.checking arm64-generic-cq.check if build is broken",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Could not find annealing builds for all revisions@@@"
     ]
   },
   {
@@ -1603,7 +1604,8 @@
     "cmd": [],
     "name": "get build history.get completed builds.checking atlas-cq.check if build is broken",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Could not find annealing builds for all revisions@@@"
     ]
   },
   {
@@ -1685,7 +1687,8 @@
     "cmd": [],
     "name": "get build history.get completed builds.checking atlas-slim-cq.check if build is broken",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_TEXT@Could not find annealing builds for all revisions@@@"
     ]
   },
   {

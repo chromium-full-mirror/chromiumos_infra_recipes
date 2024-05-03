@@ -94,7 +94,8 @@
     "cmd": [],
     "name": "get completed builds.checking atlas-cq.check if build is broken",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Could not find annealing builds for all revisions@@@"
     ]
   },
   {
