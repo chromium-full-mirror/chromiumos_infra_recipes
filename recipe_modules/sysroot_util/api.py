@@ -5,7 +5,6 @@
 
 """API for various support functions for building."""
 
-import copy
 import datetime
 import re
 from typing import Iterable, List, Optional
@@ -211,7 +210,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
       # Always enable thinlto for toolchain related CLs. This adds coverage
       # for CFI as well to help protect against regressions.
-      additional_use_flags = copy.deepcopy(config.build.use_flags)
+      additional_use_flags = []
       if toolchain_cls:
         additional_use_flags.append(UseFlag(flag='chrome_cfi_thinlto'))
 
@@ -249,7 +248,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 bazel=bazel_build,
                 skip_clean_package_dirs=skip_clean_package_dirs,
                 bazel_use_remote_execution=bazel_use_remote_execution),
-            use_flags=additional_use_flags,
+            use_flags=list(config.build.use_flags) + additional_use_flags,
             goma_config=self.m.cros_sdk.goma_config(),
             remoteexec_config=remoteexec_config,
             result_path=common_pb2.ResultPath(
