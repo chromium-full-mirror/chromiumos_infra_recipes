@@ -375,16 +375,17 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
         ]
 
-      execution_metadata_anypb = None
-      execution_metadata = self.get_execution_metadata()
+      test_execution_metadata_anypb = None
+      execution_metadata = self.get_test_execution_metadata()
       if execution_metadata:
-        execution_metadata_anypb = Any()
-        execution_metadata_anypb.Pack(execution_metadata)
+        test_execution_metadata_anypb = Any()
+        test_execution_metadata_anypb.Pack(execution_metadata)
 
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
           primary_dut=primary_dut_device, companion_duts=companion_dut_devices,
-          artifact_dir=metadata.artifact_dir, metadata=execution_metadata_anypb)
+          artifact_dir=metadata.artifact_dir,
+          metadata=test_execution_metadata_anypb)
       test_response = self._process_run_test_response(
           self._api.cros_tool_runner.test(run_test_request))
 
@@ -1308,9 +1309,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     # We shouldn't hit here ever, but for safe we return False if it happens.
     return False
 
-  def get_execution_metadata(self):
-    """Checks the first test case harness type and creates test execution
-    metadata based on it.
+  def get_test_execution_metadata(self):
+    """Gets the test execution metadata for cros test request.
 
     Returns:
       ExecutionMetadata: test execution metadata.
@@ -1327,7 +1327,19 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       args.append(
           Test_Execution_Metadata.Arg(flag='buildartifactsurl', value=gcs_path))
 
-    # Adds the original execution metadata.
+    return Test_Execution_Metadata.ExecutionMetadata(args=args)
+
+  def get_execution_metadata(self):
+    """Gets the first test suite execution metadata.
+
+    Returns:
+      ExecutionMetadata: test execution metadata.
+    """
+    metadata_anypb = None
+    if len(self.cft_test_request.test_suites) == 0:
+      return metadata_anypb
+
+    args = []
     first_test = self.cft_test_request.test_suites[0]
     for arg in first_test.execution_metadata.args:
       args.append(arg)
