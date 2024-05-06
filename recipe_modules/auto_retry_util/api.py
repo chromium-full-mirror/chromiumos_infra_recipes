@@ -458,12 +458,16 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return retryable_builders
 
     failed_on_snapshot_builders = self._failed_on_snapshot_builders(cq_run)
+
+    builder_greenness_dict = self._get_snapshot_builder_greenness_dict(
+        cq_run.output.gitiles_commit.id)
     if failed_on_snapshot_builders is not None:
       not_at_fault_retryable_builders = [
           b for b in not_at_fault_builders
           # Builders which failed on snapshot should not be retried until
           # "wait-for-green" kicks in.
-          if _snapshot_builder(b) not in failed_on_snapshot_builders
+          if _snapshot_builder(b) in builder_greenness_dict and
+          _snapshot_builder(b) not in failed_on_snapshot_builders
       ]
       if not_at_fault_retryable_builders:
         self._experimental_retries[cq_run.id].add(
@@ -726,6 +730,36 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         **dataclasses.asdict(v)
     } for k, v in self.per_build_stats.items()])
 
+  def _get_snapshot_builder_greenness_dict(
+      self, snapshot_commit_id: str) -> Optional[collections.OrderedDict]:
+    """Returns the builder greenness dict for the given snapshot commit.
+
+    Since this value is cached it is possible that the greenness isn't published
+    when it is first looked up. In that case later calls to get greenness for that
+    snapshot will also return None.
+
+    Args:
+      snapshot_commit_id: The commit for which to return builder greenness.
+
+    Returns:
+      An ordered dict mapping builder -> Greenness message as a dict. Dict will
+          be empty if no greenness is found.
+    """
+    with self.m.step.nest(
+        f'get greenness for commit {snapshot_commit_id}') as pres:
+      if snapshot_commit_id not in self._snapshot_greenness_cache:
+        self._snapshot_greenness_cache[
+            snapshot_commit_id] = self.m.buildbucket_stats.get_snapshot_greenness(
+                snapshot_commit_id,
+                pres,
+                # The staging auto retrier will still look at prod CQ runs, so it must
+                # lookup greenness on the prod snapshot-orchestrator.
+                bucket='postsubmit',
+                builder='snapshot-orchestrator',
+                retries=0,
+            )
+      return self._snapshot_greenness_cache[snapshot_commit_id]
+
   def _failed_on_snapshot_builders(
       self, cq_run: build_pb2.Build) -> Optional[List[str]]:
     """Returns builders that failed on cq_run's snapshot.
@@ -740,32 +774,20 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       The names of the builders that failed on the snapshot or None if the
           snapshot greenness was not found.
     """
-    with self.m.step.nest('get tot failure builders') as pres:
-      commit = cq_run.output.gitiles_commit.id
-      if commit not in self._snapshot_greenness_cache:
-        self._snapshot_greenness_cache[
-            commit] = self.m.buildbucket_stats.get_snapshot_greenness(
-                cq_run.output.gitiles_commit.id,
-                pres,
-                # The staging auto retrier will still look at prod CQ runs, so it must
-                # lookup greenness on the prod snapshot-orchestrator.
-                bucket='postsubmit',
-                builder='snapshot-orchestrator',
-                retries=0,
-            )
+    commit = cq_run.output.gitiles_commit.id
+    builder_to_greenness = self._get_snapshot_builder_greenness_dict(commit)
 
-      builder_to_greenness = self._snapshot_greenness_cache[commit]
-      if len(builder_to_greenness) == 0:
-        return None
+    if len(builder_to_greenness) == 0:
+      return None
 
-      self.per_build_stats[
-          cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
-              builder_to_greenness)
+    self.per_build_stats[
+        cq_run.id].wait_for_green_stats.total_builders_in_snapshot = len(
+            builder_to_greenness)
 
-      non_green_builders = [
-          b for b, g in builder_to_greenness.items() if g.build_metric < 100
-      ]
-      return non_green_builders
+    non_green_builders = [
+        b for b, g in builder_to_greenness.items() if g.build_metric < 100
+    ]
+    return non_green_builders
 
   def _get_sdk_failures(self, cq_run: build_pb2.Build) -> List[str]:
     """Returns the names of builders that have SDK failures.

@@ -94,11 +94,11 @@ def GenTests(api):
           [
               GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
           ],
-          'analyzing build results.get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search',
       ),
       api.post_process(
           post_process.LogContains,
-          'analyzing build results.get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search',
           'request',
           [
             '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
@@ -108,18 +108,18 @@ def GenTests(api):
       # Don't search for snapshot abc again.
       api.post_process(
           post_process.DoesNotRun,
-          'analyzing build results (2).get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results (2).get now green builders.get greenness for commit abc.buildbucket.search',
       ),
       # Search for snapshot def also returns a green snapshot.
       api.buildbucket.simulated_search_results(
           [
               GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
           ],
-          'analyzing build results (3).get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results (3).get now green builders.get greenness for commit def.buildbucket.search',
       ),
       api.post_process(
           post_process.LogContains,
-          'analyzing build results (3).get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results (3).get now green builders.get greenness for commit def.buildbucket.search',
           'request',
           [
             '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
@@ -163,7 +163,7 @@ def GenTests(api):
       # Don't search for snapshot abc again, even though it wasn't found the first time.
       api.post_process(
           post_process.DoesNotRun,
-          'analyzing build results (2).get now green builders.get tot failure builders.buildbucket.search',
+          'analyzing build results (2).get now green builders.get greenness for commit abc.buildbucket.search',
       ),
       api.post_process(post_process.DropExpectation),
   )

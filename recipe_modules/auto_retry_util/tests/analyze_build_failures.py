@@ -278,7 +278,7 @@ def GenTests(api):
               ),
               output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
           ),
-      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+      ], 'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search'
                                               ),
       api.buildbucket.simulated_search_results(
           builds=[
@@ -393,7 +393,7 @@ def GenTests(api):
               ),
               output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
           ),
-      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+      ], 'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search'
                                               ),
       api.buildbucket.simulated_search_results(
           builds=[
@@ -455,7 +455,7 @@ def GenTests(api):
               ),
               output=FAILED_SNAPSHOT_OUTPUT_PROPERTIES,
           ),
-      ], 'analyzing build results.get now green builders.get tot failure builders.buildbucket.search'
+      ], 'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search'
                                               ),
       api.buildbucket.simulated_search_results(
           builds=[
