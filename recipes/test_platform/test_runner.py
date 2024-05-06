@@ -3015,6 +3015,73 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
         }
     }
 
+  def _canned_test_runner_request_for_ctr_for_chromium():
+    return {
+        'parent_build_id': 12345,
+        'primary_dut': {
+            'container_metadata_key': 'fake_board',
+            'dut_model': {
+                'build_target': 'fake_board',
+                'model_name': 'fake_model'
+            },
+            'provision_state': {
+                'system_image': {
+                    'system_image_path': {
+                        'host_type':
+                            'GS',
+                        'path':
+                            'gs://chromeos-image-archive/fake_board-postsubmit/R123-12345.0.0-123456-80000000000',
+                    },
+                },
+            },
+        },
+        'test_suites': [{
+            'execution_metadata': {
+                'args': [{
+                    'flag': 'is_cft',
+                    'value': 'True'
+                }, {
+                    'flag':
+                        'lacros_gcs_path',
+                    'value':
+                        'gs://chrome-test-builds/ash/123_with_patch/base_unittests/lacros_compressed.squash'
+                }, {
+                    'flag':
+                        'resultdb_settings',
+                    'value':
+                        'eyJiYXNlX3ZhcmlhbnQiOiB7ImJ1aWxkZXIiOiAiY2hyb21lb3Mtdm9sdGVlci1jaHJvbWUtc2t5bGFiIiwgImNyb3NfaW1nIjogIiIsICJkZXZpY2VfdHlwZSI6ICJ2b2x0ZWVyIiwgIm9zIjogIkNocm9tZU9TIiwgInRlc3Rfc3VpdGUiOiAiYmFzZV91bml0dGVzdHMgVk9MVEVFUl9SRUxFQVNFX0xLR00ifSwgImNvZXJjZV9uZWdhdGl2ZV9kdXJhdGlvbiI6IHRydWUsICJlbmFibGUiOiB0cnVlLCAiZXhvbmVyYXRlX3VuZXhwZWN0ZWRfcGFzcyI6IHRydWUsICJoYXNfbmF0aXZlX3Jlc3VsdGRiX2ludGVncmF0aW9uIjogZmFsc2UsICJpbmNsdWRlIjogZmFsc2UsICJyZXN1bHRfYWRhcHRlcl9wYXRoIjogInJlc3VsdF9hZGFwdGVyIiwgInJlc3VsdF9mb3JtYXQiOiAiZ3Rlc3QiLCAic291cmNlcyI6ICJ7XG4gIFwiZ2l0aWxlc0NvbW1pdFwiOiB7XG4gICAgXCJob3N0XCI6IFwiY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbVwiLFxuICAgIFwicHJvamVjdFwiOiBcImNocm9taXVtL3NyY1wiLFxuICAgIFwicmVmXCI6IFwicmVmcy9oZWFkcy9tYWluXCIsXG4gICAgXCJjb21taXRIYXNoXCI6IFwiMjU5ZGY3MTg4MWFiMGQwYTBmMzQ0MjQxZTM0MGJkN2E3NDIzOWJjY1wiLFxuICAgIFwicG9zaXRpb25cIjogXCIxMjc5MDY1XCJcbiAgfVxufSIsICJ0ZXN0X2lkX2FzX3Rlc3RfbG9jYXRpb24iOiBmYWxzZSwgInRlc3RfaWRfcHJlZml4IjogIm5pbmphOi8vYmFzZTpiYXNlX3VuaXR0ZXN0cy8ifQ=='
+                }]
+            },
+            'name': 'suite1',
+            'test_case_ids': {
+                'test_case_ids': [{
+                    'value': 'tauto.chromium'
+                }]
+            }
+        }],
+        'container_metadata': mock_metadata(),
+        'autotest_keyvals': {
+            'branch':
+                'main',
+            'build':
+                'bob-release/R102-14637.0.0',
+            'build_config':
+                'bob-release',
+            'cidb_build_id':
+                '5141110',
+            'datastore_parent_key':
+                "('Build', 5141110)",
+            'label':
+                'bob-release/R102-14637.0.0/bvt-tast-informational/bvt-inline/login_LoginSuccess',
+            'master_build_config':
+                'master-release',
+            'parent_job_id':
+                '59dfe8555444e811',
+            'suite':
+                'bvt-tast-informational'
+        }
+    }
+
   def _canned_test_runner_request_for_ctr_with_firmware():
     req = _canned_test_runner_request_for_ctr()
     req['primary_dut']['provision_state']['firmware'] = {
@@ -4869,6 +4936,18 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
           cft_test_request=_canned_test_runner_request_for_ctr_for_vm()),
       _successful_run_test_step_for_ctr(),
   )
+
+  yield api.test(
+      'success-with-ctr-for-chromium', _set_build(bid=42),
+      _misc_properties(cft_is_enabled=True),
+      _crossystem_keyval_file_step_data_for_ctr(),
+      _gsctool_keyval_file_step_data_for_ctr(),
+      _servo_keyval_file_step_data_for_ctr(),
+      _kernel_log_file_step_data_for_ctr(),
+      _request_properties_for_ctr(
+          cft_test_request=_canned_test_runner_request_for_ctr_for_chromium()),
+      _mock_load_step_for_ctr(), _successful_prejob_step_for_ctr(),
+      _successful_run_test_step_for_ctr())
 
   yield api.test(
       'within-deadline-ctr', api.time.seed(2369692800),

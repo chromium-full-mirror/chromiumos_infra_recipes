@@ -129,7 +129,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     return rdb_config
 
   def get_drone_result_file(self, base_dir, result_format,
-                            autotest_name='chromium'):
+                            autotest_name='chromium', is_cft=False):
     """Get the path to the test results file on the drone.
 
     There are hardcoded for tast and gtest in this module.
@@ -141,6 +141,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
       result_format (str): The format of the test results.
       autotest_name: The autotest name for non-tast tests. By default,
           it is 'chromium', the generic wrapper name for browser gtests.
+      is_cft (bool): True if it's for CFT test results.
 
     Returns:
       Path to the test results file on the drone server.
@@ -148,7 +149,9 @@ class ResultDBCommand(recipe_api.RecipeApi):
     # Test results on Drone server are not stored in swarming [start_dir],
     # e.g. "/usr/local/autotest/results/swarming-12345678/1".
     # So use general os.path to join.
-    base = os.path.join(base_dir, 'autoserv_test')
+    # TODO(b/307657497): Remove is_cft filter and the `autoserv_test` prefix
+    # once the CFT migration is done.
+    base = os.path.join(base_dir, 'autoserv_test' if is_cft is False else '')
     result_file_by_type = {
         'gtest':
             os.path.join(base, '{}/results/output.json'.format(autotest_name)),
@@ -161,7 +164,7 @@ class ResultDBCommand(recipe_api.RecipeApi):
     return result_file_by_type.get(result_format)
 
   def get_drone_artifact_directory(self, base_dir, result_format=None,
-                                   artifact_directory=''):
+                                   artifact_directory='', is_cft=False):
     """Get the path to the test results artifact directory on the drone.
 
     Currently only supports Tast and Gtest.
@@ -175,11 +178,14 @@ class ResultDBCommand(recipe_api.RecipeApi):
           ONLY for gtest, E.g. chromium/debug. For tast test, we rely on
           it to pass the runtime result path to adapter. So we do
           not accept user defined artifact fed to this module.
+      is_cft (bool): True if it's for CFT test results.
 
     Returns:
       Path to the test results artifact directory on the drone server.
     """
-    base = os.path.join(base_dir, 'autoserv_test')
+    # TODO(b/307657497): Remove is_cft filter and the `autoserv_test` prefix
+    # once the CFT migration is done.
+    base = os.path.join(base_dir, 'autoserv_test' if is_cft is False else '')
     if artifact_directory is None or result_format == 'tast':
       return base
     return os.path.join(base, artifact_directory)
