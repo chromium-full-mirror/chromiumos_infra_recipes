@@ -39,10 +39,6 @@ SNAPSHOT_PREDICATE_BUILDER = 'snapshot-orchestrator'
 SNAPSHOT_PREDICATE_BUILDER_ID = BuilderID(project=PREDICATE_PROJECT,
                                           bucket=PREDICATE_BUCKET,
                                           builder=SNAPSHOT_PREDICATE_BUILDER)
-POSTSUBMIT_PREDICATE_BUILDER = 'postsubmit-orchestrator'
-POSTSUBMIT_PREDICATE_BUILDER_ID = BuilderID(
-    project=PREDICATE_PROJECT, bucket=PREDICATE_BUCKET,
-    builder=POSTSUBMIT_PREDICATE_BUILDER)
 
 VERDICTS_REQUIRING_FAULT_ATTRIBUTION = \
   [TaskState.VERDICT_FAILED, TaskState.VERDICT_UNSPECIFIED]
@@ -397,12 +393,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
     else:
       source_snapshot_build_commit_sha = orch_snapshot.id
 
-    predicate_for_postsubmit_build_retrieval = builds_service_pb2.BuildPredicate(
-        builder=POSTSUBMIT_PREDICATE_BUILDER_ID)
-    retrieved_postsubmit_builds = self.m.buildbucket.search(
-        predicate_for_postsubmit_build_retrieval,
-        limit=POSTSUBMIT_RETRIEVAL_LIMIT, fields=fields, timeout=60)
-
     tagValue = 'commit/gitiles/{}/{}/+/{}'.format(
         orch_snapshot.host, orch_snapshot.project,
         source_snapshot_build_commit_sha)
@@ -433,8 +423,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         predicate_for_previous_snapshot_builds, limit=SNAPSHOT_RETRIEVAL_LIMIT,
         fields=fields, timeout=60)
     started_builds = list(
-        filter(self._has_build_started,
-               previous_snapshot_builds + retrieved_postsubmit_builds))
+        filter(self._has_build_started, previous_snapshot_builds))
     ordered_builds = sorted(started_builds,
                             key=(lambda build: build.start_time.seconds),
                             reverse=True)

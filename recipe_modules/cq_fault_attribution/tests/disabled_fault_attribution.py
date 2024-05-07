@@ -72,12 +72,6 @@ snapshot_test_results = [
 snapshot_build_invocation \
   = Invocation(test_results=snapshot_test_results)
 
-# Mock Orchestrator postsubmit
-output = build_pb2.Build.Output()
-orch_postsubmit_build = \
-  build_pb2.Build(id=456, output=output, input=build_pb2.Build.Input())
-
-
 def RunSteps(api, properties):
   hw_test_failures = [
       SkylabResult(
@@ -133,11 +127,5 @@ def GenTests(api):
           **{
               '$chromeos/cq_fault_attribution':
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
-          }),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_postsubmit_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
-          builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search (2)'),
-      api.step_data('set fault attributes.buildbucket.search (3)', retcode=1))
+          }), api.step_data('set fault attributes.buildbucket.search',
+                            retcode=1))

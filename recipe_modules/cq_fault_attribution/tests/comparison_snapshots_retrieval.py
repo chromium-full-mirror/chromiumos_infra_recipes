@@ -71,11 +71,6 @@ output = build_pb2.Build.Output()
 orch_snapshot_build = \
   build_pb2.Build(id=123, output=output, input=build_pb2.Build.Input())
 
-# Mock Orchestrator postsubmit
-orch_postsubmit_build = \
-  build_pb2.Build(id=456, output=output, input=build_pb2.Build.Input())
-
-
 def RunSteps(api):
   hw_test_failures = [
       SkylabResult(
@@ -110,21 +105,11 @@ def GenTests(api):
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
           }),
       api.buildbucket.simulated_search_results(
-          builds=[orch_postsubmit_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
           builds=[orch_snapshot_build],
-          step_name='set fault attributes.buildbucket.search (2)'),
+          step_name='set fault attributes.buildbucket.search'),
       api.post_process(
           post_process.LogContains,
           'set fault attributes.buildbucket.search',
-          'request',
-          [
-              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "postsubmit-orchestrator",\n            "project": "chromeos"\n          }'
-          ]),
-      api.post_process(
-          post_process.LogContains,
-          'set fault attributes.buildbucket.search (2)',
           'request',
           [
               '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },\n'\
@@ -141,22 +126,11 @@ def GenTests(api):
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
           }),
       api.buildbucket.simulated_search_results(
-          builds=[orch_postsubmit_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
           builds=[orch_snapshot_build],
           step_name='set fault attributes.buildbucket.search'),
       api.post_process(
           post_process.LogContains,
           'set fault attributes.buildbucket.search',
-          'request',
-          [
-              '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "postsubmit-orchestrator",\n            "project": "chromeos"\n          }'
-          ],
-      ),
-      api.post_process(
-          post_process.LogContains,
-          'set fault attributes.buildbucket.search (2)',
           'request',
           [
               '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },\n'\

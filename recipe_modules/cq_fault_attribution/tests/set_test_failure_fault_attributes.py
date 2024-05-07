@@ -181,11 +181,6 @@ scarlet_variant = json_format.ParseDict({'def': {
     'build_target': 'scarlet'
 }}, Variant())
 
-# Mock Orchestrator postsubmit
-output = build_pb2.Build.Output()
-orch_postsubmit_build = \
-  build_pb2.Build(id=456, output=output, input=build_pb2.Build.Input())
-
 # Setup snapshot builds in descending order of start time.
 snapshot_build_1_invocation_id = 'build-123'
 snapshot_build_1 = \
@@ -711,16 +706,13 @@ def GenTests(api):
                   CqFaultAttributionApiProperties(enable_fault_attribution=True)
           }),
       api.buildbucket.simulated_search_results(
-          builds=[orch_postsubmit_build],
-          step_name='set fault attributes.buildbucket.search'),
-      api.buildbucket.simulated_search_results(
           builds=[snapshot_build_1],
-          step_name='set fault attributes.buildbucket.search (2)'),
+          step_name='set fault attributes.buildbucket.search'),
       api.buildbucket.simulated_search_results(
           builds=[
               snapshot_build_2, snapshot_build_3, snapshot_build_4,
               snapshot_build_5
-          ], step_name='set fault attributes.buildbucket.search (3)'),
+          ], step_name='set fault attributes.buildbucket.search (2)'),
       api.resultdb.query(inv_bundle=invocation_bundle,
                          step_name='set fault attributes.rdb query'),
       api.post_process(post_process.PropertiesContain, 'cq_fault_attributions'))
