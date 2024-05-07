@@ -375,11 +375,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ctr.CrosToolRunnerTestRequest.Device(dut=metadata.peer_duts[0])
         ]
 
-      execution_metadata_anypb = None
-      execution_metadata = self.get_execution_metadata()
-      if execution_metadata:
-        execution_metadata_anypb = Any()
-        execution_metadata_anypb.Pack(execution_metadata)
+      execution_metadata_anypb = self.get_execution_metadata()
 
       run_test_request = ctr.CrosToolRunnerTestRequest(
           test_suites=self.cft_test_request.test_suites,
@@ -1316,20 +1312,29 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       ExecutionMetadata: test execution metadata.
     """
     metadata_anypb = None
+    test_execution_metadata = None
     if len(self.cft_test_request.test_suites) == 0:
       return metadata_anypb
 
-    args = []
+    first_test = self.cft_test_request.test_suites[
+        0].test_case_ids.test_case_ids[0].value
     gcs_path = self.cft_test_request.primary_dut.provision_state.system_image.system_image_path.path
     if gcs_path:
       if not gcs_path.endswith('/'):
         gcs_path = gcs_path + '/'
-      args.append(
-          Test_Execution_Metadata.Arg(flag='buildartifactsurl', value=gcs_path))
+      if first_test.startswith('tast'):
+        arg = Test_Execution_Metadata.Arg(flag='buildartifactsurl',
+                                          value=gcs_path)
+        test_execution_metadata = Test_Execution_Metadata.TastExecutionMetadata(
+            args=[arg])
+      elif first_test.startswith('tauto'):
+        tauto_arg = Test_Execution_Metadata.AutotestExecutionMetadata.Arg(
+            flag='buildartifactsurl', value=gcs_path)
+        test_execution_metadata = Test_Execution_Metadata.AutotestExecutionMetadata(
+            args=[tauto_arg])
 
-    # Adds the original execution metadata.
-    first_test = self.cft_test_request.test_suites[0]
-    for arg in first_test.execution_metadata.args:
-      args.append(arg)
+    if test_execution_metadata:
+      metadata_anypb = Any()
+      metadata_anypb.Pack(test_execution_metadata)
 
-    return Test_Execution_Metadata.ExecutionMetadata(args=args)
+    return metadata_anypb
