@@ -39,6 +39,7 @@ OTHER_TAGS = (
     'TEST:',
     'TEST-ONLY:',
     'Revert',
+    'Reapply',
     'Reland',
     'FIXUP:',
     'DO-NOT-SUBMIT',
