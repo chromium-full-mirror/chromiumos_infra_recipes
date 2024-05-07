@@ -1136,13 +1136,13 @@
     "name": "get build history.find matching builds.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cave-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"cave\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cave-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"cave\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@amd64-generic-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
@@ -1158,9 +1158,9 @@
     "name": "get build history.get completed builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because its snapshot  was broken until SHA1@@@",
-      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because its snapshot  was broken until SHA1@@@",
-      "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because its snapshot  was broken until SHA1@@@",
+      "@@@STEP_LOG_LINE@skip log@arm64-generic-cq is skipped because its snapshot lmnop was broken until SHA1@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-cq is skipped because its snapshot lmnop was broken until SHA1@@@",
+      "@@@STEP_LOG_LINE@skip log@atlas-slim-cq is skipped because its snapshot lmnop was broken until SHA1@@@",
       "@@@STEP_LOG_END@skip log@@@",
       "@@@SET_BUILD_PROPERTY@count_broken_before_rebuilds@3@@@"
     ]
@@ -1209,13 +1209,13 @@
     "name": "get build history.get completed builds.get change build history.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cave-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"cave\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"cave-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"cave\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-slim-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"coral-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"coral\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514003\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"FAILURE\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-slim-cq\"}, \"id\": \"8922054662172514004\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas-slim\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514005\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm64-generic-cq\"}, \"id\": \"8922054662172514006\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"lmnop\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm64-generic\"}}}}, \"startTime\": \"2019-07-07T08:54:05Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@cave-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@amd64-generic-slim-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
@@ -1294,7 +1294,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"lmnop\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1376,7 +1376,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"lmnop\"}]}"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1458,7 +1458,7 @@
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\"}]}"
+      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"lmnop\"}]}"
     ],
     "infra_step": true,
     "luci_context": {

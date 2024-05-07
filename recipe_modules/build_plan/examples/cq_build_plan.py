@@ -75,42 +75,48 @@ def RunSteps(api, properties):
 
 def GenTests(api):
   input_proto = api.build_plan.input_proto
+  gitiles_commit = common_pb2.GitilesCommit(
+      host='chrome-internal.googlesource.com',
+      project='chromeos/manifest-internal',
+      id='lmnop',
+      ref='refs/heads/snapshot',
+  )
   builds = [
       # Completed successfully.
       build_pb2.Build(id=8922054662172514000, builder={'builder': 'cave-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'cave')),
+                      input=input_proto(gitiles_commit, 'cave')),
       build_pb2.Build(id=8922054662172514001,
                       builder={'builder': 'amd64-generic-slim-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'amd64-generic-slim')),
+                      input=input_proto(gitiles_commit, 'amd64-generic-slim')),
       # Non-critical private failure.
       build_pb2.Build(id=8922054662172514002, builder={'builder': 'coral-cq'},
                       status=common_pb2.FAILURE,
-                      input=input_proto(None, 'coral')),
+                      input=input_proto(gitiles_commit, 'coral')),
       # Non-critical public failure.
       build_pb2.Build(id=8922054662172514003,
                       builder={'builder': 'arm-generic-cq'},
                       status=common_pb2.FAILURE,
-                      input=input_proto(None, 'arm-generic')),
+                      input=input_proto(gitiles_commit, 'arm-generic')),
       # Broken before private builder.
       build_pb2.Build(id=8922054662172514004,
                       builder={'builder': 'atlas-slim-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'atlas-slim')),
+                      input=input_proto(gitiles_commit, 'atlas-slim')),
       build_pb2.Build(id=8922054662172514005, builder={'builder': 'atlas-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'atlas')),
+                      input=input_proto(gitiles_commit, 'atlas')),
       # Broken before public builder.
       build_pb2.Build(id=8922054662172514006,
                       builder={'builder': 'arm64-generic-cq'},
                       start_time=timestamp_pb2.Timestamp(seconds=1562489645),
                       status=common_pb2.SUCCESS,
-                      input=input_proto(None, 'arm64-generic'))
+                      input=input_proto(gitiles_commit, 'arm64-generic'))
   ]
 
   def cq_orchestrator_build_with_gerrit_change(**kwargs):
