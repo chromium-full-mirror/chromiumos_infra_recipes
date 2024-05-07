@@ -30,7 +30,6 @@ DEPS = [
     'cros_release',
     # TODO(b/316010599): Remove after experiment concludes.
     'cros_relevance',
-    'cros_resultdb',
     'cros_source',
     'cros_tags',
     'cros_test_plan',

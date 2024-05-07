@@ -354,8 +354,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       self._non_critical_build_check('final build criticality update',
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
-      self.m.cros_resultdb.apply_exonerated_exonerations(
-          [self.m.cros_resultdb.current_invocation_id])
       self.m.greenness.print_step()
       # Set child output ids if any
       self.add_child_info_to_output_property()

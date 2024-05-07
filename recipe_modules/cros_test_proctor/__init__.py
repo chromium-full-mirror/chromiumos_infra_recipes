@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/swarming',
     'cros_history',
     'cros_infra_config',
+    'cros_resultdb',
     'cros_tags',
     'cros_test_plan',
     'cros_test_plan_v2',

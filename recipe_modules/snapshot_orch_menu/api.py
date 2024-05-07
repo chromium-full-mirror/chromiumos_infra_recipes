@@ -162,8 +162,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       self._non_critical_build_check('final build criticality update',
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
-      self.m.cros_resultdb.apply_exonerated_exonerations(
-          [self.m.cros_resultdb.current_invocation_id])
       # Do a final call to update_irrelevant_scores, to get the previous
       # greenness for any irrelevant builders. The previous call to
       # update_build_info may have only propagated build scores forward, since
