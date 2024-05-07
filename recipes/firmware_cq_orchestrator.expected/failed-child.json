@@ -798,13 +798,6 @@
   },
   {
     "cmd": [],
-    "name": "set has_child_failures",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@has_child_failures@true@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_cost@0.0@@@"

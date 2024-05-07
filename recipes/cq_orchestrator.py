@@ -58,7 +58,7 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
     )
 
     # Collect any remaining builders and report the overall result.
-    return api.orch_menu.create_recipe_result(no_nest_final_build_collect=True)
+    return api.orch_menu.create_cq_orch_recipe_result()
 
 def GenTests(api: RecipeTestApi):
 

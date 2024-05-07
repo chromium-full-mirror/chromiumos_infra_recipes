@@ -327,26 +327,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
         self.m.cros_release.buildspec = ManifestLocation(
             manifest_gs_path=self.m.checkpoint.buildspec_gs_uri)
 
-  def create_recipe_result(
-      self, include_build_details: bool = False,
-      ignore_build_test_failures: bool = False,
-      no_nest_final_build_collect: bool = False) -> result_pb2.RawResult:
-    """Create the correct return value for RunSteps.
-
-    Args:
-      include_build_details: If True augment RawResults.summary_markdown
-        with additional details about the build for both successes and failures.
-      ignore_build_test_failures: If True, we will still produce a summary
-        of failures if present, but we will not set the build status to FAILURE.
-      no_nest_final_build_collect: If True, we do not create the parent 'final
-        build collect' step so that 'check build results' step is a top-level
-        step.
-
-    Returns:
-      (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
-    """
+  def create_cq_orch_recipe_result(self) -> result_pb2.RawResult:
+    """Create the correct return value for RunSteps."""
     # If there are any remaining children to collect, collect them now.
-    self._collect_remaining_children(no_nest=no_nest_final_build_collect)
+    self._collect_remaining_children(no_nest=True)
 
     with self.m.step.nest('clean up orchestrator'):
       # Recheck the BuilderConfigs at HEAD, one last time, to see if any
@@ -354,15 +338,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       self._non_critical_build_check('final build criticality update',
                                      self.builds_status.completed_builds,
                                      self.builds_status.failures)
-      self.m.greenness.print_step()
       # Set child output ids if any
       self.add_child_info_to_output_property()
 
       # TODO(b/316010599): Remove after the experiment.
       with self.m.failures.ignore_exceptions():
-
-        if (self._is_cq_orchestrator and
-            self.m.build_plan.cros_query_relevant_builder_configs is not None):
+        if self.m.build_plan.cros_query_relevant_builder_configs is not None:
 
           # All the builders that were scheduled and collected. Non-critical
           # builds do not get collected.
@@ -401,18 +382,11 @@ class OrchMenuApi(recipe_api.RecipeApi):
               cros_query_correctly_predicted_not_relevant=sorted(
                   correctly_predicted_not_relevant))
 
-    if self.is_cq_orchestrator:
-      successes = {
-          'build':
-              self._count_successful_critical_relevant_cq_builds(
-                  self.builds_status.completed_builds)
-      }
-    else:
-      successes = {
-          'build':
-              self._count_successful_critical_builds(
-                  self.builds_status.completed_builds)
-      }
+    successes = {
+        'build':
+            self._count_successful_critical_relevant_cq_builds(
+                self.builds_status.completed_builds)
+    }
 
     results = self.m.failures.Results(failures=self.builds_status.failures,
                                       successes=successes)
@@ -421,6 +395,44 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # fatal failures. This is currently used by cq-auto-retrier.
     has_child_failures = any(failure.fatal for failure in results.failures)
     self.m.easy.set_properties_step(has_child_failures=has_child_failures)
+
+    return self.m.failures.aggregate_failures(results)
+
+  def create_recipe_result(
+      self, include_build_details: bool = False,
+      ignore_build_test_failures: bool = False) -> result_pb2.RawResult:
+    """Create the correct return value for RunSteps.
+
+    Args:
+      include_build_details: If True augment RawResults.summary_markdown
+        with additional details about the build for both successes and failures.
+      ignore_build_test_failures: If True, we will still produce a summary
+        of failures if present, but we will not set the build status to FAILURE.
+
+    Returns:
+      (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
+    """
+    # If there are any remaining children to collect, collect them now.
+    self._collect_remaining_children()
+
+    with self.m.step.nest('clean up orchestrator'):
+      # Recheck the BuilderConfigs at HEAD, one last time, to see if any
+      # failed builders are now noncritical.
+      self._non_critical_build_check('final build criticality update',
+                                     self.builds_status.completed_builds,
+                                     self.builds_status.failures)
+      self.m.greenness.print_step()
+      # Set child output ids if any
+      self.add_child_info_to_output_property()
+
+    successes = {
+        'build':
+            self._count_successful_critical_builds(
+                self.builds_status.completed_builds)
+    }
+
+    results = self.m.failures.Results(failures=self.builds_status.failures,
+                                      successes=successes)
 
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)

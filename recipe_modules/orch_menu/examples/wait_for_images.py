@@ -61,7 +61,7 @@ def RunSteps(api):
         len(api.orch_menu.builds_status.completed_builds), 0)
 
     # All builders should be in "completed" state after the final build collect.
-    api.orch_menu.create_recipe_result(no_nest_final_build_collect=True)
+    api.orch_menu.create_cq_orch_recipe_result()
     api.assertions.assertCountEqual([
         b.builder.builder for b in api.orch_menu.builds_status.completed_builds
     ], all_expected_builders)

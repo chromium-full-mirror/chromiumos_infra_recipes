@@ -10723,13 +10723,6 @@
   },
   {
     "cmd": [],
-    "name": "set has_child_failures",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@has_child_failures@false@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
       "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
