@@ -66,10 +66,10 @@ def GenTests(api):
       'retry-fail-gsutil', attempt_download_file(api, 1),
       attempt_download_file(api, 2), attempt_download_file(api, 3),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+                               builder='snapshot-orchestrator'))
 
   yield api.test(
       'retry-fail-gsutil-cp', attempt_publish_file(api, 1),
       attempt_publish_file(api, 2), attempt_publish_file(api, 3),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+                               builder='snapshot-orchestrator'))

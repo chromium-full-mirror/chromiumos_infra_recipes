@@ -67,7 +67,7 @@ def GenTests(api: RecipeTestApi):
                                     with_history=True,
                                     collect_builds=data.builds,
                                     with_manifest_refs=True,
-                                    builder='postsubmit-orchestrator')
+                                    builder='snapshot-orchestrator')
 
   yield api.snapshot_orch_menu.test('critical-child-builder-fails',
                                     data.ctp_normal, lfg_props,
