@@ -9,7 +9,6 @@ from __future__ import division
 
 import contextlib
 from collections import defaultdict
-from collections import OrderedDict
 from collections import namedtuple
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -287,36 +286,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
           elif not self.m.gerrit.changes_submittable(self.gerrit_changes):
             raise recipe_api.StepFailure(
                 'Merge conflict detected! Please rebase and retry.')
-          self._set_related_changes_to_apply()
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()
 
       # Yield while inside of the bot_cost.build_cost_context.
       yield config
-
-  def _set_related_changes_to_apply(self):
-    """Find any changes in the relation chain that are not a part of the run.
-
-    If any related changes are not present, it records them in
-    looks_for_green.related_changes_to_apply. Exit early if the orchestrator
-    does not have looks_for_green enabed.
-    """
-    if not self.m.looks_for_green.enable_looks_for_green:
-      return
-
-    with self.m.failures.ignore_exceptions(), self.m.step.nest(
-        'find related CLs') as pres:
-      all_related_changes = OrderedDict()
-      for change in self.gerrit_changes:
-        # Note: this might include duplicates.
-        all_related_changes[
-            change.change] = self.m.gerrit.gerrit_related_changes(change)
-      pres.logs['related_changes'] = str(all_related_changes)
-      to_apply = self.m.cros_source.related_changes_to_apply(
-          self.gerrit_changes, all_related_changes)
-      self.m.looks_for_green.related_changes_to_apply = to_apply
-      self.m.easy.set_properties_step(related_changes_to_apply=to_apply)
 
   def _create_buildspec(self):
     """Create a release buildspec."""

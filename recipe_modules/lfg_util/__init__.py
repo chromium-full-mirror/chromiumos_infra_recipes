@@ -5,8 +5,12 @@
 
 """Init for LFG utility functions module."""
 
-DEPS = [
-    'depot_tools/gerrit',
-    'recipe_engine/step',
-    'git_footers',
-]
+DEPS = {
+    'depot_tools_gerrit': 'depot_tools/gerrit',
+    'step': 'recipe_engine/step',
+    'cros_source': 'cros_source',
+    'easy': 'easy',
+    'failures': 'failures',
+    'gerrit': 'gerrit',
+    'git_footers': 'git_footers',
+}

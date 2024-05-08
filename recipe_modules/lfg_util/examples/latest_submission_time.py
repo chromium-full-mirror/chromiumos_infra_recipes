@@ -5,7 +5,6 @@
 
 """Testing when the changes were submitted."""
 
-import datetime
 from recipe_engine import post_process
 from PB.recipe_modules.chromeos.lfg_util.examples.test import \
   LatestSubmittedTimeProperties
@@ -16,7 +15,6 @@ DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/json',
     'recipe_engine/properties',
-    'recipe_engine/time',
     'lfg_util',
 ]
 
@@ -32,11 +30,10 @@ def RunSteps(api, properties):
   ]
   kwargs = {}
   if properties.expected_submission:
-    submit_time = str(api.time.utcnow() - datetime.timedelta(hours=5))
-    kwargs['submitted'] = submit_time + '000'
+    kwargs['submitted'] = '1969-01-01 12:00:00.000000000'
   gerrit_response_data = api.gerrit.test_api.get_one_change_response_data(
-      change_number=properties.change_ids[0],
-      patchset=properties.patchset or 1, **kwargs)
+      change_number=properties.change_ids[0], patchset=properties.patchset or 1,
+      **kwargs)
   step_test_data = lambda: gerrit_response_data
   result = api.lfg_util.latest_submission_time(gerrit_changes=changes,
                                               step_test_data=step_test_data)
@@ -58,7 +55,7 @@ def GenTests(api):
 
   yield api.test(
       'submitted',
-      api.properties(expected_result='2012-05-14 07:53:21.500000',
-                     change_ids=[123], expected_submission=True),
+      api.properties(expected_result='1969-01-01 12:00:00', change_ids=[123],
+                     expected_submission=True),
       api.post_process(post_process.DropExpectation),
   )

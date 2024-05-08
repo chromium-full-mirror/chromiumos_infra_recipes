@@ -17,3 +17,5 @@ message LatestSubmittedTimeProperties {
   bool expected_submission = 3;
   int32 patchset = 4;
 }
+
+message GetDependedClsProperties { repeated int32 change_ids = 1; }

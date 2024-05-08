@@ -1333,6 +1333,42 @@
   },
   {
     "cmd": [],
+    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@all depended CLs are included@@@",
+      "@@@STEP_LOG_LINE@bad_footers@@@@",
+      "@@@STEP_LOG_END@bad_footers@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "--key",
+      "Cq-Depend"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included.read git footers",
+    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "looks for green.check should look for green.ensure auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -1427,20 +1463,40 @@
   },
   {
     "cmd": [],
-    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included",
+    "name": "looks for green.check should look for green.find related CLs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@all depended CLs are included@@@",
-      "@@@STEP_LOG_LINE@bad_footers@@@@",
-      "@@@STEP_LOG_END@bad_footers@@@"
+      "@@@STEP_LOG_LINE@related_changes@OrderedDict([(123456, [])])@@@",
+      "@@@STEP_LOG_END@related_changes@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@input_json@{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}@@@",
+      "@@@STEP_LOG_END@input_json@@@",
+      "@@@STEP_LOG_LINE@cmd@gerrit_related_changes@@@",
+      "@@@STEP_LOG_LINE@cmd@--input_json@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/gerrit_related_changes__tmp_1/input.json@@@",
+      "@@@STEP_LOG_LINE@cmd@--output_json@@@",
+      "@@@STEP_LOG_LINE@cmd@[CLEANUP]/gerrit_related_changes__tmp_1/output.json@@@",
+      "@@@STEP_LOG_END@cmd@@@",
+      "@@@STEP_LOG_LINE@output_json@{\"related\":[]}@@@",
+      "@@@STEP_LOG_END@output_json@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "--key",
-      "Cq-Depend"
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/input.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1455,10 +1511,218 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "looks for green.check should look for green.check if all Cq-Depend CLs are included.read git footers",
-    "stdin": "a quick description\n\nChange-Id: deadbeef\n",
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.write gerrit_related_changes input",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@input.json@{\"change\": 123456, \"host\": \"chromium-review.googlesource.com\"}@@@",
+      "@@@STEP_LOG_END@input.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.ensure gerrit_related_changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.ensure gerrit_related_changes.find cipd instance for gerrit_related_changes for infra/infra commit deadbeef",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/gerrit_related_changes/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
+      "@@@STEP_LOG_END@cipd instance@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "search",
+      "chromiumos/infra/gerrit_related_changes/${platform}",
+      "-tag",
+      "git_revision:deadbeef",
+      "-json-output",
+      "[CLEANUP]/cipd.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.ensure gerrit_related_changes.find cipd instance for gerrit_related_changes for infra/infra commit deadbeef.cipd search",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/cipd.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.ensure gerrit_related_changes.find cipd instance for gerrit_related_changes for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@6@@@",
+      "@@@STEP_LOG_LINE@cipd.json@{@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    \"result\": [@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        {@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"package\": \"chromiumos/infra/gerrit_related_changes/${platform}\",@@@",
+      "@@@STEP_LOG_LINE@cipd.json@            \"instance_id\": \"wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC\"@@@",
+      "@@@STEP_LOG_LINE@cipd.json@        }@@@",
+      "@@@STEP_LOG_LINE@cipd.json@    ]@@@",
+      "@@@STEP_LOG_LINE@cipd.json@}@@@",
+      "@@@STEP_LOG_END@cipd.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "cipd",
+      "ensure",
+      "-root",
+      "[START_DIR]/cipd/gerrit_related_changes",
+      "-ensure-file",
+      "chromiumos/infra/gerrit_related_changes/${platform} wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC",
+      "-max-threads",
+      "0",
+      "-json-output",
+      "/path/to/tmp/json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.ensure gerrit_related_changes.ensure_installed",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@      {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-wzCA5zCcIkg0uYro\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"package\": \"chromiumos/infra/gerrit_related_changes/resolved-platform\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    ]@@@",
+      "@@@STEP_LOG_LINE@json.output@  }@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/gerrit_related_changes/gerrit_related_changes",
+      "gerrit_related_changes",
+      "--input_json",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/input.json",
+      "--output_json",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/output.json"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.gerrit_related_changes",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/gerrit_related_changes__tmp_1/output.json",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "looks for green.check should look for green.find related CLs.call gerrit_related_changes.read output json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@output.json@{\"related\":[]}@@@",
+      "@@@STEP_LOG_END@output.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "looks for green.check should look for green.find related CLs.evaluating related changes",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@gerrit changes@[host: \"chromium-review.googlesource.com\"@@@",
+      "@@@STEP_LOG_LINE@gerrit changes@project: \"chromeos\"@@@",
+      "@@@STEP_LOG_LINE@gerrit changes@change: 123456@@@",
+      "@@@STEP_LOG_LINE@gerrit changes@patchset: 7@@@",
+      "@@@STEP_LOG_LINE@gerrit changes@]@@@",
+      "@@@STEP_LOG_END@gerrit changes@@@",
+      "@@@STEP_LOG_LINE@skips@@@@",
+      "@@@STEP_LOG_END@skips@@@",
+      "@@@STEP_LOG_LINE@related changes to apply@OrderedDict()@@@",
+      "@@@STEP_LOG_END@related changes to apply@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "looks for green.check should look for green.find related CLs.set related_changes_to_apply",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@SET_BUILD_PROPERTY@related_changes_to_apply@{}@@@"
     ]
   },
   {

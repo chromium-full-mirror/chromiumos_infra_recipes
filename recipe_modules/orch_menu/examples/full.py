@@ -864,46 +864,6 @@ def GenTests(api):
       status='FAILURE',
   )
 
-  RELATED_OUTPUT = {
-      'related': [{
-          '_change_number': '123456',
-          '_revision_number': '7',
-          'project': 'chromeos/manifest-internal'
-      }, {
-          '_change_number': '321',
-          '_revision_number': '1',
-          'project': 'sample'
-      }, {
-          '_change_number': '432',
-          '_revision_number': '2',
-          'project': 'sample'
-      }]
-  }
-
-  yield api.orch_menu.test(
-      'cq-orch-include-related-changes', data.ctp_normal,
-      api.properties(
-          **{'$chromeos/looks_for_green': {
-              'enable_looks_for_green': True,
-          }},
-      ),
-      api.properties(
-          FullProperties(
-              expected_completed_builds=collect + collect_after,
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary),
-              expected_enable_history=True,
-          )), api.post_check(post_process.MustRun, 'find related CLs'),
-      api.gerrit.set_gerrit_related_changes(RELATED_OUTPUT,
-                                            step_name='find related CLs'),
-      api.post_check(post_process.MustRun,
-                     'find related CLs.set related_changes_to_apply'),
-      api.post_process(post_process.DropExpectation), cq=True,
-      collect_builds=collect, history_builds=data.history_builds,
-      collect_after_builds=collect_after, with_history=True, git_footers=[],
-      inflight_orch=[])
-
   annealing_build_with_found_changes = build_pb2.Build()
   annealing_build_with_found_changes.output.properties[
       'found_gerrit_changes'] = [

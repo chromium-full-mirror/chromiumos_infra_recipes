@@ -6,6 +6,7 @@
 
 """Utility functions for looks for green."""
 
+from collections import OrderedDict
 from typing import Dict, List
 from datetime import datetime, timezone
 from recipe_engine import recipe_api
@@ -85,7 +86,7 @@ class LFGUtilApi(recipe_api.RecipeApi):
     with self.m.step.nest('get parent commits of merge CLs') as pres:
       for change in merge_commit_cls:
         host_url = 'https://{}'.format(change.host)
-        change_info = self.m.gerrit.get_changes(
+        change_info = self.m.depot_tools_gerrit.get_changes(
             host_url, query_params=[('change', str(change.change))],
             o_params=['CURRENT_REVISION', 'ALL_COMMITS',
                       'PARENTS'], step_test_data=step_test_data)[0]
@@ -115,7 +116,7 @@ class LFGUtilApi(recipe_api.RecipeApi):
     submitted_times = []
     for change in gerrit_changes:
       repo_url = 'https://{}/{}'.format(change.host, change.project)
-      change_info = self.m.gerrit.get_changes(
+      change_info = self.m.depot_tools_gerrit.get_changes(
           host=repo_url, query_params=[('change', str(change.change))],
           o_params=['ALL_REVISIONS',
                     'ALL_COMMITS'], limit=1, step_test_data=step_test_data)
@@ -151,3 +152,40 @@ class LFGUtilApi(recipe_api.RecipeApi):
                            patchset=change['_revision_number']))
 
     return gerrit_changes
+
+  def get_depended_cls(
+      self, gerrit_changes: List[GerritChange]) -> List[GerritChange]:
+    """Gets the depended CLs for the given list of changes.
+
+    Note that the depended CLs returned are ones that are not included in the
+    CQ run for the given list of changes.
+
+    Args:
+      gerrit_changes: Gerrit changes to analyze.
+
+    Returns:
+      List of depended Gerrit changes.
+    """
+    not_included_cq_depend_cls = self.not_included_cq_depend_cls(gerrit_changes)
+
+    merge_commit_cls = [
+        c for c in gerrit_changes
+        if self.m.gerrit.is_merge_commit(c.change, c.host)
+    ]
+    merge_parent_changes = self.get_parent_changes(merge_commit_cls)
+
+    to_apply = OrderedDict()
+    with self.m.failures.ignore_exceptions(), self.m.step.nest(
+        'find related CLs') as pres:
+      all_related_changes = OrderedDict()
+      for change in gerrit_changes:
+        # Note: this might include duplicates.
+        all_related_changes[
+            change.change] = self.m.gerrit.gerrit_related_changes(change)
+      pres.logs['related_changes'] = str(all_related_changes)
+      to_apply = self.m.cros_source.related_changes_to_apply(
+          gerrit_changes, all_related_changes)
+      self.m.easy.set_properties_step(related_changes_to_apply=to_apply)
+
+    return (not_included_cq_depend_cls + self.json_to_gerritchanges(to_apply) +
+            merge_parent_changes)

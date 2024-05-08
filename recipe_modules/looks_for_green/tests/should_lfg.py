@@ -25,11 +25,22 @@ DEPS = [
 
 PROPERTIES = ShouldLfgProperties
 
+RELATED_OUTPUT = {
+    'related': [{
+        '_change_number': 123,
+        '_revision_number': 1,
+        'host': 'test-host',
+        'project': 'sample'
+    }, {
+        '_change_number': 456,
+        '_revision_number': 1,
+        'host': 'test-host',
+        'project': 'sample'
+    }]
+}
+
 
 def RunSteps(api, properties):
-  if properties.related_to_apply:
-    api.looks_for_green.related_changes_to_apply = api.json.loads(
-        properties.related_to_apply)
   should_lfg = api.looks_for_green.should_lfg(
       api.buildbucket.build.input.gerrit_changes)
   api.assertions.assertEqual(properties.expected_should_lfg, should_lfg)
@@ -117,38 +128,8 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
   )
 
-  related_to_apply = {
-      '4508966': [{
-          '_change_number': 4508965,
-          '_revision_number': 1,
-          'project': 'chromiumos/platform2',
-          'host': 'chromium-review.googlesource.com',
-      }, {
-          '_change_number': 4508966,
-          '_revision_number': 2,
-          'host': 'chromium-review.googlesource.com',
-          'project': 'chromiumos/platform2'
-      }]
-  }
   yield api.test(
-      'relation-chain-with-missing-but-not-submitted',
-      api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
-      api.properties(
-          expected_should_lfg=False,
-          related_to_apply=api.json.dumps(related_to_apply), **{
-              '$chromeos/looks_for_green': {
-                  'enable_looks_for_green': True
-              },
-          }),
-      api.cv(run_mode=api.cv.FULL_RUN),
-      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
-      api.step_data('check should look for green.gerrit changes',
-                    api.json.output([])),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'merge-commit',
+      'depended-cls',
       api.buildbucket.try_build(gerrit_changes=[gerrit_change_1]),
       api.properties(
           expected_should_lfg=True, **{
@@ -157,9 +138,29 @@ def GenTests(api):
               },
           }),
       api.cv(run_mode=api.cv.FULL_RUN),
-      api.gerrit.set_is_merge_commit(
-          gerrit_change_1.change, gerrit_change_1.host, True,
-          parent_step_name='check should look for green'),
+      api.gerrit.set_gerrit_related_changes(
+          RELATED_OUTPUT,
+          step_name='check should look for green.find related CLs'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'no-submitted-depended-cls',
+      api.buildbucket.try_build(
+          gerrit_changes=[gerrit_change_1, gerrit_change_2]),
+      api.properties(
+          expected_should_lfg=False, **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True
+              },
+          }),
+      api.cv(run_mode=api.cv.FULL_RUN),
+      api.gerrit.set_gerrit_related_changes(
+          RELATED_OUTPUT,
+          step_name='check should look for green.find related CLs'),
+      api.step_data('check should look for green.gerrit changes',
+                    api.json.output([])),
+      api.post_check(LooksStatusEquals, LooksForGreenStatus.STATUS_FOUND_NONE),
       api.post_process(post_process.DropExpectation),
   )
 

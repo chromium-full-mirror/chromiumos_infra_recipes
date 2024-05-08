@@ -79,7 +79,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     self._stats = LooksForGreenStats()
     self._now = None
     self._seconds_now = None
-    self._related_changes_to_apply = None
 
   @property
   def now_utc(self) -> datetime.datetime:
@@ -135,14 +134,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
     return f'{prefix}snapshot-orchestrator'
 
-  @property
-  def related_changes_to_apply(self) -> Dict:
-    return self._related_changes_to_apply
-
-  @related_changes_to_apply.setter
-  def related_changes_to_apply(self, related_changes_to_apply):
-    self._related_changes_to_apply = related_changes_to_apply
-
   def set_stats(self):
     """Sets the LFG output property based on latest info."""
     self.m.easy.set_properties_step(looks_for_green=self.stats)
@@ -152,21 +143,6 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     eight_hours_ago = self.m.time.utcnow() - datetime.timedelta(hours=8)
     kwargs['submitted'] = eight_hours_ago.strftime(
         '%Y-%m-%d %H:%M:%S.%f') + '000'
-    return self.m.depot_tools_gerrit.test_api.get_one_change_response_data(
-        change_number=123, patchset=1, **kwargs)
-
-  def _test_parent_data(self):
-    kwargs = {}
-    parent = {
-        'patch_set_number': 2,
-        'change_number': 324328,
-        'change_id': 'alsdkfjaksdljfljjasdfwdfasdfawefw2134723'
-    }
-    kwargs['revisions'] = {
-        'asdjfhsdkhfkhk32y23797397': {
-            'parents_data': [parent]
-        }
-    }
     return self.m.depot_tools_gerrit.test_api.get_one_change_response_data(
         change_number=123, patchset=1, **kwargs)
 
@@ -187,18 +163,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         pres.step_text = 'Skipping looks for green due to disallow footer'
         self.set_stats()
         return False
-      merge_commit_cls = [
-          c for c in gerrit_changes
-          if self.m.gerrit.is_merge_commit(c.change, c.host)
-      ]
-      merge_parent_changes = self.m.lfg_util.get_parent_changes(
-          merge_commit_cls, step_test_data=self._test_parent_data)
-      not_included_cq_depend_cls = self.m.lfg_util.not_included_cq_depend_cls(
-          gerrit_changes)
-      depended_cls = (
-          not_included_cq_depend_cls +
-          self.m.lfg_util.json_to_gerritchanges(self.related_changes_to_apply) +
-          merge_parent_changes)
+      depended_cls = self.m.lfg_util.get_depended_cls(gerrit_changes)
       if depended_cls:
         submit_time = self.m.lfg_util.latest_submission_time(
             depended_cls, step_test_data=self._test_submission_data)
