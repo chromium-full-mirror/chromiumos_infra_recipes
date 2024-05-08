@@ -63,15 +63,6 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def vm_tast_build(name, status=common_pb2.SUCCESS, critical=True):
-    output = build_pb2.Build.Output()
-    input_proto = build_pb2.Build.Input()
-    output.properties.update({'name': name})
-    input_proto.properties.update({'name': name})
-    return build_pb2.Build(
-        output=output, input=input_proto, status=status,
-        critical=common_pb2.YES if critical else common_pb2.NO)
-
   def input_proto(snapshot, build_target):
     """Generate an instance of Build.Input.
 
@@ -151,13 +142,7 @@ def GenTests(api):
           'schedule skylab tests v2.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output([
-          vm_tast_build('vm-test'),
-          vm_tast_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
-      ], step_name='run tests.collect tests.collect tast vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast GCE tests'))
+          'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
       'with_additional_test_runs', cq_orchestrator_build_with_gerrit_change(),
@@ -189,13 +174,7 @@ def GenTests(api):
           'schedule skylab tests v2.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output([
-          vm_tast_build('vm-test'),
-          vm_tast_build('vm-test-2', status=common_pb2.FAILURE, critical=False)
-      ], step_name='run tests.collect tests.collect tast vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast GCE tests'))
+          'collect skylab tasks v2.buildbucket.collect'))
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
@@ -228,12 +207,7 @@ def GenTests(api):
           'schedule skylab tests v2.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           multi_hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output(
-          [vm_tast_build('vm-test')],
-          step_name='run tests.collect tests.collect tast vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast GCE tests'))
+          'collect skylab tasks v2.buildbucket.collect'))
 
   hw_tests = [
       api.skylab_results.test_with_multi_response(
@@ -290,25 +264,7 @@ def GenTests(api):
           'schedule skylab tests v2.buildbucket.schedule'),
       api.buildbucket.simulated_collect_output(
           hw_tests, 'run tests.collect tests.'
-          'collect skylab tasks v2.buildbucket.collect'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast vm tests'),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='run tests.collect tests.collect tast GCE tests'))
-
-  yield api.test(
-      'collect-vm-test-failures',
-      api.properties(FullProperties(need_tests_builds=builds)),
-      api.step_data('run tests.collect tests.collect tast vm tests.wait',
-                    retcode=1),
-      api.post_check(post_process.MustRun,
-                     'run tests.collect tests.get tast vm tests'),
-      api.step_data('run tests.collect tests.collect tast GCE tests.wait',
-                    retcode=1),
-      api.post_check(post_process.MustRun,
-                     'run tests.collect tests.get tast GCE tests'),
-      api.post_process(post_process.DropExpectation),
-  )
+          'collect skylab tasks v2.buildbucket.collect'))
 
   yield api.test(
       'no-testable-builders',

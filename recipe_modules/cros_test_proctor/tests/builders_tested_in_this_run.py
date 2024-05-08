@@ -25,7 +25,7 @@ def RunSteps(api):
                                       project='chromeos/manifest-internal',
                                       ref='refs/heads/snapshot', id='deadbeef')
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
-  _ = api.cros_test_proctor.schedule_tests(test_plan, [], [], [],
+  _ = api.cros_test_proctor.schedule_tests(test_plan, [], [],
                                            api.cros_test_proctor.timeout,
                                            snapshot)
   api.assertions.assertCountEqual(

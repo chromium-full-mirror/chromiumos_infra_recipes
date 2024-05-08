@@ -305,24 +305,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
             ], passed=False)
     ], 'run tests.collect tests.collect skylab tasks v2.buildbucket.collect')
 
-    # The only things we care about are output.properties.name and status.
-    vm_test_build = lambda x: self.m.test_util.test_build(
-        builder='vmtest', status='SUCCESS', revision=None, output_properties={
-            'name': x
-        }).message
-
-    ctp_normal += self.m.buildbucket.simulated_collect_output(
-        [vm_test_build('vm-test')],
-        'run tests.collect tests.collect tast vm tests')
-    ctp_failure += self.m.buildbucket.simulated_collect_output(
-        [vm_test_build('vm-test')],
-        'run tests.collect tests.collect tast vm tests')
-
-    ctp_normal += self.m.buildbucket.simulated_collect_output(
-        [], 'run tests.collect tests.collect tast GCE tests')
-    ctp_failure += self.m.buildbucket.simulated_collect_output(
-        [], 'run tests.collect tests.collect tast GCE tests')
-
     values.extend([ctp_normal, ctp_failure])
     return _ret(*values)
 

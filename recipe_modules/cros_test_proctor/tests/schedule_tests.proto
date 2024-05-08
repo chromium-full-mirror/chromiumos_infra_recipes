@@ -10,5 +10,5 @@ message ScheduleTestsProperties {
   repeated string passed_tests = 1;
   bool is_retry = 2;
   repeated string previously_failed_now_exonerable_hw_suites = 3;
-  repeated string previously_failed_now_exonerable_vm_suites = 4;
+  reserved 4;
 }

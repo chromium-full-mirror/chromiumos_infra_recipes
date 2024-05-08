@@ -18,8 +18,6 @@ from google.protobuf import json_format
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
-from PB.recipes.chromeos.gce_test import GceTestProperties
-from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
@@ -43,7 +41,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self.timeout = properties.timeout
     if not self.timeout.seconds:
       self.timeout = duration_pb2.Duration(seconds=9 * 60 * 60)
-    self._vm_bucket = properties.vm_bucket or 'staging'
     self._skylab_task_per_build_target = properties.skylab_task_per_build_target
     self._test_summary = []
     self._not_runnable_addtnl_tests = []
@@ -215,17 +212,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # We will not run tests that have already passed for this patch set.
         previously_passed_tests = set()
         previously_failed_now_exonerable_hw_results = []
-        previously_failed_now_exonerable_vm_builds = []
         is_retry = False
         if enable_history and gerrit_changes:
           is_retry = (self.m.cv.active and self.m.cros_history.is_retry)
           previously_passed_tests = self.m.cros_history.get_passed_tests()
-          previously_failed_now_exonerable_vm_builds, previously_failed_now_exonerable_hw_results = self.m.exonerate.get_prev_failed_now_exonerable_test_results(
+          _, previously_failed_now_exonerable_hw_results = self.m.exonerate.get_prev_failed_now_exonerable_test_results(
               test_plan, self._dry_run_exonerate_retried_suites)
-        exonerable_vm_suites_names = {
-            self.m.naming.get_vm_test_title(build)
-            for build in previously_failed_now_exonerable_vm_builds
-        }
         exonerable_hw_suites_names = {
             str(skylab_res.task.test.common.display_name)
             for skylab_res in previously_failed_now_exonerable_hw_results
@@ -235,9 +227,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             test_plan,
             previously_passed_tests,
             exonerable_hw_suites_names,
-            exonerable_vm_suites_names,
             self.timeout,
-            snapshot,
             is_retry=is_retry,
             run_async=run_async,
             container_metadata=container_metadata,
@@ -251,12 +241,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         test_results = self._collect_tests(test_tasks, timeout=self.timeout)
         # Record test results.
         passed_test_names = []
-        passed_test_names.extend(exonerable_vm_suites_names)
         passed_test_names.extend(exonerable_hw_suites_names)
         crit_failure_test_names = []
         non_crit_failure_test_names = []
-        for test_result in (test_results.tast_vm + test_results.skylab +
-                            test_results.tast_gce):
+        for test_result in test_results.skylab:
           if test_result.status == common_pb2.SUCCESS:
             passed_test_names.append(self.m.naming.get_test_title(test_result))
           elif self.m.failures.is_critical_test_failure(test_result):
@@ -273,10 +261,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       if crit_failure_test_names:
         pres.step_text = ('{} critical test(s) failed'.format(
             len(crit_failure_test_names)))
-      elif non_crit_failure_test_names:
-        pres.step_text = 'all critical tests passed.'
       elif passed_test_names:
-        pres.step_text = ('all tests passed.')
+        pres.step_text = ('all critical tests passed.')
       else:  #pragma: no cover
         # This shouldn't ever happen with multi-request
         pres.step_text = ('no tests were necessary')
@@ -294,43 +280,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         manually_exonerated_hw_results, manually_exonerated_hw_tests = (
             self.m.exonerate.exonerate_hwtests(test_results.skylab))
         passed_test_names += manually_exonerated_hw_tests
-        manually_exonerated_vm_results, manually_exonerated_vm_tests = (
-            self.m.exonerate.exonerate_vmtests(test_results.tast_vm))
-        passed_test_names += manually_exonerated_vm_tests
-        manually_exonerated_gce_results, manually_exonerated_gce_tests = (
-            self.m.exonerate.exonerate_vmtests(test_results.tast_gce))
-        passed_test_names += manually_exonerated_gce_tests
         self.m.exonerate.print_stats(property_name='exoneration_stats')
 
       with self.m.step.nest('automated exoneration') as pres:
         autoex_running = self.m.exonerate.auto_exoneration_analysis(
             fake_data=self._test_data.enabled)
         auto_exonerated_hw_results = manually_exonerated_hw_results
-        auto_exonerated_vm_results = manually_exonerated_vm_results
-        auto_exonerated_gce_results = manually_exonerated_gce_results
         if autoex_running:
           self.m.exonerate.enable_excludes()
           auto_exonerated_hw_results, auto_exonerated_hw_tests = (
               self.m.exonerate.exonerate_hwtests(manually_exonerated_hw_results)
           )
           passed_test_names += auto_exonerated_hw_tests
-          auto_exonerated_vm_results, auto_exonerated_vm_tests = (
-              self.m.exonerate.exonerate_vmtests(manually_exonerated_vm_results)
-          )
-          passed_test_names += auto_exonerated_vm_tests
-          auto_exonerated_gce_results, auto_exonerated_gce_tests = (
-              self.m.exonerate.exonerate_vmtests(
-                  manually_exonerated_gce_results))
-          passed_test_names += auto_exonerated_gce_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
       test_results = test_results._replace(
           skylab=auto_exonerated_hw_results +
           previously_failed_now_exonerable_hw_results)
-      test_results = test_results._replace(
-          tast_vm=auto_exonerated_vm_results +
-          previously_failed_now_exonerable_vm_builds)
-      test_results = test_results._replace(tast_gce=auto_exonerated_gce_results)
       self.m.exonerate.populate_exoneration_markdown()
 
       with self.m.step.nest('fault attribution'):
@@ -338,8 +304,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             test_results, snapshot)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
-      self.m.greenness.update_vmtest_info(test_results.tast_vm)
-      self.m.greenness.update_vmtest_info(test_results.tast_gce)
       self.m.greenness.update_hwtest_info(test_results.skylab)
       failures = self.get_test_failures(test_results)
       failures += self.m.failures.get_additional_hw_test_not_run_failures(
@@ -386,27 +350,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     return test_plan
 
-  def _tast_vm_builder(self, build_target, expressions):
-    """Returns the tast builder name for the given build_target and expressions."""
-    staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
-    if '!informational' in ''.join(
-        expressions) or '!"informational"' in ''.join(expressions):
-      return staging_prefix + build_target.name + '-direct-tast-vm'
-    return staging_prefix + build_target.name + '-tast-vm-informational'
-
-  def _tast_gce_builder(self, build_target, expressions):
-    """Returns the GCE builder name for the given build_target and expressions."""
-    staging_prefix = 'staging-' if self.m.cros_infra_config.is_staging else ''
-    if '!informational' in ''.join(
-        expressions) or '!"informational"' in ''.join(expressions):
-      return staging_prefix + build_target.name + '-tast-gce'
-    return staging_prefix + build_target.name + '-tast-gce-informational'
-
   def schedule_tests(self, test_plan, passed_tests,
-                     previously_failed_now_exonerable_hw_suites,
-                     previously_failed_now_exonerable_vm_suites, timeout,
-                     snapshot=None, is_retry=False, run_async=False,
-                     container_metadata=None, require_stable_devices=False,
+                     previously_failed_now_exonerable_hw_suites, timeout,
+                     is_retry=False, run_async=False, container_metadata=None,
+                     require_stable_devices=False,
                      build_target_critical_allowlist=None):
     """Schedule all tests from the test_plan.
 
@@ -417,11 +364,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           have passed before.
       previously_failed_now_exonerable_hw_suites (list[string]): Previously
           failed tests that are now eligible for exoneration.
-      previously_failed_now_exonerable_vm_suites (list[string]): Previously
-          failed tests that are now eligible for exoneration.
       timeout (Duration): Timeout in duration_pb2.Duration.
-      snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
-          the included builds were created.
       is_retry (bool): Whether this is a CQ retry.
       run_async (bool): whether to stop and collect, if set we return no
           failures (an empty list).
@@ -440,12 +383,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     def _persist_task_ids_in_properties(test_tasks: structs.MetaTestTuple):
       skylab_ids = sorted(
           {str(skylab_task.id) for skylab_task in test_tasks.skylab})
-      vm_tests_build_ids = sorted({str(test.id) for test in test_tasks.tast_vm})
-      self.m.easy.set_properties_step(
-          test_tasks={
-              'skylab_builder_ids': skylab_ids,
-              'tast_vm_tests_builder_ids': vm_tests_build_ids,
-          })
+      self.m.easy.set_properties_step(test_tasks={
+          'skylab_builder_ids': skylab_ids,
+          'tast_vm_tests_builder_ids': [],
+      })
 
     skylab_tasks = self._schedule_skylab_tests(
         test_plan,
@@ -459,26 +400,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         task_per_build_target=self._skylab_task_per_build_target,
         build_target_critical_allowlist=build_target_critical_allowlist,
     )
-    tast_vm_tests = self._schedule_tast_vm_tests(
-        test_plan, passed_tests, previously_failed_now_exonerable_vm_suites,
-        snapshot, is_retry, run_async=run_async)
-
-    tast_gce_tests = self._schedule_tast_gce_tests(test_plan, passed_tests,
-                                                   snapshot, is_retry,
-                                                   run_async=run_async)
-
     self.m.easy.set_properties_step()
     tests_tasks = self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
-                                     tast_vm=tast_vm_tests or [],
-                                     tast_gce=tast_gce_tests or [])
+                                     tast_vm=[], tast_gce=[])
     _persist_task_ids_in_properties(tests_tasks)
     return tests_tasks
 
   def _collect_tests(self, test_tasks, timeout):
     """Collect on all tests from test_tasks.
-
-    The tests are collected in the order: skylab,
-    tast_vm, tast_gce.
 
     Args:
       test_tasks (MetaTestTuple): lists of tests to collect.
@@ -487,20 +416,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       MetaTestTuple of lists of tests collected.
     """
-
-    def collect_vm_tests(build_ids, vm_test_type, timeout):
-      timeout = int(timeout.seconds)
-      try:
-        step_name = 'collect %s tests' % vm_test_type
-        return list(
-            self.m.buildbucket.collect_builds(build_ids, step_name=step_name,
-                                              timeout=timeout).values())
-      except recipe_api.StepFailure:
-        step_name = 'get %s tests' % vm_test_type
-        return list(
-            self.m.buildbucket.get_multi(build_ids,
-                                         step_name=step_name).values())
-
     results = OrderedDict({
         'skylab': [],
         'autotest_vm': [],
@@ -511,21 +426,12 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     def update_results(key, resp):
       results[key] = resp
 
+    # TODO(b/315338399): Cleanup parallel collection as we don't need it anymore.
     runner = self.m.future_utils.create_parallel_runner()
     # Collect hw test results.
     runner.run_function_async(
         lambda _, _2: self.m.skylab.wait_on_suites(test_tasks.skylab, timeout),
         None, success_handler=lambda resp: update_results('skylab', resp))
-    # Collect tast vm test results.
-    runner.run_function_async(
-        lambda _, _2: collect_vm_tests([vt.id for vt in test_tasks.tast_vm],
-                                       'tast vm', timeout), None,
-        success_handler=lambda resp: update_results('tast_vm', resp))
-    # Collect tast GCE test results.
-    runner.run_function_async(
-        lambda _, _2: collect_vm_tests([vt.id for vt in test_tasks.tast_gce],
-                                       'tast GCE', timeout), None,
-        success_handler=lambda resp: update_results('tast_gce', resp))
 
     runner.wait_for_and_get_responses()
     return self.MetaTestTuple(**results)
@@ -539,10 +445,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       list[Failure]: All failures discovered in the given run.
     """
     failures = self.m.failures.get_hw_test_results(test_results.skylab).failures
-    failures += self.m.failures.get_vm_test_results(
-        test_results.tast_vm).failures
-    failures += self.m.failures.get_vm_test_results(
-        test_results.tast_gce).failures
     return failures
 
   def _schedule_skylab_tests(
@@ -636,164 +538,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(scheduled_hw_tests=scheduled_test_names)
     return skylab_tasks
 
-  def _schedule_tast_vm_tests(self, test_plan, passed_tests,
-                              previously_failed_now_exonerable_vm_suites,
-                              snapshot, is_retry=False, run_async=False):
-    """Schedule tast VM Tests from the test_plan.
-
-    Args:
-      test_plan (GenerateTestPlanResponse): A plan for all tests to
-          be scheduled.
-      passed_tests (list[string]): A list of names for the tests that
-          have passed before.
-      previously_failed_now_exonerable_vm_suites (list[string]):
-          Previously failed tests that are now eligible for exoneration.
-      snapshot (GitilesCommit): Start ref to be supplied to the tests.
-      is_retry (bool): Whether this is a CQ retry.
-      run_async (bool): Should the tests be ran async and not cancel
-          on the termination of the parent (this caller).
-
-    Returns:
-      list[Build] objects of the VM tests scheduled.
-    """
-    requests = []
-
-    exps = self.m.cros_infra_config.experiments_for_child_build
-    footer_exps = self.m.git_footers.get_footer_values(
-        self.m.src_state.gerrit_changes, CROS_EXPERIMENTS_FOOTER,
-        step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
-    exps.update({x: True for x in footer_exps})
-
-    tags = self.m.cros_tags.make_schedule_tags(snapshot)
-    tags.extend(self.m.cros_tags.tags(**{'hide-in-gerrit': 'true'}))
-
-    # Record the names of all the tests that are scheduled. This will be set as
-    # an output property when testing Recipes only.
-    scheduled_test_names = []
-
-    for unit in test_plan.direct_tast_vm_test_units:
-      for test in unit.tast_vm_test_cfg.tast_vm_test:
-        # Do not run non-critical tests on retries.
-        if is_retry and not test.common.critical.value:
-          continue
-        if (test.common.display_name not in passed_tests and
-            test.common.display_name not in
-            previously_failed_now_exonerable_vm_suites):
-          test_name = test.common.display_name
-          build_target = unit.common.build_target
-          expressions = [t.test_expr for t in test.tast_test_expr]
-          total_shards = test.tast_test_shard.total_shards
-          shard_index = test.tast_test_shard.shard_index
-          requests.append(
-              self.m.buildbucket.schedule_request(
-                  gitiles_commit=snapshot,
-                  builder=self._tast_vm_builder(build_target, expressions),
-                  bucket=self._vm_bucket, critical=test.common.critical.value,
-                  experiments=exps, properties=self._with_props_for_child_build(
-                      json_format.MessageToDict(
-                          TastVmProperties(
-                              name=test_name, build_target=build_target,
-                              build_payload=unit.common.build_payload,
-                              expressions=expressions,
-                              total_shards=total_shards,
-                              shard_index=shard_index))), tags=tags,
-                  swarming_parent_run_id=None if run_async else
-                  self.m.swarming.task_id, can_outlive_parent=run_async))
-
-          # Record information about what is getting tested.
-          self._builders_tested_in_this_run.add(unit.common.builder_name)
-          scheduled_test_names.append(test.common.display_name)
-
-    vm_tests = self.m.buildbucket.schedule(
-        requests, step_name='schedule tast vm tests',
-        url_title_fn=self.m.naming.get_vm_test_title)
-    if self._test_data.enabled:
-      scheduled_test_names.sort()
-      self.m.easy.set_properties_step(
-          scheduled_tast_vm_tests=scheduled_test_names)
-    return vm_tests
-
-  def _schedule_tast_gce_tests(self, test_plan, passed_tests, snapshot,
-                               is_retry=False, run_async=False):
-    """Schedule tast GCE Tests from the test_plan.
-
-    Args:
-      test_plan (GenerateTestPlanResponse): A plan for all tests to
-          be scheduled.
-      passed_tests (list[string]): A list of names for the tests that
-          have passed before.
-      snapshot (GitilesCommit): Start ref to be supplied to the tests.
-      is_retry (bool): Whether this is a CQ retry.
-      run_async (bool): Should the tests be ran async and not cancel
-          on the termination of the parent (this caller).
-
-    Returns:
-      list[Build] objects of the GCE tests scheduled.
-    """
-    requests = []
-
-    # Record the names of all the tests that are scheduled. This will be set as
-    # an output property when testing Recipes only.
-    scheduled_test_names = []
-
-    exps = self.m.cros_infra_config.experiments_for_child_build
-    footer_exps = self.m.git_footers.get_footer_values(
-        self.m.src_state.gerrit_changes, CROS_EXPERIMENTS_FOOTER,
-        step_test_data=self.m.git_footers.test_api.step_test_data_factory(''))
-    exps.update({x: True for x in footer_exps})
-
-    tags = self.m.cros_tags.make_schedule_tags(snapshot)
-    tags.extend(self.m.cros_tags.tags(**{'hide-in-gerrit': 'true'}))
-
-    for unit in test_plan.tast_gce_test_units:
-      for test in unit.tast_gce_test_cfg.tast_gce_test:
-        # Do not run non-critical tests on retries.
-        if is_retry and not test.common.critical.value:
-          continue
-        if test.common.display_name not in passed_tests:
-          test_name = test.common.display_name
-          build_target = unit.common.build_target
-          expressions = [t.test_expr for t in test.tast_test_expr]
-          total_shards = test.tast_test_shard.total_shards
-          shard_index = test.tast_test_shard.shard_index
-          gce_metadata = test.gce_metadata
-          properties_gce_metadata = GceTestProperties.GceMetadata(
-              project=gce_metadata.project,
-              zone=gce_metadata.zone,
-              machine_type=gce_metadata.machine_type,
-              network=gce_metadata.network,
-              subnet=gce_metadata.subnet,
-          )
-          requests.append(
-              self.m.buildbucket.schedule_request(
-                  gitiles_commit=snapshot,
-                  builder=self._tast_gce_builder(build_target, expressions),
-                  bucket=self._vm_bucket, critical=test.common.critical.value,
-                  experiments=exps, properties=self._with_props_for_child_build(
-                      json_format.MessageToDict(
-                          GceTestProperties(
-                              name=test_name, build_target=build_target,
-                              build_payload=unit.common.build_payload,
-                              expressions=expressions,
-                              total_shards=total_shards,
-                              shard_index=shard_index,
-                              gce_metadata=properties_gce_metadata))),
-                  tags=tags, swarming_parent_run_id=None if run_async else
-                  self.m.swarming.task_id, can_outlive_parent=run_async))
-
-          # Record information about what is getting tested.
-          self._builders_tested_in_this_run.add(unit.common.builder_name)
-          scheduled_test_names.append(test.common.display_name)
-
-    gce_tests = self.m.buildbucket.schedule(
-        requests, step_name='schedule tast GCE tests',
-        url_title_fn=self.m.naming.get_vm_test_title)
-    if self._test_data.enabled:
-      scheduled_test_names.sort()
-      self.m.easy.set_properties_step(
-          scheduled_tast_gce_tests=scheduled_test_names)
-    return gce_tests
-
   def _generate_test_summary(self, test_plan, passed_test_names, test_builds):
     """Creates a summary of the test results.
 
@@ -811,16 +555,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # * Assist analysis of test results by dashboards with access to the
     #   buildbucket tables.
     test_summary = (
-        self._extract_test_summary(
-            test_plan.hw_test_units, lambda unit: unit.hw_test_cfg,
-            lambda cfg: cfg.hw_test, passed_test_names, test_builds) +
-        self._extract_test_summary(test_plan.direct_tast_vm_test_units,
-                                   lambda unit: unit.tast_vm_test_cfg,
-                                   lambda cfg: cfg.tast_vm_test,
-                                   passed_test_names, test_builds) +
-        self._extract_test_summary(
-            test_plan.tast_gce_test_units, lambda unit: unit.tast_gce_test_cfg,
-            lambda cfg: cfg.tast_gce_test, passed_test_names, test_builds))
+        self._extract_test_summary(test_plan.hw_test_units,
+                                   lambda unit: unit.hw_test_cfg,
+                                   lambda cfg: cfg.hw_test, passed_test_names,
+                                   test_builds))
     return test_summary
 
   def _extract_test_summary(self, units, cfg_func, tests_func,
@@ -828,7 +566,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     """Returns a summary of the tests within `units`.
 
     Args:
-      units (list[HwTestUnit|VmTestUnit|TastVmTestUnit]): Units to count the
+      units (list[HwTestUnit]): Units to count the
           critical tests within.
       cfg_func (lambda): Lambda function that takes a unit from units and
           returns the *test_cfg field.
@@ -889,27 +627,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         return build.input.gitiles_commit.id
     return ''
 
-  def _with_props_for_child_build(self, properties):
-    """Merge 'properties' and 'api.cv.props_for_child_build'.
-
-    Should be used to insert 'props_for_child_build' into properties being passed
-    to a Buildbucket request.
-
-    Args:
-      api (RecipeApi): See RunSteps documentation.
-      properties (dict): A dictionary of properties.
-
-    Returns:
-      The merged dict.
-    """
-    properties.update(self.m.cv.props_for_child_build)
-    return properties
-
   def _previous_test_results(self) -> Dict[str, ExecuteResponse]:
     """Gets the test results from the latest test invocation.
-
-    Currently only returns HW test results.
-    TODO(b/271938042): Also return VM test results.
 
     Returns:
       The ExecuteResponses.tagged_response from the latest invocation.
