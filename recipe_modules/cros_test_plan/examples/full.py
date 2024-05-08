@@ -16,8 +16,9 @@ from recipe_engine import post_process
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
-    'recipe_engine/raw_io',
+    'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'build_menu',
     'cros_test_plan',
     'gitiles',
@@ -67,6 +68,15 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'basic',
+      api.gitiles.get_file(TEST_TARGET_TEST_REQUIREMENTS_DATA),
+      api.buildbucket.try_build(project='chromeos', bucket='cq',
+                                builder='release-R90-13816.B-cq-orchestrator'),
+  )
+
+  yield api.test(
+      'use-local-manifest',
+      api.path.exists(api.path.cleanup_dir /
+                      'chromiumos_workspace/manifest-internal/snapshot.xml'),
       api.gitiles.get_file(TEST_TARGET_TEST_REQUIREMENTS_DATA),
       api.buildbucket.try_build(project='chromeos', bucket='cq',
                                 builder='release-R90-13816.B-cq-orchestrator'),

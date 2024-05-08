@@ -4641,8 +4641,6 @@
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
-      "--manifest_file",
-      "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml",
       "--gitiles_repo",
       "chromeos/infra/config",
       "--gitiles_branch",

@@ -4638,9 +4638,7 @@
       "--input_binary_pb",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto",
       "--output_binary_pb",
-      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto",
-      "--manifest_file",
-      "[CLEANUP]/chromiumos_workspace/manifest-internal/snapshot.xml"
+      "[CLEANUP]/test-plan-_tmp_1/output.binaryproto"
     ],
     "infra_step": true,
     "luci_context": {

@@ -133,7 +133,8 @@ class CrosTestPlanApi(recipe_api.RecipeApi):
       ]
       # We already have a local copy of the manifest.  Use it, rather than
       # fetching it from the network.
-      cmd.extend(['--manifest_file', self.m.cros_source.branch_manifest_file])
+      if self.m.path.exists(self.m.cros_source.branch_manifest_file):
+        cmd.extend(['--manifest_file', self.m.cros_source.branch_manifest_file])
 
       if self._properties.source_gitiles_repo:
         cmd.extend(['--gitiles_repo', self._properties.source_gitiles_repo])
