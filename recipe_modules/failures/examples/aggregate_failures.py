@@ -45,8 +45,8 @@ def RunSteps(api):
       api.failures.Failure(kind='test', title='test-a',
                            link_map={'subtest-1': 'test-a.com'}, fatal=True,
                            id='id-2'),
-      api.failures.Failure(kind='test', title='test-b',
-                           link_map={'test-b': 'test-b.com'}, fatal=False,
+      api.failures.Failure(kind='hw test', title='test-b',
+                           link_map={'test-b': 'test-b.com'}, fatal=True,
                            id='id-3'),
       api.failures.Failure(kind='build', title='build-c',
                            link_map={'test-c': 'test-c.com'}, fatal=False,
@@ -70,15 +70,6 @@ def RunSteps(api):
           }, fatal=True, id='id-9'),
       api.failures.Failure(kind='hw test', title='no-links-test', link_map={},
                            fatal=True, id='id-10'),
-      api.failures.Failure(kind='vm test', title='vm-test-1.tast.shard_1',
-                           link_map={'some-vm-test-from-shard-1': 'test-1.com'},
-                           fatal=True, id='id-11'),
-      api.failures.Failure(kind='vm test', title='vm-test-1.tast.shard_2',
-                           link_map={'some-vm-test-from-shard-2': 'test-2.com'},
-                           fatal=True, id='id-12'),
-      api.failures.Failure(kind='vm test', title='vm-test-2.tast.shard_1',
-                           link_map={'test page': 'shard.com'}, fatal=True,
-                           id='id-13'),
   ]
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
 
@@ -86,12 +77,6 @@ def RunSteps(api):
   comparison_snapshot_properties = SnapshotProperties()
   comparison_snapshot_properties.source_build_id = 12345
   comparison_snapshot_properties.source_started_unix_timestamp = 1693893626
-
-  vm_test_fault_attribute = FaultAttributionProperties()
-  vm_test_fault_attribute.test_name = 'some-vm-test-from-shard-1'
-  vm_test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.MATCHING_FAILURE_FOUND
-  vm_test_fault_attribute.comparison_snapshot.CopyFrom(
-      comparison_snapshot_properties)
 
   hw_test_fault_attribute = FaultAttributionProperties()
   hw_test_fault_attribute.test_name = 'test-1'
@@ -105,12 +90,18 @@ def RunSteps(api):
   hw_test_fault_attribute2.comparison_snapshot.CopyFrom(
       comparison_snapshot_properties)
 
-  test_properties_to_fault_attribute[('some-vm-test-from-shard-1', 'vm-test-1',
-                                      '')] = vm_test_fault_attribute
+  hw_test_fault_attribute3 = FaultAttributionProperties()
+  hw_test_fault_attribute3.test_name = 'test-b'
+  hw_test_fault_attribute3.snapshot_comparison_fault_attribution = CqFailureAttribute.MATCHING_FAILURE_FOUND
+  hw_test_fault_attribute3.comparison_snapshot.CopyFrom(
+      comparison_snapshot_properties)
+
   test_properties_to_fault_attribute[('test-1', 'test-1', '')] \
     = hw_test_fault_attribute
   test_properties_to_fault_attribute[('test-2', 'test-2', '')] \
     = hw_test_fault_attribute2
+  test_properties_to_fault_attribute[('test-b', 'test-b', '')] \
+    = hw_test_fault_attribute3
   api.failures.set_test_variant_to_fault_attribute(
       test_properties_to_fault_attribute)
 
@@ -128,7 +119,7 @@ def RunSteps(api):
 
 - test-x: [test-x](test-x.com)
 
-2 hw tests failed. 2 hw test suites failed with incomplete results
+3 hw tests failed. 2 hw test suites failed with incomplete results
 
 - no-links-test
 
@@ -142,23 +133,19 @@ def RunSteps(api):
 
     - [test-shard-0 (timed out)](shard.com)
 
-1 out of 1 test failed (2 additional non-critical failures)
+- test-b
+
+    - [test-b](test-b.com) | identical failure already present as of [2023-09-05 06:00:26](https://ci.chromium.org/ui/b/12345/test-results?q=ExactID:test-b)
+
+1 out of 1 test failed (1 additional non-critical failure)
 
 - test-a: [subtest-1](test-a.com)
 
-2 vm tests failed. 1 vm test suite failed with incomplete results
+1 non-critical very_different_kind_of_test failed
 
-- vm-test-1.tast
 
-    - [some-vm-test-from-shard-1](test-1.com) | identical failure already present as of [2023-09-05 06:00:26](https://ci.chromium.org/ui/b/12345/test-results?q=ExactID:some-vm-test-from-shard-1)
 
-    - [some-vm-test-from-shard-2](test-2.com)
-
-- vm-test-2.tast
-
-    - [test page](shard.com)
-
-1 non-critical very_different_kind_of_test failed''',
+📢: If this CQ attempt failed on an unrelated test, please read go/chromeos-cq-customization-psa''',
       final_result.summary_markdown)
 
   results.failures = [

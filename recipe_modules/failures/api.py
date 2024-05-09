@@ -36,7 +36,6 @@ from recipe_engine.recipe_api import StepFailure
 from recipe_engine.post_process_inputs import Step
 
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
-from RECIPE_MODULES.chromeos.urls.api import VM_FAILURE_LINK_TEXT
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -67,8 +66,6 @@ class FailuresApi(RecipeApi):
 
   # Test kind for hw tests.
   HW_TEST = 'hw test'
-  # Test kind for vm tests.
-  VM_TEST = 'vm test'
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
@@ -531,9 +528,8 @@ class FailuresApi(RecipeApi):
         total_count += results.successes[kind]
 
       if kind == self.HW_TEST:
-        lines = self.aggregate_hw_test_failures(failure_group, non_fatal_failures_count_by_kind)
-      elif kind == self.VM_TEST:
-        lines = self.aggregate_vm_test_failures(failure_group, non_fatal_failures_count_by_kind)
+        lines = self.aggregate_hw_test_failures(
+            failure_group, non_fatal_failures_count_by_kind)
       else:
         lines = self.aggregrate_failure_group(kind, failure_group, non_fatal_failures_count_by_kind, failure_count, total_count)
 
@@ -605,55 +601,6 @@ class FailuresApi(RecipeApi):
       for link_text, link_url in failure.link_map.items():
         line += ' [{}]({})'.format(link_text, link_url)
       lines.append(line)
-
-    return lines
-
-  def aggregate_vm_test_failures(self,
-      vm_test_failures: List[Failure],
-      non_fatal_failures_count_by_kind: collections.Counter) -> List[str]:
-    """Returns aggregate test failure markdown text for VM tests,
-    distinguishing between test and shard / suite failures, and grouping
-    failures from different shards in the same suite together.
-
-    Args:
-      vm_test_failures: List of all the failures for the specific kind.
-      non_fatal_failures_count_by_kind: Counter of each failure kind to its
-        non-fatal failure count.
-
-    Returns:
-      List of summary markdown lines.
-    """
-
-    # This summary markdown section will look roughly as follows:
-    #
-    # 2 vm tests failed. 1 vm test suite failed with incomplete results (1 additional non-critical failure)
-    # - betty-pi-arc-cq.tast_vm
-    #     - <a>login.ExistingUser</a>
-    #     - <a>test page</a>
-    # - reven-vmtest-cq.tast_vm
-    #     - <a>login.ExistingUser</a>
-    # ...
-
-    vm_test_shard_pattern = r'^{}$'.format(VM_FAILURE_LINK_TEXT)
-    main_line = self.get_test_failure_main_line(vm_test_shard_pattern, self.VM_TEST, vm_test_failures, non_fatal_failures_count_by_kind)
-    lines = [main_line]
-    failures_to_print = vm_test_failures[:self._failure_truncate_max]
-    failures_grouped_by_suite = collections.defaultdict(list)
-    grouped_title_pattern = r'(?P<suite>[^\.]+\.[^\.]+)(?P<shard>.+)?'
-
-    for failure in failures_to_print:
-      key = re.match(grouped_title_pattern, failure.title)
-      key = key.group('suite') if key else failure.title
-      failures_grouped_by_suite[key].extend(failure.link_map.items())
-
-    for title, link_map_items in failures_grouped_by_suite.items():
-      line = '- {}'.format(title)
-      lines.append(line)
-
-      for link_text, link_url in link_map_items:
-        line = '    - [{}]({})'.format(link_text, link_url)
-        line += self.get_test_fault_attribution_text(title, link_text)
-        lines.append(line)
 
     return lines
 
@@ -931,23 +878,6 @@ class FailuresApi(RecipeApi):
         results_pres.step_text = 'Build targets for tests was not built or failed building'
     return critical_failures
 
-  def get_vm_test_results(self, vm_tests):
-    """Logs VM test status to UI, and raises on failed tests.
-
-    Args:
-      vm_tests (list[Build]): List of VM test buildbucket results.
-
-    Returns:
-      A Results object containing the list[Failure] of all failures discovered
-      in the given runs and a dict mapping a task kind with the number of
-      successes.
-    """
-    get_id = self.m.naming.get_vm_test_title
-    return self._get_results(self.VM_TEST, vm_tests, self.get_build_status,
-                             self.m.buildbucket.is_critical,
-                             self.m.naming.get_vm_test_title,
-                             self.m.urls.get_vm_test_link_map, get_id)
-
   def get_build_status(self, build: build_pb2.Build) -> bb_common_pb2.Status:
     """Retrieve the status of the build."""
     return build.status
@@ -956,16 +886,12 @@ class FailuresApi(RecipeApi):
     """Determine if the test is critical and has failed.
 
     Args:
-      test (Build|SkylabResult): The test in question.
+      test (SkylabResult): The test in question.
 
     Returns:
       bool: True if the test is critical and has failed.
     """
-    if isinstance(test, build_pb2.Build):
-      return self.is_critical_build_failure(test)
-    if isinstance(test, SkylabResult):
-      return self.is_critical_hw_test_failure(test)
-    raise StepFailure('expected Build or SkylabResult,' 'got %s' % type(test))
+    return self.is_critical_hw_test_failure(test)
 
   def get_hwtest_status(self, hw_test: SkylabResult) -> bb_common_pb2.Status:
     """Get the status of the hw_test."""
