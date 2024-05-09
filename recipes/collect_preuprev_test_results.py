@@ -65,12 +65,21 @@ PRE_UPREV_TEST_BUILDERS = [
     'linux-chromeos-chrome',
 ]
 
+BUILD_FIELDS_TO_RETRIEVE = [
+    'builder',
+    'cancellation_markdown',
+    'id',
+    'output',
+    'status',
+    'steps',
+    'summary_markdown',
+]
+
 
 def GetPreUprevTestBuilders(api: RecipeApi, release_task_id: int):
   results = api.buildbucket.search(
-      builds_service_pb2.BuildPredicate(child_of=release_task_id), fields=[
-          'id', 'output', 'steps', 'summary_markdown', 'cancellation_markdown'
-      ])
+      builds_service_pb2.BuildPredicate(child_of=release_task_id),
+      fields=BUILD_FIELDS_TO_RETRIEVE)
 
   r = []
   for result in results:
@@ -82,9 +91,7 @@ def GetPreUprevTestBuilders(api: RecipeApi, release_task_id: int):
 def GetPuprGeneratorBuilder(api: RecipeApi, pupr_cordinator_task_id: int):
   builds = api.buildbucket.search(
       builds_service_pb2.BuildPredicate(child_of=pupr_cordinator_task_id),
-      fields=[
-          'id', 'output', 'steps', 'summary_markdown', 'cancellation_markdown'
-      ])
+      fields=BUILD_FIELDS_TO_RETRIEVE)
 
   for build in builds:
     if build.builder.builder == PUPR_GENERATOR_BUILDER_NAME:
