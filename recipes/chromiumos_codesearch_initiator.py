@@ -28,12 +28,6 @@ DEPS = [
 
 PROPERTIES = ChromiumosCodesearchInitiatorProperties
 
-# TODO: b/333786026 - Delete once we're using the input prop instead.
-CODESEARCH_REPO = 'https://chromium.googlesource.com/chromiumos/codesearch'
-
-# TODO: b/333786026 - Delete once we're using the input prop instead.
-MANIFEST_REPO = 'https://chromium.googlesource.com/chromiumos/manifest'
-
 
 def latest_ref_info(api: recipe_api.RecipeApi, clone_dir: str, repo: str,
                     branch: str):
@@ -56,15 +50,13 @@ def latest_ref_info(api: recipe_api.RecipeApi, clone_dir: str, repo: str,
 
 def RunSteps(api: recipe_api.RecipeApi,
              properties: ChromiumosCodesearchInitiatorProperties) -> None:
-  codesearch_repo = properties.codesearch_repo or CODESEARCH_REPO
-  codesearch_dirname = '_'.join(codesearch_repo.split('/')[-2:])
-  mirror_hash, mirror_unix_timestamp = latest_ref_info(api, codesearch_dirname,
-                                                       codesearch_repo, 'main')
+  codesearch_dirname = '_'.join(properties.codesearch_repo.split('/')[-2:])
+  mirror_hash, mirror_unix_timestamp = latest_ref_info(
+      api, codesearch_dirname, properties.codesearch_repo, 'main')
 
-  manifest_repo = properties.manifest_repo or MANIFEST_REPO
-  manifest_dirname = '_'.join(manifest_repo.split('/')[-2:])
-  manifest_hash, _ = latest_ref_info(api, manifest_dirname, manifest_repo,
-                                     'snapshot')
+  manifest_dirname = '_'.join(properties.manifest_repo.split('/')[-2:])
+  manifest_hash, _ = latest_ref_info(api, manifest_dirname,
+                                     properties.manifest_repo, 'snapshot')
 
   # Trigger the chromiumos_codesearch builders.
   child_properties: Dict[str, Any] = {
@@ -74,7 +66,7 @@ def RunSteps(api: recipe_api.RecipeApi,
 
   api.scheduler.emit_trigger(
       api.scheduler.GitilesTrigger(
-          repo=manifest_repo.removeprefix('https://'),
+          repo=properties.manifest_repo.removeprefix('https://'),
           ref='refs/heads/snapshot',
           revision=manifest_hash,
           properties=child_properties,
@@ -94,6 +86,8 @@ def GenTests(
                   'arm64-generic-codesearch',
               ],
           ),
+          codesearch_repo='https://chromium.googlesource.com/chromiumos/codesearch',
+          manifest_repo='https://chromium.googlesource.com/chromiumos/manifest',
       ),
       api.post_check(
           post_process.MustRun,
@@ -111,26 +105,3 @@ def GenTests(
                            '"job": "amd64-generic-codesearch"',
                            '"job": "arm64-generic-codesearch"',
                        ]))
-
-  yield api.test(
-      'with-repo-properties',
-      api.properties(
-          ChromiumosCodesearchInitiatorProperties(
-              child_jobs=[
-                  'amd64-generic-codesearch',
-                  'arm64-generic-codesearch',
-              ],
-              codesearch_repo='https://chrome-internal.googlesource.com/chromeos/superproject',
-              manifest_repo='https://chrome-internal.googlesource.com/chromeos/manifest-internal',
-          ),
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'clone snapshot of https://chrome-internal.googlesource.com/chromeos/manifest-internal'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'clone main of https://chrome-internal.googlesource.com/chromeos/superproject'
-      ),
-      api.post_process(post_process.DropExpectation),
-  )
