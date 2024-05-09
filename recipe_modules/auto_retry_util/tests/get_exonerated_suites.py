@@ -124,54 +124,6 @@ def GenTests(api):
           api.skylab_results.base64_compress_proto(execute_responses).decode()
   })
 
-  # VM test results mock data.
-  vm_build_1 = build_pb2.Build(
-      id=222, builder=builder_common_pb2.BuilderID(builder='c-cq'),
-      status=common_pb2.FAILURE)
-  vm_build_1.input.properties.update({
-      'name': 'c-cq.tast_vm.suite',
-      'buildTarget': json_format.MessageToDict(BuildTarget(name='c'))
-  })
-  test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
-      name='fake.anotherTest', verdict=TaskState.VERDICT_FAILED)
-  vm_build_1.output.properties.update(
-      {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
-
-  vm_build_2 = build_pb2.Build(
-      id=222, builder=builder_common_pb2.BuilderID(builder='d-cq'),
-      status=common_pb2.FAILURE)
-  vm_build_2.input.properties.update({
-      'name': 'd-cq.tast_gce.suite',
-      'buildTarget': json_format.MessageToDict(BuildTarget(name='d'))
-  })
-  test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
-      name='fake.test', verdict=TaskState.VERDICT_FAILED)
-  vm_build_2.output.properties.update(
-      {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
-
-  # Unexpectedly skipped test case.
-  vm_build_3 = build_pb2.Build(
-      id=333, builder=builder_common_pb2.BuilderID(builder='f-cq'),
-      status=common_pb2.FAILURE)
-  vm_build_3.input.properties.update({
-      'name': 'f-cq.tast_vm.suite',
-      'buildTarget': json_format.MessageToDict(BuildTarget(name='f'))
-  })
-  test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
-      name='fake.test.skipped', verdict=TaskState.VERDICT_FAILED,
-      human_readable_summary=MISSING_TEST_FAILURE_SUMMARY)
-  vm_build_3.output.properties.update(
-      {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
-
-  # No test cases reported.
-  vm_build_4 = build_pb2.Build(
-      id=444, builder=builder_common_pb2.BuilderID(builder='g-cq'),
-      status=common_pb2.FAILURE)
-  vm_build_4.input.properties.update({
-      'name': 'g-cq.tast_vm.suite',
-      'buildTarget': json_format.MessageToDict(BuildTarget(name='g'))
-  })
-
   test_summary = [
       # HW test results.
       {
@@ -206,39 +158,7 @@ def GenTests(api):
           'critical': True,
           'name': 'h-cq.hw.cq-minimal'
       },
-      # VM test results.
-      {
-          'builder_name': 'c-cq',
-          'build_target': 'c',
-          'status': 'FAILURE',
-          'critical': True,
-          'name': 'c-cq.tast_vm.suite'
-      },
-      {
-          'builder_name': 'd-cq',
-          'build_target': 'd',
-          'board': 'd',
-          'status': 'FAILURE',
-          'critical': True,
-          'name': 'd-cq.tast_gce.suite'
-      },
-      {
-          'builder_name': 'f-cq',
-          'build_target': 'f',
-          'status': 'FAILURE',
-          'critical': True,
-          'name': 'f-cq.tast_vm.suite'
-      },
-      {
-          'builder_name': 'g-cq',
-          'build_target': 'g',
-          'status': 'FAILURE',
-          'critical': True,
-          'name': 'g-cq.tast_vm.suite'
-      },
   ]
-
-  vm_builds = [vm_build_1, vm_build_2, vm_build_3, vm_build_4]
 
   yield api.test(
       'basic',
@@ -252,9 +172,7 @@ def GenTests(api):
           }).build,
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
-      api.properties(
-          expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
+      api.properties(expected_exonerated_suites=['b-cq.hw.suite']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -267,11 +185,10 @@ def GenTests(api):
                   'skylab_builder_ids': [111],
                   'tast_vm_tests_builder_ids': [222, 333]
               },
-              'passed_tests': ['b-cq.hw.suite', 'd-cq.tast_gce.suite'],
+              'passed_tests': ['b-cq.hw.suite'],
           }).build,
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[]),
       api.post_process(post_process.DropExpectation),
   )
@@ -283,7 +200,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.properties(
@@ -301,7 +218,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.properties(
@@ -314,13 +231,9 @@ def GenTests(api):
           }),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[
           'b-cq.hw.suite',
-          'd-cq.tast_gce.suite',
           'e-cq.hw.suite',
-          'f-cq.tast_vm.suite',
-          'g-cq.tast_vm.suite',
           'h-cq.hw.cq-minimal',
       ]),
       api.post_process(post_process.DropExpectation),
@@ -356,7 +269,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.step_data(
@@ -369,7 +282,6 @@ def GenTests(api):
               suite_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[]),
       api.post_process(post_process.DropExpectation),
   )
@@ -381,7 +293,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.step_data(
@@ -394,9 +306,7 @@ def GenTests(api):
               suite_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
-      api.properties(
-          expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
+      api.properties(expected_exonerated_suites=['b-cq.hw.suite']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -407,7 +317,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.properties(
@@ -424,11 +334,8 @@ def GenTests(api):
               suite_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[
           'e-cq.hw.suite',
-          'f-cq.tast_vm.suite',
-          'g-cq.tast_vm.suite',
           'h-cq.hw.cq-minimal',
       ]),
       api.post_process(post_process.DropExpectation),
@@ -444,7 +351,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.step_data(
@@ -457,7 +364,6 @@ def GenTests(api):
               test_case_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[]),
       api.post_process(post_process.DropExpectation),
   )
@@ -469,7 +375,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.step_data(
@@ -482,9 +388,7 @@ def GenTests(api):
               test_case_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
-      api.properties(
-          expected_exonerated_suites=['b-cq.hw.suite', 'd-cq.tast_gce.suite']),
+      api.properties(expected_exonerated_suites=['b-cq.hw.suite']),
       api.post_process(post_process.DropExpectation),
   )
 
@@ -495,7 +399,7 @@ def GenTests(api):
               'test_summary': test_summary,
               'test_tasks': {
                   'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'tast_vm_tests_builder_ids': []
               }
           }).build,
       api.properties(
@@ -512,11 +416,8 @@ def GenTests(api):
               test_case_excludes_cfg.SerializeToString())),
       api.buildbucket.simulated_get_multi(
           [ctp_build], 'get previous skylab tasks v2.buildbucket.get_multi'),
-      api.buildbucket.simulated_get_multi(vm_builds),
       api.properties(expected_exonerated_suites=[
           'e-cq.hw.suite',
-          'f-cq.tast_vm.suite',
-          'g-cq.tast_vm.suite',
           'h-cq.hw.cq-minimal',
       ]),
       api.post_process(post_process.DropExpectation),

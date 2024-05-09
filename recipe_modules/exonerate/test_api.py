@@ -58,10 +58,3 @@ class ExonerateTestApi(recipe_test_api.RecipeTestApi):
 
   def empty_config_file_contents(self):
     return self.m.gitiles.make_encoded_file_from_bytes(b'')
-
-  @staticmethod
-  def fake_vm_build(status='FAILURE'):
-    return build_pb2.Build(
-        id=123,
-        builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
-        status=status)

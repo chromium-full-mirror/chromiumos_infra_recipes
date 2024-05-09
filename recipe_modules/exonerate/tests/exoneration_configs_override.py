@@ -39,20 +39,6 @@ def RunSteps(api):
   # VM test result.
   test_case_result = ExecuteResponse.TaskResult.TestCaseResult(
       name='fake.test', verdict=TaskState.VERDICT_FAILED)
-  vm_build = build_pb2.Build(
-      id=123,
-      builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
-      status='FAILURE')
-  vm_build.output.properties.update(
-      {'failed_test_cases': [json_format.MessageToDict(test_case_result)]})
-  vm_build.input.properties.update(
-      {'buildTarget': json_format.MessageToDict(BuildTarget(name='target_2'))})
-
-  # Assert exonerable with override configs but not with the default configs.
-  api.assertions.assertFalse(
-      api.exonerate.is_vm_test_build_exonerable(vm_build))
-  api.assertions.assertTrue(
-      api.exonerate.is_vm_test_build_exonerable(vm_build, override_configs))
 
   # HW test result.
   hw_result = api.skylab_results.test_api.skylab_result(

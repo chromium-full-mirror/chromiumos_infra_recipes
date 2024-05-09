@@ -6,37 +6,40 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-from google.protobuf import json_format
 from recipe_engine import post_process
 
-from PB.chromiumos.common import BuildTarget
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.exonerate.exonerate import ExonerateProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
 
 DEPS = [
-    'recipe_engine/assertions',
     'recipe_engine/properties',
     'exonerate',
+    'skylab_results',
 ]
 
 
-
 def RunSteps(api):
-  build = api.exonerate.test_api.fake_vm_build()
-  failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
-      name='test1', verdict=TaskState.VERDICT_FAILED,
-      human_readable_summary='something wrong here')
-  failed_test_case_dict1 = json_format.MessageToDict(failed_test_case_result1)
-  build.output.properties.update(
-      {'failed_test_cases': [failed_test_case_dict1]})
-  build.input.properties.update(
-      {'buildTarget': json_format.MessageToDict(BuildTarget(name='betty'))})
-  suite_name = 'betty.tast_vm.tast_vm_default'
-  build.input.properties.update({'name': suite_name})
-  vm_builds = [build]
-  _ = api.exonerate.exonerate_vmtests(vm_builds)
+  fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)
+  failing_exonerable_test_cases = [
+      ExecuteResponse.TaskResult.TestCaseResult(
+          name='test2', verdict=TaskState.VERDICT_FAILED,
+          human_readable_summary='line 22: error'),
+  ]
+  child_results = [
+      ExecuteResponse.TaskResult(name='suite2', state=fail_state,
+                                 test_cases=failing_exonerable_test_cases),
+  ]
+  hw_test_failures = [
+      api.skylab_results.test_api.skylab_result(
+          task=api.skylab_results.test_api.skylab_task(),
+          status=common_pb2.FAILURE, child_results=child_results),
+  ]
+
+  _, _ = api.exonerate.exonerate_hwtests(hw_test_failures)
   api.exonerate.auto_exoneration_analysis()
+  api.exonerate.auto_exoneration_analysis(fake_data=True)
 
 
 def GenTests(api):
@@ -51,4 +54,5 @@ def GenTests(api):
           'Automated Exoneration Analysis.query LUCI Analysis for failure rates.rpc call',
           retcode=1),
       api.post_process(post_process.StepSuccess,
-                       'Automated Exoneration Analysis'))
+                       'Automated Exoneration Analysis'),
+      api.post_process(post_process.DropExpectation))

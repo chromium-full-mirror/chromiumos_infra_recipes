@@ -1617,63 +1617,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
 
     return exonerated_suites
 
-  def _get_exonerated_legacy_vm_suites(self, cq_run: build_pb2.Build,
-                                       exon_configs: Dict):
-    """Returns the names of newly exonerated legacy vm test suites."""
-    # Get the VM test builds.
-    output_dict = json_format.MessageToDict(cq_run.output.properties)
-    test_tasks = output_dict.get('test_tasks', {})
-    tast_vm_tests_builder_ids = [
-        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
-    ]
-
-    # Filter out suites which were previously exonerated.
-    previously_passed_suites = set(
-        cq_run.output.properties.get_or_create_list(PASSED_TESTS_KEY))
-
-    # Exonerate VM test results.
-    exonerated_suites = set()
-    exonerated_unexpected_skip_suites = set()
-    vm_builds = []
-    if len(tast_vm_tests_builder_ids) > 0:
-      vm_builds = self.m.buildbucket.get_multi(
-          tast_vm_tests_builder_ids).values()
-      for result in vm_builds:
-        suite = self.m.naming.get_vm_test_title(result)
-        if suite in previously_passed_suites:
-          continue
-
-        # Manual exoneration.
-        # The excludes configs are not taken into account when doing
-        # manual exoneration. The excludes configs are meant as a guardrail to
-        # prevent auto-exoneration from submitting CLs which are failing
-        # critical tests. Manual exoneration gives sheriffs the option over
-        # forcing these tests to be exonerated.
-        if self.m.exonerate.is_vm_test_build_exonerable(
-            result, self.m.exonerate.manual_exoneration_configs,
-            excludes_enabled_override=False):
-          exonerated_suites.add(suite)
-        # Auto exoneration.
-        elif self.m.exonerate.is_vm_test_build_exonerable(
-            result, exon_configs, excludes_enabled_override=True):
-          exonerated_suites.add(suite)
-        # Unexpected skips exoneration.
-        elif self.m.exonerate.is_vm_test_build_exonerable(
-            result, exon_configs, exonerate_unexpected_skips=True,
-            excludes_enabled_override=True):
-          exonerated_unexpected_skip_suites.add(suite)
-
-    # Only retry unexpected skips if the experiment is enabled and at least one
-    # VM test build finished running and reporting the test results.
-    if any(self.m.tast_results.had_no_unexpected_skips(b)
-           for b in vm_builds) and self.is_experimental_feature_enabled(
-               EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES, cq_run):
-      exonerated_suites.update(exonerated_unexpected_skip_suites)
-      self._experimental_retries[cq_run.id].add(
-          EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES)
-
-    return exonerated_suites
-
   def get_exonerated_suites(
       self, cq_run: build_pb2.Build,
       failed_test_stats: List[FailedTestStats]) -> List[str]:
@@ -1704,8 +1647,6 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     exonerated_suites = set()
     exonerated_suites.update(
         self._get_exonerated_hw_suites(cq_run, exon_configs))
-    exonerated_suites.update(
-        self._get_exonerated_legacy_vm_suites(cq_run, exon_configs))
 
     return sorted(exonerated_suites)
 

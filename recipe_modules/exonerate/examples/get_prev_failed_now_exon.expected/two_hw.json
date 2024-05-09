@@ -33,10 +33,9 @@
     "cmd": [],
     "name": "get previous failed and now exonerable suites",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found 0 vm suite and 2 hw suites@@@",
+      "@@@STEP_TEXT@found 2 suites@@@",
       "@@@STEP_LOG_LINE@exonerable tests@Test Suites that previously failed but now exonerable @@@",
-      "@@@STEP_LOG_LINE@exonerable tests@VM test suites:@@@",
-      "@@@STEP_LOG_LINE@exonerable tests@ @@@",
+      "@@@STEP_LOG_LINE@exonerable tests@@@@",
       "@@@STEP_LOG_LINE@exonerable tests@@@@",
       "@@@STEP_LOG_LINE@exonerable tests@HW test suites:@@@",
       "@@@STEP_LOG_LINE@exonerable tests@ htarget.hw.bvt-cq@@@",
@@ -333,15 +332,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "get previous failed and now exonerable suites.exonerate vm tests",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@exoneration logs@No tests were exonerated.@@@",
-      "@@@STEP_LOG_END@exoneration logs@@@"
     ]
   },
   {

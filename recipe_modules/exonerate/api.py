@@ -11,13 +11,11 @@ from collections import namedtuple
 from typing import Dict, List, Optional, Tuple
 from typing import Set
 
-from google.protobuf import json_format
-
 from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
   TestVariantStabilityAnalysis
 from PB.go.chromium.org.luci.buildbucket.proto import \
-  build as build_pb2, common as common_pb2
+  common as common_pb2
 from PB.go.chromium.org.luci.analysis.proto.v1.test_variants import \
   TestVariantFailureRateAnalysis
 from PB.chromiumos.test_disablement import ExcludeCfg, TestDisablementCfg
@@ -28,7 +26,6 @@ from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
-from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 CONFIG_INTERNAL_REPO = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 EXONERATION_CONFIG_BINPROTO_PATH = 'test/exoneration/generated/test_exoneration'
@@ -403,129 +400,6 @@ class ExonerateApi(recipe_api.RecipeApi):
       self._print_logs(pres)
       return new_test_results, exonerated_test_names
 
-  def exonerate_vm_testcase(self, test_case, build_target):
-    """Exonerates a single test case based on configs.
-
-    Args:
-      test_case(TestCaseResult in dict form): VM test_case to be
-        conditionally exonerated.
-      build_target(str): build_target on which the test was executed.
-
-    Returns: test case dictionary changed based on the decision.
-    """
-    test_name = test_case['name']
-    if self._excludes_enabled and test_name in self._excludes['tests']:
-      self._add_log('Excluding {} on {} from exoneration'.format(
-          test_name, build_target))
-      return test_case
-    targets = self._exoneration_configs[test_name]
-    if targets == []:
-      # If targets is empty, match universally.
-      bt_match = True
-    else:
-      bt_match = build_target in targets
-    if bt_match:
-      self._add_log('Exonerated {} on {}'.format(test_name, build_target))
-      self._stats.test_count += 1
-      self._test_stats_map[test_name] += 1
-      self._exonerated_tests[test_name].add(build_target)
-      return {'name': test_name, 'verdict': 'VERDICT_PASSED'}
-
-    return test_case
-
-  def exonerate_vm_testcases(self, all_test_cases, build_target):
-    """Exonerates VM test cases based on configs.
-
-    Args:
-      all_test_cases([Dict with predefined keys]): Failed VM test_cases
-        to be conditionally exonerated.
-      build_target(str): build_target on which the test was executed.
-
-    Returns: list of test cases modified based on configs and the new
-      overall status(common_pb2.status).
-    """
-    if not all_test_cases:
-      # If there are no test_cases, assume failure and exit.
-      return [], common_pb2.FAILURE
-    new_test_cases = []
-    for test_case in all_test_cases:
-      test_name = test_case['name']
-      self._failed_tests.add(
-          FailedTest(name='tast.{}'.format(test_case['name']), board='',
-                     build_target=build_target, model=''))
-      if test_name not in self._exoneration_configs:
-        new_test_cases.append(test_case)
-      else:
-        new_test_case = self.exonerate_vm_testcase(test_case, build_target)
-        new_test_cases.append(new_test_case)
-
-    verdicts = [tc['verdict'] for tc in new_test_cases]
-    if 'VERDICT_FAILED' in verdicts:
-      new_status = common_pb2.FAILURE
-    else:
-      new_status = common_pb2.SUCCESS
-    return new_test_cases, new_status
-
-  def exonerate_vmtests(
-      self, vm_builds: List[build_pb2.Build]
-  ) -> Tuple[List[build_pb2.Build], List[str]]:
-    """Exonerate the list of VM Test failures based on configs.
-
-    Args:
-      vm_builds([build_pb2.Build]): list of vm results from the proctor.
-
-    Returns:
-      [Build] with exonerated tests modified and [str] names of
-      tests that should be treated as success.
-    """
-    if not self._enable_exoneration:
-      return vm_builds, []
-
-    exonerated_test_names = []
-    new_vm_builds = []
-
-    with self.m.step.nest('exonerate vm tests') as pres:
-      if not self._configs_loaded:
-        self.load_configs()
-
-      for build in vm_builds:
-        if build.status == common_pb2.SUCCESS or build.critical == common_pb2.NO:
-          # If the test suite passed, do nothing.
-          new_vm_builds.append(build)
-        elif 'failed_test_cases' not in build.output.properties:
-          # If the test results are missing, do nothing.
-          new_vm_builds.append(build)
-        else:
-          new_build = build_pb2.Build()
-          new_build.CopyFrom(build)
-          build_target = self.m.cros_infra_config.get_build_target_name(build)
-          prop_struct = build.output.properties['failed_test_cases']
-          all_test_cases = json_format.MessageToDict(prop_struct)
-          display_name = self.m.naming.get_vm_test_title(build)
-          suite_name = self.m.rdb_util.get_suite(display_name)
-          if self._excludes_enabled and suite_name in self._excludes['suites']:
-            self._add_log('Excluding {} on {} from exoneration'.format(
-                suite_name, build_target))
-            new_vm_builds.append(build)
-            continue
-          new_test_cases, new_status = self.exonerate_vm_testcases(
-              all_test_cases, build_target)
-          new_build.status = new_status
-          new_build.output.properties.update(
-              {'failed_test_cases': new_test_cases})
-          if new_status == common_pb2.SUCCESS:
-            link_text = display_name
-            self._exoneration_link_map[
-                link_text] = self.m.buildbucket.build_url(build_id=build.id)
-            exonerated_test_names.append(display_name)
-            self._suite_stats_map[display_name] += 1
-            self._stats.suite_count += 1
-          new_vm_builds.append(new_build)
-
-      self._print_logs(pres)
-
-    return new_vm_builds, exonerated_test_names
-
   def is_exonerated(self, test_result):
     """Whether the test_result was exonerated.
 
@@ -795,67 +669,9 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return True
 
-  def is_vm_test_build_exonerable(
-      self, vm_build: build_pb2.Build,
-      exoneration_configs_override: Optional[Dict] = None,
-      exonerate_unexpected_skips: bool = False,
-      excludes_enabled_override: Optional[bool] = None) -> bool:
-    """Checks to see if the VM test is exonerable.
-
-    Args:
-      vm_build: The vm result to check if it is exonerable.
-      exoneration_configs_override: Alternate exoneration configs to use when
-          determining if the result is exonerable.
-      exonerate_unexpected_skips: Whether to exonerate tests which were
-          unexpectedly skipped. Unexpected skips are tests which did not run
-          because an infrastructure issue interrupted the test execution.
-      excludes_enabled_override: Whether to take into account the excludes
-          configs when exonerating. Overrides the module-level setting.
-
-    Returns:
-      True if and only if the result is a failure AND exonerable.
-      Note that it will return False if the result itself is a success.
-    """
-    if not (self._enable_exoneration or exoneration_configs_override):
-      return False
-
-    if (vm_build.status == common_pb2.SUCCESS or
-        vm_build.critical == common_pb2.NO):
-      return False
-
-    prop_struct = vm_build.output.properties.get_or_create_list(
-        'failed_test_cases')
-    all_test_cases = json_format.MessageToDict(prop_struct)
-    if not all_test_cases:
-      return exonerate_unexpected_skips
-
-    if not (self._configs_loaded or exoneration_configs_override):
-      self.load_configs()
-
-    excludes_enabled = self._excludes_enabled
-    if excludes_enabled_override is not None:
-      excludes_enabled = excludes_enabled_override
-
-    display_name = self.m.naming.get_vm_test_title(vm_build)
-    suite_name = self.m.rdb_util.get_suite(display_name)
-    build_target = self.m.cros_infra_config.get_build_target_name(vm_build)
-    for test_case in all_test_cases:
-      if test_case['verdict'] == 'VERDICT_FAILED':
-        if test_case.get(
-            'humanReadableSummary'
-        ) == MISSING_TEST_FAILURE_SUMMARY and exonerate_unexpected_skips:
-          continue
-        if excludes_enabled and (suite_name in self._excludes['suites'] or
-                                 test_case['name'] in self._excludes['tests']):
-          return False
-        if not self._is_test_name_exonerable(test_case['name'], build_target,
-                                             exoneration_configs_override):
-          return False
-    return True
-
   def get_prev_failed_now_exonerable_test_results(
       self, test_plan: GenerateTestPlanResponse,
-      dry_run=False) -> Tuple[List[build_pb2.Build], List[SkylabResult]]:
+      dry_run=False) -> List[SkylabResult]:
     """Get the tests from the previous failed runs that are now exonerable.
 
     Args:
@@ -863,41 +679,27 @@ class ExonerateApi(recipe_api.RecipeApi):
       the results from previous runs.
 
     Returns:
-      A tuple containing the list of exonerable VM test builds and the list
-      of exonerable HW test results.
+      A list of exonerable HW test results.
     """
 
-    def _get_step_text(ex_vms, ex_hws):
-      return 'found %d vm suite%s and %d hw suite%s' % (
-          len(ex_vms), 's' if len(ex_vms) > 1 else '', len(ex_hws),
-          's' if len(ex_hws) > 1 else '')
+    def _get_step_text(ex_hws):
+      return 'found %d suite%s' % (len(ex_hws), 's' if len(ex_hws) > 1 else '')
 
-    def _log_results(ex_vms, ex_hws):
-      vm_suites_names = sorted(ex_vms)
+    def _log_results(ex_hws):
       hw_suites_names = sorted(ex_hws)
       presentation.logs['exonerable tests'] = (
           'Test Suites that previously failed '
-          'but now exonerable \n') + 'VM test suites:\n ' + '\n '.join(
-              vm_suites_names) + '\n\nHW test suites:\n ' + '\n '.join(
-                  hw_suites_names)
+          'but now exonerable \n'
+      ) + '\n\nHW test suites:\n ' + '\n '.join(hw_suites_names)
 
     with self.m.step.nest(
         'get previous failed and now exonerable suites') as presentation:
+      if dry_run:
+        return []
 
-      vm_test_results, hw_test_results = self.m.cros_history.get_previous_test_results(
+      _, hw_test_results = self.m.cros_history.get_previous_test_results(
           test_plan)
       passed_tests = self.m.cros_history.get_passed_tests()
-
-      # Exonerate VM test results.
-      vm_test_results, exonerated_vm_suites = self.exonerate_vmtests(
-          vm_test_results)
-      exonerated_vm_suites = [
-          x for x in exonerated_vm_suites if x not in passed_tests
-      ]
-      exonerated_vm_test_results = [
-          x for x in vm_test_results
-          if self.m.naming.get_vm_test_title(x) in exonerated_vm_suites
-      ]
 
       # Exonerate HW test results.
       hw_test_results, exonerated_hw_suites = self.exonerate_hwtests(
@@ -913,12 +715,9 @@ class ExonerateApi(recipe_api.RecipeApi):
       # Clear failed tests because they were from prev execution.
       self.clear_failed_tests()
 
-      presentation.step_text = _get_step_text(exonerated_vm_suites,
-                                              exonerated_hw_suites)
-      _log_results(exonerated_vm_suites, exonerated_hw_suites)
-      if dry_run:
-        return [], []
-      return exonerated_vm_test_results, exonerated_hw_test_results
+      presentation.step_text = _get_step_text(exonerated_hw_suites)
+      _log_results(exonerated_hw_suites)
+      return exonerated_hw_test_results
 
   def auto_exoneration_analysis_v2(self, failed_tests: Set[FailedTest] = None,
                                    fake_data=None) -> None:

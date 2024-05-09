@@ -10156,10 +10156,9 @@
     "name": "run tests.schedule tests.get previous failed and now exonerable suites",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 0 vm suite and 0 hw suite@@@",
+      "@@@STEP_TEXT@found 0 suite@@@",
       "@@@STEP_LOG_LINE@exonerable tests@Test Suites that previously failed but now exonerable @@@",
-      "@@@STEP_LOG_LINE@exonerable tests@VM test suites:@@@",
-      "@@@STEP_LOG_LINE@exonerable tests@ @@@",
+      "@@@STEP_LOG_LINE@exonerable tests@@@@",
       "@@@STEP_LOG_LINE@exonerable tests@@@@",
       "@@@STEP_LOG_LINE@exonerable tests@HW test suites:@@@",
       "@@@STEP_LOG_LINE@exonerable tests@ @@@",
