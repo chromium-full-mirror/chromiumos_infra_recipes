@@ -553,8 +553,8 @@ class CrosSourceApi(RecipeApi):
     the output directory and it must not be on overlayfs, this function
     bind-mounts a non-overlayfs directory to the output directory path.
     """
-    real_dir = self.m.path.cache_dir.join('bazel-cache')
-    mount_dir = self.workspace_path.join('.cache/bazel')
+    real_dir = self.m.path.cache_dir / 'bazel-cache'
+    mount_dir = self.workspace_path / '.cache/bazel'
     self.m.file.ensure_directory('ensure bazel cache dir', real_dir)
     self.m.file.ensure_directory('ensure bazel cache mountpoint', mount_dir)
     # Note that we don't need to unmount this bind-mount explicitly because it
