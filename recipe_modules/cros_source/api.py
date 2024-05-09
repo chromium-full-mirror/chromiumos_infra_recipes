@@ -1492,8 +1492,14 @@ class CrosSourceApi(RecipeApi):
         # TODO(b/186770501): Changing branches can take a while.
         sync_opts['timeout'] = 7200
       sync_opts.update(kwargs)
-      self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
-                                **sync_opts)
+      try:
+        self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
+                                  **sync_opts)
+      except StepFailure:
+        sync_opts['force_remove_dirty'] = True
+        self.m.easy.set_properties_step(force_remove_dirty=True)
+        self.m.repo.sync_manifest(manifest_url, manifest_data=snapshot_xml,
+                                  **sync_opts)
       # TODO(crbug/1168649): Create partial manifest if projects is not None.
       if not projects:
         # Get the pinned manifest from repo.  If that returns None, then we
