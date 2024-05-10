@@ -653,7 +653,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         presentation.step_text = 'CQ looks not enabled. Using original snapshot'
         return chosen_internal, chosen_external
 
-      self.m.looks_for_green.resize_lfg_lookback(necessary_builder_names)
+      self.m.looks_for_green.resize_lfg_lookback(gerrit_changes,
+                                                 necessary_builder_names)
       suggested_internal = self.m.looks_for_green.find_green_snapshot(
           requested_snapshot_builders=_requested_snapshot_builders())
 

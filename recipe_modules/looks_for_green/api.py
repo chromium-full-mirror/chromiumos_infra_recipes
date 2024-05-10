@@ -164,28 +164,15 @@ class LooksForGreenApi(recipe_api.RecipeApi):
         self.set_stats()
         return False
       depended_cls = self.m.lfg_util.get_depended_cls(gerrit_changes)
-      if depended_cls:
-        submit_time = self.m.lfg_util.latest_submission_time(
-            depended_cls, step_test_data=self._test_submission_data)
-        if submit_time is None:
-          # A CQ shouldn't be launched if any of the depended CLs are not included
-          # in the run and are not submitted.
-          # This clause covers the case of gerritAPI crash.
-          self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
-          pres.step_text = 'Skipping looks for green due to depended cl(s) not being submitted'
-          self.set_stats()
-          return False
-        hours_since_submission = (self.m.time.utcnow() -
-                                  submit_time).total_seconds() / (60 * 60)
-        self.lookback_hours = min(self.lookback_hours,
-                                  hours_since_submission - 1)
-        pres.logs['reduced_lookback'] = '\n'.join([
-            f'One of the depended CLs was submitted {hours_since_submission:.2f} hours ago.',
-            'Since it can take up to 30 mins from submission for Annealing to kick off and',
-            '10-15 mins for annealing to complete, lookback should be atleast an hour less.',
-            f'lfg lookback is now {self.lookback_hours:.2f} hours.',
-        ])
-        pres.text = f'lfg lookback is now {self.lookback_hours:.2f} hours.'
+      if depended_cls and not self.m.lfg_util.latest_submission_time(
+          depended_cls, step_test_data=self._test_submission_data):
+        # A CQ shouldn't be launched if any of the depended CLs are not included
+        # in the run and are not submitted.
+        # This clause covers the case of gerritAPI crash.
+        self._stats.status = LooksForGreenStatus.STATUS_FOUND_NONE
+        pres.step_text = 'Skipping looks for green due to depended cl(s) not being submitted'
+        self.set_stats()
+        return False
       self.set_stats()
 
     return True
@@ -478,14 +465,37 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
       return found_disallow
 
-  def resize_lfg_lookback(self, builders_to_be_scheduled: List[str]) -> None:
-    """Change LFG lookback based on which builders are about to run & broken_until entries.
+  def resize_lfg_lookback(self, gerrit_changes: List[GerritChange],
+                          builders_to_be_scheduled: List[str]) -> float:
+    """Change LFG lookback based on the given parameters.
+
+    Lookback can be resized based on depended changes and/or broken_until.
 
     Args:
+      gerrit_changes: Gerrit changes to analyze.
       builders_to_be_scheduled: List of builders that need to be scheduled.
+
+    Returns:
+      The resized lookback hours.
     """
-    with self.m.step.nest('resize LFG lookback window') as pres:
-      global_hours_since_breakage = 7 * 24
+    # Initialize to 2 weeks ago which should be a high enough value since we're
+    # determining the minimum.
+    hours_since_submission = 14 * 24
+    with self.m.step.nest('resize depended cls') as pres:
+      depended_cls = self.m.lfg_util.get_depended_cls(gerrit_changes)
+      if depended_cls:
+        submit_time = self.m.lfg_util.latest_submission_time(
+            depended_cls, step_test_data=self._test_submission_data)
+        if submit_time:
+          hours_since_submission = (self.m.time.utcnow() -
+                                    submit_time).total_seconds() / (60 * 60)
+        pres.logs['depended_cls'] = (
+          'One of the depended CLs was submitted ' + \
+          f'{hours_since_submission:.2f} hours ago.'
+        )
+
+    global_hours_since_breakage = 7 * 24
+    with self.m.step.nest('resize broken until') as pres:
       log = []
       for builder in builders_to_be_scheduled:
         config = self.m.cros_infra_config.get_builder_config(builder)
@@ -498,10 +508,17 @@ class LooksForGreenApi(recipe_api.RecipeApi):
                 f'{builder} was broken till {hours_since_breakage} hours ago.')
             global_hours_since_breakage = min(global_hours_since_breakage,
                                               hours_since_breakage)
+      pres.logs['broken_until'] = log
 
+    with self.m.step.nest('resize LFG lookback window') as pres:
       self.lookback_hours = min(
           self.lookback_hours,
+          # Reduce by 1 hour to account for the creation of the next snapshot +
+          # the annealing run.
+          hours_since_submission - 1,
           # Reduce by 30 mins to account for creation of the next snapshot.
           global_hours_since_breakage - 0.5)
-      log.append(f'LFG lookback window is now {self.lookback_hours} hours')
-      pres.logs['broken_until logs'] = log
+      pres.step_text = (
+          f'LFG lookback window is now {self.lookback_hours} hours')
+
+    return self.lookback_hours
