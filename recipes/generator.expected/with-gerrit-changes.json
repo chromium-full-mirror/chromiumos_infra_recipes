@@ -1996,6 +1996,7 @@
     "cmd": [
       "[START_DIR]/cipd/support/gerrit-fetch-changes"
     ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {

@@ -519,7 +519,8 @@ class GeneratorRun:
     self.prevent_production_changes() should also be called.
     """
     if self.m.src_state.gerrit_changes:
-      with self.m.step.nest('cherry-pick gerrit changes'):
+      with self.m.step.nest('cherry-pick gerrit changes'), self.m.context(
+          cwd=self.m.cros_source.workspace_path):
         self.m.cros_source.apply_gerrit_changes(self.m.src_state.gerrit_changes)
 
   def prevent_production_changes(self) -> None:
