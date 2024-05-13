@@ -7,11 +7,8 @@
 
 from typing import Dict, List, Union
 
-from google.protobuf import json_format
-
 from PB.chromiumos import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
-from PB.recipes.chromeos.tast_vm import TastVmProperties
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -44,11 +41,7 @@ class NamingApi(recipe_api.RecipeApi):
     Returns:
       A str describing the test.
     """
-    if isinstance(test, build_pb2.Build):
-      return self.get_vm_test_title(test)
-    if isinstance(test, SkylabResult):
-      return self.get_skylab_result_title(test)
-    raise StepFailure('Expected Build or SkylabResult,' 'got %s' % type(test))
+    return self.get_skylab_result_title(test)
 
   @staticmethod
   def get_hw_test_title(hw_test: HwTestCfg.HwTest) -> str:
@@ -83,22 +76,6 @@ class NamingApi(recipe_api.RecipeApi):
       The HW test title.
     """
     return self.get_skylab_task_title(skylab_result.task)
-
-  @staticmethod
-  def get_vm_test_title(vm_test: build_pb2.Build) -> str:
-    """Get a string to describe the VM test.
-
-    Args:
-      vm_test: The buildbucket build for the VM test.
-
-    Returns:
-      A string describing the VM test.
-    """
-    all_properties = vm_test.input.properties or vm_test.output.properties
-    input_properties = json_format.Parse(
-        json_format.MessageToJson(all_properties), TastVmProperties(),
-        ignore_unknown_fields=True)
-    return input_properties.name
 
   @staticmethod
   def get_commit_title(commit: Commit) -> str:

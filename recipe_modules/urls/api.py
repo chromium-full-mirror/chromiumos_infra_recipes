@@ -8,8 +8,6 @@
 import collections
 from typing import Dict
 
-from google.protobuf import json_format
-
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.test_platform.taskstate import TaskState
@@ -21,7 +19,6 @@ from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabTask
 _LOGDOG_URL_TEMPLATE = (
     'https://%(logdog_hostname)s/logs/%(logdog_project)s/%(logdog_prefix)s/'
     '+/u/%(step_name)s/%(log_name)s')
-VM_FAILURE_LINK_TEXT = 'test page'
 
 
 class UrlsApi(recipe_api.RecipeApi):
@@ -38,29 +35,6 @@ class UrlsApi(recipe_api.RecipeApi):
     """
     link_url = self.m.buildbucket.build_url(build_id=build.id)
     return {'build page': link_url}
-
-  def get_vm_test_link_map(self, vm_test: build_pb2.Build) -> Dict[str, str]:
-    """Returns a {title: URL} dict for the given VM test build.
-
-    Args:
-      vm_test: The VM test build in question.
-
-    Returns:
-      Dict of {title: URL} pointing to the vm_test's MILO page.
-      For direct-vm tests, the individual failing tests are listed.
-    """
-    link_url = self.m.buildbucket.build_url(build_id=vm_test.id)
-    if 'failed_test_cases' in vm_test.output.properties and len(
-        vm_test.output.properties['failed_test_cases']) > 0:
-      prop_struct = vm_test.output.properties['failed_test_cases']
-      failed_test_cases_json = json_format.MessageToDict(prop_struct)
-      link_map = {}
-      for test_case_json in failed_test_cases_json:
-        if test_case_json['verdict'] == 'VERDICT_FAILED':
-          link_map[test_case_json['name']] = link_url
-
-      return link_map
-    return {VM_FAILURE_LINK_TEXT: link_url}
 
   @staticmethod
   def get_skylab_task_url(skylab_task: SkylabTask) -> str:

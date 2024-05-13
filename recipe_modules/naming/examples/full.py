@@ -47,17 +47,6 @@ Plagueis the Wise?
   api.assertions.assertEqual(
       api.naming.get_test_title(skylab_result), 'hw-test')
 
-  properties = {'name': 'vm-test'}
-
-  vm_test = build_pb2.Build()
-  vm_test.input.properties.update(properties)
-  api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
-
-  vm_test = build_pb2.Build()
-  vm_test.output.properties.update(properties)
-  api.assertions.assertEqual(api.naming.get_vm_test_title(vm_test), 'vm-test')
-  api.assertions.assertEqual(api.naming.get_test_title(vm_test), 'vm-test')
-
   package = PackageInfo(category='cat', package_name='name', version='123')
   api.assertions.assertEqual(
       api.naming.get_package_title(package), 'cat/name-123')

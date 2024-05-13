@@ -24,11 +24,6 @@ def RunSteps(api):
       api.urls.get_build_link_map(build),
       {'build page': api.buildbucket.build_url(build_id=123)})
 
-  build = build_pb2.Build(id=123)
-  api.assertions.assertEqual(
-      api.urls.get_vm_test_link_map(build),
-      {'test page': api.buildbucket.build_url(build_id=123)})
-
   skylab_task = api.skylab_results.test_api.skylab_task(url='skylab.whatever')
   api.assertions.assertEqual(
       api.urls.get_skylab_task_url(skylab_task), 'skylab.whatever')
