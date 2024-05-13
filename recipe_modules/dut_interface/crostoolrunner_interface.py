@@ -604,6 +604,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     skylab_test_results = []
     missing_test_names = []
     tast_test_exists = False
+    results_dir = None
     with self._api.step.nest('CrosToolRunner: upload to rdb') as presentation:
       test_case_metadata_list = TestCaseMetadataList()
       # Iterate through the test_dut_responses(CrosToolRunnerTestDUTResponse type).
@@ -712,12 +713,14 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           self._api.cros_resultdb.upload(chromium_rdb_config,
                                          str(metadata.testhaus_logs_url))
         else:
+          results_dir_str = str(
+              results_dir) if results_dir else metadata.artifact_dir
           # Process tauto tests
           skylab_test_runner_result = Skylab_Result(
               autotest_result=Skylab_Result.Autotest(
                   test_cases=skylab_test_results))
           autotest_rdb_config = self._autotest_results_rdb_config(
-              skylab_test_runner_result,
+              results_dir_str, skylab_test_runner_result,
               temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
               test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
               metadata, skip_board_model_check, visibility_mode, custom_realm)
@@ -826,7 +829,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     return config
 
   def _autotest_results_rdb_config(
-      self, test_runner_result, test_runner_result_file_path,
+      self, results_dir, test_runner_result, test_runner_result_file_path,
       test_metadata_file_content, test_metadata_file_path, metadata,
       skip_board_model_check=False,
       visibility_mode=TestResultVisibility.TEST_RESULTS_VISIBILITY_UNSPECIFIED,
@@ -834,6 +837,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     """Build rdb config for tauto test results.
 
     Args:
+      results_dir (str): path to test results dir.
       test_runner_result (Skylab_Result): skylab test runner results.
       test_runner_result_file_path (str): path to test runner results file.
       test_metadata_file_content (str): CFT test metadata file contents.
@@ -848,14 +852,18 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
     self._api.file.write_proto('write skylab_test_runner result',
                                test_runner_result_file_path, test_runner_result,
                                'JSONPB')
-
+    artifact_dir_arr = results_dir.split('/{}/'.format(self.ARTIFACT_DIR_NAME))
+    has_artifact_dir = len(artifact_dir_arr) > 1
+    artifact_dir = self._api.path.join(
+        artifact_dir_arr[0],
+        self.ARTIFACT_DIR_NAME) if has_artifact_dir else None
     config = {
         'result_format': 'skylab-test-runner',
         'base_variant': metadata.rdb_base_variant,
         'base_tags': metadata.rdb_base_tags,
         'sources_file': metadata.rdb_sources_file,
         'result_file': test_runner_result_file_path,
-        'artifact_directory': None,
+        'artifact_directory': artifact_dir,
         'skip_board_model_check': skip_board_model_check,
         'visibility_mode': visibility_mode,
         'custom_realm': custom_realm
