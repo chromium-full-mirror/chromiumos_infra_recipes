@@ -3104,6 +3104,344 @@
   },
   {
     "cmd": [],
+    "name": "board1.build status pubsub update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"1\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDFAAQ==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update.publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDFAAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"2\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (2).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDEqJxIlCgxTVEVQX09WRVJBTEwSFQgBEMgBGg4KDAjEgMT9BBCAyrXuAUAC',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update (2).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDEqJxIlCgxTVEVQX09WRVJBTEwSFQgBEMgBGg4KDAjEgMT9BBCAyrXuAUAC\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"3\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (3).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiIwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFAAw==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update (3).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiIwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFAAw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"4\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (4).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFABA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update (4).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gFABA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "board1.upload artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -3582,6 +3920,205 @@
   },
   {
     "cmd": [],
+    "name": "board1.publish artifacts to pubsub",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184', files_by_artifact=defaultdict(<class 'list'>, {'FIRMWARE_TARBALL': ['board1/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['board1/firmware_metadata.jsonpb']}))@@@",
+      "@@@STEP_LOG_END@uploaded artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/board1/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.publish artifacts to pubsub.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "[CLEANUP]/artifacts_tmp_1/board1/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.publish artifacts to pubsub.compute file size for board1/firmware_from_source.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/board1/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.publish artifacts to pubsub.build status pubsub update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"5\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.publish artifacts to pubsub.build status pubsub update.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDEvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AF',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIARDIARoOCgwIxIDE/QQQgMq17gE6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDEvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AF\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "board1.push image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3627,6 +4164,234 @@
     "name": "board1.push image.call pushimage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"6\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (5).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKDAjEgMT9BBCAyrXuARIGCMaAxP0EOowBCAMSfAp6Z3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Z3LWF0bGFzLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvYm9hcmQxL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update (5).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQxMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKi4SLAoMU1RFUF9PVkVSQUxMEhwIARBkGhYKDAjEgMT9BBCAyrXuARIGCMaAxP0EOowBCAMSfAp6Z3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Z3LWF0bGFzLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvYm9hcmQxL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ABg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board1\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:24.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:26Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board1/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"7\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board1.build status pubsub update (6).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCJHChcKFWZpcm13YXJlLWJvYXJkLTk5OTkuQhoICgZib2FyZDEyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoMCMSAxP0EEIDKte4BEgYIxoDE/QQ6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDEvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AH',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board1.build status pubsub update (6).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCJHChcKFWZpcm13YXJlLWJvYXJkLTk5OTkuQhoICgZib2FyZDEyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqLhIsCgxTVEVQX09WRVJBTEwSHAgBEGQaFgoMCMSAxP0EEIDKte4BEgYIxoDE/QQ6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDEvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AH\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -3760,6 +4525,344 @@
     "name": "board2.build board2.install packages",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"8\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDJACA==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update.publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDJACA==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"9\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (2).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDIqJxIlCgxTVEVQX09WRVJBTEwSFQgCEMgBGg4KDAjHgMT9BBCAyrXuAUAJ',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update (2).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiChoICgZib2FyZDIqJxIlCgxTVEVQX09WRVJBTEwSFQgCEMgBGg4KDAjHgMT9BBCAyrXuAUAJ\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"10\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (3).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiIwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gFACg==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update (3).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiIwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gFACg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (4)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"11\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (4).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gFACw==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update (4).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gFACw==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -4242,6 +5345,205 @@
   },
   {
     "cmd": [],
+    "name": "board2.publish artifacts to pubsub",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184', files_by_artifact=defaultdict(<class 'list'>, {'FIRMWARE_TARBALL': ['board2/firmware_from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['board2/firmware_metadata.jsonpb']}))@@@",
+      "@@@STEP_LOG_END@uploaded artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_2/board2/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.publish artifacts to pubsub.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "[CLEANUP]/artifacts_tmp_2/board2/firmware_from_source.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.publish artifacts to pubsub.compute file size for board2/firmware_from_source.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_2/board2/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.publish artifacts to pubsub.build status pubsub update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_RUNNING\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"12\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.publish artifacts to pubsub.build status pubsub update.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gE6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDIvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AM',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKicSJQoMU1RFUF9PVkVSQUxMEhUIAhDIARoOCgwIx4DE/QQQgMq17gE6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDIvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AM\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "board2.push image",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -4287,6 +5589,234 @@
     "name": "board2.push image.call pushimage",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (5)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"RUNNING\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:29Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"13\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (5).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKi4SLAoMU1RFUF9PVkVSQUxMEhwIAhBkGhYKDAjHgMT9BBCAyrXuARIGCMmAxP0EOowBCAMSfAp6Z3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Z3LWF0bGFzLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvYm9hcmQyL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADQ==',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update (5).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgMIyAEiRwoXChVmaXJtd2FyZS1ib2FyZC05OTk5LkIaCAoGYm9hcmQyMgIIATICCAIyBwgFEgMxMDkyDQgEEgkxNTIzNi4wLjAyAggDKi4SLAoMU1RFUF9PVkVSQUxMEhwIAhBkGhYKDAjHgMT9BBCAyrXuARIGCMmAxP0EOowBCAMSfAp6Z3M6Ly9jaHJvbWVvcy1pbWFnZS1hcmNoaXZlL2Z3LWF0bGFzLXBvc3RzdWJtaXQvUjEwOS0xNTIzNi4wLjAtMTAxLTg5NDU1MTE3NTE1MTQ4NjMxODQvYm9hcmQyL2Zpcm13YXJlX2Zyb21fc291cmNlLnRhci5iejIaCGRlYWRiZWVmKG9ADQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (6)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@message@{@@@",
+      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"value\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-board-9999.B\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"board2\"@@@",
+      "@@@STEP_LOG_LINE@message@    },@@@",
+      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ASH_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_CHROME\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"109\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"value\": \"15236.0.0\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      {@@@",
+      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_ARC\"@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    ]@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
+      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
+      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"order\": 2,@@@",
+      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
+      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
+      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:27.500Z\",@@@",
+      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:29Z\"@@@",
+      "@@@STEP_LOG_LINE@message@        }@@@",
+      "@@@STEP_LOG_LINE@message@      }@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/fw-atlas-postsubmit/R109-15236.0.0-101-8945511751514863184/board2/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
+      "@@@STEP_LOG_LINE@message@  \"count\": \"14\"@@@",
+      "@@@STEP_LOG_LINE@message@}@@@",
+      "@@@STEP_LOG_END@message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "board2.build status pubsub update (6).publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCJHChcKFWZpcm13YXJlLWJvYXJkLTk5OTkuQhoICgZib2FyZDIyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqLhIsCgxTVEVQX09WRVJBTEwSHAgCEGQaFgoMCMeAxP0EEIDKte4BEgYIyYDE/QQ6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDIvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AO',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "board2.build status pubsub update (6).publish message.publish-message",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCJHChcKFWZpcm13YXJlLWJvYXJkLTk5OTkuQhoICgZib2FyZDIyAggBMgIIAjIHCAUSAzEwOTINCAQSCTE1MjM2LjAuMDICCAMqLhIsCgxTVEVQX09WRVJBTEwSHAgCEGQaFgoMCMeAxP0EEIDKte4BEgYIyYDE/QQ6jAEIAxJ8CnpnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvZnctYXRsYXMtcG9zdHN1Ym1pdC9SMTA5LTE1MjM2LjAuMC0xMDEtODk0NTUxMTc1MTUxNDg2MzE4NC9ib2FyZDIvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AO\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -4441,7 +5971,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {\n        \"board1\": {},\n        \"board2\": {}\n    },\n    \"boards\": [\n        \"board1\",\n        \"board2\"\n    ],\n    \"bot-config\": \"fw-atlas-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"fw-atlas-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:24\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
+      "{\n    \"board-metadata\": {\n        \"board1\": {},\n        \"board2\": {}\n    },\n    \"boards\": [\n        \"board1\",\n        \"board2\"\n    ],\n    \"bot-config\": \"fw-atlas-postsubmit\",\n    \"branch\": \"firmware-board-9999.B\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"fw-atlas-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:53:30\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"full\": \"R109-15236.0.0\",\n        \"milestone\": 109,\n        \"platform\": \"15236.0.0\",\n        \"with_snapshot\": \"R109-15236.0.0-101\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -4505,7 +6035,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:24\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:53:30\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
@@ -4662,7 +6192,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0005@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.001@@@"
     ]
   },
   {

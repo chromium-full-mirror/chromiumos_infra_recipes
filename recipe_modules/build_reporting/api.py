@@ -143,15 +143,29 @@ class BuildReportingApi(recipe_api.RecipeApi):
     return self._build_report
 
   def set_build_type(self, build_type, build_target):
-    """Set the type for the build, must be set once and only once."""
+    """Set the type for the build, must be set once and only once using this method."""
     if not build_type in BuildReport.BuildType.values():
       raise ValueError("Invalid build type '%d', must be value defined in "
                        'BuildReport.BuildType' % build_type)
     if self._build_type is not None:
-      raise RuntimeError('Build type can only be set once.')
+      raise RuntimeError(
+          'Build type can only be directly set once. Use reset_build_report to change.'
+      )
 
     self._build_type = build_type
     self._build_target = build_target
+
+  def reset_build_report(self, build_target, build_type=None):
+    """Resets build properties.
+
+    Sets the build report to a new BuildReport object, _build_target and
+    _build_type to the given args, and clears _build_preamble_sent.
+    """
+    self._build_report = BuildReport()
+    self._build_target = build_target
+    self._build_preamble_sent = False
+    if build_type:
+      self._build_type = build_type
 
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
@@ -617,6 +631,9 @@ class BuildReportingApi(recipe_api.RecipeApi):
           BuilderConfig.Artifacts.FIRMWARE:
               (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
                'firmware_from_source.tar.bz2'),
+          BuilderConfig.Artifacts.FIRMWARE_TARBALL:
+              (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
+               'firmware_from_source.tar.bz2'),
           BuilderConfig.Artifacts.HWQUAL:
               (BuildReport.BuildArtifact.HWQUAL_ARCHIVE,
                files_by_artifact.get('HWQUAL', [None])[0]),
@@ -637,13 +654,19 @@ class BuildReportingApi(recipe_api.RecipeApi):
           # TODO(b/303704765): Throw error if file is missing?
           for f in files:
             if desired_file == self.m.path.basename(f):
+              # Firmware artifacts paths include build target for
+              # supporting multiple targets in the same build.
               artifact_local_path = self.m.path.join(artifact_dir, f)
               file_hash = self.m.file.file_hash(artifact_local_path,
                                                 test_data='deadbeef')
-
-              uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
-                                               uploaded_artifacts.gs_path,
-                                               desired_file)
+              if self._build_type == BuildReport.BUILD_TYPE_FIRMWARE:
+                uri = 'gs://' + self.m.path.join(
+                    uploaded_artifacts.gs_bucket, uploaded_artifacts.gs_path,
+                    self._build_target, desired_file)
+              else:
+                uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
+                                                 uploaded_artifacts.gs_path,
+                                                 desired_file)
               build_report.artifacts.append(
                   BuildReport.BuildArtifact(
                       type=build_report_artifact_type,

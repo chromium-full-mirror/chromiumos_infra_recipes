@@ -14,9 +14,11 @@ from collections import defaultdict
 from contextlib import contextmanager
 
 from PB.chromite.api.firmware import FirmwareArtifactInfo
+from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
+from PB.chromiumos.build_report import BuildReport
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.build_legacy_fw import BuildLegacyFwProperties
@@ -34,6 +36,7 @@ DEPS = [
     'recipe_engine/step',
     'depot_tools/depot_tools',
     'build_menu',
+    'build_reporting',
     'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
@@ -595,22 +598,44 @@ class FirmwareBuilder():
         self.m.bcid_reporter.report_stage('compile')
 
     with self._setup():
+      self.m.build_reporting.set_build_type(
+          BuildReport.BUILD_TYPE_FIRMWARE,
+          self.properties.build_targets[0].name)
       for bt in self.properties.build_targets:
         with self._maybe_step(bt.name, len(self.properties.build_targets) > 1):
+          # Reset the build report for each target to have a separate report per-target.
+          self.m.build_reporting.reset_build_report(bt.name)
           self._setup_board_and_install_packages(bt)
-          try:
-            bt_uploaded, _ = self.m.build_menu.upload_artifacts(
-                private_bundle_func=self._bundle_firmware,
-                sysroot=Sysroot(path='/build/{}'.format(bt.name),
-                                build_target=bt), report_to_spike=self.m
-                .cros_infra_config.config.artifacts.attestation_eligible)
-          except NoFilesToUploadFailure as e:
-            # If one build target fails, continue with the other build targets
-            # and fail at the end.
-            step_failures.append(e)
-            continue
-          all_uploaded.append(bt_uploaded)
-          self._push_image(bt)
+          with self.m.build_reporting.status_reporting():
+            with self.m.build_reporting.step_reporting(
+                BuildReport.StepDetails.STEP_OVERALL,
+                raise_on_failed_publish=True):
+              branch = self.m.src_state.gitiles_commit.ref
+              if branch.startswith('refs/heads/'):
+                branch = branch[len('refs/heads/'):]
+              self.m.build_reporting.publish_branch(branch)
+
+              target_versions = GetTargetVersionsResponse(
+                  milestone_version=str(self._bcs_version.milestone),
+                  platform_version=self._bcs_version.platform_version)
+              self.m.build_reporting.publish_versions(target_versions)
+              try:
+                (bt_uploaded,
+                 artifact_dir) = self.m.build_menu.upload_artifacts(
+                     private_bundle_func=self._bundle_firmware,
+                     sysroot=Sysroot(path='/build/{}'.format(bt.name),
+                                     build_target=bt), report_to_spike=self.m
+                     .cros_infra_config.config.artifacts.attestation_eligible)
+                if bt_uploaded:
+                  self.m.build_reporting.publish_build_artifacts(
+                      bt_uploaded, artifact_dir)
+              except NoFilesToUploadFailure as e:
+                # If one build target fails, continue with the other build targets
+                # and fail at the end.
+                step_failures.append(e)
+                continue
+              all_uploaded.append(bt_uploaded)
+              self._push_image(bt)
 
     with self.m.failures.ignore_exceptions():
       if self.m.cros_infra_config.config.artifacts.attestation_eligible:

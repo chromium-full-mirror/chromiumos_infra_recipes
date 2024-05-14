@@ -10,6 +10,7 @@ import datetime
 import json
 import os
 
+from RECIPE_MODULES.chromeos.cros_artifacts import api as cros_artifacts_api
 from PB.chromite.api.packages import GetBuilderMetadataResponse
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.common import Channel
@@ -18,6 +19,7 @@ from recipe_engine.recipe_api import StepFailure
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/time',
     'build_reporting',
 ]
@@ -57,22 +59,23 @@ def RunSteps(api):
   )
 
   # basic build setup
-  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_RELEASE,
+  api.build_reporting.set_build_type(api.properties['build_type'],
                                      'build_target')
   api.assertions.assertEqual(
       api.build_reporting.build_type,
-      BuildReport.BUILD_TYPE_RELEASE,
+      api.properties['build_type'],
   )
 
   # test that we can't send a message that's not a BuildReport
   api.assertions.assertRaisesRegexp(TypeError, 'Can only publish BuildReport',
                                     api.build_reporting.publish, {})
 
-  # test that we can only set the build type once
-  api.assertions.assertRaisesRegexp(RuntimeError, 'only be set once',
-                                    api.build_reporting.set_build_type,
-                                    BuildReport.BUILD_TYPE_RELEASE,
-                                    'build_target')
+  # test that we can only set the build type once when setting directly with set_build_type.
+  api.assertions.assertRaisesRegexp(
+      RuntimeError,
+      'only be directly set once. Use reset_build_report to change.',
+      api.build_reporting.set_build_type, api.properties['build_type'],
+      'build_target')
 
   # Test that we can't send process builder meta with multiple build targets.
   response = GetBuilderMetadataResponse()
@@ -144,11 +147,34 @@ def RunSteps(api):
   api.assertions.assertEqual(build_report.config.android_container_target.name,
                              'target-1234')
 
+  # Check that we can reset build report with a different build target.
+  api.build_reporting.reset_build_report('some_other_build_target',
+                                         api.properties['build_type'])
+  api.build_reporting.publish_status(BuildStatus.RUNNING)
+  api.build_reporting.publish_build_artifacts(
+      cros_artifacts_api.UploadedArtifacts(
+          'chromeos-image-archive', 'build_target-firmware/R12-12345.0.0',
+          {'FIRMWARE': ['firmware_from_source.tar.bz2']}), '/path/to/artifacts')
+  build_report = api.build_reporting.merged_build_report
+  api.assertions.assertEqual(
+      build_report.buildbucket_id,
+      api.buildbucket.build.id,
+  )
+  api.assertions.assertEqual(build_report.config.target.name,
+                             'some_other_build_target')
+  api.assertions.assertEqual(build_report.status.value, BuildStatus.RUNNING)
+
+
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic',
+                 api.properties(build_type=BuildReport.BUILD_TYPE_RELEASE))
+
+  yield api.test('basic-firmware',
+                 api.properties(build_type=BuildReport.BUILD_TYPE_FIRMWARE))
 
   yield api.test(
       'basic-staging',
+      api.properties(build_type=BuildReport.BUILD_TYPE_RELEASE),
       api.buildbucket.generic_build(builder='staging-backfiller'),
   )
