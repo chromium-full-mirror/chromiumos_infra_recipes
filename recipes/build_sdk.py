@@ -402,7 +402,9 @@ class BuildSDKRun:
       gs://chromiumos-sdk/cros-sdk-${version}.tar.xz
     where ${version} is the SDK version.
     """
-    return GSURI(self._sdk_bucket, f'cros-sdk-{self.version}.tar.xz')
+    # Given a path like /foo/bar.tar.xz, peel off the "tar.xz".
+    stems = ''.join(self._sdk_tarball_path.suffixes)
+    return GSURI(self._sdk_bucket, f'cros-sdk-{self.version}{stems}')
 
   def _upload_sdk_manifest(self) -> None:
     """Upload the SDK tarball to Google Storage.
