@@ -577,8 +577,8 @@ class BuildSDKRun:
 
   def _get_gs_link_to_sdk(self) -> str:
     """Return a https:// link to the built SDK tarball."""
-    return (f'https://storage.googleapis.com/{self._sdk_bucket}/'
-            f'cros-sdk-{self.version}.tar.xz')
+    uri = self._get_sdk_tarball_upload_uri()
+    return f'https://storage.googleapis.com/{uri.bucket}/{uri.path}'
 
 
 def _assert_uploads_to_buckets(
