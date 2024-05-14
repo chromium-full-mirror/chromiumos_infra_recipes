@@ -714,12 +714,12 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     )
     responses['BuildSdkTarball'] = jsonify(
         sdk_tarball_path={
-            'path': self.src_path('built-sdk.tar.xz'),
+            'path': self.src_path('built-sdk.tar.zst'),
             'location': 2,  # chromiumos.Path.Location.OUTSIDE
         })
     responses['CreateManifestFromSdk'] = jsonify(
         manifest_path={
-            'path': self.src_path('built-sdk.tar.xz.Manifest'),
+            'path': self.src_path('built-sdk.tar.zst.Manifest'),
             'location': 2,  # chromium.Path.Location.OUTSIDE
         })
     responses['CreateBinhostCLs'] = jsonify(cls=[

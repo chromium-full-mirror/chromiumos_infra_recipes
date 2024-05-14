@@ -638,12 +638,12 @@ def _assert_uploads_to_buckets(
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk tarball.gsutil upload',
-          [f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.xz']))
+          [f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.zst']))
   post_checks.append(
       api.post_check(
           post_process.StepCommandContains,
           'upload sdk tarball and manifest.upload sdk manifest.gsutil upload', [
-              f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.xz.Manifest'
+              f'gs://{prefix}chromiumos-sdk/cros-sdk-{sdk_version}.tar.zst.Manifest'
           ]))
   post_checks.append(
       api.post_check(

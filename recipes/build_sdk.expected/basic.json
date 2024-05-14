@@ -2293,7 +2293,7 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"sdk_tarball_path\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@    \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz\"@@@",
+      "@@@STEP_LOG_LINE@response@    \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.zst\"@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -2393,7 +2393,7 @@
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"manifest_path\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@    \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest\"@@@",
+      "@@@STEP_LOG_LINE@response@    \"path\": \"[CLEANUP]/chromiumos_workspace/built-sdk.tar.zst.Manifest\"@@@",
       "@@@STEP_LOG_LINE@response@  }@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
@@ -2624,15 +2624,15 @@
       "cp",
       "-a",
       "public-read",
-      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz",
-      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz"
+      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.zst",
+      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload sdk tarball and manifest.upload sdk tarball.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst@@@"
     ]
   },
   {
@@ -2653,23 +2653,23 @@
       "cp",
       "-a",
       "public-read",
-      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.xz.Manifest",
-      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest"
+      "[CLEANUP]/chromiumos_workspace/built-sdk.tar.zst.Manifest",
+      "gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "upload sdk tarball and manifest.upload sdk manifest.gsutil upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest@@@"
     ]
   },
   {
     "cmd": [],
     "name": "report uploads",
     "~followup_annotations": [
-      "@@@STEP_LINK@sdk_tarball@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz@@@",
-      "@@@STEP_LINK@sdk_manifest@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest@@@",
+      "@@@STEP_LINK@sdk_tarball@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst@@@",
+      "@@@STEP_LINK@sdk_manifest@gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest@@@",
       "@@@STEP_LINK@host_prebuilts@gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages@@@",
       "@@@STEP_LINK@target_prebuilts@gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages@@@",
       "@@@STEP_LINK@toolchain_prebuilts_foo@gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz@@@",
@@ -2681,7 +2681,7 @@
     "name": "report uploads.set uploaded_files",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@uploaded_files@{\"host_prebuilts\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"sdk_manifest\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz.Manifest\", \"sdk_tarball\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz\", \"target_prebuilts\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\", \"toolchain_prebuilts_bar\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"toolchain_prebuilts_foo\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\"}@@@"
+      "@@@SET_BUILD_PROPERTY@uploaded_files@{\"host_prebuilts\": \"gs://chromeos-prebuilt/host/amd64/amd64-host/chroot-1970.01.01.999/packages\", \"sdk_manifest\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst.Manifest\", \"sdk_tarball\": \"gs://chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst\", \"target_prebuilts\": \"gs://chromeos-prebuilt/board/amd64-host/chroot-1970.01.01.999/packages\", \"toolchain_prebuilts_bar\": \"gs://chromiumos-sdk/1970/01/bar-1970.01.01.999.tar.xz\", \"toolchain_prebuilts_foo\": \"gs://chromiumos-sdk/1970/01/foo-1970.01.01.999.tar.xz\"}@@@"
     ]
   },
   {
@@ -3042,6 +3042,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Built SDK version [1970.01.01.999](https://storage.googleapis.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.xz).\nLaunched SDK uprev build: https://cr-buildbucket.appspot.com/build/8922054662172514000"
+    "summaryMarkdown": "Built SDK version [1970.01.01.999](https://storage.googleapis.com/chromiumos-sdk/cros-sdk-1970.01.01.999.tar.zst).\nLaunched SDK uprev build: https://cr-buildbucket.appspot.com/build/8922054662172514000"
   }
 ]
