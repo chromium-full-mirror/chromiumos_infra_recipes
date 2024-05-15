@@ -412,17 +412,16 @@ class CrosReleaseApi(recipe_api.RecipeApi):
                 with self.m.step.nest('commit to {}'.format(snapshot_branch)):
                   commit_to_remote(manifest_internal_checkout, 'snapshot.xml',
                                    commit_message, snapshot_branch)
-                # Set for use by branch orchs for build_menu.upload_sources.
-                if not self.m.cros_source.is_tot:
-                  self.set_resultdb_gitiles_commit(
-                      self.MANIFEST_INTERNAL_URL,
-                      MANIFEST_INTERNAL_HOST,
-                      MANIFEST_INTERNAL_NAME,
-                      snapshot_branch,
-                      position,
-                  )
-                  presentation.logs['resultdb_gitiles_commit'] = str(
-                      self.resultdb_gitiles_commit)
+                # Set for use by orchs for build_menu.upload_sources.
+                self.set_resultdb_gitiles_commit(
+                    self.MANIFEST_INTERNAL_URL,
+                    MANIFEST_INTERNAL_HOST,
+                    MANIFEST_INTERNAL_NAME,
+                    snapshot_branch,
+                    position,
+                )
+                presentation.logs['resultdb_gitiles_commit'] = str(
+                    self.resultdb_gitiles_commit)
 
         manifest_gs_path = ''
         if gs_location:

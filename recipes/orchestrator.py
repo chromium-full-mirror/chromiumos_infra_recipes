@@ -318,21 +318,6 @@ def GenTests(api: RecipeTestApi):
                            collect_builds=data.non_crit_fail)
 
   yield api.orch_menu.test(
-      'release-commit-buildspec-upload-sources',
-      api.properties(**{
-          '$chromeos/cros_release': {
-              'commit_buildspec_as_snapshot': True,
-          },
-      }),
-      # ToT should not set an override commit.
-      api.post_check(post_process.LogDoesNotContain,
-                     'run builds.schedule new builds.eve-release-main',
-                     'request',
-                     ['$chromeos/metadata', 'sources_gitiles_commit_override']),
-      builder='release-main-orchestrator',
-  )
-
-  yield api.orch_menu.test(
       'release-branch-commit-buildspec-upload-sources',
       api.properties(**{
           '$chromeos/cros_release': {
