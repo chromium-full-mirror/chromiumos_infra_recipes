@@ -8,10 +8,13 @@ Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
 package_index, and generates then uploads a KZIP to GS.
 """
 
+from typing import Iterable
+
 from PB.chromite.api import sysroot as sysroot_pb2
 from PB.chromiumos import common as common_pb2
-from PB.recipes.chromeos.chromiumos_codesearch import (
-    ChromiumosCodesearchProperties)
+from PB.recipes.chromeos import (chromiumos_codesearch as
+                                 chromiumos_codesearch_pb2)
+from recipe_engine import config_types
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 
@@ -34,7 +37,7 @@ DEPS = [
     'easy',
 ]
 
-PROPERTIES = ChromiumosCodesearchProperties
+PROPERTIES = chromiumos_codesearch_pb2.ChromiumosCodesearchProperties
 
 def RunSteps(api, properties):
 
@@ -64,34 +67,10 @@ def RunSteps(api, properties):
                                     timeout_sec=60 * 60 * 12)
 
     # Once ChromiumOS has been set up, start the process of creating a kzip.
-    workspace = api.cros_source.workspace_path
-    with api.context(cwd=workspace):
-      # package_index_cros requires chromite/ in a parent directory.
-      chromite_contrib = workspace / 'chromite' / 'contrib'
-      package_index_cros_dir = chromite_contrib / 'package_index_cros'
+    build_dir = api.cros_source.workspace_path / 'src' / 'out' / build_target
+    with api.context(cwd=api.cros_source.workspace_path):
 
-      # Generate KZIP.
-      build_dir = workspace / 'src' / 'out' / build_target
-      with api.context(
-          cwd=package_index_cros_dir, env={
-              'PATH':
-                  api.path.pathsep.join(
-                      [str(workspace / 'chromite' / 'bin'), '%(PATH)s'])
-          }):
-        api.step('run package_index_cros', [
-            package_index_cros_dir / 'main',
-            '--debug',
-            '--board',
-            build_target,
-            '--chroot',
-            api.build_menu.chroot.path,
-            '--chroot-out',
-            api.build_menu.chroot.out_path,
-            '--build-dir',
-            build_dir,
-            '--compile-commands',
-            build_dir / 'compile_commands.json',
-        ] + list(packages))
+      generate_compilation_database(api, build_dir, build_target, packages)
 
       chromiumos_src_dir = api.cros_source.workspace_path / 'src'
       api.codesearch.set_config(
@@ -187,6 +166,44 @@ def RunSteps(api, properties):
       api.codesearch.checkout_generated_files_repo_and_sync(
           copy_config, kzip_path=kzip_path, ignore=ignore,
           revision=codesearch_mirror_revision)
+
+
+def generate_compilation_database(
+    api: recipe_api.RecipeApi,
+    build_dir: config_types.Path,
+    build_target: str,
+    packages: Iterable[str],
+) -> None:
+  """Generate a compilation database for all the given packages.
+
+  Args:
+    api: The recipe API.
+    build_dir: The directory that should contain files from the build process.
+    build_target: The build target to build packages for.
+    packages: A list of package names to build.
+  """
+  workspace = api.cros_source.workspace_path
+  script_dir = workspace / 'chromite' / 'contrib' / 'package_index_cros'
+  chromite_bin_path = workspace / 'chromite' / 'bin'
+  with api.context(
+      cwd=script_dir,
+      env={'PATH': api.path.pathsep.join([str(chromite_bin_path), '%(PATH)s'])},
+  ):
+    api.step('run package_index_cros', [
+        script_dir / 'main',
+        '--debug',
+        '--board',
+        build_target,
+        '--chroot',
+        api.build_menu.chroot.path,
+        '--chroot-out',
+        api.build_menu.chroot.out_path,
+        '--build-dir',
+        build_dir,
+        '--compile-commands',
+        build_dir / 'compile_commands.json',
+        *packages,
+    ])
 
 
 def _get_target_architecture(api: recipe_api.RecipeApi,
