@@ -964,15 +964,22 @@ class BuildMenuApi(recipe_api.RecipeApi):
           ok_ret=(0, 1), use_retry_wrapper=True)
       presentation.logs['cached container gcs'] = response.stdout
       if response.stdout:
-        response_json = json.loads(response.stdout.strip())
-        status = response_json['status']
-        if status == 'completed':
-          builder_response = BuildTestServiceContainersResponse()
-          builder_response = json_format.Parse(response.stdout,
-                                               builder_response,
-                                               ignore_unknown_fields=True)
-          return builder_response
-        presentation.step_summary_text = "status: '{}'".format(status)
+        try:
+          response_json = json.loads(response.stdout.strip())
+          status = response_json.get('status')
+          if status == 'completed':
+            builder_response = BuildTestServiceContainersResponse()
+            builder_response = json_format.Parse(response.stdout,
+                                                 builder_response,
+                                                 ignore_unknown_fields=True)
+            return builder_response
+          presentation.step_summary_text = "status: '{}'".format(status)
+        except json.JSONDecodeError as e:  # pragma: no cover
+          presentation.step_summary_text = "JSON decoding failed: '{}'".format(
+              str(e))
+        except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+          presentation.step_summary_text = "Unexpected error: '{}'".format(
+              str(e))
       return None
 
   def _get_cached_container_metadata_gcs(

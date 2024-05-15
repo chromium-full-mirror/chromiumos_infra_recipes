@@ -1,0 +1,780 @@
+{
+  "buildbucket": {
+    "bbagent_args": {
+      "payload_path": "kitchen-checkout",
+      "cache_dir": "cache",
+      "known_public_gerrit_hosts": [
+        "android.googlesource.com",
+        "aomedia.googlesource.com",
+        "boringssl.googlesource.com",
+        "chromium.googlesource.com",
+        "dart.googlesource.com",
+        "dawn.googlesource.com",
+        "fuchsia.googlesource.com",
+        "gn.googlesource.com",
+        "go.googlesource.com",
+        "llvm.googlesource.com",
+        "pdfium.googlesource.com",
+        "quiche.googlesource.com",
+        "skia.googlesource.com",
+        "swiftshader.googlesource.com",
+        "webrtc.googlesource.com"
+      ],
+      "build": {
+        "builder": {
+          "project": "chromeos",
+          "bucket": "testplatform",
+          "builder": "cros_test_platform"
+        },
+        "input": {
+          "properties": {
+              "$chromeos/cros_build_api": {
+                    "capture_stdout_stderr": true,
+                    "publish_emerge_stats_to_bq": true
+                  },
+              "$chromeos/cros_test_platform": {
+                    "version": {
+                          "cipd_label": "prod"
+                        }
+                  },
+              "$chromeos/cros_tool_runner": {
+                    "version": {
+                          "cipd_label": "prod"
+                        }
+                  },
+              "$chromeos/ctpv2": {
+                    "version": {
+                          "cipd_label": "prod"
+                        }
+                  },
+              "$chromeos/remoteexec": {
+                    "enable_logs_upload": true,
+                    "reproxy_cfg_file": "reproxy.cfg"
+                  },
+              "$recipe_engine/resultdb/test_presentation": {
+                    "column_keys": [
+                          "v.build_target"
+                        ],
+                    "grouping_keys": [
+                          "v.build_target"
+                        ]
+                  },
+              "config": {
+                    "pubsub": {
+                          "project": "chromeos-test-platform-data",
+                          "topic": "result_flow_topic_ctp"
+                        },
+                    "result_flow_channel": {
+                          "project": "chromeos-test-platform-data",
+                          "topic": "result_flow_topic_ctp"
+                        },
+                    "skylab_isolate": {
+                        },
+                    "skylab_swarming": {
+                          "server": "https://chromeos-swarming.appspot.com/"
+                        },
+                    "skylab_worker": {
+                          "log_dog_host": "luci-logdog.appspot.com",
+                          "luci_project": "chromeos"
+                        },
+                    "test_runner": {
+                          "bb_status_update_channel": {
+                                "project": "chromeos-test-platform-data",
+                                "topic": "bb_test_runner_prod"
+                              },
+                          "buildbucket": {
+                                "bucket": "test_runner",
+                                "builder": "test_runner",
+                                "host": "cr-buildbucket.appspot.com",
+                                "project": "chromeos"
+                              }
+                        }
+                  },
+              "recipe": "test_platform/cros_test_platform",
+              "requests": {
+                    "brya.NBR_AU_WITH_DLC.nbr-au-with-dlc": {
+                          "params": {
+                                "decorations": {
+                                      "tags": [
+                                            "build:brya-release/R124-15823.44.0",
+                                            "label-pool:MANAGED_POOL_QUOTA",
+                                            "ctp-fwd-task-name:NBR_AU_WITH_DLC",
+                                            "label-suite:nbr-au-with-dlc",
+                                            "suite:nbr-au-with-dlc",
+                                            "analytics_name:NBR_AU_WITH_DLC",
+                                            "branch-trigger:BETA",
+                                            "label-board:brya"
+                                          ]
+                                    },
+                                "freeformAttributes": {
+                                    },
+                                "metadata": {
+                                      "containerMetadataUrl": "gs://chromeos-image-archive/brya-release/R124-15823.44.0/metadata/containers.jsonpb",
+                                      "debugSymbolsArchiveUrl": "gs://chromeos-image-archive/brya-release/R124-15823.44.0",
+                                      "testMetadataUrl": "gs://chromeos-image-archive/brya-release/R124-15823.44.0"
+                                    },
+                                "runViaCft": true,
+                                "scheduling": {
+                                      "managedPool": "MANAGED_POOL_QUOTA",
+                                      "qsAccount": "legacypool-suites"
+                                    },
+                                "softwareAttributes": {
+                                      "buildTarget": {
+                                            "name": "brya"
+                                          }
+                                    },
+                                "softwareDependencies": [
+                                      {
+                                            "chromeosBuild": "brya-release/R124-15823.44.0"
+                                          }
+                                    ],
+                                "time": {
+                                      "maximumDuration": "140400s"
+                                    }
+                              },
+                          "testPlan": {
+                                "suite": [
+                                      {
+                                            "name": "nbr-au-with-dlc"
+                                          }
+                                    ],
+                                "tagCriteria": {
+                                    }
+                              }
+                        },
+                    "dedede.NBR_AU_WITH_DLC.nbr-au-with-dlc": {
+                          "params": {
+                                "decorations": {
+                                      "tags": [
+                                            "build:dedede-release/R126-15871.0.0",
+                                            "label-pool:MANAGED_POOL_QUOTA",
+                                            "ctp-fwd-task-name:NBR_AU_WITH_DLC",
+                                            "label-suite:nbr-au-with-dlc",
+                                            "suite:nbr-au-with-dlc",
+                                            "analytics_name:NBR_AU_WITH_DLC",
+                                            "branch-trigger:CANARY",
+                                            "label-board:dedede"
+                                          ]
+                                    },
+                                "freeformAttributes": {
+                                    },
+                                "metadata": {
+                                      "containerMetadataUrl": "gs://chromeos-image-archive/dedede-release/R126-15871.0.0/metadata/containers.jsonpb",
+                                      "debugSymbolsArchiveUrl": "gs://chromeos-image-archive/dedede-release/R126-15871.0.0",
+                                      "testMetadataUrl": "gs://chromeos-image-archive/dedede-release/R126-15871.0.0"
+                                    },
+                                "runViaCft": true,
+                                "scheduling": {
+                                      "managedPool": "MANAGED_POOL_QUOTA",
+                                      "qsAccount": "legacypool-suites"
+                                    },
+                                "softwareAttributes": {
+                                      "buildTarget": {
+                                            "name": "dedede"
+                                          }
+                                    },
+                                "softwareDependencies": [
+                                      {
+                                            "chromeosBuild": "dedede-release/R126-15871.0.0"
+                                          }
+                                    ],
+                                "time": {
+                                      "maximumDuration": "140400s"
+                                    }
+                              },
+                          "testPlan": {
+                                "suite": [
+                                      {
+                                            "name": "nbr-au-with-dlc"
+                                          }
+                                    ],
+                                "tagCriteria": {
+                                    }
+                              }
+                        },
+                    "guybrush.NBR_AU_WITH_DLC.nbr-au-with-dlc": {
+                          "params": {
+                                "decorations": {
+                                      "tags": [
+                                            "build:guybrush-release/R126-15871.0.0",
+                                            "label-pool:MANAGED_POOL_QUOTA",
+                                            "ctp-fwd-task-name:NBR_AU_WITH_DLC",
+                                            "label-suite:nbr-au-with-dlc",
+                                            "suite:nbr-au-with-dlc",
+                                            "analytics_name:NBR_AU_WITH_DLC",
+                                            "branch-trigger:CANARY",
+                                            "label-board:guybrush"
+                                          ]
+                                    },
+                                "freeformAttributes": {
+                                    },
+                                "metadata": {
+                                      "containerMetadataUrl": "gs://chromeos-image-archive/guybrush-release/R126-15871.0.0/metadata/containers.jsonpb",
+                                      "debugSymbolsArchiveUrl": "gs://chromeos-image-archive/guybrush-release/R126-15871.0.0",
+                                      "testMetadataUrl": "gs://chromeos-image-archive/guybrush-release/R126-15871.0.0"
+                                    },
+                                "runViaCft": true,
+                                "scheduling": {
+                                      "managedPool": "MANAGED_POOL_QUOTA",
+                                      "qsAccount": "legacypool-suites"
+                                    },
+                                "softwareAttributes": {
+                                      "buildTarget": {
+                                            "name": "guybrush"
+                                          }
+                                    },
+                                "softwareDependencies": [
+                                      {
+                                            "chromeosBuild": "guybrush-release/R126-15871.0.0"
+                                          }
+                                    ],
+                                "time": {
+                                      "maximumDuration": "140400s"
+                                    }
+                              },
+                          "testPlan": {
+                                "suite": [
+                                      {
+                                            "name": "nbr-au-with-dlc"
+                                          }
+                                    ],
+                                "tagCriteria": {
+                                    }
+                              }
+                        },
+                    "nissa.NBR_AU_WITH_DLC.nbr-au-with-dlc": {
+                          "params": {
+                                "decorations": {
+                                      "tags": [
+                                            "build:nissa-release/R126-15871.0.0",
+                                            "label-pool:MANAGED_POOL_QUOTA",
+                                            "ctp-fwd-task-name:NBR_AU_WITH_DLC",
+                                            "label-suite:nbr-au-with-dlc",
+                                            "suite:nbr-au-with-dlc",
+                                            "analytics_name:NBR_AU_WITH_DLC",
+                                            "branch-trigger:CANARY",
+                                            "label-board:nissa"
+                                          ]
+                                    },
+                                "freeformAttributes": {
+                                    },
+                                "metadata": {
+                                      "containerMetadataUrl": "gs://chromeos-image-archive/nissa-release/R126-15871.0.0/metadata/containers.jsonpb",
+                                      "debugSymbolsArchiveUrl": "gs://chromeos-image-archive/nissa-release/R126-15871.0.0",
+                                      "testMetadataUrl": "gs://chromeos-image-archive/nissa-release/R126-15871.0.0"
+                                    },
+                                "runViaCft": true,
+                                "scheduling": {
+                                      "managedPool": "MANAGED_POOL_QUOTA",
+                                      "qsAccount": "legacypool-suites"
+                                    },
+                                "softwareAttributes": {
+                                      "buildTarget": {
+                                            "name": "nissa"
+                                          }
+                                    },
+                                "softwareDependencies": [
+                                      {
+                                            "chromeosBuild": "nissa-release/R126-15871.0.0"
+                                          }
+                                    ],
+                                "time": {
+                                      "maximumDuration": "140400s"
+                                    }
+                              },
+                          "testPlan": {
+                                "suite": [
+                                      {
+                                            "name": "nbr-au-with-dlc"
+                                          }
+                                    ],
+                                "tagCriteria": {
+                                    }
+                              }
+                        },
+                    "rex.NBR_AU_WITH_DLC.nbr-au-with-dlc": {
+                          "params": {
+                                "decorations": {
+                                      "tags": [
+                                            "build:rex-release/R125-15853.16.0",
+                                            "label-pool:MANAGED_POOL_QUOTA",
+                                            "ctp-fwd-task-name:NBR_AU_WITH_DLC",
+                                            "label-suite:nbr-au-with-dlc",
+                                            "suite:nbr-au-with-dlc",
+                                            "analytics_name:NBR_AU_WITH_DLC",
+                                            "branch-trigger:DEV",
+                                            "label-board:rex"
+                                          ]
+                                    },
+                                "freeformAttributes": {
+                                    },
+                                "metadata": {
+                                      "containerMetadataUrl": "gs://chromeos-image-archive/rex-release/R125-15853.16.0/metadata/containers.jsonpb",
+                                      "debugSymbolsArchiveUrl": "gs://chromeos-image-archive/rex-release/R125-15853.16.0",
+                                      "testMetadataUrl": "gs://chromeos-image-archive/rex-release/R125-15853.16.0"
+                                    },
+                                "runViaCft": true,
+                                "scheduling": {
+                                      "managedPool": "MANAGED_POOL_QUOTA",
+                                      "qsAccount": "legacypool-suites"
+                                    },
+                                "softwareAttributes": {
+                                      "buildTarget": {
+                                            "name": "rex"
+                                          }
+                                    },
+                                "softwareDependencies": [
+                                      {
+                                            "chromeosBuild": "rex-release/R125-15853.16.0"
+                                          }
+                                    ],
+                                "time": {
+                                      "maximumDuration": "140400s"
+                                    }
+                              },
+                          "testPlan": {
+                                "suite": [
+                                      {
+                                            "name": "nbr-au-with-dlc"
+                                          }
+                                    ],
+                                "tagCriteria": {
+                                    }
+                              }
+                        }
+                  }
+            },
+          "experimental": true,
+          "experiments": [
+            "chromeos.cros_build_api.deployable_chromite",
+            "chromeos.cros_infra_config.filtering_enabled",
+            "chromeos.cros_infra_config.optimized_shard_allocation",
+            "chromeos.cros_infra_config.suite_execution_limited",
+            "chromeos.cros_infra_config.vmlab.launch",
+            "chromeos.sysroot_util.chrome_cache",
+            "chromeos.sysroot_util.chrome_cache_purge",
+            "luci.buildbucket.agent.cipd_installation",
+            "luci.buildbucket.agent.start_build",
+            "luci.buildbucket.backend_go",
+            "luci.buildbucket.bbagent_getbuild",
+            "luci.buildbucket.bq_exporter_go",
+            "luci.buildbucket.parent_tracking",
+            "luci.buildbucket.use_bbagent",
+            "luci.recipes.use_python3"
+          ]
+        },
+        "infra": {
+          "buildbucket": {
+            "experiment_reasons": {
+              "chromeos.cros_build_api.deployable_chromite": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.filtering_enabled": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.invocation_artifacts_upload_to_rdb": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.optimized_shard_allocation": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.suite_execution_limited": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.cros_infra_config.vmlab.launch": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.sysroot_util.chrome_cache": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "chromeos.sysroot_util.chrome_cache_purge": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "luci.best_effort_platform": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.agent.cipd_installation": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.agent.start_build": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.backend_alt": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "luci.buildbucket.backend_go": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.bbagent_getbuild": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.bq_exporter_go": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.canary_software": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.parent_tracking": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.buildbucket.use_bbagent": "EXPERIMENT_REASON_BUILDER_CONFIG",
+              "luci.buildbucket.use_bbagent_race": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.non_production": "EXPERIMENT_REASON_GLOBAL_DEFAULT",
+              "luci.recipes.use_python3": "EXPERIMENT_REASON_BUILDER_CONFIG"
+            },
+            "agent": {
+              "input": {
+                "data": {
+                  "bbagent_utility_packages": {
+                    "cipd": {
+                      "server": "chrome-infra-packages.appspot.com",
+                      "specs": [
+                        {
+                          "package": "infra/tools/luci/cas/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "bbagent_utility_packages",
+                      "bbagent_utility_packages/bin"
+                    ]
+                  },
+                  "cipd_bin_packages": {
+                    "cipd": {
+                      "server": "chrome-infra-packages.appspot.com",
+                      "specs": [
+                        {
+                          "package": "infra/3pp/tools/git/${platform}",
+                          "version": "version:2@2.42.0.chromium.11"
+                        },
+                        {
+                          "package": "infra/tools/git/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci/git-credential-luci/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci/docker-credential-luci/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci/vpython3/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci/lucicfg/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci-auth/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/bb/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/cloudtail/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/prpc/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/rdb/${platform}",
+                          "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577"
+                        },
+                        {
+                          "package": "infra/tools/luci/led/${platform}",
+                          "version": "git_revision:3533cc64973555e09249964c6efbd8ad8a53f53c"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "cipd_bin_packages",
+                      "cipd_bin_packages/bin"
+                    ]
+                  },
+                  "cipd_bin_packages/cpython3": {
+                    "cipd": {
+                      "server": "chrome-infra-packages.appspot.com",
+                      "specs": [
+                        {
+                          "package": "infra/3pp/tools/cpython3/${platform}",
+                          "version": "version:2@3.8.10.chromium.34"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "cipd_bin_packages/cpython3",
+                      "cipd_bin_packages/cpython3/bin"
+                    ]
+                  },
+                  "kitchen-checkout": {
+                    "cipd": {
+                      "server": "chrome-infra-packages.appspot.com",
+                      "specs": [
+                        {
+                          "package": "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+                          "version": "ctp-prod"
+                        }
+                      ]
+                    }
+                  }
+                },
+                "cipd_source": {
+                  "cipd": {
+                    "cipd": {
+                      "server": "chrome-infra-packages.appspot.com",
+                      "specs": [
+                        {
+                          "package": "infra/tools/cipd/${platform}",
+                          "version": "git_revision:215bc891d3d06dd49b11109abc9319a38aa66f0a"
+                        }
+                      ]
+                    },
+                    "on_path": [
+                      "cipd",
+                      "cipd/bin"
+                    ]
+                  }
+                }
+              },
+              "source": {
+                "cipd": {
+                  "package": "infra/tools/luci/bbagent/${platform}",
+                  "version": "git_revision:2aba496613f92a5b06d577f82b5d028225d3d577",
+                  "server": "chrome-infra-packages.appspot.com"
+                }
+              },
+              "purposes": {
+                "bbagent_utility_packages": "PURPOSE_BBAGENT_UTILITY",
+                "kitchen-checkout": "PURPOSE_EXE_PAYLOAD"
+              },
+              "cipd_client_cache": {
+                "name": "cipd_client_f970720a374db65e431d9836bdd8bc091f12dd8c12a454b5a67f5b163006301e",
+                "path": "cipd_client"
+              },
+              "cipd_packages_cache": {
+                "name": "cipd_cache_78e67f93399b213ea20dcd6203837d54f5d4c11cacfe5aa036a8002aeb9715b0",
+                "path": "cipd_cache"
+              }
+            },
+            "known_public_gerrit_hosts": [
+              "android.googlesource.com",
+              "aomedia.googlesource.com",
+              "boringssl.googlesource.com",
+              "chromium.googlesource.com",
+              "dart.googlesource.com",
+              "dawn.googlesource.com",
+              "fuchsia.googlesource.com",
+              "gn.googlesource.com",
+              "go.googlesource.com",
+              "llvm.googlesource.com",
+              "pdfium.googlesource.com",
+              "quiche.googlesource.com",
+              "skia.googlesource.com",
+              "swiftshader.googlesource.com",
+              "webrtc.googlesource.com"
+            ]
+          },
+          "swarming": {
+            "hostname": "chromeos-swarming.appspot.com",
+            "task_service_account": "chromeos-test-infra-prod@chromeos-bot.iam.gserviceaccount.com",
+            "priority": 40,
+            "task_dimensions": [
+              {
+                "key": "pool",
+                "value": "ChromeOSTestPlatform"
+              },
+              {
+                "key": "role",
+                "value": "crostfe"
+              }
+            ],
+            "bot_dimensions": [
+              {
+                "key": "bot_config",
+                "value": "bot_config.py"
+              },
+              {
+                "key": "bot_size",
+                "value": "e2-medium"
+              },
+              {
+                "key": "caches",
+                "value": "cipd_cache_78e67f93399b213ea20dcd6203837d54f5d4c11cacfe5aa036a8002aeb9715b0"
+              },
+              {
+                "key": "caches",
+                "value": "cipd_client_f970720a374db65e431d9836bdd8bc091f12dd8c12a454b5a67f5b163006301e"
+              },
+              {
+                "key": "caches",
+                "value": "vpython"
+              },
+              {
+                "key": "cipd_platform",
+                "value": "linux-amd64"
+              },
+              {
+                "key": "cores",
+                "value": "2"
+              },
+              {
+                "key": "cpu",
+                "value": "x86"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64-Broadwell_GCE"
+              },
+              {
+                "key": "cpu",
+                "value": "x86-64-avx2"
+              },
+              {
+                "key": "display_attached",
+                "value": "0"
+              },
+              {
+                "key": "gce",
+                "value": "1"
+              },
+              {
+                "key": "gcp",
+                "value": "chromeos-bot"
+              },
+              {
+                "key": "gpu",
+                "value": "none"
+              },
+              {
+                "key": "id",
+                "value": "chromeos-test-crostfe-us-central1-b-x1-19-z6sn"
+              },
+              {
+                "key": "image",
+                "value": "crostest-jammy-24042500-a6d4ef00dd8"
+              },
+              {
+                "key": "inside_docker",
+                "value": "0"
+              },
+              {
+                "key": "kernel",
+                "value": "6.5.0-1018-gcp"
+              },
+              {
+                "key": "kvm",
+                "value": "1"
+              },
+              {
+                "key": "locale",
+                "value": "en_US.UTF-8"
+              },
+              {
+                "key": "machine_type",
+                "value": "e2-medium"
+              },
+              {
+                "key": "os",
+                "value": "Linux"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-22"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-22.04"
+              },
+              {
+                "key": "os",
+                "value": "Ubuntu-22.04.3"
+              },
+              {
+                "key": "pool",
+                "value": "ChromeOSTestPlatform"
+              },
+              {
+                "key": "python",
+                "value": "3"
+              },
+              {
+                "key": "python",
+                "value": "3.8"
+              },
+              {
+                "key": "python",
+                "value": "3.8.10+chromium.23"
+              },
+              {
+                "key": "role",
+                "value": "crostfe"
+              },
+              {
+                "key": "server_version",
+                "value": "7632-0c63d7e"
+              },
+              {
+                "key": "ssd",
+                "value": "0"
+              },
+              {
+                "key": "zone",
+                "value": "us"
+              },
+              {
+                "key": "zone",
+                "value": "us-central"
+              },
+              {
+                "key": "zone",
+                "value": "us-central1"
+              },
+              {
+                "key": "zone",
+                "value": "us-central1-b"
+              }
+            ],
+            "caches": [
+              {
+                "name": "builder",
+                "path": "builder"
+              },
+              {
+                "name": "git",
+                "path": "git"
+              },
+              {
+                "name": "goma_v2",
+                "path": "goma"
+              },
+              {
+                "name": "vpython",
+                "path": "vpython",
+                "env_var": "VPYTHON_VIRTUALENV_ROOT"
+              }
+            ]
+          },
+          "logdog": {
+            "hostname": "logs.chromium.org",
+            "project": "chromeos"
+          },
+          "resultdb": {
+            "hostname": "results.api.cr.dev",
+            "invocation": "invocations/build-8749325230619092193",
+            "enable": true
+          },
+          "bbagent": {
+            "payload_path": "kitchen-checkout",
+            "cache_dir": "cache"
+          }
+        },
+        "exe": {
+          "cipd_package": "infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
+          "cipd_version": "ctp-prod",
+          "cmd": [
+            "luciexe"
+          ]
+        },
+        "scheduling_timeout": "21600s",
+        "execution_timeout": "144000s",
+        "grace_period": "30s"
+      }
+    },
+    "env_prefixes": [
+      {
+        "key": "VPYTHON_VIRTUALENV_ROOT",
+        "value": [
+          "cache/vpython"
+        ]
+      }
+    ],
+    "bot_ping_tolerance": "0s",
+    "containment": {
+
+    },
+    "name": "led: get-build 8749325230619092193",
+    "final_build_proto_path": "build.proto.json"
+  }
+}
