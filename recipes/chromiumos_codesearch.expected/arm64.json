@@ -14,7 +14,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"amd64-generic-codesearch\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"arm64-generic-codesearch\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"PUBLIC\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"codesearch\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
@@ -4425,7 +4425,7 @@
     "cwd": "[START_DIR]/chrome/src",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/amd64-generic-codesearch/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/arm64-generic-codesearch/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4779,7 +4779,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/amd64-generic-codesearch/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/arm64-generic-codesearch/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4872,7 +4872,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/amd64-generic-codesearch/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/codesearch/arm64-generic-codesearch/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -5465,7 +5465,7 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"architecture\": \"amd64\"@@@",
+      "@@@STEP_LOG_LINE@response@  \"architecture\": \"arm64\"@@@",
       "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
@@ -5612,7 +5612,8 @@
       "[CLEANUP]/tmp_tmp_5/bin",
       "-p",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic",
-      "--all"
+      "--all",
+      "--tool-arg=--extra-arg=--target=arm64"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform2",
     "luci_context": {
@@ -5753,6 +5754,8 @@
       "chromium.googlesource.com/chromiumos/codesearch//main",
       "--project",
       "chromiumos",
+      "--clang_target_arch",
+      "arm64",
       "--out_dir",
       "src/out/amd64-generic"
     ],
@@ -6034,7 +6037,7 @@
       "--copy",
       "[CACHE]/cros_chroot/out;out",
       "--message",
-      "Generated files from \"amd64-generic-codesearch\" build 8945511751514863184, revision aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "Generated files from \"arm64-generic-codesearch\" build 8945511751514863184, revision aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       "--dest-branch",
       "main",
       "[CACHE]/generated",

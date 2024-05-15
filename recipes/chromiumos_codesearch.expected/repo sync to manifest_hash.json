@@ -5612,8 +5612,7 @@
       "[CLEANUP]/tmp_tmp_5/bin",
       "-p",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic",
-      "--all",
-      "--tool-arg=--extra-arg=--target=amd64"
+      "--all"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform2",
     "luci_context": {
@@ -5754,8 +5753,6 @@
       "chromium.googlesource.com/chromiumos/codesearch//main",
       "--project",
       "chromiumos",
-      "--clang_target_arch",
-      "amd64",
       "--out_dir",
       "src/out/amd64-generic"
     ],

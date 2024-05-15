@@ -109,9 +109,38 @@ def RunSteps(api, properties):
 
       # Run the translation_unit tool in chromiumos/src dirs.
       target_architecture = _get_target_architecture(api, build_target)
-      api.codesearch.run_clang_tool(clang_dir=clang_dir,
-                                    run_dirs=[chromiumos_src_dir / 'platform2'],
-                                    target_architecture=target_architecture)
+
+      # TODO: b/327501932#comment78 - translation_unit does not work properly
+      # when target_architecture is passed in.
+      #
+      # For amd64, if the compdb contains a clang command with the argument
+      # "-march=x86-64", then running translation_unit without
+      # "target_architecture" creates a valid kzip, but including
+      # "target_architecture" causes compilation errors during Kythe indexing
+      # and an incomplete kzip will be created.
+      #
+      # For arm64, if the compdb contains a clang command with the argument
+      # "-march=armv8-a", then running translation_unit errors out with
+      # "unknown target CPU" error and no kzip will be created.
+      # While including "target_architecture" in translation_unit causes
+      # compilation errors during Kythe indexing and creates an incomplete kzip,
+      # having an incomplete kzip with 50% of references is considerably better than
+      # not having any references at all.
+      #
+      # In summary, we specify "target_architecture" for "arm64" but not for "amd64"
+      # to maximize kzip references across architectures.
+      #
+      # We want to debug the problem of why specifying "target_architecture" in
+      # translation_unit leads to compilation errors for both "amd64" and "arm64" so
+      # that there are any missing references.
+      translation_unit_args = {
+          'clang_dir': clang_dir,
+          'run_dirs': [chromiumos_src_dir / 'platform2']
+      }
+      if target_architecture != 'amd64':
+        translation_unit_args['target_architecture'] = target_architecture
+
+      api.codesearch.run_clang_tool(**translation_unit_args)
 
       # Create the kythe index pack and upload it to google storage.
 
@@ -120,12 +149,20 @@ def RunSteps(api, properties):
       # TODO(gavinmak): Make gn_targets optional in package_index.
       api.file.write_json('write empty gn_targets.json file',
                           build_dir / 'gn_targets.json', {})
+      package_index_args = {
+          'commit_hash':
+              codesearch_mirror_revision,
+          'commit_timestamp':
+              int(codesearch_mirror_revision_timestamp or api.time.time()),
+          'checkout_dir':
+              chromiumos_src_dir
+      }
+      if target_architecture != 'amd64':
+        package_index_args['clang_target_arch'] = target_architecture
+
       kzip_path = api.codesearch.create_and_upload_kythe_index_pack(
-          commit_hash=codesearch_mirror_revision,
-          commit_timestamp=int(codesearch_mirror_revision_timestamp or
-                               api.time.time()),
-          clang_target_arch=target_architecture,
-          checkout_dir=chromiumos_src_dir)
+          **package_index_args)
+
 
       # Check out the generated files repo and sync the generated files
       # into this checkout.
@@ -178,7 +215,41 @@ def GenTests(api):
           sync_generated_files=True,
           experimental=False,
       ),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'run translation_unit clang tool',
+                     ['--tool-arg=--extra-arg=--target=amd64']),
+      api.post_check(post_process.StepCommandDoesNotContain,
+                     'create kythe index pack',
+                     ['--clang_target_arch', 'amd64']),
       builder_name='amd64-generic-codesearch',
+      bucket='codesearch',
+      git_ref='refs/heads/snapshot',
+      git_repo='chromium.googlesource.com/chromiumos/manifest',
+      revision='d3adb33f',
+  )
+
+  yield api.build_menu.test(
+      'arm64',
+      api.properties(
+          codesearch_mirror_revision='a' * 40,
+          codesearch_mirror_revision_timestamp='1531887759',
+          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
+          packages=[
+              'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
+          ],
+          sync_generated_files=True,
+          experimental=False,
+      ),
+      api.cros_build_api.set_api_return(
+          '', endpoint='SysrootService/GetTargetArchitecture',
+          data='{"architecture": "arm64"}'),
+      api.post_check(post_process.StepCommandContains,
+                     'run translation_unit clang tool',
+                     ['--tool-arg=--extra-arg=--target=arm64']),
+      api.post_check(post_process.StepCommandContains,
+                     'create kythe index pack',
+                     ['--clang_target_arch', 'arm64']),
+      builder_name='arm64-generic-codesearch',
       bucket='codesearch',
       git_ref='refs/heads/snapshot',
       git_repo='chromium.googlesource.com/chromiumos/manifest',
