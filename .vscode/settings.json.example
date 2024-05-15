@@ -1,8 +1,5 @@
 {
         "python.defaultInterpreterPath": "${env:HOME}/.local/lib/depot_tools/vpython",
-        "python.linting.pylintEnabled": true,
-        "python.linting.enabled": true,
-        "python.linting.pylintPath": "${env:HOME}/.local/lib/depot_tools/pylint",
         "python.formatting.provider": "yapf",
         "python.formatting.yapfPath": "${env:HOME}/.local/lib/depot_tools/yapf",
         // These should be kept in sync with `.env` in the checkout root. Be
