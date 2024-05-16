@@ -48,12 +48,8 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
     testable_builds = api.orch_menu.plan_and_wait_for_images(
         extra_child_props=extra_child_props)
 
-    # Aggregate any metadata produced by the child builds into our own GS bucket
-    metadata = api.orch_menu.aggregate_metadata(testable_builds)
-
     # Run any HW tests.
     api.orch_menu.plan_and_run_tests(
-        container_metadata=metadata,
         testable_builds=testable_builds,
     )
 

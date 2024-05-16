@@ -41,13 +41,9 @@ def DoRunSteps(api: RecipeApi):
   builds_status = api.snapshot_orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
-  # Aggregate any metadata produced by the child builds into our own GS bucket
-  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
   testable_builds = builds_status.testable_builds
-
   # Run any HW tests.
-  api.snapshot_orch_menu.plan_and_run_tests(container_metadata=metadata,
-                                            testable_builds=testable_builds)
+  api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
 
 def GenTests(api: RecipeTestApi):

@@ -4183,6 +4183,259 @@
   },
   {
     "cmd": [],
+    "name": "aggregating metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@container metadata (log)@{}@@@",
+      "@@@STEP_LOG_END@container metadata (log)@@@",
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/cq-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@skipped build info@amd64-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm-generic-pointless-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@arm64-generic-cq - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@atlas-cq - containers not configured@@@",
+      "@@@STEP_LOG_END@skipped build info@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing amd64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing arm-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing arm64-generic-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing arm-generic-pointless-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing atlas-cq",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.upload container metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.upload container metadata.read chromeos version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
+      "/path/to/tmp/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.read chromeos version.read chromeos_version.sh",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.upload container metadata.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{}",
+      "[CLEANUP]/tmp_tmp_1/containers.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@containers.jsonpb@{}@@@",
+      "@@@STEP_LOG_END@containers.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_1/containers.jsonpb",
+      "gs://chromeos-image-archive/cq-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "aggregating metadata.upload container metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/cq-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "check test planning v2 enabled",
     "~followup_annotations": [
       "@@@STEP_TEXT@enabling test planning v2@@@"
@@ -4578,7 +4831,7 @@
       "--depth",
       "1",
       "https://chromium.googlesource.com/platform/testrepoA",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoA",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoA",
       "-v",
       "--progress"
     ],
@@ -4608,7 +4861,7 @@
       "--depth",
       "1",
       "https://chromium.googlesource.com/platform/testrepoB",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoB",
+      "[CLEANUP]/tmp_tmp_3/platform/testrepoB",
       "-v",
       "--progress"
     ],
@@ -9265,7 +9518,7 @@
       "/path/to/tmp/json",
       "copy",
       "ewogICJ2YWx1ZXMiOiBbCiAgICB7CiAgICAgICJidWlsZFRhcmdldCI6IHsKICAgICAgICAicG9ydGFnZUJ1aWxkVGFyZ2V0IjogewogICAgICAgICAgIm92ZXJsYXlOYW1lIjogIm92ZXJsYXlBIgogICAgICAgIH0KICAgICAgfQogICAgfQogIF0KfQ==",
-      "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto"
+      "[CLEANUP]/tmp_tmp_4/build_metadata.jsonproto"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9324,7 +9577,7 @@
       "/path/to/tmp/json",
       "copy",
       "ewogICJ2YWx1ZXMiOiBbCiAgICB7CiAgICAgICJkZXNpZ25MaXN0IjogWwogICAgICAgIHsKICAgICAgICAgICJuYW1lIjogImRlc2lnbjEiCiAgICAgICAgfQogICAgICBdCiAgICB9CiAgXQp9",
-      "[CLEANUP]/tmp_tmp_3/configs.jsonproto"
+      "[CLEANUP]/tmp_tmp_4/configs.jsonproto"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9383,7 +9636,7 @@
       "/path/to/tmp/json",
       "copy",
       "ewogICJkdXRBdHRyaWJ1dGVzIjogWwogICAgewogICAgICAiaWQiOiB7CiAgICAgICAgInZhbHVlIjogImF0dHJpYnV0ZTEiCiAgICAgIH0KICAgIH0KICBdCn0=",
-      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto"
+      "[CLEANUP]/tmp_tmp_4/dut_attributes.jsonproto"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9442,7 +9695,7 @@
       "/path/to/tmp/json",
       "copy",
       "ewogICJib2FyZFByaW9yaXRpZXMiOiBbCiAgICB7CiAgICAgICJza3lsYWJCb2FyZCI6ICJ0ZXN0Ym9hcmRBIiwKICAgICAgInByaW9yaXR5IjogLTEwMAogICAgfQogIF0KfQ==",
-      "[CLEANUP]/tmp_tmp_3/board_priority.cfg"
+      "[CLEANUP]/tmp_tmp_4/board_priority.cfg"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9501,7 +9754,7 @@
       "/path/to/tmp/json",
       "copy",
       "ewogICJidWlsZGVyQ29uZmlncyI6IFsKICAgIHsKICAgICAgImlkIjogewogICAgICAgICJuYW1lIjogInRlc3Rib2FyZEEtY3EiCiAgICAgIH0KICAgIH0KICBdCn0=",
-      "[CLEANUP]/tmp_tmp_3/builder_configs.binaryproto"
+      "[CLEANUP]/tmp_tmp_4/builder_configs.binaryproto"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9530,7 +9783,7 @@
       "/path/to/tmp/json",
       "copy",
       "*\ufffd\u0004\n\ufffd\u0004\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 \n\bchromeos\u0012\u0002cq\u001a\u0010amd64-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514000:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u001e\n\bchromeos\u0012\u0002cq\u001a\u000earm-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514001:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012 \n\bchromeos\u0012\u0002cq\u001a\u0010arm64-generic-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\rarm64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\rarm64-generic\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\rarm64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\rarm64-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514002:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0005\n\ufffd\u0005\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012(\n\bchromeos\u0012\u0002cq\u001a\u0018arm-generic-pointless-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\n\ufffd\u0001\nO\n\u0014$chromeos/build_menu\u00127*5\n3\n\fbuild_target\u0012#*!\n\u001f\n\u0004name\u0012\u0017\u001a\u0015arm-generic-pointless\n3\n\fbuild_target\u0012#*!\n\u001f\n\u0004name\u0012\u0017\u001a\u0015arm-generic-pointless\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nO\n\u0014$chromeos/build_menu\u00127*5\n3\n\fbuild_target\u0012#*!\n\u001f\n\u0004name\u0012\u0017\u001a\u0015arm-generic-pointless\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n3\n\fbuild_target\u0012#*!\n\u001f\n\u0004name\u0012\u0017\u001a\u0015arm-generic-pointless\n\u0014\n\u000erelevant_build\u0012\u0002 \u0000\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514003:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001*\ufffd\u0004\n\ufffd\u0004\b\u052d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0018\n\bchromeos\u0012\u0002cq\u001a\batlas-cq\"\u0010project:chromeos2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nf\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\u001a3\n chromium-review.googlesource.com\u0012\tproject-a\u0018\ufffd\ufffd\u0007 \u0007\ufffd\u0001\ufffd\u0001\n\u007f\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005atlas\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514004:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0018\n\u000fcq_experimental\u0012\u0005false\ufffd\u0001\u0001",
-      "[CLEANUP]/tmp_tmp_3/generatetestplanreq.binaryproto"
+      "[CLEANUP]/tmp_tmp_4/generatetestplanreq.binaryproto"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9557,24 +9810,24 @@
       "-loglevel",
       "debug",
       "-dutattributes",
-      "[CLEANUP]/tmp_tmp_3/dut_attributes.jsonproto",
+      "[CLEANUP]/tmp_tmp_4/dut_attributes.jsonproto",
       "-buildmetadata",
-      "[CLEANUP]/tmp_tmp_3/build_metadata.jsonproto",
+      "[CLEANUP]/tmp_tmp_4/build_metadata.jsonproto",
       "-configbundlelist",
-      "[CLEANUP]/tmp_tmp_3/configs.jsonproto",
+      "[CLEANUP]/tmp_tmp_4/configs.jsonproto",
       "-out",
-      "[CLEANUP]/tmp_tmp_3/generatetestplanresp.binaryproto",
+      "[CLEANUP]/tmp_tmp_4/generatetestplanresp.binaryproto",
       "-boardprioritylist",
-      "[CLEANUP]/tmp_tmp_3/board_priority.cfg",
+      "[CLEANUP]/tmp_tmp_4/board_priority.cfg",
       "-builderconfigs",
-      "[CLEANUP]/tmp_tmp_3/builder_configs.binaryproto",
+      "[CLEANUP]/tmp_tmp_4/builder_configs.binaryproto",
       "-ctpv1",
       "-generatetestplanreq",
-      "[CLEANUP]/tmp_tmp_3/generatetestplanreq.binaryproto",
+      "[CLEANUP]/tmp_tmp_4/generatetestplanreq.binaryproto",
       "-plan",
-      "[CLEANUP]/tmp_tmp_1/platform/testrepoA/a/b/kernel1.star",
+      "[CLEANUP]/tmp_tmp_2/platform/testrepoA/a/b/kernel1.star",
       "-plan",
-      "[CLEANUP]/tmp_tmp_2/platform/testrepoB/kernel2.star"
+      "[CLEANUP]/tmp_tmp_3/platform/testrepoB/kernel2.star"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9602,7 +9855,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/tmp_tmp_3/generatetestplanresp.binaryproto",
+      "[CLEANUP]/tmp_tmp_4/generatetestplanresp.binaryproto",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -9618,7 +9871,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.generate hw test plans.read output [CLEANUP]/tmp_tmp_3/generatetestplanresp.binaryproto",
+    "name": "run tests.schedule tests.generate hw test plans.read output [CLEANUP]/tmp_tmp_4/generatetestplanresp.binaryproto",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]

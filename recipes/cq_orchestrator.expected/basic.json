@@ -3155,6 +3155,13 @@
   },
   {
     "cmd": [],
+    "name": "apply qs account overrides",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@No qs account overrides were applied@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "aggregating metadata",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@container metadata (log)@{}@@@",
@@ -3386,13 +3393,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/cq-orchestrator/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "apply qs account overrides",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@No qs account overrides were applied@@@"
     ]
   },
   {

@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional, Tuple
 
 from google.protobuf import json_format
 
-from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -482,7 +481,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
   def plan_and_run_tests(
       self,
       testable_builds: Optional[List[build_pb2.Build]] = None,
-      container_metadata: Optional[ContainerMetadata] = None,
       ignore_gerrit_changes: bool = False,
   ) -> BuildsStatus:
     """Plan, schedule, and run tests.
@@ -492,8 +490,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     Args:
       testable_builds: The list of builds to consider or None to use the
         current results.
-      container_metadata: Information on container images used for test
-        execution.
       ignore_gerrit_changes: Whether to drop gerrit changes from the test plan
         request, primarily used for tryjobs (which are release builds and thus
         shouldn't test based on any patches applied).
@@ -516,6 +512,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       assert not gerrit_changes, 'gerrit_changes are not expected on the snapshot orchestrator'
       gerrit_changes = self._gerrit_changes_in_snapshot()
 
+    testable_builds = testable_builds or self._builds_status.testable_builds
+    container_metadata = self.m.orch_menu.aggregate_metadata(testable_builds)
     test_failures = self.m.cros_test_proctor.run_proctor(
         testable_builds or self._builds_status.testable_builds,
         self.gitiles_commit,

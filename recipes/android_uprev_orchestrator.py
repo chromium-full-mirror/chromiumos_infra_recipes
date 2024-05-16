@@ -114,11 +114,8 @@ def DoRunSteps(api: RecipeApi, properties: AndroidUprevProperties) -> None:
       extra_child_props=extra_child_props,
   )
 
-  # Aggregate any metadata produced by the child builds into our own GS bucket
-  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
-
   # Run any HW tests.
-  builds_status = api.orch_menu.plan_and_run_tests(container_metadata=metadata)
+  builds_status = api.orch_menu.plan_and_run_tests()
 
   if builds_status.fatal_failures:
     # Do not proceed if any critical builds/tests failed.

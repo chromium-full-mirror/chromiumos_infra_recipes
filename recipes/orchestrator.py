@@ -109,8 +109,6 @@ def DoRunSteps(api: RecipeApi):
   builds_status = api.orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
-  # Aggregate any metadata produced by the child builds into our own GS bucket
-  metadata = api.orch_menu.aggregate_metadata(builds_status.completed_builds)
   testable_builds = builds_status.testable_builds
 
   # Run any HW tests.
@@ -124,7 +122,6 @@ def DoRunSteps(api: RecipeApi):
           # orchestrators without testing we can't run the test plan generator because
           # it requires access to internal repos.
           api.orch_menu.plan_and_run_tests(
-              container_metadata=metadata,
               testable_builds=testable_builds,
               ignore_gerrit_changes=api.orch_menu.is_release_orchestrator,
           )
