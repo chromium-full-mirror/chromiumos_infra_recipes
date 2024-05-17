@@ -15,39 +15,63 @@ from PB.chromite.api.sdk_subtools import BuildSdkSubtoolsRequest, UploadSdkSubto
 from PB.chromiumos import common as cros_common
 from PB.go.chromium.org.luci.buildbucket.proto import common as buildbucket_common
 from PB.recipe_engine.result import RawResult
+from PB.recipes.chromeos.build_sdk_subtools import BuildSdkSubtoolsProperties
 from recipe_engine import post_process
 from recipe_engine import recipe_api
 from recipe_engine import recipe_test_api
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
     'cros_sdk',
     'cros_source',
     'image_builder_failures',
+    'failures',
+    'src_state',
 ]
+PROPERTIES = BuildSdkSubtoolsProperties
 
 
+def RunSteps(api: recipe_api.RecipeApi,
+             properties: BuildSdkSubtoolsProperties) -> None:
+  return BuildSdkSubtoolsRun(api, properties).run()
 
-def RunSteps(api: recipe_api.RecipeApi) -> None:
-  return BuildSdkSubtoolsRun(api).run()
+
+def create_package_info(atom: str) -> cros_common.PackageInfo:
+  """Parse category/package-name into a PackageInfo."""
+  category, package_name = atom.split('/')
+  return cros_common.PackageInfo(category=category, package_name=package_name)
 
 
 class BuildSdkSubtoolsRun:
   """Class to encapsulate a single run of the SDK subtools builder."""
 
-  def __init__(self, api: recipe_api.RecipeApi) -> None:
+  def __init__(self, api: recipe_api.RecipeApi,
+               properties: BuildSdkSubtoolsProperties) -> None:
     """Initialize the builder run."""
     self.m = api
     self.sdk_subtools_service = api.cros_build_api.SdkSubtoolsService
+    self.packages = [create_package_info(x) for x in properties.packages]
+    self.public = properties.public
+    self.upload_filter = [
+        BuildSdkSubtoolsRequest.SubtoolName(name=x)
+        for x in properties.upload_filter
+    ]
+    self.gitiles_commit = properties.gitiles_commit
 
   def run(self) -> None:
     """Run the main logic for this builder."""
     with self._setup():
       with self.m.step.nest('Build SDK Subtools') as step:
-        request = BuildSdkSubtoolsRequest(chroot=self.m.cros_sdk.chroot)
+        request = BuildSdkSubtoolsRequest(
+            chroot=self.m.cros_sdk.chroot,
+            packages=self.packages,
+            upload_filter=self.upload_filter,
+            private_only=not self.public,
+        )
         request.result_path.transfer = cros_common.ResultPath.TRANSFER_TRANSLATE
         build_response = self.sdk_subtools_service.BuildSdkSubtools(
             request,
@@ -69,16 +93,17 @@ class BuildSdkSubtoolsRun:
   @contextlib.contextmanager
   def _setup(self) -> Generator:
     """Configure the builder and setup the workspace and chroot."""
-    with self.m.build_menu.configure_builder(missing_ok=True), \
-        self.m.build_menu.setup_workspace_and_chroot(
-            force_no_chroot_upgrade=True) as context:
-      # TBD how far we can get re-using the cros_sdk recipe. It will create and
-      # use chroots in `m.path / cache / cros_chroot / chroot`, but the subtools
-      # builder might be more efficient using its own `subtools_chroot` scope so
-      # that there is more control over when to mark it "dirty".
-      # For now, always mark the SDK "dirty" as a precaution.
-      self.m.cros_sdk.mark_sdk_as_dirty()
-      yield context
+    with self.m.build_menu.configure_builder(missing_ok=True):
+      self.m.src_state.gitiles_commit = self.gitiles_commit
+      with self.m.build_menu.setup_workspace_and_chroot(
+          force_no_chroot_upgrade=True) as context:
+        # TBD how far we can get re-using the cros_sdk recipe. It will create
+        # and use chroots in `m.path / cache / cros_chroot / chroot`, but the
+        # subtools builder might be more efficient using its own
+        # `subtools_chroot` scope so that there is more control over when to
+        # mark it "dirty". For now, always mark the SDK "dirty" as a precaution.
+        self.m.cros_sdk.mark_sdk_as_dirty()
+        yield context
 
 
 def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
@@ -92,9 +117,42 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
                                    '.call build API script')
   INIT_SDK_CALL_STEP = ('init sdk.call chromite.api.SdkService/Create.call'
                         ' build API script')
+  UPDATE_SRC_STATE_STEP = 'update src_state.gitiles_commit'
+  PUBLIC_PROPERTIES = BuildSdkSubtoolsProperties(
+      packages=['virtual/target-sdk-subtools'],
+      public=True,
+      upload_filter=[],
+      gitiles_commit=buildbucket_common.GitilesCommit(
+          host='chromium.googlesource.com',
+          project='chromiumos/manifest',
+          ref='refs/heads/snapshot',
+      ),
+  )
+  PRIVATE_PROPERTIES = BuildSdkSubtoolsProperties(
+      packages=['virtual/target-chromeos-sdk-subtools'],
+      public=False,
+      upload_filter=[],
+      gitiles_commit=buildbucket_common.GitilesCommit(
+          host='chrome-internal.googlesource.com',
+          project='chromeos/manifest-internal',
+          ref='refs/heads/snapshot',
+      ),
+  )
+  PACKAGE_PROPERTIES = BuildSdkSubtoolsProperties(
+      packages=['some-specific/package-name'],
+      public=True,
+      upload_filter=['specific-package'],
+      gitiles_commit=buildbucket_common.GitilesCommit(
+          host='chromium.googlesource.com',
+          project='chromiumos/manifest',
+          ref='refs/heads/snapshot',
+      ),
+  )
 
   yield api.test(
       'basic',
+      api.properties(PUBLIC_PROPERTIES),
+      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
       api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
@@ -124,6 +182,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
 
   yield api.test(
       'build-sdk-subtools-propagates-production',
+      api.properties(PUBLIC_PROPERTIES),
       api.buildbucket.build(api.buildbucket.ci_build_message(bucket='infra')),
       api.post_check(post_process.LogContains, UPLOAD_SDK_SUBTOOLS_PARENT_STEP,
                      'request', ['"useProduction": true']),
@@ -133,6 +192,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
 
   yield api.test(
       'build-sdk-subtools-propagates-staging',
+      api.properties(PUBLIC_PROPERTIES),
       api.buildbucket.build(api.buildbucket.ci_build_message(bucket='staging')),
       api.post_check(post_process.LogDoesNotContain,
                      UPLOAD_SDK_SUBTOOLS_PARENT_STEP, 'request',
@@ -143,6 +203,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
 
   yield api.test(
       'build-sdk-subtools-step-failure',
+      api.properties(PUBLIC_PROPERTIES),
       api.step_data(BUILD_SDK_SUBTOOLS_CALL_STEP, retcode=1),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_process(post_process.DropExpectation),
@@ -151,8 +212,31 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
 
   yield api.test(
       'init-sdk-step-failure',
+      api.properties(PUBLIC_PROPERTIES),
       api.step_data(INIT_SDK_CALL_STEP, retcode=1),
       api.post_check(post_process.DoesNotRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_process(post_process.DropExpectation),
       status='INFRA_FAILURE',
+  )
+
+  yield api.test(
+      'basic-private',
+      api.properties(PRIVATE_PROPERTIES),
+      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
+      api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.MustRun, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'basic-specific-package',
+      api.properties(PACKAGE_PROPERTIES),
+      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
+      api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+      api.post_check(post_process.MustRun, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
+      status='SUCCESS',
   )

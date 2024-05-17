@@ -1,0 +1,25 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipes.chromeos.build_sdk_subtools;
+
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
+
+message BuildSdkSubtoolsProperties {
+  // List of packages to build.
+  repeated string packages = 1;
+
+  // If true, use a public manifest and upload all built packages.  If false,
+  // use a private manifest and upload packages originating from private
+  // overlays only.
+  bool public = 2;
+
+  // If provided, only upload these subtools (by name).
+  repeated string upload_filter = 3;
+
+  // Manifest to sync.
+  buildbucket.v2.GitilesCommit gitiles_commit = 4;
+};
