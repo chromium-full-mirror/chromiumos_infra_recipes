@@ -583,12 +583,12 @@ class FailuresApi(RecipeApi):
         kind + 's' if total_count > 1 else kind,
     )
 
-    failure_reasons = {
-        f.failure_reason for f in failure_group if f.failure_reason
-    }
+    failure_reasons = {f.failure_reason for f in failure_group}
 
     # TODO(b/327255136): Start with builds where all failures were alike.
-    if len(failure_reasons) == 1:
+    # At the moment only builds with package failures produce a failure reason.
+    # Builds which fail in other ways will return None.
+    if None not in failure_reasons and len(failure_reasons) == 1:
       main_line = f'{failure_count} out of {total_count} {kind}s {failure_reasons.pop()}'
 
     main_line += \

@@ -106,16 +106,7 @@ def GenTests(api):
                           phase='COMPILE'))
               ]
           }).message,
-      api.test_util.test_child_build(
-          'volteer', status='FAILURE', output_properties={
-              'package_failures': [
-                  json_format.MessageToDict(
-                      PackageFailure(
-                          package=PackageInfo(category='foo',
-                                              package_name='baz'),
-                          phase='COMPILE'))
-              ]
-          }).message
+      api.test_util.test_child_build('volteer', status='FAILURE').message,
   ]
   yield api.test(
       'multiple-failure-reasons-does-not-bubble-up',
