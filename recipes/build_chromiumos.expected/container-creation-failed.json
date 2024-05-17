@@ -6597,7 +6597,7 @@
       "@@@STEP_LOG_LINE@request@  \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@    \"kukui-public-release.R99-1234.56.0-101\",@@@",
       "@@@STEP_LOG_LINE@request@    \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"PRIVATE\"@@@",
+      "@@@STEP_LOG_LINE@request@    \"PRIVATE-8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
       "@@@STEP_LOG_LINE@request@  \"labels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"@@@",
@@ -6617,7 +6617,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"kukui\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"kukui-public-release.R99-1234.56.0-101\",\n  \"tags\": [\n    \"kukui-public-release.R99-1234.56.0-101\",\n    \"8945511751514863184\",\n    \"PRIVATE\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"kukui\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        },\n        {\n          \"flag\": \"-cros-debug\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"kukui-public-release.R99-1234.56.0-101\",\n  \"tags\": [\n    \"kukui-public-release.R99-1234.56.0-101\",\n    \"8945511751514863184\",\n    \"PRIVATE-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_12/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

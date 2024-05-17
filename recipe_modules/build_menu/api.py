@@ -1128,8 +1128,10 @@ class BuildMenuApi(recipe_api.RecipeApi):
                     chroot=self.m.cros_sdk.chroot,
                     version=version,
                     tags=[version] + ([str(build_id)] if build_id else []) +
-                    (['PUBLIC'] if builder_config.general.manifest
-                     == BuilderConfig.General.PUBLIC else ['PRIVATE']),
+                    (['PUBLIC-' +
+                      str(build_id)] if builder_config.general.manifest
+                     == BuilderConfig.General.PUBLIC else
+                     ['PRIVATE-' + str(build_id)]),
                     labels={
                         'build-url':
                             'https://ci.chromium.org/b/{}'.format(build_id)
