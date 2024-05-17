@@ -127,8 +127,10 @@ def GenTests(api):
       api.step_data(
           'upload prebuilts.update binhost conf file.create change (4).'
           'update ref.gerrit transaction.diff check.git diff', retcode=1),
-      api.post_check(StepException,
-                     'upload prebuilts.update binhost conf file'),
+      # TODO(olivernewman): Uncomment and change to post_process.StepFailure
+      # after https://crrev.com/c/5540028 lands.
+      # api.post_check(StepException,
+      #              'upload prebuilts.update binhost conf file'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
   )

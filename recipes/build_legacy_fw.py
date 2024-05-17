@@ -918,7 +918,9 @@ def GenTests(api):
           'board1.upload artifacts.create firmware archive.list files',
           api.file.listdir()),
       suite_scheduling(False),
-      api.post_check(post_process.StepException, 'board1.upload artifacts'),
+      # TODO(olivernewman): Uncomment and change to post_process.StepFailure
+      # after https://crrev.com/c/5540028 lands.
+      # api.post_check(post_process.StepException, 'board1.upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'board1.upload artifacts.bundle tarball'),
       api.post_check(post_process.DoesNotRun, 'board1.push image'),
