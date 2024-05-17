@@ -129,6 +129,13 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
                     'location': 2
                 }
             }]),
+        'FetchTestHarnessMetadata':
+            jsonify(filepaths=[{
+                'path': {
+                    'path': '[CACHE]/example.pb',
+                    'location': 2
+                }
+            }]),
         'FetchPinnedGuestImageUris':
             jsonify(pinned_images=[{
                 'filename': 'filename',

@@ -6651,7 +6651,8 @@
       "@@@STEP_LOG_END@container metadata (log)@@@",
       "@@@STEP_LINK@ []@https:////@sha256:@@@",
       "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
-      "@@@STEP_LINK@test metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
+      "@@@STEP_LINK@test_metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@",
+      "@@@STEP_LINK@test_harness_metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@"
     ]
   },
   {
@@ -7144,6 +7145,266 @@
   },
   {
     "cmd": [],
+    "name": "Create test containers.create test service containers.call chromite.api.ArtifactsService/FetchTestHarnessMetadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"sysroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"/build/amd64-generic-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"amd64-generic-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"filepaths\": [@@@",
+      "@@@STEP_LOG_LINE@response@    {@@@",
+      "@@@STEP_LOG_LINE@response@      \"path\": {@@@",
+      "@@@STEP_LOG_LINE@response@        \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@        \"path\": \"[CACHE]/example.pb\"@@@",
+      "@@@STEP_LOG_LINE@response@      }@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  ]@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/amd64-generic-postsubmit\",\n    \"buildTarget\": {\n      \"name\": \"amd64-generic-postsubmit\"\n    }\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.call chromite.api.ArtifactsService/FetchTestHarnessMetadata.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ArtifactsService/FetchTestHarnessMetadata"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.call chromite.api.ArtifactsService/FetchTestHarnessMetadata.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.call chromite.api.ArtifactsService/FetchTestHarnessMetadata.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Create test containers.create test service containers.call chromite.api.ArtifactsService/FetchTestHarnessMetadata.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CACHE]/example.pb",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.read [CACHE]/example.pb (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Create test containers.create test service containers.upload test_harness_metadata metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"values\": [\n    {\n      \"tast_metadata\": {\n        \"tast_fixture_metadata\": [\n          {\n            \"id\": \"example_fixture\"\n          }\n        ]\n      }\n    }\n  ]\n}",
+      "[CLEANUP]/tmp_tmp_8/test_harness_metadata.jsonpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.upload test_harness_metadata metadata.writing metadata",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@{@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@  \"values\": [@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@    {@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@      \"tast_metadata\": {@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@        \"tast_fixture_metadata\": [@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@          {@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@            \"id\": \"example_fixture\"@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@          }@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@        ]@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@      }@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@    }@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@  ]@@@",
+      "@@@STEP_LOG_LINE@test_harness_metadata.jsonpb@}@@@",
+      "@@@STEP_LOG_END@test_harness_metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/tmp_tmp_8/test_harness_metadata.jsonpb",
+      "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create test service containers.upload test_harness_metadata metadata.gsutil upload",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Create Ti50 Tast artifacts",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
@@ -7221,7 +7482,7 @@
       "ensure-directory",
       "--mode",
       "0o777",
-      "[CLEANUP]/tmp_tmp_8/download"
+      "[CLEANUP]/tmp_tmp_9/download"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7252,7 +7513,7 @@
       "----",
       "cp",
       "gs://chromeos-image-archive/build0/ti50.tar.bz2",
-      "[CLEANUP]/tmp_tmp_8/download"
+      "[CLEANUP]/tmp_tmp_9/download"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7292,9 +7553,9 @@
       "--wildcards",
       "*.bin",
       "--xform=s=^.*/\\([^/]*\\)$=\\1=",
-      "--one-top-level=[CLEANUP]/tmp_tmp_8/tast/andreiboard-ti50",
+      "--one-top-level=[CLEANUP]/tmp_tmp_9/tast/andreiboard-ti50",
       "-f",
-      "[CLEANUP]/tmp_tmp_8/download/ti50.tar.bz2"
+      "[CLEANUP]/tmp_tmp_9/download/ti50.tar.bz2"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -7325,7 +7586,7 @@
       "----",
       "cp",
       "gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin",
-      "[CLEANUP]/tmp_tmp_8/tast/andreiboard-ti50/image_image.bin"
+      "[CLEANUP]/tmp_tmp_9/tast/andreiboard-ti50/image_image.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -7356,7 +7617,7 @@
       "----",
       "cp",
       "-r",
-      "[CLEANUP]/tmp_tmp_8/tast",
+      "[CLEANUP]/tmp_tmp_9/tast",
       "gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7497,7 +7758,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic-postsubmit\"\n    ],\n    \"bot-config\": \"amd64-generic-postsubmit\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:15\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"amd64-generic-postsubmit\"\n    ],\n    \"bot-config\": \"amd64-generic-postsubmit\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"amd64-generic-postsubmit\",\n    \"builder_type\": \"postsubmit\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:18\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -7557,7 +7818,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:15\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:18\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
@@ -7672,7 +7933,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -7696,9 +7957,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -7733,7 +7994,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -7976,7 +8237,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0055@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0058@@@"
     ]
   },
   {

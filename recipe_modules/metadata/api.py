@@ -15,12 +15,16 @@ from recipe_engine import recipe_api
 
 # Protobuffer imports
 from PB.chromite.api.artifacts import FetchMetadataRequest
+from PB.chromite.api.artifacts import FetchTestHarnessMetadataRequest
 from PB.chromite.api.sysroot import Sysroot
 from PB.chromiumos.build.api.container_metadata import ContainerMetadata
 from PB.chromiumos.common import Chroot
 from PB.chromiumos.test.api.test_case import TestCase
 from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadata
 from PB.chromiumos.test.api.test_case_metadata import TestCaseMetadataList
+from PB.chromiumos.test.api.test_harness_metadata import TastFixtureMetadata
+from PB.chromiumos.test.api.test_harness_metadata import TestHarnessMetadata
+from PB.chromiumos.test.api.test_harness_metadata import TestHarnessMetadataList
 from PB.go.chromium.org.luci.resultdb.proto.v1.invocation import Sources
 
 
@@ -63,9 +67,15 @@ class MetadataApi(recipe_api.RecipeApi):
       'container': CONTAINER_METADATA_INFO,
   }
 
-  # TestCaseMetadataList to use when testing fetch_test_metadata.
+  # Fake metadata to use when testing.
   EXAMPLE_TEST_METADATA_LIST = TestCaseMetadataList(
       values=[TestCaseMetadata(test_case=TestCase(name='example_test'))])
+  EXAMPLE_TEST_HARNESS_METADATA_LIST = TestHarnessMetadataList(values=[
+      TestHarnessMetadata(
+          tast_metadata=TestHarnessMetadata.TastMetadata(
+              tast_fixture_metadata=[TastFixtureMetadata(
+                  id='example_fixture')]))
+  ])
 
   def gspath(self, metadata_info, gs_bucket=None, gs_path=None):
     """Return full or relative path to a metadata payload
@@ -106,10 +116,11 @@ class MetadataApi(recipe_api.RecipeApi):
     """Fetch and return test case metadata.
 
     Args:
-      chroot: proto representing the chroot
-      sysroot: proto representing the sysroot
-      mock_metadata_file: boolean which should always be true unless
-        testing the case when a metadata file is not found
+      chroot: Proto representing the chroot.
+      sysroot: Proto representing the sysroot.
+      mock_metadata_file: Whether the returned filepath should be mocked as
+        existing during tests. This should always be True unless testing the
+        case when a metadata file is not found.
 
     Returns:
       A TestCaseMetadataList containing the metadata of all tests, or None
@@ -140,3 +151,50 @@ class MetadataApi(recipe_api.RecipeApi):
       return None
 
     return test_metadata
+
+  def fetch_test_harness_metadata(
+      self,
+      chroot: Chroot,
+      sysroot: Sysroot,
+      mock_metadata_file: bool = True,
+  ) -> Optional[TestHarnessMetadataList]:
+    """Fetch and return test harness metadata.
+
+    Args:
+      chroot: Proto representing the chroot.
+      sysroot: Proto representing the sysroot.
+      mock_metadata_file: Whether the returned filepath should be mocked as
+        existing during tests. This should always be True unless testing the
+        case when a metadata file is not found.
+
+    Returns:
+      A TestHarnessMetadataList containing the metadata of all harnesses,
+      or None if the ArtifactsService/FetchTestHarnessMetadata endpoint is
+      unavailable or all metadata files are empty.
+    """
+    artifacts_service = self.m.cros_build_api.ArtifactsService
+    if not self.m.cros_build_api.has_endpoint(artifacts_service,
+                                              'FetchTestHarnessMetadata'):
+      return None
+    response = artifacts_service.FetchTestHarnessMetadata(
+        FetchTestHarnessMetadataRequest(chroot=chroot, sysroot=sysroot))
+
+    # Combine multiple files each containing a TestHarnessMetadataList.
+    harness_metadata = TestHarnessMetadataList()
+    harness_test_data = self.EXAMPLE_TEST_HARNESS_METADATA_LIST
+    for result_path in response.filepaths:
+      recipes_path = self.m.util.proto_path_to_recipes_path(
+          proto_path=result_path.path)
+      if mock_metadata_file:
+        self.m.path.mock_add_file(recipes_path)
+      if self.m.path.exists(recipes_path):
+        contents = self.m.file.read_raw(
+            name=f'read {recipes_path}',
+            source=recipes_path,
+            test_data=harness_test_data.SerializeToString(),
+        )
+        harness_metadata.MergeFromString(contents)
+    if len(harness_metadata.values) == 0:
+      return None
+
+    return harness_metadata

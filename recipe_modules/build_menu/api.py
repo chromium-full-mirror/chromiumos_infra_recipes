@@ -1213,20 +1213,25 @@ class BuildMenuApi(recipe_api.RecipeApi):
                 'One or more test service containers failed to build.')
 
           # Upload test metadata to the same gs bucket.
-          test_metadata = self.m.metadata.fetch_test_metadata(
-              chroot=self.chroot, sysroot=self.sysroot)
-          if test_metadata:
-            gs_path = self.m.cros_artifacts.upload_metadata(
-                'test_metadata',
-                builder_config.id.name,
-                self.build_target,
-                builder_config.artifacts.artifacts_gs_bucket,
-                'test_metadata.jsonpb',
-                test_metadata,
-                template=self.m.cros_artifacts.gs_upload_path,
-            )
-            presentation.links['test metadata (gs)'] = (
-                self.m.urls.get_gs_bucket_url(gs_bucket, gs_path))
+          for (metadata_type, fetch) in [
+              ('test_metadata', self.m.metadata.fetch_test_metadata),
+              ('test_harness_metadata',
+               self.m.metadata.fetch_test_harness_metadata)
+          ]:
+            metadata = fetch(chroot=self.chroot, sysroot=self.sysroot)
+            if metadata:
+              gs_path = self.m.cros_artifacts.upload_metadata(
+                  metadata_type,
+                  builder_config.id.name,
+                  self.build_target,
+                  builder_config.artifacts.artifacts_gs_bucket,
+                  f'{metadata_type}.jsonpb',
+                  metadata,
+                  template=self.m.cros_artifacts.gs_upload_path,
+              )
+              presentation.links[f'{metadata_type} (gs)'] = (
+                  self.m.urls.get_gs_bucket_url(gs_bucket, gs_path))
+
 
   def publish_centralized_suites(
       self, builder_config: Optional[BuilderConfig] = None) -> None:

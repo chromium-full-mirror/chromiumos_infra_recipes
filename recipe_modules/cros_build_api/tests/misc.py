@@ -86,24 +86,43 @@ def RunSteps(api):
           'CompileProto': meta_api.CompileProtoResponse,
       },
       'ArtifactsService': {
-          'FetchCentralizedSuites': artifacts.FetchCentralizedSuitesResponse,
-          'FetchMetadata': artifacts.FetchMetadataResponse,
-          'FetchPinnedGuestImageUris': artifacts.PinnedGuestImageUriResponse,
-          'BuildSetup': artifacts.BuildSetupResponse,
-          'Get': artifacts.GetResponse,
+          'FetchCentralizedSuites':
+              artifacts.FetchCentralizedSuitesResponse,
+          'FetchMetadata':
+              artifacts.FetchMetadataResponse,
+          'FetchTestHarnessMetadata':
+              artifacts.FetchTestHarnessMetadataResponse,
+          'FetchPinnedGuestImageUris':
+              artifacts.PinnedGuestImageUriResponse,
+          'BuildSetup':
+              artifacts.BuildSetupResponse,
+          'Get':
+              artifacts.GetResponse,
           # TODO(crbug/1034529): All of the following are migrating to Get.
-          'BundleDebugSymbols': artifacts.BundleResponse,
-          'BundleImageZip': artifacts.BundleResponse,
-          'BundleTestUpdatePayloads': artifacts.BundleResponse,
-          'BundleAutotestFiles': artifacts.BundleResponse,
-          'BundleTastFiles': artifacts.BundleResponse,
-          'BundlePinnedGuestImages': artifacts.BundleResponse,
-          'BundleFirmware': artifacts.BundleResponse,
-          'BundleEbuildLogs': artifacts.BundleResponse,
-          'BundleChromeOSConfig': artifacts.BundleResponse,
-          'BundleImageArchives': artifacts.BundleResponse,
-          'BundleFpmcuUnittests': artifacts.BundleResponse,
-          'BundleGceTarball': artifacts.BundleResponse,
+          'BundleDebugSymbols':
+              artifacts.BundleResponse,
+          'BundleImageZip':
+              artifacts.BundleResponse,
+          'BundleTestUpdatePayloads':
+              artifacts.BundleResponse,
+          'BundleAutotestFiles':
+              artifacts.BundleResponse,
+          'BundleTastFiles':
+              artifacts.BundleResponse,
+          'BundlePinnedGuestImages':
+              artifacts.BundleResponse,
+          'BundleFirmware':
+              artifacts.BundleResponse,
+          'BundleEbuildLogs':
+              artifacts.BundleResponse,
+          'BundleChromeOSConfig':
+              artifacts.BundleResponse,
+          'BundleImageArchives':
+              artifacts.BundleResponse,
+          'BundleFpmcuUnittests':
+              artifacts.BundleResponse,
+          'BundleGceTarball':
+              artifacts.BundleResponse,
       },
       'BinhostService': {
           'PrepareBinhostUploads':
