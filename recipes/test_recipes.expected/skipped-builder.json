@@ -717,7 +717,7 @@
     "name": "analyze and launch builders",
     "~followup_annotations": [
       "@@@STEP_TEXT@launched 1 / 2 builders@@@",
-      "@@@STEP_LINK@staging-release-triggerer@https://ci.chromium.org/b/2@@@"
+      "@@@STEP_LINK@staging-release-triggerer@https://buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
@@ -1493,11 +1493,11 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"buildbucket\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"build_id\": 2,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"buildbucket@appspot.com\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"host_name\": \"buildbucket.appspot.com\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LINK@Build@https://ci.chromium.org/b/2@@@"
+      "@@@STEP_LINK@Build@https://buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
