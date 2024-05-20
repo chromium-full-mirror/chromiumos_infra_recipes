@@ -59,6 +59,23 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-timed-events",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch TIMED_EVENT tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]

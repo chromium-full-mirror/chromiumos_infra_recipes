@@ -67,6 +67,16 @@ def RunSteps(api, properties):
           'launch NEW_BUILD tasks', nb_command,
           stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
 
+    with api.context(cwd=cipd_dir, infra_steps=True):
+      te_command = [cmd_path, 'run', '-timed-events', '-run-id', run_uuid]
+
+      if not api.cros_infra_config.is_staging:
+        te_command.append('-prod')
+
+      api.step(
+          'launch TIMED_EVENT tasks', te_command,
+          stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+
 
 def GenTests(api):
   yield api.test('basic',
