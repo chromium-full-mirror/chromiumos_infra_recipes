@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "update ref",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

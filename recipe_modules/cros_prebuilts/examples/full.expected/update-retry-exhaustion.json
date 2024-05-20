@@ -335,7 +335,7 @@
     "cmd": [],
     "name": "upload prebuilts",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1110,7 +1110,7 @@
     "name": "upload prebuilts.update binhost conf file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1661,7 +1661,7 @@
     "name": "upload prebuilts.update binhost conf file.create change",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1669,7 +1669,7 @@
     "name": "upload prebuilts.update binhost conf file.create change.update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -1677,7 +1677,7 @@
     "name": "upload prebuilts.update binhost conf file.create change.update ref.gerrit transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -2349,7 +2349,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -2357,7 +2357,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (2).update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -2365,7 +2365,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (2).update ref.gerrit transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3037,7 +3037,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3045,7 +3045,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (3).update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3053,7 +3053,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (3).update ref.gerrit transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3725,7 +3725,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3733,7 +3733,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (4).update ref",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -3741,7 +3741,7 @@
     "name": "upload prebuilts.update binhost conf file.create change (4).update ref.gerrit transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {

@@ -272,7 +272,7 @@
     "cmd": [],
     "name": "update ref (3)",
     "~followup_annotations": [
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
@@ -280,7 +280,7 @@
     "name": "update ref (3).gerrit transaction",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_EXCEPTION@@@"
+      "@@@STEP_FAILURE@@@"
     ]
   },
   {
