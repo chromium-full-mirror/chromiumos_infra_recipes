@@ -82,26 +82,56 @@ class Ctpv2Command(recipe_api.RecipeApi):
         """
     result = copy.deepcopy(requests)
     for name, request in requests.items():
-      meets_criteria = False
-      params = request.params if hasattr(request,
-                                         'params') else request['params']
-      decorations = params.decorations if hasattr(
-          params, 'decorations') else params['decorations']
-      if decorations:
-        tags = decorations.tags if hasattr(decorations,
-                                           'tags') else decorations['tags']
-        for tag in tags:
-          if tag.startswith('label-pool:'):
-            tag = tag.lstrip('label-pool:')
-          elif tag.startswith('pool:'):
-            tag = tag.lstrip('pool:')
-          else:
-            continue
-          if tag in self.allowed_pools:
-            meets_criteria = True
       # XOR meets_criteria with reverse to
       # produce the reversing boolean algebra.
-      if not meets_criteria ^ reverse:
+      if not self._meets_ctpv2_criteria(request) ^ reverse:
         del result[name]
-
     return result
+
+  def _meets_ctpv2_criteria(self, request):
+    params = self._get_val_from_obj_or_dict(request, 'params')
+    if not params:  # pragma: no cover
+      return False
+    if self._is_ctpv2_with_qs_request(params):
+      return True
+    return self._is_allowed_pool(params)
+
+  def _is_ctpv2_with_qs_request(self, params):
+    run_via_cft = self._get_val_from_obj_or_dict(params, 'run_via_cft',
+                                                 'runViaCft')
+    run_ctpv2_with_qs = self._get_val_from_obj_or_dict(params,
+                                                       'run_ctpv2_with_qs',
+                                                       'runCtpv2WithQs')
+    return run_via_cft and run_ctpv2_with_qs
+
+  def _is_allowed_pool(self, params):
+    decorations = self._get_val_from_obj_or_dict(params, 'decorations')
+    if not decorations:  # pragma: no cover
+      return False
+    tags = self._get_val_from_obj_or_dict(decorations, 'tags')
+    if not tags:  # pragma: no cover
+      return False
+    for tag in tags:
+      if tag.startswith('label-pool:'):
+        tag = tag.lstrip('label-pool:')
+      elif tag.startswith('pool:'):
+        tag = tag.lstrip('pool:')
+      else:
+        continue
+      if tag in self.allowed_pools:
+        return True
+    return False
+
+  def _get_val_from_obj_or_dict(self, obj_or_dict, field,
+                                key=None):  # pragma: no cover
+    """Retrieves the value from the obj/dict using the field/key.
+
+    This is needed because filter legacy requests is called with both a proto
+    object and a proto dict.
+    """
+    if hasattr(obj_or_dict, field):
+      return getattr(obj_or_dict, field)
+    key = key if key else field
+    if key in obj_or_dict:
+      return obj_or_dict[key]
+    return None
