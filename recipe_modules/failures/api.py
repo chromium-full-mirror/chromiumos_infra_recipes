@@ -630,10 +630,8 @@ class FailuresApi(RecipeApi):
     #     - <a>tast.firmware.something</a>
     # ...
 
-    # This regex works on the assumption that suite / shard failures should have
-    # a reason associated e.g. tast.fingerprint-cq (timed out while running).
-    hw_test_shard_pattern = r'^\b\S+\b\s+.+$'
-    main_line = self.get_test_failure_main_line(hw_test_shard_pattern, self.HW_TEST, hw_test_failures, non_fatal_failures_count_by_kind)
+    main_line = self.get_test_failure_main_line(
+        hw_test_failures, non_fatal_failures_count_by_kind)
     lines = [main_line]
     failures_to_print = hw_test_failures[:self._failure_truncate_max]
 
@@ -684,14 +682,12 @@ class FailuresApi(RecipeApi):
 
     return fault_attribution_text.format(failure_type, comparison_build_start_datetime, milo_link)
 
-  def get_test_failure_main_line(self, shard_pattern: str,
-      kind: str, failure_group: List[Failure],
+  def get_test_failure_main_line(
+      self, failure_group: List[Failure],
       non_fatal_failures_count_by_kind: collections.Counter) -> str:
     """Returns the main line of the summary markdown.
 
     Args:
-      kind: The failure kind.
-      shard_pattern: The regex pattern used to identify suite / shard failures.
       failure_group: List of all the failures for the specified kind.
       non_fatal_failures_count_by_kind: Counter of each failure kind to its
         non-fatal failure count.
@@ -699,6 +695,11 @@ class FailuresApi(RecipeApi):
     Returns:
       Main line of the summary markdown.
     """
+    kind = self.HW_TEST
+    # This regex works on the assumption that suite / shard failures should have
+    # a reason associated e.g. tast.fingerprint-cq (timed out while running).
+    shard_pattern = r'^\b\S+\b\s+.+$'
+
     shard_failure_count = 0
     test_failure_count = 0
     for failure in failure_group:
