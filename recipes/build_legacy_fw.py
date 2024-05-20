@@ -363,7 +363,12 @@ class FirmwareBuilder():
         ]
       self.sdk_call('setup board', cmd=cmd)
 
-      if self._is_after('14950.0.0'):
+      if self._is_after('15506.0.0'):
+        cmd = [
+            'cros', 'build-packages', board_arg, '--accept-licenses=@CHROMEOS',
+            '--skip-chroot-upgrade'
+        ]
+      elif self._is_after('14950.0.0'):
         cmd = [
             'build_packages', board_arg, '--accept-licenses=@CHROMEOS',
             '--skip-chroot-upgrade'
