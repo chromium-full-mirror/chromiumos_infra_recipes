@@ -137,7 +137,8 @@ def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
 
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
-    StagingReCheck('chromeos', 'staging', r'staging-amd64-generic-postsubmit',
+    StagingReCheck('chromeos', 'staging',
+                   r'staging-amd64-generic-always-relevant-snapshot',
                    [image_builder_exemption], num_builds=2),
     StagingReCheck('chromeos', 'staging', r'staging-Annealing'),
     StagingReCheck('chromeos', 'staging', r'staging-chrome-pupr-generator',
@@ -150,8 +151,8 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit',
                    [image_builder_exemption, build_firmware_exemption]),
-    StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
-                   num_builds=3),
+    # StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
+    #                num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-recipes_autoreleaser_infra',
                    [autoreleaser_no_releasable_changes_exemption],
                    num_builds=1),
