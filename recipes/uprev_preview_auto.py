@@ -66,7 +66,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
       projects=_SYNC_PROJECTS, is_staging=api.cros_infra_config.is_staging)
 
   # Create a branch in the overlay project and sync to ToT.
-  overlay_path = api.cros_source.workspace_path.join(
+  overlay_path = api.cros_source.workspace_path.joinpath(
       'src/third_party/autotest/files')
   with api.step.nest('create branch and sync overlay') as pres, \
       api.context(cwd=overlay_path):
@@ -86,7 +86,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
       api.step(f'chmod {dep_name}', ['chmod', '+x', f'{env_path}/{dep_name}'])
 
   for android_major_version in _ANDROID_MAJOR_VERSIONS:
-    config_path = overlay_path.join(
+    config_path = overlay_path.joinpath(
         f'server/site_tests/cheets_CTS_{android_major_version}')
     modified_files = ''
     current_preview_version = ''
@@ -96,7 +96,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> None:
       modified_files = api.git.get_working_dir_diff_files()
 
       load_dict = api.file.read_json('read preview version',
-                                     config_path.join('bundle_url_config.json'))
+                                     config_path / 'bundle_url_config.json')
       current_preview_version = load_dict['preview_version_name']
 
     if modified_files:
