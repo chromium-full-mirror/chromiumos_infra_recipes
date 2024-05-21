@@ -11,7 +11,7 @@ recipe.
 
 import re
 from collections import defaultdict
-from contextlib import contextmanager
+from contextlib import contextmanager, nullcontext
 
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.packages import GetTargetVersionsResponse
@@ -611,19 +611,23 @@ class FirmwareBuilder():
           # Reset the build report for each target to have a separate report per-target.
           self.m.build_reporting.reset_build_report(bt.name)
           self._setup_board_and_install_packages(bt)
-          with self.m.build_reporting.status_reporting():
+          with self.m.build_reporting.status_reporting(
+          ) if not self.m.cv.active else nullcontext():
             with self.m.build_reporting.step_reporting(
                 BuildReport.StepDetails.STEP_OVERALL,
-                raise_on_failed_publish=True):
+                raise_on_failed_publish=True
+            ) if not self.m.cv.active else nullcontext():
               branch = self.m.src_state.gitiles_commit.ref
               if branch.startswith('refs/heads/'):
                 branch = branch[len('refs/heads/'):]
-              self.m.build_reporting.publish_branch(branch)
+              if not self.m.cv.active:
+                self.m.build_reporting.publish_branch(branch)
 
               target_versions = GetTargetVersionsResponse(
                   milestone_version=str(self._bcs_version.milestone),
                   platform_version=self._bcs_version.platform_version)
-              self.m.build_reporting.publish_versions(target_versions)
+              if not self.m.cv.active:
+                self.m.build_reporting.publish_versions(target_versions)
               try:
                 (bt_uploaded,
                  artifact_dir) = self.m.build_menu.upload_artifacts(
@@ -631,7 +635,7 @@ class FirmwareBuilder():
                      sysroot=Sysroot(path='/build/{}'.format(bt.name),
                                      build_target=bt), report_to_spike=self.m
                      .cros_infra_config.config.artifacts.attestation_eligible)
-                if bt_uploaded:
+                if bt_uploaded and not self.m.cv.active:
                   self.m.build_reporting.publish_build_artifacts(
                       bt_uploaded, artifact_dir)
               except NoFilesToUploadFailure as e:
