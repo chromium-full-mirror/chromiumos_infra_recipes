@@ -297,7 +297,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       test_results = test_results._replace(
           skylab=auto_exonerated_hw_results +
           previously_failed_now_exonerable_hw_results)
-      self.m.exonerate.populate_exoneration_markdown()
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
 
