@@ -32,6 +32,7 @@ DEPS = [
     'failures',
     'git_footers',
     'gobin',
+    'image_builder_failures',
     'metadata',
     'metadata_json',
     'observability_image_size',

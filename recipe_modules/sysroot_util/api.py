@@ -168,7 +168,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           request, response_lambda=response_lambda, timeout=timeout_sec,
           test_output_data=test_data)
       pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
-      self.m.failures.set_compile_failed_packages(pres, pkgs)
+      self.m.image_builder_failures.set_compile_failed_packages(pres, pkgs)
 
   def install_packages(self, config, dep_graph, packages=None,
                        artifact_build=False, timeout_sec='DEFAULT', name=None,
@@ -358,8 +358,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
           cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
               self.sysroot, self.m.cros_sdk.chroot,
               self.m.workspace_util.patch_sets, include_rev_deps=True)
-        self.m.failures.set_compile_failed_packages(presentation, pkgs,
-                                                    cl_affected_packages)
+        self.m.image_builder_failures.set_compile_failed_packages(
+            presentation, pkgs, cl_affected_packages)
 
   def create_netboot_image(self) -> None:
     """Create a netboot image for the factory build."""
@@ -471,7 +471,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             request, timeout=timeout_sec,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
             test_output_data=build_test_data)
-        self.m.failures.set_compile_failed_packages(
+        self.m.image_builder_failures.set_compile_failed_packages(
             pres, [(p, '') for p in response.failed_packages])
 
         # b/239795601: We can't currently finish the factory image inside of the
@@ -543,7 +543,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                     chroot=self.m.cros_sdk.chroot),
                 test_output_data=test_test_data).success:
               failed_images.append(image)
-            self.m.failures.raise_failed_image_tests(failed_images)
+            self.m.image_builder_failures.raise_failed_image_tests(
+                failed_images)
         return response.images
 
   def _get_last_postsubmit_rootfs_size(self):

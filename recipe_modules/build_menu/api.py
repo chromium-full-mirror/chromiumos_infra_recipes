@@ -851,7 +851,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, response)
         if pkgs:
-          self.m.failures.set_test_failed_packages(
+          self.m.image_builder_failures.set_test_failed_packages(
               presentation, pkgs,
               self.get_cl_affected_sysroot_packages(include_rev_deps=True))
 

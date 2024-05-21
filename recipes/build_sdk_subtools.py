@@ -26,7 +26,7 @@ DEPS = [
     'cros_build_api',
     'cros_sdk',
     'cros_source',
-    'failures',
+    'image_builder_failures',
 ]
 
 
@@ -54,7 +54,7 @@ class BuildSdkSubtoolsRun:
             response_lambda=self.m.cros_build_api.failed_pkg_data_names,
             pkg_logs_lambda=self.m.cros_build_api.failed_pkg_logs)
         pkgs = self.m.cros_build_api.failed_pkg_logs(request, build_response)
-        self.m.failures.set_compile_failed_packages(step, pkgs)
+        self.m.image_builder_failures.set_compile_failed_packages(step, pkgs)
 
       with self.m.step.nest('Upload SDK Subtools') as step:
         request = UploadSdkSubtoolsRequest(

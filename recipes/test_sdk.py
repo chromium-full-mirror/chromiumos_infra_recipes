@@ -34,7 +34,7 @@ DEPS = [
     'cros_relevance',
     'cros_sdk',
     'easy',
-    'failures',
+    'image_builder_failures',
     'workspace_util',
 ]
 
@@ -78,7 +78,8 @@ def RunSteps(api: RecipeApi):
         cl_affected_packages = api.cros_relevance.get_package_dependencies(
             api.cros_sdk.default_sdk_sysroot, api.cros_sdk.chroot,
             api.workspace_util.patch_sets, include_rev_deps=True)
-      api.failures.set_test_failed_packages(step, pkgs, cl_affected_packages)
+      api.image_builder_failures.set_test_failed_packages(
+          step, pkgs, cl_affected_packages)
 
     # SDK has been modified, so ensure it is not reused.
     api.cros_sdk.mark_sdk_as_dirty()

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2024 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -17,7 +17,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/raw_io',
     'recipe_engine/step',
-    'failures',
+    'image_builder_failures',
     'test_util',
 ]
 
@@ -27,8 +27,8 @@ def RunSteps(api):
 
   with api.step.nest('no failures') as test_step:
     # Call with no failed packages, should noop.
-    api.failures.set_compile_failed_packages(test_step, [])
-    api.failures.set_test_failed_packages(test_step, [])
+    api.image_builder_failures.set_compile_failed_packages(test_step, [])
+    api.image_builder_failures.set_test_failed_packages(test_step, [])
 
   package_info_0 = PackageInfo(package_name='package-name', category='category')
   package_info_1 = PackageInfo(package_name='package1')
@@ -42,7 +42,7 @@ def RunSteps(api):
         api.step.StepFailure, r'failed compilation for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_compile_failure/category_package-name_log\)',
-        api.failures.set_compile_failed_packages, test_step,
+        api.image_builder_failures.set_compile_failed_packages, test_step,
         [(package_info_0, 'test log')])
 
   with api.step.nest('one compile failure with attribution') as test_step:
@@ -50,7 +50,7 @@ def RunSteps(api):
         api.step.StepFailure, r'failed compilation for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_compile_failure_with_attribution/category_package-name_log\)',
-        api.failures.set_compile_failed_packages, test_step,
+        api.image_builder_failures.set_compile_failed_packages, test_step,
         [(package_info_0, 'test log')], cl_affected_packages=[package_info_0])
 
   with api.step.nest(
@@ -59,7 +59,7 @@ def RunSteps(api):
         api.step.StepFailure, r'failed compilation for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_compile_failure_with_snapshot_comparison/category_package-name_log\)',
-        api.failures.set_compile_failed_packages, test_step,
+        api.image_builder_failures.set_compile_failed_packages, test_step,
         [(package_info_0, 'test log')])
 
   with api.step.nest('one test failure') as test_step:
@@ -67,7 +67,7 @@ def RunSteps(api):
         api.step.StepFailure, r'failed unit tests for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_test_failure/category_package-name_log\)',
-        api.failures.set_test_failed_packages, test_step,
+        api.image_builder_failures.set_test_failed_packages, test_step,
         [(package_info_0, 'test log')])
 
   with api.step.nest('one test failure with attribution') as test_step:
@@ -75,26 +75,26 @@ def RunSteps(api):
         api.step.StepFailure, r'failed unit tests for \[category/package-name]'
         r'\(https://logs.chromium.org/logs/chromeos/logdog/prefix/'
         r'\+/u/one_test_failure_with_attribution/category_package-name_log\)',
-        api.failures.set_test_failed_packages, test_step,
+        api.image_builder_failures.set_test_failed_packages, test_step,
         [(package_info_0, 'test log')], cl_affected_packages=[package_info_0])
 
   with api.step.nest('multiple compile failures') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_compile_failed_packages,
+                                api.image_builder_failures.set_compile_failed_packages,
                                 test_step,
                                 [(package_info_1, 'test log for package1'),
                                  (package_info_2, 'test log for package2')])
 
   with api.step.nest('multiple test failures') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_test_failed_packages,
+                                api.image_builder_failures.set_test_failed_packages,
                                 test_step,
                                 [(package_info_3, 'test log for package3'),
                                  (package_info_4, 'test log for package4')])
 
   with api.step.nest('test3') as test_step:
     api.assertions.assertRaises(api.step.StepFailure,
-                                api.failures.set_compile_failed_packages,
+                                api.image_builder_failures.set_compile_failed_packages,
                                 test_step, [(package_info_5, '')])
 
   expected_failures = [
@@ -116,7 +116,7 @@ def RunSteps(api):
     snapshot_comparison_failure.snapshot_comparison = CqFailureAttribute.MATCHING_FAILURE_FOUND
   expected_failures.append(snapshot_comparison_failure)
 
-  api.assertions.assertCountEqual(api.failures.package_failures,
+  api.assertions.assertCountEqual(api.image_builder_failures.package_failures,
                                   expected_failures)
 
 def GenTests(api):

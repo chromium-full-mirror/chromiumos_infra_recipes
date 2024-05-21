@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2019 The ChromiumOS Authors
+# Copyright 2024 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
@@ -13,15 +13,16 @@ from PB.chromiumos.common import IMAGE_TYPE_TEST
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
-    'failures',
+    'image_builder_failures',
 ]
 
 
 
 def RunSteps(api):
-  api.failures.raise_failed_image_tests([])
+  api.image_builder_failures.raise_failed_image_tests([])
   api.assertions.assertRaises(
-      api.step.StepFailure, api.failures.raise_failed_image_tests, [
+      api.step.StepFailure, api.image_builder_failures.raise_failed_image_tests,
+      [
           Image(path='path', type=IMAGE_TYPE_TEST,
                 build_target=BuildTarget(name='build_target'))
       ])

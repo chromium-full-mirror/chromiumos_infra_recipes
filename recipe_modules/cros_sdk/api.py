@@ -479,8 +479,8 @@ class CrosSdkApi(RecipeApi):
               self.default_sdk_sysroot, self.chroot,
               self.m.workspace_util.patch_sets, include_rev_deps=True)
         # TODO(b/271120919): Specify that it is a host package.
-        self.m.failures.set_compile_failed_packages(pres, pkgs,
-                                                    cl_affected_packages)
+        self.m.image_builder_failures.set_compile_failed_packages(
+            pres, pkgs, cl_affected_packages)
       except StepFailure as e:
         # If the update fails, also delete the SDK.
         self._remove_chroot(name='UpdateSDK failure')
