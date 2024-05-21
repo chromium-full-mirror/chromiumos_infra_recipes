@@ -982,7 +982,8 @@ class GerritApi(RecipeApi):
 
   def _query_changes(self, host: str, query_params: List[Tuple[str, str]],
                      label_constraints: Optional[List[LabelConstraint]] = None,
-                     o_params: Optional[List[str]] = None) -> List[ChangeInfo]:
+                     o_params: Optional[List[str]] = None,
+                     limit: Optional[int] = None) -> List[ChangeInfo]:
     """Query gerrit for change meeting certain constraints, and return them.
 
     Args:
@@ -994,6 +995,7 @@ class GerritApi(RecipeApi):
           filter before returning.
       o_params: A list of additional output specifiers, as documented here:
           https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+      limit: The maximum number of changes to return.
     Returns:
       A list of ChangeInfo objects that matches the specified query parameters
       and label constraints. If no changes match the query, an empty list will
@@ -1003,7 +1005,8 @@ class GerritApi(RecipeApi):
     if label_constraints:
       o_params.append('LABELS')
     results = self.m.depot_tools_gerrit.get_changes(host, query_params,
-                                                    o_params=o_params)
+                                                    o_params=o_params,
+                                                    limit=limit)
     if label_constraints:
       results = [
           r for r in results
@@ -1011,13 +1014,10 @@ class GerritApi(RecipeApi):
       ]
     return results
 
-  def query_change_infos(
-      self,
-      host: str,
-      query_params: List[Tuple[str, str]],
-      label_constraints: Optional[List[LabelConstraint]] = None,
-      o_params: Optional[List[str]] = None,
-  ) -> List[ChangeInfo]:
+  def query_change_infos(self, host: str, query_params: List[Tuple[
+      str, str]], label_constraints: Optional[List[LabelConstraint]] = None,
+                         o_params: Optional[List[str]] = None,
+                         limit: Optional[int] = None) -> List[ChangeInfo]:
     """Query gerrit for change meeting certain constraints, and return them.
 
       Args:
@@ -1029,6 +1029,7 @@ class GerritApi(RecipeApi):
             filter before returning.
         o_params: A list of additional output specifiers, as documented here:
             https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+        limit: The maximum number of changes to return.
       Returns:
         A list of ChangeInfo objects that meet the specified query parameters
         and label constraints. If no changes meet the criteria, an empty list
@@ -1036,7 +1037,7 @@ class GerritApi(RecipeApi):
       """
     with self.m.step.nest('query %s' % host) as presentation:
       results = self._query_changes(host, query_params, label_constraints,
-                                    o_params)
+                                    o_params, limit)
       presentation.step_text = 'found %d matching CLs' % len(results)
       return results
 
