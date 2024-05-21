@@ -27,6 +27,7 @@ DEPS = [
     'cros_build_api',
     'cros_history',
     'cros_relevance',
+    'cros_version',
     'gerrit',
     'repo',
     'test_util',
@@ -169,6 +170,7 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           )
       ),
+      api.cros_version.workspace_version('R126-15870.0.0'),
       step_data_no_cached_container_gcs(api),
       cq=True,
       build_target='atlas',
@@ -184,6 +186,7 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           ),
       ),
+      api.cros_version.workspace_version('R126-15870.0.0'),
       step_data_complete_ls_attempt_1,
       step_data_complete_cat_attempt_1,
       cq=True,
@@ -200,12 +203,43 @@ def GenTests(api):
               '{staging?}{build-target}-cq.{cros-version}-{bbid}'
           ),
       ),
+      api.cros_version.workspace_version('R126-15870.0.0'),
       step_data_ls_attempt_1,
       step_data_cat_attempt_1,
       step_data_ls_attempt_2,
       step_data_cat_attempt_2,
       step_data_ls_attempt_3,
       step_data_cat_attempt_3,
+      cq=True,
+      build_target='atlas',
+      experiments=['chromeos.build_cq.cft_cache_build'],
+  )
+
+  yield api.build_menu.test(
+      'cq-build-with-cache-build-supported-build-version',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          ),
+      ),
+      api.cros_version.workspace_version('R126-15870.0.0'),
+      cq=True,
+      build_target='atlas',
+      experiments=['chromeos.build_cq.cft_cache_build'],
+  )
+
+  yield api.build_menu.test(
+      'cq-build-with-cache-build-unsupported-build-version',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          ),
+      ),
+      api.cros_version.workspace_version('R126-15869.0.0'),
       cq=True,
       build_target='atlas',
       experiments=['chromeos.build_cq.cft_cache_build'],

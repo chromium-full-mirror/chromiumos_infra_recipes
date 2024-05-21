@@ -939,9 +939,16 @@ class BuildMenuApi(recipe_api.RecipeApi):
 
     Checks if the experiment is enabled and excludes public boards.
     """
+    # TODO(b/341969820): This check is to avoid missing tests as changes to unify ebuilds landed in this version.
+    # Eventually we'll never see builds older than this and it could be then removed.
+    is_supported_version = (
+        self.m.cros_version.version.milestone > 126 or
+        (self.m.cros_version.version.milestone == 126 and
+         self.m.cros_version.version.is_after('15870.0.0')))
+
     public = builder_config.general.manifest == BuilderConfig.General.PUBLIC
     is_experiment_enabled = 'chromeos.build_cq.cft_cache_build' in self.m.cros_infra_config.experiments
-    return is_experiment_enabled and not public
+    return is_experiment_enabled and not public and is_supported_version
 
   def _read_container_info_gcs_file(
       self, gs_path) -> Optional[BuildTestServiceContainersResponse]:

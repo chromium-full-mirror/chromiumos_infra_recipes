@@ -2589,7 +2589,7 @@
     "cmd": [],
     "name": "read chromeos version",
     "~followup_annotations": [
-      "@@@STEP_TEXT@found version: R126-15870.0.0-101@@@"
+      "@@@STEP_TEXT@found version: R126-15869.0.0-101@@@"
     ]
   },
   {
@@ -2710,7 +2710,7 @@
     "cmd": [],
     "name": "set chromeos_version",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R126-15870.0.0-101\"@@@"
+      "@@@SET_BUILD_PROPERTY@chromeos_version@\"R126-15869.0.0-101\"@@@"
     ]
   },
   {
@@ -2798,7 +2798,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/sources.jsonpb"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2818,7 +2818,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
     ]
   },
   {
@@ -4316,7 +4316,7 @@
     "cmd": [],
     "name": "upload metadata",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/partial-metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/partial-metadata.json@@@"
     ]
   },
   {
@@ -4386,7 +4386,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_1/partial-metadata.json",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/partial-metadata.json"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/partial-metadata.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6582,7 +6582,7 @@
       "@@@STEP_LOG_LINE@request@    1,@@@",
       "@@@STEP_LOG_LINE@request@    3@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -6619,7 +6619,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"imageTypes\": [\n    1,\n    3\n  ],\n  \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"imageTypes\": [\n    1,\n    3\n  ],\n  \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6738,7 +6738,7 @@
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_BASE\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_TEST\"@@@",
       "@@@STEP_LOG_LINE@published event@    ],@@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -6774,7 +6774,7 @@
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI64DE/QQQgMq17gEiBgjtgMT9BKIBdQoHCgVhdGxhcxICAQMyL2F0bGFzLWNxL1IxMjYtMTU4NzAuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI64DE/QQQgMq17gEiBgjtgMT9BKIBdQoHCgVhdGxhcxICAQMyL2F0bGFzLWNxL1IxMjYtMTU4NjkuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6806,7 +6806,7 @@
       }
     },
     "name": "build images.call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI64DE/QQQgMq17gEiBgjtgMT9BKIBdQoHCgVhdGxhcxICAQMyL2F0bGFzLWNxL1IxMjYtMTU4NzAuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI64DE/QQQgMq17gEiBgjtgMT9BKIBdQoHCgVhdGxhcxICAQMyL2F0bGFzLWNxL1IxMjYtMTU4NjkuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkhidWlsZCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -7310,8 +7310,8 @@
       "@@@STEP_LOG_LINE@request@    1,@@@",
       "@@@STEP_LOG_LINE@request@    3@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
-      "@@@STEP_LOG_LINE@request@  \"version\": \"15870.0.0\",@@@",
-      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"version\": \"15869.0.0\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -7348,7 +7348,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"imageTypes\": [\n    1,\n    3\n  ],\n  \"version\": \"15870.0.0\",\n  \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"imageTypes\": [\n    1,\n    3\n  ],\n  \"version\": \"15869.0.0\",\n  \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -7467,8 +7467,8 @@
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_BASE\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"IMAGE_TYPE_TEST\"@@@",
       "@@@STEP_LOG_LINE@published event@    ],@@@",
-      "@@@STEP_LOG_LINE@published event@    \"version\": \"15870.0.0\",@@@",
-      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"version\": \"15869.0.0\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"builderPath\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -7504,7 +7504,7 @@
     "name": "build images (2).call chromite.api.ImageService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI9IDE/QQQgMq17gEiBgj2gMT9BKIBgAEKBwoFYXRsYXMSAgEDIgkxNTg3MC4wLjAyL2F0bGFzLWNxL1IxMjYtMTU4NzAuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkxidWlsZCBpbWFnZXMgKDIpfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI9IDE/QQQgMq17gEiBgj2gMT9BKIBgAEKBwoFYXRsYXMSAgEDIgkxNTg2OS4wLjAyL2F0bGFzLWNxL1IxMjYtMTU4NjkuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkxidWlsZCBpbWFnZXMgKDIpfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -7536,7 +7536,7 @@
       }
     },
     "name": "build images (2).call chromite.api.ImageService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI9IDE/QQQgMq17gEiBgj2gMT9BKIBgAEKBwoFYXRsYXMSAgEDIgkxNTg3MC4wLjAyL2F0bGFzLWNxL1IxMjYtMTU4NzAuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkxidWlsZCBpbWFnZXMgKDIpfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI9IDE/QQQgMq17gEiBgj2gMT9BKIBgAEKBwoFYXRsYXMSAgEDIgkxNTg2OS4wLjAyL2F0bGFzLWNxL1IxMjYtMTU4NjkuMC4wLTEwMS04OTQ1NTExNzUxNTE0ODYzMTg0OjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dKoBYggBEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy9iYXNlLmJpbhABGgcKBWF0bGFzEi4KIVtTVEFSVF9ESVJdL2J1aWxkL2ltYWdlcy90ZXN0LmJpbhADGgcKBWF0bGFz0ALQ7IDZrvG1knzaAkxidWlsZCBpbWFnZXMgKDIpfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -8224,7 +8224,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -8661,7 +8661,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -8678,7 +8678,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -8705,14 +8705,14 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"atlas-cq/R126-15870.0.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"IMAGE_ZIP\": [\"../../[START_DIR]/tmp/artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-throwaway\", \"gs_path\": \"atlas-cq/R126-15869.0.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "create test service containers",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@version: 'atlas-cq.R126-15870.0.0-101-8945511751514863184'@@@",
+      "@@@STEP_SUMMARY_TEXT@version: 'atlas-cq.R126-15869.0.0-101-8945511751514863184'@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@{@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@  \"containers\": {@@@",
       "@@@STEP_LOG_LINE@container metadata (log)@    \"atlas\": {@@@",
@@ -8726,136 +8726,8 @@
       "@@@STEP_LOG_LINE@container metadata (log)@}@@@",
       "@@@STEP_LOG_END@container metadata (log)@@@",
       "@@@STEP_LINK@ []@https:////@sha256:@@@",
-      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
-      "@@@STEP_LINK@test metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create test service containers.cached container info from gcs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@no files present, builder should build fresh container and upload to gcs@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create test service containers.cached container info from gcs.attempt-1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@no files present, builder should build fresh container and upload to gcs@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create test service containers.cached container info from gcs.attempt-1.gsutil list",
-    "timeout": 30,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create test service containers.update test service container build progress as: started",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@gs upload path@gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json@@@",
-      "@@@STEP_LOG_END@gs upload path@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create test service containers.update test service container build progress as: started.writing update to local file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\"status\": \"started\"}",
-      "[CLEANUP]/cft-builder-json_tmp_1/8945511751514863184.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create test service containers.update test service container build progress as: started.writing update to local file.Writing response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@8945511751514863184.json@{\"status\": \"started\"}@@@",
-      "@@@STEP_LOG_END@8945511751514863184.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "[CLEANUP]/cft-builder-json_tmp_1/8945511751514863184.json",
-      "gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create test service containers.update test service container build progress as: started.gsutil upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json@@@"
+      "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
+      "@@@STEP_LINK@test metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
     ]
   },
   {
@@ -8871,9 +8743,9 @@
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"version\": \"atlas-cq.R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"version\": \"atlas-cq.R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@  \"tags\": [@@@",
-      "@@@STEP_LOG_LINE@request@    \"atlas-cq.R126-15870.0.0-101-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"atlas-cq.R126-15869.0.0-101-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@    \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@request@    \"PRIVATE-8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@request@  ],@@@",
@@ -8900,7 +8772,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"atlas-cq.R126-15870.0.0-101-8945511751514863184\",\n  \"tags\": [\n    \"atlas-cq.R126-15870.0.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PRIVATE-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"atlas\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"atlas-cq.R126-15869.0.0-101-8945511751514863184\",\n  \"tags\": [\n    \"atlas-cq.R126-15869.0.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PRIVATE-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9003,86 +8875,6 @@
   },
   {
     "cmd": [],
-    "name": "create test service containers.update test service container build progress as: completed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@gs upload path@gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json@@@",
-      "@@@STEP_LOG_END@gs upload path@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "create test service containers.update test service container build progress as: completed.writing update to local file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\"results\": [{\"success\": {}}], \"status\": \"completed\"}",
-      "[CLEANUP]/cft-builder-json_tmp_2/8945511751514863184.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create test service containers.update test service container build progress as: completed.writing update to local file.Writing response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@8945511751514863184.json@{\"results\": [{\"success\": {}}], \"status\": \"completed\"}@@@",
-      "@@@STEP_LOG_END@8945511751514863184.json@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "cp",
-      "[CLEANUP]/cft-builder-json_tmp_2/8945511751514863184.json",
-      "gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create test service containers.update test service container build progress as: completed.gsutil upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337/8945511751514863184.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "create test service containers.upload container metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -9140,7 +8932,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_8/containers.jsonpb",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/containers.jsonpb"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/containers.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9160,7 +8952,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/containers.jsonpb@@@"
     ]
   },
   {
@@ -9389,7 +9181,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_9/test_metadata.jsonpb",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9409,7 +9201,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@"
     ]
   },
   {
@@ -9519,7 +9311,7 @@
     "name": "finalize metadata.upload metadata",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata.json@@@"
+      "@@@STEP_LINK@gs_link@https://storage.cloud.google.com/chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata.json@@@"
     ]
   },
   {
@@ -9530,7 +9322,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"atlas\"\n    ],\n    \"bot-config\": \"atlas-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"atlas-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:39\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"atlas\"\n    ],\n    \"bot-config\": \"atlas-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"atlas-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:36\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -9590,7 +9382,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:39\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:36\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
@@ -9615,7 +9407,7 @@
       "----",
       "cp",
       "[CLEANUP]/metadata_tmp_2/metadata.json",
-      "gs://chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata.json"
+      "gs://chromeos-throwaway/atlas-cq/R126-15869.0.0-101-8945511751514863184/metadata.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -9967,7 +9759,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0078@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0075@@@"
     ]
   },
   {
