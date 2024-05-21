@@ -472,7 +472,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
   chromeos-test-platform-data.analytics.TestTiming as t  WHERE t.board like 
   '{_BOARD}'  and t.suite like '{_SUITE}' '''
 
-  def _get_test_timing_information(self, suite_name, board):
+  def _update_test_timing_information(self, suite_name, board):
     #  build the query
     test_timing_query = CrosTestShardingAPI._TEST_TIMING_DICT_QUERY.format(
         _SUITE=suite_name, _BOARD=board)
@@ -520,7 +520,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
   def optimized_shard_allocation(self, test_suite, suite_name, board,
                                  total_shards):
     # Update TestCase.test_times
-    self._get_test_timing_information(suite_name, board)
+    self._update_test_timing_information(suite_name, board)
 
     if total_shards == 0:
       total_shards = CrosTestShardingAPI._MAX_SHARDS
@@ -550,7 +550,7 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
   def optimized_shard_allocation_deps(self, test_buckets, suite_name, board,
                                       max_number_of_shards):
     # Update TestCase.test_times
-    self._get_test_timing_information(suite_name, board)
+    self._update_test_timing_information(suite_name, board)
     with self.m.step.nest('Calculating Dep Shards') as step:
       if max_number_of_shards == 0:
         max_number_of_shards = CrosTestShardingAPI._MAX_SHARDS
@@ -591,8 +591,8 @@ class CrosTestShardingAPI(recipe_api.RecipeApi):
             test_buckets[i], shards_per_bucket[i], makespan)
         shards_information += f'\nbucket id: {i}\n' \
                               f'- bucket makespan: {makespan}\n' \
-                              f'- shards generated: {len(shards[-1])}\n'
-
+                              f'- tests count: {len(shards[-1])}\n'
+      shards_information += f'shard count: {len(shards)}\n'
       step.logs['shard buildout'] = shards_information
 
     return shards

@@ -386,6 +386,18 @@
   },
   {
     "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Determine shard count",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@shard information@requested_shard_count:0@@@",
+      "@@@STEP_LOG_LINE@shard information@requested_max_in_shard:0@@@",
+      "@@@STEP_LOG_LINE@shard information@num_suite_tests:0@@@",
+      "@@@STEP_LOG_LINE@shard information@calculated total_shards:1@@@",
+      "@@@STEP_LOG_END@shard information@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate CFT tests.enumeration error",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

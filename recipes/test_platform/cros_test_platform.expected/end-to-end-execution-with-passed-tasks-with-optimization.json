@@ -515,6 +515,18 @@
   },
   {
     "cmd": [],
+    "name": "enumerate CFT tests.Shard test cases.Determine shard count",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@shard information@requested_shard_count:5@@@",
+      "@@@STEP_LOG_LINE@shard information@requested_max_in_shard:0@@@",
+      "@@@STEP_LOG_LINE@shard information@num_suite_tests:2@@@",
+      "@@@STEP_LOG_LINE@shard information@calculated total_shards:5@@@",
+      "@@@STEP_LOG_END@shard information@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "enumerate CFT tests.Shard test cases.Optimized Sharding Experiment",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -578,7 +590,8 @@
       "@@@STEP_LOG_LINE@shard buildout@@@@",
       "@@@STEP_LOG_LINE@shard buildout@bucket id: 0@@@",
       "@@@STEP_LOG_LINE@shard buildout@- bucket makespan: 1@@@",
-      "@@@STEP_LOG_LINE@shard buildout@- shards generated: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@- tests count: 1@@@",
+      "@@@STEP_LOG_LINE@shard buildout@shard count: 2@@@",
       "@@@STEP_LOG_END@shard buildout@@@"
     ]
   },

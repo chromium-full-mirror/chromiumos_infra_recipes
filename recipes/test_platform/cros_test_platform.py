@@ -92,8 +92,10 @@ CTP_RELEASE_VERSION_TAG = 'ctp_release_version'
 PROPERTIES = CrosTestPlatformProperties
 
 BUILD_ID_REGEX = re.compile(r'\/b(?P<build_id>[0-9]+)$')
-MAX_IN_SHARD = 70
+MAX_IN_SHARD_DEFAULT = 70
+NUMBER_SHARDS_DEFAULT = 15
 CENTRALIZED_SUITE_PREFIX = 'centralizedsuite:'
+UNSET_BUILD_CONFIG_NUMERIC = 0
 
 
 def output_ctp_release_timestamp_tag(api):
@@ -915,10 +917,10 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
   """
   with api.step.nest('Shard test cases') as step:
     seed = request.test_plan.seed
-    total_shards = request.test_plan.total_shards
-    max_in_shard = request.test_plan.max_in_shard
-    if max_in_shard == 0:
-      max_in_shard = MAX_IN_SHARD
+    requested_max_in_shard = request.test_plan.max_in_shard
+    max_in_shard = requested_max_in_shard
+    if requested_max_in_shard == UNSET_BUILD_CONFIG_NUMERIC:
+      max_in_shard = MAX_IN_SHARD_DEFAULT
     # TODO (b/272816888): Short term experiment, replace with value from configs later.
     if suite_name.__contains__('tast-tags-test-suite'):  # pragma: no cover
       if request.test_plan.tag_criteria.test_names:
@@ -928,19 +930,23 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
           max_in_shard = 40
       else:
         max_in_shard = 225
+
     if seed is None or seed == 0:
       seed = int(api.time.time())
     step.logs['shard seed'] = json.dumps({'seed': seed}, separators=(',', ': '),
                                          indent=2)
     api.random.seed(seed)
     autotest_invocations = []
+    requested_shard_count = request.test_plan.total_shards
     for test_suite in test_suites:
+      suite_tests = list(test_suite.test_cases.test_cases)
+      num_suite_tests = len(suite_tests)
+      total_shards = _calculate_total_shards(api, requested_shard_count,
+                                             requested_max_in_shard,
+                                             num_suite_tests)
       test_buckets = api.cros_test_sharding.bucket_by_dependencies(
-          list(test_suite.test_cases.test_cases), suite_name)
-      if ('chromeos.cros_infra_config.optimized_shard_allocation'
-          in api.cros_infra_config.experiments or
-          CrosTestPlatformProperties.OPTIMIZED_SHARDING
-          in properties.experiments):
+          suite_tests, suite_name)
+      if _is_optimized_sharding_experiment(api, properties):
         with api.m.step.nest('Optimized Sharding Experiment') as optimized_step:
           build_target = _reconstruct_build_target(request)
           optimized_step.logs[
@@ -980,6 +986,33 @@ def _build_tast_invocations(api, properties, request, test_suites, suite_name,
         )
         autotest_invocations.append(autotest_invocation)
     return autotest_invocations
+
+
+def _calculate_total_shards(api, requested_shard_count,
+                            requested_num_tests_in_shard, num_suite_tests):
+  total_shards = 0
+  with api.m.step.nest('Determine shard count') as total_shards_step:
+    if requested_shard_count != UNSET_BUILD_CONFIG_NUMERIC:
+      total_shards = requested_shard_count
+    else:
+      if requested_num_tests_in_shard == UNSET_BUILD_CONFIG_NUMERIC:
+        test_per_shard = MAX_IN_SHARD_DEFAULT
+      else:
+        test_per_shard = requested_num_tests_in_shard
+      total_shards = math.ceil(num_suite_tests / test_per_shard)
+      total_shards = max(1, min(total_shards, NUMBER_SHARDS_DEFAULT))
+    total_shards_step.logs[
+        'shard information'] = f'requested_shard_count:{requested_shard_count}\nrequested_max_in_shard:{requested_num_tests_in_shard}\nnum_suite_tests:{num_suite_tests}\ncalculated total_shards:{total_shards}'
+  return total_shards
+
+
+def _is_optimized_sharding_experiment(api, properties):
+  is_in_experiment = False
+  if ('chromeos.cros_infra_config.optimized_shard_allocation'
+      in api.cros_infra_config.experiments or
+      CrosTestPlatformProperties.OPTIMIZED_SHARDING in properties.experiments):
+    is_in_experiment = True
+  return is_in_experiment
 
 
 def _build_autotest_invocations(test_suites, suite_name, args):
@@ -1063,7 +1096,7 @@ def _shard_test_buckets(api, test_buckets, total_shards, max_in_shard):
   return shards
 
 
-def _shard_test_cases(api, test_cases, max_in_shard=MAX_IN_SHARD):
+def _shard_test_cases(api, test_cases, max_in_shard=MAX_IN_SHARD_DEFAULT):
   """Create groupings of the test_cases.
 
   Args:
@@ -2043,7 +2076,7 @@ def _test_request(request_name_tag, build_target='foo-build-target',
                   scheduling=_test_scheduling(), individual_test=False,
                   individual_test_name=None, tag_criteria=None, seed=None,
                   software_deps=_default_software_dependencies(), retries=0,
-                  total_shards=0, suite_name=None,
+                  total_shards=0, max_in_shard=0, suite_name=None,
                   enable_autotest_sharding=False, swarming_tags=[]):
   params = Request.Params(
       software_attributes=Request.Params.SoftwareAttributes(
@@ -2084,6 +2117,7 @@ def _test_request(request_name_tag, build_target='foo-build-target',
       params=params, test_plan=Request.TestPlan(
           suite=[Request.Suite(name=request_suite_name)],
           tag_criteria=tag_criteria, seed=seed, total_shards=total_shards,
+          max_in_shard=max_in_shard,
           enable_autotest_sharding=enable_autotest_sharding))
 
 
@@ -2092,16 +2126,15 @@ def _cft_test_request(request_name, build_target='foo-build-target',
                       individual_test=False, individual_test_name=None,
                       tag_criteria=None, seed=None,
                       software_deps=_default_software_dependencies(), retries=0,
-                      total_shards=0, suite_name=None,
+                      total_shards=0, max_in_shard=0, suite_name=None,
                       enable_autotest_sharding=False, swarming_tags=[]):
-  test_req = _test_request(request_name, build_target,
-                           individual_test=individual_test,
-                           individual_test_name=individual_test_name,
-                           tag_criteria=tag_criteria, seed=seed,
-                           software_deps=software_deps, retries=retries,
-                           total_shards=total_shards, suite_name=suite_name,
-                           enable_autotest_sharding=enable_autotest_sharding,
-                           swarming_tags=swarming_tags)
+  test_req = _test_request(
+      request_name, build_target, individual_test=individual_test,
+      individual_test_name=individual_test_name, tag_criteria=tag_criteria,
+      seed=seed, software_deps=software_deps, retries=retries,
+      total_shards=total_shards, max_in_shard=max_in_shard,
+      suite_name=suite_name, enable_autotest_sharding=enable_autotest_sharding,
+      swarming_tags=swarming_tags)
   test_req.params.run_via_cft = True
   return test_req
 
@@ -3936,6 +3969,30 @@ def GenTests(api):
                           .TestCaseTagCriteria(tags=['beep', 'boop'],
                                                tag_excludes=['blap', 'blop']),
                           total_shards=5, suite_name='bvt-tast-cq-security')
+              }, experiments=[CrosTestPlatformProperties.OPTIMIZED_SHARDING],
+              config=_test_config('foo')), **{
+                  '$chromeos/cros_tool_runner':
+                      CrosToolRunnerProperties(
+                          version=CrosToolRunnerProperties.Version(
+                              cipd_label='prod')),
+              }),
+      _mock_container_metadata_step(api, 'bvt-tast-cq-security'),
+      _generic_cft_enumerate_response(api),
+      _generic_passing_execute_response(api),
+  )
+
+  yield api.test(
+      'with-optimization-undefined-shard-count-bvt-tast-cq-security',
+      api.properties(
+          CrosTestPlatformProperties(
+              requests={
+                  'default':
+                      _cft_test_request(
+                          'bvt-tast-cq-security',
+                          tag_criteria=ctr_test_suite.TestSuite
+                          .TestCaseTagCriteria(tags=['beep', 'boop'],
+                                               tag_excludes=['blap', 'blop']),
+                          max_in_shard=20, suite_name='bvt-tast-cq-security')
               }, experiments=[CrosTestPlatformProperties.OPTIMIZED_SHARDING],
               config=_test_config('foo')), **{
                   '$chromeos/cros_tool_runner':

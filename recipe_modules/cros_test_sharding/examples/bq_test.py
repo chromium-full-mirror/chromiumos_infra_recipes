@@ -39,7 +39,7 @@ def RunSteps(api, suite, board, test_timing_query_results):
     test_timing_query_results = api.cros_test_sharding.TestCase.test_times
 
   # pylint: disable=protected-access
-  test_timings = api.cros_test_sharding._get_test_timing_information(
+  test_timings = api.cros_test_sharding._update_test_timing_information(
       suite, board)
   #  To Show that this works for real...
   #  uncomment the EXAMPLE section below, then run
