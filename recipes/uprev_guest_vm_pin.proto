@@ -27,8 +27,7 @@ message UprevGuestVmPinProperties {
   // username@google.com:OWNER
   repeated string group_acls = 4;
 
-  // Which builder to source images from.
-  chromiumos.BuilderConfig.Id.Type builder_type = 5;
+  reserved 5;
 }
 
 message VmBoardImage {

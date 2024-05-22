@@ -19,7 +19,6 @@ from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 from google.protobuf.struct_pb2 import Struct
 
-from PB.chromiumos.builder_config import BuilderConfig as bc
 from PB.go.chromium.org.luci.buildbucket.proto import build as bb_build
 from PB.go.chromium.org.luci.buildbucket.proto \
   import builder_common as bb_builder_common
@@ -29,6 +28,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.recipes.chromeos.uprev_guest_vm_pin import UprevGuestVmPinProperties
 from PB.recipes.chromeos.uprev_guest_vm_pin import VmBoardImage
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_api import StepFailure
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -91,9 +91,6 @@ def _validate_properties(properties: UprevGuestVmPinProperties):
   if not properties.vm_board_images:
     raise StepFailure('must set vm_board_images')
 
-  if properties.builder_type not in (bc.Id.POSTSUBMIT, bc.Id.RELEASE):
-    raise StepFailure('unknown builder_type: ' + str(properties.builder_type))
-
   for vm_board_image in properties.vm_board_images:
     board = vm_board_image.board
     if not board:
@@ -104,30 +101,6 @@ def _validate_properties(properties: UprevGuestVmPinProperties):
 
     if not vm_board_image.destination_gs_path:
       raise StepFailure('must set destination_gs_path for {}'.format(board))
-
-
-def FindPostsubmitBuilds(
-    api: RecipeApi, board: str,
-    version_build_map: Dict[str, Dict[str, Dict[str, Build]]]):
-  # Find successful builds that started within the last 36 hours. This
-  # should cover everything we're interested in, since we run once per
-  # day.
-  builds = api.buildbucket.search(
-      predicate=bb_service.BuildPredicate(
-          builder=bb_builder_common.BuilderID(
-              project='chromeos',
-              bucket='postsubmit',
-              builder='{}-postsubmit'.format(board),
-          ), create_time=bb_common.TimeRange(
-              start_time=timestamp_pb2.Timestamp(
-                  seconds=api.buildbucket.build.create_time.ToSeconds() -
-                  36 * 60 * 60)), status=bb_common.SUCCESS))
-
-  for build in builds:
-    branch = build.input.gitiles_commit.ref.split('/')[-1]
-    version = build.output.properties['chromeos_version']
-    version_build_map[branch][version][board] = build
-
 
 def FindReleaseBuilds(api: RecipeApi, board: str,
                       version_build_map: Dict[str, Dict[str, Dict[str,
@@ -166,36 +139,6 @@ def FindReleaseBuilds(api: RecipeApi, board: str,
       for build in builds:
         version = build.output.properties['chromeos_version']
         version_build_map[branch][version][board] = build
-
-
-def CopyPostsubmitImage(api: RecipeApi, board: str, build: Build,
-                        vm_property_map: Dict[str, Struct],
-                        sanitized_version: str):
-  tmp_dir = api.path.mkdtemp(prefix='archive-staging')
-  with api.context(cwd=tmp_dir):
-    build_artifact_bucket = str(
-        build.output.properties['artifacts']['gs_bucket'])
-    build_artifact_path = str(build.output.properties['artifacts']['gs_path'])
-    src_path = '{}/{}'.format(build_artifact_path, 'image.zip')
-    api.gsutil.download(build_artifact_bucket, src_path, './')
-    api.archive.extract('unzip image archive', api.context.cwd / 'image.zip',
-                        api.context.cwd / 'image')
-
-    base_image_path = api.context.cwd / 'image' / _base_vm_name
-    api.archive.package(base_image_path).archive(
-        'archive base guest VM', api.context.cwd / f'{_base_vm_name}.tbz',
-        'tbz')
-
-    test_image_path = api.context.cwd / 'image' / _test_vm_name
-    api.archive.package(test_image_path).archive(
-        'archive test guest VM', api.context.cwd / f'{_test_vm_name}.tbz',
-        'tbz')
-
-    dst_bucket = vm_property_map[board].destination_gs_bucket
-    dst_path = '{}/{}/'.format(vm_property_map[board].destination_gs_path,
-                               sanitized_version)
-    api.gsutil.upload('*.tbz', dst_bucket, dst_path)
-
 
 def CopyReleaseImage(api: RecipeApi, board: str, build: Build,
                      vm_property_map: Dict[str, Struct],
@@ -248,10 +191,7 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
         vm_property_map[board] = vm_board_image
 
         with api.step.nest('query-{}'.format(board)):
-          if properties.builder_type == bc.Id.POSTSUBMIT:
-            FindPostsubmitBuilds(api, board, version_build_map)
-          elif properties.builder_type == bc.Id.RELEASE:
-            FindReleaseBuilds(api, board, version_build_map)
+          FindReleaseBuilds(api, board, version_build_map)
 
           if len(version_build_map) == 0:
             raise StepFailure('unable to find builds for {}'.format(board))
@@ -314,12 +254,8 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
 
         with api.step.nest('copy images to destination bucket'):
           for board, build in version_build_map[branch][version].items():
-            if properties.builder_type == bc.Id.POSTSUBMIT:
-              CopyPostsubmitImage(api, board, build, vm_property_map,
-                                  sanitized_version)
-            elif properties.builder_type == bc.Id.RELEASE:
-              CopyReleaseImage(api, board, build, vm_property_map,
-                               sanitized_version)
+            CopyReleaseImage(api, board, build, vm_property_map,
+                             sanitized_version)
 
             if properties.user_acls or properties.group_acls:
               with api.step.nest(
@@ -351,66 +287,6 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
 
 
 def GenTests(api: RecipeTestApi):
-  buildbucket_search_step = 'get latest build version.query-{}.buildbucket.search'
-
-  termina_properties = json_format.MessageToDict(
-      UprevGuestVmPinProperties(
-          version_file=('src/third_party/chromiumos-overlay/'
-                        'chromeos-base/termina-dlc/VERSION-PIN'),
-          vm_board_images=[
-              VmBoardImage(board='tatl',
-                           destination_gs_bucket='termina-component-testing',
-                           destination_gs_path='uprev-test/amd64'),
-              VmBoardImage(board='tael',
-                           destination_gs_bucket='termina-component-testing',
-                           destination_gs_path='uprev-test/arm')
-          ], builder_type=bc.Id.POSTSUBMIT,
-          user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
-          group_acls=['koolkids@google.com:READ']))
-
-  tatl_builds_success = _generate_postsubmit_build_set([10, 8, 6, 5], 'tatl')
-  tael_builds_success = _generate_postsubmit_build_set([9, 7, 5, 3], 'tael')
-  tael_builds_no_common = _generate_postsubmit_build_set([9, 7, 4, 3], 'tael')
-  tatl_builds_subversion = _generate_postsubmit_build_set([9, 9.0], 'tatl')
-  tael_builds_subversion = _generate_postsubmit_build_set([9, 9.0], 'tael')
-  tatl_builds_falloff = _generate_postsubmit_build_set([10.1, 10], 'tatl')
-  tael_builds_falloff = _generate_postsubmit_build_set([10.1, 10], 'tael')
-
-  mock_tatl_build_search_success = api.buildbucket.simulated_search_results(
-      tatl_builds_success, step_name=buildbucket_search_step.format('tatl'))
-
-  mock_tael_build_search_success = api.buildbucket.simulated_search_results(
-      tael_builds_success, step_name=buildbucket_search_step.format('tael'))
-
-  mock_tatl_build_search_subversion = api.buildbucket.simulated_search_results(
-      tatl_builds_subversion, step_name=buildbucket_search_step.format('tatl'))
-
-  mock_tael_build_search_subversion = api.buildbucket.simulated_search_results(
-      tael_builds_subversion, step_name=buildbucket_search_step.format('tael'))
-
-  mock_tael_build_search_no_common = api.buildbucket.simulated_search_results(
-      tael_builds_no_common, step_name=buildbucket_search_step.format('tael'))
-
-  mock_tatl_build_search_falloff = api.buildbucket.simulated_search_results(
-      tatl_builds_falloff, step_name=buildbucket_search_step.format('tatl'))
-
-  mock_tael_build_search_falloff = api.buildbucket.simulated_search_results(
-      tael_builds_falloff, step_name=buildbucket_search_step.format('tael'))
-
-  termina_release_properties = json_format.MessageToDict(
-      UprevGuestVmPinProperties(
-          version_file=('src/third_party/chromiumos-overlay/'
-                        'chromeos-base/termina-dlc/VERSION-PIN'),
-          vm_board_images=[
-              VmBoardImage(board='tatl',
-                           destination_gs_bucket='termina-component-testing',
-                           destination_gs_path='uprev-test/amd64'),
-              VmBoardImage(board='tael',
-                           destination_gs_bucket='termina-component-testing',
-                           destination_gs_path='uprev-test/arm')
-          ], builder_type=bc.Id.RELEASE,
-          user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
-          group_acls=['koolkids@google.com:READ']))
 
   buildbucket_builder_list_step = 'get latest build version.query-{}.buildbucket.builders'
 
@@ -446,6 +322,47 @@ def GenTests(api: RecipeTestApi):
       _generate_release_build_set('tael', 'main', [1, 2, 3]),
       step_name=buildbucket_rubik_search_step.format('tael', 'main'))
 
+  tael_builds_no_common = _generate_release_build_set('tael', 'main', [9, 7, 4])
+  tatl_builds_subversion = _generate_release_build_set('tatl', 'main', [9, 9.0])
+  tael_builds_subversion = _generate_release_build_set('tael', 'main', [9, 9.0])
+  tatl_builds_falloff = _generate_release_build_set('tatl', 'main', [10.1, 10])
+  tael_builds_falloff = _generate_release_build_set('tael', 'main', [10.1, 10])
+
+  mock_tatl_build_search_subversion = api.buildbucket.simulated_search_results(
+      tatl_builds_subversion,
+      step_name=buildbucket_rubik_search_step.format('tatl', 'main'))
+
+  mock_tael_build_search_subversion = api.buildbucket.simulated_search_results(
+      tael_builds_subversion,
+      step_name=buildbucket_rubik_search_step.format('tael', 'main'))
+
+  mock_tael_build_search_no_common = api.buildbucket.simulated_search_results(
+      tael_builds_no_common,
+      step_name=buildbucket_rubik_search_step.format('tael', 'main'))
+
+  mock_tatl_build_search_falloff = api.buildbucket.simulated_search_results(
+      tatl_builds_falloff,
+      step_name=buildbucket_rubik_search_step.format('tatl', 'main'))
+
+  mock_tael_build_search_falloff = api.buildbucket.simulated_search_results(
+      tael_builds_falloff,
+      step_name=buildbucket_rubik_search_step.format('tael', 'main'))
+
+  termina_properties = json_format.MessageToDict(
+      UprevGuestVmPinProperties(
+          version_file=('src/third_party/chromiumos-overlay/'
+                        'chromeos-base/termina-dlc/VERSION-PIN'),
+          vm_board_images=[
+              VmBoardImage(board='tatl',
+                           destination_gs_bucket='termina-component-testing',
+                           destination_gs_path='uprev-test/amd64'),
+              VmBoardImage(board='tael',
+                           destination_gs_bucket='termina-component-testing',
+                           destination_gs_path='uprev-test/arm')
+          ],
+          user_acls=['tony.stark@google.com:OWNER', 'bighead@google.com:READ'],
+          group_acls=['koolkids@google.com:READ']))
+
   mock_tatl_rubik_R108_search = api.buildbucket.simulated_search_results(
       _generate_release_build_set('tatl', 'release-R108-15183.B', [1, 2, 3]),
       step_name=buildbucket_rubik_search_step.format('tatl',
@@ -456,45 +373,48 @@ def GenTests(api: RecipeTestApi):
       step_name=buildbucket_rubik_search_step.format('tael',
                                                      'release-R108-15183.B'))
 
+  def _standard_test_data():
+    ret = api.properties(**termina_properties)
+    ret += api.git.diff_check(True)
+    ret += mock_builder_list_tatl
+    ret += mock_builder_list_tael
+    ret += mock_tatl_rubik_main_search
+    ret += mock_tael_rubik_main_search
+    return ret
+
   yield api.test(
       'uprev-termina',
-      api.properties(**termina_properties),
-      api.git.diff_check(True),
-      mock_tatl_build_search_success,
-      mock_tael_build_search_success,
+      _standard_test_data(),
   )
 
   yield api.test(
       'no-common-builds',
-      api.properties(**termina_properties),
-      api.git.diff_check(True),
-      mock_tatl_build_search_success,
+      _standard_test_data(),
       mock_tael_build_search_no_common,
+      api.post_check(
+          post_process.SummaryMarkdown,
+          'unable to find common build on branch main for all boards'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   yield api.test(
       'version-compare-subversions',
-      api.properties(**termina_properties),
-      api.git.diff_check(True),
+      _standard_test_data(),
       mock_tatl_build_search_subversion,
       mock_tael_build_search_subversion,
   )
 
   yield api.test(
       'version-compare-falloff',
-      api.properties(**termina_properties),
-      api.git.diff_check(True),
+      _standard_test_data(),
       mock_tatl_build_search_falloff,
       mock_tael_build_search_falloff,
   )
 
   yield api.test(
-      'uprev-termina-rubik-success',
-      api.properties(**termina_release_properties),
-      api.git.diff_check(True),
-      mock_builder_list_tatl,
-      mock_builder_list_tael,
+      'uprev-termina-multiple-branches',
+      _standard_test_data(),
       mock_tatl_rubik_main_search,
       mock_tael_rubik_main_search,
       mock_tatl_rubik_R108_search,
@@ -505,6 +425,9 @@ def GenTests(api: RecipeTestApi):
       'no-version-file',
       api.properties(**termina_properties),
       api.properties(versionFile=''),
+      api.properties(vmBoardImages=[]),
+      api.post_check(post_process.SummaryMarkdown, 'must set version_file'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -512,6 +435,8 @@ def GenTests(api: RecipeTestApi):
       'no-vm-board-images',
       api.properties(**termina_properties),
       api.properties(vmBoardImages=[]),
+      api.post_check(post_process.SummaryMarkdown, 'must set vm_board_images'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -526,6 +451,8 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='uprev-test/amd64',
               ))
       ]),
+      api.post_check(post_process.SummaryMarkdown, 'must set board'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -540,6 +467,9 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='uprev-test/amd64',
               ))
       ]),
+      api.post_check(post_process.SummaryMarkdownRE,
+                     'must set destination_gs_bucket'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
@@ -554,63 +484,37 @@ def GenTests(api: RecipeTestApi):
                   destination_gs_path='',
               ))
       ]),
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'unknown-build-type',
-      api.properties(**termina_properties),
-      api.properties(builderType=123),
+      api.post_check(post_process.SummaryMarkdownRE,
+                     'must set destination_gs_path'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   yield api.test(
       'no-version-diff',
-      api.properties(**termina_properties),
+      _standard_test_data(),
       api.git.diff_check(False),
-      mock_tatl_build_search_success,
-      mock_tael_build_search_success,
   )
 
   yield api.test(
-      'no-latest-postsubmit-build',
+      'no-latest-release-build',
       api.properties(**termina_properties),
+      mock_builder_list_tatl,
       api.buildbucket.simulated_search_results(
           [],
-          step_name='get latest build version.query-tatl.buildbucket.search'),
+          step_name='get latest build version.query-tatl.main.buildbucket.search'
+      ),
+      api.post_check(post_process.SummaryMarkdown,
+                     'unable to find builds for tatl'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
   yield api.test(
       'no-acls',
-      api.properties(**termina_properties),
+      _standard_test_data(),
       api.properties(userAcls=[], groupAcls=[]),
-      api.git.diff_check(True),
-      mock_tatl_build_search_success,
-      mock_tael_build_search_success,
   )
-
-
-# Helper function to create a set of parameterized buildbucket build objects.
-def _generate_postsubmit_build_set(ids: List[int], board: str) -> List[Build]:
-  builds = []
-  for index, bb_id in enumerate(ids):
-    build_artifacts = {
-        'gs_path': 'postsubmit-{0}/R80-1.2.{1}-{1}'.format(board, bb_id),
-        'gs_bucket': 'chromeos-image-archive'
-    }
-    gitiles_commit = {'ref': 'refs/heads/main'}
-    properties = Struct()
-    properties['chromeos_version'] = 'R80-1.2.{0}'.format(bb_id)
-    properties['artifacts'] = build_artifacts
-
-    builds.append(
-        bb_build.Build(
-            id=index + 1, status=bb_common.SUCCESS,
-            input=bb_build.Build.Input(gitiles_commit=gitiles_commit),
-            output=bb_build.Build.Output(properties=properties)))
-
-  return builds
 
 
 def _generate_release_build_set(board: str, branch: str,
