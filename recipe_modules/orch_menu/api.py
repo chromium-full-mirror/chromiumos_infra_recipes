@@ -188,11 +188,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return self._is_public_orchestrator
 
   @property
-  def is_postsubmit_orchestrator(self):
-    return self.m.buildbucket.build.builder.builder.endswith(
-        'postsubmit-orchestrator')
-
-  @property
   def is_snapshot_orchestrator(self):
     return self.m.buildbucket.build.builder.builder.endswith(
         'snapshot-orchestrator')

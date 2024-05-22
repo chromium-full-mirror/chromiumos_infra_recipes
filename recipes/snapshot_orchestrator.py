@@ -8,7 +8,6 @@
 from google.protobuf.json_format import MessageToDict
 
 from PB.recipe_engine import result as result_pb2
-from PB.recipe_modules.chromeos.cros_relevance.cros_relevance import CrosRelevanceProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -34,10 +33,6 @@ def DoRunSteps(api: RecipeApi):
 
   # Run the child builders.
   extra_child_props = {}
-
-  if api.snapshot_orch_menu.is_postsubmit_orchestrator:
-    extra_child_props['$chromeos/cros_relevance'] = MessageToDict(
-        CrosRelevanceProperties(force_postsubmit_relevance=True))
   extra_child_props['$chromeos/metadata'] = {
       'sources_gitiles_commit_override':
           MessageToDict(api.build_menu.resultdb_gitiles_commit)

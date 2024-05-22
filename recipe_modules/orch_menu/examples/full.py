@@ -65,9 +65,6 @@ def RunSteps(api, properties):
     _ = api.orch_menu.is_factory_orchestrator
     is_cq_orch = build.builder.builder == 'cq-orchestrator'
     api.assertions.assertEqual(api.orch_menu.is_cq_orchestrator, is_cq_orch)
-    is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
-    api.assertions.assertEqual(api.orch_menu.is_postsubmit_orchestrator,
-                               is_postsubmit_orch)
 
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.

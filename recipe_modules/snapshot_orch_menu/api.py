@@ -46,7 +46,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/snapshot_orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
-    self._is_postsubmit_orchestrator = False
     self._relevant_child_builder_names = []
 
   def initialize(self):
@@ -72,10 +71,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
   @property
   def builds_status(self):
     return self._builds_status
-
-  @property
-  def is_postsubmit_orchestrator(self):
-    return self._is_postsubmit_orchestrator
 
   @property
   def relevant_child_builder_names(self):
@@ -135,10 +130,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
         # We cannot push manifest refs to unpinned branches.
         self._update_manifest_refs &= (external_commit.id != '')
-
-        if self.m.buildbucket.build.builder.builder.endswith(
-            'postsubmit-orchestrator'):
-          self._is_postsubmit_orchestrator = True
 
       if config:
         # Update the start ref to indicate we've begun processing the snapshot.

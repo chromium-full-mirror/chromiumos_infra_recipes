@@ -53,10 +53,6 @@ def RunSteps(api, properties):
       return None
     api.assertions.assertIsNotNone(config)
 
-    is_postsubmit_orch = build.builder.builder == 'postsubmit-orchestrator'
-    api.assertions.assertEqual(
-        api.snapshot_orch_menu.is_postsubmit_orchestrator, is_postsubmit_orch)
-
     # It's hard to set buildbucket properties for these tests so we
     # get coverage by creating a dict that returns multiple items with the
     # same key, knowing that the impl of this module calls dict.items().
