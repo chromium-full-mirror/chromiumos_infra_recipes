@@ -493,13 +493,19 @@ class SigningApi(recipe_api.RecipeApi):
       config = BuildTargetSigningConfigs(
           build_target_signing_configs=[build_target_config])
 
-      # BAPI is hermetic so need to pull down the specified docker image
-      # ahead of time.
-      self.m.step('docker pull', [
-          'docker',
-          'pull',
-          self.signing_docker_image,
-      ])
+      self.m.time.exponential_retry(retries=2,
+                                    delay=datetime.timedelta(seconds=1))
+
+      def docker_pull():
+        # BAPI is hermetic so need to pull down the specified docker image
+        # ahead of time.
+        self.m.step('docker pull', [
+            'docker',
+            'pull',
+            self.signing_docker_image,
+        ])
+
+      docker_pull()
 
       gs_dirs = set()
       gs_dirs.update(self.stage_paygen_artifacts(build_target_config, channels))
