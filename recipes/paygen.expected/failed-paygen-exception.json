@@ -2336,7 +2336,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "paygen failed with errors: DLC (termina-dlc) stable-channel | Full (13425.90.0) - Step('doing paygen.running paygen operations in parallel.making single payload retry (1).call build API script') (retcode: 3)"
+      "humanReason": "paygen failed with errors:\n\nDLC (termina-dlc) stable-channel | Full (13425.90.0) - Step('doing paygen.running paygen operations in parallel.making single payload retry (1).call build API script') (retcode: 3)"
     },
     "name": "$result"
   }

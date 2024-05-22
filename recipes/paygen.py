@@ -257,12 +257,15 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
     api.easy.set_properties_step(failure_reasons=failure_reasons)
 
     if errors:
-      raise StepFailure('paygen failed with errors: {}'.format('\n'.join([
+      failure_msg_lines = ['paygen failed with errors:']
+      failure_msg_lines.extend([
           '{request} - {error}'.format(
               request=api.naming.get_generation_request_title(
                   MessageToDict(x.req).get('generationRequest', {})),
               error=x.resp) for x in errors
-      ])))
+      ])
+      failure_msg = api.failures.format_summary_markdown(failure_msg_lines)
+      raise StepFailure(failure_msg)
   with api.failures.ignore_exceptions():
     api.bcid_reporter.report_stage('upload-complete')
 
@@ -457,7 +460,7 @@ def GenTests(api: RecipeTestApi):
       api: RecipeTestApi, is_success: bool = True,
       versioned_artifacts: List[Dict[str, Any]] = None,
       failure_reason: GenerationResponse.FailureReason = None, retcode: int = 0,
-      retry: int = 0) -> TestData:
+      retry: int = 0, iteration: int = 1) -> TestData:
     suffix = '' if not retry else ' retry ({})'.format(retry)
     data = json.dumps(
         {
@@ -468,7 +471,7 @@ def GenTests(api: RecipeTestApi):
     return api.cros_build_api.set_api_return(
         parent_step_name='doing paygen.running paygen operations in parallel',
         step_name='making single payload{}'.format(suffix), data=data,
-        retcode=retcode)
+        retcode=retcode, iteration=iteration)
 
   # TODO(b/296444046): Remove when older branches age out.
   # Here to support backwards compatibility on branches
@@ -778,6 +781,27 @@ def GenTests(api: RecipeTestApi):
                                 failure_reason=2, retry=1),
       api.post_check(post_process.StepFailure, 'doing paygen'),
       # api.post_process(post_process.DropExpectation),
+      status='FAILURE',
+  )
+
+  req_cnt = 50
+  test_data = api.properties(
+      PaygenProperties(requests=[{
+          'generation_request':
+              api.paygen_orchestration.EXAMPLE_GEN_REQUEST_FULL_DLC[0]
+      }] * req_cnt))
+  for i in range(1, req_cnt + 1):
+    test_data += generate_payload_response(api, is_success=False, retcode=3,
+                                           failure_reason=2, iteration=i)
+    test_data += generate_payload_response(api, is_success=False, retcode=3,
+                                           failure_reason=2, retry=1,
+                                           iteration=i)
+  yield api.test(
+      'failed-paygen-exception-truncated',
+      test_data,
+      # Check that the failure message is truncated.
+      api.post_process(post_process.SummaryMarkdownRE, r'\n\n\.\.\.$'),
+      api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
 
