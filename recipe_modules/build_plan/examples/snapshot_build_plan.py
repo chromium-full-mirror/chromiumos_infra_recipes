@@ -21,7 +21,7 @@ DEPS = [
 
 def RunSteps(api):
   child_specs = api.cros_infra_config.get_builder_config(
-      'postsubmit-orchestrator').orchestrator.child_specs
+      'snapshot-orchestrator').orchestrator.child_specs
   completed_builds, new_requests = api.build_plan.get_build_plan(
       child_specs,
       True,
@@ -48,12 +48,12 @@ def GenTests(api):
   yield api.test(
       'basic',
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+                               builder='snapshot-orchestrator'))
 
   yield api.test(
       'led-build',
       api.buildbucket.ci_build(project='chromeos', bucket='staging.shadow',
-                               builder='staging-postsubmit-orchestrator'),
+                               builder='staging-snapshot-orchestrator'),
       api.properties(**{'$recipe_engine/led': {
           'shadowed_bucket': 'staging',
       }}))

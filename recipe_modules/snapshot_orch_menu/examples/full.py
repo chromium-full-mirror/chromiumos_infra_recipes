@@ -128,12 +128,8 @@ def GenTests(api):
             }]),
             'run builds.schedule new builds.{}'.format(build.builder.builder)))
 
-
-  collect, _ = api.snapshot_orch_menu.orch_child_builds(
-      'postsubmit-orchestrator', '-postsubmit')
-
   yield api.snapshot_orch_menu.test(
-      'postsubmit-orch',
+      'failed-to-push-manifest-refs',
       data.ctp_normal,
       lfg_props,
       api.post_check(post_process.MustRun,
@@ -144,7 +140,7 @@ def GenTests(api):
                     retcode=1),
       api.step_data('update manifest ref refs/heads/postsubmit.git push (3)',
                     retcode=1),
-      builder='postsubmit-orchestrator',
+      builder='snapshot-orchestrator',
       with_manifest_refs=True,
       collect_builds=collect,
       with_history=True,

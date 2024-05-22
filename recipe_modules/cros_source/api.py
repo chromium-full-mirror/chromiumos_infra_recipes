@@ -732,7 +732,7 @@ class CrosSourceApi(RecipeApi):
         # GoB hasn't quite reconciled all of its copies, and it may not have
         # been included in the repo sync above, because of that timing.  The
         # orchestrator only needs to have it checked out if it is pushing
-        # manifest_refs (such as postsubmit-orchestrator).
+        # manifest_refs (such as snapshot-orchestrator).
         self.checkout_external_manifest(ext_commit.id)
       return ext_commit
 

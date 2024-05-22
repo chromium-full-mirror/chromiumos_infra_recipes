@@ -51,4 +51,4 @@ def GenTests(api):
       'retry-success-gsutil', attempt_download_file(api, 1),
       attempt_download_file(api, 2),
       api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'))
+                               builder='snapshot-orchestrator'))

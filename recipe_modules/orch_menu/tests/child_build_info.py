@@ -128,14 +128,3 @@ def GenTests(api):
               'relevant'] is False)),
       api.post_process(post_process.DropExpectation),
   )
-
-  yield api.test(
-      'postsubmit-orchestrator-no-relevance-field',
-      api.buildbucket.ci_build(project='chromeos', bucket='postsubmit',
-                               builder='postsubmit-orchestrator'),
-      api.buildbucket.simulated_search_results(
-          _child_builds(['atlas-postsubmit'])),
-      api.post_check(lambda check, steps: check('relevant' not in steps[
-          'set child_build_info'].output_properties['child_build_info'][0])),
-      api.post_process(post_process.DropExpectation),
-  )

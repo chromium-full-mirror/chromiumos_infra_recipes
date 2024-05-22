@@ -60,7 +60,7 @@ def GenTests(api):
       tags=api.cros_tags.tags(**{'relevance': 'not relevant'})).message
 
   yield api.test(
-      'postsubmit', api.buildbucket.ci_build(builder='postsubmit-orchestrator'),
+      'snapshot', api.buildbucket.ci_build(builder='snapshot-orchestrator'),
       api.properties(
           CollectAndCheckBuildResultsProperties(
               input_builds=[

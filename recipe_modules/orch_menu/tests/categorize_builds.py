@@ -227,7 +227,7 @@ def GenTests(api):
 
   yield api.test(
       'non-cq',
-      api.buildbucket.try_build(builder='postsubmit-orchestrator'),
+      api.buildbucket.try_build(builder='snapshot-orchestrator'),
       api.post_check(
           post_process.DoesNotRun,
           'categorize builds by collect handling.get testable builders'),

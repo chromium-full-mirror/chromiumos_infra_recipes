@@ -40,21 +40,6 @@
   },
   {
     "cmd": [],
-    "name": "looks for green",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@CQ looks not enabled. Using original snapshot@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "looks for green.check should look for green",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Looks for green not enabled@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@build_plan_new_build_requests@3@@@",

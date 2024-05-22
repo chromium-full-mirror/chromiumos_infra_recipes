@@ -593,8 +593,8 @@ def GenTests(api):
       bot_size='medium',
   )
 
-  collect, _ = api.orch_menu.orch_child_builds('postsubmit-orchestrator',
-                                               '-postsubmit')
+  collect, _ = api.orch_menu.orch_child_builds('snapshot-orchestrator',
+                                               '-snapshot')
   yield api.orch_menu.test(
       'branch', data.ctp_normal, api.cros_source.snapshot_xml_exists(False),
       api.post_check(post_process.DoesNotRun,
@@ -822,10 +822,10 @@ def GenTests(api):
           },
       ),
       data.ctp_normal,
-      collect_builds=api.orch_menu.orch_child_builds('postsubmit-orchestrator',
-                                                     '-postsubmit')[0],
+      collect_builds=api.orch_menu.orch_child_builds('cq-orchestrator',
+                                                     '-cq')[0],
       input_properties=input_props_with_generate_ctpv1_format,
-      builder='postsubmit-orchestrator',
+      builder='cq-orchestrator',
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,
@@ -855,7 +855,7 @@ def GenTests(api):
       ),
       data.ctp_failure,
       input_properties=input_props_with_generate_ctpv1_format,
-      builder='postsubmit-orchestrator',
+      builder='cq-orchestrator',
       collect_builds=data.builds,
       with_manifest_refs=True,
       with_history=True,
