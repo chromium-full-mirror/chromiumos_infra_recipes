@@ -71,7 +71,7 @@ def GenTests(api):
       api.properties(BuildProperties(builds=builds)),
       api.post_check(
           post_process.ResultReasonRE,
-          r'1 out of 1 builds failed compilation for foo/bar \(affected by changes in CQ run\)\n\n'
+          r'1 out of 1 builds failed compilation for foo/bar \(affected by the CLs in the CQ run\)\n\n'
       ), status='FAILURE')
 
   builds = [
@@ -94,6 +94,81 @@ def GenTests(api):
           post_process.ResultReasonRE,
           r'1 out of 1 builds failed compilation for foo/bar \(failure also seen on snapshot builds\)\n\n'
       ), status='FAILURE')
+
+  yield api.test(
+      'one-failure-reason-multiple-package-failures-with-attribution',
+      api.properties(
+          BuildProperties(builds=[
+              api.test_util.test_child_build(
+                  'atlas', status='FAILURE', output_properties={
+                      'package_failures': [
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='bar'),
+                                  phase='COMPILE', affected_by_changes=True)),
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='baz'),
+                                  phase='COMPILE', affected_by_changes=True)),
+                      ]
+                  }).message
+          ])),
+      api.post_check(
+          post_process.ResultReasonRE,
+          r'1 out of 1 builds failed compilation for foo/bar, foo/baz \(affected by the CLs in the CQ run\)\n\n'
+      ), status='FAILURE')
+
+  yield api.test(
+      'one-failure-reason-multiple-package-failures-different-attribution',
+      api.properties(
+          BuildProperties(builds=[
+              api.test_util.test_child_build(
+                  'atlas', status='FAILURE', output_properties={
+                      'package_failures': [
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='bar'),
+                                  phase='COMPILE', affected_by_changes=True)),
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='baz'),
+                                  phase='COMPILE', affected_by_changes=False)),
+                      ]
+                  }).message
+          ])),
+      # Does not output fault attribution since the package failures have
+      # different values.
+      api.post_check(
+          post_process.ResultReasonRE,
+          r'1 out of 1 builds failed compilation for foo/bar, foo/baz\n\n'),
+      status='FAILURE')
+
+  yield api.test(
+      'multiple-package-failure-phases-does-not-bubble-up',
+      api.properties(
+          BuildProperties(builds=[
+              api.test_util.test_child_build(
+                  'atlas', status='FAILURE', output_properties={
+                      'package_failures': [
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='bar'),
+                                  phase='COMPILE', affected_by_changes=True)),
+                          json_format.MessageToDict(
+                              PackageFailure(
+                                  package=PackageInfo(category='foo',
+                                                      package_name='baz'),
+                                  phase='TEST', affected_by_changes=False)),
+                      ]
+                  }).message
+          ])),
+      api.post_check(post_process.ResultReasonRE,
+                     r'1 out of 1 build failed\n\n'), status='FAILURE')
 
   builds = [
       api.test_util.test_child_build(

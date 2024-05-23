@@ -144,21 +144,29 @@ class FailuresApi(RecipeApi):
         json_format.ParseDict(x, PackageFailure())
         for x in output_dict.get('package_failures', [])
     ]
-    # TODO(b/327255136): Start with builds that have exactly 1 package failure.
-    if len(package_failures) != 1:
+    # If there are multiple package failures in a build, they should have all
+    # failed in the same phase, but we'll verify anyway.
+    # TODO(b/327255136): Start with builds that have package failures.
+    failed_phases = {p.phase for p in package_failures}
+    if len({p.phase for p in package_failures}) != 1:
       return None
-    package_failure = package_failures[0]
-    phase = 'compilation' if package_failure.phase == PackageFailure.Phase.COMPILE else 'unit tests'
-    package = f'{package_failure.package.category}/{package_failure.package.package_name}'
+    phase = 'compilation' if failed_phases.pop(
+    ) == PackageFailure.Phase.COMPILE else 'unit tests'
+    packages = ', '.join(
+        sorted([
+            f'{package_failure.package.category}/{package_failure.package.package_name}'
+            for package_failure in package_failures
+        ]))
 
     fault_attribution_text = ''
-    if (package_failure.snapshot_comparison ==
-        CqFailureAttribute.MATCHING_FAILURE_FOUND):
+    if all((package_failure.snapshot_comparison ==
+            CqFailureAttribute.MATCHING_FAILURE_FOUND)
+           for package_failure in package_failures):
       fault_attribution_text = ' (failure also seen on snapshot builds)'
-    elif package_failure.affected_by_changes:
-      fault_attribution_text = ' (affected by changes in CQ run)'
-
-    return f'failed {phase} for {package}{fault_attribution_text}'
+    elif all(package_failure.affected_by_changes
+             for package_failure in package_failures):
+      fault_attribution_text = ' (affected by the CLs in the CQ run)'
+    return f'failed {phase} for {packages}{fault_attribution_text}'
 
   def _get_results(self, kind, runs, get_status, is_critical, get_title,
                    get_link_map, get_id, build_detailed_kind = None):

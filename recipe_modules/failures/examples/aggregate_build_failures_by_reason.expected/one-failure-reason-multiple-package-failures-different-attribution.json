@@ -27,7 +27,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 1 builds failed compilation for foo/bar (affected by the CLs in the CQ run)\n\n- atlas-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
+      "humanReason": "1 out of 1 builds failed compilation for foo/bar, foo/baz\n\n- atlas-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
     },
     "name": "$result"
   }
