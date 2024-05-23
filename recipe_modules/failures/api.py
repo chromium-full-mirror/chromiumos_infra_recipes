@@ -290,12 +290,8 @@ class FailuresApi(RecipeApi):
       else:
         status = bb_common_pb2.FAILURE
 
-    non_fatal_failures = [
-        failure.kind for failure in results.failures if not failure.fatal
-    ]
     exoneration_summary = self._exoneration_markdown
 
-    non_fatal_failures_count_by_kind = collections.Counter(non_fatal_failures)
     failures_by_kind = collections.defaultdict(list)
     for failure in fatal_failures:
       failures_by_kind[failure.kind].append(failure)
@@ -310,19 +306,14 @@ class FailuresApi(RecipeApi):
         total_count += results.successes[kind]
 
       if kind == self.HW_TEST:
-        lines = self.aggregate_hw_test_failures(
-            failure_group, non_fatal_failures_count_by_kind)
+        lines = self.aggregate_hw_test_failures(failure_group)
       else:
-        lines = self.aggregrate_failure_group(kind, failure_group, non_fatal_failures_count_by_kind, failure_count, total_count)
+        lines = self.aggregrate_failure_group(kind, failure_group,
+                                              failure_count, total_count)
 
       if failure_count > self._failure_truncate_max:
         lines.append('- ...and {} others'.format(failure_count - self._failure_truncate_max))
       summary_lines.extend(lines)
-
-    for kind in non_fatal_failures_count_by_kind:
-      non_fatal_count = non_fatal_failures_count_by_kind[kind]
-      summary_lines.append('{} non-critical {} failed'.format(
-          non_fatal_count, kind + 's' if non_fatal_count > 1 else kind))
 
     if self.HW_TEST in failures_by_kind and self.m.cv.active:
       summary_lines.append('')
@@ -334,18 +325,14 @@ class FailuresApi(RecipeApi):
     return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
 
-  def aggregrate_failure_group(self, kind: str,
-      failure_group: List[Failure],
-      non_fatal_failures_count_by_kind: collections.Counter,
-      failure_count: int,
-      total_count: int) -> List[str]:
+  def aggregrate_failure_group(self, kind: str, failure_group: List[Failure],
+                               failure_count: int,
+                               total_count: int) -> List[str]:
     """Returns aggregate failure markdown text.
 
     Args:
       kind: The failure kind.
       failure_group: List of all the failures for the specific kind.
-      non_fatal_failures_count_by_kind: Counter of each failure kind to its
-        non-fatal failure count.
       failure_count: Number of failures
       total_count: Number of all entries
 
@@ -373,9 +360,6 @@ class FailuresApi(RecipeApi):
     if None not in failure_reasons and len(failure_reasons) == 1:
       main_line = f'{failure_count} out of {total_count} {kind}s {failure_reasons.pop()}'
 
-    main_line += \
-      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
-
     lines = [main_line]
     failures_to_print = failure_group[0:self._failure_truncate_max]
     for failure in failures_to_print:
@@ -387,15 +371,12 @@ class FailuresApi(RecipeApi):
     return lines
 
   def aggregate_hw_test_failures(self,
-      hw_test_failures: List[Failure],
-      non_fatal_failures_count_by_kind: collections.Counter) -> List[str]:
+                                 hw_test_failures: List[Failure]) -> List[str]:
     """Returns aggregate test failure markdown text for HW tests,
     distinguishing between test and shard / suite failures.
 
     Args:
       hw_test_failures: List of all the hw test failures.
-      non_fatal_failures_count_by_kind: Counter of each failure kind to its
-        non-fatal failure count.
 
     Returns:
       List of summary markdown lines.
@@ -412,8 +393,7 @@ class FailuresApi(RecipeApi):
     #     - <a>tast.firmware.something</a>
     # ...
 
-    main_line = self.get_test_failure_main_line(
-        hw_test_failures, non_fatal_failures_count_by_kind)
+    main_line = self.get_test_failure_main_line(hw_test_failures)
     lines = [main_line]
     failures_to_print = hw_test_failures[:self._failure_truncate_max]
 
@@ -464,15 +444,11 @@ class FailuresApi(RecipeApi):
 
     return fault_attribution_text.format(failure_type, comparison_build_start_datetime, milo_link)
 
-  def get_test_failure_main_line(
-      self, failure_group: List[Failure],
-      non_fatal_failures_count_by_kind: collections.Counter) -> str:
+  def get_test_failure_main_line(self, failure_group: List[Failure]) -> str:
     """Returns the main line of the summary markdown.
 
     Args:
       failure_group: List of all the failures for the specified kind.
-      non_fatal_failures_count_by_kind: Counter of each failure kind to its
-        non-fatal failure count.
 
     Returns:
       Main line of the summary markdown.
@@ -510,28 +486,7 @@ class FailuresApi(RecipeApi):
           's' if shard_failure_count > 1 else '',
       )
 
-    main_line += \
-      self.get_non_critical_failures_text(kind, non_fatal_failures_count_by_kind)
-
     return main_line
-
-  def get_non_critical_failures_text(self,
-      kind: str,
-      non_fatal_failures_count_by_kind: collections.Counter) -> str:
-    """Returns a line summarizing the non-critical failures for the kind.
-
-    Args:
-      kind: The failure kind.
-      non_fatal_failures_count_by_kind: Counter of each failure kind to its
-        non-fatal failure count.
-    """
-    if kind in non_fatal_failures_count_by_kind:
-      non_fatal_count = non_fatal_failures_count_by_kind[kind]
-      del non_fatal_failures_count_by_kind[kind]
-      return ' ({} additional non-critical failure{})'.format(
-          non_fatal_count, 's' if non_fatal_count > 1 else '')
-
-    return ''
 
   def format_summary_markdown(self, summary_lines):
     """Aggregate individual failure summary lines.

@@ -32,8 +32,6 @@ def RunSteps(api):
   ]
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
-  api.assertions.assertIn('1 non-critical kind failed',
-                          final_result.summary_markdown)
 
   results.failures = [
       api.failures.Failure(kind='build', title='build-a',
@@ -109,7 +107,7 @@ def RunSteps(api):
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
   api.assertions.assertIn(
       '''\
-2 out of 30 builds failed (1 additional non-critical failure)
+2 out of 30 builds failed
 
 - build-a: [build page](build-a.com)
 
@@ -137,11 +135,9 @@ def RunSteps(api):
 
     - [test-b](test-b.com) | identical failure already present as of [2023-09-05 06:00:26](https://ci.chromium.org/ui/b/12345/test-results?q=ExactID:test-b)
 
-1 out of 1 test failed (1 additional non-critical failure)
+1 out of 1 test failed
 
 - test-a: [subtest-1](test-a.com)
-
-1 non-critical very_different_kind_of_test failed
 
 
 

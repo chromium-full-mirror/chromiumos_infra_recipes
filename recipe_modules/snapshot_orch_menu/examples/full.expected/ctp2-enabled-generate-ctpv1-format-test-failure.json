@@ -13004,7 +13004,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.bvt-inline\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.some-other-suite\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n1 non-critical build failed"
+      "humanReason": "3 hw test suites failed with incomplete results\n\n- htarget.hw.bvt-cq\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.bvt-inline\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)\n\n- htarget.hw.some-other-suite\n\n    - [suite page](https://cr-buildbucket.appspot.com/build/4321)"
     },
     "name": "$result"
   }

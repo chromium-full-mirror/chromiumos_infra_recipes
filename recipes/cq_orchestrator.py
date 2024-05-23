@@ -164,8 +164,6 @@ def GenTests(api: RecipeTestApi):
       _cq_schedule_and_collect_builds_test_data(
           collect_builds_with_non_crit_failure, collect_after_builds),
       data.ctp_normal,
-      api.post_process(post_process.SummaryMarkdown,
-                       '1 non-critical build failed'),
       cq=True,
   )
 

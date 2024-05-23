@@ -6125,7 +6125,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 6 builds failed (1 additional non-critical failure)\n\n- atlas-cq: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514004)"
+      "humanReason": "1 out of 6 builds failed\n\n- atlas-cq: [build page](https://cr-buildbucket.appspot.com/build/8922054662172514004)"
     },
     "name": "$result"
   }
