@@ -38,7 +38,7 @@ def RunSteps(api, properties):
       if not build.id in properties.skip_builds:
         build_menu_props = {
             'container_version_format':
-                '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
+                '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
         }
 
       # Setup builder info
@@ -76,7 +76,7 @@ def GenTests(api):
     skip = skip or []
 
     data = []
-    for ii in range(3):
+    for ii in range(2):
       if ii in skip:
         continue
 
@@ -141,7 +141,6 @@ def GenTests(api):
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-0.*'),
       require_step('.*reading payload for test-target-1.*'),
-      require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       step_passed('aggregating metadata'),
       step_passed('aggregating metadata.container metadata'),
@@ -149,12 +148,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'skip-child',
-      set_test_properties(skip_builds=[CHILD_BUILDS[0]]),
+      set_test_properties(skip_builds=[CHILD_BUILDS[1]]),
       mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
-      require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       api.post_check(
           StepLogEquals,
@@ -166,12 +164,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'skip-build-target',
-      set_test_properties(skip_build_target=[CHILD_BUILDS[0]]),
+      set_test_properties(skip_build_target=[CHILD_BUILDS[1]]),
       mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
-      require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       api.post_check(
           post_process.StepSummaryEquals,
@@ -182,12 +179,11 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'skip-artifacts',
-      set_test_properties(skip_artifacts=[CHILD_BUILDS[0]]),
+      set_test_properties(skip_artifacts=[CHILD_BUILDS[1]]),
       mock_metadata(skip=[0]),
       require_step('aggregating metadata.*'),
       require_step('.*container metadata.*'),
       require_step('.*reading payload for test-target-1.*'),
-      require_step('.*reading payload for test-target-2.*'),
       require_step('.*writing metadata.*'),
       api.post_check(
           post_process.StepSummaryEquals,
@@ -223,7 +219,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'failed-reading-but-forgiven',
-      set_test_properties(failed_builds=[CHILD_BUILDS[0]]),
+      set_test_properties(failed_builds=[CHILD_BUILDS[1]]),
       mock_metadata(),
       api.step_data(
           'aggregating metadata'

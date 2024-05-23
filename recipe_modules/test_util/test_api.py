@@ -77,7 +77,9 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
         build: Step_data for the build.
     """
     kwargs.setdefault('bucket', 'cq' if kwargs.get('cq') else 'postsubmit')
-    kwargs.setdefault('builder', '%s-orchestrator' % kwargs['bucket'])
+    kwargs.setdefault(
+        'builder', 'snapshot-orchestrator' if kwargs['bucket'] == 'postsubmit'
+        else '%s-orchestrator' % kwargs['bucket'])
     kwargs.setdefault('bot_size', 'small')
     return self.test_build(**kwargs)
 

@@ -2273,32 +2273,6 @@
       },
       "id": {
         "bucket": "postsubmit",
-        "name": "postsubmit-orchestrator",
-        "type": "POSTSUBMIT"
-      },
-      "orchestrator": {
-        "child_specs": [
-          {
-            "name": "amd64-generic-postsubmit"
-          },
-          {
-            "collectHandling": "COLLECT",
-            "name": "arm-generic-postsubmit"
-          },
-          {
-            "collectHandling": "COLLECT",
-            "name": "grunt-postsubmit"
-          }
-        ]
-      }
-    },
-    {
-      "general": {
-        "critical": true,
-        "manifest": "PRIVATE"
-      },
-      "id": {
-        "bucket": "postsubmit",
         "name": "snapshot-orchestrator",
         "type": "SNAPSHOT"
       },
