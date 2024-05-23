@@ -17,7 +17,7 @@
   },
   {
     "cmd": [],
-    "name": "build results.irrelevant critical build results.bob-postsubmit",
+    "name": "build results.irrelevant critical build results.bob-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",

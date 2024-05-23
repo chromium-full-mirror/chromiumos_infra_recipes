@@ -336,7 +336,7 @@ def GenTests(api):
                                             'ImageService/Create'),
       api.build_menu.assert_step_uses_bazel('run ebuild tests',
                                             'TestService/BuildTargetUnitTest'),
-      builder_name='amd64-generic-bazel-postsubmit',
+      builder_name='amd64-generic-bazel-snapshot',
   )
 
   yield api.build_menu.test(

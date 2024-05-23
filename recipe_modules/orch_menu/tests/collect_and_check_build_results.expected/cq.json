@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "check build results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@cq_relevant_builds@grunt-postsubmit@@@",
+      "@@@STEP_LOG_LINE@cq_relevant_builds@grunt-snapshot@@@",
       "@@@STEP_LOG_END@cq_relevant_builds@@@"
     ]
   },
@@ -82,7 +82,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.relevant critical build results.grunt-postsubmit",
+    "name": "check build results.build results.relevant critical build results.grunt-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"

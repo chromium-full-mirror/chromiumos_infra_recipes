@@ -67,7 +67,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.irrelevant critical build results.amd64-generic-postsubmit",
+    "name": "check build results.build results.irrelevant critical build results.amd64-generic-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",

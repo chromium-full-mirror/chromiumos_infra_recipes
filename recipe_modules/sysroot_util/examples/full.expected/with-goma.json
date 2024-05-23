@@ -1242,7 +1242,7 @@
     ],
     "cwd": "[START_DIR]/chrome/src",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1680,7 +1680,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1769,7 +1769,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2335,7 +2335,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"is_cros\": true}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz",
       "gs://chrome-goma-log/2012/05/14/eve/compiler_proxy-subproc.chromeos-ci.log.INFO.20200131.84.gz"
@@ -2369,7 +2369,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"is_cros\": true}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"is_cros\": true}",
       "cp",
       "compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz",
       "gs://chrome-goma-log/2012/05/14/eve/compiler_proxy.chromeos-ci.log.INFO.20200131-063322.81.gz"
@@ -2403,7 +2403,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"is_cros\": true}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"is_cros\": true}",
       "cp",
       "gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz",
       "gs://chrome-goma-log/2012/05/14/eve/gomacc.chromeos-ci.log.INFO.20200131-073921.1717.tar.gz"
@@ -2437,7 +2437,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "-h",
-      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-postsubmit\", \"project\": \"chromeos\"}, \"is_cros\": true}",
+      "x-goog-meta-builderinfo:{\"bot_id\": \"\", \"build_id\": 8945511751514863184, \"build_target_name\": \"eve\", \"builder_id\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"is_cros\": true}",
       "cp",
       "ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz",
       "gs://chrome-goma-log/2012/05/14/eve/ninja_log.chrome-bot.chromeos-ci-8owx.20200131-081005.8.gz"

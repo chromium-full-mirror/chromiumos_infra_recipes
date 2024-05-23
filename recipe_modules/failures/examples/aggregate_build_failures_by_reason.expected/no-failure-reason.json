@@ -17,7 +17,7 @@
   },
   {
     "cmd": [],
-    "name": "build results.irrelevant critical build results.atlas-postsubmit",
+    "name": "build results.irrelevant critical build results.atlas-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
@@ -27,7 +27,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "1 out of 1 build failed\n\n- atlas-postsubmit: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
+      "humanReason": "1 out of 1 build failed\n\n- atlas-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
     },
     "name": "$result"
   }

@@ -1242,7 +1242,7 @@
     ],
     "cwd": "[START_DIR]/chrome/src",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1680,7 +1680,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1769,7 +1769,7 @@
     ],
     "cwd": "[START_DIR]/chrome",
     "env": {
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/amd64-generic-snapshot/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

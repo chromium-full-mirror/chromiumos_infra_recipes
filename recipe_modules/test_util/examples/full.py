@@ -79,7 +79,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True)))
 
@@ -89,7 +89,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='myboard-postsubmit',
+                         expected_builder='myboard-snapshot',
                          expect_commit=True, expected_build_target='myboard')))
 
   yield api.test(
@@ -100,7 +100,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True,
                          expected_force_relevant_build=True)))
@@ -114,7 +114,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True,
                          expected_force_relevant_build=True)))
@@ -122,20 +122,20 @@ def GenTests(api):
   yield api.test(
       'with-properties-message',
       api.test_util.test_build(
-          builder='amd64-generic-postsubmit',
+          builder='amd64-generic-snapshot',
           input_properties=BuildMenuProperties(
               build_target=BuildTarget(name='amd64-generic'))).build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True)))
 
   yield api.test(
       'with-properties-dict',
       api.test_util.test_build(
-          builder='amd64-generic-postsubmit', input_properties={
+          builder='amd64-generic-snapshot', input_properties={
               'build_target': {
                   'name': 'amd64-generic'
               }
@@ -143,7 +143,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True)))
 
@@ -151,11 +151,11 @@ def GenTests(api):
   yield api.test(
       'with-properties-dict-from-build-target-properties',
       api.test_util.test_child_build('myboard', input_properties=props,
-                                     builder='amd64-generic-postsubmit').build,
+                                     builder='amd64-generic-snapshot').build,
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expect_commit=True, expected_build_target='myboard')))
 
   # Also verify that project and bucket are handled correctly.
@@ -214,7 +214,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic')))
 
   yield api.test(
@@ -226,7 +226,7 @@ def GenTests(api):
           TestProperties(
               expected_project='chromeos',
               expected_bucket='postsubmit',
-              expected_builder='amd64-generic-postsubmit',
+              expected_builder='amd64-generic-snapshot',
               expected_build_target='amd64-generic',
               expect_commit=True,
               expected_create_time=1,
@@ -243,7 +243,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expect_commit=True, expected_executable=executable)))
 
@@ -253,7 +253,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expected_critical=common_pb2.YES, expect_commit=True)))
 
@@ -263,14 +263,14 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expected_critical=common_pb2.NO, expect_commit=True)))
 
   yield api.test(
       'with-output-properties-message',
       api.test_util.test_build(
-          builder='amd64-generic-postsubmit',
+          builder='amd64-generic-snapshot',
           input_properties=BuildMenuProperties(
               build_target=BuildTarget(name='amd64-generic')),
           output_properties=BuildMenuProperties(
@@ -278,7 +278,7 @@ def GenTests(api):
       api.properties(
           TestProperties(expected_project='chromeos',
                          expected_bucket='postsubmit',
-                         expected_builder='amd64-generic-postsubmit',
+                         expected_builder='amd64-generic-snapshot',
                          expected_build_target='amd64-generic',
                          expected_output_build_target_name='changed',
                          expect_commit=True)))

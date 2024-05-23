@@ -57,8 +57,11 @@ class TestUtilApi(recipe_test_api.RecipeTestApi):
       # TODO(crbug/1099259: build_target is moving to $chromeos/build_menu
       # properties.  Drop this when no longer needed.
       input_dict['build_target'] = build_target
-      builder_name = builder_name or '%s-%s' % (build_target_name,
-                                                kwargs['bucket'])
+      if not builder_name:
+        suffix = '-snapshot' if kwargs[
+            'bucket'] == 'postsubmit' else f'-{kwargs["bucket"]}'
+        builder_name = f'{build_target_name}{suffix}'
+
       kwargs.setdefault('builder', builder_name)
 
     return self.test_build(input_properties=input_dict, **kwargs)

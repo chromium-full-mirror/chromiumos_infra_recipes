@@ -235,7 +235,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                             'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_bazel('build images',
                                             'ImageService/Create'),
-      builder_name='amd64-generic-bazel-postsubmit',
+      builder_name='amd64-generic-bazel-snapshot',
   )
 
   # Enable sysroot archive.

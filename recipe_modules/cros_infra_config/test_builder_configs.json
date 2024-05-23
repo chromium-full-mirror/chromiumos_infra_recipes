@@ -414,7 +414,7 @@
       },
       "id": {
         "bucket": "postsubmit",
-        "name": "amd64-generic-bazel-postsubmit",
+        "name": "amd64-generic-bazel-snapshot",
         "type": "POSTSUBMIT"
       },
       "unitTests": {
@@ -881,13 +881,19 @@
         },
         "installToolchain": {
           "compileSource": false
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
         }
       },
       "chrome": {
         "internal": false
       },
       "general": {
-        "critical": false,
+        "critical": true,
         "manifest": "PUBLIC"
       },
       "id": {

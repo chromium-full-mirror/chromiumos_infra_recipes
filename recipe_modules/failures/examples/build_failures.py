@@ -81,7 +81,7 @@ def GenTests(api):
     config = None
     if config_critical:
       config = builder_config.BuilderConfig()
-      config.id.name = '%s-postsubmit' % target
+      config.id.name = '%s-snapshot' % target
       config.general.critical.value = config_critical == 'YES'
     return builder_info(target, status, critical, config_critical, message,
                         config)

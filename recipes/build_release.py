@@ -1273,4 +1273,7 @@ gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc/fake2/dlc.img
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='kukui-release-main',
+      bucket='release',
   )

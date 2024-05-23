@@ -78,7 +78,7 @@
   },
   {
     "cmd": [],
-    "name": "check build results.build results.irrelevant critical build results.atlas-postsubmit",
+    "name": "check build results.build results.irrelevant critical build results.atlas-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"

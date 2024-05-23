@@ -17,7 +17,7 @@
   },
   {
     "cmd": [],
-    "name": "build results.irrelevant non-critical build results.coral-postsubmit",
+    "name": "build results.irrelevant non-critical build results.coral-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@failed but is not critical@@@",

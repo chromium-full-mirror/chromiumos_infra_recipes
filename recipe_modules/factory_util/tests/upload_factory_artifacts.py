@@ -51,7 +51,7 @@ def GenTests(api):
               'RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py',
               '--', 'RECIPE_REPO[depot_tools]/gsutil.py', '-m', '----', 'cp',
               '/path/to/artifacts/factory_image.zip',
-              'gs://chromeos-image-archive/amd64-generic-postsubmit/R99-1234.56.0-101-8945511751514863184'
+              'gs://chromeos-image-archive/amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184'
           ]),
       api.post_process(post_process.DropExpectation),
   )
