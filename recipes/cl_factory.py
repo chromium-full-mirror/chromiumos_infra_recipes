@@ -622,7 +622,8 @@ TEST=CQ
                                        forall_data('a', 'b')),
       api.repo.project_infos_step_data('find regex matching CL repos', {}),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE, '.*No matching projects.*'),
+      api.post_process(post_process.SummaryMarkdownRE,
+                       '.*No matching projects.*'),
       api.post_process(post_process.DropExpectation), status='INFRA_FAILURE')
 
   yield api.test(
@@ -647,7 +648,7 @@ TEST=CQ
               message_template=message_template,
           )),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        '.*Projects to operate on must be specified.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.
@@ -664,7 +665,7 @@ TEST=CQ
               hashtags=['refactor-audio-config'],
           )),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        '.*A message_template property must specify.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.

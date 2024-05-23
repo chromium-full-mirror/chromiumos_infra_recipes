@@ -273,8 +273,8 @@ def GenTests(api):
       })),
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
-                       ('.*local_manifests must be specified.*')),
+      api.post_process(post_process.SummaryMarkdownRE,
+                       '.*local_manifests must be specified.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.
       status='INFRA_FAILURE')
@@ -305,8 +305,8 @@ def GenTests(api):
       project_config_cq_build(api),
       api.expect_exception('ValueError'),
       api.post_process(
-          post_process.ResultReasonRE,
-          ('.*All checkout_paths and config_paths must be specified.*')),
+          post_process.SummaryMarkdownRE,
+          '.*All checkout_paths and config_paths must be specified.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.
       status='INFRA_FAILURE')
@@ -314,7 +314,7 @@ def GenTests(api):
   yield api.test(
       'no-manifest-groups',
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        '.*At least one manifest group must be specified.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.
@@ -324,7 +324,7 @@ def GenTests(api):
       'no-gerrit-changes',
       api.properties(**properties_dict()),
       api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        '.*At least one gerrit_change must be specified.*'),
       api.post_process(post_process.DropExpectation),
       # TODO (b/275363240): audit this test.

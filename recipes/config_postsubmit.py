@@ -652,7 +652,7 @@ def GenTests(api):
           retcode=1),
       api.post_process(post_process.DoesNotRunRE, 'git commit'),
       api.post_process(
-          post_process.ResultReason,
+          post_process.SummaryMarkdown,
           '1 step failed:\n\n\n- Infra Failure: '              \
                "Step('Do replicate_public_config and create CL" \
                    '.chromeos/project/galaxy/milkyway'          \

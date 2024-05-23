@@ -102,6 +102,6 @@ def GenTests(api):
                       ),
                   ])
           }), api.expect_exception('ValueError'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        '.*file_allowlist_regexps must be non-empty.*'),
       api.post_process(post_process.DropExpectation))

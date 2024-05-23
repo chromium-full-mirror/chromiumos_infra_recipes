@@ -397,7 +397,7 @@ def GenTests(api):
       api.step_data(
           'repo forall', stdout=api.raw_io.output_text(
               'some/project|project|project|refs/heads/main|')),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        'not found in project info'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -415,7 +415,7 @@ def GenTests(api):
                       '647f0526e7416808a6d3447099d75104647f0526e7416808a6d3447099d75104'
               })),
       api.post_process(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           r'Error\(s\) occurred when checking FIT image versions:'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -425,7 +425,7 @@ def GenTests(api):
       'no-version-information-in-ref',
       setup_build(basic_config),
       mock_file('checking change 1.read reference file', mock_version_file('')),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        'FIT version information not found in'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -442,7 +442,7 @@ def GenTests(api):
                   'pchc.bin':
                       '2f93215a5141aa29f21b55d7a2684316647f0526e7416808a6d3447099d75104'
               })),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        'FIT version information not found in'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -451,7 +451,8 @@ def GenTests(api):
   yield api.test(
       'no-matching-bin-change',
       setup_build([('foo', ['fitimage-test-versions.txt'])]),
-      api.post_process(post_process.ResultReasonRE, 'no change in binary blob'),
+      api.post_process(post_process.SummaryMarkdownRE,
+                       'no change in binary blob'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
 
@@ -459,7 +460,7 @@ def GenTests(api):
   yield api.test(
       'no-matching-version-change',
       setup_build([('foo', ['fitimage-test.bin'])]),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        'no change in versions file'),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -477,7 +478,7 @@ def GenTests(api):
                   'pchc.bin':
                       '2f93215a5141aa29f21b55d7a2684316647f0526e7416808a6d3447099d75104'
               })),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        "FIT tool versions don't match"),
       # TODO (b/275363240): audit this test.
       status='FAILURE')
@@ -491,7 +492,7 @@ def GenTests(api):
                          mock_version_file(
                              delete=['pchc.bin'],
                          )),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        "file 'pchc.bin' from reference not in"),
       # TODO (b/275363240): audit this test.
       status='FAILURE')

@@ -364,7 +364,7 @@ def GenTests(api):
           ])),
       api.expect_exception('RuntimeError'),
       api.post_process(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           'no annealing build found for snapshot_id snapshot-HEAD-SHA'),
       api.post_process(post_process.DropExpectation),
       builder='snapshot-orchestrator',

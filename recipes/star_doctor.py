@@ -553,7 +553,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               ],
           )),
       api.post_process(post_process.StepFailure, 'set up.validate properties'),
-      api.post_process(post_process.ResultReasonRE,
+      api.post_process(post_process.SummaryMarkdownRE,
                        ('.*ge_bucket and branches cannot be set if'
                         ' remote_config_files is set..*')),
       api.post_process(post_process.DropExpectation),
