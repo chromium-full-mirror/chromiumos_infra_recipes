@@ -46,8 +46,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         collect_aftering child builds, or None.
       process_child (Build): The Build message for a process child, or None.
       process_child_timeout (bool): Whether the process child times out.
-      follow_on_orch (Build): The Build message for a follow-on orchestrator, or
-        None.
       sheriff_rotations (list): List of sheriff rotations watching this orch.
       *args (list): Arguments to pass to test_api.test.
       **kwargs (dict): Arguments to pass to test_util.test_build.
@@ -63,7 +61,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     collect_builds = kwargs.pop('collect_builds', [])
     collect_timeout = kwargs.pop('collect_timeout', None)
     collect_after_builds = kwargs.pop('collect_after_builds', [])
-    follow_on_orch = kwargs.pop('follow_on_orch', None)
     sheriff_rotations = kwargs.pop('sheriff_rotations', [])
 
     default_props = {
@@ -106,18 +103,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
       ret += self.m.buildbucket.simulated_search_results(
           child_builds, 'clean up orchestrator.buildbucket.search')
 
-    if follow_on_orch:
-      args.append(
-          self.m.buildbucket.simulated_schedule_output(
-              BatchResponse(responses=[{
-                  'schedule_build': follow_on_orch
-              }]), 'run follow on orchestrator.buildbucket.schedule')
-      )  # pragma: nocover
-      args.append(
-          self.m.buildbucket.simulated_collect_output(
-              [follow_on_orch],
-              'run follow on orchestrator.collect'))  # pragma: nocover
-
     # Call recipe_test_api.test().
     return super().test(name, ret, *args, status=status)
 
@@ -152,16 +137,13 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         non_crit_fail (list): List of builds that includes a failed non-critical
           child.
         process_child (Build): Build message for a process-child.
-        follow_on_orchestrator (Build): Build message for a follow-on
-          orchestrator.
         ctp_normal (StepTestData): StepTestData for normal buildset.
         ctp_failure (StepTestData): StepTestData for build failing tests.
     """
     _ret = namedtuple('_standard_test_data', [
         'orchestrator', 'inflight_orchestrator', 'builds', 'history_builds',
         'after_builds', 'crit_fail', 'non_crit_fail', 'process_child',
-        'follow_on_orchestrator', 'mixed_build_results', 'ctp_normal',
-        'ctp_failure'
+        'mixed_build_results', 'ctp_normal', 'ctp_failure'
     ])
 
     def _child_build_msg(name, **kwargs):
@@ -181,10 +163,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
 
     inflight_orchestrator = self.m.test_util.test_orchestrator(
         cq=True, build_id=8922054662172513001, status='STARTED').message
-
-    follow_on_orchestrator = self.m.test_util.test_orchestrator(
-        build_id=8922054662172515000, bucket='toolchain',
-        builder='artifact-verify-orchestrator', status='SUCCESS').message
 
     builds = [
         _child_build_msg(
@@ -245,7 +223,6 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
         crit_fail,
         non_crit_fail,
         process_child,
-        follow_on_orchestrator,
         mixed_build_results,
     ]
 
