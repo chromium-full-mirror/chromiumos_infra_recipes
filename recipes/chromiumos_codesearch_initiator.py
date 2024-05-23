@@ -66,7 +66,7 @@ def RunSteps(api: recipe_api.RecipeApi,
 
   api.scheduler.emit_trigger(
       api.scheduler.GitilesTrigger(
-          repo=properties.manifest_repo.removeprefix('https://'),
+          repo=properties.manifest_repo,
           ref='refs/heads/snapshot',
           revision=manifest_hash,
           properties=child_properties,
