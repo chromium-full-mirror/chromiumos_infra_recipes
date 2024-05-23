@@ -151,9 +151,8 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-DutTracker'),
     StagingReCheck('chromeos', 'staging', r'staging-firmware-ti50-postsubmit',
                    [image_builder_exemption, build_firmware_exemption]),
-    # TODO(b/340739584): Re-enable after bug is fixed.
-    # StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
-    #                num_builds=3),
+    StagingReCheck('chromeos', 'staging', r'staging-manifest-doctor',
+                   num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-recipes_autoreleaser_infra',
                    [autoreleaser_no_releasable_changes_exemption],
                    num_builds=1),
