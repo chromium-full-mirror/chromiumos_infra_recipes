@@ -328,11 +328,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._collect_remaining_children(no_nest=True)
 
     with self.m.step.nest('clean up orchestrator'):
-      # Recheck the BuilderConfigs at HEAD, one last time, to see if any
-      # failed builders are now noncritical.
-      self._non_critical_build_check('final build criticality update',
-                                     self.builds_status.completed_builds,
-                                     self.builds_status.failures)
       # Set child output ids if any
       self.add_child_info_to_output_property()
 

@@ -561,13 +561,11 @@ class FailuresApi(RecipeApi):
     summary_markdown = summary_markdown.strip()
     return summary_markdown
 
-  def get_build_results(self, builds, refresh_configs=False,
-                        relevant_child_builder_names=None):
+  def get_build_results(self, builds, relevant_child_builder_names=None):
     """Verify all builds completed successfully.
 
     Args:
       builds (list[build_pb2.Build]): List of completed builds.
-      refresh_configs (bool): Whether to update configs and adjust is_critical.
       relevant_child_builder_names (list(str)): List of relevant child builder
         names.
 
@@ -606,12 +604,6 @@ class FailuresApi(RecipeApi):
             for i in set(all_results.successes).union(results.successes)
           }
 
-    if refresh_configs:
-      self.m.cros_infra_config.force_reload()
-      child_configs = self.m.cros_infra_config.safe_get_builder_configs(
-          [b.builder.builder for b in builds])
-      all_results.failures = self.update_non_critical_build_failures(
-          all_results.failures, child_configs)
     return all_results
 
   def get_hw_test_results(self, hw_tests):
@@ -715,23 +707,6 @@ class FailuresApi(RecipeApi):
     return (self.get_hwtest_status(hw_test) != bb_common_pb2.SUCCESS and
             hw_test.task.test.common.critical.value)
 
-  @contextlib.contextmanager
-  def _with_step(self, step, name):
-    """Returns a context with the current step, or a new one.
-
-    Args:
-      step (StepData): The current step, or None.
-      name (str): The name of the step to create if there is not one.
-
-    Returns:
-      (context) with active step.
-    """
-    if step:
-      yield step
-    else:
-      with self.m.step.nest(name) as new_step:
-        yield new_step
-
   def update_non_critical_build_failures(self, failures: List[Failure],
                                          fresh_builder_configs: Dict[str, BuilderConfig],
                                          presentation: Optional[StepPresentation] = None) -> List[Failure]:
@@ -755,9 +730,6 @@ class FailuresApi(RecipeApi):
         if f.id in fresh_builder_configs:
           cfg = fresh_builder_configs[f.id]
           non_critical = cfg.general.critical and not cfg.general.critical.value
-        else:
-          # Deleted builders are non_critical.
-          non_critical = True
         if f.fatal and non_critical:
           new_non_critical_builds.append(f.id)
           fatal = False
@@ -766,8 +738,7 @@ class FailuresApi(RecipeApi):
                        fatal=fatal, id=f.id, type=f.type,
                        failure_reason=f.failure_reason))
     if new_non_critical_builds:
-      with self._with_step(presentation, 'non-critical build check') as pres:
-        pres.logs['new non-critical builders'] = new_non_critical_builds
+      presentation.logs['new non-critical builders'] = new_non_critical_builds
     return updated_failures
 
   def format_step_failures(self, step_failures):

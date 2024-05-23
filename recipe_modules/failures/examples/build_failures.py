@@ -49,8 +49,7 @@ def RunSteps(api, properties):
   ]
 
   build_results = api.failures.get_build_results(
-      properties.builds, properties.refresh_config,
-      api.properties['relevant_child_builder_names'])
+      properties.builds, api.properties['relevant_child_builder_names'])
 
   api.assertions.assertEqual(expected_failures, build_results.failures)
   api.assertions.assertEqual(
@@ -87,7 +86,7 @@ def GenTests(api):
     return builder_info(target, status, critical, config_critical, message,
                         config)
 
-  def test(name, builds, refresh_config=False, expected_failing_builds=None,
+  def test(name, builds, expected_failing_builds=None,
            expected_is_critical_build_failure=False,
            relevant_child_builder_names=None):
     """Create a test.
@@ -95,8 +94,6 @@ def GenTests(api):
     Args:
       name (str): The test name.
       builds (list[builder_info]): The builds to for get_build_results().
-      refresh_config (bool): Whether to have get_build_results refresh the
-        config.
       expected_failing_builds (list[builder_info]): The builds that we expect to
         have failed.
       expected_is_critical_build_failure (bool): The expected return from
@@ -107,7 +104,6 @@ def GenTests(api):
     """
     configs = builder_config.BuilderConfigs()
     props = BuildProperties(
-        refresh_config=refresh_config,
         expected_is_critical_build_failure=expected_is_critical_build_failure)
 
     for build in builds:
@@ -118,26 +114,18 @@ def GenTests(api):
     for fail in expected_failing_builds or []:
       failing_build = props.expected_failing_builds.add()
       failing_build.CopyFrom(fail.message)
-      if refresh_config:
-        failing_build.critical = fail.config_critical == 'YES'
 
-    ret = api.test(
+    return api.test(
         name,
         api.test_util.test_orchestrator().build,
         api.properties(
             props, relevant_child_builder_names=relevant_child_builder_names))
-
-    if refresh_config:
-      ret += api.cros_infra_config.override_builder_configs_test_data(configs)
-    return ret
 
   # Define some builds.
   build_success = make_builder_info('zork', 'SUCCESS', 'UNSET', 'UNSET')
   build_failure = make_builder_info('coral', 'FAILURE', 'NO', 'UNSET')
   build_crit_failure = make_builder_info('eve', 'FAILURE', 'YES', 'YES')
   crit_infra_failure = make_builder_info('bob', 'INFRA_FAILURE', 'YES', 'YES')
-  build_was_crit_failure = make_builder_info('grunt', 'FAILURE', 'YES', 'NO')
-  build_now_missing_failure = make_builder_info('amd64', 'FAILURE', 'YES', None)
 
   yield test('success', [build_success])
 
@@ -160,21 +148,3 @@ def GenTests(api):
              expected_failing_builds=[
                  crit_infra_failure,
              ], expected_is_critical_build_failure=True)
-
-  # Verify that no-longer-critical and now-missing builder failures are still
-  # marked fatal when we do not refresh config.
-  yield test(
-      'critical-failure-no-refresh',
-      [build_crit_failure, build_was_crit_failure, build_now_missing_failure],
-      expected_failing_builds=[
-          build_crit_failure, build_was_crit_failure, build_now_missing_failure
-      ])
-
-  # Verify that no-longer-critical and now-missing builder failures are marked
-  # non-fatal when we refresh config.
-  yield test(
-      'critical-failure-with-refresh',
-      [build_crit_failure, build_was_crit_failure, build_now_missing_failure],
-      refresh_config=True, expected_failing_builds=[
-          build_crit_failure, build_was_crit_failure, build_now_missing_failure
-      ])

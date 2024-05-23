@@ -148,11 +148,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       self._push_manifest_refs(self._properties.update_manifest_refs.test)
 
     with self.m.step.nest('clean up orchestrator'):
-      # Recheck the BuilderConfigs at HEAD, one last time, to see if any
-      # failed builders are now noncritical.
-      self._non_critical_build_check('final build criticality update',
-                                     self.builds_status.completed_builds,
-                                     self.builds_status.failures)
       # Do a final call to update_irrelevant_scores, to get the previous
       # greenness for any irrelevant builders. The previous call to
       # update_build_info may have only propagated build scores forward, since

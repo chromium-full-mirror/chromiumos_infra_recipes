@@ -12,12 +12,11 @@ message BuildProperties {
   // The builds.
   repeated buildbucket.v2.Build builds = 1;
 
-  // Refresh_config value:
-  bool refresh_config = 2;
-
   // Same as builds, but only the ones we expect to be failures.
   repeated buildbucket.v2.Build expected_failing_builds = 3;
 
   // Expected is_critical_build_failure.
   bool expected_is_critical_build_failure = 4;
+
+  reserved 2;
 }
