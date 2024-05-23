@@ -18,6 +18,6 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test('basic',
                  api.post_process(MustRunRE, r'Looking for CLs in host .*'),
-                 api.post_process(MustRun, 'Filtering Cq-Depend CLs'),
+                 api.post_process(MustRun, 'Filtering CLs with Cq-Depend'),
                  api.post_process(MustRun, 'Filtering Related Chain CLs'),
                  api.post_process(DropExpectation))

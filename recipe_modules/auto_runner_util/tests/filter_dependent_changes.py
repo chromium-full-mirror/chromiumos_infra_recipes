@@ -3,7 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Tests for the filter_dependent_changes function."""
+"""Tests for the filtering cq-depent changes."""
 
 from recipe_engine.post_process import DropExpectation
 
@@ -22,7 +22,10 @@ def is_equal(actual_change_infos, expected_cl_numbers):
 
 def RunSteps(api):
   change_infos = api.properties['change_infos']
-  actual = api.auto_runner_util.filter_dependent_changes(change_infos)
+  # pylint: disable=protected-access
+  actual = api.auto_runner_util.filter_cls(
+      change_infos, 'No Reviewers', api.auto_runner_util._has_no_cq_depends)
+  # pylint: enable=protected-access
   expected = api.properties['filtered_hosts']
   for host in expected:
     api.assertions.assertTrue(is_equal(actual[host], expected[host]))

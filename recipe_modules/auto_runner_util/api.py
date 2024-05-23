@@ -5,7 +5,7 @@
 
 """ Helper functions for auto runner recipe."""
 
-from typing import Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple
 from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo, JSONObject
@@ -29,7 +29,7 @@ QUERY_PARAMS = (
 # Output parameters for Gerrit API.
 # See documentation here
 # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
-O_PARAMS = ('CURRENT_REVISION', 'COMMIT_FOOTERS')
+O_PARAMS = ('CURRENT_REVISION', 'COMMIT_FOOTERS', 'REVIEWER_UPDATES')
 
 # Gerrit hosts to query. These are the relevant hosts for chromeos.
 HOSTS = ('chromium', 'chrome-internal')
@@ -110,12 +110,12 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
       return self._get_unrelated_changes(all_gerrit_changes,
                                          related_changes_so_far)
 
-  def _has_cq_depends(self, change_info: ChangeInfo) -> bool:
-    """Checks if a Gerrit change has 'cq-depends' in its commit footer.
+  def _has_no_cq_depends(self, change_info: ChangeInfo) -> bool:
+    """Checks if a Gerrit change has no 'cq-depends' in its commit footer.
 
     This function takes a `ChangeInfo` object as input and determines if the
     current revision of the change has 'cq-depends' in its commit footer.
-    It returns `True` if 'cq-depends' is present, and `False` otherwise.
+    It returns `True` if  no 'Cq-Depend' is present, and `False` if it does.
 
     Args:
       change_info: A `ChangeInfo` object representing the Gerrit change.
@@ -126,54 +126,73 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
 
     revisions = change_info.get('revisions')
     if not revisions:
-      return False
+      return True
 
     current_revision_number = change_info.get('current_revision_number')
     if not current_revision_number:
-      return False
+      return True
 
     # Check if the current revision contains 'cq-depends'
     for revision in revisions.values():
       if (revision.get('_number') == current_revision_number and
           'Cq-Depend:' in revision.get('commit_with_footers', {})):
-        return True
+        return False
 
-    return False
+    return True
 
-  def filter_dependent_changes(
-      self,
-      change_infos: Dict[str, List[ChangeInfo]]) -> Dict[str, List[ChangeInfo]]:
-    """Filters out Gerrit changes that have 'cq-depends' in their commit footer.
+  def _has_reviewers(self, change_info: ChangeInfo) -> bool:
+    """Checks if a Gerrit change has atleast one reviewer.
 
-    This function takes a dictionary of Gerrit change information, where the keys
-    are Gerrit host URLs and the values are lists of `ChangeInfo` objects. It
-    then filters out changes that have 'cq-depends' in their commit footer.
+    This function takes a `ChangeInfo` object as input and determines if the
+    the change has reviewers. It returns `True` if there is atleast one
+    reviewer, and `False` otherwise.
 
     Args:
-      change_infos: A dictionary of Gerrit change information, where the keys
-        are Gerrit host URLs and the values are lists of `ChangeInfo` objects.
+      change_info: A `ChangeInfo` object representing the Gerrit change.
+
+    Returns:
+      `True` if the change has atleast one reviewer, `False` otherwise.
+    """
+    return any(
+        reviewer_update.get('state') == 'REVIEWER'
+        for reviewer_update in change_info.get('reviewer_updates', []))
+
+  def filter_cls(
+      self, change_infos: Dict[str, List[ChangeInfo]], filter_text: str,
+      filter_func: Callable[[ChangeInfo], bool]) -> Dict[str, List[ChangeInfo]]:
+    """Filters a dictionary of Gerrit changeInfos based on a provided function.
+
+    This function iterates through ChangeInfos grouped by host, applying
+    the `filter_func` to each change. It retains changes that pass the filter and creates
+    nested presentation steps to track the filtering process for each host.
+
+    Args:
+        change_infos: A dictionary where keys are host URLs and values are lists of
+                      `ChangeInfo` objects representing Gerrit changes.
+        filter_text: A string describing the filter criteria (used for logging/presentation).
+        filter_func: A callable function that takes a `ChangeInfo` object as input and
+                     returns `True` if the change should be kept, `False` otherwise.
 
     Returns:
       A dictionary of Gerrit change information, where the keys are Gerrit host
-      URLs and the values are lists of `ChangeInfo` objects that do not have
-      'cq-depends' in their commit footer.
+        URLs and the values are lists of `ChangeInfo` objects that passed the filter_func
     """
-    no_cq_depend_change_infos = {}
-    with self.m.step.nest('Filtering Cq-Depend CLs'):
+    final_remaining_cls = {}
+    with self.m.step.nest('Filtering CLs with %s' % filter_text):
       for host_url, change_infos_per_host in change_infos.items():
-        with self.m.step.nest('Filtering CQ-Depend CLs for host %s' %
-                              host_url) as host_preso:
+        with self.m.step.nest('Filtering CLs with %s for host %s' %
+                              (filter_text, host_url)) as host_preso:
           remaining_change = []
           for change_info in change_infos_per_host:
-            if not self._has_cq_depends(change_info):
+            if filter_func(change_info):
               remaining_change.append(change_info)
             else:
               host_preso.links[
                   'Filtering CL %s' %
                   change_info.get('_number')] = host_url + '/' + str(
                       change_info.get('_number'))
-        no_cq_depend_change_infos[host_url] = remaining_change
-    return no_cq_depend_change_infos
+        final_remaining_cls[host_url] = remaining_change
+    return final_remaining_cls
 
   def get_change_infos_from_gerrit(
       self, hosts: Tuple[str], projects: Tuple[str],
@@ -227,11 +246,15 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     all_changes = self.get_change_infos_from_gerrit(HOSTS, PROJECTS_PREFIX,
                                                     QUERY_PARAMS, O_PARAMS)
 
-    no_cq_dependent_change_infos = self.filter_dependent_changes(all_changes)
-    no_cq_dependent_gerrit_changes = [
+    no_cq_dependent_change_infos = self.filter_cls(all_changes, 'Cq-Depend',
+                                                   self._has_no_cq_depends)
+    cl_reviewer_change_infos = self.filter_cls(no_cq_dependent_change_infos,
+                                               'No Reviewers',
+                                               self._has_reviewers)
+    remaining_gerrit_changes = [
         change_info_to_gerrit_change(change_info, host)
-        for host, change_infos in no_cq_dependent_change_infos.items()
+        for host, change_infos in cl_reviewer_change_infos.items()
         for change_info in change_infos
     ]
-    remaining_cls = self.filter_related_changes(no_cq_dependent_gerrit_changes)
+    remaining_cls = self.filter_related_changes(remaining_gerrit_changes)
     return remaining_cls
