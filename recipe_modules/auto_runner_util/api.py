@@ -8,11 +8,13 @@
 from typing import Callable, Dict, List, Tuple
 from recipe_engine import recipe_api
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import AutoRunnerUtilProperties, HostProjects, CLSignalEnum
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo, JSONObject
 from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
 
+
 # Maximum number of changes to query per request.
-MAX_LIMIT_PER_QUERY = 50
+DEFAULT_MAX_LIMIT_PER_QUERY = 50
 
 # Query parameters for Gerrit API. These are the relevant filters
 # for auto runner. See go/run-cq-run for full details and explanations.
@@ -31,17 +33,25 @@ QUERY_PARAMS = (
 # https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
 O_PARAMS = ('CURRENT_REVISION', 'COMMIT_FOOTERS', 'REVIEWER_UPDATES')
 
-# Gerrit hosts to query. These are the relevant hosts for chromeos.
-HOSTS = ('chromium', 'chrome-internal')
+# Default List of host and project pairs to query.
+# This list is used to determine which Gerrit hosts and projects to query for
+# changes. The project prefix can be used to match multiple projects. For example,
+# project_prefix=['chromeiumos'] query all projects that start with 'chromiumos'.
+DEFAULT_HOST_PROJECTS_PREFIXES = [
+    HostProjects(host='chromium', project_prefix=['chromiumos']),
+    HostProjects(host='chrome-internal', project_prefix=['chromeos']),
+]
 
-# Gerrit projects prefix to query.
-PROJECTS_PREFIX = ('chromiumos', 'chromeos')
+DEFAULT_CL_SIGNAL = CLSignalEnum.REVIEWER_ADDED
 
 
 class AutoRunnerUtilApi(recipe_api.RecipeApi):
 
-  def __init__(self, *args, **kwargs):
+  def __init__(self, properties: AutoRunnerUtilProperties, *args, **kwargs):
     super().__init__(*args, **kwargs)
+    self._max_limit_per_query = properties.max_limit_per_query or DEFAULT_MAX_LIMIT_PER_QUERY
+    self._host_project_prefixs = properties.host_projects or DEFAULT_HOST_PROJECTS_PREFIXES
+    self._cl_signal = properties.cls_signal or DEFAULT_CL_SIGNAL
 
   def _get_unrelated_changes(
       self, all_current_changes: List[GerritChange],
@@ -195,21 +205,23 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     return final_remaining_cls
 
   def get_change_infos_from_gerrit(
-      self, hosts: Tuple[str], projects: Tuple[str],
-      query_params: Tuple[Tuple[str, str]],
+      self, host_projects: List[HostProjects], query_params: Tuple[Tuple[str,
+                                                                         str]],
       o_params: Tuple[str]) -> Dict[str, List[ChangeInfo]]:
     """Retrieves Gerrit change information from all configured hosts and projects.
 
     This function retrieves Gerrit change information from all configured hosts
-    and projects that match the constraints specified in `QUERY_PARAMS`. It
-    users the Gerrit API to query for changes that meet the specified criteria.
+    and projects that match the constraints specified in query_params and o_params. It
+    uses the Gerrit API to query for changes that meet the specified criteria.
 
     Returns:
       A dictionary of Gerrit change information, where the keys are Gerrit host
       URLs and the values are lists of `ChangeInfo` objects.
     """
     all_changes = {}
-    for host in hosts:
+    for host_project_prefixes in host_projects:
+      host = host_project_prefixes.host
+      projects = host_project_prefixes.project_prefix
       with self.m.step.nest('Looking for CLs in host %s' % host):
         host_url = 'https://{}-review.googlesource.com'.format(host)
         changes = []
@@ -220,7 +232,7 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
                 host_url, query_params + ((
                     'projects',
                     project,
-                ),), o_params=list(o_params), limit=MAX_LIMIT_PER_QUERY)
+                ),), o_params=list(o_params), limit=self._max_limit_per_query)
             changes.extend(changes_from_project)
             for change in changes_from_project:
               gerrit_change = change_info_to_gerrit_change(change, host_url)
@@ -243,17 +255,18 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     Returns:
       A list of `GerritChange` objects representing the eligible Gerrit changes.
     """
-    all_changes = self.get_change_infos_from_gerrit(HOSTS, PROJECTS_PREFIX,
+    all_changes = self.get_change_infos_from_gerrit(self._host_project_prefixs,
                                                     QUERY_PARAMS, O_PARAMS)
 
-    no_cq_dependent_change_infos = self.filter_cls(all_changes, 'Cq-Depend',
-                                                   self._has_no_cq_depends)
-    cl_reviewer_change_infos = self.filter_cls(no_cq_dependent_change_infos,
+    remaining_change_infos = self.filter_cls(all_changes, 'Cq-Depend',
+                                             self._has_no_cq_depends)
+    if self._cl_signal == CLSignalEnum.REVIEWER_ADDED:
+      remaining_change_infos = self.filter_cls(remaining_change_infos,
                                                'No Reviewers',
                                                self._has_reviewers)
     remaining_gerrit_changes = [
         change_info_to_gerrit_change(change_info, host)
-        for host, change_infos in cl_reviewer_change_infos.items()
+        for host, change_infos in remaining_change_infos.items()
         for change_info in change_infos
     ]
     remaining_cls = self.filter_related_changes(remaining_gerrit_changes)

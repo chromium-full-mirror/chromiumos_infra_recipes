@@ -6,7 +6,7 @@
 """Tests for get_change_infos_from_gerrit function."""
 from recipe_engine import post_process
 from recipe_engine.post_process import DropExpectation, MustRun
-from RECIPE_MODULES.chromeos.auto_runner_util.api import HOSTS
+from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import HostProjects
 
 DEPS = [
     'recipe_engine/assertions',
@@ -22,26 +22,23 @@ O_PARAMS = [
     'COMMIT_FOOTERS',
 ]
 
-HOSTS = ('chromium',)
-PROJECTS = ('chromiumos',)
+TEST_HOST_PROJECTS_PREFIXES = [
+    HostProjects(host='chromium', project_prefix=['chromiumos']),
+]
 
 
 def RunSteps(api):
-  hosts = api.properties['hosts']
-  query_params = api.properties['query_params']
-  projects = list(api.properties['projects'])
-  o_params = list(api.properties['o_params'])
-  api.auto_runner_util.get_change_infos_from_gerrit(hosts, projects=projects,
-                                                    query_params=query_params,
-                                                    o_params=o_params)
+  api.auto_runner_util.get_change_infos_from_gerrit(TEST_HOST_PROJECTS_PREFIXES,
+                                                    query_params=QUERY_PARAMS,
+                                                    o_params=O_PARAMS)
 
 
 def GenTests(api):
   yield api.test(
       'basic',
-      api.properties(hosts=HOSTS, query_params=QUERY_PARAMS, projects=PROJECTS,
-                     o_params=O_PARAMS),
-      api.post_process(MustRun, 'Looking for CLs in host %s' % HOSTS[0]),
+      api.post_process(
+          MustRun,
+          'Looking for CLs in host %s' % TEST_HOST_PROJECTS_PREFIXES[0].host),
       api.post_process(
           post_process.StepCommandContains,
           '''Looking for CLs in host chromium.Looking for CLs in project chromiumos.query https://chromium-review.googlesource.com.gerrit changes''',

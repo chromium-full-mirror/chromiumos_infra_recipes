@@ -1,0 +1,32 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.auto_runner_util;
+
+message AutoRunnerUtilProperties {
+  // The maximum number of changes to query per gerrit request.
+  int64 max_limit_per_query = 1;
+  // A list of host and project pairs to query
+  repeated HostProjects host_projects = 2;
+  // The signal to use for determining eligible CLs.
+  CLSignalEnum cls_signal = 4;
+}
+
+message HostProjects {
+  // The Gerrit host to query.
+  string host = 1;
+  // list of project prefixes.
+  repeated string project_prefix = 2;
+}
+
+enum CLSignalEnum {
+  // This value should not be used.
+  CLSIGNAL_UNSPECIFIED = 0;
+  // Consider CLs that have a reviewer added.
+  REVIEWER_ADDED = 1;
+  // Consider Cls with a new patchset.
+  PATCHSET_UPLOAD = 2;
+}
