@@ -748,6 +748,131 @@
     },
     {
       "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "buildImagesOrchestrator": "BAZEL",
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "installPackagesOrchestrator": "BAZEL",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-bazel-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
+          {
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
+          }
+        ],
+        "unitTestsOrchestrator": "BAZEL"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-throwaway",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "NONE",
+        "prebuilts_gs_bucket": "prebuilts_gs_bucket"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "buildImages": {
+          "buildImagesOrchestrator": "BAZEL",
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
+        "installPackages": {
+          "bazelTargets": "LITE",
+          "dependencies": "ALL_DEPENDENCIES",
+          "installPackagesOrchestrator": "BAZEL",
+          "runSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-bazel-lite-cq",
+        "type": "CQ"
+      },
+      "unitTests": {
+        "dependencies": "ALL_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN",
+        "packageBlocklist": [
+          {
+            "category": "chromeos-base",
+            "packageName": "chromite",
+            "version": ""
+          }
+        ],
+        "unitTestsOrchestrator": "BAZEL"
+      }
+    },
+    {
+      "artifacts": {
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "legacy": {

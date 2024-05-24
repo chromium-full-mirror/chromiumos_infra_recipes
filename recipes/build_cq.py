@@ -11,6 +11,7 @@ from typing import Optional
 from google.protobuf import json_format
 from google.protobuf import timestamp_pb2
 
+from PB.chromite.api.sysroot import InstallPackagesRequest
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
@@ -399,5 +400,34 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           )),
       cq=True,
       builder='amd64-generic-cq-img-pkg-sizes',
+      build_target='amd64-generic',
+  )
+
+  # Build that uses Bazel for all its build steps.
+  yield api.build_menu.test(
+      'bazel',
+      api.build_menu.assert_step_uses_bazel('install packages',
+                                            'SysrootService/InstallPackages'),
+      api.build_menu.assert_step_uses_bazel('build images',
+                                            'ImageService/Create'),
+      api.build_menu.assert_step_uses_bazel('run ebuild tests',
+                                            'TestService/BuildTargetUnitTest'),
+      cq=True,
+      builder_name='amd64-generic-bazel-cq',
+      build_target='amd64-generic',
+  )
+
+  # Bazel Lite build.
+  yield api.build_menu.test(
+      'bazel-lite',
+      api.build_menu.assert_step_uses_bazel('install packages',
+                                            'SysrootService/InstallPackages'),
+      api.post_check(
+          post_process.LogContains,
+          'install packages.call chromite.api.SysrootService/InstallPackages',
+          'request',
+          [f'"bazelTargets": {InstallPackagesRequest.BazelTargets.LITE}']),
+      cq=True,
+      builder='amd64-generic-bazel-lite-cq',
       build_target='amd64-generic',
   )
