@@ -860,11 +860,14 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   if carrier:
     base_tags.append(('carrier', carrier[0]))
 
+  # Set default account ID as 1 for non-partner runs
+  account_id = '1'
   partner_config = properties.common_config.partner_config
   if partner_config and partner_config.account_id:
     # Sets the partner account id from the common_config.
     # This value is set in the partner luci config file.
-    base_tags.append(('account_id', str(partner_config.account_id)))
+    account_id = str(partner_config.account_id)
+  base_tags.append(('account_id', account_id))
 
   chameleon_connection_types = api.cros_tags.get_values(
       'label-chameleon_connection_types',
