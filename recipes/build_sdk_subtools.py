@@ -93,8 +93,8 @@ class BuildSdkSubtoolsRun:
   @contextlib.contextmanager
   def _setup(self) -> Generator:
     """Configure the builder and setup the workspace and chroot."""
-    with self.m.build_menu.configure_builder(missing_ok=True):
-      self.m.src_state.gitiles_commit = self.gitiles_commit
+    with self.m.build_menu.configure_builder(missing_ok=True,
+                                             commit=self.gitiles_commit):
       with self.m.build_menu.setup_workspace_and_chroot(
           force_no_chroot_upgrade=True) as context:
         # TBD how far we can get re-using the cros_sdk recipe. It will create
@@ -117,7 +117,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
                                    '.call build API script')
   INIT_SDK_CALL_STEP = ('init sdk.call chromite.api.SdkService/Create.call'
                         ' build API script')
-  UPDATE_SRC_STATE_STEP = 'update src_state.gitiles_commit'
   PUBLIC_PROPERTIES = BuildSdkSubtoolsProperties(
       packages=['virtual/target-sdk-subtools'],
       public=True,
@@ -152,7 +151,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
   yield api.test(
       'basic',
       api.properties(PUBLIC_PROPERTIES),
-      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
       api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
@@ -222,7 +220,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
   yield api.test(
       'basic-private',
       api.properties(PRIVATE_PROPERTIES),
-      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
       api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
@@ -233,7 +230,6 @@ def GenTests(api: recipe_test_api.RecipeTestApi) -> Generator:
   yield api.test(
       'basic-specific-package',
       api.properties(PACKAGE_PROPERTIES),
-      api.post_check(post_process.MustRun, UPDATE_SRC_STATE_STEP),
       api.post_check(post_process.StepSuccess, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.MustRun, BUILD_SDK_SUBTOOLS_CALL_STEP),
       api.post_check(post_process.StepSuccess, UPLOAD_SDK_SUBTOOLS_CALL_STEP),
