@@ -26,8 +26,8 @@ class CoverageFileSettings:
 
 DEFAULT_CODE_PROJECT = 'chromiumos/platform2'
 DEFAULT_CODE_BRANCH = 'refs/heads/main'
-PUBLIC_CODE_HOST = 'chromium'
-CODESEARCH_PROJECT = 'chromiumos/codesearch'
+HOST = 'chrome-internal'
+CODESEARCH_PROJECT = 'chromeos/superproject'
 DEFAULT_BUCKET_NAME = 'cros-code-coverage-data'
 E2E_COVERAGE_BUCKET_NAME = 'e2e-coverage-artifacts'
 E2E_METADATA_FILENAME = 'e2e_metadata.json'
@@ -374,7 +374,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
 
     self._merger_input_absolute_coverage.append({
         'CovPaths': [f'gs://{gs_artifact_bucket}/{object_path}'],
-        'Host': PUBLIC_CODE_HOST,
+        'Host': HOST,
         'Project': CODESEARCH_PROJECT,
         'Ref': DEFAULT_CODE_BRANCH,
         'CovType': coverage_type,
@@ -521,7 +521,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
           fpath, absolute_cs_settings)
 
       codesearch_commit_id = self.m.gitiles.fetch_revision(
-          PUBLIC_CODE_HOST, CODESEARCH_PROJECT, self._branch)
+          HOST, CODESEARCH_PROJECT, self._branch)
       if merger_flow_enabled:
         self._merger_absolute(absolute_coverage_file, codesearch_commit_id,
                               gs_artifact_bucket, gs_artifact_path,
@@ -545,7 +545,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
                   '--timeout',
                   '10m',
                   '--host',
-                  PUBLIC_CODE_HOST,
+                  HOST,
                   '--project',
                   CODESEARCH_PROJECT,
                   '--commit_id',
@@ -666,8 +666,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       return
 
     with self.m.step.nest('upload absolute coverage to chromium coverage'):
-      commit_id = self.m.gitiles.fetch_revision(PUBLIC_CODE_HOST,
-                                                project_name_to_use,
+      commit_id = self.m.gitiles.fetch_revision(HOST, project_name_to_use,
                                                 self._branch)
 
       path_to_coverage_file = self._write_cleaned_coverage_file(
@@ -710,7 +709,7 @@ class CodeCoverageApi(recipe_api.RecipeApi):
       # to look for the code. This location needs to be public.
       result.presentation.properties['coverage_override_gitiles_commit'] = True
       result.presentation.properties[
-          'gitiles_commit_host'] = PUBLIC_CODE_HOST + '.googlesource.com'
+          'gitiles_commit_host'] = HOST + '.googlesource.com'
       result.presentation.properties[
           'gitiles_commit_project'] = project_name_to_use
       result.presentation.properties['gitiles_commit_ref'] = self._branch

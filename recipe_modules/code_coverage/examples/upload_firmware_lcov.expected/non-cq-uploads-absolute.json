@@ -6420,7 +6420,7 @@
       }
     },
     "name": "upload code coverage data (firmware lcov).upload absolute coverage to Code Search.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal\", \"project\": \"chromeos/superproject\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6504,9 +6504,9 @@
       "--timeout",
       "10m",
       "--host",
-      "chromium",
+      "chrome-internal",
       "--project",
-      "chromiumos/codesearch",
+      "chromeos/superproject",
       "--commit_id",
       "abcd1234",
       "--ref",

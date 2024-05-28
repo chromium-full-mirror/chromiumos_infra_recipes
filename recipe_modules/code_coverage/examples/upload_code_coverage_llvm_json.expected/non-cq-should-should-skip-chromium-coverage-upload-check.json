@@ -6356,7 +6356,7 @@
       }
     },
     "name": "upload code coverage data.upload absolute coverage to Code Search.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chromium\", \"project\": \"chromiumos/codesearch\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal\", \"project\": \"chromeos/superproject\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6407,9 +6407,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@merger_incremental_coverage@[]@@@",
       "@@@STEP_LOG_END@merger_incremental_coverage@@@",
-      "@@@STEP_LOG_LINE@merger_absolute_coverage@[{'CovPaths': ['gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json'], 'Host': 'chromium', 'Project': 'chromiumos/codesearch', 'Ref': 'refs/heads/main', 'CovType': 'LLVM', 'CommitID': 'abcd1234'}]@@@",
+      "@@@STEP_LOG_LINE@merger_absolute_coverage@[{'CovPaths': ['gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json'], 'Host': 'chrome-internal', 'Project': 'chromeos/superproject', 'Ref': 'refs/heads/main', 'CovType': 'LLVM', 'CommitID': 'abcd1234'}]@@@",
       "@@@STEP_LOG_END@merger_absolute_coverage@@@",
-      "@@@SET_BUILD_PROPERTY@merger_absolute_coverage@[{\"CommitID\": \"abcd1234\", \"CovPaths\": [\"gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json\"], \"CovType\": \"LLVM\", \"Host\": \"chromium\", \"Project\": \"chromiumos/codesearch\", \"Ref\": \"refs/heads/main\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@merger_absolute_coverage@[{\"CommitID\": \"abcd1234\", \"CovPaths\": [\"gs://chromeos-image-archive/buildername/id/coverage/abcd1234/.json\"], \"CovType\": \"LLVM\", \"Host\": \"chrome-internal\", \"Project\": \"chromeos/superproject\", \"Ref\": \"refs/heads/main\"}]@@@",
       "@@@SET_BUILD_PROPERTY@merger_incremental_coverage@[]@@@"
     ]
   },
