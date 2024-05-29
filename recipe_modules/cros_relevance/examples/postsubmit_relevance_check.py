@@ -64,7 +64,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'force-postsubmit-relevant',
+      'force-snapshot-relevant',
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

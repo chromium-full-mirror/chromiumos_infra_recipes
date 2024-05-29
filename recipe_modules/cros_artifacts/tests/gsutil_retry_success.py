@@ -21,7 +21,7 @@ def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
   api.cros_artifacts.upload_artifacts(
-      'target-postsubmit',
+      'target-snapshot',
       BuilderConfig.Id.POSTSUBMIT,
       'artifacts_gs_bucket',
       artifacts_info=common.ArtifactsByService(

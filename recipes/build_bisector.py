@@ -124,7 +124,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Pointless postsubmit build.
   yield api.build_menu.test(
-      'pointless-postsubmit-build',
+      'pointless-snapshot-build',
       api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
@@ -249,7 +249,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       'name': 'elm'
                   },
                   'container_version_format':
-                      '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}'
+                      '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
               },
               '$chromeos/cros_relevance': {
                   'force_postsubmit_relevance': True
@@ -316,7 +316,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       'name': 'elm'
                   },
                   'container_version_format':
-                      '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}'
+                      '{staging?}{build-target}-snapshot.{cros-version}-{bbid}'
               },
               '$chromeos/cros_relevance': {
                   'force_postsubmit_relevance': True

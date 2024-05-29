@@ -24,7 +24,7 @@ def RunSteps(api):
   target = common.BuildTarget()
   target.name = 'target'
   api.assertions.assertRaises(
-      StepFailure, api.cros_artifacts.upload_artifacts, 'target-postsubmit',
+      StepFailure, api.cros_artifacts.upload_artifacts, 'target-snapshot',
       BuilderConfig.Id.POSTSUBMIT, 'artifacts_gs_bucket',
       artifacts_info=common.ArtifactsByService(
           legacy={

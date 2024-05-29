@@ -640,7 +640,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-Annealing',
               'critical': True
           }, {
-              'name': 'staging-chromite-postsubmit',
+              'name': 'staging-chromite-snapshot',
               'critical': True
           }, {
               'name': 'staging-no-size',
@@ -659,7 +659,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       get_non_skipped_builders_test_data(),
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
-      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+      buildbucket_search_and_get_build('staging-chromite-snapshot',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 3),
@@ -672,8 +672,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                recipes=['no_size_recipe']),
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
 
   yield api.test(
       'two-changes',
@@ -684,7 +683,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-Annealing',
               'critical': True
           }, {
-              'name': 'staging-chromite-postsubmit',
+              'name': 'staging-chromite-snapshot',
               'critical': True
           }, {
               'name': 'staging-release-triggerer',
@@ -695,7 +694,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
-      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+      buildbucket_search_and_get_build('staging-chromite-snapshot',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 3),
@@ -703,8 +702,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
 
   yield api.test(
       'two-changes-mixed-repos',
@@ -715,7 +713,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-Annealing',
               'critical': True
           }, {
-              'name': 'staging-chromite-postsubmit',
+              'name': 'staging-chromite-snapshot',
               'critical': True
           }, {
               'name': 'staging-release-triggerer',
@@ -726,7 +724,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        builder='test-recipes'),
       # Buildbucket search and led get-build results.
       buildbucket_search_and_get_build('staging-Annealing', 'annealing', 1),
-      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+      buildbucket_search_and_get_build('staging-chromite-snapshot',
                                        'test_chromite', 2),
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 3),
@@ -734,8 +732,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # affected.
       recipe_analyze_test_data(builder='staging-Annealing',
                                recipes=['annealing']),
-      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
 
   yield api.test(
       'skipped-builder',
@@ -746,7 +743,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-Annealing',
               'critical': True
           }, {
-              'name': 'staging-chromite-postsubmit',
+              'name': 'staging-chromite-snapshot',
               'critical': True
           }, {
               'name': 'staging-release-triggerer',
@@ -758,14 +755,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       get_non_skipped_builders_test_data(skipped_builders=['staging-Annealing']
                                         ),
       # Buildbucket search and led get-build results.
-      buildbucket_search_and_get_build('staging-chromite-postsubmit',
+      buildbucket_search_and_get_build('staging-chromite-snapshot',
                                        'test_chromite', 1),
       buildbucket_search_and_get_build('staging-release-triggerer',
                                        'release_triggerer', 2),
       # recipe analyze results. Note that the test_chromite recipe isn't
       # affected.
-      recipe_analyze_test_data(builder='staging-chromite-postsubmit',
-                               recipes=[]))
+      recipe_analyze_test_data(builder='staging-chromite-snapshot', recipes=[]))
 
   yield api.test(
       'one-verifier-failure',
@@ -831,7 +827,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               'name': 'staging-Annealing',
               'critical': True
           }, {
-              'name': 'staging-chromite-postsubmit',
+              'name': 'staging-chromite-snapshot',
               'critical': True
           }, {
               'name': 'staging-release-triggerer',

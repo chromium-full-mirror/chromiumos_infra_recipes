@@ -188,7 +188,7 @@ class ReturnBuildersForRegexTest(unittest.TestCase):
         'chromeos/staging/staging-release-R108-15183.B-orchestrator',
         'chromeos/staging/staging-release-R113-15393.B-android-vm-rvc-uprev-orchestrator',
         'chromeos/staging/staging-release-R113-15393.B-orchestrator',
-        'chromeos/staging/staging-arm64-generic-postsubmit',
+        'chromeos/staging/staging-arm64-generic-snapshot',
         'chromeos/staging/staging-arm64-generic-cq',
         'chromeos/staging/staging-arm64-generic-public-main'
     ]))

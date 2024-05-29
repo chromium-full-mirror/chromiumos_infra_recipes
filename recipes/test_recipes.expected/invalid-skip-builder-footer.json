@@ -150,7 +150,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-postsubmit staging-release-triggerer)"
+      "humanReason": "Builder other-builder is specified in the Test-Recipes-Skip-Builder footer, but is not in the builders list (staging-Annealing staging-chromite-snapshot staging-release-triggerer)"
     },
     "name": "$result"
   }

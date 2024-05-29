@@ -1289,10 +1289,10 @@
   },
   {
     "cmd": [],
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit",
+    "name": "analyze and launch builders.analyze and launch staging-chromite-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@builder staging-chromite-postsubmit (recipe test_chromite) not affected@@@"
+      "@@@STEP_TEXT@builder staging-chromite-snapshot (recipe test_chromite) not affected@@@"
     ]
   },
   {
@@ -1316,8 +1316,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-chromite-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
+    "name": "analyze and launch builders.analyze and launch staging-chromite-snapshot.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-chromite-snapshot\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1327,7 +1327,7 @@
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"staging-chromite-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"staging-chromite-snapshot\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
@@ -1354,7 +1354,7 @@
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"staging\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"builder\": \"staging-chromite-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"staging-chromite-snapshot\",@@@",
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\"@@@",
@@ -1364,7 +1364,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@staging-chromite-postsubmit@https://cr-buildbucket.appspot.com/build/2@@@"
+      "@@@STEP_LINK@staging-chromite-snapshot@https://cr-buildbucket.appspot.com/build/2@@@"
     ]
   },
   {
@@ -1387,7 +1387,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.led get-build",
+    "name": "analyze and launch builders.analyze and launch staging-chromite-snapshot.led get-build",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@proto.output@{@@@",
@@ -1395,7 +1395,7 @@
       "@@@STEP_LOG_LINE@proto.output@    \"bbagent_args\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@      \"build\": {@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-chromite-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@proto.output@          \"builder\": \"staging-chromite-snapshot\"@@@",
       "@@@STEP_LOG_LINE@proto.output@        },@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"id\": \"2\",@@@",
       "@@@STEP_LOG_LINE@proto.output@        \"infra\": {@@@",
@@ -1440,7 +1440,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "analyze and launch builders.analyze and launch staging-chromite-postsubmit.recipe analyze",
+    "name": "analyze and launch builders.analyze and launch staging-chromite-snapshot.recipe analyze",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
