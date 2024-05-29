@@ -22,8 +22,8 @@ DEPS = [
 
 # Test data.
 BUILDER_GREENNESS = {
-    'eve-postsubmit':
-        greenness_pb2.AggregateGreenness.Greenness(builder='eve-postsubmit',
+    'eve-snapshot':
+        greenness_pb2.AggregateGreenness.Greenness(builder='eve-snapshot',
                                                    build_metric=100, metric=98)
 }
 BUILD_INPUT = build_pb2.Build.Input()
@@ -35,7 +35,7 @@ BUILD_OUTPUT.properties['greenness'] = {
     'builderGreenness': [{
         'buildMetric': '100',
         'metric': '98',
-        'builder': 'eve-postsubmit'
+        'builder': 'eve-snapshot'
     }]
 }
 

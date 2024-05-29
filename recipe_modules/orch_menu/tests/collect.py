@@ -45,7 +45,7 @@ def GenTests(api):
   ChildSpec = BuilderConfig.Orchestrator.ChildSpec
   CollectHandling = ChildSpec.CollectHandling
   build_target = 'amd64-generic'
-  builders = ['%s-postsubmit' % build_target, '%s-slim-cq' % build_target]
+  builders = ['%s-snapshot' % build_target, '%s-slim-cq' % build_target]
 
   # Iterate through all of the possible cases for builder, child_specs_dict, and
   # child_targets_dict, and verify that we get the right answer each time.

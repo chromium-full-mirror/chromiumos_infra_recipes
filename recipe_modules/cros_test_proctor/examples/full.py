@@ -178,14 +178,14 @@ def GenTests(api):
 
   builds = [
       build_pb2.Build(id=8922054662172514000,
-                      builder={'builder': 'amd64-generic-postsubmit'},
+                      builder={'builder': 'amd64-generic-snapshot'},
                       status=common_pb2.SUCCESS, critical=common_pb2.YES,
                       input=input_proto(
                           None,
                           'amd64-generic',
                       )),
       build_pb2.Build(id=8922054662172514001,
-                      builder={'builder': 'arm-generic-postsubmit'},
+                      builder={'builder': 'arm-generic-snapshot'},
                       status=common_pb2.FAILURE, critical=common_pb2.NO,
                       input=input_proto('COMMIT_SHA', 'target')),
   ]
@@ -227,7 +227,7 @@ def GenTests(api):
   ]
 
   builds = [
-      api.buildbucket.ci_build_message(builder='amd64-generic-postsubmit',
+      api.buildbucket.ci_build_message(builder='amd64-generic-snapshot',
                                        status='SUCCESS')
   ]
 

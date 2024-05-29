@@ -122,7 +122,7 @@ def GenTests(api):
       api.buildbucket.ci_build(project='chromeos', bucket='snapshot',
                                builder='snapshot-orchestrator'),
       api.buildbucket.simulated_search_results(
-          _child_builds(['atlas-postsubmit'])),
+          _child_builds(['atlas-snapshot'])),
       api.post_check(lambda check, steps: check(steps[
           'set child_build_info'].output_properties['child_build_info'][0][
               'relevant'] is False)),

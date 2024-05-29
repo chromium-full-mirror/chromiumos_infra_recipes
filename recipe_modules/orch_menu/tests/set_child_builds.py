@@ -32,14 +32,14 @@ def GenTests(api):
       'child-builds',
       api.properties(**{
           '$chromeos/orch_menu': {
-              'child_builds': ['amd64-generic-postsubmit',],
+              'child_builds': ['amd64-generic-snapshot',],
           }
       }),
       api.post_check(post_process.MustRun,
-                     schedule_build_step('amd64-generic-postsubmit')),
+                     schedule_build_step('amd64-generic-snapshot')),
       api.post_check(post_process.DoesNotRun,
-                     schedule_build_step('arm-generic-postsubmit')),
+                     schedule_build_step('arm-generic-snapshot')),
       api.post_check(post_process.DoesNotRun,
-                     schedule_build_step('grunt-postsubmit')),
+                     schedule_build_step('grunt-snapshot')),
       api.post_process(post_process.DropExpectation),
   )

@@ -5,18 +5,18 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@looking@Trying to find greenness for snapshot for commit ababab...@@@",
       "@@@STEP_LOG_END@looking@@@",
-      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-postsubmit', metric: 78@@@",
+      "@@@STEP_LOG_LINE@found@Found greenness for snapshot for commit ababab: OrderedDict([('eve-snapshot', metric: 78@@@",
       "@@@STEP_LOG_LINE@found@build_metric: 98@@@",
-      "@@@STEP_LOG_LINE@found@builder: \"eve-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@found@), ('eve-kernelnext-postsubmit', context: IRRELEVANT@@@",
-      "@@@STEP_LOG_LINE@found@builder: \"eve-kernelnext-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@found@builder: \"eve-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@found@), ('eve-kernelnext-snapshot', context: IRRELEVANT@@@",
+      "@@@STEP_LOG_LINE@found@builder: \"eve-kernelnext-snapshot\"@@@",
       "@@@STEP_LOG_LINE@found@)])@@@",
       "@@@STEP_LOG_END@found@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-postsubmit', metric: 78@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@odict_items([('eve-snapshot', metric: 78@@@",
       "@@@STEP_LOG_LINE@last snapshot greenness@build_metric: 98@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-postsubmit\"@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@), ('eve-kernelnext-postsubmit', context: IRRELEVANT@@@",
-      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-kernelnext-postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-snapshot\"@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@), ('eve-kernelnext-snapshot', context: IRRELEVANT@@@",
+      "@@@STEP_LOG_LINE@last snapshot greenness@builder: \"eve-kernelnext-snapshot\"@@@",
       "@@@STEP_LOG_LINE@last snapshot greenness@)])@@@",
       "@@@STEP_LOG_END@last snapshot greenness@@@"
     ]
@@ -80,11 +80,11 @@
       "@@@STEP_LOG_LINE@json.output@                  \"builderGreenness\": [@@@",
       "@@@STEP_LOG_LINE@json.output@                    {@@@",
       "@@@STEP_LOG_LINE@json.output@                      \"buildMetric\": \"98\",@@@",
-      "@@@STEP_LOG_LINE@json.output@                      \"builder\": \"eve-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"builder\": \"eve-snapshot\",@@@",
       "@@@STEP_LOG_LINE@json.output@                      \"metric\": \"78\"@@@",
       "@@@STEP_LOG_LINE@json.output@                    },@@@",
       "@@@STEP_LOG_LINE@json.output@                    {@@@",
-      "@@@STEP_LOG_LINE@json.output@                      \"builder\": \"eve-kernelnext-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"builder\": \"eve-kernelnext-snapshot\",@@@",
       "@@@STEP_LOG_LINE@json.output@                      \"context\": \"IRRELEVANT\"@@@",
       "@@@STEP_LOG_LINE@json.output@                    }@@@",
       "@@@STEP_LOG_LINE@json.output@                  ]@@@",
@@ -132,7 +132,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-postsubmit', GreennessTuple(score=78, build_score=98, critical=True, relevant=False))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-snapshot', GreennessTuple(score=78, build_score=98, critical=True, relevant=False))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
@@ -148,7 +148,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"99\", \"aggregateMetric\": \"89\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-postsubmit\", \"metric\": \"100\"}, {\"buildMetric\": \"98\", \"builder\": \"eve-postsubmit\", \"context\": \"IRRELEVANT\", \"metric\": \"78\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"99\", \"aggregateMetric\": \"89\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"98\", \"builder\": \"eve-snapshot\", \"context\": \"IRRELEVANT\", \"metric\": \"78\"}]}@@@"
     ]
   },
   {

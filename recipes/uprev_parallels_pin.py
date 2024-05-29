@@ -739,5 +739,5 @@ def GenTests(api: RecipeTestApi):
                      _BUILD_STEP_NAME + '.upload artifacts'),
       api.post_check(post_process.MustRun, _IMAGE_STEP_NAME),
       api.post_check(post_process.MustRun, 'update VERSION-PIN'),
-      # Leverage test data for existing postsubmit builder.
-      builder='amd64-generic-postsubmit', bucket='staging')
+      # Leverage test data for existing snapshot builder.
+      builder='amd64-generic-snapshot', bucket='staging')

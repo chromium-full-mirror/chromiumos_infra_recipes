@@ -901,9 +901,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
     child_spec = child_specs_dict.get(build.builder.builder)
     if not child_spec:
       # Missed lookup, the existing build name was not a name in child_specs.
-      # The usual case could be existing build has a *-snapshot name but the
-      # orchestrator's child has a *-postsubmit name, or a slim-cq build which
-      # doesn't have an explicit ChildSpec.
+      # The usual case is a slim-cq build which doesn't have an explicit
+      # ChildSpec.
       build_target = self._get_property(
           '$chromeos/build_menu.build_target.name', build.input.properties)
       if build_target:

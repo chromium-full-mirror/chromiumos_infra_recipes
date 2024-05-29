@@ -30,11 +30,11 @@ BUILD_OUTPUT.properties['greenness'] = {
         {
             'buildMetric': '98',
             'metric': '78',
-            'builder': 'eve-postsubmit'
+            'builder': 'eve-snapshot'
         },
         {
             'context': 'IRRELEVANT',
-            'builder': 'eve-kernelnext-postsubmit'
+            'builder': 'eve-kernelnext-snapshot'
         },
     ]
 }
@@ -45,24 +45,23 @@ LAST_SNAPSHOT = build_pb2.Build(id=123, status=common_pb2.SUCCESS,
 def RunSteps(api):
   builds = [
       api.test_util.test_api.test_child_build(
-          builder='eve-kernelnext-postsubmit',
-          build_target_name='eve-kernelnext', critical='YES', status='SUCCESS',
-          tags=api.cros_tags.tags(**{
+          builder='eve-kernelnext-snapshot', build_target_name='eve-kernelnext',
+          critical='YES', status='SUCCESS', tags=api.cros_tags.tags(**{
               'relevance': 'relevant',
           })).message,
       api.test_util.test_api.test_child_build(
-          builder='eve-postsubmit', build_target_name='eve', critical='YES',
+          builder='eve-snapshot', build_target_name='eve', critical='YES',
           status='SUCCESS', tags=api.cros_tags.tags(**{
               'relevance': 'not relevant',
           })).message
   ]
   api.greenness.update_build_info(builds)
   api.assertions.assertEqual(
-      api.greenness.builder_greenness_dict['eve-kernelnext-postsubmit'].score,
+      api.greenness.builder_greenness_dict['eve-kernelnext-snapshot'].score,
       100)
   if api.properties['propagated_irrelevant_scores']:
     api.assertions.assertEqual(
-        api.greenness.builder_greenness_dict['eve-postsubmit'].build_score, 98)
+        api.greenness.builder_greenness_dict['eve-snapshot'].build_score, 98)
   api.greenness.print_step()
 
 

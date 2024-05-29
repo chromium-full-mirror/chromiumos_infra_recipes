@@ -375,7 +375,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       * ancestor_buildbucket_ids: All the ancestor buildbucket ids,
           e.g. "8814950840874708945, 8814951792758733697"
       * image:
-          e.g. novato-postsubmit/R111-15302.0.0-76073-8792941570274926657
+          e.g. novato-snapshot/R111-15302.0.0-76073-8792941570274926657
       * build:
           e.g. R111-15302.0.0-76073-8792941570274926657
       * pool: Device pool, an optional dimension to Swarming, which is used only

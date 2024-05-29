@@ -396,9 +396,9 @@
     "name": "run tests.schedule tests.generate hw test plans",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@*\\x84\u0002@@@",
-      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@\\x81\u0002\b\\xd0\\xec\\x80\u066e\\xf1\\xb5\\x92|\u0012'@@@",
-      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@\u0007project\u0012\u0002ci\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\\xb9\u00a2\\xd8\u0005`@@@",
+      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@*\\x82\u0002@@@",
+      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@\\xff\u0001\b\\xd0\\xec\\x80\u066e\\xf1\\xb5\\x92|\u0012%@@@",
+      "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@\u0007project\u0012\u0002ci\u001a\u0016amd64-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\\xb9\u00a2\\xd8\u0005`@@@",
       "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@za\u0012_@@@",
       "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\\x92\u0001-\u0012\u0002 @@@",
       "@@@STEP_LOG_LINE@generatetestplanreq.binaryproto@*'\u0012%invocations/build:8945511751514863184@@@",
@@ -5051,7 +5051,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\ufffd\ufffd\u066e\ufffd|\u0012'\n\u0007project\u0012\u0002ci\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184",
+      "*\ufffd\u0002\n\ufffd\u0001\b\ufffd\ufffd\u066e\ufffd|\u0012%\n\u0007project\u0012\u0002ci\u001a\u0016amd64-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184",
       "[CLEANUP]/tmp_tmp_3/generatetestplanreq.binaryproto"
     ],
     "infra_step": true,

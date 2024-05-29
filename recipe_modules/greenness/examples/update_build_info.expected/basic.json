@@ -667,7 +667,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-postsubmit', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-postsubmit', GreennessTuple(score=0, build_score=0, critical=True, relevant=False))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('eve-kernelnext-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('eve-snapshot', GreennessTuple(score=0, build_score=0, critical=True, relevant=False))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
@@ -683,7 +683,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"50\", \"aggregateMetric\": \"50\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-postsubmit\", \"metric\": \"100\"}, {\"builder\": \"eve-postsubmit\", \"context\": \"IRRELEVANT\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"50\", \"aggregateMetric\": \"50\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"eve-kernelnext-snapshot\", \"metric\": \"100\"}, {\"builder\": \"eve-snapshot\", \"context\": \"IRRELEVANT\"}]}@@@"
     ]
   },
   {

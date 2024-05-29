@@ -18,7 +18,7 @@
       "@@@STEP_LOG_LINE@planner_input@{@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
-      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNDsgNmu8bWSfBInCgdwcm9qZWN0EgJjaRoYYW1kNjQtZ2VuZXJpYy1wb3N0c3VibWl0Ii91c2VyOmx1Y2ktc2NoZWR1bGVyQGFwcHNwb3QuZ3NlcnZpY2VhY2NvdW50LmNvbTIGCLnCotgFYAx6YRJfChljaHJvbWl1bS5nb29nbGVzb3VyY2UuY29tEgdwcm9qZWN0GigyZDcyNTEwZTQ0N2FiNjBhOTcyOGFlZWEyMzYyZDhiZTJjYmQ3Nzg5Ig9yZWZzL2hlYWRzL21haW6SAS0SAiAeKicSJWludm9jYXRpb25zL2J1aWxkOjg5NDU1MTE3NTE1MTQ4NjMxODQ=\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNDsgNmu8bWSfBIlCgdwcm9qZWN0EgJjaRoWYW1kNjQtZ2VuZXJpYy1zbmFwc2hvdCIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMemESXwoZY2hyb21pdW0uZ29vZ2xlc291cmNlLmNvbRIHcHJvamVjdBooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWlukgEtEgIgHionEiVpbnZvY2F0aW9ucy9idWlsZDo4OTQ1NTExNzUxNTE0ODYzMTg0\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"manifestCommit\": \"deadbeef\",@@@",
@@ -4373,7 +4373,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0002\n\ufffd\u0002\b\ufffd\ufffd\u066e\ufffd|\u0012'\n\u0007project\u0012\u0002ci\u001a\u0018amd64-generic-postsubmit\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0002\n\ufffd\u0001\b\ufffd\ufffd\u066e\ufffd|\u0012%\n\u0007project\u0012\u0002ci\u001a\u0016amd64-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fza\u0012_\n\u0019chromium.googlesource.com\u0012\u0007project\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001-\u0012\u0002 \u001e*'\u0012%invocations/build:8945511751514863184:\bdeadbeefJ_\n]\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\bdeadbeef\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

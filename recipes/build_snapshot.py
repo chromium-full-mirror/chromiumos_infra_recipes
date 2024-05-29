@@ -121,7 +121,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   # Pointless snapshot build.
   yield api.build_menu.test(
-      'pointless-postsubmit-build',
+      'pointless-snapshot-build',
     api.properties(
         **api.test_util.build_menu_properties(
           build_target_name='amd64-generic',

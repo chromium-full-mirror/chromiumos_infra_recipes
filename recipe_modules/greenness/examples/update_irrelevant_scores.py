@@ -27,11 +27,11 @@ BUILD_OUTPUT_WITH_BUILD_METRIC.properties['greenness'] = {
     'builderGreenness': [
         {
             'buildMetric': '98',
-            'builder': 'eve-postsubmit'
+            'builder': 'eve-snapshot'
         },
         {
             'context': 'IRRELEVANT',
-            'builder': 'eve-kernelnext-postsubmit'
+            'builder': 'eve-kernelnext-snapshot'
         },
     ]
 }
@@ -49,11 +49,11 @@ BUILD_OUTPUT_WITH_ALL_METRICS.properties['greenness'] = {
         {
             'buildMetric': '98',
             'metric': '78',
-            'builder': 'eve-postsubmit'
+            'builder': 'eve-snapshot'
         },
         {
             'context': 'IRRELEVANT',
-            'builder': 'eve-kernelnext-postsubmit'
+            'builder': 'eve-kernelnext-snapshot'
         },
     ]
 }
@@ -68,13 +68,12 @@ LAST_SNAPSHOT_WITH_ALL_METRICS = build_pb2.Build(
 def RunSteps(api):
   builds = [
       api.test_util.test_api.test_child_build(
-          builder='eve-kernelnext-postsubmit',
-          build_target_name='eve-kernelnext', critical='YES', status='SUCCESS',
-          tags=api.cros_tags.tags(**{
+          builder='eve-kernelnext-snapshot', build_target_name='eve-kernelnext',
+          critical='YES', status='SUCCESS', tags=api.cros_tags.tags(**{
               'relevance': 'relevant',
           })).message,
       api.test_util.test_api.test_child_build(
-          builder='eve-postsubmit', build_target_name='eve', critical='YES',
+          builder='eve-snapshot', build_target_name='eve', critical='YES',
           status='SUCCESS', tags=api.cros_tags.tags(**{
               'relevance': 'not relevant',
           })).message
@@ -113,11 +112,11 @@ def GenTests(api):
                   '89',
               'builderGreenness': [{
                   'buildMetric': '100',
-                  'builder': 'eve-kernelnext-postsubmit',
+                  'builder': 'eve-kernelnext-snapshot',
                   'metric': '100'
               }, {
                   'buildMetric': '98',
-                  'builder': 'eve-postsubmit',
+                  'builder': 'eve-snapshot',
                   'context': 'IRRELEVANT',
                   'metric': '78'
               }]

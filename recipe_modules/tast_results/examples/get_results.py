@@ -140,7 +140,7 @@ def GenTests(api):
               'kernel': '5.4.151-16902-g93699f4e73de',
           }, ancestor_buildbucket_ids=[123, 456], properties={
               'buildPayload': {
-                  'artifactsGsPath': 'novato-postsubmit/R111-15302.0.0',
+                  'artifactsGsPath': 'novato-snapshot/R111-15302.0.0',
               },
               'buildTarget': {
                   'name': 'amd64-generic'
