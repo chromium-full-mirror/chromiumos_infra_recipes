@@ -2,7 +2,7 @@
   "builderConfigs": [
     {
       "id": {
-        "name": "chromite-postsubmit",
+        "name": "chromite-snapshot",
         "type": "POSTSUBMIT",
         "bucket": "postsubmit"
       },
@@ -336,58 +336,6 @@
       },
       "build": {
         "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
-        },
-        "installPackages": {
-          "dependencies": "ALL_DEPENDENCIES",
-          "runSpec": "RUN"
-        },
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ]
-      },
-      "chrome": {
-        "internal": true
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC"
-      },
-      "id": {
-        "bucket": "postsubmit",
-        "name": "amd64-generic-postsubmit",
-        "type": "POSTSUBMIT"
-      },
-      "unitTests": {
-        "dependencies": "ALL_DEPENDENCIES",
-        "ebuildsRunSpec": "RUN",
-        "packageBlocklist": []
-      }
-    },
-    {
-      "artifacts": {
-        "artifactsGsBucket": "chromeos-image-archive",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuilts": "PUBLIC",
-        "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "build": {
-        "buildImages": {
           "buildImagesOrchestrator": "BAZEL",
           "imageTypes": [
             "IMAGE_TYPE_BASE",
@@ -579,60 +527,7 @@
       },
       "id": {
         "bucket": "postsubmit",
-        "name": "amd64-generic-postsubmit-remoteexec",
-        "type": "POSTSUBMIT"
-      },
-      "unitTests": {
-        "dependencies": "ALL_DEPENDENCIES",
-        "ebuildsRunSpec": "RUN",
-        "packageBlocklist": []
-      }
-    },
-    {
-      "artifacts": {
-        "artifactsGsBucket": "chromeos-image-archive",
-        "artifactsInfo": {
-          "legacy": {
-            "outputArtifacts": [
-              {
-                "artifactTypes": [
-                  "IMAGE_ZIP"
-                ]
-              }
-            ]
-          }
-        },
-        "prebuilts": "PUBLIC",
-        "prebuiltsGsBucket": "chromeos-prebuilt"
-      },
-      "build": {
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
-        },
-        "installPackages": {
-          "dependencies": "ALL_DEPENDENCIES",
-          "runSpec": "RUN"
-        },
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ]
-      },
-      "chrome": {
-        "internal": true
-      },
-      "general": {
-        "critical": true,
-        "manifest": "PUBLIC",
-        "publish_image_sizes": true
-      },
-      "id": {
-        "bucket": "postsubmit",
-        "name": "amd64-generic-postsubmit-publish-img-sizes",
+        "name": "amd64-generic-snapshot-remoteexec",
         "type": "POSTSUBMIT"
       },
       "unitTests": {
@@ -897,7 +792,7 @@
         "manifest": "PUBLIC"
       },
       "id": {
-        "bucket": "cq",
+        "bucket": "postsubmit",
         "name": "amd64-generic-snapshot",
         "type": "POSTSUBMIT"
       },
@@ -1228,49 +1123,8 @@
       },
       "id": {
         "bucket": "postsubmit",
-        "name": "arm-generic-postsubmit",
-        "type": "POSTSUBMIT"
-      }
-    },
-    {
-      "build": {
-        "installPackages": {
-          "dependencies": "ALL_DEPENDENCIES",
-          "runSpec": "RUN"
-        }
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
-      "id": {
-        "bucket": "postsubmit",
         "name": "arm-generic-snapshot",
         "type": "SNAPSHOT"
-      }
-    },
-    {
-      "build": {
-        "installPackages": {
-          "dependencies": "ALL_DEPENDENCIES",
-          "packages": [
-            {
-              "category": "syskernel",
-              "packageName": "chromeos-kernel",
-              "version": "4.19"
-            }
-          ],
-          "runSpec": "RUN_EXIT"
-        }
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PUBLIC"
-      },
-      "id": {
-        "bucket": "postsubmit",
-        "name": "arm-generic-v42-buildtest-postsubmit",
-        "type": "POSTSUBMIT"
       }
     },
     {
@@ -1684,8 +1538,8 @@
         "manifest": "PRIVATE"
       },
       "id": {
-        "bucket": "postsubmit",
-        "name": "grunt-postsubmit",
+        "bucket": "bisector",
+        "name": "grunt-bisector",
         "type": "POSTSUBMIT"
       },
       "unitTests": {
@@ -1713,28 +1567,6 @@
       "unitTests": {
         "dependencies": "ALL_DEPENDENCIES",
         "ebuildsRunSpec": "NO_RUN"
-      }
-    },
-    {
-      "build": {
-        "applyGerritChanges": false,
-        "installPackages": {
-          "dependencies": "ALL_DEPENDENCIES",
-          "runSpec": "RUN"
-        }
-      },
-      "general": {
-        "critical": false,
-        "manifest": "PRIVATE"
-      },
-      "id": {
-        "bucket": "postsubmit",
-        "name": "grunt-unittest-only-postsubmit",
-        "type": "POSTSUBMIT"
-      },
-      "unitTests": {
-        "dependencies": "ALL_DEPENDENCIES",
-        "ebuildsRunSpec": "RUN_EXIT"
       }
     },
     {
@@ -3312,6 +3144,17 @@
       }
     },
     {
+      "general": {
+        "critical": true,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "host-packages-snapshot",
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
       "build": {
         "applyGerritChanges": true
       },
@@ -3400,9 +3243,9 @@
         "sdkCacheVersion": 1
       },
       "id": {
-        "bucket": "postsubmit",
-        "name": "arm64-generic-kernel-v5_4-buildtest-postsubmit",
-        "type": "POSTSUBMIT"
+        "bucket": "informational",
+        "name": "arm64-generic-kernel-v5_4-buildtest",
+        "type": "INFORMATIONAL"
       },
       "unitTests": {
         "dependencies": "ALL_DEPENDENCIES",
@@ -3572,9 +3415,9 @@
         "critical": false
       },
       "id": {
-        "bucket": "cq",
-        "name": "sarien-code-coverage-postsubmit",
-        "type": "POSTSUBMIT"
+        "bucket": "informational",
+        "name": "build-code-coverage-brya-informational",
+        "type": "INFORMATIONAL"
       },
       "unitTests": {
         "dependencies": "ALL_DEPENDENCIES",

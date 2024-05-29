@@ -201,7 +201,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           'call chromite.api.PackageService/GetTargetVersions.read output file',
           api.m.file.read_raw(
               content='{"milestoneVersion":"110","platformVersion":"15255.0.0"}'
-          )), builder='amd64-generic-postsubmit-publish-img-sizes')
+          )), builder='amd64-generic-snapshot-publish-img-sizes')
 
   yield api.build_menu.test(
       'run-exit-install',
@@ -212,7 +212,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
-      builder='arm64-generic-kernel-v5_4-buildtest-postsubmit')
+      builder='arm64-generic-kernel-v5_4-buildtest')
 
   # This builder has no output artifacts, and builds no images. (In the test
   # data...)
@@ -226,7 +226,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       # api.post_check(post_process.DoesNotRun, 'upload prebuilts'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
       build_target='grunt',
-      builder='grunt-postsubmit')
+      builder='grunt-bisector',
+      bucket='bisector')
 
   # Build that uses Bazel for all its build steps.
   yield api.build_menu.test(

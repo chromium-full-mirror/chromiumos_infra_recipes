@@ -19,7 +19,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -60,9 +60,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"grunt-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"grunt-bisector\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"bisector\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": false,@@@",
@@ -111,7 +111,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -192,7 +192,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -231,7 +231,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -260,7 +260,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -300,7 +300,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -333,7 +333,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -391,7 +391,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -442,7 +442,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -478,7 +478,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -522,7 +522,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -566,7 +566,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -618,7 +618,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -656,7 +656,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -686,7 +686,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -716,7 +716,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -744,7 +744,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -774,7 +774,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -808,7 +808,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -837,7 +837,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -875,7 +875,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -919,7 +919,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -949,7 +949,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -979,7 +979,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1009,7 +1009,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1039,7 +1039,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1065,7 +1065,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1116,7 +1116,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1140,7 +1140,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1178,7 +1178,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1222,7 +1222,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1262,7 +1262,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1302,7 +1302,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1327,7 +1327,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1359,7 +1359,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1391,7 +1391,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1421,7 +1421,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1465,7 +1465,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1511,7 +1511,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1553,7 +1553,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1600,7 +1600,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1647,7 +1647,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1705,7 +1705,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1734,7 +1734,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1765,7 +1765,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1799,7 +1799,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1829,7 +1829,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1859,7 +1859,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1889,7 +1889,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1919,7 +1919,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1946,7 +1946,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -1970,7 +1970,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2004,7 +2004,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2035,7 +2035,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2077,7 +2077,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2121,7 +2121,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2168,7 +2168,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2226,7 +2226,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2268,7 +2268,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2306,7 +2306,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2339,7 +2339,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2364,7 +2364,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2390,7 +2390,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2454,7 +2454,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2488,7 +2488,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2524,7 +2524,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2604,7 +2604,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2644,7 +2644,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2699,7 +2699,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2734,7 +2734,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2770,7 +2770,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2852,7 +2852,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2895,7 +2895,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -2925,7 +2925,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3011,7 +3011,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3045,7 +3045,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3081,7 +3081,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3171,7 +3171,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3240,7 +3240,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3274,7 +3274,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3310,7 +3310,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3397,7 +3397,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3458,7 +3458,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3492,7 +3492,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3527,7 +3527,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3636,7 +3636,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3670,7 +3670,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3705,7 +3705,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3821,7 +3821,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3910,7 +3910,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3944,7 +3944,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -3980,7 +3980,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4066,7 +4066,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4112,7 +4112,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4141,7 +4141,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4225,7 +4225,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4262,7 +4262,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4300,7 +4300,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4359,7 +4359,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4393,7 +4393,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4420,7 +4420,7 @@
     "cwd": "[START_DIR]/chrome/src",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/grunt-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/bisector/grunt-bisector/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4434,7 +4434,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4474,7 +4474,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4537,7 +4537,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4575,7 +4575,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4613,7 +4613,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4694,7 +4694,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4733,7 +4733,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4760,7 +4760,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/grunt-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/bisector/grunt-bisector/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4774,7 +4774,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4815,7 +4815,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4853,7 +4853,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/grunt-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/bisector/grunt-bisector/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4867,7 +4867,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4910,7 +4910,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4950,7 +4950,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -4979,7 +4979,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5065,7 +5065,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5102,7 +5102,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5141,7 +5141,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5252,7 +5252,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5298,7 +5298,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5354,7 +5354,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5406,7 +5406,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5439,7 +5439,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5473,7 +5473,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5511,7 +5511,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5553,7 +5553,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5579,7 +5579,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5613,7 +5613,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5638,7 +5638,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5661,7 +5661,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5686,7 +5686,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {
@@ -5718,7 +5718,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:bisector"
       },
       "resultdb": {
         "current_invocation": {

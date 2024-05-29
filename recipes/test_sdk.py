@@ -87,10 +87,9 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
-  # TODO (b/275363240): audit this test.
   yield api.test(
-      'not-relevant-postsubmit',
-      api.buildbucket.ci_build(builder='host-packages-cq'),
+      'not-relevant-snapshot',
+      api.buildbucket.ci_build(builder='host-packages-snapshot'),
       api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_uprev_response()],
           step_name='postsubmit relevance check.buildbucket.search',
@@ -107,8 +106,8 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'relevant-postsubmit',
-      api.buildbucket.ci_build(builder='host-packages-cq'),
+      'relevant-snapshot',
+      api.buildbucket.ci_build(builder='host-packages-snapshot'),
       api.properties(
           **{'$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

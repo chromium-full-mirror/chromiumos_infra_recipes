@@ -14,9 +14,9 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"sarien-code-coverage-postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"build-code-coverage-brya-informational\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"INFORMATIONAL\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"informational\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": false@@@",
@@ -3886,55 +3886,6 @@
   },
   {
     "cmd": [],
-    "name": "postsubmit relevance check",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@relevant because annealing build was not found@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "bb",
-      "ls",
-      "-host",
-      "cr-buildbucket.appspot.com",
-      "-json",
-      "-nopage",
-      "-n",
-      "1",
-      "-fields",
-      "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
-      "-predicate",
-      "{\"builder\": {\"project\": \"chromeos\"}, \"tags\": [{\"key\": \"published_snapshot_id\", \"value\": \"snapshot-HEAD-SHA\"}]}"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "postsubmit relevance check.buildbucket.search",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "buildbucket.add_tags_to_current_build",
-    "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"relevant\"]}@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "install toolchain"
   },
   {
@@ -4526,7 +4477,7 @@
     "cwd": "[START_DIR]/chrome/src",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/build-code-coverage-brya-informational/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4880,7 +4831,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/build-code-coverage-brya-informational/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -4973,7 +4924,7 @@
     "cwd": "[START_DIR]/chrome",
     "env": {
       "DEPOT_TOOLS_COLLECT_METRICS": "0",
-      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/sarien-code-coverage-postsubmit/8945511751514863184"
+      "DEPOT_TOOLS_REPORT_BUILD": "chromeos/postsubmit/build-code-coverage-brya-informational/8945511751514863184"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [

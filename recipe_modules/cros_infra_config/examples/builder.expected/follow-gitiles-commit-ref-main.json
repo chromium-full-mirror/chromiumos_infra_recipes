@@ -5,8 +5,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"grunt-postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"grunt-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"SNAPSHOT\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"postsubmit\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",

@@ -428,8 +428,8 @@ def GenTests(api):
                 build_target=common.BuildTarget(name='sarien'),
                 artifact_build=True, forced_relevant=forced,
                 expected_packages=[])), build_target='sarien',
-        builder='sarien-code-coverage-postsubmit', artifact_pointless=True,
-        input_properties={
+        builder='build-code-coverage-brya-informational',
+        artifact_pointless=True, input_properties={
             '$chromeos/build_menu': {
                 'artifact_build': True,
                 'force_relevant_build': forced,
@@ -475,7 +475,7 @@ def GenTests(api):
       builder='no-config')
 
   yield api.build_menu.test(
-      'code-coverage-build', builder='sarien-code-coverage-postsubmit',
+      'code-coverage-build', builder='build-code-coverage-brya-informational',
       build_target='sarien', input_properties={
           '$chromeos/build_menu': {
               'test_with_code_coverage': True

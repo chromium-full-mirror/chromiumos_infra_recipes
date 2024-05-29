@@ -39,12 +39,12 @@ def RunSteps(api, properties):
   )
 
   # add_builder_metadata.
-  name = properties.builder_name or 'amd64-generic-postsubmit'
+  name = properties.builder_name or 'amd64-generic-snapshot'
   config = api.cros_infra_config.get_builder_config(name)
 
   if properties.skip_publish_image_sizes:
     config.general.publish_image_sizes = False
-  elif name.endswith('postsubmit'):
+  elif name.endswith('snapshot'):
     config.general.publish_image_sizes = True
 
   # get_image_size_data.

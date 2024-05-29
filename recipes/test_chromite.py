@@ -45,8 +45,8 @@ def GenTests(api: RecipeTestApi):
   yield test('cq', cq=True, builder='chromite-cq')
 
   yield test(
-      'postsubmit',
-      builder='chromite-postsubmit',
+      'snapshot',
+      builder='chromite-snapshot',
   )
 
   yield test(

@@ -14,7 +14,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"chromite-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"chromite-snapshot\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"postsubmit\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",

@@ -135,7 +135,7 @@ def GenTests(api):
   yield api.test(
       'follow-gitiles-commit-ref',
       builder(
-          build_target='grunt', builder='grunt-postsubmit',
+          build_target='grunt', builder='grunt-snapshot',
           git_ref='refs/heads/BRANCH',
           expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
@@ -148,7 +148,7 @@ def GenTests(api):
   yield api.test(
       'fixes-manifest-project',
       builder(
-          build_target='grunt', builder='grunt-postsubmit', choose_branch=False,
+          build_target='grunt', builder='grunt-snapshot', choose_branch=False,
           git_repo='https://chromium.googlesource.com/chromium/src',
           git_ref='refs/tags/93.0.4552.0',
           expected_gitiles_commit=common_pb2.GitilesCommit(
@@ -162,7 +162,7 @@ def GenTests(api):
   yield api.test(
       'fixes-manifest-project-choose-branch',
       builder(
-          build_target='grunt', builder='grunt-postsubmit', choose_branch=True,
+          build_target='grunt', builder='grunt-snapshot', choose_branch=True,
           git_repo='https://chromium.googlesource.com/chromium/src',
           git_ref='refs/tags/93.0.4552.0',
           expected_gitiles_commit=common_pb2.GitilesCommit(
@@ -177,7 +177,7 @@ def GenTests(api):
   yield api.test(
       'follow-gitiles-commit-ref-main',
       builder(
-          build_target='grunt', builder='grunt-postsubmit',
+          build_target='grunt', builder='grunt-snapshot',
           git_ref='refs/heads/main',
           expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
@@ -200,7 +200,7 @@ def GenTests(api):
   yield api.test(
       'branch-ref',
       builder(
-          build_target='grunt', builder='grunt-postsubmit',
+          build_target='grunt', builder='grunt-snapshot',
           git_repo=i_manifest.url, revision='5' * 40,
           git_ref='refs/heads/BRANCH',
           expected_gitiles_commit=common_pb2.GitilesCommit(
@@ -210,7 +210,7 @@ def GenTests(api):
   yield api.test(
       'apply-gerrit-changes-false',
       builder(
-          build_target='grunt', builder='grunt-postsubmit',
+          build_target='grunt', builder='grunt-snapshot',
           git_repo=i_manifest.url, git_ref='refs/heads/snapshot',
           revision='5' * 40, expected_gitiles_commit=common_pb2.GitilesCommit(
               host=i_manifest.host, project=i_manifest.project,
@@ -219,7 +219,7 @@ def GenTests(api):
 
   yield api.test(
       'apply-gerrit-changes-false-no-choose-branch',
-      builder(build_target='grunt', builder='grunt-postsubmit',
+      builder(build_target='grunt', builder='grunt-snapshot',
               choose_branch=False,
               extra_changes=[common_pb2.GerritChange(change=1234)], cq=True,
               expect_empty_gitiles_commit=False),

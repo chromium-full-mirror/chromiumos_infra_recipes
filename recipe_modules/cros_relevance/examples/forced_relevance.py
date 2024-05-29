@@ -92,10 +92,9 @@ def GenTests(api):
           ForcedRelevanceTest(gerrit_changes=gerrit_changes, configs=configs,
                               expected_forced_targets=[])),
       api.git_footers.simulated_get_footers(
-          ['amd64-generic-postsubmit'],
-          parent_step_name='check force relevance'),
+          ['amd64-generic-snapshot'], parent_step_name='check force relevance'),
       api.post_check(post_process.LogEquals, 'check force relevance',
-                     'invalid builders', 'amd64-generic-postsubmit'),
+                     'invalid builders', 'amd64-generic-snapshot'),
       api.post_process(post_process.DropExpectation),
   )
 

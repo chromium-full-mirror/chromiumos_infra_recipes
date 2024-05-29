@@ -455,13 +455,13 @@ def GenTests(api):
       api.post_check(
           post_process.MustRun,
           'Create test containers.create test service containers.upload container metadata.gsutil upload'
-      ), builder='amd64-generic-postsubmit', input_properties={
+      ), builder='amd64-generic-snapshot', input_properties={
           '$chromeos/build_menu': {
               'build_target': {
-                  'name': 'amd64-generic-postsubmit',
+                  'name': 'amd64-generic',
               },
               'container_version_format':
-                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
+                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -479,13 +479,13 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepTextContains, 'Create test containers',
                      ['Failed to create containers']),
-      builder='amd64-generic-postsubmit', input_properties={
+      builder='amd64-generic-snapshot', input_properties={
           '$chromeos/build_menu': {
               'build_target': {
-                  'name': 'amd64-generic-postsubmit',
+                  'name': 'amd64-generic',
               },
               'container_version_format':
-                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
+                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -502,31 +502,30 @@ def GenTests(api):
           'Create Ti50 Tast artifacts.gsutil list (2)',
           stdout=api.raw_io.output_text(
               'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
-          )), builder='amd64-generic-postsubmit',
-      input_properties={
-          '$chromeos/build_menu': {
-              'build_target': {
-                  'name': 'amd64-generic-postsubmit',
+          )), builder='amd64-generic-snapshot', input_properties={
+              '$chromeos/build_menu': {
+                  'build_target': {
+                      'name': 'amd64-generic',
+                  },
+                  'container_version_format':
+                      '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
               },
-              'container_version_format':
-                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
-          },
-          '$chromeos/cros_relevance': {
-              'force_postsubmit_relevance': True
-          },
-          'firmware_location': common_pb2.PLATFORM_TI50
-      })
+              '$chromeos/cros_relevance': {
+                  'force_postsubmit_relevance': True
+              },
+              'firmware_location': common_pb2.PLATFORM_TI50
+          })
 
   yield test(
       'create tast artifacts missing tar files',
       api.step_data('Create Ti50 Tast artifacts.gsutil list', retcode=1),
-      builder='amd64-generic-postsubmit', input_properties={
+      builder='amd64-generic-snapshot', input_properties={
           '$chromeos/build_menu': {
               'build_target': {
-                  'name': 'amd64-generic-postsubmit',
+                  'name': 'amd64-generic',
               },
               'container_version_format':
-                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
+                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True
@@ -546,14 +545,14 @@ def GenTests(api):
               'gs://chromeos-releases/build0/ti50.tar.bz2/ti50_Unknown_image.bin'
           )),
       api.step_data('Create Ti50 Tast artifacts.Extract archive.untar',
-                    retcode=2), builder='amd64-generic-postsubmit',
+                    retcode=2), builder='amd64-generic-snapshot',
       input_properties={
           '$chromeos/build_menu': {
               'build_target': {
-                  'name': 'amd64-generic-postsubmit',
+                  'name': 'amd64-generic',
               },
               'container_version_format':
-                  '{staging?}{build-target}-postsubmit.{cros-version}-{bbid}',
+                  '{staging?}{build-target}-snapshot.{cros-version}-{bbid}',
           },
           '$chromeos/cros_relevance': {
               'force_postsubmit_relevance': True

@@ -46,7 +46,7 @@ def RunSteps(api, properties):
 
   image_test_json = properties.image_test_json
 
-  name = properties.builder_name or 'amd64-generic-postsubmit'
+  name = properties.builder_name or 'amd64-generic-snapshot'
   config = api.cros_infra_config.get_builder_config(name)
 
   target = common.BuildTarget(name='eve')
@@ -283,9 +283,8 @@ def GenTests(api):
                   )
           }),
       api.properties(
-          FullTestProperties(
-              use_remoteexec=True,
-              builder_name='amd64-generic-postsubmit-remoteexec')))
+          FullTestProperties(use_remoteexec=True,
+                             builder_name='amd64-generic-snapshot-remoteexec')))
 
   yield api.test(
       'failed-image-test',
