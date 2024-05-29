@@ -113,9 +113,9 @@ class Ctpv2Command(recipe_api.RecipeApi):
       return False
     for tag in tags:
       if tag.startswith('label-pool:'):
-        tag = tag.lstrip('label-pool:')
+        tag = tag.removeprefix('label-pool:')
       elif tag.startswith('pool:'):
-        tag = tag.lstrip('pool:')
+        tag = tag.removeprefix('pool:')
       else:
         continue
       if tag in self.allowed_pools:
