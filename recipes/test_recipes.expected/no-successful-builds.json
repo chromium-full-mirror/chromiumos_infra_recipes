@@ -3,7 +3,7 @@
     "cmd": [],
     "name": "get non-skipped builders",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-amd64-generic-postsubmit', 'staging-chromite-postsubmit', 'staging-test-manifest', 'staging-release-triggerer']@@@",
+      "@@@STEP_TEXT@Non-skipped builders: ['staging-Annealing', 'staging-amd64-generic-always-relevant-snapshot', 'staging-chromite-snapshot', 'staging-test-manifest', 'staging-release-triggerer']@@@",
       "@@@STEP_LOG_END@Skipped builders@@@"
     ]
   },

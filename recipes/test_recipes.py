@@ -97,8 +97,9 @@ def _verifier(name, critical: bool = False,
 # Note: infra/config overrides this by specifying the input property.
 DEFAULT_VERIFIERS = [
     _verifier(name='staging-Annealing', critical=True),
-    _verifier(name='staging-amd64-generic-postsubmit', critical=True),
-    _verifier(name='staging-chromite-postsubmit', critical=True),
+    _verifier(name='staging-amd64-generic-always-relevant-snapshot',
+              critical=True),
+    _verifier(name='staging-chromite-snapshot', critical=True),
     _verifier(name='staging-test-manifest', critical=True),
     _verifier(name='staging-release-triggerer', critical=True,
               always_launch=True),
