@@ -19,6 +19,8 @@ from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import ArtifactsByService
 
+from RECIPE_MODULES.chromeos.cros_version.version import Version
+
 from recipe_engine import config_types
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -1271,65 +1273,76 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     )
     return self.m.cros_build_api.ImageService.PushImage(request)
 
-  def publish_latest_files(self, gs_bucket, gs_path):
+  def publish_latest_files(self, gs_bucket: str, gs_path: str) -> None:
     """Write LATEST-... files to GS.
 
-    Writes version information to the LATEST-{version} and LATEST-{branch} files
-    in the specified GS dir. Will only write LATEST-{branch} if the version is
-    more recent than the existing contents.
+    Writes version information to the following files to locate the location of
+    artifacts:
+     - LATEST-{version}
+     - LATEST-{branch}
+
+    Will only write if the version is more recent than the existing contents.
 
     Args:
       gs_bucket (str): GS bucket to write to.
       gs_path (str): GS path to write to (relative to the bucket),
         e.g. eve-release.
     """
+
+    # Return True if the version listed is more recent (or the same), by
+    # reading the current LATEST file.
+    def is_newer_or_same(current_latest_file_path: str,
+                         version: Version) -> bool:
+      ret = self.m.gsutil.cat(current_latest_file_path,
+                              stdout=self.m.raw_io.output_text(), ok_ret=(0, 1),
+                              use_retry_wrapper=True)
+
+      if ret.stdout:
+        current_latest_version = self.m.cros_version.Version.from_string(
+            ret.stdout.strip())
+        if current_latest_version and current_latest_version > version:
+          return False
+      return True
+
+    # Copy `tmp_file` to the GS, if `version` is newer than (or same as) the
+    # current.
+    def copy_file_if_newer_or_same(tmp_file: str, gs_base_path: str,
+                                   file_name: str, version: Version) -> None:
+      with self.m.step.nest('write {}'.format(file_name)) as presentation:
+        version_file_path = gs_base_path + file_name
+        if is_newer_or_same(version_file_path, version):
+          self.m.gsutil(cmd=['cp', tmp_file, version_file_path],
+                        name='write %s' % version_file_path,
+                        use_retry_wrapper=True)
+        else:
+          presentation.step_text = \
+              '{} has more recent version, skipping'.format(version_file_path)
+
     with self.m.step.nest('write LATEST files'):
-      # e.g. R100-12345.0.0.
+      # e.g. "R100-12345.0.0".
       version = self.m.cros_version.version
+      contents = str(version)
 
       tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
       tmp_file = tmp_dir / 'LATEST'
-      contents = str(version)
       self.m.file.write_raw('write "{}" to tmp LATEST file'.format(contents),
                             tmp_file, contents)
-
-      partial_cmd = ['cp', tmp_file]
 
       gs_template = 'gs://{gs_bucket}/{gs_path}/'
       gs_base_path = gs_template.format(gs_bucket=gs_bucket, gs_path=gs_path)
 
-      # Write version LATEST file, e.g. LATEST-12345.0.0.
+      # 1) Write version LATEST file, e.g. LATEST-12345.0.0.
       version_file = 'LATEST-%s' % version.platform_version
-      with self.m.step.nest('write {}'.format(version_file)):
-        version_file_path = gs_base_path + version_file
-        self.m.gsutil(cmd=partial_cmd + [version_file_path],
-                      name='write %s' % version_file_path,
-                      use_retry_wrapper=True)
+      copy_file_if_newer_or_same(tmp_file, gs_base_path, version_file, version)
 
+      # 2-1) Retrieve the current branch name.
       config = self.m.cros_infra_config.config
       if not config:
         raise StepFailure(
             'could not find builder config, needed to determine branch')
       branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
 
-      # Write branch LATEST file, e.g. LATEST-main.
+      # 2-2) Write branch LATEST file, e.g. LATEST-main.
       branch = 'main' if self.m.cros_source.is_tot else branch
       branch_file = 'LATEST-{}'.format(branch)
-      with self.m.step.nest('write {}'.format(branch_file)) as presentation:
-        branch_file_path = gs_base_path + branch_file
-
-        # Read branch LATEST file to see if the version listed is more recent.
-        ret = self.m.gsutil.cat(branch_file_path,
-                                stdout=self.m.raw_io.output_text(),
-                                ok_ret=(0, 1), use_retry_wrapper=True)
-
-        if ret.stdout:
-          current_latest_version = self.m.cros_version.Version.from_string(
-              ret.stdout.strip())
-          if current_latest_version > version:
-            presentation.step_text = '{} has more recent version, skipping'.format(
-                branch_file_path)
-            return
-        self.m.gsutil(cmd=partial_cmd + [branch_file_path],
-                      name='write %s' % branch_file_path,
-                      use_retry_wrapper=True)
+      copy_file_if_newer_or_same(tmp_file, gs_base_path, branch_file, version)
