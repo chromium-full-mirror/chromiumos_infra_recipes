@@ -8,6 +8,7 @@
 from google.protobuf.json_format import MessageToDict
 
 from PB.recipe_engine import result as result_pb2
+from PB.recipe_modules.chromeos.cros_snapshot.cros_snapshot import CrosSnapshotProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -17,6 +18,7 @@ DEPS = [
     'build_menu',
     'orch_menu',
     'snapshot_orch_menu',
+    'cros_snapshot',
 ]
 
 
@@ -37,10 +39,13 @@ def DoRunSteps(api: RecipeApi):
       'sources_gitiles_commit_override':
           MessageToDict(api.build_menu.resultdb_gitiles_commit)
   }
-
+  extra_child_props['$chromeos/cros_snapshot'] = MessageToDict(
+      CrosSnapshotProperties(
+          snapshot_identifier=api.cros_snapshot.snapshot_identifier()))
   builds_status = api.snapshot_orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
+
   testable_builds = builds_status.testable_builds
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
