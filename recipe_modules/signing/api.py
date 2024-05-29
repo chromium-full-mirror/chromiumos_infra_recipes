@@ -505,6 +505,13 @@ class SigningApi(recipe_api.RecipeApi):
             self.signing_docker_image,
         ])
 
+      # Make sure we're authenticated.
+      self.m.step('docker auth', [
+          'gcloud',
+          'auth',
+          'configure-docker',
+          'us-docker.pkg.dev',
+      ])
       docker_pull()
 
       gs_dirs = set()
