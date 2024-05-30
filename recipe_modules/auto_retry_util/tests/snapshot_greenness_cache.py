@@ -3,13 +3,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Tests caching greenness for a specific snapshot and from looks for green."""
+"""Tests caching greenness for the latest snapshot."""
+
+from google.protobuf import json_format
 
 from recipe_engine import post_process
 
+from PB.chromiumos import greenness as greenness_pb2
 from PB.chromiumos.builder_config import BuilderConfigs
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import ExperimentalFeature
 from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN
@@ -44,7 +48,7 @@ def RunSteps(api):
     candidate = build_pb2.Build()
     candidate.output.properties['child_build_info'] = child_build_info
     candidate.output.properties['looks_for_green'] = {
-        'status': 'STATUS_FOUND_NONE'
+        'status': 'STATUS_SKIPPED_CQ_DEPEND'
     }
     candidate.output.gitiles_commit.id = 'abc' if i < 2 else 'def'
     candidates.append(candidate)
@@ -60,20 +64,31 @@ def GenTests(api):
   orch.id.name = 'cq-orchestrator'
   orch.orchestrator.child_specs.add().name = 'builder1-cq'
 
-  GREENNESS_PUBLISHED_SNAPSHOT_BUILD = build_pb2.Build(
-      builder=builder_common_pb2.BuilderID(
-          project='chromeos',
-          bucket='postsubmit',
-          builder='snapshot-orchestrator',
-      ),
-  )
-  GREENNESS_PUBLISHED_SNAPSHOT_BUILD.output.properties['greenness'] = {
-      'aggregateMetric': 100,
-      'aggregateBuildMetric': 100,
-  }
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES = build_pb2.Build.Output()
+  GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties[
+      'greenness'] = json_format.MessageToDict(
+          greenness_pb2.AggregateGreenness(
+              aggregate_build_metric=100, aggregate_metric=100,
+              builder_greenness=[
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder1-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder2-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder3-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+              ]))
 
   yield api.test(
-      'greenness-cache-used',
+      'cache-used',
       api.cros_infra_config.override_builder_configs_test_data(configs),
       api.properties(
           **{
@@ -84,86 +99,34 @@ def GenTests(api):
                   ])
           }),
       api.buildbucket.simulated_search_results(
-          [
-              GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
+          builds=[
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(
+                      project='chromeos',
+                      bucket='postsubmit',
+                      builder='snapshot-orchestrator',
+                  ),
+                  output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+                  input=build_pb2.Build.Input(
+                      gitiles_commit=common_pb2.GitilesCommit(id='abc'),
+                  ),
+              ),
           ],
-          'analyzing build results.determine CQ retry snapshot.find green snapshot.buildbucket.search',
-      ),
-      # Search for snapshot abc returns a green snapshot.
-      api.buildbucket.simulated_search_results(
-          [
-              GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
-          ],
-          'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search',
+          step_name='analyzing build results.determine CQ retry snapshot.checking latest scored snapshot greenness.buildbucket.search'
       ),
       api.post_process(
-          post_process.LogContains,
-          'analyzing build results.get now green builders.get greenness for commit abc.buildbucket.search',
-          'request',
-          [
-            '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
-            '\n          "tags": [\n            {\n              "key": "buildset",\n              "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/abc"\n            }\n          ]\n        }'
-          ],
+          post_process.MustRun,
+          'analyzing build results.determine CQ retry snapshot.checking latest scored snapshot greenness.buildbucket.search',
       ),
       # Don't search for snapshot abc again.
       api.post_process(
           post_process.DoesNotRun,
-          'analyzing build results (2).get now green builders.get greenness for commit abc.buildbucket.search',
+          'analyzing build results (2).determine CQ retry snapshot.checking latest scored snapshot greenness.buildbucket.search',
       ),
-      # Search for snapshot def also returns a green snapshot.
-      api.buildbucket.simulated_search_results(
-          [
-              GREENNESS_PUBLISHED_SNAPSHOT_BUILD,
-          ],
-          'analyzing build results (3).get now green builders.get greenness for commit def.buildbucket.search',
-      ),
-      api.post_process(
-          post_process.LogContains,
-          'analyzing build results (3).get now green builders.get greenness for commit def.buildbucket.search',
-          'request',
-          [
-            '"predicate": {\n          "builder": {\n            "bucket": "postsubmit",\n            "builder": "snapshot-orchestrator",\n            "project": "chromeos"\n          },'\
-            '\n          "tags": [\n            {\n              "key": "buildset",\n              "value": "commit/gitiles/chrome-internal.googlesource.com/chromeos/manifest-internal/+/def"\n            }\n          ]\n        }'
-          ],
-      ),
-      # Don't do a second call for the lfg snapshot.
+      # Also don't search for snapshot def.
       api.post_process(
           post_process.DoesNotRun,
-          'analyzing build results (2).determine CQ retry snapshot.find green snapshot',
-      ),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  GREENNESS_MISSING_SNAPSHOT_BUILD = build_pb2.Build(
-      builder=builder_common_pb2.BuilderID(
-          project='chromeos',
-          bucket='postsubmit',
-          builder='snapshot-orchestrator',
-      ),
-  )
-
-  yield api.test(
-      'cache unpublished greenness',
-      api.cros_infra_config.override_builder_configs_test_data(configs),
-      api.properties(
-          **{
-              '$chromeos/auto_retry_util':
-                  AutoRetryUtilProperties(experimental_features=[
-                      ExperimentalFeature(
-                          name=EXPERIMENTAL_FEATURE_WAITS_FOR_GREEN)
-                  ])
-          }),
-      # Search for snapshot abc returns no greenness data.
-      api.buildbucket.simulated_search_results(
-          [
-              GREENNESS_MISSING_SNAPSHOT_BUILD,
-          ],
-          'analyzing build results.determine CQ retry snapshot.find green snapshot.buildbucket.search',
-      ),
-      # Don't search for snapshot abc again, even though it wasn't found the first time.
-      api.post_process(
-          post_process.DoesNotRun,
-          'analyzing build results (2).get now green builders.get greenness for commit abc.buildbucket.search',
+          'analyzing build results (3).determine CQ retry snapshot.checking latest scored snapshot greenness.buildbucket.search',
       ),
       api.post_process(post_process.DropExpectation),
   )

@@ -475,14 +475,17 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         retryable_builders = not_at_fault_retryable_builders
     return retryable_builders
 
-  def _cq_retry_snapshot(self, cq_run: build_pb2.Build) -> Optional[Snapshot]:
+  def _cq_retry_snapshot(self, cq_run: build_pb2.Build,
+                         builders: List[str]) -> Optional[Snapshot]:
     """Return the Snapshot that the CQ retry would use."""
     with self.m.step.nest('determine CQ retry snapshot') as pres:
       if _lfg_skipped(cq_run):
         current_greenness = self._latest_greenness
         step_text_prefix = 'build skipped LFG, using latest scored snapshot'
       else:
-        current_greenness = self._lfg_greenness
+        lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
+            cq_run.input.gerrit_changes, builders)
+        current_greenness = self._lfg_greenness(lfg_lookback_hours)
         step_text_prefix = 'build used LFG, using current snapshot found by LFG'
 
       step_text_suffix = ': no snapshot found' if not current_greenness else ''
@@ -511,7 +514,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       return retryable_builders
 
     # If we did not find a green snapshot, return early.
-    cq_retry_snapshot = self._cq_retry_snapshot(cq_run)
+    cq_retry_snapshot = self._cq_retry_snapshot(cq_run,
+                                                outstanding_failure_builders)
     if not cq_retry_snapshot:
       return retryable_builders
 
@@ -639,28 +643,25 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     broken_until_revision = config.general.broken_until
     return self.m.cros_history.is_build_broken(revision, broken_until_revision)
 
-  @functools.cached_property
-  def _lfg_greenness(self) -> Optional[Snapshot]:
-    """Find the current green snapshot, as defined by looks for green.
-
-    Note that this property is cached because we assume an auto-retrier run is
-    relatively short, and thus using the same green snapshot for every retry
-    candidate is ok. In addition, more straightforward for all candidates to get
-    the same green snapshot, instead of later calls potentially returning a
-    different snapshot.
-    """
+  def _lfg_greenness(self, lookback_hours: float) -> Optional[Snapshot]:
+    """Find the current green snapshot, as defined by looks for green."""
     return self.m.looks_for_green.find_green_snapshot(
         # The staging auto retrier will still look at prod CQ runs, so it must
         # lookup greenness on the prod snapshot-orchestrator.
         bucket='postsubmit',
         builder='snapshot-orchestrator',
+        lookback_hours=lookback_hours,
     )
 
   @functools.cached_property
   def _latest_greenness(self) -> Optional[Snapshot]:
     """Find the latest scored snapshot.
 
-    This property is cached for the same reasons as _lfg_greenness.
+    Note that this property is cached because we assume an auto-retrier run is
+    relatively short, and thus using the same latest snapshot for every retry
+    candidate is ok. In addition, more straightforward for all candidates to get
+    the same latest snapshot, instead of later calls potentially returning a
+    different snapshot.
     """
     return self.m.looks_for_green.get_latest_snapshot_greenness(
         # The staging auto retrier will still look at prod CQ runs, so it must

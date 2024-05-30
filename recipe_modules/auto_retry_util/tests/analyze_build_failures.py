@@ -55,6 +55,14 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder6-cq'
   orch.orchestrator.child_specs.add().name = 'builder7-kernelnext-cq'
   orch.orchestrator.child_specs.add().name = 'non-critical-builder-cq'
+  builder2 = configs.builder_configs.add()
+  builder2.id.name = 'builder2-cq'
+  builder5 = configs.builder_configs.add()
+  builder5.id.name = 'builder5-cq'
+  builder6 = configs.builder_configs.add()
+  builder6.id.name = 'builder6-slim-cq'
+  builder7 = configs.builder_configs.add()
+  builder7.id.name = 'builder7-kernelnext-cq'
 
   child_build_info = [
       {
