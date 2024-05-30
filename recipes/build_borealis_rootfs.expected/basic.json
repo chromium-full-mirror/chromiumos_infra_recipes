@@ -1826,7 +1826,7 @@
       "docker",
       "help"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1843,7 +1843,7 @@
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1861,7 +1861,7 @@
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1876,7 +1876,7 @@
     "cmd": [
       "./tools/convert_docker_image.py"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1905,7 +1905,7 @@
       "--chroot=[CACHE]/cros_chroot/chroot",
       "--out-dir=[CACHE]/cros_chroot/out"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1951,7 +1951,7 @@
       "2012.05.14.125327",
       "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/VERSION_PIN"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1974,10 +1974,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis/metadata.xml",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/metadata.xml",
       "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-overlay/chromeos-base/borealis-dlc/metadata.xml"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

@@ -59,6 +59,8 @@ def RunSteps(api: RecipeApi, properties: BuildBorealisRootfsProperties) -> None:
       raise StepFailure('must set destination_gs_bucket')
     if not properties.destination_gs_path:
       raise StepFailure('must set destination_gs_path')
+    if not properties.borealis_path:
+      properties.borealis_path = 'src/platform/borealis-vm'
 
     presentation.step_text = 'all properties good'
 
@@ -79,7 +81,7 @@ def DoRunSteps(api: RecipeApi,
   checkout_path = api.cros_source.workspace_path
   chroot_path = api.build_menu.chroot.path
   out_dir = api.build_menu.chroot.out_path
-  borealis_path = checkout_path / 'src/platform/borealis'
+  borealis_path = checkout_path / properties.borealis_path
   with api.context(cwd=borealis_path), api.depot_tools.on_path():
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.
@@ -235,6 +237,31 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
               '--chroot=[CACHE]/cros_chroot/chroot',
               '--out-dir=[CACHE]/cros_chroot/out', '--variant', 'chroot'
           ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['borealis_path'] = None
+  yield api.test(
+      'default-borealis-directory',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update VERSION-PIN.copy metadata.xml file', [
+              '[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/metadata.xml'
+          ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['borealis_path'] = 'src/platform/test'
+  yield api.test(
+      'alternate-borealis-directory',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update VERSION-PIN.copy metadata.xml file',
+          ['[CLEANUP]/chromiumos_workspace/src/platform/test/metadata.xml']),
       api.post_process(post_process.DropExpectation),
   )
 

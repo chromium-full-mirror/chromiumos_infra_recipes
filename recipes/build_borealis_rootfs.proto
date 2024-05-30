@@ -40,4 +40,8 @@ message BuildBorealisRootfsProperties {
   // Arch's built in PGP keys. Used for cases when keys expire (specifically on
   // manifest branches where the Arch version can't be uprev'd.)
   bool disable_arch_sig_validation = 8;
+
+  // Path to the Borealis repository relative to the CrOS SDK root.
+  // Optional. Defaults to 'src/platform/borealis-vm'.
+  string borealis_path = 9;
 }

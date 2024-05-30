@@ -5,6 +5,13 @@
   },
   {
     "cmd": [],
+    "name": "validate properties",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@all properties good@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "configure builder"
   },
   {
@@ -1819,7 +1826,7 @@
       "docker",
       "help"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1841,7 +1848,7 @@
       "--skip-license-report",
       "--no-cache"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1856,14 +1863,14 @@
     "cmd": [],
     "name": "Arch mirror uprev",
     "~followup_annotations": [
-      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
     "cmd": [
       "./tools/arch_mirror_uprev.py"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1884,7 +1891,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1906,7 +1913,7 @@
       "--out-dir=[CACHE]/cros_chroot/out",
       "--skip-termina"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1925,7 +1932,7 @@
       "./tools/arch_verity/checksum_tool.py",
       "--update"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1944,7 +1951,7 @@
       "./tools/arch_verity/checksum_tool.py",
       "--verify"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1964,7 +1971,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -1984,11 +1991,11 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2003,7 +2010,7 @@
     "name": "Arch mirror uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2021,7 +2028,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2049,9 +2056,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "createArchmirrorCL",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis"
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2074,7 +2081,7 @@
       "add",
       "build/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2095,7 +2102,7 @@
       "add",
       "tools/arch_verity/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2121,7 +2128,7 @@
       "uprev Arch historic mirror\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2147,7 +2154,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2167,12 +2174,12 @@
     "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2180,7 +2187,7 @@
   },
   {
     "cmd": [],
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis exists",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2189,7 +2196,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis"
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2203,7 +2210,7 @@
       ]
     },
     "infra_step": true,
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis exists.repo info",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -2214,7 +2221,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -2230,10 +2237,10 @@
       ]
     },
     "infra_step": true,
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.repo forall",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2252,7 +2259,7 @@
       "pobega@google.com",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2263,7 +2270,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.git_cl upload",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2277,7 +2284,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2288,7 +2295,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.git_cl status",
+    "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2300,7 +2307,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
@@ -2308,7 +2315,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -2327,7 +2334,7 @@
     "name": "Arch mirror uprev.create Arch mirror CL.upload CL to gerrit.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2337,7 +2344,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2359,7 +2366,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2378,7 +2385,7 @@
     "cmd": [],
     "name": "PKGBUILDs uprev",
     "~followup_annotations": [
-      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
@@ -2386,7 +2393,7 @@
       "./tools/pkgbuild_uprev.py",
       "--all"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2407,7 +2414,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2429,7 +2436,7 @@
       "--out-dir=[CACHE]/cros_chroot/out",
       "--skip-termina"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2449,7 +2456,7 @@
       "rev-parse",
       "--show-toplevel"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2469,11 +2476,11 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2488,7 +2495,7 @@
     "name": "PKGBUILDs uprev.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2506,7 +2513,7 @@
       "--name-only",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2534,9 +2541,9 @@
       "RECIPE_REPO[depot_tools]/repo",
       "start",
       "createPKGBUILDsCL",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis"
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2559,7 +2566,7 @@
       "add",
       "build/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2580,7 +2587,7 @@
       "add",
       "tools/arch_verity/"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2606,7 +2613,7 @@
       "uprev PKGBUILDs\n\nCL generated by job https://cr-buildbucket.appspot.com/build/0",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2632,7 +2639,7 @@
       "--file",
       "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2652,12 +2659,12 @@
     "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@Gerrit CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
@@ -2665,7 +2672,7 @@
   },
   {
     "cmd": [],
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis exists",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm exists",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2674,7 +2681,7 @@
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "info",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis"
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -2688,7 +2695,7 @@
       ]
     },
     "infra_step": true,
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis exists.repo info",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.check if project [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm exists.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
@@ -2699,7 +2706,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -2715,10 +2722,10 @@
       ]
     },
     "infra_step": true,
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.repo forall",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2737,7 +2744,7 @@
       "pobega@google.com",
       "--send-mail"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2748,7 +2755,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.git_cl upload",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.git_cl upload",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2762,7 +2769,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0",
@@ -2773,7 +2780,7 @@
         "RECIPE_REPO[depot_tools]"
       ]
     },
-    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis.git_cl status",
+    "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/borealis-vm.git_cl status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
     ]
@@ -2785,7 +2792,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@labels@Bot-Commit+1,Commit-Queue+2@@@",
       "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis/+/1@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm/+/1@@@"
     ]
   },
   {
@@ -2793,7 +2800,7 @@
       "RECIPE_REPO[depot_tools]/repo",
       "forall",
       "-v",
-      "[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+      "[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
       "-c",
       "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
@@ -2812,7 +2819,7 @@
     "name": "PKGBUILDs uprev.create PKGBUILDs CL.upload CL to gerrit.set labels on CL 1.repo forall",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm|cros|refs/heads/main|refs/heads/main@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2822,7 +2829,7 @@
       "rebase",
       "--force-rebase"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2844,7 +2851,7 @@
       "cros",
       "HEAD:refs/for/main%l=Bot-Commit+1,l=Commit-Queue+2"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis",
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

@@ -36,10 +36,14 @@ PROPERTIES = UprevBorealisDepsProperties
 GERRIT_CL_TOPIC = 'borealis-deps'
 GERRIT_CL_REVIEWERS = ['davidriley@google.com', 'pobega@google.com']
 
-_BOREALIS_REPO_PATH = 'src/platform/borealis/'
-
 
 def RunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
+  with api.step.nest('validate properties') as presentation:
+    if not properties.borealis_path:
+      properties.borealis_path = 'src/platform/borealis-vm'
+
+    presentation.step_text = 'all properties good'
+
   with api.build_menu.configure_builder(missing_ok=True), \
     api.build_menu.setup_workspace(), api.cros_sdk.cleanup_context():
     api.cros_sdk.create_chroot(timeout_sec=None)
@@ -80,17 +84,18 @@ def DoBorealisBuild(api: RecipeApi, use_cache: bool = True,
   api.step('Borealis build_full.py', build_command)
 
 
-def _CommitChanges(api: RecipeApi, project: ProjectInfo, commit_message: str,
-                   branch_name: str = None):
+def _CommitChanges(api: RecipeApi, project: ProjectInfo, borealis_path: str,
+                   commit_message: str, branch_name: str = None):
   """Commit changes to the Borealis build/ and tools/arch_verity/ directories.
 
   Args:
     api: The recipe modules API.
     project: Project object obtained from api.repo.project_info
+    borealis_path: the path to the Borealis directory in a CrOS checkout
     commit_message: Git commit message to use.
     branch_name: Name for the local branch for repo start
   """
-  borealis_repo_path = api.cros_source.workspace_path / _BOREALIS_REPO_PATH
+  borealis_repo_path = api.cros_source.workspace_path / borealis_path
   changed_files = api.git.get_diff_files('HEAD')
   with api.step.nest('commit changes') as presentation, api.context(
       cwd=borealis_repo_path):
@@ -137,13 +142,14 @@ def _CreateCL(api: RecipeApi, project: ProjectInfo,
         change)
 
 
-def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
+def CommitChangesAndCreateCL(api: RecipeApi, borealis_path: str, step_name: str,
                              commit_message: str,
                              presentation: StepPresentation):
   """Create Git commit from changes and upload Gerrit CL.
 
   Args:
     api: The recipe modules API.
+    borealis_path: the path to the Borealis directory in a CrOS checkout
     step_name: Name of the step to nest operations from.
     commit_message: Git commit message to use.
     presentation: the API step to show the Gerrit CL URL
@@ -156,7 +162,7 @@ def CommitChangesAndCreateCL(api: RecipeApi, step_name: str,
     # easily caused as a race condition if the staging job is scheduled to run
     # shortly after the prod job.
     if not api.build_menu.is_staging:
-      _CommitChanges(api, project, commit_message, step_name)
+      _CommitChanges(api, project, borealis_path, commit_message, step_name)
       _CreateCL(api, project, presentation)
 
 
@@ -164,7 +170,7 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
   checkout_path = api.cros_source.workspace_path
   chroot_path = api.build_menu.chroot.path
   out_dir = api.build_menu.chroot.out_path
-  borealis_path = checkout_path / _BOREALIS_REPO_PATH
+  borealis_path = checkout_path / properties.borealis_path
   with api.depot_tools.on_path(), api.context(cwd=borealis_path):
     # This recipe should only run on bots with docker pre-installed.  Abort
     # immediately if that is not the case.
@@ -191,7 +197,8 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
                    ['./tools/arch_verity/checksum_tool.py', '--update'])
           api.step('Verify new Arch db checksums',
                    ['./tools/arch_verity/checksum_tool.py', '--verify'])
-          CommitChangesAndCreateCL(api, 'create Arch mirror CL', commit_message,
+          CommitChangesAndCreateCL(api, properties.borealis_path,
+                                   'create Arch mirror CL', commit_message,
                                    presentation)
         else:
           presentation.step_text = 'Arch repository not updated. Skipping build.'
@@ -211,7 +218,8 @@ def DoRunSteps(api: RecipeApi, properties: UprevBorealisDepsProperties):
               api.buildbucket.build_url())
           # TODO: on the second run this creates a patchseries CL so the URL
           # provided is the same as the first.
-          CommitChangesAndCreateCL(api, 'create PKGBUILDs CL', commit_message,
+          CommitChangesAndCreateCL(api, properties.borealis_path,
+                                   'create PKGBUILDs CL', commit_message,
                                    presentation)
         else:
           presentation.step_text = 'No PKGBUILDs need updating. Skipping build.'
@@ -258,6 +266,28 @@ def GenTests(api: RecipeTestApi):
               '--skip-termina',
           ],
       ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['borealis_path'] = None
+  yield api.test(
+      'default-borealis-directory',
+      api.properties(**props),
+      api.post_process(
+          post_process.StepCommandContains, 'Arch mirror uprev.repo forall',
+          ['[CLEANUP]/chromiumos_workspace/src/platform/borealis-vm']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['borealis_path'] = 'src/platform/test'
+  yield api.test(
+      'alternate-borealis-directory',
+      api.properties(**props),
+      api.post_process(post_process.StepCommandContains,
+                       'Arch mirror uprev.repo forall',
+                       ['[CLEANUP]/chromiumos_workspace/src/platform/test']),
       api.post_process(post_process.DropExpectation),
   )
 

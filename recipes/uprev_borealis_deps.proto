@@ -14,4 +14,8 @@ message UprevBorealisDepsProperties {
 
   // Whether or not to attempt to uprev the PKGBUILDs.
   bool uprev_pkgbuilds = 2;
+
+  // Path to the Borealis repository relative to the CrOS SDK root.
+  // Optional. Defaults to 'src/platform/borealis-vm'.
+  string borealis_path = 3;
 }
