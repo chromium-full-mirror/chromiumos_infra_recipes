@@ -58,7 +58,10 @@ class FailuresApi(RecipeApi):
     type: bb_common_pb2.Status = bb_common_pb2.FAILURE
     failure_reason: Optional[str] = None
 
-  # Test kind for hw tests.
+  # Kind for build failures.
+  BUILD = 'build'
+
+  # Kind for hw tests.
   HW_TEST = 'hw test'
 
   def __init__(self, **kwargs):
@@ -316,9 +319,12 @@ class FailuresApi(RecipeApi):
 
       if kind == self.HW_TEST:
         lines = self.aggregate_hw_test_failures(failure_group)
+      elif kind == self.BUILD:
+        lines = self.aggregate_build_failures(failure_group, failure_count,
+                                              total_count)
       else:
-        lines = self.aggregrate_failure_group(kind, failure_group,
-                                              failure_count, total_count)
+        lines = self.aggregate_failure_group(kind, failure_group, failure_count,
+                                             total_count)
 
       if failure_count > self._failure_truncate_max:
         lines.append('- ...and {} others'.format(failure_count - self._failure_truncate_max))
@@ -334,35 +340,29 @@ class FailuresApi(RecipeApi):
     return result_pb2.RawResult(status=status,
                                 summary_markdown=summary_markdown)
 
-  def aggregrate_failure_group(self, kind: str, failure_group: List[Failure],
+  def aggregate_build_failures(self, build_failures: List[Failure],
                                failure_count: int,
                                total_count: int) -> List[str]:
-    """Returns aggregate failure markdown text.
+    """Returns aggregate test failure markdown text for build results.
 
     Args:
-      kind: The failure kind.
-      failure_group: List of all the failures for the specific kind.
-      failure_count: Number of failures
-      total_count: Number of all entries
+      build_failures: List of all the build failures.
+      failure_count: Number of build failures.
+      total_count: Number of all build results.
 
     Returns:
       List of summary markdown lines.
     """
 
+    kind = self.BUILD
     # This summary markdown section will look roughly as follows:
     #
-    # 2 out of 10 build failed (1 additional non-critical failure)
+    # 2 out of 10 builds failed for a reason
     # - asurada-cq: <a>build page<\a>
     # - atlas-cq: <a>build page<\a>
     # ...
-    main_line = '{} out of {} {} failed'.format(
-        failure_count,
-        total_count,
-        kind + 's' if total_count > 1 else kind,
-    )
-
     reason_to_failure_map = collections.defaultdict(list)
-    for f in failure_group:
+    for f in build_failures:
       reason_to_failure_map[f.failure_reason].append(f)
 
     lines = []
@@ -386,13 +386,55 @@ class FailuresApi(RecipeApi):
             line += ' [{}]({})'.format(link_text, link_url)
           lines.append(line)
     else:
+      main_line = '{} out of {} {} failed'.format(
+          failure_count,
+          total_count,
+          kind + 's' if total_count > 1 else kind,
+      )
       lines = [main_line]
-      failures_to_print = failure_group[0:self._failure_truncate_max]
+      failures_to_print = build_failures[0:self._failure_truncate_max]
       for failure in failures_to_print:
         line = '- {}:'.format(failure.title)
         for link_text, link_url in failure.link_map.items():
           line += ' [{}]({})'.format(link_text, link_url)
         lines.append(line)
+
+    return lines
+
+  def aggregate_failure_group(self, kind: str, failure_group: List[Failure],
+                              failure_count: int,
+                              total_count: int) -> List[str]:
+    """Returns aggregate failure markdown text.
+
+    Args:
+      kind: The failure kind.
+      failure_group: List of all the failures for the specific kind.
+      failure_count: Number of failures
+      total_count: Number of all entries
+
+    Returns:
+      List of summary markdown lines.
+    """
+
+    # This summary markdown section will look roughly as follows:
+    #
+    # 2 out of 10 {kind} failed
+    # - failure 1: <a>url<\a>
+    # - failure 2: <a>url<\a>
+    # ...
+    main_line = '{} out of {} {} failed'.format(
+        failure_count,
+        total_count,
+        kind + 's' if total_count > 1 else kind,
+    )
+
+    lines = [main_line]
+    failures_to_print = failure_group[0:self._failure_truncate_max]
+    for failure in failures_to_print:
+      line = '- {}:'.format(failure.title)
+      for link_text, link_url in failure.link_map.items():
+        line += ' [{}]({})'.format(link_text, link_url)
+      lines.append(line)
 
     return lines
 
