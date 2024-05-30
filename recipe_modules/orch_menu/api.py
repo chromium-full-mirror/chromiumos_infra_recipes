@@ -65,7 +65,7 @@ class BuildsStatus():
 
   @property
   def testable_builds(self):
-    return [b for b in self.completed_builds if self._is_testable(b)]
+    return [b for b in self.completed_builds if b.status == common_pb2.SUCCESS]
 
   @property
   def fatal_failures(self):
@@ -113,12 +113,6 @@ class BuildsStatus():
         f for f in self.failures if f.id not in failure_update_ids
     ]
     self.failures = failure_updates + unchanged_failures
-
-  def _is_testable(self, build):
-    """Whether the build is testable."""
-    return (build.status == common_pb2.SUCCESS and
-            self._configs.get(build.builder.builder))
-
 
 class OrchMenuApi(recipe_api.RecipeApi):
   """A module with steps used by orchestrators.

@@ -566,6 +566,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'public-orchestrator',
+      data.ctp_normal,
       api.properties(
           **{
               '$chromeos/cros_source': {
@@ -586,6 +587,7 @@ def GenTests(api):
   # TODO(b/245326818): Add useful assertions
   yield api.orch_menu.test(
       'factory-orchestrator',
+      data.ctp_normal,
       input_properties=orch_menu_properties(
           update_manifest_refs={'test': 'refs/heads/test'},
           buildspec_gs_path='gs://buildspecbucket/buildspecs/',
@@ -914,6 +916,7 @@ def GenTests(api):
 
   yield api.orch_menu.test(
       'snapshot-orch-v2-test-planning',
+      data.ctp_normal,
       api.buildbucket.simulated_multi_predicates_search_results(
           [annealing_build_with_found_changes],
           'find changes in snapshot.buildbucket.search'),

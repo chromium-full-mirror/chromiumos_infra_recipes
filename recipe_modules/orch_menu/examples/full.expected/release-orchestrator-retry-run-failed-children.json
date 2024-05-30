@@ -2765,6 +2765,9 @@
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexISGhBldmUtcmVsZWFzZS1tYWluYAx6HQobChkKBnJlY2lwZRIPGg1idWlsZF9yZWxlYXNl\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    },@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNOtpKubruDoe2AM\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    }@@@",
       "@@@STEP_LOG_LINE@planner_input@  ],@@@",
       "@@@STEP_LOG_LINE@planner_input@  \"manifestCommit\": \"main-HEAD-SHA\",@@@",
@@ -7119,7 +7122,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*A\n?\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010eve-release-main`\fz\u001d\n\u001b\n\u0019\n\u0006recipe\u0012\u000f\u001a\rbuild_release:\rmain-HEAD-SHAJ`\n^\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\rmain-HEAD-SHA\"\u000frefs/heads/main",
+      "*A\n?\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012\u0012\u001a\u0010eve-release-main`\fz\u001d\n\u001b\n\u0019\n\u0006recipe\u0012\u000f\u001a\rbuild_release*\u000e\n\f\b\u04ed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{`\f:\rmain-HEAD-SHAJ`\n^\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\rmain-HEAD-SHA\"\u000frefs/heads/main",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,

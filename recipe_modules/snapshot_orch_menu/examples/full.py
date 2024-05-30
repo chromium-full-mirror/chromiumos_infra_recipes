@@ -320,6 +320,7 @@ def GenTests(api):
 
   yield api.snapshot_orch_menu.test(
       'snapshot-orch-v2-test-planning',
+      data.ctp_normal,
       lfg_props,
       api.properties(
           FullProperties(experiments=[
