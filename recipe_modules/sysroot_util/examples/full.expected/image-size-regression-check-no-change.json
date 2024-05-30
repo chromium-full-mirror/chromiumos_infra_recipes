@@ -2469,7 +2469,7 @@
       }
     },
     "name": "build images.image size regression check.fetch last recorded rootfs size.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-postsubmit\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,output.properties\"}, \"pageSize\": 1, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"eve-snapshot\", \"project\": \"chromeos\"}, \"status\": \"SUCCESS\", \"tags\": [{\"key\": \"relevance\", \"value\": \"relevant\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2502,7 +2502,7 @@
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"bucket\": \"postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"builder\": \"eve-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"eve-snapshot\",@@@",
       "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"status\": \"SUCCESS\",@@@",

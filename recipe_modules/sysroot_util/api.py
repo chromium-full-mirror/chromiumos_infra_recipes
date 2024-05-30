@@ -500,7 +500,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             else:
               with self.m.step.nest(
                   'fetch last recorded rootfs size') as subpres:
-                bbid, latest_size = self._get_last_postsubmit_rootfs_size()
+                bbid, latest_size = self._get_last_snapshot_rootfs_size()
                 subpres.step_text = 'build {}: {}B'.format(bbid, latest_size)
               if not latest_size:
                 presentation.step_text = 'No previous rootfs size found.'
@@ -547,8 +547,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                 failed_images)
         return response.images
 
-  def _get_last_postsubmit_rootfs_size(self):
-    builder_name = '{}-postsubmit'.format(self.sysroot.build_target.name)
+  def _get_last_snapshot_rootfs_size(self):
+    builder_name = '{}-snapshot'.format(self.sysroot.build_target.name)
     fields = frozenset({'id', 'output.properties'})
     predicate = builds_service_pb2.BuildPredicate(
         builder=builder_common_pb2.BuilderID(project='chromeos',
