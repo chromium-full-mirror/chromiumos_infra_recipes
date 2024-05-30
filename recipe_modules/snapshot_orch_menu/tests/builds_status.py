@@ -7,6 +7,7 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -24,10 +25,10 @@ def RunSteps(api):
       build_pb2.Build(id=222), build_pb2.Build(id=333)
   ]
   api.snapshot_orch_menu.builds_status.failures = [
-      api.failures.Failure(kind='test', title='unchanged_failure', link_map={},
-                           fatal=True, id='1'),
-      api.failures.Failure(kind='test', title='updated_failure', link_map={},
-                           fatal=True, id='2'),
+      Failure(kind='test', title='unchanged_failure', link_map={}, fatal=True,
+              id='1'),
+      Failure(kind='test', title='updated_failure', link_map={}, fatal=True,
+              id='2'),
   ]
 
   new_completed = [
@@ -35,10 +36,10 @@ def RunSteps(api):
       build_pb2.Build(id=222),
   ]
   new_failures = [
-      api.failures.Failure(kind='test', title='update_failure', link_map={},
-                           fatal=False, id='2'),
-      api.failures.Failure(kind='build', title='new_failure', link_map={},
-                           fatal=True, id='3'),
+      Failure(kind='test', title='update_failure', link_map={}, fatal=False,
+              id='2'),
+      Failure(kind='build', title='new_failure', link_map={}, fatal=True,
+              id='3'),
   ]
   new_failures_copy = new_failures.copy()
   new_completed_copy = new_completed.copy()
@@ -63,12 +64,12 @@ def RunSteps(api):
       [build_pb2.Build(id=333)])
   api.assertions.assertCountEqual(
       api.snapshot_orch_menu.builds_status.failures, [
-          api.failures.Failure(kind='test', title='unchanged_failure',
-                               link_map={}, fatal=True, id='1'),
-          api.failures.Failure(kind='test', title='update_failure', link_map={},
-                               fatal=False, id='2'),
-          api.failures.Failure(kind='build', title='new_failure', link_map={},
-                               fatal=True, id='3'),
+          Failure(kind='test', title='unchanged_failure', link_map={},
+                  fatal=True, id='1'),
+          Failure(kind='test', title='update_failure', link_map={}, fatal=False,
+                  id='2'),
+          Failure(kind='build', title='new_failure', link_map={}, fatal=True,
+                  id='3'),
       ])
 
 

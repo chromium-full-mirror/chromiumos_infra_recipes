@@ -8,11 +8,12 @@
 
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.testplans.target_test_requirements_config import TestSuiteCommon
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
-    'failures',
+    'test_failures',
 ]
 
 
@@ -37,11 +38,11 @@ def RunSteps(api):
           hw_test_suite_type=HwTestCfg.TAST,
       )
   ]
-  failures = api.failures.get_additional_hw_test_not_run_failures(hw_tests)
+  failures = api.test_failures.get_additional_hw_test_not_run_failures(hw_tests)
   expected_failures = [
-      api.failures.Failure('additional test not run',
-                           'my_build_target.hw.my_test_suite', {}, True,
-                           'my_build_target.hw.my_test_suite'),
+      Failure('additional test not run',
+              'my_build_target.hw.my_test_suite', {}, True,
+              'my_build_target.hw.my_test_suite'),
   ]
   #len is 1 since the non critical test is not returned as failures
   api.assertions.assertEqual(len(failures), 1)

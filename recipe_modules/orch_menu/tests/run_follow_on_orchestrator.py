@@ -7,6 +7,7 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.chromiumos.builder_config import BuilderConfigs
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 from recipe_engine import post_process
 
@@ -14,7 +15,6 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'cros_infra_config',
-    'failures',
     'orch_menu',
 ]
 
@@ -22,9 +22,8 @@ DEPS = [
 
 def RunSteps(api):
   if api.properties.get('fatal_failure'):
-    fatal_failure = api.failures.Failure(kind='build', id='fake-build',
-                                         title='fake-build', link_map={},
-                                         fatal=True)
+    fatal_failure = Failure(kind='build', id='fake-build', title='fake-build',
+                            link_map={}, fatal=True)
     api.orch_menu.builds_status.update(failures=[fatal_failure])
   api.orch_menu.run_follow_on_orchestrator()
 

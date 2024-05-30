@@ -29,7 +29,30 @@ from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 
-from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
+
+@dataclass
+class Failure:
+  """A failure in recipe execution.
+
+  Fields:
+    kind: Describes the kind of failure, e.g. 'build'
+    title: Full title of the failure.
+    link_map: title to URL map for the failed task.
+    fatal: Whether or not the failure is fatal. Fatal failures cause
+        recipes to fail when the failure is aggregated.
+    id: a unique, reproducible name for this failure. For build-type
+        failures, this is the builder name. For test-type failures this is the
+        display_name.
+    type: Type of the failure.
+    failure_reason: The reason for the failure.
+  """
+  kind: str
+  title: str
+  link_map: Dict[str, str]
+  fatal: bool
+  id: str
+  type: bb_common_pb2.Status = bb_common_pb2.FAILURE
+  failure_reason: Optional[str] = None
 
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
@@ -171,9 +194,10 @@ class FailuresApi(RecipeApi):
       fault_attribution_text = ' (affected by the CLs in the CQ run)'
     return f'failed {phase} for {packages}{fault_attribution_text}'
 
-  def _get_results(self, kind, runs, get_status, is_critical, get_title,
-                   get_link_map, get_id, build_detailed_kind = None):
-    with self.m.step.nest('{} results'.format(build_detailed_kind or kind)) as results_pres:
+  def get_results(self, kind, runs, get_status, is_critical, get_title,
+                  get_link_map, get_id, build_detailed_kind=None):
+    with self.m.step.nest('{} results'.format(build_detailed_kind or
+                                              kind)) as results_pres:
       results = self.Results(failures=[], successes={})
       non_critical_build_results = self.Results(failures=[], successes={})
 
@@ -196,14 +220,12 @@ class FailuresApi(RecipeApi):
 
         if critical:
           results.failures.append(
-              self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=True, id=fail_id, type=status,
-                           failure_reason=failure_reason))
+              Failure(kind=kind, title=title, link_map=link_map, fatal=True,
+                      id=fail_id, type=status, failure_reason=failure_reason))
         elif build_detailed_kind:
           non_critical_build_results.failures.append(
-              self.Failure(kind=kind, title=title, link_map=link_map,
-                           fatal=False, id=fail_id,
-                           failure_reason=failure_reason))
+              Failure(kind=kind, title=title, link_map=link_map, fatal=False,
+                      id=fail_id, failure_reason=failure_reason))
 
       success_runs = [run for run in runs if run not in failed_runs]
       results.successes = {kind: 0}
@@ -224,10 +246,7 @@ class FailuresApi(RecipeApi):
             len(failed_runs), kind, s, len(success_runs))
         status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
       else:
-        if build_detailed_kind:
-          detailed_kind = build_detailed_kind
-        else:
-          detailed_kind = 'critical {}'.format(kind)
+        detailed_kind = build_detailed_kind or 'critical {}'.format(kind)
         step_text = 'all {}s succeeded'.format(detailed_kind)
         status = self.m.step.SUCCESS
 
@@ -615,11 +634,11 @@ class FailuresApi(RecipeApi):
 
       all_results = self.Results(failures=[], successes={})
       for detail, build in categorized_builds.items():
-        results = self._get_results(kind, build, self.get_build_status,
-                                    self.m.buildbucket.is_critical,
-                                    self.m.naming.get_build_title,
-                                    self.m.urls.get_build_link_map, get_id,
-                                    '{} {}'.format(detail, kind))
+        results = self.get_results(kind, build, self.get_build_status,
+                                   self.m.buildbucket.is_critical,
+                                   self.m.naming.get_build_title,
+                                   self.m.urls.get_build_link_map, get_id,
+                                   '{} {}'.format(detail, kind))
         all_results.failures += results.failures
         if results.successes:
           all_results.successes = {
@@ -629,82 +648,9 @@ class FailuresApi(RecipeApi):
 
     return all_results
 
-  def get_hw_test_results(self, hw_tests):
-    """Logs hardware test status to UI, and raises on failed tests.
-
-    Args:
-      hw_tests (list[SkylabResult]): List of Skylab suite results.
-
-    Returns:
-      A Results object containing the list[Failure] of all failures discovered
-      in the given runs and a dict mapping a task kind with the number of
-      successes.
-    """
-    get_id = self.m.naming.get_skylab_result_title
-    return self._get_results(self.HW_TEST, hw_tests, self.get_hwtest_status,
-                             self.is_hw_test_critical,
-                             self.m.naming.get_skylab_result_title,
-                             self.m.urls.get_skylab_result_link_map, get_id)
-
-  def get_additional_hw_test_not_run_failures(self, not_runnable_addtnl_tests):
-
-    critical_failures = []
-    if not_runnable_addtnl_tests:
-      kind = 'additional test not run'
-      critical_failures = []
-      with self.m.step.nest('{}'.format(kind)) as results_pres:
-
-        for nr in not_runnable_addtnl_tests:
-          title = nr.common.display_name
-          link_map = {}
-
-          critical = nr.common.critical.value
-          with self.m.step.nest(title) as presentation:
-            if critical:
-              presentation.step_text = 'Test not run and is critical'
-              presentation.status = self.m.step.FAILURE
-              critical_failures.append(
-                  self.Failure(kind=kind, title=title, link_map=link_map,
-                               fatal=True, id=title))
-            else:
-              presentation.step_text = 'Test not run but is not critical'
-              presentation.status = self.m.step.SUCCESS
-        status = self.m.step.SUCCESS
-        if critical_failures:
-          status = self.m.step.FAILURE
-        results_pres.status = status
-        results_pres.step_text = 'Build targets for tests was not built or failed building'
-    return critical_failures
-
   def get_build_status(self, build: build_pb2.Build) -> bb_common_pb2.Status:
     """Retrieve the status of the build."""
     return build.status
-
-  def is_critical_test_failure(self, test):
-    """Determine if the test is critical and has failed.
-
-    Args:
-      test (SkylabResult): The test in question.
-
-    Returns:
-      bool: True if the test is critical and has failed.
-    """
-    return self.is_critical_hw_test_failure(test)
-
-  def get_hwtest_status(self, hw_test: SkylabResult) -> bb_common_pb2.Status:
-    """Get the status of the hw_test."""
-    return hw_test.status
-
-  def is_hw_test_critical(self, hw_test):
-    """Determine if the hw test was critical.
-
-    Args:
-      hw_test (SkylabResult): The hardware test result in question.
-
-    Returns:
-      bool: True if the test was critical.
-    """
-    return hw_test.task.test.common.critical.value
 
   def is_critical_build_failure(self, build):
     """Determine in the build failed and was critical.
@@ -717,18 +663,6 @@ class FailuresApi(RecipeApi):
     """
     return (self.get_build_status(build) != bb_common_pb2.SUCCESS and
             self.m.buildbucket.is_critical(build))
-
-  def is_critical_hw_test_failure(self, hw_test):
-    """Determine if the hw test failed and was critical.
-
-    Args:
-      hw_test (SkylabResult): The hardware test result in question.
-
-    Returns:
-      bool: True if the test failed and was critical.
-    """
-    return (self.get_hwtest_status(hw_test) != bb_common_pb2.SUCCESS and
-            hw_test.task.test.common.critical.value)
 
   def update_non_critical_build_failures(self, failures: List[Failure],
                                          fresh_builder_configs: Dict[str, BuilderConfig],
@@ -757,9 +691,8 @@ class FailuresApi(RecipeApi):
           new_non_critical_builds.append(f.id)
           fatal = False
       updated_failures.append(
-          self.Failure(kind=f.kind, title=f.title, link_map=f.link_map,
-                       fatal=fatal, id=f.id, type=f.type,
-                       failure_reason=f.failure_reason))
+          Failure(kind=f.kind, title=f.title, link_map=f.link_map, fatal=fatal,
+                  id=f.id, type=f.type, failure_reason=f.failure_reason))
     if new_non_critical_builds:
       presentation.logs['new non-critical builders'] = new_non_critical_builds
     return updated_failures

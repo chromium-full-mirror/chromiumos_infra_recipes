@@ -12,6 +12,7 @@ files in projects touched by the input CLs.
 from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'depot_tools/depot_tools',
@@ -78,7 +79,7 @@ def RunSteps(api):
           logdog_url = api.urls.get_logdog_url(ex.result, 'stdout',
                                                use_top_level_step=False)
           results.failures.append(
-              api.failures.Failure(
+              Failure(
                   kind=kind,
                   title=pi.name,
                   link_map={'stdout': logdog_url},
@@ -96,7 +97,7 @@ def RunSteps(api):
           logdog_url = api.urls.get_logdog_url(ex.result, 'stdout',
                                                use_top_level_step=False)
           results.failures.append(
-              api.failures.Failure(
+              Failure(
                   kind=kind,
                   title=pi.name,
                   link_map={'stdout': logdog_url},

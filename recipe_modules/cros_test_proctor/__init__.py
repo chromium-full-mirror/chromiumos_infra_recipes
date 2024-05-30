@@ -25,12 +25,12 @@ DEPS = [
     'git',
     'git_footers',
     'greenness',
-    'failures',
     'future_utils',
     'naming',
     'skylab',
     'skylab_results',
     'src_state',
+    'test_failures',
     'urls',
 ]
 

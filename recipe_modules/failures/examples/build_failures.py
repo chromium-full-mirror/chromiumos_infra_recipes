@@ -12,6 +12,7 @@ from PB.chromiumos import builder_config
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.failures.examples.build_failures import BuildProperties
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -39,9 +40,8 @@ def RunSteps(api, properties):
         properties.expected_is_critical_build_failure)
 
   expected_failures = [
-      api.failures.Failure('build', x.builder.builder,
-                           api.urls.get_build_link_map(x), x.critical,
-                           x.builder.builder, type=x.status)
+      Failure('build', x.builder.builder, api.urls.get_build_link_map(x),
+              x.critical, x.builder.builder, type=x.status)
       for x in expected_failing_builds
   ]
   expected_successful_builds = [

@@ -7,6 +7,7 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from PB.chromiumos.builder_config import BuilderConfig
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -29,8 +30,8 @@ def RunSteps(api):
 
   link_map = {'a title': 'someurl'}
   in_failures = [
-      api.failures.Failure(kind='build', title='title', link_map=link_map,
-                           fatal=True, id='noncritical builder')
+      Failure(kind='build', title='title', link_map=link_map, fatal=True,
+              id='noncritical builder')
   ]
   with api.step.nest('test step') as pres:
     out_failures = api.failures.update_non_critical_build_failures(
@@ -38,8 +39,8 @@ def RunSteps(api):
     api.assertions.assertFalse(out_failures[0].fatal)
 
     in_failures = [
-        api.failures.Failure(kind='build', title='title', link_map=link_map,
-                             fatal=True, id='critical builder')
+        Failure(kind='build', title='title', link_map=link_map, fatal=True,
+                id='critical builder')
     ]
     out_failures = api.failures.update_non_critical_build_failures(
         in_failures, builder_configs, pres)

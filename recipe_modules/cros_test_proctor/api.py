@@ -247,7 +247,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         for test_result in test_results.skylab:
           if test_result.status == common_pb2.SUCCESS:
             passed_test_names.append(self.m.naming.get_test_title(test_result))
-          elif self.m.failures.is_critical_test_failure(test_result):
+          elif self.m.test_failures.is_critical_test_failure(test_result):
             crit_failure_test_names.append(
                 self.m.naming.get_test_title(test_result))
           else:
@@ -307,7 +307,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_hwtest_info(test_results.skylab)
       failures = self.get_test_failures(test_results)
-      failures += self.m.failures.get_additional_hw_test_not_run_failures(
+      failures += self.m.test_failures.get_additional_hw_test_not_run_failures(
           self._not_runnable_addtnl_tests)
     return failures
 
@@ -445,7 +445,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     Returns:
       list[Failure]: All failures discovered in the given run.
     """
-    failures = self.m.failures.get_hw_test_results(test_results.skylab).failures
+    failures = self.m.test_failures.get_hw_test_results(
+        test_results.skylab).failures
     return failures
 
   def _schedule_skylab_tests(

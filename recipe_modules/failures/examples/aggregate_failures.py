@@ -11,6 +11,7 @@ from collections import defaultdict
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFailureAttribute, FaultAttributionProperties, SnapshotProperties
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
@@ -27,47 +28,38 @@ def RunSteps(api):
   api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
   api.assertions.assertEqual(final_result.summary_markdown, '')
   results.failures = [
-      api.failures.Failure(kind='kind', title='title',
-                           link_map={'title': 'url'}, fatal=False, id='my id'),
+      Failure(kind='kind', title='title', link_map={'title': 'url'},
+              fatal=False, id='my id'),
   ]
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
 
   results.failures = [
-      api.failures.Failure(kind='build', title='build-a',
-                           link_map={'build page': 'build-a.com'}, fatal=True,
-                           id='id-0'),
-      api.failures.Failure(kind='build', title='build-b',
-                           link_map={'build page': 'build-b.com'}, fatal=True,
-                           id='id-1'),
-      api.failures.Failure(kind='test', title='test-a',
-                           link_map={'subtest-1': 'test-a.com'}, fatal=True,
-                           id='id-2'),
-      api.failures.Failure(kind='hw test', title='test-b',
-                           link_map={'test-b': 'test-b.com'}, fatal=True,
-                           id='id-3'),
-      api.failures.Failure(kind='build', title='build-c',
-                           link_map={'test-c': 'test-c.com'}, fatal=False,
-                           id='id-4'),
-      api.failures.Failure(kind='test', title='test-c',
-                           link_map={'test-c': 'test-c.com'}, fatal=False,
-                           id='id-5'),
-      api.failures.Failure(kind='different_kind_of_test', title='test-x',
-                           link_map={'test-x': 'test-x.com'}, fatal=True,
-                           id='id-6'),
-      api.failures.Failure(kind='very_different_kind_of_test', title='test-y',
-                           link_map={'test-y': 'test-y.com'}, fatal=False,
-                           id='id-7'),
-      api.failures.Failure(kind='hw test', title='test-1',
-                           link_map={'test-1': 'test-1.com'}, fatal=True,
-                           id='id-8'),
-      api.failures.Failure(
+      Failure(kind='build', title='build-a',
+              link_map={'build page': 'build-a.com'}, fatal=True, id='id-0'),
+      Failure(kind='build', title='build-b',
+              link_map={'build page': 'build-b.com'}, fatal=True, id='id-1'),
+      Failure(kind='test', title='test-a', link_map={'subtest-1': 'test-a.com'},
+              fatal=True, id='id-2'),
+      Failure(kind='hw test', title='test-b', link_map={'test-b': 'test-b.com'},
+              fatal=True, id='id-3'),
+      Failure(kind='build', title='build-c', link_map={'test-c': 'test-c.com'},
+              fatal=False, id='id-4'),
+      Failure(kind='test', title='test-c', link_map={'test-c': 'test-c.com'},
+              fatal=False, id='id-5'),
+      Failure(kind='different_kind_of_test', title='test-x',
+              link_map={'test-x': 'test-x.com'}, fatal=True, id='id-6'),
+      Failure(kind='very_different_kind_of_test', title='test-y',
+              link_map={'test-y': 'test-y.com'}, fatal=False, id='id-7'),
+      Failure(kind='hw test', title='test-1', link_map={'test-1': 'test-1.com'},
+              fatal=True, id='id-8'),
+      Failure(
           kind='hw test', title='test-2', link_map={
               'test-2': 'test-2.com',
               'test-shard-0 (timed out)': 'shard.com'
           }, fatal=True, id='id-9'),
-      api.failures.Failure(kind='hw test', title='no-links-test', link_map={},
-                           fatal=True, id='id-10'),
+      Failure(kind='hw test', title='no-links-test', link_map={}, fatal=True,
+              id='id-10'),
   ]
   results.successes = {'build': 28, 'very_different_kind_of_test': 1}
 
@@ -145,9 +137,8 @@ def RunSteps(api):
       final_result.summary_markdown)
 
   results.failures = [
-      api.failures.Failure(kind='build', title='build-a', link_map={
-          'build page': 'build-a.com'
-      }, fatal=True, id='my id'),
+      Failure(kind='build', title='build-a',
+              link_map={'build page': 'build-a.com'}, fatal=True, id='my id'),
   ] * 50
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
@@ -156,7 +147,7 @@ def RunSteps(api):
   # Try to exceed the 4000 limit with really long test links.
   really_long_text = 'All code and no test makes failures a dull module.' * 4000
   results.failures = [
-      api.failures.Failure(
+      Failure(
           kind='hw test', title='test-a', link_map={
               'subtest-1': 'testlink.com',
               'subtest-2': really_long_text,
@@ -170,18 +161,15 @@ def RunSteps(api):
   api.failures.set_exoneration_markdown(markdown_txt='some suites exonerated')
 
   results = api.failures.Results(failures=[], successes={})
-  infra_failure1 = api.failures.Failure(kind='build', title='build-a',
-                                        link_map={'build page': 'build-a.com'},
-                                        fatal=True, id='id-0',
-                                        type=common_pb2.INFRA_FAILURE)
-  infra_failure2 = api.failures.Failure(kind='build', title='build-a1',
-                                        link_map={'build page': 'build-a.com'},
-                                        fatal=True, id='id-1',
-                                        type=common_pb2.INFRA_FAILURE)
-  regular_failure = api.failures.Failure(kind='build', title='build-b',
-                                         link_map={'build page': 'build-b.com'},
-                                         fatal=True, id='id-2',
-                                         type=common_pb2.FAILURE)
+  infra_failure1 = Failure(kind='build', title='build-a',
+                           link_map={'build page': 'build-a.com'}, fatal=True,
+                           id='id-0', type=common_pb2.INFRA_FAILURE)
+  infra_failure2 = Failure(kind='build', title='build-a1',
+                           link_map={'build page': 'build-a.com'}, fatal=True,
+                           id='id-1', type=common_pb2.INFRA_FAILURE)
+  regular_failure = Failure(kind='build', title='build-b',
+                            link_map={'build page': 'build-b.com'}, fatal=True,
+                            id='id-2', type=common_pb2.FAILURE)
   results.failures = [infra_failure1, infra_failure2]
   infra_failure_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(infra_failure_result.status,

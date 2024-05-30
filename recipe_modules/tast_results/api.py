@@ -12,6 +12,7 @@ from typing import List
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
+from RECIPE_MODULES.chromeos.failures.api import Failure
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -220,7 +221,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       if test_case.name not in exclude_tests:
         if test_case.verdict == TaskState.VERDICT_FAILED:
           results.failures.append(
-              self.m.failures.Failure(
+              Failure(
                   kind=kind,
                   title=test_case.name,
                   link_map={
