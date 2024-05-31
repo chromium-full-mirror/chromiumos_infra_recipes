@@ -466,7 +466,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
       return found_disallow
 
   def resize_lfg_lookback(self, gerrit_changes: List[GerritChange],
-                          builders_to_be_scheduled: List[str]) -> float:
+                          builders_to_be_scheduled: List[str],
+                          lookback_hours: Optional[float] = None) -> float:
     """Change LFG lookback based on the given parameters.
 
     Lookback can be resized based on depended changes and/or broken_until.
@@ -474,6 +475,8 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     Args:
       gerrit_changes: Gerrit changes to analyze.
       builders_to_be_scheduled: List of builders that need to be scheduled.
+      lookback_hours: If specified, use the specified value when finding the
+        minimum lookback hours. Only used by the auto-retrier.
 
     Returns:
       The resized lookback hours.
@@ -512,7 +515,7 @@ class LooksForGreenApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('resize LFG lookback window') as pres:
       self.lookback_hours = min(
-          self.lookback_hours,
+          lookback_hours or self.lookback_hours,
           # Reduce by 1 hour to account for the creation of the next snapshot +
           # the annealing run.
           hours_since_submission - 1,

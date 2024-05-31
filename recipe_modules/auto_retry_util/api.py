@@ -484,7 +484,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         step_text_prefix = 'build skipped LFG, using latest scored snapshot'
       else:
         lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
-            cq_run.input.gerrit_changes, builders)
+            cq_run.input.gerrit_changes, builders,
+            lookback_hours=self.lookback_seconds / 3600)
         current_greenness = self._lfg_greenness(lfg_lookback_hours)
         step_text_prefix = 'build used LFG, using current snapshot found by LFG'
 
