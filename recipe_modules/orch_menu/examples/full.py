@@ -65,8 +65,6 @@ def RunSteps(api, properties):
 
     _ = api.orch_menu.is_public_orchestrator
     _ = api.orch_menu.is_factory_orchestrator
-    is_cq_orch = build.builder.builder == 'cq-orchestrator'
-    api.assertions.assertEqual(api.orch_menu.is_cq_orchestrator, is_cq_orch)
 
     expected_changes = build.input.gerrit_changes
     # Add any changes from the config.
@@ -117,7 +115,7 @@ def RunSteps(api, properties):
     expected = properties.expected_recipe_result
     if not expected.status:
       expected = RawResult(status=common_pb2.SUCCESS)
-    if api.orch_menu.is_cq_orchestrator:
+    if api.buildbucket.build.builder.builder.endswith('cq-orchestrator'):
       actual = api.orch_menu.create_cq_orch_recipe_result()
     else:
       actual = api.orch_menu.create_recipe_result(

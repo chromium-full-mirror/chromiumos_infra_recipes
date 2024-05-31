@@ -15,6 +15,7 @@ from recipe_engine import post_process
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/properties',
     'cros_test_proctor',
     'orch_menu',
     'test_util',
@@ -24,7 +25,10 @@ DEPS = [
 
 def RunSteps(api):
   with api.orch_menu.setup_orchestrator():
-    api.orch_menu.add_child_info_to_output_property()
+    relevant_child_builder_names = api.properties.get(
+        'relevant_child_builder_names')
+    api.orch_menu.add_child_info_to_output_property(
+        relevant_child_builder_names)
 
 
 def GenTests(api):
@@ -118,13 +122,39 @@ def GenTests(api):
   )
 
   yield api.test(
-      'snapshot-orchestrator-relevance-field',
+      'relevance-field-unset',
       api.buildbucket.ci_build(project='chromeos', bucket='snapshot',
                                builder='snapshot-orchestrator'),
+      api.properties(relevant_child_builder_names=None),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-snapshot'])),
+      api.post_check(lambda check, steps: check('relevant' not in steps[
+          'set child_build_info'].output_properties['child_build_info'][0])),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'relevance-field-false',
+      api.buildbucket.ci_build(project='chromeos', bucket='snapshot',
+                               builder='snapshot-orchestrator'),
+      api.properties(relevant_child_builder_names=[]),
       api.buildbucket.simulated_search_results(
           _child_builds(['atlas-snapshot'])),
       api.post_check(lambda check, steps: check(steps[
           'set child_build_info'].output_properties['child_build_info'][0][
               'relevant'] is False)),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'relevance-field-true',
+      api.buildbucket.ci_build(project='chromeos', bucket='snapshot',
+                               builder='snapshot-orchestrator'),
+      api.properties(relevant_child_builder_names=['atlas-snapshot']),
+      api.buildbucket.simulated_search_results(
+          _child_builds(['atlas-snapshot'])),
+      api.post_check(lambda check, steps: check(steps[
+          'set child_build_info'].output_properties['child_build_info'][0][
+              'relevant'] is True)),
       api.post_process(post_process.DropExpectation),
   )

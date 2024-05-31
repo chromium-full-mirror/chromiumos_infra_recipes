@@ -126,7 +126,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     # Our properties: OrchMenuProperties ($chromeos/orch_menu).
     self._properties = properties
     self._builds_status = BuildsStatus([], [], {})
-    self._is_cq_orchestrator = False
     self._is_release_orchestrator = False
     self._is_factory_orchestrator = False
     self._is_public_orchestrator = False
@@ -163,10 +162,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
   @property
   def builds_status(self):
     return self._builds_status
-
-  @property
-  def is_cq_orchestrator(self):
-    return self._is_cq_orchestrator
 
   @property
   def is_release_orchestrator(self):
@@ -236,9 +231,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
         is_staging = self.m.cros_infra_config.is_staging
 
-        if config and config.id.type == BuilderConfig.Id.CQ:
-          self._is_cq_orchestrator = True
-
         # If release orchestrator, full checkout and pin manifest.
         if config and config.id.type == BuilderConfig.Id.RELEASE:
           self._is_release_orchestrator = True
@@ -263,9 +255,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       if config:
         if self.gerrit_changes:
-          # Limit to staging and cq-orchestrator for now. We'll want to ask
+          # Limit to staging-cq-orchestrator for now. We'll want to ask
           # the RBS team how tryjobs could be affected.
-          if is_staging and self._is_cq_orchestrator:
+          if self.m.buildbucket.build.builder.builder == 'staging-cq-orchestrator':
             with self.m.context(cwd=self.m.cros_source.workspace_path):
               self.m.cros_source.sync_checkout(self.gitiles_commit)
               # This step will throw a StepFailure if changes cannot be applied
@@ -322,7 +314,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
     with self.m.step.nest('clean up orchestrator'):
       # Set child output ids if any
-      self.add_child_info_to_output_property()
+      self.add_child_info_to_output_property(self._relevant_child_builder_names)
 
       # TODO(b/316010599): Remove after the experiment.
       with self.m.failures.ignore_exceptions():
@@ -1287,8 +1279,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     Args:
       relevant_builder_names: List of relevant child builders.
     """
-    relevant_child_builder_names = (
-        relevant_child_builder_names or self._relevant_child_builder_names)
     child_builds = self._get_child_builds()
     child_build_info = []
     # TODO(b/266749698): Deprecate child_build_ids for child_build_info.
@@ -1303,7 +1293,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           in self.m.cros_test_proctor.builders_tested_in_this_run)
       # Add whether this builder was relevant.
       # This is only applicable to CQ and Snapshot.
-      if self.is_cq_orchestrator or self.is_snapshot_orchestrator:
+      if relevant_child_builder_names is not None:
         child_build_dict['relevant'] = (
             b.builder.builder in relevant_child_builder_names)
       # If running unit tests async, add the time the child build was elegible
