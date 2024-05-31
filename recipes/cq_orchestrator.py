@@ -88,6 +88,7 @@ def GenTests(api: RecipeTestApi):
       api.orch_menu.build_poller_step_data(builds=data.builds,
                                            parent_step_name='run builds'),
       builder='cq-orchestrator',
+      cq=True,
   )
 
   yield api.orch_menu.test(
@@ -166,9 +167,10 @@ def GenTests(api: RecipeTestApi):
   yield api.orch_menu.test(
       'chromium-src-ref-cq-cl-tag',
       data.ctp_normal,
-      api.buildbucket.ci_build(
+      api.buildbucket.try_build(
           project='chromeos', bucket='cq', builder='cq-orchestrator',
           tags=api.cros_tags.tags(cq_cl_tag='chromium_src_ref:foo1234ref')),
       _cq_schedule_and_collect_builds_test_data(collect_builds,
                                                 collect_after_builds),
+      builder='cq-orchestrator',
   )
