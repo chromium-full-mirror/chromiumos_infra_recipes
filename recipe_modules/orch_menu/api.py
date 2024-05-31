@@ -199,6 +199,49 @@ class OrchMenuApi(recipe_api.RecipeApi):
         ChromeProperties(version=self.chromium_src_ref_cl_tag))
 
   @contextlib.contextmanager
+  def setup_cq_orchestrator(self):
+    """Initial setup steps for the cq-orchestrator.
+
+    This context manager returns with all of the contexts that the orchestrator
+    needs to have when it runs, for cleanup to happen properly.
+
+    If appropriate, any inflight orchestrator has finished before we return.
+
+    Raises:
+      StepFailure if no config is found.
+    """
+    with self.m.bot_cost.build_cost_context(), \
+        self.m.cros_source.checkout_overlays_context():
+      with self.m.step.nest('set up orchestrator') as presentation:
+        self.m.cros_source.configure_builder(
+            self.m.buildbucket.gitiles_commit,
+            self.m.buildbucket.build.input.gerrit_changes)
+
+        presentation.links['manifest snapshot revision'] = (
+            self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
+
+        self._external_gitiles_commit = self.m.cros_source.checkout_manifests(
+            is_staging=self.m.cros_infra_config.is_staging,
+            checkout_internal=True)
+
+      # Limit to staging-cq-orchestrator for now.
+      if self.m.buildbucket.build.builder.builder == 'staging-cq-orchestrator':
+        with self.m.context(cwd=self.m.cros_source.workspace_path):
+          self.m.cros_source.sync_checkout(self.gitiles_commit)
+          # This step will throw a StepFailure if changes cannot be applied
+          # to chosen snapshot.
+          self.m.workspace_util.apply_changes()
+      elif not self.m.gerrit.changes_submittable(self.gerrit_changes):
+        raise recipe_api.StepFailure(
+            'Merge conflict detected! Please rebase and retry.')
+
+      # If we are waiting on inflight orchestrators, do that now.
+      self._wait_for_inflight_orchestrator()
+
+      # Yield while inside of the bot_cost.build_cost_context.
+      yield
+
+  @contextlib.contextmanager
   def setup_orchestrator(self):
     """Initial setup steps for the orchestrator.
 
@@ -253,19 +296,10 @@ class OrchMenuApi(recipe_api.RecipeApi):
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
             pass
 
-      if config:
-        if self.gerrit_changes:
-          # Limit to staging-cq-orchestrator for now. We'll want to ask
-          # the RBS team how tryjobs could be affected.
-          if self.m.buildbucket.build.builder.builder == 'staging-cq-orchestrator':
-            with self.m.context(cwd=self.m.cros_source.workspace_path):
-              self.m.cros_source.sync_checkout(self.gitiles_commit)
-              # This step will throw a StepFailure if changes cannot be applied
-              # to chosen snapshot.
-              self.m.workspace_util.apply_changes()
-          elif not self.m.gerrit.changes_submittable(self.gerrit_changes):
-            raise recipe_api.StepFailure(
-                'Merge conflict detected! Please rebase and retry.')
+      if config and self.gerrit_changes and not self.m.gerrit.changes_submittable(
+          self.gerrit_changes):
+        raise recipe_api.StepFailure(
+            'Merge conflict detected! Please rebase and retry.')
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()

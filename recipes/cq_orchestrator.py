@@ -29,7 +29,7 @@ DEPS = [
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
-  with api.orch_menu.setup_orchestrator():
+  with api.orch_menu.setup_cq_orchestrator():
     # Run the child builders.
     extra_child_props = {
         # Value is a callback function that should be executed after LFG

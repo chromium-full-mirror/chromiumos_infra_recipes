@@ -632,21 +632,7 @@ def GenTests(api):
       'fails-if-changes-not-submittable',
       api.gerrit.simulated_changes_are_submittable(submittable=False),
       cq=True,
-      with_history=True,
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
-  )
-
-  yield api.orch_menu.test(
-      'fails-if-changes-not-submittable-staging-exp',
-      api.step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
-          retcode=1),
-      api.step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets.git merge',
-          retcode=1),
-      cq=True,
-      builder='staging-cq-orchestrator',
+      builder='staging-release-main-orchestrator',
       status='FAILURE',
   )
 

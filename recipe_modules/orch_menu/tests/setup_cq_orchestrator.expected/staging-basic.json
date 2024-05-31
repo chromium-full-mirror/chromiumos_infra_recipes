@@ -2371,10 +2371,7 @@
   },
   {
     "cmd": [],
-    "name": "cherry-pick gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "cherry-pick gerrit changes"
   },
   {
     "cmd": [
@@ -2458,8 +2455,7 @@
     "cmd": [],
     "name": "cherry-pick gerrit changes.apply gerrit patch sets",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2603,56 +2599,11 @@
     ]
   },
   {
-    "cmd": [
-      "git",
-      "cherry-pick",
-      "--abort"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick --abort",
+    "cmd": [],
+    "name": "cherry-pick gerrit changes.apply gerrit patch sets.set cros_source_git_strategy",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@cherry-pick failed. will try merge instead@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "merge",
-      "deadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
-      "-m",
-      "merge gerrit changes"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/project-a",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "cherry-pick gerrit changes.apply gerrit patch sets.git merge",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@SET_BUILD_PROPERTY@cros_source_git_strategy@2@@@"
     ]
   },
   {
@@ -2827,10 +2778,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Step('cherry-pick gerrit changes.apply gerrit patch sets.git merge') (retcode: 1)"
-    },
     "name": "$result"
   }
 ]
