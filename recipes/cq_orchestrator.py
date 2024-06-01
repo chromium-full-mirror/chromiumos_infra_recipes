@@ -50,7 +50,9 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
 
     # Run any HW tests.
     api.orch_menu.plan_and_run_tests(
-        testable_builds=testable_builds,
+        testable_builds=[
+            b for b in testable_builds if api.orch_menu.cq_relevant(b)
+        ],
     )
 
     # Collect any remaining builders and report the overall result.
