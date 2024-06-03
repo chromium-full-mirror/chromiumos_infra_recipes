@@ -865,7 +865,6 @@
       "@@@STEP_LOG_LINE@crossystem@fw_try_count            = 0                              # [RW/int] Number of times to try fw_try_next@@@",
       "@@@STEP_LOG_LINE@crossystem@fw_try_next             = B                              # [RW/str] Firmware to try next (A or B)@@@",
       "@@@STEP_LOG_LINE@crossystem@fw_vboot2               = 1                              # [RO/int] 1 if firmware was selected by vboot2 or 0 otherwise@@@",
-      "@@@STEP_LOG_LINE@crossystem@fwb_tries               = 0                              # [RW/int] Try firmware B count@@@",
       "@@@STEP_LOG_LINE@crossystem@fwid                    = Google_Voema.13672.224.0       # [RO/str] Active firmware ID@@@",
       "@@@STEP_LOG_LINE@crossystem@fwupdate_tries          = 0                              # [RW/int] Times to try OS firmware update (inside kern_nv)@@@",
       "@@@STEP_LOG_LINE@crossystem@hwid                    = VOEMA-DHAS C4B-D3A-C3C-37Y-A83 # [RO/str] Hardware ID@@@",
