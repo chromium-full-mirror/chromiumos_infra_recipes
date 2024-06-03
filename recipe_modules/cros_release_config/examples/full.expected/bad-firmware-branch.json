@@ -1,0 +1,24 @@
+[
+  {
+    "cmd": [],
+    "name": "validate branch",
+    "~followup_annotations": [
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "validate branch.validate firmware branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "failure": {
+      "failure": {},
+      "humanReason": "bad firmware branch, add descriptor=Rxxx"
+    },
+    "name": "$result"
+  }
+]

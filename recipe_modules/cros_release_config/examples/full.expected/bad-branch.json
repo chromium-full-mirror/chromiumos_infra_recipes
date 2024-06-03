@@ -9,7 +9,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "factory-foo.B is not a release or stabilize branch"
+      "humanReason": "factory-foo.B is not a release, stabilize or firmware branch"
     },
     "name": "$result"
   }

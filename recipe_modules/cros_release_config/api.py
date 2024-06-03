@@ -19,6 +19,7 @@ from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 
 CONFIG = 'release/release_builders.textpb'
 STABILIZE_CONFIG = 'release/stabilize_builders.textpb'
+FIRMWARE_CONFIG = 'release/firmware_builders.textpb'
 CHROMITE_ANDROID = 'lib/constants.py'
 
 ANDROID_BRANCH_FORMAT = {
@@ -48,6 +49,7 @@ TEST_DATA = ReleaseBuilders(builders=[
 ])
 
 RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
+MILESTONE_BRANCH_REGEX = r'(?:firmware|release)-R(\d+)-\d+.B'
 
 
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
@@ -60,7 +62,7 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     self._keep_n_milestones = properties.keep_n_milestones
 
   def _extract_milestone(self, release_branch):
-    res = re.search(RELEASE_BRANCH_REGEX, release_branch)
+    res = re.search(MILESTONE_BRANCH_REGEX, release_branch)
     if res:
       return int(res.group(1))
     return None
@@ -144,17 +146,17 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     config in chromite as well as the Rubik starlark config in infra/config.
 
     Args:
-      branch: Release or stabilize branch, e.g. "release-R89-13729.B" or
-        "stabilize-15129.B".
+      branch: Release, stabilize or firmware branch, e.g. "release-R89-13729.B",
+        "stabilize-15129.B", or "firmware-R126-12345.B".
       auto_submit: Whether to autosubmit the config change.
       dryrun: If in dryrun mode, we'll abandon the change.
     """
     milestone = None
     with self.m.step.nest('validate branch'):
       if not branch.startswith('release-') and not branch.startswith(
-          'stabilize-'):
+          'stabilize-') and not branch.startswith('firmware-'):
         raise StepFailure(
-            '{} is not a release or stabilize branch'.format(branch))
+            '{} is not a release, stabilize or firmware branch'.format(branch))
 
       is_release_branch = branch.startswith('release-')
       if is_release_branch:
@@ -162,6 +164,12 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
           milestone = self._extract_milestone(branch)
           if not milestone:
             raise StepFailure('bad release branch')
+      is_firmware_branch = branch.startswith('firmware-')
+      if is_firmware_branch:
+        with self.m.step.nest('validate firmware branch'):
+          milestone = self._extract_milestone(branch)
+          if not milestone:
+            raise StepFailure('bad firmware branch, add descriptor=Rxxx')
 
     with self.m.step.nest('validate CL settings'):
       if not self._reviewers and not auto_submit:
@@ -180,7 +188,12 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     with self.m.step.nest('update config'):
       config_path = project_path[self.CONFIG_PROJECT]
       with self.m.context(cwd=config_path):
-        config_file = CONFIG if is_release_branch else STABILIZE_CONFIG
+        if is_release_branch:
+          config_file = CONFIG
+        elif is_firmware_branch:
+          config_file = FIRMWARE_CONFIG
+        else:
+          config_file = STABILIZE_CONFIG
         file_path = config_path / config_file
 
         release_builders = self.m.file.read_proto('read {}'.format(config_file),
@@ -198,6 +211,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
             expiration_date = ReleaseBuilder.Date(
                 value=(branch_metadata.ltr_last_refresh_date.ToDatetime() +
                        datetime.timedelta(days=14)).strftime('%Y-%m-%d'))
+        elif is_firmware_branch:
+          expiration_date = None
         else:
           # Default expiration date for stabilize branches is 6 months.
           date = datetime.datetime.today() + datetime.timedelta(days=30 * 6)

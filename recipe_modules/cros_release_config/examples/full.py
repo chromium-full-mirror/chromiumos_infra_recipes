@@ -98,6 +98,15 @@ BLOCK_NEW_STABILIZE = '''builders {
 }
 '''
 
+BLOCK_NEW_FIRMWARE = '''builders {
+  milestone {
+    number: %(number)d
+    branch_name: "%(branch_name)s"
+  }
+}
+'''
+
+
 # Return a block of config to be included in textpb expecations.
 def new_block(number, branch_name, expiration_date=None):
   expiration_block = ''
@@ -116,6 +125,14 @@ def new_stabilize_block(branch_name, expiration_date=None):
   if expiration_date:
     expiration_block = EXPIRATION_SECTION_TEMPLATE % expiration_date
   return BLOCK_NEW_STABILIZE % (branch_name, expiration_block)
+
+
+# Return a block of config to be included in textpb expecations.
+def new_firmware_block(number, branch_name):
+  return BLOCK_NEW_FIRMWARE % {
+      'number': number,
+      'branch_name': branch_name,
+  }
 
 
 BLOCK_EXPIRATION = '''builders {
@@ -214,6 +231,26 @@ def GenTests(api):
           ]), api.post_process(post_process.DropExpectation))
 
   yield api.test(
+      'firmware-branch',
+      api.properties(
+          **{
+              'branch':
+                  'firmware-R126-12345.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='jbettis@google.com')], ccs=[
+                          Email(email='chromeos-firmware@google.com')
+                      ], keep_n_milestones=3)
+          }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/firmware_builders.textpb', [
+              expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
+                              new_firmware_block(126, 'firmware-R126-12345.B'),
+                              BLOCK_3, BLOCK_2, BLOCK_1)
+          ]), api.post_process(post_process.DropExpectation))
+
+  yield api.test(
       'bad-branch',
       api.properties(**{
           'branch': 'factory-foo.B',
@@ -229,6 +266,16 @@ def GenTests(api):
       }),
       api.post_check(post_process.StepFailure,
                      'validate branch.validate release branch'),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'bad-firmware-branch',
+      api.properties(**{
+          'branch': 'firmware-foo.B',
+      }),
+      api.post_check(post_process.StepFailure,
+                     'validate branch.validate firmware branch'),
       status='FAILURE',
   )
 
