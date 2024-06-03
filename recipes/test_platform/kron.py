@@ -57,25 +57,48 @@ def RunSteps(api, properties):
     step_presentation.properties['kron-run'] = run_uuid
 
     cmd_path = cipd_dir / 'kron'
-    with api.context(cwd=cipd_dir, infra_steps=True):
-      nb_command = [cmd_path, 'run', '-new-builds', '-run-id', run_uuid]
+    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
+      try:
+        nb_command = [cmd_path, 'run', '-new-builds', '-run-id', run_uuid]
 
-      if not api.cros_infra_config.is_staging:
-        nb_command.append('-prod')
+        if not api.cros_infra_config.is_staging:
+          nb_command.append('-prod')
 
-      api.step(
-          'launch NEW_BUILD tasks', nb_command,
-          stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+        api.step(
+            'launch NEW_BUILD tasks', nb_command,
+            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
+        presentation.status = api.step.WARNING
 
-    with api.context(cwd=cipd_dir, infra_steps=True):
-      te_command = [cmd_path, 'run', '-timed-events', '-run-id', run_uuid]
+    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
+      try:
+        te_command = [cmd_path, 'run', '-timed-events', '-run-id', run_uuid]
 
-      if not api.cros_infra_config.is_staging:
-        te_command.append('-prod')
+        if not api.cros_infra_config.is_staging:
+          te_command.append('-prod')
 
-      api.step(
-          'launch TIMED_EVENT tasks', te_command,
-          stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+        api.step(
+            'launch TIMED_EVENT tasks', te_command,
+            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
+        presentation.status = api.step.WARNING
+
+    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
+      try:
+        nb_3d_command = [cmd_path, 'run', '-new-builds-3d', '-run-id', run_uuid]
+
+        if not api.cros_infra_config.is_staging:
+          nb_3d_command.append('-prod')
+
+        api.step(
+            'launch NEW_BUILD_3D tasks', nb_3d_command,
+            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
+        presentation.status = api.step.WARNING
+
 
 
 def GenTests(api):

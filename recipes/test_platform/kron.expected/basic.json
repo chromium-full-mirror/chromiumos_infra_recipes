@@ -76,6 +76,23 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-new-builds-3d",
+      "-run-id",
+      "test123",
+      "-prod"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch NEW_BUILD_3D tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
