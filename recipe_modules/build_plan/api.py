@@ -520,6 +520,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
           if broken_until_snapshot:
             # broken_until only works with ToT CQ (ie not LTS).
             if build.input.gitiles_commit.ref != 'refs/heads/snapshot':
+              completed_builds.append(build)
               continue
             build_snapshot = build.input.gitiles_commit.id
             is_build_broken = self.m.cros_history.is_build_broken(

@@ -40,9 +40,9 @@
     "name": "get completed builds.get change build history.buildbucket.search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"STARTED\"}@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"amd64-generic-cq\"}, \"id\": \"8922054662172514000\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"ref\": \"heads/refs/release-R00\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"arm-generic-cq\"}, \"id\": \"8922054662172514001\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"ref\": \"heads/refs/release-R00\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}}}, \"status\": \"STARTED\"}@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@{\"builder\": {\"builder\": \"atlas-cq\"}, \"id\": \"8922054662172514002\", \"input\": {\"gerritChanges\": [{\"change\": \"1234\"}], \"gitilesCommit\": {\"ref\": \"heads/refs/release-R00\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"atlas\"}}}}, \"startTime\": \"2019-07-07T04:54:05Z\", \"status\": \"SUCCESS\"}@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@",
       "@@@STEP_LINK@amd64-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@STEP_LINK@arm-generic-cq@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
