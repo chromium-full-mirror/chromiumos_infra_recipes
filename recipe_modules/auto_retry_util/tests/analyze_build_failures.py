@@ -201,7 +201,7 @@ def GenTests(api):
   FAILED_SNAPSHOT_OUTPUT_PROPERTIES.properties[
       'greenness'] = json_format.MessageToDict(
           greenness_pb2.AggregateGreenness(
-              aggregate_build_metric=75, aggregate_metric=75,
+              aggregate_build_metric=60, aggregate_metric=60,
               builder_greenness=[
                   greenness_pb2.AggregateGreenness.Greenness(
                       builder='builder2-snapshot',
@@ -222,6 +222,11 @@ def GenTests(api):
                       builder='builder6-snapshot',
                       metric=100,
                       build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder7-kernelnext-snapshot',
+                      metric=0,
+                      build_metric=0,
                   ),
               ]))
 
@@ -248,6 +253,11 @@ def GenTests(api):
                   ),
                   greenness_pb2.AggregateGreenness.Greenness(
                       builder='builder6-snapshot',
+                      metric=100,
+                      build_metric=100,
+                  ),
+                  greenness_pb2.AggregateGreenness.Greenness(
+                      builder='builder7-kernelnext-snapshot',
                       metric=100,
                       build_metric=100,
                   ),
@@ -314,11 +324,13 @@ def GenTests(api):
               ['builder2-cq', 'builder3-cq', 'builder7-kernelnext-cq'],
           'retryable_test_suites': [],
           'wait_for_green_stats': {
-              'failed_builders_in_snapshot': ['builder2-snapshot'],
-              'no_snapshot_data_retryable_builders': ['builder7-kernelnext-cq'],
-              'now_green_builders': ['builder2-snapshot'],
-              'retryable_builders': ['builder2-cq'],
-              'total_builders_in_snapshot': 4
+              'failed_builders_in_snapshot':
+                  ['builder2-snapshot', 'builder7-kernelnext-snapshot'],
+              'no_snapshot_data_retryable_builders': [],
+              'now_green_builders':
+                  ['builder2-snapshot', 'builder7-kernelnext-snapshot'],
+              'retryable_builders': ['builder2-cq', 'builder7-kernelnext-cq'],
+              'total_builders_in_snapshot': 5
           },
           'filter_reasons': [],
       }]),

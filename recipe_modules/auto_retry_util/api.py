@@ -486,7 +486,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
             cq_run.input.gerrit_changes, builders,
             lookback_hours=self.lookback_seconds / 3600)
-        current_greenness = self._lfg_greenness(lfg_lookback_hours)
+        requested_snapshot_builders = [_snapshot_builder(x) for x in builders]
+        current_greenness = self._lfg_greenness(requested_snapshot_builders,
+                                                lfg_lookback_hours)
         step_text_prefix = 'build used LFG, using current snapshot found by LFG'
 
       step_text_suffix = ': no snapshot found' if not current_greenness else ''
@@ -644,13 +646,25 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     broken_until_revision = config.general.broken_until
     return self.m.cros_history.is_build_broken(revision, broken_until_revision)
 
-  def _lfg_greenness(self, lookback_hours: float) -> Optional[Snapshot]:
-    """Find the current green snapshot, as defined by looks for green."""
+  def _lfg_greenness(self, builders: List[str],
+                     lookback_hours: float) -> Optional[Snapshot]:
+    """Find the current green snapshot, as defined by looks for green.
+
+    Args:
+      builders: The list of builders to consider when determining aggregate
+        greenness.
+      lookback_hours: The number of hours to lookback when finding a green
+        snapshot.
+
+    Returns:
+      A green snapshot, if found.
+    """
     return self.m.looks_for_green.find_green_snapshot(
         # The staging auto retrier will still look at prod CQ runs, so it must
         # lookup greenness on the prod snapshot-orchestrator.
         bucket='postsubmit',
         builder='snapshot-orchestrator',
+        requested_snapshot_builders=builders,
         lookback_hours=lookback_hours,
     )
 
