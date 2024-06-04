@@ -26,7 +26,7 @@ def RunSteps(api):
 def GenTests(api):
 
   yield api.orch_menu.test(
-      'prod-basic',
+      'basic',
       api.post_check(post_process.MustRun,
                      'set up orchestrator.configure builder'),
       api.post_check(post_process.MustRun,
@@ -37,35 +37,10 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
-      'staging-basic',
-      api.post_check(post_process.MustRun,
-                     'set up orchestrator.configure builder'),
-      api.post_check(post_process.MustRun,
-                     'set up orchestrator.sync manifest branches'),
-      api.post_check(post_process.MustRun, 'cherry-pick gerrit changes'),
-      cq=True,
-      builder='staging-cq-orchestrator',
-  )
-
-  yield api.orch_menu.test(
       'fails-if-changes-not-submittable',
       api.gerrit.simulated_changes_are_submittable(submittable=False),
       api.post_process(post_process.DropExpectation),
       cq=True,
       with_history=True,
-      status='FAILURE',
-  )
-
-  yield api.orch_menu.test(
-      'fails-if-changes-not-submittable-staging-exp',
-      api.post_process(post_process.DropExpectation),
-      api.step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets.git cherry-pick',
-          retcode=1),
-      api.step_data(
-          'cherry-pick gerrit changes.apply gerrit patch sets.git merge',
-          retcode=1),
-      cq=True,
-      builder='staging-cq-orchestrator',
       status='FAILURE',
   )

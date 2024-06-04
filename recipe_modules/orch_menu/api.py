@@ -224,14 +224,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             is_staging=self.m.cros_infra_config.is_staging,
             checkout_internal=True)
 
-      # Limit to staging-cq-orchestrator for now.
-      if self.m.buildbucket.build.builder.builder == 'staging-cq-orchestrator':
-        with self.m.context(cwd=self.m.cros_source.workspace_path):
-          self.m.cros_source.sync_checkout(self.gitiles_commit)
-          # This step will throw a StepFailure if changes cannot be applied
-          # to chosen snapshot.
-          self.m.workspace_util.apply_changes()
-      elif not self.m.gerrit.changes_submittable(self.gerrit_changes):
+      if not self.m.gerrit.changes_submittable(self.gerrit_changes):
         raise recipe_api.StepFailure(
             'Merge conflict detected! Please rebase and retry.')
 
