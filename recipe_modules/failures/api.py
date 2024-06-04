@@ -150,7 +150,7 @@ class FailuresApi(RecipeApi):
       return self.m.step.EXCEPTION
     return self.m.step.FAILURE
 
-  def _present_run(self, title, link_map, status, critical=True):
+  def present_run(self, title, link_map, status, critical=True):
     with self.m.step.nest(title) as presentation:
       if status != bb_common_pb2.SUCCESS and not critical:
         presentation.step_text = 'failed but is not critical'
@@ -214,7 +214,7 @@ class FailuresApi(RecipeApi):
         failure_reason = self._get_build_failure_reason(
             failed_run) if kind == 'build' else None
 
-        self._present_run(title, link_map, status, critical)
+        self.present_run(title, link_map, status, critical)
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:
@@ -237,7 +237,7 @@ class FailuresApi(RecipeApi):
         if critical:
           results.successes[kind] += 1
 
-        self._present_run(title, link_map, status)
+        self.present_run(title, link_map, status)
 
       if results.failures or non_critical_build_results.failures:
         s = 's' if len(failed_runs) > 1 else ''

@@ -33,12 +33,47 @@ class TestFailuresApi(RecipeApi):
       successes.
     """
     get_id = self.m.naming.get_skylab_result_title
-    return self.m.failures.get_results(self.HW_TEST, hw_tests,
-                                       self.get_hwtest_status,
-                                       self.is_hw_test_critical,
-                                       self.m.naming.get_skylab_result_title,
-                                       self.m.urls.get_skylab_result_link_map,
-                                       get_id)
+    with self.m.step.nest('test results') as results_pres:
+      results = self.m.failures.Results(failures=[], successes={})
+
+      failed_runs = sorted([
+          run for run in hw_tests
+          if self.get_hwtest_status(run) != bb_common_pb2.SUCCESS
+      ], key=get_id)
+      only_infra_failure = True
+      success_runs = sorted([run for run in hw_tests if run not in failed_runs],
+                            key=get_id)
+      results.successes = {self.HW_TEST: 0}
+
+      for run in failed_runs + success_runs:
+        title = get_id(run)
+        link_map = self.m.urls.get_skylab_result_link_map(run)
+        status = self.get_hwtest_status(run)
+        critical = self.is_hw_test_critical(run)
+
+        self.m.failures.present_run(title, link_map, status, critical)
+        only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
+
+        if critical:
+          if status == bb_common_pb2.FAILURE:
+            results.failures.append(
+                Failure(kind=self.HW_TEST, title=title, link_map=link_map,
+                        fatal=True, id=title, type=status, failure_reason=None))
+          else:
+            results.successes[self.HW_TEST] += 1
+
+      if results.failures:
+        s = 's' if len(failed_runs) > 1 else ''
+        step_text = '{} {}{} failed, {} succeeded'.format(
+            len(failed_runs), self.HW_TEST, s, len(success_runs))
+        status = self.m.step.EXCEPTION if only_infra_failure else self.m.step.FAILURE
+      else:
+        step_text = 'all critical {}s succeeded'.format(self.HW_TEST)
+        status = self.m.step.SUCCESS
+
+      results_pres.status = status
+      results_pres.step_text = step_text
+      return results
 
   def get_additional_hw_test_not_run_failures(self, not_runnable_addtnl_tests):
 

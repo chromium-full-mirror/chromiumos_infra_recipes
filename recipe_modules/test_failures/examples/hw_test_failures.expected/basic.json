@@ -1,14 +1,14 @@
 [
   {
     "cmd": [],
-    "name": "hw test results",
+    "name": "test results",
     "~followup_annotations": [
       "@@@STEP_TEXT@all critical hw tests succeeded@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "hw test results.target.hw.bvt-cq",
+    "name": "test results.target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite page@https://google.com@@@"
@@ -16,14 +16,14 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (2)",
+    "name": "test results (2)",
     "~followup_annotations": [
       "@@@STEP_TEXT@all critical hw tests succeeded@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "hw test results (2).target.hw.bvt-cq",
+    "name": "test results (2).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@failed but is not critical@@@",
@@ -32,7 +32,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (3)",
+    "name": "test results (3)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 hw test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
@@ -40,7 +40,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (3).target.hw.bvt-cq",
+    "name": "test results (3).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite page@https://google.com@@@",
@@ -49,7 +49,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (4)",
+    "name": "test results (4)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 hw test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
@@ -57,7 +57,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (4).target.hw.bvt-cq",
+    "name": "test results (4).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite page@https://google.com@@@",
@@ -66,7 +66,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (5)",
+    "name": "test results (5)",
     "~followup_annotations": [
       "@@@STEP_TEXT@1 hw test failed, 0 succeeded@@@",
       "@@@STEP_FAILURE@@@"
@@ -74,7 +74,7 @@
   },
   {
     "cmd": [],
-    "name": "hw test results (5).target.hw.bvt-cq",
+    "name": "test results (5).target.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LINK@suite page@https://google.com@@@",

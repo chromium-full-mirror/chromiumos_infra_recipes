@@ -10849,7 +10849,7 @@
   },
   {
     "cmd": [],
-    "name": "check test results.hw test results",
+    "name": "check test results.test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_TEXT@all critical hw tests succeeded@@@"
@@ -10857,7 +10857,7 @@
   },
   {
     "cmd": [],
-    "name": "check test results.hw test results.htarget.hw.bvt-cq",
+    "name": "check test results.test results.htarget.hw.bvt-cq",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
@@ -10865,7 +10865,7 @@
   },
   {
     "cmd": [],
-    "name": "check test results.hw test results.htarget.hw.bvt-inline",
+    "name": "check test results.test results.htarget.hw.bvt-inline",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
@@ -10873,7 +10873,7 @@
   },
   {
     "cmd": [],
-    "name": "check test results.hw test results.htarget.hw.some-other-suite",
+    "name": "check test results.test results.htarget.hw.some-other-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
@@ -10881,7 +10881,7 @@
   },
   {
     "cmd": [],
-    "name": "check test results.hw test results.htarget.hw.some-suite",
+    "name": "check test results.test results.htarget.hw.some-suite",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@suite page@https://cr-buildbucket.appspot.com/build/4321@@@"
