@@ -416,20 +416,6 @@ class ExonerateApi(recipe_api.RecipeApi):
 
     return False
 
-  def populate_exoneration_markdown(self):
-    """Populate markdown style info about suites that were exonerated."""
-    exonerated_count = len(self._exoneration_link_map)
-    if exonerated_count == 0:
-      return
-    md_string = '{} {} exonerated\n- '.format(
-        exonerated_count, 'suite' + ('s' if exonerated_count > 1 else ''))
-    all_links = [
-        '[{}]({})'.format(text, link)
-        for text, link in self._exoneration_link_map.items()
-    ]
-    md_string += ', '.join(all_links)
-    self.m.failures.set_exoneration_markdown(md_string)
-
   def get_test_variant_dict(self, test_id: str, board: str, build_target: str,
                             model: str) -> dict:
     """Create test_variant dict for LUCI Analysis from inputs.

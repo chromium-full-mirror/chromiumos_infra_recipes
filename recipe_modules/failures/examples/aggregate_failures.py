@@ -158,7 +158,6 @@ def RunSteps(api):
   api.assertions.assertIn(
       '2 hw tests failed\n\n- test-a\n\n    - [subtest-1](testlink.com)\n\n...',
       final_result.summary_markdown)
-  api.failures.set_exoneration_markdown(markdown_txt='some suites exonerated')
 
   results = api.failures.Results(failures=[], successes={})
   infra_failure1 = Failure(kind='build', title='build-a',

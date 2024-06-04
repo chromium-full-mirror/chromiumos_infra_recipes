@@ -90,7 +90,6 @@ class FailuresApi(RecipeApi):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
     self._failure_truncate_max = 10
-    self._exoneration_markdown = None
     self._caught_exceptions = {}
     self._test_variant_to_fault_attribute = collections.defaultdict(
         lambda: None)
@@ -254,14 +253,6 @@ class FailuresApi(RecipeApi):
       results_pres.step_text = step_text
       return results
 
-  def set_exoneration_markdown(self, markdown_txt: str):
-    """Store string containing exoneration info for summary.
-
-    Args:
-      markdown_txt: String containing summary of exonerations.
-    """
-    self._exoneration_markdown = markdown_txt
-
   def set_test_variant_to_fault_attribute(self,
       test_variant_to_fault_attribute: Dict[Tuple[str, str, str],
       FaultAttributedBuildTarget]):
@@ -321,13 +312,11 @@ class FailuresApi(RecipeApi):
       else:
         status = bb_common_pb2.FAILURE
 
-    exoneration_summary = self._exoneration_markdown
-
     failures_by_kind = collections.defaultdict(list)
     for failure in fatal_failures:
       failures_by_kind[failure.kind].append(failure)
 
-    summary_lines = [exoneration_summary] if exoneration_summary else []
+    summary_lines = []
     for kind in sorted(failures_by_kind):
       failure_group = sorted(failures_by_kind[kind],
                              key=operator.attrgetter('title'))

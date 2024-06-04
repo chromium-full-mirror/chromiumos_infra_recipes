@@ -13,7 +13,6 @@ DEPS = [
     'cros_history',
     'cros_infra_config',
     'easy',
-    'failures',
     'exoneration_util',
     'naming',
     'rdb_util',

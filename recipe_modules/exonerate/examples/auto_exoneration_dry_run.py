@@ -22,7 +22,6 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.exonerate.populate_exoneration_markdown()
   api.exonerate.auto_exoneration_analysis()
   pass_state = TaskState(verdict=TaskState.VERDICT_PASSED)
   fail_state = TaskState(verdict=TaskState.VERDICT_FAILED)

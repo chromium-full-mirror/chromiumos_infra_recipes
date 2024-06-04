@@ -97,8 +97,6 @@ def RunSteps(api):
 
   updated_test_results, exonerated_test_names = api.exonerate.exonerate_hwtests(
       hw_test_failures)
-  # Testing the markdown output.
-  api.exonerate.populate_exoneration_markdown()
   api.assertions.assertFalse(
       common_pb2.FAILURE in [f.status for f in updated_test_results])
   api.assertions.assertEqual(exonerated_test_names,
