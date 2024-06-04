@@ -220,9 +220,16 @@ class OrchMenuApi(recipe_api.RecipeApi):
         presentation.links['manifest snapshot revision'] = (
             self.m.gitiles.file_url(self.gitiles_commit, 'snapshot.xml'))
 
-        self._external_gitiles_commit = self.m.cros_source.checkout_manifests(
-            is_staging=self.m.cros_infra_config.is_staging,
-            checkout_internal=True)
+        if 'chromeos.cq_orchestrator.full_sync' in self.m.cros_infra_config.experiments:
+          with self.m.workspace_util.sync_to_commit(
+              staging=self.m.cros_infra_config.is_staging):
+            self._external_gitiles_commit = self.m.src_state.external_manifest.as_gitiles_commit_proto
+            self._external_gitiles_commit.id = self.m.cros_source.get_external_snapshot_commit(
+                self.m.src_state.internal_manifest.path, self.gitiles_commit.id)
+        else:
+          self._external_gitiles_commit = self.m.cros_source.checkout_manifests(
+              is_staging=self.m.cros_infra_config.is_staging,
+              checkout_internal=True)
 
       if not self.m.gerrit.changes_submittable(self.gerrit_changes):
         raise recipe_api.StepFailure(

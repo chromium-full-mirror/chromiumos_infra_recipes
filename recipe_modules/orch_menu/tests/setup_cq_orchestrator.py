@@ -37,6 +37,20 @@ def GenTests(api):
   )
 
   yield api.orch_menu.test(
+      'full-sync-experiment',
+      api.buildbucket.try_build(
+          builder='staging-cq-orchestrator',
+          experiments=['chromeos.cq_orchestrator.full_sync']),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.configure builder'),
+      api.post_check(post_process.MustRun,
+                     'set up orchestrator.sync cached directory'),
+      api.post_check(post_process.MustRun, 'check for merge conflicts'),
+      cq=True,
+      builder='staging-cq-orchestrator',
+  )
+
+  yield api.orch_menu.test(
       'fails-if-changes-not-submittable',
       api.gerrit.simulated_changes_are_submittable(submittable=False),
       api.post_process(post_process.DropExpectation),
