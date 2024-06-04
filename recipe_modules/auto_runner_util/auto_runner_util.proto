@@ -12,7 +12,12 @@ message AutoRunnerUtilProperties {
   // A list of host and project pairs to query
   repeated HostProjects host_projects = 2;
   // The signal to use for determining eligible CLs.
-  CLSignalEnum cls_signal = 4;
+  CLSignalEnum cls_signal = 3;
+  // Daily Quota for Auto Runner Util.
+  int64 daily_quota = 4;
+  // Daily Quota per cl. i.e Max number of times Auto Runner can CQ+1 a CL per
+  // day.
+  int64 daily_quota_per_cl = 5;
 }
 
 message HostProjects {

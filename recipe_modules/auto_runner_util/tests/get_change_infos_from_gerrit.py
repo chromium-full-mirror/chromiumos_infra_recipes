@@ -30,7 +30,8 @@ TEST_HOST_PROJECTS_PREFIXES = [
 def RunSteps(api):
   api.auto_runner_util.get_change_infos_from_gerrit(TEST_HOST_PROJECTS_PREFIXES,
                                                     query_params=QUERY_PARAMS,
-                                                    o_params=O_PARAMS)
+                                                    o_params=O_PARAMS,
+                                                    query_limit=None)
 
 
 def GenTests(api):

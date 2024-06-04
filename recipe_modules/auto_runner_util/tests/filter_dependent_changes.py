@@ -6,6 +6,7 @@
 """Tests for the filtering cq-depent changes."""
 
 from recipe_engine.post_process import DropExpectation
+from RECIPE_MODULES.chromeos.auto_runner_util.api import EnhancedChangeInfo
 
 DEPS = [
     'recipe_engine/assertions',
@@ -13,22 +14,15 @@ DEPS = [
     'auto_runner_util',
 ]
 
-
-def is_equal(actual_change_infos, expected_cl_numbers):
-  actual_set = set((ac['_number']) for ac in actual_change_infos)
-  expected_set = set(expected_cl_numbers)
-  return actual_set == expected_set
-
-
 def RunSteps(api):
   change_infos = api.properties['change_infos']
-  # pylint: disable=protected-access
-  actual = api.auto_runner_util.filter_cls(
-      change_infos, 'No Reviewers', api.auto_runner_util._has_no_cq_depends)
-  # pylint: enable=protected-access
-  expected = api.properties['filtered_hosts']
-  for host in expected:
-    api.assertions.assertTrue(is_equal(actual[host], expected[host]))
+  enhancedcis = []
+  for host, cis in change_infos.items():
+    enhancedcis.extend(
+        [EnhancedChangeInfo(c, host, api.auto_runner_util.m) for c in cis])
+  actual = {c for c in enhancedcis if not c.has_cq_depends()}
+  expected = api.properties['filtered_changes']
+  api.assertions.assertTrue(actual == expected)
 
 
 def GenTests(api):
@@ -40,6 +34,7 @@ def GenTests(api):
                   {
                       '_number': 1234,
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'project': 'myproject',
                       'revisions': {
                           '1': {
@@ -57,6 +52,7 @@ def GenTests(api):
                       '_number': 456,
                       'project': 'myproject',
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'revisions': {
                           '1': {
                               '_number':
@@ -70,6 +66,7 @@ def GenTests(api):
                       '_number': 789,
                       'project': 'myproject',
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'revisions': {
                           '1': {
                               '_number': 1,
@@ -81,6 +78,7 @@ def GenTests(api):
                   {
                       '_number': 12340,
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'project': 'myproject',
                       'revisions': {
                           '1': {
@@ -95,6 +93,7 @@ def GenTests(api):
                       '_number': 4560,
                       'project': 'myproject',
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'revisions': {
                           '1': {
                               '_number':
@@ -110,6 +109,7 @@ def GenTests(api):
                       '_number': 7890,
                       'project': 'myproject',
                       'current_revision_number': 1,
+                      'current_revision': '1',
                       'revisions': {
                           '1': {
                               '_number': 1,
@@ -122,7 +122,25 @@ def GenTests(api):
                       'current_revision_number': 1,
                   },
               ],
-          }, filtered_hosts={
-              'chromium-review.googlesource.com': [456, 789],
-              'chromium-internal-review.googlesource.com': [12340, 7890, 78390],
+          }, filtered_changes={
+              EnhancedChangeInfo({
+                  '_number': 456,
+                  'project': 'myproject'
+              }, 'chromium-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 789,
+                  'project': 'myproject'
+              }, 'chromium-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 12340,
+                  'project': 'myproject'
+              }, 'chromium-internal-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 7890,
+                  'project': 'myproject'
+              }, 'chromium-internal-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 78390,
+                  'project': 'myproject'
+              }, 'chromium-internal-review.googlesource.com', None),
           }), api.post_process(DropExpectation))

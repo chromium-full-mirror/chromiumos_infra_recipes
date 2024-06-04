@@ -1,0 +1,466 @@
+[
+     {
+          "id": "example that will show up in relation chain",
+          "project": "mychromiumos",
+          "branch": "main",
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 2",
+          "status": "NEW",
+          "created": "2024-06-01 00:28:57.000000000",
+          "updated": "2024-06-01 02:02:21.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "has_review_started": true,
+          "_number": 5590294,
+          "reviewer_updates": [],
+          "messages": [],
+          "current_revision_number": 2,
+          "current_revision": "c1c7e176957311b311a6e6771e69e804b8351d59",
+          "revisions": {
+               "c1c7e176957311b311a6e6771e69e804b8351d59": {
+                    "kind": "REWORK",
+                    "_number": 2,
+                    "created": "2024-06-01 00:30:38.000000000",
+                    "branch": "refs/heads/main",
+                    "commit_with_footers": "crash: \n"
+               }
+          }
+     },
+     {
+          "id": "change that has cq-depends",
+          "project": "mychromiumos",
+          "branch": "main",
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 3",
+          "status": "NEW",
+          "created": "2024-06-01 00:17:43.000000000",
+          "updated": "2024-06-01 00:20:34.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "has_review_started": true,
+          "_number": 5590423,
+          "virtual_id_number": 5590423,
+          "reviewer_updates": [],
+          "messages": [],
+          "current_revision_number": 1,
+          "current_revision": "b7b9e6df130e2f27d727b3e112e6725dc3289a08",
+          "revisions": {
+               "b7b9e6df130e2f27d727b3e112e6725dc3289a08": {
+                    "kind": "REWORK",
+                    "_number": 1,
+                    "created": "2024-06-01 00:17:43.000000000",
+                    "ref": "refs/changes/23/5590423/1",
+                    "branch": "refs/heads/main",
+                    "commit_with_footers": "crash.\n\nBUG=None\nTEST=None\n\nCq-Depend: 5590140\nChange-Id: 9de5i333024a8a9afeccaff29a27bce8b5890a1c\n"
+               }
+          }
+     },
+     {
+          "id": "Example that do not have any reviewers",
+          "project": "mychromiumos",
+          "branch": "main",
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 4",
+          "status": "NEW",
+          "created": "2024-05-31 23:35:03.000000000",
+          "updated": "2024-05-31 23:35:03.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "insertions": 36,
+          "deletions": 1,
+          "total_comment_count": 0,
+          "unresolved_comment_count": 0,
+          "has_review_started": true,
+          "meta_rev_id": "6c0da79223df415a921d14843e16cc5b3b2f92aa",
+          "_number": 5590242,
+          "virtual_id_number": 5590242,
+          "reviewer_updates": [
+               {
+                    "updated": "2024-05-31 20:41:33.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "CC"
+               }
+          ],
+          "messages": [],
+          "current_revision_number": 1,
+          "current_revision": "8eb6cdf2adc83f196a9c793a80a58272bb24cd1d",
+          "revisions": {}
+     },
+     {
+          "id": "Example with current patchset has already had a cq run",
+          "project": "mychromiumos",
+          "branch": "main",
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 5",
+          "status": "NEW",
+          "created": "2024-05-31 20:39:51.000000000",
+          "updated": "2024-05-31 23:31:02.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "insertions": 19,
+          "deletions": 8,
+          "total_comment_count": 2,
+          "unresolved_comment_count": 0,
+          "has_review_started": true,
+          "meta_rev_id": "27e1160ac84031467f4e3f0bf009707a50d51ccf",
+          "_number": 5588289,
+          "virtual_id_number": 5588289,
+          "reviewer_updates": [
+               {
+                    "updated": "2024-05-31 20:41:33.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "REVIEWER"
+               },
+               {
+                    "updated": "2024-05-31 20:46:36.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "CC"
+               }
+          ],
+          "messages": [
+               {
+                    "id": "8cd377e44c6c904386ebb8c24ca796c09bd54d7e",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 20:41:33.000000000",
+                    "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
+                    "accounts_in_message": [],
+                    "_revision_number": 1
+               }
+          ],
+          "current_revision_number": 1,
+          "current_revision": "38356f9069dfd77d6771dfb3f0de6d9ac1da2492",
+          "revisions": {
+               "38356f9069dfd77d6771dfb3f0de6d9ac1da2492": {
+                    "kind": "REWORK",
+                    "_number": 1,
+                    "created": "2024-05-31 20:39:51.000000000",
+                    "uploader": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "ref": "refs/changes/89/5588289/1",
+                    "branch": "refs/heads/main",
+                    "commit_with_footers": "somefooter again\n"
+               }
+          }
+     },
+     {
+          "id": "Example Cl 1 that will be eligible for CL",
+          "project": "mychromiumos",
+          "branch": "main",
+          "removed_from_attention_set": {},
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 1",
+          "status": "NEW",
+          "created": "2024-05-31 23:29:02.000000000",
+          "updated": "2024-05-31 23:30:55.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "current_revision_number": 2,
+          "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+          "_number": 5590139,
+          "reviewer_updates": [
+               {
+                    "updated": "2024-05-31 23:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "CC"
+               },
+               {
+                    "updated": "2024-05-31 23:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "REVIEWER"
+               }
+          ],
+          "messages": [
+               {
+                    "id": "8cd377e44c6c904386ebb8c24ca796c09bd54d7e",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                    },
+                    "date": "2024-05-31 20:41:33.000000000",
+                    "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
+                    "accounts_in_message": [],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "8cd377e44c6c904386ebb8c24ca796c09bd54d7e",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                    },
+                    "date": "2024-05-31 21:41:33.000000000",
+                    "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
+                    "accounts_in_message": [],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "736d5ef8394eecbc1a4d7cdd3758927093f84315",
+                    "tag": "autogenerated:gerrit:code-owners:addReviewer",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:04.000000000",
+                    "message": "<GERRIT_ACCOUNT_123456>, who was added as reviewer owns the following files:\n* `src/go.myid_sieium.org/tast-tests/cros/local/cellular/cellular_helper.go`\n",
+                    "accounts_in_message": [
+                         {
+                              "_account_id": 123455,
+                              "name": "Jon Doe",
+                              "email": "test@test.com"
+                         }
+                    ],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+                    "tag": "autogenerated:gerrit:newPatchSet",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:55.000000000",
+                    "message": "Uploaded patch set 2: Commit message was updated.\n\nCopied Votes:\n* Verified+1 (copy condition: \"**changekind:NO_CODE_CHANGE**\")\n",
+                    "accounts_in_message": [],
+                    "_revision_number": 2
+               }
+          ]
+     },
+     {
+          "id": "Example Cl 2 that will be eligible for CL",
+          "project": "mychromiumos",
+          "branch": "main",
+          "removed_from_attention_set": {},
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 1",
+          "status": "NEW",
+          "created": "2024-05-31 13:29:02.000000000",
+          "updated": "2024-05-31 13:30:55.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "current_revision_number": 2,
+          "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+          "_number": 5590140,
+          "reviewer_updates": [
+               {
+                    "updated": "2024-05-31 13:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "CC"
+               },
+               {
+                    "updated": "2024-05-31 13:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "REVIEWER"
+               }
+          ],
+          "messages": [
+               {
+                    "id": "8cd377e44c6c904386ebb8c24ca796c09bd54d7e",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                    },
+                    "date": "2024-05-31 20:41:33.000000000",
+                    "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
+                    "accounts_in_message": [],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "736d5ef8394eecbc1a4d7cdd3758927093f84315",
+                    "tag": "autogenerated:gerrit:code-owners:addReviewer",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:04.000000000",
+                    "message": "<GERRIT_ACCOUNT_123456>, who was added as reviewer owns the following files:\n* `src/go.myid_sieium.org/tast-tests/cros/local/cellular/cellular_helper.go`\n",
+                    "accounts_in_message": [
+                         {
+                              "_account_id": 123455,
+                              "name": "Jon Doe",
+                              "email": "test@test.com"
+                         }
+                    ],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+                    "tag": "autogenerated:gerrit:newPatchSet",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:55.000000000",
+                    "message": "Uploaded patch set 2: Commit message was updated.\n\nCopied Votes:\n* Verified+1 (copy condition: \"**changekind:NO_CODE_CHANGE**\")\n",
+                    "accounts_in_message": [],
+                    "_revision_number": 2
+               }
+          ]
+     },
+     {
+          "id": "Example Cl 3 that will be eligible for CL",
+          "project": "mychromiumos",
+          "branch": "main",
+          "removed_from_attention_set": {},
+          "hashtags": [],
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 1",
+          "status": "NEW",
+          "created": "2024-05-31 14:29:02.000000000",
+          "updated": "2024-05-31 14:30:55.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "current_revision_number": 2,
+          "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+          "_number": 5590141,
+          "reviewer_updates": [
+               {
+                    "updated": "2024-05-31 13:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "CC"
+               },
+               {
+                    "updated": "2024-05-31 13:30:04.000000000",
+                    "updated_by": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "reviewer": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "state": "REVIEWER"
+               }
+          ],
+          "messages": [
+               {
+                    "id": "8cd377e44c6c904386ebb8c24ca796c09bd54d7e",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                    },
+                    "date": "2024-05-31 20:41:33.000000000",
+                    "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
+                    "accounts_in_message": [],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "736d5ef8394eecbc1a4d7cdd3758927093f84315",
+                    "tag": "autogenerated:gerrit:code-owners:addReviewer",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:04.000000000",
+                    "message": "<GERRIT_ACCOUNT_123456>, who was added as reviewer owns the following files:\n* `src/go.myid_sieium.org/tast-tests/cros/local/cellular/cellular_helper.go`\n",
+                    "accounts_in_message": [
+                         {
+                              "_account_id": 123455,
+                              "name": "Jon Doe",
+                              "email": "test@test.com"
+                         }
+                    ],
+                    "_revision_number": 1
+               },
+               {
+                    "id": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
+                    "tag": "autogenerated:gerrit:newPatchSet",
+                    "author": {
+                         "_account_id": 123455,
+                         "name": "Jon Doe",
+                         "email": "test@test.com"
+                    },
+                    "date": "2024-05-31 23:30:55.000000000",
+                    "message": "Uploaded patch set 2: Commit message was updated.\n\nCopied Votes:\n* Verified+1 (copy condition: \"**changekind:NO_CODE_CHANGE**\")\n",
+                    "accounts_in_message": [],
+                    "_revision_number": 2
+               }
+          ]
+     }
+]

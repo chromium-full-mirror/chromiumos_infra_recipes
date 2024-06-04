@@ -5,9 +5,6 @@
 
 from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import AutoRunnerUtilProperties
 
-DEPS = [
-    'recipe_engine/step',
-    'gerrit',
-]
+DEPS = ['recipe_engine/step', 'gerrit', 'recipe_engine/time']
 
 PROPERTIES = AutoRunnerUtilProperties
