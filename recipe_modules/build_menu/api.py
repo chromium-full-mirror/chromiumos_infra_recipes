@@ -1079,6 +1079,53 @@ class BuildMenuApi(recipe_api.RecipeApi):
       presentation.logs[
           'gs upload path'] = 'gs://chromeos-image-archive/' + gs_path
 
+  def _generate_build_test_service_container_request(
+      self, version, build_id,
+      builder_config) -> BuildTestServiceContainersRequest:
+    """Generates buildTestServiceContainersRequest required for creating containers
+
+    This function creates buildTestServiceContainersRequest required for creating
+    containers.
+
+    Args:
+      version (str): version
+      build_id (int): buildbucket id of the builder
+      builder_config : builder_config for the current build
+
+    Returns:
+      build_test_service_containers_request (BuildTestServiceContainersRequest): BuildTestServiceContainersRequest
+    """
+    # define tags
+    tags = [version]
+    if build_id:
+      tags.append(str(build_id))
+    # If the manifest is PUBLIC add that info to tag. This is used in CTP avoid grouping fro CTPv2
+    # NOTE: manifest as PUBLIC includes builders running on private and public bots pool. If builder in run on
+    # public bot then we push the docker images to different repo. We make that check below.
+    if builder_config.general.manifest == BuilderConfig.General.PUBLIC:
+      tags.append('PUBLIC-' + str(build_id))
+    else:
+      tags.append('PRIVATE-' + str(build_id))
+    # create buildTestServiceContainersRequest
+    build_test_service_containers_request = BuildTestServiceContainersRequest(
+        build_target=self.build_target,
+        chroot=self.m.cros_sdk.chroot,
+        version=version,
+        tags=tags,
+        labels={
+            'build-url':
+                'https://ci.chromium.org/b/{}'.format(build_id)
+                if build_id else 'led'
+        },
+    )
+    # if builder is run on public bots then add the public repository info.
+    # By default it uses private repository info
+    public = builder_config.id.type == BuilderConfig.Id.PUBLIC
+    if public:
+      build_test_service_containers_request.repository.hostname = 'us-docker.pkg.dev'
+      build_test_service_containers_request.repository.project = 'test-services-publicbuilds'
+    return build_test_service_containers_request
+
   def create_containers(self, builder_config=None):
     """Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1130,21 +1177,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
             presentation.step_summary_text = "version: '{}'".format(version)
 
             response = BuildTestServiceContainers(
-                BuildTestServiceContainersRequest(
-                    build_target=self.build_target,
-                    chroot=self.m.cros_sdk.chroot,
-                    version=version,
-                    tags=[version] + ([str(build_id)] if build_id else []) +
-                    (['PUBLIC-' +
-                      str(build_id)] if builder_config.general.manifest
-                     == BuilderConfig.General.PUBLIC else
-                     ['PRIVATE-' + str(build_id)]),
-                    labels={
-                        'build-url':
-                            'https://ci.chromium.org/b/{}'.format(build_id)
-                            if build_id else 'led'
-                    },
-                ), timeout=1 * 60 * 60)
+                self._generate_build_test_service_container_request(
+                    version, build_id, builder_config), timeout=1 * 60 * 60)
 
             # update status file in gcs for other builders from same parent to read container info.
             if cft_cache_build_enabled:

@@ -246,6 +246,22 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'push-cft-containers-to-publicbuilds-repository-for-builds-running-on-public-builder-bots',
+      api.properties(**api.test_util.build_menu_properties(
+          build_target_name='eve',
+          container_version_format='{staging?}{build-target}-cq.{cros-version}-{bbid}',
+      )),
+      api.post_process(
+          post_process.LogContains,
+          'create test service containers.call chromite.api.TestService/BuildTestServiceContainers',
+          'request',
+          ['"project": "test-services-publicbuilds"'],
+      ),
+      cq=True,
+      builder_name='eve-main-public',
+  )
+
+  yield api.build_menu.test(
       'staging-cq-build',
       api.properties(
           **api.test_util.build_menu_properties(
