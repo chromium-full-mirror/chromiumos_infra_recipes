@@ -396,7 +396,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
     found_green = (
         self.m.looks_for_green.stats.status ==
         LooksForGreenStatus.STATUS_RAN_OLDER)
-    if found_green and not (is_retry or forced_relevant) and gerrit_changes:
+    synced_checkout = (
+        found_green or 'chromeos.cq_orchestrator.full_sync'
+        in self.m.cros_infra_config.experiments)
+    if synced_checkout and not (is_retry or forced_relevant) and gerrit_changes:
       _ = self.get_relevant_builder_configs([
           self.m.cros_infra_config.get_builder_config(c.name)
           for c in necessary_child_specs
