@@ -87,6 +87,9 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
 
           # Satlab Envvars.
           'SERVOD_CONTAINER_LABEL',
+          'DOCKER_CERT_PATH',
+          'DOCKER_HOST',
+          'DOCKER_TLS_VERIFY',
 
           # Resource limits for docker.
           'DRONE_AGENT_BOT_BLKIO_READ_BPS',
