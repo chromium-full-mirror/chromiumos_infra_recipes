@@ -36,7 +36,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "2 out of 2 builds failed\n\n- atlas-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)\n\n- volteer-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
+      "humanReason": "1 out of 2 builds failed compilation for foo/bar\n\n- atlas-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)\n\n1 other build failures\n\n- volteer-snapshot: [build page](https://cr-buildbucket.appspot.com/build/8945511751514863184)"
     },
     "name": "$result"
   }

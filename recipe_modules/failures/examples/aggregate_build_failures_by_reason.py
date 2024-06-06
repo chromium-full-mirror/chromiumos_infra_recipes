@@ -184,10 +184,13 @@ def GenTests(api):
       api.test_util.test_child_build('volteer', status='FAILURE').message,
   ]
   yield api.test(
-      'build-failure-without-reason-does-not-bubble-up',
+      'multiple-failure-reasons-with-some-unknown-still-bubbles-up',
       api.properties(BuildProperties(builds=builds)),
       api.post_check(post_process.ResultReasonRE,
-                     '2 out of 2 builds failed\n\n'), status='FAILURE')
+                     '1 out of 2 builds failed compilation for foo/bar\n\n'),
+      api.post_check(post_process.ResultReasonRE, '1 other build failures\n\n'),
+      status='FAILURE',
+  )
 
   builds = [
       api.test_util.test_child_build(

@@ -246,50 +246,69 @@ class FailuresApi(RecipeApi):
       List of summary markdown lines.
     """
 
-    kind = self.BUILD
     # This summary markdown section will look roughly as follows:
     #
     # 2 out of 10 builds failed for a reason
     # - asurada-cq: <a>build page<\a>
     # - atlas-cq: <a>build page<\a>
+    #
+    # 2 other build failures
+    # - volteer-cq: <a>build page<\a>
+    # - zork-cq: <a>build page<\a>
     # ...
+
+    kind = self.BUILD
+
+    def _list_examples(failures):
+      ret = []
+      for failure in failures:
+        line = '- {}:'.format(failure.title)
+        for link_text, link_url in failure.link_map.items():
+          line += ' [{}]({})'.format(link_text, link_url)
+        ret.append(line)
+      return ret
+
+    # If none have failure reason, return the generic summary markdown.
+    if all(f.failure_reason is None for f in build_failures):
+      return self.aggregate_failure_group(kind, build_failures, failure_count,
+                                          total_count)
+
     reason_to_failure_map = collections.defaultdict(list)
     for f in build_failures:
       reason_to_failure_map[f.failure_reason].append(f)
 
-    lines = []
+    failure_reasons_count = len(reason_to_failure_map.keys())
     # TODO(b/327255136): Do at most 2 unique failure reasons as we play around
     # with space.
-    failure_reasons_count = len(reason_to_failure_map.keys())
-    if (None not in reason_to_failure_map and 0 < failure_reasons_count <= 2):
-      # Distribute the lines given to the "kind" across the number of reasons.
-      # keeping in mind that summarizing each reason also takes up a line.
-      failures_per_reason = max(
-          (math.floor((self._failure_truncate_max - failure_reasons_count) /
-                      failure_reasons_count)), 1)
+    if failure_reasons_count > 2:
+      return self.aggregate_failure_group(kind, build_failures, failure_count,
+                                          total_count)
 
-      for reason, failures in reason_to_failure_map.items():
-        main_line = f'{len(failures)} out of {total_count} {kind}s {reason}'
-        lines.append(main_line)
-        failures_to_print = failures[0:failures_per_reason]
-        for failure in failures_to_print:
-          line = '- {}:'.format(failure.title)
-          for link_text, link_url in failure.link_map.items():
-            line += ' [{}]({})'.format(link_text, link_url)
-          lines.append(line)
-    else:
-      main_line = '{} out of {} {} failed'.format(
-          failure_count,
-          total_count,
-          kind + 's' if total_count > 1 else kind,
-      )
-      lines = [main_line]
-      failures_to_print = build_failures[0:self._failure_truncate_max]
-      for failure in failures_to_print:
-        line = '- {}:'.format(failure.title)
-        for link_text, link_url in failure.link_map.items():
-          line += ' [{}]({})'.format(link_text, link_url)
-        lines.append(line)
+    lines = []
+    # Distribute the lines given to the "kind" across the number of reasons.
+    # keeping in mind that summarizing each reason also takes up a line.
+    failures_per_reason = max(
+        (math.floor((self._failure_truncate_max - failure_reasons_count) /
+                    failure_reasons_count)), 1)
+
+    # Display failures grouped by reason.
+    for reason, failures in reason_to_failure_map.items():
+      # Unknown failures are reported at the end.
+      if reason is None:
+        continue
+      main_line = f'{len(failures)} out of {total_count} {kind}s {reason}'
+      lines.append(main_line)
+      failures_to_print = failures[0:failures_per_reason]
+      lines.extend(_list_examples(failures_to_print))
+
+    # Mention any other build failures.
+    unknown_failure_reason_build_failures = reason_to_failure_map.get(None, [])
+    if unknown_failure_reason_build_failures:
+      main_line = f'{len(unknown_failure_reason_build_failures)} other {kind} failures'
+      lines.append(main_line)
+      failures_to_print = unknown_failure_reason_build_failures[
+          0:failures_per_reason]
+      lines.extend(_list_examples(failures_to_print))
 
     return lines
 
