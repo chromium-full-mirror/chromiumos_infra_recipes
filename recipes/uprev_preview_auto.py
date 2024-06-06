@@ -57,7 +57,7 @@ _ANDROID_MAJOR_VERSIONS = ['T']
 
 
 def RunSteps(api: RecipeApi, properties: UprevPreviewProperties) -> RawResult:
-  with api.build_menu.configure_builder():
+  with api.build_menu.configure_builder(missing_ok=True):
     return DoRunSteps(api, properties)
 
 
