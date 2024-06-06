@@ -11,13 +11,11 @@ from PB.recipe_engine.result import RawResult
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import TestData
 
-DEPS = []
+DEPS = ['auto_runner_util']
 
 
-# pylint: disable=unused-argument
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
-  pass
-
+  api.auto_runner_util.get_eligible_cls()
 
 def GenTests(api: RecipeApi) -> Generator[TestData, None, None]:
   yield api.test('basic')
