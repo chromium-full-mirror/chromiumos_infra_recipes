@@ -12,7 +12,7 @@ files in projects touched by the input CLs.
 from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
-from RECIPE_MODULES.chromeos.failures.api import Failure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
 DEPS = [
     'depot_tools/depot_tools',
@@ -23,6 +23,7 @@ DEPS = [
     'cros_test_plan_v2',
     'dirmd',
     'failures',
+    'failures_util',
     'repo',
     'urls',
     'workspace_util',
@@ -61,7 +62,7 @@ def RunSteps(api):
     # 2. To present all failures from a run, not just the first failed
     #    validation.
     validation_kinds = ['dirmd validation', 'test_plan validation']
-    results = api.failures.Results(
+    results = api.failures_util.Results(
         failures=[], successes={
             validation_kinds[0]: 0,
             validation_kinds[1]: 0

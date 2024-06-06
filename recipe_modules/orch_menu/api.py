@@ -397,8 +397,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
                 self.builds_status.completed_builds)
     }
 
-    results = self.m.failures.Results(failures=self.builds_status.failures,
-                                      successes=successes)
+    results = self.m.failures_util.Results(failures=self.builds_status.failures,
+                                           successes=successes)
 
     # Output whether any of the cq-orchestrator children (build and test) had
     # fatal failures. This is currently used by cq-auto-retrier.
@@ -440,8 +440,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
                 self.builds_status.completed_builds)
     }
 
-    results = self.m.failures.Results(failures=self.builds_status.failures,
-                                      successes=successes)
+    results = self.m.failures_util.Results(failures=self.builds_status.failures,
+                                           successes=successes)
 
     raw_result = self.m.failures.aggregate_failures(results,
                                                     ignore_build_test_failures)

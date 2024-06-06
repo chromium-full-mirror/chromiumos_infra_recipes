@@ -12,7 +12,7 @@ from PB.chromiumos import builder_config
 from PB.go.chromium.org.luci.buildbucket.proto.common import Trinary
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.failures.examples.build_failures import BuildProperties
-from RECIPE_MODULES.chromeos.failures.api import Failure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',

@@ -5,7 +5,7 @@
 
 """API for raising e2e test failures and presenting them."""
 
-from RECIPE_MODULES.chromeos.failures.api import Failure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 
@@ -34,7 +34,7 @@ class TestFailuresApi(RecipeApi):
     """
     get_id = self.m.naming.get_skylab_result_title
     with self.m.step.nest('test results') as results_pres:
-      results = self.m.failures.Results(failures=[], successes={})
+      results = self.m.failures_util.Results(failures=[], successes={})
 
       failed_runs = sorted([
           run for run in hw_tests
@@ -51,7 +51,7 @@ class TestFailuresApi(RecipeApi):
         status = self.get_hwtest_status(run)
         critical = self.is_hw_test_critical(run)
 
-        self.m.failures.present_run(title, link_map, status, critical)
+        self.m.failures_util.present_run(title, link_map, status, critical)
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:

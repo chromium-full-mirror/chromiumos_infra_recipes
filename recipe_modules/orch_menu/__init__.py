@@ -38,6 +38,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'failures_util',
     'gerrit',
     'git',
     'git_footers',

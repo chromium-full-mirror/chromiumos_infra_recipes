@@ -1,23 +1,22 @@
 # -*- coding: utf-8 -*-
-# Copyright 2023 The ChromiumOS Authors
+# Copyright 2024 The ChromiumOS Authors
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-from RECIPE_MODULES.chromeos.failures.api import Failure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
 DEPS = [
     'recipe_engine/assertions',
     'recipe_engine/step',
-    'failures',
+    'failures_util',
 ]
 
 
-
 def RunSteps(api):
-  results = api.failures.Results(failures=[], successes={})
+  results = api.failures_util.Results(failures=[], successes={})
 
   failure1 = Failure(kind='test', title='test-a',
                      link_map={'subtest-1': 'test-a.com'}, fatal=True,
@@ -32,16 +31,20 @@ def RunSteps(api):
   success2 = {'build': 10, 'test': 28}
 
   results.add_results(
-      api.failures.Results(failures=[failure1, failure2], successes=success1))
-  results.add_results(api.failures.Results(failures=None, successes=success2))
-  results.add_results(api.failures.Results(failures=[failure3], successes=None))
+      api.failures_util.Results(failures=[failure1, failure2],
+                                successes=success1))
+  results.add_results(
+      api.failures_util.Results(failures=None, successes=success2))
+  results.add_results(
+      api.failures_util.Results(failures=[failure3], successes=None))
 
   api.assertions.assertEqual(
       results,
-      api.failures.Results(failures=[failure1, failure2, failure3], successes={
-          'build': 10,
-          'test': 128
-      }))
+      api.failures_util.Results(failures=[failure1, failure2, failure3],
+                                successes={
+                                    'build': 10,
+                                    'test': 128
+                                }))
 
 
 def GenTests(api):

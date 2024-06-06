@@ -12,6 +12,7 @@ DEPS = [
     'cros_infra_config',
     'cros_tags',
     'easy',
+    'failures_util',
     'naming',
     'src_state',
     'urls',

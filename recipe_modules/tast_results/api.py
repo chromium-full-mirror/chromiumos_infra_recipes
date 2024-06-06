@@ -12,7 +12,7 @@ from typing import List
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
-from RECIPE_MODULES.chromeos.failures.api import Failure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
@@ -212,7 +212,7 @@ class TastResultsApi(recipe_api.RecipeApi):
       failed test cases excluding the ones provided.
     """
     kind = 'vm test'
-    results = self.m.failures.Results(failures=[], successes={kind: 0})
+    results = self.m.failures_util.Results(failures=[], successes={kind: 0})
     failed_test_cases = []
     build = self.m.buildbucket.build
 

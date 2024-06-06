@@ -163,8 +163,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
                 self.builds_status.completed_builds)
     }
 
-    results = self.m.failures.Results(failures=self.builds_status.failures,
-                                      successes=successes)
+    results = self.m.failures_util.Results(failures=self.builds_status.failures,
+                                           successes=successes)
 
     raw_result = self.m.failures.aggregate_failures(results)
     return raw_result

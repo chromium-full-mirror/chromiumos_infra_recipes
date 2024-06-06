@@ -18,12 +18,13 @@ DEPS = [
     'recipe_engine/cv',
     'recipe_engine/step',
     'failures',
+    'failures_util',
 ]
 
 
 
 def RunSteps(api):
-  results = api.failures.Results(failures=[], successes={})
+  results = api.failures_util.Results(failures=[], successes={})
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.SUCCESS)
   api.assertions.assertEqual(final_result.summary_markdown, '')
@@ -159,7 +160,7 @@ def RunSteps(api):
       '2 hw tests failed\n\n- test-a\n\n    - [subtest-1](testlink.com)\n\n...',
       final_result.summary_markdown)
 
-  results = api.failures.Results(failures=[], successes={})
+  results = api.failures_util.Results(failures=[], successes={})
   infra_failure1 = Failure(kind='build', title='build-a',
                            link_map={'build page': 'build-a.com'}, fatal=True,
                            id='id-0', type=common_pb2.INFRA_FAILURE)

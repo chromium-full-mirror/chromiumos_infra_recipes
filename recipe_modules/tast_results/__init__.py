@@ -20,7 +20,7 @@ DEPS = [
     'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
-    'failures',
+    'failures_util',
 ]
 
 

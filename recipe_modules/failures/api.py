@@ -14,8 +14,6 @@ import operator
 import re
 
 from typing import Dict, List, Optional, Tuple
-from dataclasses import dataclass, field
-
 from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
@@ -25,62 +23,14 @@ from PB.recipe_engine import result as result_pb2
 from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   import CqFailureAttribute, FaultAttributedBuildTarget
 from PB.recipe_modules.chromeos.failures.failures import PackageFailure
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 
 
-@dataclass
-class Failure:
-  """A failure in recipe execution.
-
-  Fields:
-    kind: Describes the kind of failure, e.g. 'build'
-    title: Full title of the failure.
-    link_map: title to URL map for the failed task.
-    fatal: Whether or not the failure is fatal. Fatal failures cause
-        recipes to fail when the failure is aggregated.
-    id: a unique, reproducible name for this failure. For build-type
-        failures, this is the builder name. For test-type failures this is the
-        display_name.
-    type: Type of the failure.
-    failure_reason: The reason for the failure.
-  """
-  kind: str
-  title: str
-  link_map: Dict[str, str]
-  fatal: bool
-  id: str
-  type: bb_common_pb2.Status = bb_common_pb2.FAILURE
-  failure_reason: Optional[str] = None
-
 class FailuresApi(RecipeApi):
   """A module for presenting errors and raising StepFailures."""
-
-  @dataclass
-  class Failure:
-    """A failure in recipe execution.
-
-    Fields:
-      kind: Describes the kind of failure, e.g. 'build'
-      title: Full title of the failure.
-      link_map: title to URL map for the failed task.
-      fatal: Whether or not the failure is fatal. Fatal failures cause
-          recipes to fail when the failure is aggregated.
-      id: a unique, reproducible name for this failure. For build-type
-          failures, this is the builder name. For test-type failures this is the
-          display_name.
-      type: Type of the failure.
-      failure_reason: The reason for the failure.
-    """
-    kind: str
-    title: str
-    link_map: Dict[str, str]
-    fatal: bool
-    id: str
-    type: bb_common_pb2.Status = bb_common_pb2.FAILURE
-    failure_reason: Optional[str] = None
-
   # Kind for build failures.
   BUILD = 'build'
 
@@ -93,73 +43,6 @@ class FailuresApi(RecipeApi):
     self._caught_exceptions = {}
     self._test_variant_to_fault_attribute = collections.defaultdict(
         lambda: None)
-
-  @dataclass
-  class Results():
-    """A class for keeping aggregated results from executions."""
-
-    failures: List[FailuresApi.Failure] = field(default_factory=List)
-    successes: Dict[str, int] = field(default_factory=Dict)
-
-    def add_failures(self, failures: List[FailuresApi.Failure]) -> None:
-      """Append failures to the list.
-
-      Args:
-        failures (List[FailuresApi.Failure]): A List of Failure objects to
-          append.
-      """
-      if failures:
-        self.failures += failures
-
-    def add_successes(self, successes: Dict[str, int]) -> None:
-      """Update the successes numbers.
-
-      Args:
-        successes (Dict[str, int]): A Dict of success count per test kind to be
-          updated with.
-      """
-      if successes:
-        self.successes = {
-            i: self.successes.get(i, 0) + successes.get(i, 0)
-            for i in set(self.successes).union(successes)
-        }
-
-    def add_results(self, results: FailuresApi.Results) -> None:
-      """Update the results.
-
-      Args:
-        results (Results): an object containing the list[Failure] of all
-          failures discovered in the given runs and a Dict mapping a task kind
-          with the number of successes.
-      """
-      self.add_failures(results.failures)
-      self.add_successes(results.successes)
-
-  def _proto_to_step_status(self, proto_status: bb_common_pb2.Status):
-    """Convert from bb_common_pb2.Status to api.step status.
-
-    Args:
-      status: The status of the step.
-
-    Returns:
-      str representing status as listed in step/api.py.
-    """
-    if proto_status == bb_common_pb2.SUCCESS:
-      return self.m.step.SUCCESS
-    if proto_status == bb_common_pb2.INFRA_FAILURE:
-      return self.m.step.EXCEPTION
-    return self.m.step.FAILURE
-
-  def present_run(self, title, link_map, status, critical=True):
-    with self.m.step.nest(title) as presentation:
-      if status != bb_common_pb2.SUCCESS and not critical:
-        presentation.step_text = 'failed but is not critical'
-        presentation.status = self.m.step.SUCCESS
-      else:
-        presentation.status = self._proto_to_step_status(status)
-      for link_text, link_url in link_map.items():
-        presentation.links[link_text] = link_url
-      return
 
   # TODO(b/327255136): Generalize this to other failures.
   def _get_build_failure_reason(self, failed_build) -> Optional[str]:
@@ -197,8 +80,9 @@ class FailuresApi(RecipeApi):
                   get_link_map, get_id, build_detailed_kind=None):
     with self.m.step.nest('{} results'.format(build_detailed_kind or
                                               kind)) as results_pres:
-      results = self.Results(failures=[], successes={})
-      non_critical_build_results = self.Results(failures=[], successes={})
+      results = self.m.failures_util.Results(failures=[], successes={})
+      non_critical_build_results = self.m.failures_util.Results(
+          failures=[], successes={})
 
       failed_runs = [
           run for run in runs if get_status(run) != bb_common_pb2.SUCCESS
@@ -214,7 +98,7 @@ class FailuresApi(RecipeApi):
         failure_reason = self._get_build_failure_reason(
             failed_run) if kind == 'build' else None
 
-        self.present_run(title, link_map, status, critical)
+        self.m.failures_util.present_run(title, link_map, status, critical)
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:
@@ -237,7 +121,7 @@ class FailuresApi(RecipeApi):
         if critical:
           results.successes[kind] += 1
 
-        self.present_run(title, link_map, status)
+        self.m.failures_util.present_run(title, link_map, status)
 
       if results.failures or non_critical_build_results.failures:
         s = 's' if len(failed_runs) > 1 else ''
@@ -621,7 +505,7 @@ class FailuresApi(RecipeApi):
 
         categorized_builds.setdefault('{} {}'.format(rel, criticality), []).append(b)
 
-      all_results = self.Results(failures=[], successes={})
+      all_results = self.m.failures_util.Results(failures=[], successes={})
       for detail, build in categorized_builds.items():
         results = self.get_results(kind, build, self.get_build_status,
                                    self.m.buildbucket.is_critical,
