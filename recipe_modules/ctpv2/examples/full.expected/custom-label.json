@@ -53,7 +53,6 @@
       "TMP": "[CLEANUP]/tmp_tmp_2",
       "TMPDIR": "[CLEANUP]/tmp_tmp_2"
     },
-    "infra_step": true,
     "name": "callsite-execute-luciexe.ctpv2 sub-build",
     "stdin": "\u0012\u00002\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002",
     "~followup_annotations": [

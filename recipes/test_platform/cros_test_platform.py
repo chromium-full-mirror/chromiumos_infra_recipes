@@ -5,6 +5,7 @@
 
 """Recipe for the ChromeOS Test Frontend."""
 
+import base64
 import collections
 import csv
 import datetime
@@ -12,6 +13,7 @@ import json
 import math
 import re
 from io import StringIO
+import zlib
 
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
@@ -1379,23 +1381,33 @@ def _ensure_all_requests_enumerated(requests, enumerations, error_in_requests):
 
 def RunSteps(api, properties):
   with api.bot_cost.build_cost_context():
-    DoRunSteps(api, properties)
-
+    responses, enumerations, error_in_requests, suite_execution_logs = DoRunSteps(
+        api, properties)
+    # set output properties & summarize
+    set_output_properties(api, responses)
+    summarize(api, enumerations, responses.tagged_responses, error_in_requests,
+              suite_execution_logs)
 
 def DoRunSteps(api, properties):
   # Log which cros_test_platform release version the tests will run on.
   output_ctp_release_timestamp_tag(api)
   api.easy.log_parent_step(log_if_no_parent=False)
 
+  v1_responses = ExecuteResponses(tagged_responses={})
+  v2_responses = ExecuteResponses(tagged_responses={})
+  enumerations = {}
+  error_in_requests = {}
+  suite_execution_logs = None
+  runner = api.future_utils.create_parallel_runner()
+
   # If ctpv2 req is provided, run the ctpv2 flow
   if properties.HasField(
       'ctpv2_request') and api.ctpv2.is_enabled():  # pragma: nocover
     # Use ctpv2 binary rather than the normal ctpv1 workflow
-    api.ctpv2.execute_luciexe()
-    return
-
-  runner = api.future_utils.create_parallel_runner()
-  v2_request_count = CheckIfCtpv2NeedsToRun(api, properties)
+    # This will force v2 to be invoked (anything greater than 0 would work here)
+    v2_request_count = 1
+  else:
+    v2_request_count = CheckIfCtpv2NeedsToRun(api, properties)
   # v2 eligible request found so run ctpv2
   if v2_request_count > 0:
 
@@ -1404,15 +1416,62 @@ def DoRunSteps(api, properties):
         pres.step_text = '{}'.format(resp)
 
     runner.run_function_async(api.ctpv2.execute_luciexe, (True, True),
-                              error_handler=errorHandlerFunc)
-    if v2_request_count < len(properties.requests):
+                              error_handler=lambda resp: errorHandlerFunc(resp))
+    if not properties.requests or v2_request_count < len(properties.requests):
       # If ctpv2 was invoked, nest the ctpv1 steps under a parent step
       with api.step.nest('ctpv1'):
-        RunCtpv1(api, properties)
+        v1_responses, enumerations, error_in_requests, suite_execution_logs = RunCtpv1(
+            api, properties)
   else:
     # If ctpv2 was not invoked, let's show the steps similar to legacy to avoid user confusion
-    RunCtpv1(api, properties)
-  runner.wait_for_and_throw()
+    v1_responses, enumerations, error_in_requests, suite_execution_logs = RunCtpv1(
+        api, properties)
+
+  # wait for runner to finish
+  runner_resp = runner.wait_for_and_get_responses()
+  # process responses from runner if there's any
+  if runner_resp is not None and len(runner_resp) > 0:  # pragma: no cover
+    # there should be only one response since there should be at max one async call to ctpv2
+    resp = runner_resp[0].resp
+    if resp is not None:
+      if 'compressed_responses' in resp.step.sub_build.output.properties:
+        compressed_responses = resp.step.sub_build.output.properties[
+            'compressed_responses']
+        decompressed_responses = zlib.decompress(
+            base64.b64decode(compressed_responses))
+        v2_responses = ExecuteResponses()
+        v2_responses.ParseFromString(decompressed_responses)
+
+  merged_responses = mergeV1AndV2Responses(api, v1_responses, v2_responses)
+  return merged_responses, enumerations, error_in_requests, suite_execution_logs
+
+
+def mergeV1AndV2Responses(api, v1_responses, v2_responses):  # pragma: no cover
+  with api.step.nest('process v1 and v2 responses') as step:
+    # print out the valid responses
+    if v1_responses is not None and len(v1_responses.tagged_responses) > 0:
+      step.logs['v1_responses'] = json_format.MessageToJson(v1_responses)
+    if v2_responses is not None and len(v2_responses.tagged_responses) > 0:
+      step.logs['v2_responses'] = json_format.MessageToJson(v2_responses)
+
+    # if one of them in null, just return the other one
+    if v1_responses is None or len(v1_responses.tagged_responses) == 0:
+      step.step_summary_text = 'no v1 response; processing v2 responses only'
+      return v2_responses
+    if v2_responses is None or len(v2_responses.tagged_responses) == 0:
+      step.step_summary_text = 'no v2 response; processing v1 responses only'
+      return v1_responses
+
+    # merge v1 and v2 responses
+    step.step_summary_text = 'merging v1 and v2 responses'
+    merged_responses_dict = json_format.MessageToDict(v1_responses)
+    for tag, response in v2_responses.tagged_responses.items():
+      merged_responses_dict['taggedResponses'][tag] = json_format.MessageToDict(
+          response)
+    merged_responses = json_format.ParseDict(merged_responses_dict,
+                                             ExecuteResponses())
+    step.logs['merged_responses'] = json_format.MessageToJson(merged_responses)
+  return merged_responses
 
 
 def CheckIfCtpv2NeedsToRun(api, properties):
@@ -1457,7 +1516,6 @@ def RunCtpv1(api, properties):
     # This is necessary so that output properties have all responses.
     responses = _append_error_responses(error_in_requests, responses)
     tagged_responses = responses.tagged_responses
-    set_output_properties(api, responses)
     # Push the Build ID to notify the subscribers that test plan execution
     # is completed.
     publish_to_result_flow(api, properties.config,
@@ -1465,8 +1523,7 @@ def RunCtpv1(api, properties):
 
     postprocess(api, requests, tagged_responses,
                 skip_postprocess=properties.partner_config)
-  summarize(api, enumerations, tagged_responses, error_in_requests,
-            suite_execution_logs)
+  return responses, enumerations, error_in_requests, suite_execution_logs
 
 
 def _append_error_responses(error_in_requests, responses):
@@ -1781,7 +1838,7 @@ def summarize(api, enumerations, responses, error_in_requests,
 
     for tag, response in sorted(responses.items()):
       with api.step.nest('%s task results' % tag) as results_step:
-        if 'totals' in suite_execution_logs:  # pragma: nocover
+        if suite_execution_logs and 'totals' in suite_execution_logs:  # pragma: nocover
           ioStringReader = StringIO(suite_execution_logs['totals'])
           reader = csv.DictReader(ioStringReader)
           for row in reader:
@@ -1792,11 +1849,13 @@ def summarize(api, enumerations, responses, error_in_requests,
               else:
                 results_step.step_summary_text = 'SuiteLimits: Execution limit exceeded: go/suitelimits-faqs'
 
-        if tag in error_in_requests:
+        if error_in_requests and tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
 
-        _log_enumeration_errors(api, enumerations[tag], tag)
-        _log_task_results(api, response.task_results)
+        if enumerations and tag in enumerations:
+          _log_enumeration_errors(api, enumerations[tag], tag)
+        if response.task_results:
+          _log_task_results(api, response.task_results)
         if response.state.verdict in _SUCCESSFUL_VERDICTS:
           request_classifications[_REQUEST_SUCCESS] += 1
         else:
@@ -1854,6 +1913,10 @@ def _top_level_export_to_bigquery(api, force_export):
 def set_output_properties(api, responses):
   """Set the output properties that are part of the cros_test_platform API."""
   with api.step.nest('set output properties') as step:
+    if not responses:  # pragma: no cover
+      step.logs['error'] = 'empty responses'
+      return
+
     step.logs['output'] = json_format.MessageToJson(responses)
     marshalled = api.skylab_results.test_api.marshal_responses(responses)
     # Requests that specify a single request instead of a multi-request result

@@ -45,8 +45,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     if runningAsync:  # pragma: no cover
       stepName += ' (async)'
 
-    with self.m.context(infra_steps=True):
-      self.m.step.sub_build(stepName, [cmd], build)
+    return self.m.step.sub_build(stepName, [cmd], build)
 
   def ensure_ctpv2(self):
     """Ensure the ctpv2 CLI is installed."""

@@ -385,16 +385,6 @@
   },
   {
     "cmd": [],
-    "name": "set output properties",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@output@{}@@@",
-      "@@@STEP_LOG_END@output@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\"@@@",
-      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "publish build ID (2)",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
@@ -403,6 +393,23 @@
   {
     "cmd": [],
     "name": "postprocess"
+  },
+  {
+    "cmd": [],
+    "name": "process v1 and v2 responses",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@no v1 response; processing v2 responses only@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set output properties",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@output@{}@@@",
+      "@@@STEP_LOG_END@output@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_json_responses@\"eJyrrgUAAXUA+Q==\"@@@",
+      "@@@SET_BUILD_PROPERTY@compressed_responses@\"eJwDAAAAAAE=\"@@@"
+    ]
   },
   {
     "cmd": [],
