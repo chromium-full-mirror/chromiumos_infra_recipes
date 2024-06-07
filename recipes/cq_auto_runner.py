@@ -8,6 +8,7 @@ from typing import Generator
 from typing import Optional
 
 from PB.recipe_engine.result import RawResult
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import TestData
 
@@ -18,4 +19,4 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.auto_runner_util.get_eligible_cls()
 
 def GenTests(api: RecipeApi) -> Generator[TestData, None, None]:
-  yield api.test('basic')
+  yield api.test('basic', api.post_process(post_process.DropExpectation))
