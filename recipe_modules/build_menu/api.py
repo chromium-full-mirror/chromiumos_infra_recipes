@@ -1159,7 +1159,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
               'parent_buildbucket_id') or 'led-launch-' + self.m.uuid.random()
           cached_container_gs_path = 'gs://chromeos-image-archive/cft-container-json/' + parent_build_id
           # if test train then reduce it to 5 seconds to explore all code path for 100% code coverage
-          timeout = 1 * 20 * 60 if self.m.cros_tags.get_single_value(
+          timeout = 1 * 25 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 5
           interval = 1 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 1
