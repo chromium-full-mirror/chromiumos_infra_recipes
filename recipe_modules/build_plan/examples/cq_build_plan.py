@@ -26,6 +26,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'build_plan',
+    'cros_build_api',
     'cros_history',
     'cros_infra_config',
     'cros_relevance',
@@ -155,6 +156,36 @@ def GenTests(api):
       api.buildbucket.simulated_multi_predicates_search_results(
           builds, 'get build history.find matching builds.'
           'buildbucket.search'),
+  )
+
+  yield api.test(
+      'cros-query-active',
+      api.cv(run_mode=api.cv.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(experiments=[
+          'chromeos.cq_orchestrator.full_sync', 'chromeos.build_plan.cros_query'
+      ]),
+      api.properties(
+          expected_build_requests=[
+              'arm-generic-cq',
+              'atlas-cq',
+              'arm64-generic-cq',
+              'cave-cq',
+          ],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+              'amd64-generic-incremental-cq',
+          ], skipped_builders=[]),
+      api.post_check(post_process.LogEquals, 'filter builds using cros query',
+                     'skipped builders', 'amd64-generic-incremental-cq'),
   )
 
   yield api.test(

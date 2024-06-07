@@ -352,7 +352,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
       # TODO(b/316010599): Remove after the experiment.
       with self.m.failures.ignore_exceptions():
-        if self.m.build_plan.cros_query_relevant_builders is not None:
+        if (not self.m.build_plan.cros_query_active and
+            self.m.build_plan.cros_query_relevant_builders is not None):
 
           # All the builders that were scheduled and collected. Non-critical
           # builds do not get collected.

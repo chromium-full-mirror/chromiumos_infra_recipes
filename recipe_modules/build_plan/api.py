@@ -40,6 +40,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # with the result of the portage relevance check at the end of the run.
     self.cros_query_relevant_builders = None
 
+  def initialize(self):
+    self.cros_query_active = ('chromeos.cq_orchestrator.full_sync'
+                              in self.m.cros_infra_config.experiments and
+                              'chromeos.build_plan.cros_query'
+                              in self.m.cros_infra_config.experiments)
+
+
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -279,6 +286,22 @@ class BuildPlanApi(recipe_api.RecipeApi):
         irrelevant_builders = set(builders_tuple.run_when_rules_skipped +
                                   builders_tuple.global_irrelevance_skipped)
 
+        if self.cros_query_active:
+          with self.m.step.nest('filter builds using cros query') as pres:
+            relevant_builders = self.get_relevant_builders(
+                necessary_builders, gerrit_changes)
+
+            # Add logging about decisions.
+            skipped_builders = sorted(
+                [b for b in necessary_builders if b not in relevant_builders])
+            pres.step_text = f'filtered out {len(skipped_builders)} builders'
+            pres.logs['skipped builders'] = skipped_builders
+            pres.properties['cros_query_skipped_builders'] = skipped_builders
+
+            # Update our lists.
+            necessary_builders = relevant_builders
+            irrelevant_builders.update(skipped_builders)
+
         # Public builders can only apply changes to the chromium host.
         # If all CLs are in chrome-internal then we know the build will not be
         # relevant.
@@ -392,17 +415,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, lfg_builder_names)
 
-    # TODO(b/316010599): Get data from cros-query experiment.
-    # Eventually, this will be taken into account when build planning.
-    # In order to simplify things, we are going to start with only first CQ
-    # attempts which do not configure additional builders via footer.
+    # TODO(b/316010599): As we rollout into prod, continue getting data on runs
+    # where it is not active.
     found_green = (
         self.m.looks_for_green.stats.status ==
         LooksForGreenStatus.STATUS_RAN_OLDER)
     synced_checkout = (
         found_green or 'chromeos.cq_orchestrator.full_sync'
         in self.m.cros_infra_config.experiments)
-    if synced_checkout and gerrit_changes:
+    if not self.cros_query_active and synced_checkout and gerrit_changes:
       _ = self.get_relevant_builders(necessary_builders, gerrit_changes)
       if self.cros_query_relevant_builders is not None:
         self.cros_query_relevant_builders.extend(forced_relevant)
