@@ -5,7 +5,6 @@
 
 """Functions related to build planning."""
 
-import re
 from typing import List, Optional, Set, Tuple
 
 from PB.chromite.api import relevancy as relevancy_pb2
@@ -643,7 +642,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
       }
       requested_snapshot_builders = []
       for b in necessary_builder_names:
-        snapshot_build = re.sub('(-slim)?-cq$', '-snapshot', b)
+        snapshot_build = self.m.naming.get_snapshot_builder_name(b)
         if snapshot_build in snapshot_child_builders:
           requested_snapshot_builders.append(snapshot_build)
         else:

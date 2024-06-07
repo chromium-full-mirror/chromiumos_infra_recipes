@@ -5,7 +5,6 @@
 
 """API for raising image builder failures and presenting them."""
 
-import re
 from typing import List, Optional, Tuple
 from google.protobuf import json_format
 
@@ -42,8 +41,8 @@ class ImageBuilderFailuresApi(RecipeApi):
     if not self.m.buildbucket.build.builder.builder.endswith('-cq'):
       return package_failures
 
-    snapshot_builder_name = re.sub('(-slim)?-cq$', '-snapshot',
-                                   self.m.buildbucket.build.builder.builder)
+    snapshot_builder_name = self.m.naming.get_snapshot_builder_name(
+        self.m.buildbucket.build.builder.builder)
 
     predicate = builds_service_pb2.BuildPredicate(
         builder=builder_common_pb2.BuilderID(

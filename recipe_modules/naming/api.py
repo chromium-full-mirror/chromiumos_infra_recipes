@@ -5,6 +5,7 @@
 
 """API featuring shared helpers for naming things."""
 
+import re
 from typing import Dict, List, Union
 
 from PB.chromiumos import common as common_pb2
@@ -215,3 +216,12 @@ class NamingApi(recipe_api.RecipeApi):
     else:
       version_part = 'No src image found (?-%s)' % tgt_version
     return '%s | %s' % (image_type_part, version_part)
+
+  @staticmethod
+  def get_snapshot_builder_name(cq_builder_name: str) -> str:
+    """Converts a cq builder name to matching snapshot builder name.
+
+    For example, 'amd64-generic-cq' -> 'amd64-generic-snapshot' or
+    'amd64-generic-slim-cq' -> 'amd64-generic-snapshot'.
+    """
+    return re.sub('(-slim)?-cq$', '-snapshot', cq_builder_name)

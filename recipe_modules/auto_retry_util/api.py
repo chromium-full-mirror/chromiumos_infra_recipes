@@ -8,7 +8,6 @@
 import collections
 import dataclasses
 import functools
-import re
 from typing import Dict, FrozenSet, Iterable, List, NamedTuple, Set, Optional, Tuple
 
 from google.protobuf import json_format, timestamp_pb2
@@ -166,15 +165,6 @@ class PerBuildStats:
 
   # The reasons why this CQ run was not retried.
   filter_reasons: List[str] = dataclasses.field(default_factory=list)
-
-
-def _snapshot_builder(cq_builder: str) -> str:
-  """Converts a cq builder name to matching snapshot builder name.
-
-  For example, 'amd64-generic-cq' -> 'amd64-generic-snapshot' or
-  'amd64-generic-slim-cq' -> 'amd64-generic-snapshot'.
-  """
-  return re.sub('(-slim)?-cq$', '-snapshot', cq_builder)
 
 
 def _lfg_skipped(cq_orch: build_pb2.Build) -> bool:
@@ -466,8 +456,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
           b for b in not_at_fault_builders
           # Builders which failed on snapshot should not be retried until
           # "wait-for-green" kicks in.
-          if _snapshot_builder(b) in builder_greenness_dict and
-          _snapshot_builder(b) not in failed_on_snapshot_builders
+          if self.m.naming.get_snapshot_builder_name(b) in
+          builder_greenness_dict and self.m.naming.get_snapshot_builder_name(
+              b) not in failed_on_snapshot_builders
       ]
       if not_at_fault_retryable_builders:
         self._experimental_retries[cq_run.id].add(
@@ -486,7 +477,9 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
             cq_run.input.gerrit_changes, builders,
             lookback_hours=self.lookback_seconds / 3600)
-        requested_snapshot_builders = [_snapshot_builder(x) for x in builders]
+        requested_snapshot_builders = [
+            self.m.naming.get_snapshot_builder_name(x) for x in builders
+        ]
         current_greenness = self._lfg_greenness(requested_snapshot_builders,
                                                 lfg_lookback_hours)
         step_text_prefix = 'build used LFG, using current snapshot found by LFG'
@@ -527,7 +520,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     # cq builders. Convert them with _snapshot_builder when matching them.
     now_green_retryable_builders = [
         b for b in outstanding_failure_builders
-        if _snapshot_builder(b) in now_green_builders
+        if self.m.naming.get_snapshot_builder_name(b) in now_green_builders
     ]
     if now_green_retryable_builders:
       self._experimental_retries[cq_run.id].add(
@@ -547,7 +540,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
     if now_green_retryable_builders:
       no_snapshot_data_builders = [
           b for b in outstanding_failure_builders
-          if _snapshot_builder(b) not in cq_retry_snapshot.builder_greenness
+          if self.m.naming.get_snapshot_builder_name(b) not in
+          cq_retry_snapshot.builder_greenness
       ]
       self.per_build_stats[
           cq_run.
