@@ -8728,7 +8728,8 @@
       "@@@STEP_LINK@ []@https:////@sha256:@@@",
       "@@@STEP_LINK@container metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/containers.jsonpb@@@",
       "@@@STEP_LINK@test_metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_metadata.jsonpb@@@",
-      "@@@STEP_LINK@test_harness_metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@"
+      "@@@STEP_LINK@test_harness_metadata (gs)@https://console.cloud.google.com/storage/browser/_details/chromeos-throwaway/atlas-cq/R126-15870.0.0-101-8945511751514863184/metadata/test_harness_metadata.jsonpb@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
@@ -8736,12 +8737,55 @@
     "name": "create test service containers.cached container info from gcs",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@no files present, builder should build fresh container and upload to gcs@@@"
+      "@@@STEP_SUMMARY_TEXT@no files present, builder should build fresh container and upload to gcs@@@",
+      "@@@STEP_EXCEPTION@@@"
     ]
   },
   {
     "cmd": [],
     "name": "create test service containers.cached container info from gcs.attempt-1",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@Attempt failed due to unexpected error: 'Infra Failure: Step('create test service containers.cached container info from gcs.attempt-1.gsutil list') (timeout) (retcode: None)'@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "ls",
+      "gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "create test service containers.cached container info from gcs.attempt-1.gsutil list",
+    "timeout": 60,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text[ls results]@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "create test service containers.cached container info from gcs.attempt-2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@no files present, builder should build fresh container and upload to gcs@@@"
@@ -8772,7 +8816,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "create test service containers.cached container info from gcs.attempt-1.gsutil list",
+    "name": "create test service containers.cached container info from gcs.attempt-2.gsutil list",
     "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -9784,7 +9828,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"atlas\"\n    ],\n    \"bot-config\": \"atlas-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"atlas-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:42\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"atlas\"\n    ],\n    \"bot-config\": \"atlas-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"atlas-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:44\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -9844,7 +9888,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:42\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:44\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",

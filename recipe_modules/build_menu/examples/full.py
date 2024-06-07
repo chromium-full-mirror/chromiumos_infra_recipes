@@ -216,6 +216,25 @@ def GenTests(api):
   )
 
   yield api.build_menu.test(
+      'cq-build-with-cft-cache-gsutil-timeout',
+      api.properties(
+          **api.test_util.build_menu_properties(
+            build_target_name='atlas',
+            container_version_format=\
+              '{staging?}{build-target}-cq.{cros-version}-{bbid}'
+          ),
+      ),
+      api.cros_version.workspace_version('R126-15870.0.0'),
+      # the value for times_out_after should be greater than what is defined in the gsutil call
+      api.step_data(
+      'create test service containers.cached container info from gcs.attempt-1.gsutil list',
+      stdout=api.raw_io.output_text(''), times_out_after=61),
+      cq=True,
+      build_target='atlas',
+      experiments=['chromeos.build_cq.cft_cache_build'],
+  )
+
+  yield api.build_menu.test(
       'cq-build-with-cache-build-supported-build-version',
       api.properties(
           **api.test_util.build_menu_properties(
@@ -255,7 +274,7 @@ def GenTests(api):
           post_process.LogContains,
           'create test service containers.call chromite.api.TestService/BuildTestServiceContainers',
           'request',
-          ['"project": "test-services-publicbuilds"'],
+          ['"project": "cros-registry/test-services-publicbuilds"'],
       ),
       cq=True,
       builder_name='eve-main-public',

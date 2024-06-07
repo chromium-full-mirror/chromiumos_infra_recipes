@@ -1008,17 +1008,25 @@ class BuildMenuApi(recipe_api.RecipeApi):
       build_test_container_response (BuildTestServiceContainersResponse): BuildTestServiceContainersResponse or None
     """
     with self.m.step.nest('cached container info from gcs') as presentation:
+
       start_time = self.m.time.time()
       attempt_counter = 1
       # Run the loop for {timeout} seconds at {interval} seconds
       while self.m.time.time() - start_time < timeout:
         with self.m.step.nest(
             'attempt-{}'.format(attempt_counter)) as interval_presentation:
-          response = self.m.gsutil.list(
-              gs_path, timeout=1 * 30,
-              stdout=self.m.raw_io.output_text(name='ls results',
-                                               add_output_log=True),
-              ok_ret=(0, 1))
+          try:
+            response = self.m.gsutil.list(
+                gs_path, timeout=1 * 60,
+                stdout=self.m.raw_io.output_text(name='ls results',
+                                                 add_output_log=True),
+                ok_ret=(0, 1))
+          except recipe_api.StepFailure as e:
+            interval_presentation.step_summary_text = "Attempt failed due to unexpected error: '{}'".format(
+                e)
+            self.m.time.sleep(interval)
+            attempt_counter = attempt_counter + 1
+            continue
           if response.stdout:
             for uri in response.stdout.split():
               container_info = self._read_container_info_gcs_file(uri)
@@ -1123,7 +1131,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     public = builder_config.id.type == BuilderConfig.Id.PUBLIC
     if public:
       build_test_service_containers_request.repository.hostname = 'us-docker.pkg.dev'
-      build_test_service_containers_request.repository.project = 'test-services-publicbuilds'
+      build_test_service_containers_request.repository.project = 'cros-registry/test-services-publicbuilds'
     return build_test_service_containers_request
 
   def create_containers(self, builder_config=None):
@@ -1153,7 +1161,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           # if test train then reduce it to 5 seconds to explore all code path for 100% code coverage
           timeout = 1 * 20 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 5
-          interval = 1 * 30 if self.m.cros_tags.get_single_value(
+          interval = 1 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 1
 
           cft_cache_build_enabled = self._should_run_cft_cache_build(

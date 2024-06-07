@@ -8773,7 +8773,7 @@
       }
     },
     "name": "create test service containers.cached container info from gcs.attempt-1.gsutil list",
-    "timeout": 30,
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@@@@",
@@ -8858,7 +8858,7 @@
       }
     },
     "name": "create test service containers.cached container info from gcs.attempt-2.gsutil list",
-    "timeout": 30,
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@@@@",
@@ -8943,7 +8943,7 @@
       }
     },
     "name": "create test service containers.cached container info from gcs.attempt-3.gsutil list",
-    "timeout": 30,
+    "timeout": 60,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@raw_io.output_text[ls results]@@@@",
