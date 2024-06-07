@@ -16,6 +16,9 @@ per-file build_android_uprev.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
 per-file uprev_preview.proto = file:chromiumos/owners:v1:/arc/OWNERS.infra
 per-file uprev_preview_auto.py = file:chromiumos/owners:v1:/arc/OWNERS.infra
 
+per-file cipd_uprev.* = set noparent
+per-file cipd_uprev.* = file:chromiumos/owners:v1:/infra/OWNERS.tse
+
 # Recipes which should be reviewed by a member of the CQW team.
 per-file build_cq.py,OWNERS.cqw=set noparent
 per-file build_cq.py,OWNERS.cqw=file:chromiumos/owners:v1:/infra/OWNERS.cqw

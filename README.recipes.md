@@ -6,6 +6,7 @@
   * [analysis_service](#recipe_modules-analysis_service) &mdash; API for publishing events to the Analysis Service.
   * [android](#recipe_modules-android)
   * [auto_retry_util](#recipe_modules-auto_retry_util) &mdash; Utility function for CQ auto retry.
+  * [auto_runner_util](#recipe_modules-auto_runner_util) &mdash; Helper functions for auto runner recipe.
   * [binhost_lookup_service](#recipe_modules-binhost_lookup_service) &mdash; APIs to interact with the binhost lookup service.
   * [bot_cost](#recipe_modules-bot_cost) &mdash; Module for calculating bot cost.
   * [bot_scaling](#recipe_modules-bot_scaling) &mdash; A module that determines how to scale bot groups based on demand.
@@ -42,6 +43,7 @@
   * [cros_resultdb](#recipe_modules-cros_resultdb) &mdash; cros_resultdb is a module to ease interaction with ResultDB for ChromeOS.
   * [cros_schedule](#recipe_modules-cros_schedule) &mdash; API for working with CrOS's Schedule.
   * [cros_sdk](#recipe_modules-cros_sdk) &mdash; API for interacting with cros_sdk, the interface to the CrOS SDK.
+  * [cros_snapshot](#recipe_modules-cros_snapshot) &mdash; API for working with CrOS snapshot builds.
   * [cros_som](#recipe_modules-cros_som)
   * [cros_source](#recipe_modules-cros_source) &mdash; API for working with CrOS source.
   * [cros_storage](#recipe_modules-cros_storage) &mdash; API featuring shared helpers for locating and naming stored artifacts.
@@ -69,6 +71,7 @@
   * [exoneration_util](#recipe_modules-exoneration_util) &mdash; A module for util functions associated with cq test exoneration.
   * [factory_util](#recipe_modules-factory_util) &mdash; A module for util functions associated with factory builds.
   * [failures](#recipe_modules-failures) &mdash; API for raising failures and presenting them in cute ways.
+  * [failures_util](#recipe_modules-failures_util) &mdash; API for failures util functions.
   * [future_utils](#recipe_modules-future_utils)
   * [gce_provider](#recipe_modules-gce_provider) &mdash; A module that interacts with GCE Provider.
   * [gcloud](#recipe_modules-gcloud) &mdash; API for gcloud commands.
@@ -79,6 +82,7 @@
   * [git_txn](#recipe_modules-git_txn) &mdash; API for updating remote git repositories transactionally.
   * [gitiles](#recipe_modules-gitiles) &mdash; APIs for working with Gitiles.
   * [gobin](#recipe_modules-gobin) &mdash; API for interacting with Go binaries built from infra/infra.
+  * [golucibin](#recipe_modules-golucibin) &mdash; API to call into Go luci binaries.
   * [goma](#recipe_modules-goma) &mdash; API for working with goma.
   * [greenness](#recipe_modules-greenness) &mdash; API providing a menu for calculating greenness metric.
   * [gs_step_logging](#recipe_modules-gs_step_logging) &mdash; APIs for logging step output to Google Storage.
@@ -123,6 +127,7 @@
   * [sysroot_util](#recipe_modules-sysroot_util) &mdash; API for various support functions for building.
   * [tast_exec](#recipe_modules-tast_exec)
   * [tast_results](#recipe_modules-tast_results) &mdash; Functions for reporting and parsing Tast VM test results.
+  * [test_failures](#recipe_modules-test_failures) &mdash; API for raising e2e test failures and presenting them.
   * [test_util](#recipe_modules-test_util) &mdash; API to simpify testing CrOS recipes.
   * [urls](#recipe_modules-urls) &mdash; API for creating task URLs out of complex data structures.
   * [util](#recipe_modules-util) &mdash; Module providing importable utilities.
@@ -151,10 +156,16 @@
   * [auto_retry_util:tests/not_at_fault_package_failures](#recipes-auto_retry_util_tests_not_at_fault_package_failures) &mdash; Tests retrying package failures unrelated to the changes under test.
   * [auto_retry_util:tests/retry_build](#recipes-auto_retry_util_tests_retry_build)
   * [auto_retry_util:tests/sdk_failures](#recipes-auto_retry_util_tests_sdk_failures) &mdash; Tests involving SDK failure retries.
-  * [auto_retry_util:tests/snapshot_greenness_cache](#recipes-auto_retry_util_tests_snapshot_greenness_cache) &mdash; Tests caching greenness for a specific snapshot and from looks for green.
+  * [auto_retry_util:tests/snapshot_greenness_cache](#recipes-auto_retry_util_tests_snapshot_greenness_cache) &mdash; Tests caching greenness for the latest snapshot.
   * [auto_retry_util:tests/submission_blocking_builders](#recipes-auto_retry_util_tests_submission_blocking_builders)
   * [auto_retry_util:tests/test_variant_exoneration_analysis](#recipes-auto_retry_util_tests_test_variant_exoneration_analysis)
   * [auto_retry_util:tests/throttle](#recipes-auto_retry_util_tests_throttle)
+  * [auto_runner_util:tests/current_revision_number](#recipes-auto_runner_util_tests_current_revision_number) &mdash; Tests for current_revision_number prop.
+  * [auto_runner_util:tests/filter_dependent_changes](#recipes-auto_runner_util_tests_filter_dependent_changes) &mdash; Tests for the filtering cq-depent changes.
+  * [auto_runner_util:tests/filter_no_reviewer_changes](#recipes-auto_runner_util_tests_filter_no_reviewer_changes) &mdash; Tests for the cls with reviewers functionality.
+  * [auto_runner_util:tests/get_change_infos_from_gerrit](#recipes-auto_runner_util_tests_get_change_infos_from_gerrit) &mdash; Tests for get_change_infos_from_gerrit function.
+  * [auto_runner_util:tests/get_eligible_cls](#recipes-auto_runner_util_tests_get_eligible_cls) &mdash; Tests for get_eligible_cls function.
+  * [auto_runner_util:tests/quota_limit](#recipes-auto_runner_util_tests_quota_limit) &mdash; Tests for quota limits.
   * [binhost_lookup_service:examples/publish_binhost_data](#recipes-binhost_lookup_service_examples_publish_binhost_data) &mdash; Test the `publish binhost metadata` functionality of the module.
   * [binhost_lookup_service:examples/publish_snapshot_data](#recipes-binhost_lookup_service_examples_publish_snapshot_data) &mdash; Test the `publish snapshot metadata` functionality of the module.
   * [bot_cost:examples/calculate_build_cost](#recipes-bot_cost_examples_calculate_build_cost) &mdash; Tests for bot_cost.
@@ -196,12 +207,12 @@
   * [build_menu:tests/upload_sources](#recipes-build_menu_tests_upload_sources)
   * [build_parallels_image](#recipes-build_parallels_image) &mdash; Recipe for building a Parallels image for testing.
   * [build_plan:examples/cq_build_plan](#recipes-build_plan_examples_cq_build_plan)
-  * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds)
-  * [build_plan:examples/postsubmit_build_plan](#recipes-build_plan_examples_postsubmit_build_plan)
+  * [build_plan:examples/get_completed_builds](#recipes-build_plan_examples_get_completed_builds) &mdash; Unit tests for the get_completed_builds function.
+  * [build_plan:examples/snapshot_build_plan](#recipes-build_plan_examples_snapshot_build_plan)
   * [build_plan:tests/cq_looks](#recipes-build_plan_tests_cq_looks)
   * [build_plan:tests/cq_looks_with_request_builders](#recipes-build_plan_tests_cq_looks_with_request_builders) &mdash; Unit tests for choosing snapshots with requested builders.
   * [build_plan:tests/get_forced_rebuilds](#recipes-build_plan_tests_get_forced_rebuilds)
-  * [build_plan:tests/get_relevant_builders](#recipes-build_plan_tests_get_relevant_builders) &mdash; Unit tests for the get_relevant_builder_configs function.
+  * [build_plan:tests/get_relevant_builders](#recipes-build_plan_tests_get_relevant_builders) &mdash; Unit tests for the get_relevant_builders function.
   * [build_release](#recipes-build_release) &mdash; Recipe for building images for release.
   * [build_reporting:examples/contexts_1](#recipes-build_reporting_examples_contexts_1)
   * [build_reporting:examples/contexts_2](#recipes-build_reporting_examples_contexts_2)
@@ -241,9 +252,9 @@
   * [chromeos_cbuildbot](#recipes-chromeos_cbuildbot)
   * [chromite:examples/full](#recipes-chromite_examples_full)
   * [chromium_ide_pre_release](#recipes-chromium_ide_pre_release) &mdash; Recipe for creating pre-release CL for ChromiumIDE.
-  * [chromiumos_codesearch](#recipes-chromiumos_codesearch) &mdash; Recipe for enabling cross-references in code search for ChromiumOS.
-  * [chromiumos_codesearch_initiator](#recipes-chromiumos_codesearch_initiator) &mdash; Initialize ChromiumOS codesearch builders to create kzips.
-  * [cipd_uprev](#recipes-cipd_uprev)
+  * [chromiumos_codesearch](#recipes-chromiumos_codesearch) &mdash; Upload a kzip so Kythe can provide language support services for ChromeOS.
+  * [chromiumos_codesearch_initiator](#recipes-chromiumos_codesearch_initiator) &mdash; Builder that launches the chromiumos_codesearch builders.
+  * [cipd_uprev](#recipes-cipd_uprev) &mdash; Recipe for upreving cipd packages.
   * [cl_factory](#recipes-cl_factory) &mdash; Used to create sweeping changes by creating CLs in many repos.
   * [clean_up_lkgm_uprev_cls](#recipes-clean_up_lkgm_uprev_cls) &mdash; Recipe that tests chromite.
   * [clean_vm_images](#recipes-clean_vm_images) &mdash; Recipe for cleaning up stale GCP VM images.
@@ -401,6 +412,8 @@
   * [cros_sdk:tests/cleanup_context_exception_handling](#recipes-cros_sdk_tests_cleanup_context_exception_handling) &mdash; Tests exception handling in the cleanup_context.
   * [cros_sdk:tests/long_timeouts](#recipes-cros_sdk_tests_long_timeouts)
   * [cros_sdk:tests/update](#recipes-cros_sdk_tests_update)
+  * [cros_snapshot:examples/full](#recipes-cros_snapshot_examples_full) &mdash; Basic examples of CrOS snapshot information manipulation.
+  * [cros_snapshot:tests/invalid-git-footer](#recipes-cros_snapshot_tests_invalid-git-footer) &mdash; Basic examples of CrOS snapshot information manipulation.
   * [cros_som:examples/full](#recipes-cros_som_examples_full)
   * [cros_source:examples/checkout_branch](#recipes-cros_source_examples_checkout_branch)
   * [cros_source:examples/checkout_manifests](#recipes-cros_source_examples_checkout_manifests)
@@ -496,15 +509,14 @@
   * [exoneration_util:examples/query_failure_rate](#recipes-exoneration_util_examples_query_failure_rate)
   * [exoneration_util:examples/query_stability](#recipes-exoneration_util_examples_query_stability) &mdash; Unit test query_stability API.
   * [factory_util:tests/upload_factory_artifacts](#recipes-factory_util_tests_upload_factory_artifacts) &mdash; Tests for factory util methods.
-  * [failures:examples/additional_test_not_run_critical_cq](#recipes-failures_examples_additional_test_not_run_critical_cq)
   * [failures:examples/aggregate_build_failures_by_reason](#recipes-failures_examples_aggregate_build_failures_by_reason) &mdash; Tests build failure aggregation by reason.
   * [failures:examples/aggregate_failures](#recipes-failures_examples_aggregate_failures)
   * [failures:examples/build_failures](#recipes-failures_examples_build_failures)
-  * [failures:examples/hw_test_failures](#recipes-failures_examples_hw_test_failures)
   * [failures:examples/ignore_exceptions](#recipes-failures_examples_ignore_exceptions)
-  * [failures:examples/results](#recipes-failures_examples_results)
   * [failures:examples/step_failures](#recipes-failures_examples_step_failures)
   * [failures:examples/update_non_critical_failures](#recipes-failures_examples_update_non_critical_failures)
+  * [failures_util:examples/present_run](#recipes-failures_util_examples_present_run)
+  * [failures_util:examples/results](#recipes-failures_util_examples_results)
   * [firmware_cq_orchestrator](#recipes-firmware_cq_orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [future_utils:tests/error_handler](#recipes-future_utils_tests_error_handler) &mdash; Tests to verify future_utils error handling.
   * [future_utils:tests/happy_path](#recipes-future_utils_tests_happy_path) &mdash; Tests to verify future_utils happy path.
@@ -567,6 +579,7 @@
   * [gobin:examples/mirror_prod_refs_to_latest](#recipes-gobin_examples_mirror_prod_refs_to_latest) &mdash; An example for mirror_prod_refs_to_latest.
   * [gobin:tests/full](#recipes-gobin_tests_full) &mdash; Tests for various `gobin` module failure modes.
   * [gobin:tests/get_latest_pin_value](#recipes-gobin_tests_get_latest_pin_value) &mdash; Tests for get_latest_pin_value.
+  * [golucibin:examples/full](#recipes-golucibin_examples_full) &mdash; Test examples showing off golucibin.
   * [goma:examples/disable_upload](#recipes-goma_examples_disable_upload)
   * [goma:examples/full](#recipes-goma_examples_full) &mdash; Example to demonstrate usage of the goma module.
   * [goma:examples/legacy_goma](#recipes-goma_examples_legacy_goma)
@@ -616,12 +629,14 @@
   * [looks_for_green:tests/find_green_snapshot](#recipes-looks_for_green_tests_find_green_snapshot) &mdash; Unit tests for find_green_snapshot.
   * [looks_for_green:tests/find_green_snapshot_request_builders](#recipes-looks_for_green_tests_find_green_snapshot_request_builders) &mdash; Unit tests for find_green_snapshot with requested builders.
   * [looks_for_green:tests/get_latest_snapshot_greenness](#recipes-looks_for_green_tests_get_latest_snapshot_greenness)
+  * [looks_for_green:tests/get_requested_snapshot_builders](#recipes-looks_for_green_tests_get_requested_snapshot_builders) &mdash; Tests for the get_requested_snapshot_builders function.
   * [looks_for_green:tests/resize_lfg_lookback](#recipes-looks_for_green_tests_resize_lfg_lookback) &mdash; Tests for the resize_lfg_lookback function.
   * [looks_for_green:tests/should_lfg](#recipes-looks_for_green_tests_should_lfg) &mdash; Tests for the should_lfg function.
   * [lvfs_mirror](#recipes-lvfs_mirror) &mdash; Recipe for syncing to our local cache LVFS files (https://fwupd.
   * [manifest_doctor](#recipes-manifest_doctor) &mdash; Recipe for performing various manipulations on ChromeOS manifests.
   * [mass_deploy:tests/run_mass_deploy_generation](#recipes-mass_deploy_tests_run_mass_deploy_generation) &mdash; Tests for run_mass_deploy_generation.
-  * [metadata:examples/fetch_test_metadata](#recipes-metadata_examples_fetch_test_metadata)
+  * [metadata:examples/fetch_test_harness_metadata](#recipes-metadata_examples_fetch_test_harness_metadata) &mdash; Test generator for fetch_test_harness_metadata function.
+  * [metadata:examples/fetch_test_metadata](#recipes-metadata_examples_fetch_test_metadata) &mdash; Test generator for fetch_test_metadata function.
   * [metadata:examples/gspath](#recipes-metadata_examples_gspath)
   * [metadata_json:examples/add_stage_results](#recipes-metadata_json_examples_add_stage_results)
   * [metadata_json:examples/add_version_entries](#recipes-metadata_json_examples_add_version_entries)
@@ -631,6 +646,7 @@
   * [naming:examples/full](#recipes-naming_examples_full)
   * [naming:tests/build_url_title](#recipes-naming_tests_build_url_title)
   * [naming:tests/get_generation_request_title](#recipes-naming_tests_get_generation_request_title)
+  * [naming:tests/get_snapshot_builder_name](#recipes-naming_tests_get_snapshot_builder_name) &mdash; Tests for the get_snapshot_builder_name function.
   * [non_manifest_projects_presubmit](#recipes-non_manifest_projects_presubmit) &mdash; Recipe for running presubmit on CLs for projects not in the manifest.
   * [observability_image_size:tests/publish](#recipes-observability_image_size_tests_publish)
   * [orch_menu:examples/aggregate_metadata](#recipes-orch_menu_examples_aggregate_metadata)
@@ -645,6 +661,7 @@
   * [orch_menu:tests/no_necessary_builds](#recipes-orch_menu_tests_no_necessary_builds)
   * [orch_menu:tests/run_follow_on_orchestrator](#recipes-orch_menu_tests_run_follow_on_orchestrator)
   * [orch_menu:tests/set_child_builds](#recipes-orch_menu_tests_set_child_builds)
+  * [orch_menu:tests/setup_cq_orchestrator](#recipes-orch_menu_tests_setup_cq_orchestrator) &mdash; Unit tests for the setup_cq_orchestrator function.
   * [orchestrator](#recipes-orchestrator) &mdash; Recipe that schedules child builders and watches for failures.
   * [overlayfs:examples/full](#recipes-overlayfs_examples_full)
   * [paygen](#recipes-paygen) &mdash; Recipe for generating ChromeOS payloads (AU deltas etc).
@@ -773,6 +790,8 @@
   * [tast_results:tests/had_no_unexpected_skips](#recipes-tast_results_tests_had_no_unexpected_skips) &mdash; Tests for the had_no_unexpected_skips function.
   * [test_bazel](#recipes-test_bazel) &mdash; Recipe that runs Bazel tests.
   * [test_chromite](#recipes-test_chromite) &mdash; Recipe that tests chromite.
+  * [test_failures:examples/additional_test_not_run_critical_cq](#recipes-test_failures_examples_additional_test_not_run_critical_cq)
+  * [test_failures:examples/hw_test_failures](#recipes-test_failures_examples_hw_test_failures)
   * [test_flexor](#recipes-test_flexor) &mdash; Recipe for testing Flexor's functionality.
   * [test_manifest](#recipes-test_manifest) &mdash; Verifies a repo manifest.
   * [test_new_sdk](#recipes-test_new_sdk) &mdash; Recipe that tests a newly built SDK.
@@ -921,11 +940,11 @@ Returns:
 
 Utility function for CQ auto retry.
 
-#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#199)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [AutoRetryUtilApi](/recipe_modules/auto_retry_util/api.py#189)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for util functions associated with the CQ auto retries.
 
-&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#369)(self, cq_run: build_pb2.Build):**
+&mdash; **def [analyze\_build\_failures](/recipe_modules/auto_retry_util/api.py#359)(self, cq_run: build_pb2.Build):**
 
 &mdash; **def [analyze\_test\_results](/recipe_modules/auto_retry_util/api.py#552)(self, cq_run: build_pb2.Build):**
 
@@ -939,7 +958,7 @@ Returns:
       suite was successful, failed but is retryable, or failed and is not
       retryable.
 
-&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#1000)(self, build: build_pb2.Build):**
+&mdash; **def [build\_was\_dry\_run](/recipe_modules/auto_retry_util/api.py#1009)(self, build: build_pb2.Build):**
 
 Returns whether the build was a dry run.
 
@@ -949,9 +968,9 @@ which may not be true for some builds (e.g. manually triggered builds).
 Args:
   build: The build for which to determine whether it is a dry run.
 
-&emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#206)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_comment\_limit](/recipe_modules/auto_retry_util/api.py#196)(self):**
 
-&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#932)(self):**
+&mdash; **def [cq\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#941)(self):**
 
 Returns cq-orchestrator builds which may be elegible for auto retry.
 
@@ -961,9 +980,9 @@ Candidate cq-orchestrator builds must meet the following criteria:
   * The build had a supported failure mode.
   * The CLs under test are active.
 
-&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#264)(self):**
+&emsp; **@property**<br>&mdash; **def [experimental\_retries](/recipe_modules/auto_retry_util/api.py#254)(self):**
 
-&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#1108)(self, cq_orchs: List[build_pb2.Build]):**
+&mdash; **def [filter\_retry\_candidates](/recipe_modules/auto_retry_util/api.py#1117)(self, cq_orchs: List[build_pb2.Build]):**
 
 Returns cq-orchestrator builds which meet the retry criteria.
 
@@ -974,7 +993,7 @@ cq-orchestrator builds must meet the following criteria:
   * All CLs in the build are mergeable (as defined by the Gerrit API's
     GetMergeable) and ready for submission.
 
-&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1620)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
+&mdash; **def [get\_exonerated\_suites](/recipe_modules/auto_retry_util/api.py#1629)(self, cq_run: build_pb2.Build, failed_test_stats: List[FailedTestStats]):**
 
 Returns the names of the exonerated test suites for the given CQ run.
 
@@ -988,7 +1007,7 @@ Args:
 Returns:
   The names of the exonerated test suites.
 
-&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1490)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
+&mdash; **def [get\_failure\_attributed\_hw\_suites](/recipe_modules/auto_retry_util/api.py#1499)(self, cq_run: build_pb2.Build, already_retryable_suites: Optional[Iterable[str]]=None):**
 
 Returns a list of suites that can have their failures attributed.
 
@@ -1009,19 +1028,19 @@ Args:
 Returns:
   A list of suite names that have all failing tests attributed.
 
-&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#251)(self):**
+&mdash; **def [initialize](/recipe_modules/auto_retry_util/api.py#241)(self):**
 
-&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#268)(self, feature_name: str, build: build_pb2.Build):**
+&mdash; **def [is\_experimental\_feature\_enabled](/recipe_modules/auto_retry_util/api.py#258)(self, feature_name: str, build: build_pb2.Build):**
 
 Returns whether the given feature is enabled on the build.
 
-&emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#202)(self):**
+&emsp; **@property**<br>&mdash; **def [lookback\_seconds](/recipe_modules/auto_retry_util/api.py#192)(self):**
 
-&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#839)(self, build):**
+&mdash; **def [no\_retry\_footer\_set](/recipe_modules/auto_retry_util/api.py#848)(self, build):**
 
 Given an orchestrator's associated CLs, have any opted out via footer.
 
-&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#715)(self):**
+&mdash; **def [publish\_per\_build\_stats](/recipe_modules/auto_retry_util/api.py#724)(self):**
 
 Write PerBuildStats to an output property.
 
@@ -1035,7 +1054,7 @@ map to a list and adds a new field 'build_id'. This is done because
 iterating a JSON object is less convinient than a list in most SQL dialects.
 build_id is a str to avoid integer trunctation.
 
-&mdash; **def [retry\_builds](/recipe_modules/auto_retry_util/api.py#1756)(self, retryable_runs: List[Tuple[(build_pb2.Build, RetryDetails)]]):**
+&mdash; **def [retry\_builds](/recipe_modules/auto_retry_util/api.py#1765)(self, retryable_runs: List[Tuple[(build_pb2.Build, RetryDetails)]]):**
 
 Performs retry on retryable builds.
 
@@ -1045,9 +1064,9 @@ Args:
 Returns:
   A tuple with a retried (old) builds and a list with exceptions.
 
-&emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#210)(self):**
+&emsp; **@property**<br>&mdash; **def [suites\_comment\_limit](/recipe_modules/auto_retry_util/api.py#200)(self):**
 
-&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1289)(self, cq_run: build_pb2.Build):**
+&mdash; **def [test\_variant\_exoneration\_analysis](/recipe_modules/auto_retry_util/api.py#1298)(self, cq_run: build_pb2.Build):**
 
 Runs auto exoneration analysis and returns categorized FailedTestStats.
 
@@ -1065,9 +1084,63 @@ Returns:
   A tuple containing 3 lists of FailedTestStats grouped by whether the test
       variant is previously exonerated, newly exonerated, or not exonerated.
 
-&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#301)(self):**
+&mdash; **def [unthrottled\_retries\_left](/recipe_modules/auto_retry_util/api.py#291)(self):**
 
 Returns the number of retries left below the 24 and 2 hour throttles.
+### *recipe_modules* / [auto\_runner\_util](/recipe_modules/auto_runner_util)
+
+[DEPS](/recipe_modules/auto_runner_util/__init__.py#8): [gerrit](#recipe_modules-gerrit), [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Helper functions for auto runner recipe.
+
+#### **class [AutoRunnerUtilApi](/recipe_modules/auto_runner_util/api.py#230)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+&mdash; **def [add\_a\_step\_with\_cl\_links](/recipe_modules/auto_runner_util/api.py#280)(self, step_description: str, change_infos: Set[EnhancedChangeInfo]):**
+
+Adds a recipe step with links to the provided Gerrit changes.
+
+Args:
+    step_description: Description for the recipe step.
+    change_infos: A set of EnhancedChangeInfo objects representing the changes.
+
+&mdash; **def [get\_change\_infos\_from\_gerrit](/recipe_modules/auto_runner_util/api.py#241)(self, host_projects: List[HostProjects], query_params: Tuple[Tuple[(str, str)]], o_params: Tuple[str], query_limit: int):**
+
+Retrieves Gerrit change information from configured hosts and projects.
+
+Args:
+    host_projects: List of HostProjects objects defining target hosts and projects.
+    query_params: Tuple of tuples specifying Gerrit query parameters (key, value).
+    o_params: Tuple of additional Gerrit query options.
+    query_limit: Maximum number of results to fetch (None for no limit).
+
+Returns:
+    Set[EnhancedChangeInfo]: A set of EnhancedChangeInfo objects representing the changes.
+
+&mdash; **def [get\_eligible\_cls](/recipe_modules/auto_runner_util/api.py#339)(self):**
+
+Retrieves Gerrit changes that are considered eligible for auto run.
+
+This function performs the following steps:
+
+1. Fetches changes from configured Gerrit hosts and projects.
+2. Checks and enforces the daily quota for the auto runner.
+3. Filters out changes that:
+    - Have exceeded their individual daily CQ quota.
+    - Have already been CQed in their current revision.
+    - Contain 'cq-depends' in their commit footer.
+    - Lack reviewers (if `_cl_signal` is set to `REVIEWER_ADDED`).
+    - Are part of a relation chain with other changes.
+4. Sorts the remaining changes and limits them to the available quota.
+
+Returns:
+    Set[EnhancedChangeInfo]: A set of EnhancedChangeInfos representing the eligible changes.
+
+&mdash; **def [get\_quota\_stats](/recipe_modules/auto_runner_util/api.py#292)(self):**
+
+Calculates the current auto runner quota usage in last 24 hrs.
+
+Returns: The total number of times auto runner CQed CLs in the last 24 hours.
 ### *recipe_modules* / [binhost\_lookup\_service](/recipe_modules/binhost_lookup_service)
 
 [DEPS](/recipe_modules/binhost_lookup_service/__init__.py#11): [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -1471,7 +1544,7 @@ Run through the format string, and replace any allowed fields with
 their runtime values. If any unknown fields are encountered, then a
 RuntimeError is thrown.
 
-&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1082)(self, builder_config=None):**
+&mdash; **def [create\_containers](/recipe_modules/build_menu/api.py#1137)(self, builder_config=None):**
 
 Call the BuildTestServiceContainers endpoint to build test containers.
 
@@ -1553,7 +1626,7 @@ Returns:
 
 &emsp; **@property**<br>&mdash; **def [is\_staging](/recipe_modules/build_menu/api.py#194)(self):**
 
-&mdash; **def [publish\_centralized\_suites](/recipe_modules/build_menu/api.py#1231)(self, builder_config: Optional[BuilderConfig]=None):**
+&mdash; **def [publish\_centralized\_suites](/recipe_modules/build_menu/api.py#1278)(self, builder_config: Optional[BuilderConfig]=None):**
 
 Call the PublishCentralizedSuites endpoint to build test containers.
 
@@ -1562,7 +1635,7 @@ Args:
 Raises:
   recipe_api.StepFailure: If the FetchCentralizedSuites endpoint doesn't exist.
 
-&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1424)(self, config):**
+&mdash; **def [publish\_image\_size\_data](/recipe_modules/build_menu/api.py#1471)(self, config):**
 
 Retrieve, assemble, and publish information about package and image size.
 
@@ -1572,7 +1645,7 @@ ImageService/Create and PackageService/GetTargetVersions.
 Args:
   config: A BuilderConfig object.
 
-&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1404)(self, gs_bucket, gs_path):**
+&mdash; **def [publish\_latest\_files](/recipe_modules/build_menu/api.py#1451)(self, gs_bucket, gs_path):**
 
 Write LATEST-... files to GS.
 
@@ -1736,21 +1809,21 @@ Returns:
   (Option[UploadedArtifacts]) information about uploaded artifacts, if any
         exist.
 
-&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1365)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_chrome\_prebuilts](/recipe_modules/build_menu/api.py#1412)(self, config: Optional[BuilderConfig]=None):**
 
 Upload Chrome prebuilts from the build.
 
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1352)(self, config=None):**
+&mdash; **def [upload\_devinstall\_prebuilts](/recipe_modules/build_menu/api.py#1399)(self, config=None):**
 
 Upload dev_install prebuilts from the build.
 
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1383)(self, config: Optional[BuilderConfig]=None):**
+&mdash; **def [upload\_host\_prebuilts](/recipe_modules/build_menu/api.py#1430)(self, config: Optional[BuilderConfig]=None):**
 
 Upload host prebuilts from the build.
 
@@ -1759,7 +1832,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config: The Builder Config for the build, or None.
 
-&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1333)(self, config=None):**
+&mdash; **def [upload\_prebuilts](/recipe_modules/build_menu/api.py#1380)(self, config=None):**
 
 Upload prebuilts from the build.
 
@@ -1768,7 +1841,7 @@ Upload prebuilts if the configuration has uploadable prebuilts.
 Args:
   config (BuilderConfig): The Builder Config for the build, or None.
 
-&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1273)(self, config: BuilderConfig):**
+&mdash; **def [upload\_sources](/recipe_modules/build_menu/api.py#1320)(self, config: BuilderConfig):**
 
 Add the Sources file to the build metadata artifact dir.
 
@@ -1786,13 +1859,13 @@ Returns:
 
 Functions related to build planning.
 
-#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#30)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [BuildPlanApi](/recipe_modules/build_plan/api.py#29)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to plan the builds to be launched.
 
-&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#53)(self):**
+&emsp; **@property**<br>&mdash; **def [additional\_chrome\_pupr\_builders](/recipe_modules/build_plan/api.py#63)(self):**
 
-&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#221)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
+&mdash; **def [get\_build\_plan](/recipe_modules/build_plan/api.py#235)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], enable_history: bool, gerrit_changes: List[GerritChange], internal_snapshot: GitilesCommit, external_snapshot: GitilesCommit):**
 
 Return a two-tuple of completed and needed builds.
 
@@ -1812,7 +1885,7 @@ Returns:
     A list of Build objects of successful builds with refreshed criticality.
     A list of ScheduleBuildRequests that have to be scheduled.
 
-&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#479)(self, child_specs, forced_rebuilds):**
+&mdash; **def [get\_completed\_builds](/recipe_modules/build_plan/api.py#508)(self, child_specs, forced_rebuilds):**
 
 Get the list of previously passed child builds with criticality refreshed.
 
@@ -1826,7 +1899,7 @@ Returns:
   latest successful child builds with the same patches as the current
   cq orchestrator with refreshed critical values.
 
-&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#542)(self, gerrit_changes: List[bb_common_pb2.GerritChange]):**
+&mdash; **def [get\_forced\_rebuilds](/recipe_modules/build_plan/api.py#572)(self, gerrit_changes: List[bb_common_pb2.GerritChange]):**
 
 Gets a list of builders whose builds should not be reused.
 
@@ -1841,11 +1914,11 @@ Returns:
   forced_rebuilds: A set of builder names or 'all' if no builds can be
     reused.
 
-&mdash; **def [get\_relevant\_builder\_configs](/recipe_modules/build_plan/api.py#88)(self, builder_configs: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
+&mdash; **def [get\_relevant\_builders](/recipe_modules/build_plan/api.py#98)(self, builders: List[BuilderConfig], gerrit_changes: List[GerritChange]):**
 
-Returns BuilderConfigs deemed relevant by the RelevancyService.
+Returns builders deemed relevant by the RelevancyService.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#581)(builder_name: str):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_slim\_builder\_name](/recipe_modules/build_plan/api.py#611)(builder_name: str):**
 
 Returns to the name of the slim variant of the builder.
 
@@ -1855,6 +1928,8 @@ Args:
 
 Returns:
    The slim builder name.
+
+&mdash; **def [initialize](/recipe_modules/build_plan/api.py#43)(self):**
 ### *recipe_modules* / [build\_reporting](/recipe_modules/build_reporting)
 
 [DEPS](/recipe_modules/build_reporting/__init__.py#13): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cloud\_pubsub](#recipe_modules-cloud_pubsub), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [signing](#recipe_modules-signing), [signing\_utils](#recipe_modules-signing_utils), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -4019,9 +4094,9 @@ Raises:
 
 An API for managing release config.
 
-#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#53)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [CrosReleaseConfigApi](/recipe_modules/cros_release_config/api.py#55)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#140)(self, branch: str, auto_submit: bool, dryrun: bool=False):**
+&mdash; **def [update\_config](/recipe_modules/cros_release_config/api.py#142)(self, branch: str, auto_submit: bool, dryrun: bool=False):**
 
 Creates CLs updating config file to include new release branch.
 
@@ -4029,8 +4104,8 @@ While Rubik is being turned-up, this endpoint modifies both the legacy
 config in chromite as well as the Rubik starlark config in infra/config.
 
 Args:
-  branch: Release or stabilize branch, e.g. "release-R89-13729.B" or
-    "stabilize-15129.B".
+  branch: Release, stabilize or firmware branch, e.g. "release-R89-13729.B",
+    "stabilize-15129.B", or "firmware-R126-12345.B".
   auto_submit: Whether to autosubmit the config change.
   dryrun: If in dryrun mode, we'll abandon the change.
 ### *recipe_modules* / [cros\_release\_util](/recipe_modules/cros_release_util)
@@ -4676,6 +4751,27 @@ Args:
   name (string): Step name.  Default: "update sdk".
   force_update (bool): Pass force_update to the SdkService/Update call,
       causing update_chroot to be called.
+### *recipe_modules* / [cros\_snapshot](/recipe_modules/cros_snapshot)
+
+[DEPS](/recipe_modules/cros_snapshot/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [git\_footers](#recipe_modules-git_footers), [src\_state](#recipe_modules-src_state), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+API for working with CrOS snapshot builds.
+
+#### **class [CrosSnapshotApi](/recipe_modules/cros_snapshot/api.py#17)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for steps that manipulates CrOS snapshot information.
+
+&mdash; **def [is\_snapshot\_build](/recipe_modules/cros_snapshot/api.py#60)(self):**
+
+Return True if this build is a snapshot build running on a snapshot builder.
+
+&mdash; **def [snapshot\_identifier](/recipe_modules/cros_snapshot/api.py#48)(self, test_value: Optional[str]=None):**
+
+The snapshot identifier of the workspace checkout.
+
+Args:
+  test_value: test value of the snapshot identifier.
 ### *recipe_modules* / [cros\_som](/recipe_modules/cros_som)
 
 [DEPS](/recipe_modules/cros_som/__init__.py#10): [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/time][recipe_engine/recipe_modules/time], [recipe\_engine/url][recipe_engine/recipe_modules/url]
@@ -5406,7 +5502,7 @@ Returns:
   A named tuple of (gs_path, local_path).
 ### *recipe_modules* / [cros\_test\_proctor](/recipe_modules/cros_test_proctor)
 
-[DEPS](/recipe_modules/cros_test_proctor/__init__.py#9): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [failures](#recipe_modules-failures), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
+[DEPS](/recipe_modules/cros_test_proctor/__init__.py#9): [cq\_fault\_attribution](#recipe_modules-cq_fault_attribution), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [easy](#recipe_modules-easy), [exonerate](#recipe_modules-exonerate), [future\_utils](#recipe_modules-future_utils), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [test\_failures](#recipe_modules-test_failures), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming]
 
 
 Functions for sending requests and processing results from cros test platform.
@@ -5578,50 +5674,50 @@ Create a temp file with provided container metadata.
 Args:
   container_metadata: (ContainerMetadata) container metadata.
 
-&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#227)(self):**
+&mdash; **def [ensure\_cros\_tool\_runner](/recipe_modules/cros_tool_runner/api.py#230)(self):**
 
 Ensure the CrosToolRunner CLI is installed.
 
-&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#142)(self, request):**
+&mdash; **def [find\_tests](/recipe_modules/cros_tool_runner/api.py#145)(self, request):**
 
 Find tests via `test-finder` subcommand.
 
 Args:
   request: a CrosToolRunnerTestFinderRequest.
 
-&mdash; **def [post\_process](/recipe_modules/cros_tool_runner/api.py#170)(self, request):**
+&mdash; **def [post\_process](/recipe_modules/cros_tool_runner/api.py#173)(self, request):**
 
 Run post process via `post_process` subcommand.
 
 Args:
   request: a CrosToolRunnerPostTestRequest.
 
-&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#152)(self, request):**
+&mdash; **def [pre\_process](/recipe_modules/cros_tool_runner/api.py#155)(self, request):**
 
 Pre process commands via `pre-process` subcommand.
 
 Args:
   request: a CrosToolRunnerPreTestRequest.
 
-&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#133)(self, request):**
+&mdash; **def [provision](/recipe_modules/cros_tool_runner/api.py#136)(self, request):**
 
 Run provision via `provision` subcommand.
 
 Args:
   request: a CrosToolRunnerProvisionRequest.
 
-&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#263)(self):**
+&mdash; **def [read\_dut\_hostname](/recipe_modules/cros_tool_runner/api.py#266)(self):**
 
 "Return the DUT hostname.
 
-&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#161)(self, request):**
+&mdash; **def [test](/recipe_modules/cros_tool_runner/api.py#164)(self, request):**
 
 Run test(s) via `test` subcommand.
 
 Args:
   request: a CrosToolRunnerTestRequest.
 
-&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#180)(self, autotest_dir, results_dir):**
+&mdash; **def [upload\_to\_tko](/recipe_modules/cros_tool_runner/api.py#183)(self, autotest_dir, results_dir):**
 
 Upload test results to TKO via tko-parse.
 This command does not call into CTR. It directly invokes tko-parse in autotest.
@@ -5699,11 +5795,11 @@ API to call into the CTPv2 binary
 
 Module for issuing ctpv2 commands
 
-&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#66)(self):**
+&mdash; **def [cipd\_package\_label](/recipe_modules/ctpv2/api.py#65)(self):**
 
 Return the CTPv2 CIPD package version (e.g. prod/staging/latest).
 
-&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#51)(self):**
+&mdash; **def [ensure\_ctpv2](/recipe_modules/ctpv2/api.py#50)(self):**
 
 Ensure the ctpv2 CLI is installed.
 
@@ -5711,7 +5807,7 @@ Ensure the ctpv2 CLI is installed.
 
 Execute work via ctpv2 luciexe binary.
 
-&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#74)(self, requests, reverse=False):**
+&mdash; **def [filter\_legacy\_requests](/recipe_modules/ctpv2/api.py#73)(self, requests, reverse=False):**
 
 Filter out the legacy requests based on allowed pools.
 
@@ -5727,7 +5823,7 @@ Checks if ctpv2 is enabled for use.
 
 Returns: bool
 
-&mdash; **def [set\_allowed\_pools](/recipe_modules/ctpv2/api.py#70)(self, allowed_pools):**
+&mdash; **def [set\_allowed\_pools](/recipe_modules/ctpv2/api.py#69)(self, allowed_pools):**
 
 Set the allowed ctp2 pools
 ### *recipe_modules* / [cts\_results\_archive](/recipe_modules/cts_results_archive)
@@ -6061,14 +6157,14 @@ Returns:
   See 'step.__call__'.
 ### *recipe_modules* / [exonerate](/recipe_modules/exonerate)
 
-[DEPS](/recipe_modules/exonerate/__init__.py#9): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [exoneration\_util](#recipe_modules-exoneration_util), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/exonerate/__init__.py#9): [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [exoneration\_util](#recipe_modules-exoneration_util), [naming](#recipe_modules-naming), [rdb\_util](#recipe_modules-rdb_util), [urls](#recipe_modules-urls), [depot\_tools/gitiles][depot_tools/recipe_modules/gitiles], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Functions for exonerating test failures.
 
 #### **class [ExonerateApi](/recipe_modules/exonerate/api.py#42)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
-&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#527)(self, fake_data: bool=False):**
+&mdash; **def [auto\_exoneration\_analysis](/recipe_modules/exonerate/api.py#513)(self, fake_data: bool=False):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -6079,7 +6175,7 @@ Args:
 Returns: A boolean indicating if auto exoneration was enabled without dry_run
 and did not exceed any of the limits.
 
-&mdash; **def [auto\_exoneration\_analysis\_v2](/recipe_modules/exonerate/api.py#722)(self, failed_tests: Set[FailedTest]=None, fake_data=None):**
+&mdash; **def [auto\_exoneration\_analysis\_v2](/recipe_modules/exonerate/api.py#708)(self, failed_tests: Set[FailedTest]=None, fake_data=None):**
 
 Analyze failed tests to see if they can be exonerated.
 
@@ -6120,11 +6216,11 @@ Args:
 
 Returns: TestDisablementCfg object of the config.
 
-&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#493)(self, failure_rates: TestVariantFailureRateAnalysis):**
+&mdash; **def [generate\_failed\_test\_stats](/recipe_modules/exonerate/api.py#479)(self, failure_rates: TestVariantFailureRateAnalysis):**
 
 Returns FailedTestStats for the given LUCI Analysis failure rates.
 
-&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#454)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
+&mdash; **def [get\_consistent\_failure\_count\_from\_verdicts](/recipe_modules/exonerate/api.py#440)(self, recent_verdicts: List[TestVariantFailureRateAnalysis.RecentVerdict]):**
 
 Get the number of failures in the last 10 independant runs from LUCI Analysis.
 
@@ -6133,7 +6229,7 @@ Args:
 
 Returns: Number of failures in the last 10 runs.
 
-&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#466)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
+&mdash; **def [get\_flake\_percent\_from\_interval\_stats](/recipe_modules/exonerate/api.py#452)(self, interval_stats: List[TestVariantFailureRateAnalysis.IntervalStats]):**
 
 Get the flake count & percent of the test for the last 24 hr period.
 
@@ -6143,7 +6239,7 @@ Args:
 Returns: Percent of verdict with flaky result in the last
   24 hr period rounded to the nearest integer.
 
-&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#672)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
+&mdash; **def [get\_prev\_failed\_now\_exonerable\_test\_results](/recipe_modules/exonerate/api.py#658)(self, test_plan: GenerateTestPlanResponse, dry_run=False):**
 
 Get the tests from the previous failed runs that are now exonerable.
 
@@ -6154,7 +6250,7 @@ Args:
 Returns:
   A list of exonerable HW test results.
 
-&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#433)(self, test_id: str, board: str, build_target: str, model: str):**
+&mdash; **def [get\_test\_variant\_dict](/recipe_modules/exonerate/api.py#419)(self, test_id: str, board: str, build_target: str, model: str):**
 
 Create test_variant dict for LUCI Analysis from inputs.
 
@@ -6179,7 +6275,7 @@ Args:
 
 Returns: boolean indicating if test_result was exonerated.
 
-&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#611)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None, exonerate_prejob_failures: Optional[bool]=False, excludes_enabled_override: Optional[bool]=None):**
+&mdash; **def [is\_hw\_result\_exonerable](/recipe_modules/exonerate/api.py#597)(self, hw_test_result: SkylabResult, exoneration_configs_override: Optional[Dict]=None, exonerate_prejob_failures: Optional[bool]=False, excludes_enabled_override: Optional[bool]=None):**
 
 Checks to see if hw result is exonerable.
 
@@ -6211,10 +6307,6 @@ Returns the max number of tests to auto exonerate.
 &emsp; **@property**<br>&mdash; **def [per\_target\_autoex\_limit](/recipe_modules/exonerate/api.py#74)(self):**
 
 Returns the max number of tests to auto exonerate on a single target.
-
-&mdash; **def [populate\_exoneration\_markdown](/recipe_modules/exonerate/api.py#419)(self):**
-
-Populate markdown style info about suites that were exonerated.
 
 &mdash; **def [print\_stats](/recipe_modules/exonerate/api.py#180)(self, property_name: str):**
 
@@ -6350,16 +6442,41 @@ Upload factory.zip and chromiumos_test_image.tar.xz
 Zip up artifacts for factory.zip
 ### *recipe_modules* / [failures](/recipe_modules/failures)
 
-[DEPS](/recipe_modules/failures/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [naming](#recipe_modules-naming), [src\_state](#recipe_modules-src_state), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [failures\_util](#recipe_modules-failures_util), [naming](#recipe_modules-naming), [src\_state](#recipe_modules-src_state), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 API for raising failures and presenting them in cute ways.
 
-#### **class [FailuresApi](/recipe_modules/failures/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [FailuresApi](/recipe_modules/failures/api.py#32)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#262)(self, results, ignore_build_test_failures=False):**
+&mdash; **def [aggregate\_build\_failures](/recipe_modules/failures/api.py#235)(self, build_failures: List[Failure], failure_count: int, total_count: int):**
+
+Returns aggregate test failure markdown text for build results.
+
+Args:
+  build_failures: List of all the build failures.
+  failure_count: Number of build failures.
+  total_count: Number of all build results.
+
+Returns:
+  List of summary markdown lines.
+
+&mdash; **def [aggregate\_failure\_group](/recipe_modules/failures/api.py#315)(self, kind: str, failure_group: List[Failure], failure_count: int, total_count: int):**
+
+Returns aggregate failure markdown text.
+
+Args:
+  kind: The failure kind.
+  failure_group: List of all the failures for the specific kind.
+  failure_count: Number of failures
+  total_count: Number of all entries
+
+Returns:
+  List of summary markdown lines.
+
+&mdash; **def [aggregate\_failures](/recipe_modules/failures/api.py#168)(self, results, ignore_build_test_failures=False):**
 
 Returns a recipe result based on the given failures.
 
@@ -6375,35 +6492,18 @@ Args:
 Returns:
   RawResult: The recipe result, including a human-readable failure summary.
 
-&mdash; **def [aggregate\_hw\_test\_failures](/recipe_modules/failures/api.py#389)(self, hw_test_failures: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [aggregate\_hw\_test\_failures](/recipe_modules/failures/api.py#352)(self, hw_test_failures: List[Failure]):**
 
 Returns aggregate test failure markdown text for HW tests,
 distinguishing between test and shard / suite failures.
 
 Args:
   hw_test_failures: List of all the hw test failures.
-  non_fatal_failures_count_by_kind: Counter of each failure kind to its
-    non-fatal failure count.
 
 Returns:
   List of summary markdown lines.
 
-&mdash; **def [aggregrate\_failure\_group](/recipe_modules/failures/api.py#337)(self, kind: str, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter, failure_count: int, total_count: int):**
-
-Returns aggregate failure markdown text.
-
-Args:
-  kind: The failure kind.
-  failure_group: List of all the failures for the specific kind.
-  non_fatal_failures_count_by_kind: Counter of each failure kind to its
-    non-fatal failure count.
-  failure_count: Number of failures
-  total_count: Number of all entries
-
-Returns:
-  List of summary markdown lines.
-
-&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#773)(self, step_failures):**
+&mdash; **def [format\_step\_failures](/recipe_modules/failures/api.py#592)(self, step_failures):**
 
 Helper function to format the collected failures for presentation.
 
@@ -6412,7 +6512,7 @@ Args:
 Returns:
   formatted markdown string for UI presentation.
 
-&mdash; **def [format\_summary\_markdown](/recipe_modules/failures/api.py#536)(self, summary_lines):**
+&mdash; **def [format\_summary\_markdown](/recipe_modules/failures/api.py#470)(self, summary_lines):**
 
 Aggregate individual failure summary lines.
 
@@ -6427,15 +6527,12 @@ Returns:
   summary_markdown (str): A markdown text that can be used to set the result
   of the step or build.
 
-&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/failures/api.py#634)(self, not_runnable_addtnl_tests):**
-
-&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#564)(self, builds, refresh_configs=False, relevant_child_builder_names=None):**
+&mdash; **def [get\_build\_results](/recipe_modules/failures/api.py#498)(self, builds, relevant_child_builder_names=None):**
 
 Verify all builds completed successfully.
 
 Args:
   builds (list[build_pb2.Build]): List of completed builds.
-  refresh_configs (bool): Whether to update configs and adjust is_critical.
   relevant_child_builder_names (list(str)): List of relevant child builder
     names.
 
@@ -6444,48 +6541,23 @@ Returns:
   in the given runs and a dict mapping a task kind with the number of
   successes.
 
-&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#664)(self, build: build_pb2.Build):**
+&mdash; **def [get\_build\_status](/recipe_modules/failures/api.py#543)(self, build: build_pb2.Build):**
 
 Retrieve the status of the build.
 
-&mdash; **def [get\_hw\_test\_results](/recipe_modules/failures/api.py#617)(self, hw_tests):**
+&mdash; **def [get\_results](/recipe_modules/failures/api.py#79)(self, kind, runs, get_status, is_critical, get_title, get_link_map, get_id, build_detailed_kind=None):**
 
-Logs hardware test status to UI, and raises on failed tests.
-
-Args:
-  hw_tests (list[SkylabResult]): List of Skylab suite results.
-
-Returns:
-  A Results object containing the list[Failure] of all failures discovered
-  in the given runs and a dict mapping a task kind with the number of
-  successes.
-
-&mdash; **def [get\_hwtest\_status](/recipe_modules/failures/api.py#679)(self, hw_test: SkylabResult):**
-
-Get the status of the hw_test.
-
-&mdash; **def [get\_non\_critical\_failures\_text](/recipe_modules/failures/api.py#518)(self, kind: str, non_fatal_failures_count_by_kind: collections.Counter):**
-
-Returns a line summarizing the non-critical failures for the kind.
-
-Args:
-  kind: The failure kind.
-  non_fatal_failures_count_by_kind: Counter of each failure kind to its
-    non-fatal failure count.
-
-&mdash; **def [get\_test\_failure\_main\_line](/recipe_modules/failures/api.py#467)(self, failure_group: List[Failure], non_fatal_failures_count_by_kind: collections.Counter):**
+&mdash; **def [get\_test\_failure\_main\_line](/recipe_modules/failures/api.py#426)(self, failure_group: List[Failure]):**
 
 Returns the main line of the summary markdown.
 
 Args:
   failure_group: List of all the failures for the specified kind.
-  non_fatal_failures_count_by_kind: Counter of each failure kind to its
-    non-fatal failure count.
 
 Returns:
   Main line of the summary markdown.
 
-&mdash; **def [get\_test\_fault\_attribution\_text](/recipe_modules/failures/api.py#430)(self, target_identifier: str, test_id: str):**
+&mdash; **def [get\_test\_fault\_attribution\_text](/recipe_modules/failures/api.py#389)(self, target_identifier: str, test_id: str):**
 
 Returns the fault attribution text of a summary markdown line.
 
@@ -6497,14 +6569,14 @@ Args:
 Returns:
   Fault attribution text for a summary line.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#246)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [ignore\_exceptions](/recipe_modules/failures/api.py#152)(self):**
 
 Catches exceptions and logs them instead.
 
 Should only be used temporarily to prevent new features from crashing the
 entire recipe. Remove once new feature is stable.
 
-&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#694)(self, build):**
+&mdash; **def [is\_critical\_build\_failure](/recipe_modules/failures/api.py#547)(self, build):**
 
 Determine in the build failed and was critical.
 
@@ -6514,44 +6586,7 @@ Args:
 Returns:
   bool: True if the build failed and was critical.
 
-&mdash; **def [is\_critical\_hw\_test\_failure](/recipe_modules/failures/api.py#706)(self, hw_test):**
-
-Determine if the hw test failed and was critical.
-
-Args:
-  hw_test (SkylabResult): The hardware test result in question.
-
-Returns:
-  bool: True if the test failed and was critical.
-
-&mdash; **def [is\_critical\_test\_failure](/recipe_modules/failures/api.py#668)(self, test):**
-
-Determine if the test is critical and has failed.
-
-Args:
-  test (SkylabResult): The test in question.
-
-Returns:
-  bool: True if the test is critical and has failed.
-
-&mdash; **def [is\_hw\_test\_critical](/recipe_modules/failures/api.py#683)(self, hw_test):**
-
-Determine if the hw test was critical.
-
-Args:
-  hw_test (SkylabResult): The hardware test result in question.
-
-Returns:
-  bool: True if the test was critical.
-
-&mdash; **def [set\_exoneration\_markdown](/recipe_modules/failures/api.py#226)(self, markdown_txt: str):**
-
-Store string containing exoneration info for summary.
-
-Args:
-  markdown_txt: String containing summary of exonerations.
-
-&mdash; **def [set\_test\_variant\_to\_fault\_attribute](/recipe_modules/failures/api.py#234)(self, test_variant_to_fault_attribute: Dict[(Tuple[(str, str, str)], FaultAttributedBuildTarget)]):**
+&mdash; **def [set\_test\_variant\_to\_fault\_attribute](/recipe_modules/failures/api.py#140)(self, test_variant_to_fault_attribute: Dict[(Tuple[(str, str, str)], FaultAttributedBuildTarget)]):**
 
 Sets dictionary information for test variant to the corresponding
 fault attribute.
@@ -6560,7 +6595,7 @@ Args:
   test_variant_to_fault_attribute: defaultdict of tuples of the format:
   (test_id, build_target, model), to fault attribution.
 
-&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#735)(self, failures: List[Failure], fresh_builder_configs: Dict[(str, BuilderConfig)], presentation: Optional[StepPresentation]=None):**
+&mdash; **def [update\_non\_critical\_build\_failures](/recipe_modules/failures/api.py#559)(self, failures: List[Failure], fresh_builder_configs: Dict[(str, BuilderConfig)], presentation: Optional[StepPresentation]=None):**
 
 If builders are now non-critical or removed, failures are non-fatal.
 
@@ -6573,6 +6608,18 @@ Args:
 
 Returns:
   The list of Failures with 'fatal' statuses possibly updated.
+### *recipe_modules* / [failures\_util](/recipe_modules/failures_util)
+
+[DEPS](/recipe_modules/failures_util/__init__.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+API for failures util functions.
+
+#### **class [FailuresUtilApi](/recipe_modules/failures_util/api.py#40)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for util functions associated with failures printing & processing.
+
+&mdash; **def [present\_run](/recipe_modules/failures_util/api.py#99)(self, title, link_map, status, critical=True):**
 ### *recipe_modules* / [future\_utils](/recipe_modules/future_utils)
 
 [DEPS](/recipe_modules/future_utils/__init__.py#8): [recipe\_engine/futures][recipe_engine/recipe_modules/futures]
@@ -7217,7 +7264,7 @@ Returns:
 Raises:
   StepFailure: If any of the requested patch sets is not found.
 
-&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1179)(self, gerrit_change: GerritChange):**
+&mdash; **def [gerrit\_related\_changes](/recipe_modules/gerrit/api.py#1180)(self, gerrit_change: GerritChange):**
 
 Fetch and return related changes given a Gerrit change.
 
@@ -7226,7 +7273,7 @@ Uses the gerrit_related_changes CIPD package.
 Returns:
   The JSON for 'related' outputted by gerrit_related_changes.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#1075)(self, email: str, gerrit_host: str):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&emsp; **@functools.lru_cache**<br>&mdash; **def [get\_account\_id](/recipe_modules/gerrit/api.py#1076)(self, email: str, gerrit_host: str):**
 
 Get the Gerrit account id for the given email on the given host.
 
@@ -7242,7 +7289,7 @@ Args:
 Returns:
   The change description.
 
-&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#1103)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=4, delay=timedelta(seconds=5))**<br>&mdash; **def [get\_change\_mergeable](/recipe_modules/gerrit/api.py#1104)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Get the mergeable status of the given Gerrit change.
 
@@ -7254,7 +7301,7 @@ Args:
 Returns:
   Whether the revision of the change is mergeable.
 
-&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1139)(self, change_num: int, gerrit_host: str, revision: str='current'):**
+&emsp; **@exponential_retry(retries=1, delay=timedelta(seconds=5))**<br>&mdash; **def [is\_merge\_commit](/recipe_modules/gerrit/api.py#1140)(self, change_num: int, gerrit_host: str, revision: str='current'):**
 
 Returns whether the given change list contains a merge commit.
 
@@ -7291,7 +7338,7 @@ Return a Gerrit change URL, parsed from a GerritChange proto.
 
 Return a fully qualified host parsed from a GerritChange proto.
 
-&mdash; **def [query\_change\_infos](/recipe_modules/gerrit/api.py#1014)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None, o_params: Optional[List[str]]=None):**
+&mdash; **def [query\_change\_infos](/recipe_modules/gerrit/api.py#1017)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None, o_params: Optional[List[str]]=None, limit: Optional[int]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -7304,12 +7351,13 @@ Args:
       filter before returning.
   o_params: A list of additional output specifiers, as documented here:
       https://gerrit-review.googlesource.com/Documentation/rest-api-changes.html#list-changes
+  limit: The maximum number of changes to return.
 Returns:
   A list of ChangeInfo objects that meet the specified query parameters
   and label constraints. If no changes meet the criteria, an empty list
   is returned.
 
-&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#1043)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
+&mdash; **def [query\_changes](/recipe_modules/gerrit/api.py#1044)(self, host: str, query_params: List[Tuple[(str, str)]], label_constraints: Optional[List[LabelConstraint]]=None):**
 
 Query gerrit for change meeting certain constraints, and return them.
 
@@ -8170,6 +8218,22 @@ for some packages.
 &emsp; **@property**<br>&mdash; **def [supported\_packages](/recipe_modules/gobin/api.py#97)(self):**
 
 Return the golang packages supported by this module.
+### *recipe_modules* / [golucibin](/recipe_modules/golucibin)
+
+[DEPS](/recipe_modules/golucibin/__init__.py#7): [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+API to call into Go luci binaries.
+
+#### **class [GoLuciBinAPI](/recipe_modules/golucibin/api.py#14)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+Module for running Go luci binaries.
+
+&mdash; **def [ensure\_package](/recipe_modules/golucibin/api.py#47)(self, package: str, cipdLabel: str):**
+
+&mdash; **def [execute\_luciexe](/recipe_modules/golucibin/api.py#24)(self, package: str, cipdLabel: str, args: List[str]=None, runningAsync: bool=False):**
+
+Execute go luciexe binary.
 ### *recipe_modules* / [goma](/recipe_modules/goma)
 
 [DEPS](/recipe_modules/goma/__init__.py#7): [support](#recipe_modules-support), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -8329,13 +8393,13 @@ Args:
 
 API for raising image builder failures and presenting them.
 
-#### **class [ImageBuilderFailuresApi](/recipe_modules/image_builder_failures/api.py#26)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [ImageBuilderFailuresApi](/recipe_modules/image_builder_failures/api.py#25)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module for presenting errors and raising StepFailures.
 
-&emsp; **@property**<br>&mdash; **def [package\_failures](/recipe_modules/image_builder_failures/api.py#33)(self):**
+&emsp; **@property**<br>&mdash; **def [package\_failures](/recipe_modules/image_builder_failures/api.py#32)(self):**
 
-&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/image_builder_failures/api.py#217)(self, failed_images):**
+&mdash; **def [raise\_failed\_image\_tests](/recipe_modules/image_builder_failures/api.py#216)(self, failed_images):**
 
 Display failed image tests and raise a failure.
 
@@ -8350,7 +8414,7 @@ Args:
 Raises:
   StepFailure: If failed_images is not empty.
 
-&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/image_builder_failures/api.py#195)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
+&mdash; **def [set\_compile\_failed\_packages](/recipe_modules/image_builder_failures/api.py#194)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
 
 If any packages failed compilation set presentation and raise failure.
 
@@ -8363,7 +8427,7 @@ Args:
 Raises:
   StepFailure: If failed_packages is not empty.
 
-&mdash; **def [set\_test\_failed\_packages](/recipe_modules/image_builder_failures/api.py#173)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
+&mdash; **def [set\_test\_failed\_packages](/recipe_modules/image_builder_failures/api.py#172)(self, enclosing_step: Step, packages: List[Tuple[(common_pb2.PackageInfo, str)]], cl_affected_packages: Optional[List[common_pb2.PackageInfo]]=None):**
 
 If any packages failed unit tests set presentation and raise failure.
 
@@ -8694,7 +8758,7 @@ Returns:
   List of changes that input CLs CQ-depend on but are not included in this run.
 ### *recipe_modules* / [looks\_for\_green](/recipe_modules/looks_for_green)
 
-[DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [lfg\_util](#recipe_modules-lfg_util), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/looks_for_green/__init__.py#10): [buildbucket\_stats](#recipe_modules-buildbucket_stats), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [greenness](#recipe_modules-greenness), [lfg\_util](#recipe_modules-lfg_util), [naming](#recipe_modules-naming), [depot\_tools/gerrit][depot_tools/recipe_modules/gerrit], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Functions implementing looks for green.
@@ -8713,7 +8777,7 @@ snapshot-orchestrator run starts within ~30 minutes of snapshot creation.
 Returns:
   Approx age in hours of snapshot used by latest scored snap-orch.
 
-&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#389)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None, requested_snapshot_builders: Optional[List[str]]=None, lookback_hours: Optional[float]=None):**
+&mdash; **def [find\_green\_snapshot](/recipe_modules/looks_for_green/api.py#414)(self, latest_start: Optional[timestamp_pb2.Timestamp]=None, bucket: Optional[str]=None, builder: Optional[str]=None, requested_snapshot_builders: Optional[List[str]]=None, lookback_hours: Optional[float]=None):**
 
 Find a green snapshot within the lookback period if one exists.
 
@@ -8733,7 +8797,7 @@ Args:
 Returns:
   A green snapshot, if one was found.
 
-&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#441)(self, gerrit_changes: List[common_pb2.GerritChange]):**
+&mdash; **def [found\_disallow\_lfg\_footer](/recipe_modules/looks_for_green/api.py#466)(self, gerrit_changes: List[common_pb2.GerritChange]):**
 
 Check the incoming gerrit changes for disallow looks for green footer.
 
@@ -8763,6 +8827,15 @@ Returns:
   Snapshot from the latest scored snapshot-orchestrator, or None if not
     found.
 
+&mdash; **def [get\_requested\_snapshot\_builders](/recipe_modules/looks_for_green/api.py#369)(self, necessary_builders: List[str]):**
+
+Gets the requested snapshot builders for find_green_snapshot.
+
+Returns:
+  The names of the snapshot equivalents of the builders in
+    necessary_builders if all necessary_builders have a
+    corresponding snapshot builder. Otherwise, return None.
+
 &emsp; **@lookback_hours.setter**<br>&mdash; **def [lookback\_hours](/recipe_modules/looks_for_green/api.py#120)(self, lookback_hours):**
 
 &emsp; **@property**<br>&mdash; **def [now\_utc](/recipe_modules/looks_for_green/api.py#83)(self):**
@@ -8772,7 +8845,7 @@ Returns the current UTC time.
 Initialized once and used throughout for any time calculations. Zero out
 the microseconds to use seconds as level of precision.
 
-&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#468)(self, gerrit_changes: List[GerritChange], builders_to_be_scheduled: List[str]):**
+&mdash; **def [resize\_lfg\_lookback](/recipe_modules/looks_for_green/api.py#493)(self, gerrit_changes: List[GerritChange], builders_to_be_scheduled: List[str], lookback_hours: Optional[float]=None):**
 
 Change LFG lookback based on the given parameters.
 
@@ -8781,6 +8854,8 @@ Lookback can be resized based on depended changes and/or broken_until.
 Args:
   gerrit_changes: Gerrit changes to analyze.
   builders_to_be_scheduled: List of builders that need to be scheduled.
+  lookback_hours: If specified, use the specified value when finding the
+    minimum lookback hours. Only used by the auto-retrier.
 
 Returns:
   The resized lookback hours.
@@ -8823,7 +8898,7 @@ This assumes signed builds have already been generated.
 
 API to support metadata generation and wrangling.
 
-#### **class [MetadataApi](/recipe_modules/metadata/api.py#27)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [MetadataApi](/recipe_modules/metadata/api.py#31)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with config and support methods for metadata.
 
@@ -8834,22 +8909,39 @@ as part of a build, including, but not necessarily limited to:
   * hardware metadata
   * test metadata
 
-&mdash; **def [fetch\_test\_metadata](/recipe_modules/metadata/api.py#100)(self, chroot: Chroot, sysroot: Sysroot, mock_metadata_file: bool=True):**
+&mdash; **def [fetch\_test\_harness\_metadata](/recipe_modules/metadata/api.py#155)(self, chroot: Chroot, sysroot: Sysroot, mock_metadata_file: bool=True):**
+
+Fetch and return test harness metadata.
+
+Args:
+  chroot: Proto representing the chroot.
+  sysroot: Proto representing the sysroot.
+  mock_metadata_file: Whether the returned filepath should be mocked as
+    existing during tests. This should always be True unless testing the
+    case when a metadata file is not found.
+
+Returns:
+  A TestHarnessMetadataList containing the metadata of all harnesses,
+  or None if the ArtifactsService/FetchTestHarnessMetadata endpoint is
+  unavailable or all metadata files are empty.
+
+&mdash; **def [fetch\_test\_metadata](/recipe_modules/metadata/api.py#110)(self, chroot: Chroot, sysroot: Sysroot, mock_metadata_file: bool=True):**
 
 Fetch and return test case metadata.
 
 Args:
-  chroot: proto representing the chroot
-  sysroot: proto representing the sysroot
-  mock_metadata_file: boolean which should always be true unless
-    testing the case when a metadata file is not found
+  chroot: Proto representing the chroot.
+  sysroot: Proto representing the sysroot.
+  mock_metadata_file: Whether the returned filepath should be mocked as
+    existing during tests. This should always be True unless testing the
+    case when a metadata file is not found.
 
 Returns:
   A TestCaseMetadataList containing the metadata of all tests, or None
   if the ArtifactsService/FetchMetadata endpoint is unavailable or all
   metadata files are empty.
 
-&mdash; **def [gspath](/recipe_modules/metadata/api.py#70)(self, metadata_info, gs_bucket=None, gs_path=None):**
+&mdash; **def [gspath](/recipe_modules/metadata/api.py#80)(self, metadata_info, gs_bucket=None, gs_path=None):**
 
 Return full or relative path to a metadata payload
 depending on if bucket info is provided or not.
@@ -8943,11 +9035,11 @@ Returns:
 
 API featuring shared helpers for naming things.
 
-#### **class [NamingApi](/recipe_modules/naming/api.py#20)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [NamingApi](/recipe_modules/naming/api.py#21)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with helpers for naming things.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#23)(build: build_pb2.Build):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_build\_title](/recipe_modules/naming/api.py#24)(build: build_pb2.Build):**
 
 Get a string to describe the build.
 
@@ -8957,7 +9049,7 @@ Args:
 Returns:
   A string describing the build.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#80)(commit: Commit):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_commit\_title](/recipe_modules/naming/api.py#81)(commit: Commit):**
 
 Get a string to describe the commit.
 
@@ -8969,7 +9061,7 @@ Args:
 Returns:
   The commit title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#156)(req):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_generation\_request\_title](/recipe_modules/naming/api.py#157)(req):**
 
 Get a presentation name for a single GenerationRequest.
 
@@ -8980,7 +9072,7 @@ Args:
 Returns:
   A string providing helpful info about that payload.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#46)(hw_test: HwTestCfg.HwTest):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_hw\_test\_title](/recipe_modules/naming/api.py#47)(hw_test: HwTestCfg.HwTest):**
 
 Get a string to describe the HW test.
 
@@ -8990,7 +9082,7 @@ Args:
 Returns:
   The HW test title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#96)(package: common_pb2.PackageInfo):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_package\_title](/recipe_modules/naming/api.py#97)(package: common_pb2.PackageInfo):**
 
 Get a string to describe the package.
 
@@ -9000,7 +9092,7 @@ Args:
 Returns:
   The package title.
 
-&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#111)(build_id: int, paygen_request_dicts: List[Dict]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_paygen\_build\_title](/recipe_modules/naming/api.py#112)(build_id: int, paygen_request_dicts: List[Dict]):**
 
 Get a presentation name for a build running a batch of PaygenRequests.
 
@@ -9012,7 +9104,7 @@ Args:
 Returns:
   A string providing helpful info about the paygens being run.
 
-&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#69)(self, skylab_result: SkylabResult):**
+&mdash; **def [get\_skylab\_result\_title](/recipe_modules/naming/api.py#70)(self, skylab_result: SkylabResult):**
 
 Get a string to describe the HW test.
 
@@ -9022,7 +9114,7 @@ Args:
 Returns:
   The HW test title.
 
-&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#58)(self, skylab_task: SkylabTask):**
+&mdash; **def [get\_skylab\_task\_title](/recipe_modules/naming/api.py#59)(self, skylab_task: SkylabTask):**
 
 Get a string to describe the Skylab task.
 
@@ -9032,7 +9124,14 @@ Args:
 Returns:
   The Skylab task title.
 
-&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#35)(self, test: Union[(SkylabResult, build_pb2.Build)]):**
+&emsp; **@staticmethod**<br>&mdash; **def [get\_snapshot\_builder\_name](/recipe_modules/naming/api.py#220)(cq_builder_name: str):**
+
+Converts a cq builder name to matching snapshot builder name.
+
+For example, 'amd64-generic-cq' -> 'amd64-generic-snapshot' or
+'amd64-generic-slim-cq' -> 'amd64-generic-snapshot'.
+
+&mdash; **def [get\_test\_title](/recipe_modules/naming/api.py#36)(self, test: Union[(SkylabResult, build_pb2.Build)]):**
 
 Get a string to describe the test.
 
@@ -9057,26 +9156,26 @@ Collect image size data.
 Collect and publish the image size data.
 ### *recipe_modules* / [orch\_menu](/recipe_modules/orch_menu)
 
-[DEPS](/recipe_modules/orch_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [gobin](#recipe_modules-gobin), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/orch_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [failures\_util](#recipe_modules-failures_util), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [gobin](#recipe_modules-gobin), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API providing a menu for orchestrator steps
 
-#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#123)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [OrchMenuApi](/recipe_modules/orch_menu/api.py#116)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1302)(self, relevant_child_builder_names: List[str]=None):**
+&mdash; **def [add\_child\_info\_to\_output\_property](/recipe_modules/orch_menu/api.py#1310)(self, relevant_child_builder_names: List[str]=None):**
 
 Add child information to output property of current build.
 
 Args:
   relevant_builder_names: List of relevant child builders.
 
-&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1142)(self, child_builds):**
+&mdash; **def [aggregate\_metadata](/recipe_modules/orch_menu/api.py#1150)(self, child_builds):**
 
 Aggregate metadata payloads from children.
 
@@ -9089,9 +9188,9 @@ Args:
 Returns:
   (ContainerMetadata): Aggregated container metadata
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#170)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/orch_menu/api.py#162)(self):**
 
-&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1349)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
+&mdash; **def [categorize\_builds\_by\_collect\_handling](/recipe_modules/orch_menu/api.py#1355)(self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec], builds: List[build_pb2.Build]):**
 
 Group builds by CollectHandling value.
 
@@ -9103,24 +9202,24 @@ Returns:
   A dict mapping CollectHandling to the list of builds which fall into that
       category.
 
-&emsp; **@property**<br>&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#213)(self):**
+&emsp; **@property**<br>&mdash; **def [chrome\_module\_child\_props](/recipe_modules/orch_menu/api.py#196)(self):**
 
-&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#200)(self):**
+&emsp; **@property**<br>&mdash; **def [chromium\_src\_ref\_cl\_tag](/recipe_modules/orch_menu/api.py#183)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#150)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/orch_menu/api.py#142)(self):**
 
-&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#685)(self, build: build_pb2.Build):**
+&mdash; **def [cq\_relevant](/recipe_modules/orch_menu/api.py#695)(self, build: build_pb2.Build):**
 
 Whether the CQ child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&mdash; **def [create\_cq\_orch\_recipe\_result](/recipe_modules/orch_menu/api.py#330)(self):**
+&mdash; **def [create\_cq\_orch\_recipe\_result](/recipe_modules/orch_menu/api.py#345)(self):**
 
 Create the correct return value for RunSteps.
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#401)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/orch_menu/api.py#411)(self, include_build_details: bool=False, ignore_build_test_failures: bool=False):**
 
 Create the correct return value for RunSteps.
 
@@ -9133,29 +9232,25 @@ Args:
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#158)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/orch_menu/api.py#150)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#162)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/orch_menu/api.py#154)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#154)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/orch_menu/api.py#146)(self):**
 
-&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#146)(self):**
+&mdash; **def [initialize](/recipe_modules/orch_menu/api.py#138)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#174)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#158)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_dry\_run](/recipe_modules/orch_menu/api.py#166)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#170)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_factory\_orchestrator](/recipe_modules/orch_menu/api.py#182)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#174)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/orch_menu/api.py#190)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#166)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_public\_orchestrator](/recipe_modules/orch_menu/api.py#186)(self):**
+&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#178)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_release\_orchestrator](/recipe_modules/orch_menu/api.py#178)(self):**
-
-&emsp; **@property**<br>&mdash; **def [is\_snapshot\_orchestrator](/recipe_modules/orch_menu/api.py#195)(self):**
-
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#607)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/orch_menu/api.py#617)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -9169,7 +9264,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1034)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/orch_menu/api.py#1043)(self, testable_builds: Optional[List[build_pb2.Build]]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -9178,8 +9273,6 @@ Run tests on the testable_builds identified by plan_and_run_children.
 Args:
   testable_builds: The list of builds to consider or None to use the
     current results.
-  container_metadata: Information on container images used for test
-    execution.
   ignore_gerrit_changes: Whether to drop gerrit changes from the test plan
     request, primarily used for tryjobs (which are release builds and thus
     shouldn't test based on any patches applied).
@@ -9187,7 +9280,7 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#572)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
+&mdash; **def [plan\_and\_wait\_for\_images](/recipe_modules/orch_menu/api.py#582)(self, run_step_name: Optional[str]=None, extra_child_props: Optional[Dict[(str, Any)]]=None):**
 
 Plan and schedule children, and wait until they have produced images.
 
@@ -9199,13 +9292,13 @@ Args:
 Returns:
   A list of builds that have produced images and are ready for testing.
 
-&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#209)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/orch_menu/api.py#192)(self):**
 
-&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#927)(self, check_failures=False):**
+&mdash; **def [run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/api.py#936)(self, check_failures=False):**
 
 Run the follow_on_orchestrator, if any.  Wait if necessary.
 
-&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#935)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
+&mdash; **def [schedule\_wait\_build](/recipe_modules/orch_menu/api.py#944)(self, builder, await_completion=False, properties=None, check_failures=False, step_name=None, timeout_sec=None):**
 
 Schedule a builder, and optionally await completion.
 
@@ -9222,7 +9315,19 @@ Args:
 Returns:
   (Build): The build that was scheduled, and possibly waited for.
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#218)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_cq\_orchestrator](/recipe_modules/orch_menu/api.py#201)(self):**
+
+Initial setup steps for the cq-orchestrator.
+
+This context manager returns with all of the contexts that the orchestrator
+needs to have when it runs, for cleanup to happen properly.
+
+If appropriate, any inflight orchestrator has finished before we return.
+
+Raises:
+  StepFailure if no config is found.
+
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/orch_menu/api.py#245)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -9237,7 +9342,7 @@ Raises:
 Returns:
   BuilderConfig or None, with an active context.
 
-&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#205)(self):**
+&emsp; **@property**<br>&mdash; **def [skip\_paygen](/recipe_modules/orch_menu/api.py#188)(self):**
 ### *recipe_modules* / [overlayfs](/recipe_modules/overlayfs)
 
 [DEPS](/recipe_modules/overlayfs/__init__.py#10): [easy](#recipe_modules-easy), [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -10286,7 +10391,7 @@ Module providing signing functionality.
 
 A module to encapsulate signing operations.
 
-&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#527)(self, presentation: StepPresentation, result_path: Path):**
+&mdash; **def [add\_kms\_logs\_as\_step\_logs](/recipe_modules/signing/api.py#540)(self, presentation: StepPresentation, result_path: Path):**
 
 Add the CloudKMS logs to the given step presentation.
 
@@ -10379,11 +10484,11 @@ Copy the artifacts needed for paygen into the appropriate GS locations.
 Returns:
   List of GS dirs that were pushed to.
 
-&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#605)(self, response: SignImageResponse):**
+&mdash; **def [upload\_signed\_artifacts](/recipe_modules/signing/api.py#618)(self, response: SignImageResponse):**
 
 Uploads all files in output_dir to GS using gsutil cp.
 
-&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#564)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
+&emsp; **@exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT, delay=datetime.timedelta(seconds=1))**<br>&mdash; **def [upload\_unsigned\_artifacts](/recipe_modules/signing/api.py#577)(self, archive_dir: Path, build_target_config: BuildTargetSigningConfig, channels: List['common_pb2.Channel']):**
 
 Uploads files from archive_dir to GS based on signing config.
 
@@ -10632,44 +10737,42 @@ Returns:
 Translates result to a Skylab result.
 ### *recipe_modules* / [snapshot\_orch\_menu](/recipe_modules/snapshot_orch_menu)
 
-[DEPS](/recipe_modules/snapshot_orch_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [gobin](#recipe_modules-gobin), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/snapshot_orch_menu/__init__.py#10): [bot\_cost](#recipe_modules-bot_cost), [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [checkpoint](#recipe_modules-checkpoint), [conductor](#recipe_modules-conductor), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_cq\_additional\_tests](#recipe_modules-cros_cq_additional_tests), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [cros\_version](#recipe_modules-cros_version), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [failures\_util](#recipe_modules-failures_util), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [git\_footers](#recipe_modules-git_footers), [gitiles](#recipe_modules-gitiles), [gobin](#recipe_modules-gobin), [greenness](#recipe_modules-greenness), [looks\_for\_green](#recipe_modules-looks_for_green), [metadata](#recipe_modules-metadata), [naming](#recipe_modules-naming), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [skylab\_results](#recipe_modules-skylab_results), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 API providing a menu for snapshot orchestrator steps
 
-#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#35)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [SnapshotOrchMenuApi](/recipe_modules/snapshot_orch_menu/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module with steps used by orchestrators.
 
 Orchestrators do not call other recipe modules directly: they always get there
 via this module, and are a simple sequence of steps.
 
-&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#72)(self):**
+&emsp; **@property**<br>&mdash; **def [builds\_status](/recipe_modules/snapshot_orch_menu/api.py#70)(self):**
 
-&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#56)(self):**
+&emsp; **@property**<br>&mdash; **def [config](/recipe_modules/snapshot_orch_menu/api.py#54)(self):**
 
-&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#150)(self):**
+&mdash; **def [create\_recipe\_result](/recipe_modules/snapshot_orch_menu/api.py#140)(self):**
 
 Create the correct return value for RunSteps.
 
 Returns:
   (recipe_engine.result_pb2.RawResult) The return value for RunSteps.
 
-&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#64)(self):**
+&emsp; **@property**<br>&mdash; **def [external\_gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#62)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#68)(self):**
+&emsp; **@property**<br>&mdash; **def [gerrit\_changes](/recipe_modules/snapshot_orch_menu/api.py#66)(self):**
 
-&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#60)(self):**
+&emsp; **@property**<br>&mdash; **def [gitiles\_commit](/recipe_modules/snapshot_orch_menu/api.py#58)(self):**
 
-&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#52)(self):**
+&mdash; **def [initialize](/recipe_modules/snapshot_orch_menu/api.py#50)(self):**
 
-&emsp; **@property**<br>&mdash; **def [is\_postsubmit\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#76)(self):**
-
-&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#302)(self, should_update: bool, should_update_bazel: bool):**
+&mdash; **def [output\_local\_greenness](/recipe_modules/snapshot_orch_menu/api.py#287)(self, should_update: bool, should_update_bazel: bool):**
 
 Outputs info about local greenness.
 
-&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#250)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
+&mdash; **def [plan\_and\_run\_children](/recipe_modules/snapshot_orch_menu/api.py#235)(self, run_step_name=None, results_step_name=None, check_critical_step_name=None, extra_child_props=None):**
 
 Plan, schedule, and run child builders.
 
@@ -10683,7 +10786,7 @@ Args:
 Returns:
   (BuildsStatus): The current status of the builds.
 
-&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#496)(self, testable_builds: Optional[List[build_pb2.Build]]=None, container_metadata: Optional[ContainerMetadata]=None, ignore_gerrit_changes: bool=False):**
+&mdash; **def [plan\_and\_run\_tests](/recipe_modules/snapshot_orch_menu/api.py#481)(self, testable_builds: Optional[List[build_pb2.Build]]=None, ignore_gerrit_changes: bool=False):**
 
 Plan, schedule, and run tests.
 
@@ -10692,8 +10795,6 @@ Run tests on the testable_builds identified by plan_and_run_children.
 Args:
   testable_builds: The list of builds to consider or None to use the
     current results.
-  container_metadata: Information on container images used for test
-    execution.
   ignore_gerrit_changes: Whether to drop gerrit changes from the test plan
     request, primarily used for tryjobs (which are release builds and thus
     shouldn't test based on any patches applied).
@@ -10701,16 +10802,16 @@ Args:
 Returns:
   BuildsStatus updated with any test failures.
 
-&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#310)(self, build: build_pb2.Build):**
+&mdash; **def [ps\_relevant](/recipe_modules/snapshot_orch_menu/api.py#295)(self, build: build_pb2.Build):**
 
 Whether the postsubmit child build was critical and relevant.
 
 Args:
   build: The child build.
 
-&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#80)(self):**
+&emsp; **@property**<br>&mdash; **def [relevant\_child\_builder\_names](/recipe_modules/snapshot_orch_menu/api.py#74)(self):**
 
-&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#104)(self):**
+&emsp; **@contextlib.contextmanager**<br>&mdash; **def [setup\_orchestrator](/recipe_modules/snapshot_orch_menu/api.py#98)(self):**
 
 Initial setup steps for the orchestrator.
 
@@ -11225,20 +11326,20 @@ Returns:
    empty and a dict mapping a task kind with the number of successes.
 ### *recipe_modules* / [tast\_results](/recipe_modules/tast_results)
 
-[DEPS](/recipe_modules/tast_results/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [failures](#recipe_modules-failures), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/tast_results/__init__.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [failures\_util](#recipe_modules-failures_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Functions for reporting and parsing Tast VM test results.
 
-#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#33)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+#### **class [TastResultsApi](/recipe_modules/tast_results/api.py#34)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
 
 A module to process tast-results/ directory.
 
-&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#36)(self, props, \*args, \*\*kwargs):**
+&mdash; **def [\_\_init\_\_](/recipe_modules/tast_results/api.py#37)(self, props, \*args, \*\*kwargs):**
 
 Initialize TastResultsApi.
 
-&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#55)(self, dir_path, tag):**
+&emsp; **@exponential_retry(retries=2, delay=datetime.timedelta(seconds=1), condition=(lambda e: getattr(e, 'had_timeout', False)))**<br>&mdash; **def [archive\_dir](/recipe_modules/tast_results/api.py#56)(self, dir_path, tag):**
 
 Archive dir to Google Storage.
 
@@ -11249,7 +11350,7 @@ Args:
 Returns:
   str, link to the archive on pantheon.
 
-&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#201)(self, task_result, exclude_tests=None):**
+&mdash; **def [convert\_results](/recipe_modules/tast_results/api.py#202)(self, task_result, exclude_tests=None):**
 
 Convert TaskResult into api.failures.Results object and dicts.
 
@@ -11262,7 +11363,7 @@ Returns:
   A tuple of api.failures.Results object and list(dict) representing
   failed test cases excluding the ones provided.
 
-&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#176)(self, test_result):**
+&mdash; **def [convert\_to\_testcaseresult](/recipe_modules/tast_results/api.py#177)(self, test_result):**
 
 Convert Tast's result into CTP format.
 
@@ -11272,7 +11373,7 @@ Args:
 Returns:
   TestCaseResult with the same info.
 
-&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#160)(self, missing_test_names):**
+&mdash; **def [create\_missing\_test\_results](/recipe_modules/tast_results/api.py#161)(self, missing_test_names):**
 
 Create test results for the missing test cases.
 
@@ -11282,11 +11383,11 @@ Args:
 Returns:
   list(TestCaseResult) Test results for the missing tests cases.
 
-&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#555)(self, vm_test_build: Build):**
+&mdash; **def [extract\_failed\_test\_names](/recipe_modules/tast_results/api.py#556)(self, vm_test_build: Build):**
 
 Returns the failed test names from the output properties of the build.
 
-&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#80)(self, test_results_path, suite_name, tag, tests, build_artifacts_url=None, new_invocation=False):**
+&mdash; **def [get\_results](/recipe_modules/tast_results/api.py#81)(self, test_results_path, suite_name, tag, tests, build_artifacts_url=None, new_invocation=False):**
 
 Return the test results decoded from the streamed_results.jsonl.
 
@@ -11305,7 +11406,7 @@ Returns:
   Currently this is a TaskResult.
   https://crrev.com/ee30a869473a8ee54246e0469ede2aa010fb2e48/src/test_platform/steps/execution.proto#47
 
-&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#291)(self, task_result):**
+&mdash; **def [get\_tests\_to\_retry](/recipe_modules/tast_results/api.py#292)(self, task_result):**
 
 Determine which tests to retry.
 
@@ -11316,11 +11417,11 @@ Returns:
   list(str) names of tests to be retried and a boolean that
   requires VM restart before retry.
 
-&mdash; **def [had\_no\_unexpected\_skips](/recipe_modules/tast_results/api.py#562)(self, vm_test_build: Build):**
+&mdash; **def [had\_no\_unexpected\_skips](/recipe_modules/tast_results/api.py#563)(self, vm_test_build: Build):**
 
 Returns whether all test cases were attempted.
 
-&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#240)(self, failures, empty_result):**
+&mdash; **def [print\_results](/recipe_modules/tast_results/api.py#241)(self, failures, empty_result):**
 
 Print results for the user.
 
@@ -11328,14 +11429,14 @@ Args:
   failures(list(Failure)): Failures of this run.
   empty_result(bool): Were the results empty?
 
-&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#265)(self, sys_log_dir):**
+&mdash; **def [record\_logs](/recipe_modules/tast_results/api.py#266)(self, sys_log_dir):**
 
 Print system logs to MILO.
 
 Args:
   sys_log_dir(str): absolute dir path to copy logs from.
 
-&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#504)(self, test_results_path, suite_name, missing_test_names, tag, build_artifacts_url=None, new_invocation=False):**
+&mdash; **def [upload\_to\_resultdb](/recipe_modules/tast_results/api.py#505)(self, test_results_path, suite_name, missing_test_names, tag, build_artifacts_url=None, new_invocation=False):**
 
 Upload the test results to ResultDB.
 
@@ -11346,6 +11447,54 @@ Args:
   tag (str): Tag for this execution. Used to distinguish archive folders.
   build_artifacts_url (str): GS Link to the artifacts of the build.
       Ex: 'gs://chromeos-image-archive/betty-cq/R111-2349872/'
+### *recipe_modules* / [test\_failures](/recipe_modules/test_failures)
+
+[DEPS](/recipe_modules/test_failures/__init__.py#8): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_tags](#recipe_modules-cros_tags), [failures](#recipe_modules-failures), [failures\_util](#recipe_modules-failures_util), [naming](#recipe_modules-naming), [src\_state](#recipe_modules-src_state), [urls](#recipe_modules-urls), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+API for raising e2e test failures and presenting them.
+
+#### **class [TestFailuresApi](/recipe_modules/test_failures/api.py#15)([RecipeApi][recipe_engine/wkt/RecipeApi]):**
+
+A module for presenting test failures.
+
+&mdash; **def [get\_additional\_hw\_test\_not\_run\_failures](/recipe_modules/test_failures/api.py#78)(self, not_runnable_addtnl_tests):**
+
+&mdash; **def [get\_hw\_test\_results](/recipe_modules/test_failures/api.py#24)(self, hw_tests):**
+
+Logs hardware test status to UI, and raises on failed tests.
+
+Args:
+  hw_tests (list[SkylabResult]): List of Skylab suite results.
+
+Returns:
+  A Results object containing the list[Failure] of all failures discovered
+  in the given runs and a dict mapping a task kind with the number of
+  successes.
+
+&mdash; **def [get\_hwtest\_status](/recipe_modules/test_failures/api.py#120)(self, hw_test: SkylabResult):**
+
+Get the status of the hw_test.
+
+&mdash; **def [is\_critical\_test\_failure](/recipe_modules/test_failures/api.py#108)(self, test):**
+
+Determine if the test is critical and has failed.
+
+Args:
+  test (SkylabResult): The test in question.
+
+Returns:
+  bool: True if the test is critical and has failed.
+
+&mdash; **def [is\_hw\_test\_critical](/recipe_modules/test_failures/api.py#124)(self, hw_test):**
+
+Determine if the hw test was critical.
+
+Args:
+  hw_test (SkylabResult): The hardware test result in question.
+
+Returns:
+  bool: True if the test was critical.
 ### *recipe_modules* / [test\_util](/recipe_modules/test_util)
 
 [DEPS](/recipe_modules/test_util/__init__.py#8): [cros\_tags](#recipe_modules-cros_tags), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11864,12 +12013,12 @@ Tests involving SDK failure retries.
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/sdk_failures.py#29)(api):**
 ### *recipes* / [auto\_retry\_util:tests/snapshot\_greenness\_cache](/recipe_modules/auto_retry_util/tests/snapshot_greenness_cache.py)
 
-[DEPS](/recipe_modules/auto_retry_util/tests/snapshot_greenness_cache.py#17): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/auto_retry_util/tests/snapshot_greenness_cache.py#21): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-Tests caching greenness for a specific snapshot and from looks for green.
+Tests caching greenness for the latest snapshot.
 
-&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/snapshot_greenness_cache.py#28)(api):**
+&mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/snapshot_greenness_cache.py#32)(api):**
 ### *recipes* / [auto\_retry\_util:tests/submission\_blocking\_builders](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py)
 
 [DEPS](/recipe_modules/auto_retry_util/tests/submission_blocking_builders.py#11): [auto\_retry\_util](#recipe_modules-auto_retry_util), [cros\_infra\_config](#recipe_modules-cros_infra_config), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -11888,6 +12037,54 @@ Tests caching greenness for a specific snapshot and from looks for green.
 
 
 &mdash; **def [RunSteps](/recipe_modules/auto_retry_util/tests/throttle.py#22)(api):**
+### *recipes* / [auto\_runner\_util:tests/current\_revision\_number](/recipe_modules/auto_runner_util/tests/current_revision_number.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/current_revision_number.py#12): [auto\_runner\_util](#recipe_modules-auto_runner_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for current_revision_number prop.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/current_revision_number.py#17)(api):**
+### *recipes* / [auto\_runner\_util:tests/filter\_dependent\_changes](/recipe_modules/auto_runner_util/tests/filter_dependent_changes.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/filter_dependent_changes.py#11): [auto\_runner\_util](#recipe_modules-auto_runner_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the filtering cq-depent changes.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/filter_dependent_changes.py#17)(api):**
+### *recipes* / [auto\_runner\_util:tests/filter\_no\_reviewer\_changes](/recipe_modules/auto_runner_util/tests/filter_no_reviewer_changes.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/filter_no_reviewer_changes.py#11): [auto\_runner\_util](#recipe_modules-auto_runner_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the cls with reviewers functionality.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/filter_no_reviewer_changes.py#17)(api):**
+### *recipes* / [auto\_runner\_util:tests/get\_change\_infos\_from\_gerrit](/recipe_modules/auto_runner_util/tests/get_change_infos_from_gerrit.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/get_change_infos_from_gerrit.py#11): [auto\_runner\_util](#recipe_modules-auto_runner_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for get_change_infos_from_gerrit function.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/get_change_infos_from_gerrit.py#30)(api):**
+### *recipes* / [auto\_runner\_util:tests/get\_eligible\_cls](/recipe_modules/auto_runner_util/tests/get_eligible_cls.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/get_eligible_cls.py#14): [auto\_runner\_util](#recipe_modules-auto_runner_util), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for get_eligible_cls function.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/get_eligible_cls.py#22)(api):**
+### *recipes* / [auto\_runner\_util:tests/quota\_limit](/recipe_modules/auto_runner_util/tests/quota_limit.py)
+
+[DEPS](/recipe_modules/auto_runner_util/tests/quota_limit.py#13): [auto\_runner\_util](#recipe_modules-auto_runner_util), [gerrit](#recipe_modules-gerrit), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+
+
+Tests for quota limits.
+
+&mdash; **def [RunSteps](/recipe_modules/auto_runner_util/tests/quota_limit.py#21)(api):**
 ### *recipes* / [binhost\_lookup\_service:examples/publish\_binhost\_data](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py)
 
 [DEPS](/recipe_modules/binhost_lookup_service/examples/publish_binhost_data.py#13): [binhost\_lookup\_service](#recipe_modules-binhost_lookup_service), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12001,16 +12198,16 @@ accidentally use it, it should be immediately obvious that something is wrong.
 &mdash; **def [RunSteps](/recipe_modules/bot_scaling/examples/update_gce_configs.py#22)(api):**
 ### *recipes* / [brancher](/recipes/brancher.py)
 
-[DEPS](/recipes/brancher.py#18): [cros\_branch](#recipe_modules-cros_branch), [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/brancher.py#19): [cros\_branch](#recipe_modules-cros_branch), [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for creating a new ChromeOS branch.
 
-&mdash; **def [RunSteps](/recipes/brancher.py#52)(api: RecipeApi, properties: BrancherProperties):**
+&mdash; **def [RunSteps](/recipes/brancher.py#53)(api: RecipeApi, properties: BrancherProperties):**
 
-&mdash; **def [is\_108\_or\_greater](/recipes/brancher.py#34)(source_version: str):**
+&mdash; **def [is\_108\_or\_greater](/recipes/brancher.py#35)(source_version: str):**
 
-&mdash; **def [is\_unsupported\_rubik\_build](/recipes/brancher.py#38)(api: RecipeApi, source_version: str):**
+&mdash; **def [is\_unsupported\_rubik\_build](/recipes/brancher.py#39)(api: RecipeApi, source_version: str):**
 ### *recipes* / [breakpad:examples/full](/recipe_modules/breakpad/examples/full.py)
 
 [DEPS](/recipe_modules/breakpad/examples/full.py#11): [breakpad](#recipe_modules-breakpad), [cros\_test\_postprocess](#recipe_modules-cros_test_postprocess), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -12058,7 +12255,7 @@ Recipe for building a BuildTarget image for Bisector.
 
 Recipe for building a Borealis rootfs image.
 
-&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#77)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_borealis_rootfs.py#79)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
 
 &mdash; **def [RunSteps](/recipes/build_borealis_rootfs.py#52)(api: RecipeApi, properties: BuildBorealisRootfsProperties):**
 ### *recipes* / [build\_chromiumos](/recipes/build_chromiumos.py)
@@ -12079,14 +12276,14 @@ Recipe for building public ChromiumOS images.
 &mdash; **def [RunSteps](/recipes/build_compilation_database.py#13)(api):**
 ### *recipes* / [build\_cq](/recipes/build_cq.py)
 
-[DEPS](/recipes/build_cq.py#25): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/build_cq.py#26): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [chrome](#recipe_modules-chrome), [cros\_infra\_config](#recipe_modules-cros_infra_config), [deferrals](#recipe_modules-deferrals), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [gerrit](#recipe_modules-gerrit), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for building a BuildTarget image for CQ.
 
-&mdash; **def [DoRunSteps](/recipes/build_cq.py#97)(api: RecipeApi, config: BuilderConfig, upload_state: ArtifactUploadState):**
+&mdash; **def [DoRunSteps](/recipes/build_cq.py#98)(api: RecipeApi, config: BuilderConfig, upload_state: ArtifactUploadState):**
 
-&mdash; **def [RunSteps](/recipes/build_cq.py#64)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_cq.py#65)(api: RecipeApi):**
 ### *recipes* / [build\_factory](/recipes/build_factory.py)
 
 [DEPS](/recipes/build_factory.py#19): [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [cros\_version](#recipe_modules-cros_version), [factory\_util](#recipe_modules-factory_util), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12146,12 +12343,12 @@ Args:
   uploaded_artifacts: Artifacts uploaded.
 ### *recipes* / [build\_incremental](/recipes/build_incremental.py)
 
-[DEPS](/recipes/build_incremental.py#23): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [incremental](#recipe_modules-incremental), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_incremental.py#26): [build\_menu](#recipe_modules-build_menu), [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [git](#recipe_modules-git), [incremental](#recipe_modules-incremental), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [sysroot\_util](#recipe_modules-sysroot_util), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe for building a BuildTarget incrementally.
 
-&mdash; **def [DoRunSteps](/recipes/build_incremental.py#61)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
+&mdash; **def [DoRunSteps](/recipes/build_incremental.py#64)(api: RecipeApi, config: BuilderConfig, properties: IncrementalProperties):**
 
 Tests reliability of incremental build by performing two builds.
 
@@ -12167,7 +12364,7 @@ Args:
 Returns:
   A list of relevant packages built.
 
-&mdash; **def [RunSteps](/recipes/build_incremental.py#53)(api: RecipeApi, properties: IncrementalProperties):**
+&mdash; **def [RunSteps](/recipes/build_incremental.py#56)(api: RecipeApi, properties: IncrementalProperties):**
 ### *recipes* / [build\_informational](/recipes/build_informational.py)
 
 [DEPS](/recipes/build_informational.py#18): [build\_menu](#recipe_modules-build_menu), [test\_util](#recipe_modules-test_util)
@@ -12318,22 +12515,24 @@ Args:
     to (on the local disk).
 ### *recipes* / [build\_plan:examples/cq\_build\_plan](/recipe_modules/build_plan/examples/cq_build_plan.py)
 
-[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#22): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
+[DEPS](/recipe_modules/build_plan/examples/cq_build_plan.py#22): [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [repo](#recipe_modules-repo), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#41)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/cq_build_plan.py#42)(api, properties):**
 ### *recipes* / [build\_plan:examples/get\_completed\_builds](/recipe_modules/build_plan/examples/get_completed_builds.py)
 
-[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#18): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/build_plan/examples/get_completed_builds.py#19): [build\_plan](#recipe_modules-build_plan), [cros\_history](#recipe_modules-cros_history), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#30)(api, properties):**
-### *recipes* / [build\_plan:examples/postsubmit\_build\_plan](/recipe_modules/build_plan/examples/postsubmit_build_plan.py)
+Unit tests for the get_completed_builds function.
 
-[DEPS](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/get_completed_builds.py#31)(api, properties):**
+### *recipes* / [build\_plan:examples/snapshot\_build\_plan](/recipe_modules/build_plan/examples/snapshot_build_plan.py)
+
+[DEPS](/recipe_modules/build_plan/examples/snapshot_build_plan.py#12): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/postsubmit_build_plan.py#22)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/examples/snapshot_build_plan.py#22)(api):**
 ### *recipes* / [build\_plan:tests/cq\_looks](/recipe_modules/build_plan/tests/cq_looks.py)
 
 [DEPS](/recipe_modules/build_plan/tests/cq_looks.py#22): [build\_plan](#recipe_modules-build_plan), [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12356,12 +12555,12 @@ Unit tests for choosing snapshots with requested builders.
 &mdash; **def [RunSteps](/recipe_modules/build_plan/tests/get_forced_rebuilds.py#20)(api):**
 ### *recipes* / [build\_plan:tests/get\_relevant\_builders](/recipe_modules/build_plan/tests/get_relevant_builders.py)
 
-[DEPS](/recipe_modules/build_plan/tests/get_relevant_builders.py#18): [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/build_plan/tests/get_relevant_builders.py#18): [build\_plan](#recipe_modules-build_plan), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-Unit tests for the get_relevant_builder_configs function.
+Unit tests for the get_relevant_builders function.
 
-&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/get_relevant_builders.py#27)(api):**
+&mdash; **def [RunSteps](/recipe_modules/build_plan/tests/get_relevant_builders.py#28)(api):**
 ### *recipes* / [build\_release](/recipes/build_release.py)
 
 [DEPS](/recipes/build_release.py#32): [bot\_cost](#recipe_modules-bot_cost), [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [build\_reporting](#recipe_modules-build_reporting), [builder\_metadata](#recipe_modules-builder_metadata), [checkpoint](#recipe_modules-checkpoint), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_prebuilts](#recipe_modules-cros_prebuilts), [cros\_release](#recipe_modules-cros_release), [cros\_release\_util](#recipe_modules-cros_release_util), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [cros\_try](#recipe_modules-cros_try), [cros\_version](#recipe_modules-cros_version), [debug\_symbols](#recipe_modules-debug_symbols), [dlc\_utils](#recipe_modules-dlc_utils), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [mass\_deploy](#recipe_modules-mass_deploy), [signing](#recipe_modules-signing), [src\_state](#recipe_modules-src_state), [vmlab](#recipe_modules-vmlab), [recipe\_engine/bcid\_reporter][recipe_engine/recipe_modules/bcid_reporter], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/led][recipe_engine/recipe_modules/led], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12442,7 +12641,7 @@ Recipe that builds a ChromiumOS SDK and cross-compilers.
 &mdash; **def [RunSteps](/recipes/build_sdk.py#78)(api: recipe_api.RecipeApi, properties: build_sdk_pb2.BuildSDKProperties):**
 ### *recipes* / [build\_sdk\_subtools](/recipes/build_sdk_subtools.py)
 
-[DEPS](/recipes/build_sdk_subtools.py#22): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [image\_builder\_failures](#recipe_modules-image_builder_failures), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/build_sdk_subtools.py#23): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [failures](#recipe_modules-failures), [image\_builder\_failures](#recipe_modules-image_builder_failures), [src\_state](#recipe_modules-src_state), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe that runs the Subtools Builder.
@@ -12450,7 +12649,11 @@ Recipe that runs the Subtools Builder.
 The Subtools builder starts with an SDK, builds some additional _host_ packages,
 then uploads build artifacts to external locations, such as CIPD.
 
-&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#34)(api: recipe_api.RecipeApi):**
+&mdash; **def [RunSteps](/recipes/build_sdk_subtools.py#38)(api: recipe_api.RecipeApi, properties: BuildSdkSubtoolsProperties):**
+
+&mdash; **def [create\_package\_info](/recipes/build_sdk_subtools.py#43)(atom: str):**
+
+Parse category/package-name into a PackageInfo.
 ### *recipes* / [build\_slim\_cq](/recipes/build_slim_cq.py)
 
 [DEPS](/recipes/build_slim_cq.py#22): [bot\_scaling](#recipe_modules-bot_scaling), [build\_menu](#recipe_modules-build_menu), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_tags](#recipe_modules-cros_tags), [easy](#recipe_modules-easy), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/runtime][recipe_engine/recipe_modules/runtime], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -12683,38 +12886,64 @@ Recipe for creating pre-release CL for ChromiumIDE.
 &mdash; **def [RunSteps](/recipes/chromium_ide_pre_release.py#34)(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):**
 ### *recipes* / [chromiumos\_codesearch](/recipes/chromiumos_codesearch.py)
 
-[DEPS](/recipes/chromiumos_codesearch.py#18): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/chromiumos_codesearch.py#29): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [depot\_tools/bot\_update][depot_tools/recipe_modules/bot_update], [depot\_tools/gclient][depot_tools/recipe_modules/gclient], [infra/codesearch][infra/recipe_modules/codesearch], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-Recipe for enabling cross-references in code search for ChromiumOS.
+Upload a kzip so Kythe can provide language support services for ChromeOS.
 
-Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
-package_index, and generates then uploads a KZIP to GS.
+This recipe checks out a Chrom(e|ium)OS manifest, syncs it to the latest
+snapshot, and builds packages with FEATURES=noclean so that build artifacts are
+preserved. Then the `package_index_cros` script creates a compilation database
+for all supported packages, and the `package_index` script bundles it into a
+kzip file. That file gets uploaded to Kythe (go/kythe), which will index it to
+serve cross-references to both Code Search and Cider G.
 
-&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#39)(api, properties):**
+Note: the "ChromiumOS" in the name is outdated. Originally this recipe was
+written with the assumption that it used the public ChromiumOS manifest. Now the
+internal manifest can be specified via input properties.
+
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch.py#50)(api, properties):**
+
+&mdash; **def [generate\_compilation\_database](/recipes/chromiumos_codesearch.py#179)(api: recipe_api.RecipeApi, build_dir: config_types.Path, build_target: str, packages: Iterable[str]):**
+
+Generate a compilation database for all the given packages.
+
+Args:
+  api: The recipe API.
+  build_dir: The directory that should contain files from the build process.
+  build_target: The build target to build packages for.
+  packages: A list of package names to build.
 ### *recipes* / [chromiumos\_codesearch\_initiator](/recipes/chromiumos_codesearch_initiator.py)
 
-[DEPS](/recipes/chromiumos_codesearch_initiator.py#19): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
+[DEPS](/recipes/chromiumos_codesearch_initiator.py#25): [depot\_tools/git][depot_tools/recipe_modules/git], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler]
 
 
-Initialize ChromiumOS codesearch builders to create kzips.
+Builder that launches the chromiumos_codesearch builders.
 
-Checks out chromiumos manifest repo and uses the latest snapshot commit hash
-to initialize chromiumos codesearch builders.
+Each chromiumos_codesearch builder generates and uploads a kzip for a different
+build target. This builder finds the latest snapshot manifest to check out, and
+launches all the build targets' builders to ensure that they use the same
+manifest.
 
-&mdash; **def [RunSteps](/recipes/chromiumos_codesearch_initiator.py#51)(api: recipe_api.RecipeApi, properties: ChromiumosCodesearchInitiatorProperties):**
+Note: the "ChromiumOS" in the name is outdated. Originally this recipe was
+written with the assumption that it used the public ChromiumOS manifest. Now the
+internal manifest can be specified via input properties.
 
-&mdash; **def [latest\_ref\_info](/recipes/chromiumos_codesearch_initiator.py#32)(api: recipe_api.RecipeApi, clone_dir: str, repo: str, branch: str):**
+&mdash; **def [RunSteps](/recipes/chromiumos_codesearch_initiator.py#57)(api: recipe_api.RecipeApi, properties: ChromiumosCodesearchInitiatorProperties):**
+
+&mdash; **def [latest\_ref\_info](/recipes/chromiumos_codesearch_initiator.py#38)(api: recipe_api.RecipeApi, clone_dir: str, repo: str, branch: str):**
 
 Return the hash and timestamp of the latest commit on a branch.
 ### *recipes* / [cipd\_uprev](/recipes/cipd_uprev.py)
 
-[DEPS](/recipes/cipd_uprev.py#15): [deferrals](#recipe_modules-deferrals), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/cipd_uprev.py#17): [deferrals](#recipe_modules-deferrals), [golucibin](#recipe_modules-golucibin), [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipes/cipd_uprev.py#105)(api: RecipeApi, properties: cipd_uprev.Properties):**
+Recipe for upreving cipd packages.
 
-&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#49)(api: RecipeApi, instruction: cipd_uprev.Instruction):**
+&mdash; **def [RunSteps](/recipes/cipd_uprev.py#108)(api: RecipeApi, properties: cipd_uprev.Properties):**
+
+&mdash; **def [get\_current\_instance](/recipes/cipd_uprev.py#52)(api: RecipeApi, instruction: cipd_uprev.Instruction):**
 
 Get the current version of the ref.
 
@@ -12726,7 +12955,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#71)(api: RecipeApi, instruction: cipd_uprev.Instruction, package_tags=None):**
+&mdash; **def [uprev\_package](/recipes/cipd_uprev.py#74)(api: RecipeApi, instruction: cipd_uprev.Instruction, package_tags=None):**
 
 Change CIPD ref of a package according to the instructions.
 
@@ -12739,7 +12968,7 @@ Returns:
 Raises:
   A StepFailure if the CIPD tool call fails.
 
-&mdash; **def [validate](/recipes/cipd_uprev.py#31)(api: RecipeApi, instruction: cipd_uprev.Instruction):**
+&mdash; **def [validate](/recipes/cipd_uprev.py#34)(api: RecipeApi, instruction: cipd_uprev.Instruction):**
 
 Validate instructions for uprevving a specific package.
 
@@ -13032,6 +13261,8 @@ Recipe for analyzing and retrying failed CQ runs.
 
 &mdash; **def [RunSteps](/recipes/cq_auto_retrier.py#42)(api: RecipeApi):**
 ### *recipes* / [cq\_auto\_runner](/recipes/cq_auto_runner.py)
+
+[DEPS](/recipes/cq_auto_runner.py#15): [auto\_runner\_util](#recipe_modules-auto_runner_util), [easy](#recipe_modules-easy)
 
 
 Recipe that opportunistically tries CQ runs on qualified CLs.
@@ -13701,13 +13932,15 @@ Unit tests for the get_ctp2_pools_config function.
 [DEPS](/recipe_modules/cros_release_config/examples/full.py#16): [cros\_release\_config](#recipe_modules-cros_release_config), [cros\_schedule](#recipe_modules-cros_schedule), [repo](#recipe_modules-repo), [test\_util](#recipe_modules-test_util), [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
 
 
-&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#156)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/cros_release_config/examples/full.py#173)(api, properties):**
 
 &mdash; **def [expected\_config](/recipe_modules/cros_release_config/examples/full.py#28)(\*blocks):**
 
-&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#102)(number, branch_name, expiration_date=None):**
+&mdash; **def [new\_block](/recipe_modules/cros_release_config/examples/full.py#111)(number, branch_name, expiration_date=None):**
 
-&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#114)(branch_name, expiration_date=None):**
+&mdash; **def [new\_firmware\_block](/recipe_modules/cros_release_config/examples/full.py#131)(number, branch_name):**
+
+&mdash; **def [new\_stabilize\_block](/recipe_modules/cros_release_config/examples/full.py#123)(branch_name, expiration_date=None):**
 ### *recipes* / [cros\_release\_util:examples/full](/recipe_modules/cros_release_util/examples/full.py)
 
 [DEPS](/recipe_modules/cros_release_util/examples/full.py#11): [cros\_release\_util](#recipe_modules-cros_release_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -13888,6 +14121,22 @@ Tests exception handling in the cleanup_context.
 
 
 &mdash; **def [RunSteps](/recipe_modules/cros_sdk/tests/update.py#28)(api):**
+### *recipes* / [cros\_snapshot:examples/full](/recipe_modules/cros_snapshot/examples/full.py)
+
+[DEPS](/recipe_modules/cros_snapshot/examples/full.py#11): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_snapshot](#recipe_modules-cros_snapshot), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Basic examples of CrOS snapshot information manipulation.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_snapshot/examples/full.py#22)(api, properties: TestInputProperties):**
+### *recipes* / [cros\_snapshot:tests/invalid-git-footer](/recipe_modules/cros_snapshot/tests/invalid-git-footer.py)
+
+[DEPS](/recipe_modules/cros_snapshot/tests/invalid-git-footer.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_snapshot](#recipe_modules-cros_snapshot), [git\_footers](#recipe_modules-git_footers), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Basic examples of CrOS snapshot information manipulation.
+
+&mdash; **def [RunSteps](/recipe_modules/cros_snapshot/tests/invalid-git-footer.py#21)(api, properties: TestInputProperties):**
 ### *recipes* / [cros\_som:examples/full](/recipe_modules/cros_som/examples/full.py)
 
 [DEPS](/recipe_modules/cros_som/examples/full.py#9): [cros\_som](#recipe_modules-cros_som), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14505,12 +14754,6 @@ Unit test query_stability API
 Tests for factory util methods.
 
 &mdash; **def [RunSteps](/recipe_modules/factory_util/tests/upload_factory_artifacts.py#18)(api):**
-### *recipes* / [failures:examples/additional\_test\_not\_run\_critical\_cq](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py)
-
-[DEPS](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py#12): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/additional_test_not_run_critical_cq.py#20)(api):**
 ### *recipes* / [failures:examples/aggregate\_build\_failures\_by\_reason](/recipe_modules/failures/examples/aggregate_build_failures_by_reason.py)
 
 [DEPS](/recipe_modules/failures/examples/aggregate_build_failures_by_reason.py#17): [failures](#recipe_modules-failures), [test\_util](#recipe_modules-test_util), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -14521,34 +14764,22 @@ Tests build failure aggregation by reason.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_build_failures_by_reason.py#26)(api, properties):**
 ### *recipes* / [failures:examples/aggregate\_failures](/recipe_modules/failures/examples/aggregate_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/aggregate_failures.py#15): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/aggregate_failures.py#16): [failures](#recipe_modules-failures), [failures\_util](#recipe_modules-failures_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#24)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/aggregate_failures.py#26)(api):**
 ### *recipes* / [failures:examples/build\_failures](/recipe_modules/failures/examples/build_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/build_failures.py#16): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/build_failures.py#17): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [naming](#recipe_modules-naming), [test\_util](#recipe_modules-test_util), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#31)(api, properties):**
-### *recipes* / [failures:examples/hw\_test\_failures](/recipe_modules/failures/examples/hw_test_failures.py)
-
-[DEPS](/recipe_modules/failures/examples/hw_test_failures.py#11): [failures](#recipe_modules-failures), [skylab\_results](#recipe_modules-skylab_results), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/hw_test_failures.py#21)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/build_failures.py#32)(api, properties):**
 ### *recipes* / [failures:examples/ignore\_exceptions](/recipe_modules/failures/examples/ignore_exceptions.py)
 
 [DEPS](/recipe_modules/failures/examples/ignore_exceptions.py#11): [failures](#recipe_modules-failures), [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/ignore_exceptions.py#18)(api):**
-### *recipes* / [failures:examples/results](/recipe_modules/failures/examples/results.py)
-
-[DEPS](/recipe_modules/failures/examples/results.py#9): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
-
-
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/results.py#17)(api):**
 ### *recipes* / [failures:examples/step\_failures](/recipe_modules/failures/examples/step_failures.py)
 
 [DEPS](/recipe_modules/failures/examples/step_failures.py#9): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14557,10 +14788,22 @@ Tests build failure aggregation by reason.
 &mdash; **def [RunSteps](/recipe_modules/failures/examples/step_failures.py#17)(api):**
 ### *recipes* / [failures:examples/update\_non\_critical\_failures](/recipe_modules/failures/examples/update_non_critical_failures.py)
 
-[DEPS](/recipe_modules/failures/examples/update_non_critical_failures.py#11): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipe_modules/failures/examples/update_non_critical_failures.py#12): [failures](#recipe_modules-failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
-&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_failures.py#20)(api):**
+&mdash; **def [RunSteps](/recipe_modules/failures/examples/update_non_critical_failures.py#21)(api):**
+### *recipes* / [failures\_util:examples/present\_run](/recipe_modules/failures_util/examples/present_run.py)
+
+[DEPS](/recipe_modules/failures_util/examples/present_run.py#12): [failures\_util](#recipe_modules-failures_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+
+
+&mdash; **def [RunSteps](/recipe_modules/failures_util/examples/present_run.py#18)(api):**
+### *recipes* / [failures\_util:examples/results](/recipe_modules/failures_util/examples/results.py)
+
+[DEPS](/recipe_modules/failures_util/examples/results.py#11): [failures\_util](#recipe_modules-failures_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/failures_util/examples/results.py#18)(api):**
 ### *recipes* / [firmware\_cq\_orchestrator](/recipes/firmware_cq_orchestrator.py)
 
 [DEPS](/recipes/firmware_cq_orchestrator.py#16): [bot\_cost](#recipe_modules-bot_cost), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_source](#recipe_modules-cros_source), [easy](#recipe_modules-easy), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [orch\_menu](#recipe_modules-orch_menu), [src\_state](#recipe_modules-src_state), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -14989,6 +15232,14 @@ Tests for various `gobin` module failure modes.
 Tests for get_latest_pin_value.
 
 &mdash; **def [RunSteps](/recipe_modules/gobin/tests/get_latest_pin_value.py#24)(api: RecipeApi):**
+### *recipes* / [golucibin:examples/full](/recipe_modules/golucibin/examples/full.py)
+
+[DEPS](/recipe_modules/golucibin/examples/full.py#10): [golucibin](#recipe_modules-golucibin), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+Test examples showing off golucibin.
+
+&mdash; **def [RunSteps](/recipe_modules/golucibin/examples/full.py#18)(api: recipe_api.RecipeApi):**
 ### *recipes* / [goma:examples/disable\_upload](/recipe_modules/goma/examples/disable_upload.py)
 
 [DEPS](/recipe_modules/goma/examples/disable_upload.py#14): [goma](#recipe_modules-goma), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15374,6 +15625,14 @@ Unit tests for find_green_snapshot with requested builders.
 
 
 &mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_latest_snapshot_greenness.py#34)(api, properties):**
+### *recipes* / [looks\_for\_green:tests/get\_requested\_snapshot\_builders](/recipe_modules/looks_for_green/tests/get_requested_snapshot_builders.py)
+
+[DEPS](/recipe_modules/looks_for_green/tests/get_requested_snapshot_builders.py#12): [cros\_infra\_config](#recipe_modules-cros_infra_config), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the get_requested_snapshot_builders function.
+
+&mdash; **def [RunSteps](/recipe_modules/looks_for_green/tests/get_requested_snapshot_builders.py#22)(api, properties):**
 ### *recipes* / [looks\_for\_green:tests/resize\_lfg\_lookback](/recipe_modules/looks_for_green/tests/resize_lfg_lookback.py)
 
 [DEPS](/recipe_modules/looks_for_green/tests/resize_lfg_lookback.py#12): [cros\_history](#recipe_modules-cros_history), [git\_footers](#recipe_modules-git_footers), [looks\_for\_green](#recipe_modules-looks_for_green), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15414,12 +15673,22 @@ Recipe for performing various manipulations on ChromeOS manifests.
 Tests for run_mass_deploy_generation.
 
 &mdash; **def [RunSteps](/recipe_modules/mass_deploy/tests/run_mass_deploy_generation.py#119)(api):**
+### *recipes* / [metadata:examples/fetch\_test\_harness\_metadata](/recipe_modules/metadata/examples/fetch_test_harness_metadata.py)
+
+[DEPS](/recipe_modules/metadata/examples/fetch_test_harness_metadata.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Test generator for fetch_test_harness_metadata function.
+
+&mdash; **def [RunSteps](/recipe_modules/metadata/examples/fetch_test_harness_metadata.py#25)(api: RecipeApi):**
 ### *recipes* / [metadata:examples/fetch\_test\_metadata](/recipe_modules/metadata/examples/fetch_test_metadata.py)
 
-[DEPS](/recipe_modules/metadata/examples/fetch_test_metadata.py#18): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/metadata/examples/fetch_test_metadata.py#17): [cros\_build\_api](#recipe_modules-cros_build_api), [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
-&mdash; **def [RunSteps](/recipe_modules/metadata/examples/fetch_test_metadata.py#27)(api: RecipeApi):**
+Test generator for fetch_test_metadata function.
+
+&mdash; **def [RunSteps](/recipe_modules/metadata/examples/fetch_test_metadata.py#26)(api: RecipeApi):**
 ### *recipes* / [metadata:examples/gspath](/recipe_modules/metadata/examples/gspath.py)
 
 [DEPS](/recipe_modules/metadata/examples/gspath.py#10): [metadata](#recipe_modules-metadata), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
@@ -15474,6 +15743,14 @@ Tests for run_mass_deploy_generation.
 
 
 &mdash; **def [RunSteps](/recipe_modules/naming/tests/get_generation_request_title.py#27)(api, properties):**
+### *recipes* / [naming:tests/get\_snapshot\_builder\_name](/recipe_modules/naming/tests/get_snapshot_builder_name.py)
+
+[DEPS](/recipe_modules/naming/tests/get_snapshot_builder_name.py#9): [naming](#recipe_modules-naming), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Tests for the get_snapshot_builder_name function.
+
+&mdash; **def [RunSteps](/recipe_modules/naming/tests/get_snapshot_builder_name.py#16)(api):**
 ### *recipes* / [non\_manifest\_projects\_presubmit](/recipes/non_manifest_projects_presubmit.py)
 
 [DEPS](/recipes/non_manifest_projects_presubmit.py#13): [bot\_cost](#recipe_modules-bot_cost), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -15521,10 +15798,10 @@ Returns:
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/aggregate_metadata.py#29)(api, properties):**
 ### *recipes* / [orch\_menu:examples/full](/recipe_modules/orch_menu/examples/full.py)
 
-[DEPS](/recipe_modules/orch_menu/examples/full.py#21): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipe_modules/orch_menu/examples/full.py#22): [checkpoint](#recipe_modules-checkpoint), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_plan](#recipe_modules-cros_test_plan), [gerrit](#recipe_modules-gerrit), [git\_footers](#recipe_modules-git_footers), [orch\_menu](#recipe_modules-orch_menu), [skylab](#recipe_modules-skylab), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#45)(api, properties):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/full.py#47)(api, properties):**
 ### *recipes* / [orch\_menu:examples/wait\_for\_images](/recipe_modules/orch_menu/examples/wait_for_images.py)
 
 [DEPS](/recipe_modules/orch_menu/examples/wait_for_images.py#15): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
@@ -15535,7 +15812,7 @@ Tests for the plan_and_wait_for_images function.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/examples/wait_for_images.py#22)(api):**
 ### *recipes* / [orch\_menu:tests/builds\_status](/recipe_modules/orch_menu/tests/builds_status.py)
 
-[DEPS](/recipe_modules/orch_menu/tests/builds_status.py#11): [failures](#recipe_modules-failures), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/orch_menu/tests/builds_status.py#12): [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/builds_status.py#19)(api):**
@@ -15547,12 +15824,12 @@ Tests for the plan_and_wait_for_images function.
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/categorize_builds.py#27)(api):**
 ### *recipes* / [orch\_menu:tests/child\_build\_info](/recipe_modules/orch_menu/tests/child_build_info.py)
 
-[DEPS](/recipe_modules/orch_menu/tests/child_build_info.py#16): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket]
+[DEPS](/recipe_modules/orch_menu/tests/child_build_info.py#16): [cros\_test\_proctor](#recipe_modules-cros_test_proctor), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Tests for the add_child_build_info_to_output_property function.
 
-&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#25)(api):**
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/child_build_info.py#26)(api):**
 ### *recipes* / [orch\_menu:tests/chrome\_module\_child\_props](/recipe_modules/orch_menu/tests/chrome_module_child_props.py)
 
 [DEPS](/recipe_modules/orch_menu/tests/chrome_module_child_props.py#10): [cros\_tags](#recipe_modules-cros_tags), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -15581,7 +15858,7 @@ Unit tests for chrome_module_child_props().
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/no_necessary_builds.py#18)(api):**
 ### *recipes* / [orch\_menu:tests/run\_follow\_on\_orchestrator](/recipe_modules/orch_menu/tests/run_follow_on_orchestrator.py)
 
-[DEPS](/recipe_modules/orch_menu/tests/run_follow_on_orchestrator.py#13): [cros\_infra\_config](#recipe_modules-cros_infra_config), [failures](#recipe_modules-failures), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipe_modules/orch_menu/tests/run_follow_on_orchestrator.py#14): [cros\_infra\_config](#recipe_modules-cros_infra_config), [orch\_menu](#recipe_modules-orch_menu), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/run_follow_on_orchestrator.py#23)(api):**
@@ -15591,6 +15868,14 @@ Unit tests for chrome_module_child_props().
 
 
 &mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/set_child_builds.py#22)(api):**
+### *recipes* / [orch\_menu:tests/setup\_cq\_orchestrator](/recipe_modules/orch_menu/tests/setup_cq_orchestrator.py)
+
+[DEPS](/recipe_modules/orch_menu/tests/setup_cq_orchestrator.py#10): [cros\_infra\_config](#recipe_modules-cros_infra_config), [gerrit](#recipe_modules-gerrit), [orch\_menu](#recipe_modules-orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+
+
+Unit tests for the setup_cq_orchestrator function.
+
+&mdash; **def [RunSteps](/recipe_modules/orch_menu/tests/setup_cq_orchestrator.py#21)(api):**
 ### *recipes* / [orchestrator](/recipes/orchestrator.py)
 
 [DEPS](/recipes/orchestrator.py#26): [build\_menu](#recipe_modules-build_menu), [checkpoint](#recipe_modules-checkpoint), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_lkgm](#recipe_modules-cros_lkgm), [cros\_release](#recipe_modules-cros_release), [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [cros\_try](#recipe_modules-cros_try), [easy](#recipe_modules-easy), [orch\_menu](#recipe_modules-orch_menu), [signing](#recipe_modules-signing), [skylab](#recipe_modules-skylab), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -16350,10 +16635,10 @@ Tests for the get_per_board_prejob_stats function.
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/examples/full.py#44)(api, properties):**
 ### *recipes* / [snapshot\_orch\_menu:tests/builds\_status](/recipe_modules/snapshot_orch_menu/tests/builds_status.py)
 
-[DEPS](/recipe_modules/snapshot_orch_menu/tests/builds_status.py#11): [failures](#recipe_modules-failures), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
+[DEPS](/recipe_modules/snapshot_orch_menu/tests/builds_status.py#12): [failures](#recipe_modules-failures), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions]
 
 
-&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/builds_status.py#18)(api):**
+&mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/builds_status.py#19)(api):**
 ### *recipes* / [snapshot\_orch\_menu:tests/collect\_and\_check\_build\_results](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py)
 
 [DEPS](/recipe_modules/snapshot_orch_menu/tests/collect_and_check_build_results.py#15): [cros\_tags](#recipe_modules-cros_tags), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [test\_util](#recipe_modules-test_util), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
@@ -16368,14 +16653,14 @@ Tests for the get_per_board_prejob_stats function.
 &mdash; **def [RunSteps](/recipe_modules/snapshot_orch_menu/tests/set_child_builds.py#21)(api):**
 ### *recipes* / [snapshot\_orchestrator](/recipes/snapshot_orchestrator.py)
 
-[DEPS](/recipes/snapshot_orchestrator.py#16): [build\_menu](#recipe_modules-build_menu), [orch\_menu](#recipe_modules-orch_menu), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
+[DEPS](/recipes/snapshot_orchestrator.py#16): [build\_menu](#recipe_modules-build_menu), [cros\_snapshot](#recipe_modules-cros_snapshot), [orch\_menu](#recipe_modules-orch_menu), [snapshot\_orch\_menu](#recipe_modules-snapshot_orch_menu), [recipe\_engine/properties][recipe_engine/recipe_modules/properties]
 
 
 Recipe that schedules snapshot/postsubmit child builders and watches for failures.
 
-&mdash; **def [DoRunSteps](/recipes/snapshot_orchestrator.py#33)(api: RecipeApi):**
+&mdash; **def [DoRunSteps](/recipes/snapshot_orchestrator.py#34)(api: RecipeApi):**
 
-&mdash; **def [RunSteps](/recipes/snapshot_orchestrator.py#25)(api: RecipeApi):**
+&mdash; **def [RunSteps](/recipes/snapshot_orchestrator.py#26)(api: RecipeApi):**
 ### *recipes* / [source\_cache\_builder](/recipes/source_cache_builder.py)
 
 [DEPS](/recipes/source_cache_builder.py#19): [chrome](#recipe_modules-chrome), [cros\_cache](#recipe_modules-cros_cache), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_release](#recipe_modules-cros_release), [easy](#recipe_modules-easy), [failures](#recipe_modules-failures), [gcloud](#recipe_modules-gcloud), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/futures][recipe_engine/recipe_modules/futures], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/scheduler][recipe_engine/recipe_modules/scheduler], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16669,6 +16954,18 @@ Recipe that tests chromite.
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 
 &mdash; **def [RunSteps](/recipes/test_chromite.py#26)(api: RecipeApi):**
+### *recipes* / [test\_failures:examples/additional\_test\_not\_run\_critical\_cq](/recipe_modules/test_failures/examples/additional_test_not_run_critical_cq.py)
+
+[DEPS](/recipe_modules/test_failures/examples/additional_test_not_run_critical_cq.py#13): [test\_failures](#recipe_modules-test_failures), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/test_failures/examples/additional_test_not_run_critical_cq.py#21)(api):**
+### *recipes* / [test\_failures:examples/hw\_test\_failures](/recipe_modules/test_failures/examples/hw_test_failures.py)
+
+[DEPS](/recipe_modules/test_failures/examples/hw_test_failures.py#12): [skylab\_results](#recipe_modules-skylab_results), [test\_failures](#recipe_modules-test_failures), [urls](#recipe_modules-urls), [recipe\_engine/assertions][recipe_engine/recipe_modules/assertions], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+
+
+&mdash; **def [RunSteps](/recipe_modules/test_failures/examples/hw_test_failures.py#22)(api):**
 ### *recipes* / [test\_flexor](/recipes/test_flexor.py)
 
 [DEPS](/recipes/test_flexor.py#8): [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -16710,20 +17007,20 @@ Updates test plan rules to reflect new risk-based rules.
 &mdash; **def [RunSteps](/recipes/test_plan_filtering.py#240)(api: RecipeApi, _: TestPlanFilteringProperties):**
 ### *recipes* / [test\_platform/cros\_test\_platform](/recipes/test_platform/cros_test_platform.py)
 
-[DEPS](/recipes/test_platform/cros_test_platform.py#59): [bot\_cost](#recipe_modules-bot_cost), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [cros\_test\_sharding](#recipe_modules-cros_test_sharding), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [ctpv2](#recipe_modules-ctpv2), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [result\_flow](#recipe_modules-result_flow), [satlab](#recipe_modules-satlab), [service\_version](#recipe_modules-service_version), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
+[DEPS](/recipes/test_platform/cros_test_platform.py#61): [bot\_cost](#recipe_modules-bot_cost), [cros\_history](#recipe_modules-cros_history), [cros\_infra\_config](#recipe_modules-cros_infra_config), [cros\_resultdb](#recipe_modules-cros_resultdb), [cros\_tags](#recipe_modules-cros_tags), [cros\_test\_platform](#recipe_modules-cros_test_platform), [cros\_test\_sharding](#recipe_modules-cros_test_sharding), [cros\_tool\_runner](#recipe_modules-cros_tool_runner), [ctpv2](#recipe_modules-ctpv2), [easy](#recipe_modules-easy), [future\_utils](#recipe_modules-future_utils), [result\_flow](#recipe_modules-result_flow), [satlab](#recipe_modules-satlab), [service\_version](#recipe_modules-service_version), [skylab\_results](#recipe_modules-skylab_results), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/cipd][recipe_engine/recipe_modules/cipd], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/cv][recipe_engine/recipe_modules/cv], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/random][recipe_engine/recipe_modules/random], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/resultdb][recipe_engine/recipe_modules/resultdb], [recipe\_engine/service\_account][recipe_engine/recipe_modules/service_account], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/time][recipe_engine/recipe_modules/time]
 
 
 Recipe for the ChromeOS Test Frontend.
 
-&mdash; **def [CheckIfCtpv2NeedsToRun](/recipes/test_platform/cros_test_platform.py#1418)(api, properties):**
+&mdash; **def [CheckIfCtpv2NeedsToRun](/recipes/test_platform/cros_test_platform.py#1477)(api, properties):**
 
-&mdash; **def [DoRunSteps](/recipes/test_platform/cros_test_platform.py#1385)(api, properties):**
+&mdash; **def [DoRunSteps](/recipes/test_platform/cros_test_platform.py#1391)(api, properties):**
 
-&mdash; **def [RunCtpv1](/recipes/test_platform/cros_test_platform.py#1435)(api, properties):**
+&mdash; **def [RunCtpv1](/recipes/test_platform/cros_test_platform.py#1494)(api, properties):**
 
-&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1380)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/cros_test_platform.py#1382)(api, properties):**
 
-&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1534)(api, requests, error_in_requests):**
+&mdash; **def [add\_container\_metadata](/recipes/test_platform/cros_test_platform.py#1591)(api, requests, error_in_requests):**
 
 Add container metadata to requests when required.
 
@@ -16732,7 +17029,7 @@ Args:
   * requests: ExecuteRequests.tagged_requests.
   * error_in_requests: {tag: error(str)} dict.
 
-&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#254)(api, properties, requests, error_in_requests):**
+&mdash; **def [enumerate\_tests](/recipes/test_platform/cros_test_platform.py#256)(api, properties, requests, error_in_requests):**
 
 Resolve request into list of tests and their metadata.
 
@@ -16744,7 +17041,7 @@ Args:
 
 Returns: {tag: EnumerationResponse} dict.
 
-&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1305)(api, properties, requests):**
+&mdash; **def [execute](/recipes/test_platform/cros_test_platform.py#1307)(api, properties, requests):**
 
 Execute request in the correct backend.
 
@@ -16752,14 +17049,16 @@ Args:
   properties: CrosTestPlatformProperties
   requests: ExecutionRequests payload.
 
-&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#101)(api):**
+&mdash; **def [mergeV1AndV2Responses](/recipes/test_platform/cros_test_platform.py#1449)(api, v1_responses, v2_responses):**
+
+&mdash; **def [output\_ctp\_release\_timestamp\_tag](/recipes/test_platform/cros_test_platform.py#103)(api):**
 
 Get the timestamped release tag of the cros_test_platform CIPD packages in use.
   
 
-&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1658)(api, requests, responses, skip_postprocess=True):**
+&mdash; **def [postprocess](/recipes/test_platform/cros_test_platform.py#1715)(api, requests, responses, skip_postprocess=True):**
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1282)(api, config, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/cros_test_platform.py#1284)(api, config, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub
 
@@ -16768,15 +17067,15 @@ Args:
 * should_poll_for_completion (bool): If true, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1854)(api, responses):**
+&mdash; **def [set\_output\_properties](/recipes/test_platform/cros_test_platform.py#1913)(api, responses):**
 
 Set the output properties that are part of the cros_test_platform API.
 
-&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1933)(task_results):**
+&mdash; **def [sort\_task\_results\_by\_state](/recipes/test_platform/cros_test_platform.py#1996)(task_results):**
 
-&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1761)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
+&mdash; **def [summarize](/recipes/test_platform/cros_test_platform.py#1818)(api, enumerations, responses, error_in_requests, suite_execution_logs):**
 
-&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#120)(api, properties):**
+&mdash; **def [validated\_requests](/recipes/test_platform/cros_test_platform.py#122)(api, properties):**
 
 Get and validate requests from input properties.
 
@@ -16869,7 +17168,7 @@ Returns:
 
 Recipe for the ChromeOS Skylab Test Runner.
 
-&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2192)(api, properties):**
+&mdash; **def [RunSteps](/recipes/test_platform/test_runner.py#2195)(api, properties):**
 
 Entrypoint to the script
 
@@ -16894,7 +17193,7 @@ Args:
 Raises:
   * InfraFailure if binary call fails.
 
-&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1915)(api, ctr_result, properties, dut_state):**
+&mdash; **def [create\_skylab\_result](/recipes/test_platform/test_runner.py#1918)(api, ctr_result, properties, dut_state):**
 
 Create skylab_result from ctr_result.
 
@@ -16906,7 +17205,7 @@ Args:
 
 Returns: Skylab_result: Skylab_result for current test.
 
-&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1626)(api, properties):**
+&mdash; **def [execution\_steps\_with\_ctr](/recipes/test_platform/test_runner.py#1629)(api, properties):**
 
 Runs all the non-UI-related steps using ctr.
 
@@ -16922,7 +17221,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1539)(api, properties):**
+&mdash; **def [execution\_steps\_with\_phosphorus](/recipes/test_platform/test_runner.py#1542)(api, properties):**
 
 Runs all the non-UI-related steps.
 
@@ -16938,7 +17237,7 @@ Returns: DUTResult: The result for all tests run in this run.
 Raises:
 * InfraFailure.
 
-&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1510)(api, config, parent_request_uid, should_poll_for_completion=False):**
+&mdash; **def [publish\_to\_result\_flow](/recipes/test_platform/test_runner.py#1513)(api, config, parent_request_uid, should_poll_for_completion=False):**
 
 Publish build info to result_flow PubSub.
 
@@ -16949,7 +17248,7 @@ Args:
 * should_poll_for_completion (bool): If True, the consumers should not ACK
                                      the message until the build is complete.
 
-&mdash; **def [raise\_on\_trv2\_result](/recipes/test_platform/test_runner.py#2103)(api, res):**
+&mdash; **def [raise\_on\_trv2\_result](/recipes/test_platform/test_runner.py#2106)(api, res):**
 
 Decompress trv2 result and raise StepFailure on prejob or test failure.
 
@@ -16957,7 +17256,7 @@ Args:
   * api (RecipeScriptApi): Ubiquitous recipe api.
   * res - The step result.
 
-&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2144)(api, properties):**
+&mdash; **def [run\_and\_upload](/recipes/test_platform/test_runner.py#2147)(api, properties):**
 
 Run test and upload results.
 
@@ -16994,7 +17293,7 @@ Args:
 * api (RecipeScriptApi): Ubiquitous recipe api.
 * result (DUTResult): Test results.
 
-&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1985)(api, result):**
+&mdash; **def [summarize\_results\_from\_ctr\_results](/recipes/test_platform/test_runner.py#1988)(api, result):**
 
 Display test cases (and failures) as recipe substeps through the api.
 
@@ -17027,7 +17326,7 @@ Raises:
 
 Tests a recipe CL by running ChromeOS builders.
 
-&mdash; **def [RunSteps](/recipes/test_recipes.py#434)(api: RecipeApi, properties: TestRecipesProperties):**
+&mdash; **def [RunSteps](/recipes/test_recipes.py#435)(api: RecipeApi, properties: TestRecipesProperties):**
 ### *recipes* / [test\_sdk](/recipes/test_sdk.py)
 
 [DEPS](/recipes/test_sdk.py#25): [build\_menu](#recipe_modules-build_menu), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_history](#recipe_modules-cros_history), [cros\_relevance](#recipe_modules-cros_relevance), [cros\_sdk](#recipe_modules-cros_sdk), [easy](#recipe_modules-easy), [image\_builder\_failures](#recipe_modules-image_builder_failures), [workspace\_util](#recipe_modules-workspace_util), [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -17158,17 +17457,18 @@ Args:
 
 Recipe for upreving Borealis build dependencies.
 
-&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#140)(api: RecipeApi, step_name: str, commit_message: str, presentation: StepPresentation):**
+&mdash; **def [CommitChangesAndCreateCL](/recipes/uprev_borealis_deps.py#145)(api: RecipeApi, borealis_path: str, step_name: str, commit_message: str, presentation: StepPresentation):**
 
 Create Git commit from changes and upload Gerrit CL.
 
 Args:
   api: The recipe modules API.
+  borealis_path: the path to the Borealis directory in a CrOS checkout
   step_name: Name of the step to nest operations from.
   commit_message: Git commit message to use.
   presentation: the API step to show the Gerrit CL URL
 
-&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#50)(api: RecipeApi, use_cache: bool=True, chroot_path: str=None, out_dir: str=None, skip_termina: bool=False, stage: Optional[str]=None):**
+&mdash; **def [DoBorealisBuild](/recipes/uprev_borealis_deps.py#54)(api: RecipeApi, use_cache: bool=True, chroot_path: str=None, out_dir: str=None, skip_termina: bool=False, stage: Optional[str]=None):**
 
 Perform a Borealis build_full.
 
@@ -17179,9 +17479,9 @@ Args:
   stage: The name of the step from the Dockerfile to build. Does not
     perform a full build, will stop after the specified stage is built.
 
-&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#163)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [DoRunSteps](/recipes/uprev_borealis_deps.py#169)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 
-&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#42)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
+&mdash; **def [RunSteps](/recipes/uprev_borealis_deps.py#40)(api: RecipeApi, properties: UprevBorealisDepsProperties):**
 ### *recipes* / [uprev\_guest\_vm\_pin](/recipes/uprev_guest_vm_pin.py)
 
 [DEPS](/recipes/uprev_guest_vm_pin.py#37): [cros\_source](#recipe_modules-cros_source), [cros\_tags](#recipe_modules-cros_tags), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [repo](#recipe_modules-repo), [src\_state](#recipe_modules-src_state), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/archive][recipe_engine/recipe_modules/archive], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/step][recipe_engine/recipe_modules/step]
@@ -17192,15 +17492,11 @@ Recipe for Upreving Guest VM version pin files.
 This recipe copies a VM image artifact from the chromeos-image-archive to the
 localmirror and then modifies the Guest VM's version pin to match this version.
 
-&mdash; **def [CopyPostsubmitImage](/recipes/uprev_guest_vm_pin.py#171)(api: RecipeApi, board: str, build: Build, vm_property_map: Dict[(str, Struct)], sanitized_version: str):**
+&mdash; **def [CopyReleaseImage](/recipes/uprev_guest_vm_pin.py#143)(api: RecipeApi, board: str, build: Build, vm_property_map: Dict[(str, Struct)], sanitized_version: str):**
 
-&mdash; **def [CopyReleaseImage](/recipes/uprev_guest_vm_pin.py#200)(api: RecipeApi, board: str, build: Build, vm_property_map: Dict[(str, Struct)], sanitized_version: str):**
+&mdash; **def [FindReleaseBuilds](/recipes/uprev_guest_vm_pin.py#105)(api: RecipeApi, board: str, version_build_map: Dict[(str, Dict[(str, Dict[(str, Build)])])]):**
 
-&mdash; **def [FindPostsubmitBuilds](/recipes/uprev_guest_vm_pin.py#109)(api: RecipeApi, board: str, version_build_map: Dict[(str, Dict[(str, Dict[(str, Build)])])]):**
-
-&mdash; **def [FindReleaseBuilds](/recipes/uprev_guest_vm_pin.py#132)(api: RecipeApi, board: str, version_build_map: Dict[(str, Dict[(str, Dict[(str, Build)])])]):**
-
-&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#228)(api: RecipeApi, properties: UprevGuestVmPinProperties):**
+&mdash; **def [RunSteps](/recipes/uprev_guest_vm_pin.py#171)(api: RecipeApi, properties: UprevGuestVmPinProperties):**
 ### *recipes* / [uprev\_parallels\_pin](/recipes/uprev_parallels_pin.py)
 
 [DEPS](/recipes/uprev_parallels_pin.py#41): [build\_menu](#recipe_modules-build_menu), [cros\_artifacts](#recipe_modules-cros_artifacts), [cros\_build\_api](#recipe_modules-cros_build_api), [cros\_sdk](#recipe_modules-cros_sdk), [cros\_source](#recipe_modules-cros_source), [gerrit](#recipe_modules-gerrit), [git](#recipe_modules-git), [naming](#recipe_modules-naming), [repo](#recipe_modules-repo), [depot\_tools/gsutil][depot_tools/recipe_modules/gsutil], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/context][recipe_engine/recipe_modules/context], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/json][recipe_engine/recipe_modules/json], [recipe\_engine/path][recipe_engine/recipe_modules/path], [recipe\_engine/properties][recipe_engine/recipe_modules/properties], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step], [recipe\_engine/swarming][recipe_engine/recipe_modules/swarming], [recipe\_engine/time][recipe_engine/recipe_modules/time]
@@ -17353,7 +17649,7 @@ Unit tests for get_skylab_result_link_map.
 &mdash; **def [RunSteps](/recipe_modules/util/tests/proto_path_to_recipes_path.py#29)(api: recipe_api.RecipeApi, properties: ProtoPathToRecipesPathProperties):**
 ### *recipes* / [validate\_dirmd](/recipes/validate_dirmd.py)
 
-[DEPS](/recipes/validate_dirmd.py#16): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
+[DEPS](/recipes/validate_dirmd.py#17): [cros\_test\_plan\_v2](#recipe_modules-cros_test_plan_v2), [dirmd](#recipe_modules-dirmd), [failures](#recipe_modules-failures), [failures\_util](#recipe_modules-failures_util), [repo](#recipe_modules-repo), [urls](#recipe_modules-urls), [workspace\_util](#recipe_modules-workspace_util), [depot\_tools/depot\_tools][depot_tools/recipe_modules/depot_tools], [recipe\_engine/buildbucket][recipe_engine/recipe_modules/buildbucket], [recipe\_engine/file][recipe_engine/recipe_modules/file], [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io], [recipe\_engine/step][recipe_engine/recipe_modules/step]
 
 
 Recipe to validate DIR_METADATA files in the ChromeOS source tree.
@@ -17361,7 +17657,7 @@ Recipe to validate DIR_METADATA files in the ChromeOS source tree.
 This recipe will call `dirmd validate` and `test_plan validate` on DIR_METADATA
 files in projects touched by the input CLs.
 
-&mdash; **def [RunSteps](/recipes/validate_dirmd.py#32)(api):**
+&mdash; **def [RunSteps](/recipes/validate_dirmd.py#34)(api):**
 ### *recipes* / [vmlab:examples/full](/recipe_modules/vmlab/examples/full.py)
 
 [DEPS](/recipe_modules/vmlab/examples/full.py#11): [vmlab](#recipe_modules-vmlab), [recipe\_engine/raw\_io][recipe_engine/recipe_modules/raw_io]
@@ -17403,43 +17699,43 @@ Intended for flows like incremental builders. See b/329271972.
 
 &mdash; **def [RunSteps](/recipe_modules/workspace_util/tests/only_checked_out_projects.py#28)(api: RecipeApi):**
 
-[depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-bot_update
-[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-depot_tools
-[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-gclient
-[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-gerrit
-[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-git
-[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-git_cl
-[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-gitiles
-[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-gsutil
-[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/0c557985c77daa1a809f5a6c2e04e69b792142e9/recipes/README.recipes.md#recipe_modules-tryserver
-[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/66be8ef9e9aa71cf87710a3efaa456799e7c7160/recipes/README.recipes.md#recipe_modules-codesearch
-[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-archive
-[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-assertions
-[recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-bcid_reporter
-[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-buildbucket
-[recipe_engine/recipe_modules/cas]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-cas
-[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-cipd
-[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-context
-[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-cq
-[recipe_engine/recipe_modules/cv]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-cv
-[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-file
-[recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-futures
-[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-json
-[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-led
-[recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-legacy_annotation
-[recipe_engine/recipe_modules/luci_analysis]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-luci_analysis
-[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-path
-[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-properties
-[recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-random
-[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-raw_io
-[recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-resultdb
-[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-runtime
-[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-scheduler
-[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-service_account
-[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-step
-[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-swarming
-[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-time
-[recipe_engine/recipe_modules/tricium]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-tricium
-[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-url
-[recipe_engine/recipe_modules/uuid]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/README.recipes.md#recipe_modules-uuid
-[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/e7b7f04f2cd591f8be47b8859c87ae6ed167e383/recipe_engine/recipe_api.py#433
+[depot_tools/recipe_modules/bot_update]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-bot_update
+[depot_tools/recipe_modules/depot_tools]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-depot_tools
+[depot_tools/recipe_modules/gclient]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-gclient
+[depot_tools/recipe_modules/gerrit]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-gerrit
+[depot_tools/recipe_modules/git]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-git
+[depot_tools/recipe_modules/git_cl]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-git_cl
+[depot_tools/recipe_modules/gitiles]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-gitiles
+[depot_tools/recipe_modules/gsutil]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-gsutil
+[depot_tools/recipe_modules/tryserver]: https://chromium.googlesource.com/chromium/tools/depot_tools.git/+/e30d8fac34378beeb3d72cfca444e87f6fc28013/recipes/README.recipes.md#recipe_modules-tryserver
+[infra/recipe_modules/codesearch]: https://chromium.googlesource.com/infra/infra.git/+/b5ac17ee34564a0d05ed27795cd5a475cd0d3672/recipes/README.recipes.md#recipe_modules-codesearch
+[recipe_engine/recipe_modules/archive]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-archive
+[recipe_engine/recipe_modules/assertions]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-assertions
+[recipe_engine/recipe_modules/bcid_reporter]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-bcid_reporter
+[recipe_engine/recipe_modules/buildbucket]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-buildbucket
+[recipe_engine/recipe_modules/cas]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-cas
+[recipe_engine/recipe_modules/cipd]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-cipd
+[recipe_engine/recipe_modules/context]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-context
+[recipe_engine/recipe_modules/cq]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-cq
+[recipe_engine/recipe_modules/cv]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-cv
+[recipe_engine/recipe_modules/file]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-file
+[recipe_engine/recipe_modules/futures]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-futures
+[recipe_engine/recipe_modules/json]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-json
+[recipe_engine/recipe_modules/led]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-led
+[recipe_engine/recipe_modules/legacy_annotation]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-legacy_annotation
+[recipe_engine/recipe_modules/luci_analysis]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-luci_analysis
+[recipe_engine/recipe_modules/path]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-path
+[recipe_engine/recipe_modules/properties]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-properties
+[recipe_engine/recipe_modules/random]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-random
+[recipe_engine/recipe_modules/raw_io]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-raw_io
+[recipe_engine/recipe_modules/resultdb]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-resultdb
+[recipe_engine/recipe_modules/runtime]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-runtime
+[recipe_engine/recipe_modules/scheduler]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-scheduler
+[recipe_engine/recipe_modules/service_account]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-service_account
+[recipe_engine/recipe_modules/step]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-step
+[recipe_engine/recipe_modules/swarming]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-swarming
+[recipe_engine/recipe_modules/time]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-time
+[recipe_engine/recipe_modules/tricium]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-tricium
+[recipe_engine/recipe_modules/url]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-url
+[recipe_engine/recipe_modules/uuid]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/README.recipes.md#recipe_modules-uuid
+[recipe_engine/wkt/RecipeApi]: https://chromium.googlesource.com/infra/luci/recipes-py.git/+/76cc89d9b39f24148536b258a738be16338d1ed7/recipe_engine/recipe_api.py#433

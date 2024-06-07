@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Recipe for upreving cipd packages."""
+
 from typing import Generator
 
 from PB.recipes.chromeos import cipd_uprev
@@ -20,6 +22,7 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'deferrals',
+    'golucibin',
 ]
 
 
@@ -122,6 +125,9 @@ def RunSteps(api: RecipeApi, properties: cipd_uprev.Properties) -> None:
         with api.deferrals.defer_exceptions():
           package = uprev_package(api, instruction, package_tags)
           properties.response.new_versions.extend([package])
+    for luci_instruction in properties.config.luci_instructions:  # pragma: no cover
+      api.golucibin.execute_luciexe(luci_instruction.package_name,
+                                    luci_instruction.ref, luci_instruction.args)
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
