@@ -403,8 +403,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
     synced_checkout = (
         found_green or 'chromeos.cq_orchestrator.full_sync'
         in self.m.cros_infra_config.experiments)
-    if synced_checkout and not (is_retry or forced_relevant) and gerrit_changes:
+    if synced_checkout and gerrit_changes:
       _ = self.get_relevant_builders(necessary_builders, gerrit_changes)
+      if self.cros_query_relevant_builders is not None:
+        self.cros_query_relevant_builders.extend(forced_relevant)
 
     for child_spec in necessary_child_specs:
       child_builder_config = self.m.cros_infra_config.get_builder_config(
