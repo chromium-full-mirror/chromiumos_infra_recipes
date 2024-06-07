@@ -47,3 +47,8 @@ message ShouldLfgProperties {
 }
 
 message ResizeLfgLookbackProperties { int32 expected_lookback_hours = 1; }
+
+message GetRequestedSnapshotBuildersProperties {
+  repeated string necessary_builders = 1;
+  repeated string expected_requested_snapshot_builders = 2;
+}

@@ -366,6 +366,31 @@ class LooksForGreenApi(recipe_api.RecipeApi):
     approx_snap_age_hours = days * 24 + seconds / 3600
     return round(approx_snap_age_hours)
 
+  def get_requested_snapshot_builders(
+      self, necessary_builders: List[str]) -> Optional[List[str]]:
+    """Gets the requested snapshot builders for find_green_snapshot.
+
+    Returns:
+      The names of the snapshot equivalents of the builders in
+        necessary_builders if all necessary_builders have a
+        corresponding snapshot builder. Otherwise, return None.
+    """
+    snapshot_orch = ('staging-snapshot-orchestrator'
+                     if self.m.cros_infra_config.is_staging else
+                     'snapshot-orchestrator')
+    snapshot_child_builders = {
+        x.name for x in self.m.cros_infra_config.get_builder_config(
+            snapshot_orch).orchestrator.child_specs
+    }
+    requested_snapshot_builders = []
+    for b in necessary_builders:
+      snapshot_build = self.m.naming.get_snapshot_builder_name(b)
+      if snapshot_build in snapshot_child_builders:
+        requested_snapshot_builders.append(snapshot_build)
+      else:
+        return None
+    return requested_snapshot_builders
+
   def _get_latest_greenest_snapshot(
       self, parsed_results: List[Snapshot]) -> Optional[Snapshot]:
     """Get the latest greenest snapshot from a list of buildbucket snapshots.

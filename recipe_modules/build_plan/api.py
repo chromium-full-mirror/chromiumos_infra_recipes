@@ -641,35 +641,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
       chosen_external: The external manifest snapshot that CQ will run with.
 
     """
-
-    def _requested_snapshot_builders() -> Optional[List[str]]:
-      """Returns the names of the builders to pass into find_green_snapshot.
-
-      Returns:
-        The names of the snapshot equivalents of the builders in
-          necessary_builder_names if all necessary_builder_names have a
-          corresponding snapshot builder. Otherwise, return None.
-      """
-      # TODO(b/299561567): Remove experiment gating.
-      if ('chromeos.looks_for_green.targeted_lfg'
-          not in self.m.cros_infra_config.experiments):
-        return None
-      snapshot_orch = ('staging-snapshot-orchestrator'
-                       if self.m.cros_infra_config.is_staging else
-                       'snapshot-orchestrator')
-      snapshot_child_builders = {
-          x.name for x in self.m.cros_infra_config.get_builder_config(
-              snapshot_orch).orchestrator.child_specs
-      }
-      requested_snapshot_builders = []
-      for b in necessary_builder_names:
-        snapshot_build = self.m.naming.get_snapshot_builder_name(b)
-        if snapshot_build in snapshot_child_builders:
-          requested_snapshot_builders.append(snapshot_build)
-        else:
-          return None
-      return requested_snapshot_builders
-
     chosen_internal = original_internal
     chosen_external = original_external
     original_internal_id = original_internal.id
@@ -685,8 +656,15 @@ class BuildPlanApi(recipe_api.RecipeApi):
 
       self.m.looks_for_green.resize_lfg_lookback(gerrit_changes,
                                                  necessary_builder_names)
+
+      requested_snapshot_builders = None
+      # TODO(b/299561567): Remove experiment gating.
+      if ('chromeos.looks_for_green.targeted_lfg'
+          in self.m.cros_infra_config.experiments):
+        requested_snapshot_builders = self.m.looks_for_green.get_requested_snapshot_builders(
+            necessary_builder_names)
       suggested_internal = self.m.looks_for_green.find_green_snapshot(
-          requested_snapshot_builders=_requested_snapshot_builders())
+          requested_snapshot_builders=requested_snapshot_builders)
 
       if not suggested_internal:
         presentation.step_text = 'No green snapshot found. Using latest minted snapshot.'

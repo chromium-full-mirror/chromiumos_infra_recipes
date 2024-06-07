@@ -477,9 +477,8 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
         lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
             cq_run.input.gerrit_changes, builders,
             lookback_hours=self.lookback_seconds / 3600)
-        requested_snapshot_builders = [
-            self.m.naming.get_snapshot_builder_name(x) for x in builders
-        ]
+        requested_snapshot_builders = self.m.looks_for_green.get_requested_snapshot_builders(
+            builders)
         current_greenness = self._lfg_greenness(requested_snapshot_builders,
                                                 lfg_lookback_hours)
         step_text_prefix = 'build used LFG, using current snapshot found by LFG'

@@ -22,6 +22,7 @@ DEPS = {
     'git_footers': 'git_footers',
     'greenness': 'greenness',
     'lfg_util': 'lfg_util',
+    'naming': 'naming',
 }
 
 

@@ -55,6 +55,8 @@ def GenTests(api):
   orch.orchestrator.child_specs.add().name = 'builder6-cq'
   orch.orchestrator.child_specs.add().name = 'builder7-kernelnext-cq'
   orch.orchestrator.child_specs.add().name = 'non-critical-builder-cq'
+  snapshot_orch = configs.builder_configs.add()
+  snapshot_orch.id.name = 'snapshot-orchestrator'
   builder2 = configs.builder_configs.add()
   builder2.id.name = 'builder2-cq'
   builder5 = configs.builder_configs.add()

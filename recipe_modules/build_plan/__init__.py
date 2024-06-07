@@ -28,7 +28,6 @@ DEPS = [
     'git',
     'git_footers',
     'looks_for_green',
-    'naming',
     'repo',
     'src_state',
     'test_util',
