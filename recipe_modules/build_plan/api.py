@@ -46,6 +46,10 @@ class BuildPlanApi(recipe_api.RecipeApi):
                               'chromeos.build_plan.cros_query'
                               in self.m.cros_infra_config.experiments)
 
+    self.cros_query_dry_run = (not self.cros_query_active and
+                               'chromeos.cq_orchestrator.full_sync'
+                               in self.m.cros_infra_config.experiments)
+
 
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
@@ -286,21 +290,25 @@ class BuildPlanApi(recipe_api.RecipeApi):
         irrelevant_builders = set(builders_tuple.run_when_rules_skipped +
                                   builders_tuple.global_irrelevance_skipped)
 
-        if self.cros_query_active:
+        if self.cros_query_active or self.cros_query_dry_run:
           with self.m.step.nest('filter builds using cros query') as pres:
             relevant_builders = self.get_relevant_builders(
                 necessary_builders, gerrit_changes)
+            # TODO(b/316010599): As we rollout into prod, continue getting data
+            # on runs where it is not active.
+            if self.cros_query_dry_run:
+              pres.step_text = 'not enabled'
+            else:
+              # Add logging about decisions.
+              skipped_builders = sorted(
+                  [b for b in necessary_builders if b not in relevant_builders])
+              pres.step_text = f'filtered out {len(skipped_builders)} builders'
+              pres.logs['skipped builders'] = skipped_builders
+              pres.properties['cros_query_skipped_builders'] = skipped_builders
 
-            # Add logging about decisions.
-            skipped_builders = sorted(
-                [b for b in necessary_builders if b not in relevant_builders])
-            pres.step_text = f'filtered out {len(skipped_builders)} builders'
-            pres.logs['skipped builders'] = skipped_builders
-            pres.properties['cros_query_skipped_builders'] = skipped_builders
-
-            # Update our lists.
-            necessary_builders = relevant_builders
-            irrelevant_builders.update(skipped_builders)
+              # Update our lists.
+              necessary_builders = relevant_builders
+              irrelevant_builders.update(skipped_builders)
 
         # Public builders can only apply changes to the chromium host.
         # If all CLs are in chrome-internal then we know the build will not be
@@ -316,7 +324,11 @@ class BuildPlanApi(recipe_api.RecipeApi):
       forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
           gerrit_changes, builder_configs)
       necessary_builders = list(set(necessary_builders) | set(forced_relevant))
-
+      # TODO(b/316010599): If we are dry-running add the forced relevant
+      # builders to this list so we don't dock ourselves for the false
+      # negative.
+      if self.cros_query_relevant_builders is not None:
+        self.cros_query_relevant_builders.extend(forced_relevant)
       # Given the build plan and forced relevancy results, get a list of all
       # necessary child specs. This includes creating child specs for
       # forced relevant and slim cq builds.
@@ -415,18 +427,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
           internal_snapshot, external_snapshot, gerrit_changes,
           self.m.src_state.internal_manifest, lfg_builder_names)
 
-    # TODO(b/316010599): As we rollout into prod, continue getting data on runs
-    # where it is not active.
-    found_green = (
-        self.m.looks_for_green.stats.status ==
-        LooksForGreenStatus.STATUS_RAN_OLDER)
-    synced_checkout = (
-        found_green or 'chromeos.cq_orchestrator.full_sync'
-        in self.m.cros_infra_config.experiments)
-    if not self.cros_query_active and synced_checkout and gerrit_changes:
-      _ = self.get_relevant_builders(necessary_builders, gerrit_changes)
-      if self.cros_query_relevant_builders is not None:
-        self.cros_query_relevant_builders.extend(forced_relevant)
 
     for child_spec in necessary_child_specs:
       child_builder_config = self.m.cros_infra_config.get_builder_config(

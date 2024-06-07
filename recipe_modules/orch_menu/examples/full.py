@@ -664,6 +664,24 @@ def GenTests(api):
       history_builds=data.history_builds, collect_after_builds=collect_after,
       with_history=True, git_footers=[])
 
+  yield api.orch_menu.test(
+      'cq-cros-query-dry-run', data.ctp_normal,
+      api.properties(
+          **{
+              '$chromeos/looks_for_green': {
+                  'enable_looks_for_green': True,
+                  'greenness_threshold': 75
+              }
+          }),
+      api.properties(
+          FullProperties(
+              expected_completed_builds=collect + collect_after,
+              expected_recipe_result=RawResult(status=common_pb2.SUCCESS),
+              expected_enable_history=True)), cq=True, collect_builds=collect,
+      history_builds=data.history_builds, collect_after_builds=collect_after,
+      with_history=True, git_footers=[],
+      experiments=['chromeos.cq_orchestrator.full_sync'])
+
   one_non_crit_fail_summary = ('1 non-critical build failed')
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')

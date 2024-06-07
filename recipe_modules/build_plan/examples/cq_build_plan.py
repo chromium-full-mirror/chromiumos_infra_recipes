@@ -159,6 +159,37 @@ def GenTests(api):
   )
 
   yield api.test(
+      'cros-query-dry-run',
+      api.cv(run_mode=api.cv.FULL_RUN),
+      cq_orchestrator_build_with_gerrit_change(experiments=[
+          'chromeos.cq_orchestrator.full_sync',
+      ]),
+      api.properties(
+          expected_build_requests=[
+              'arm-generic-cq',
+              'atlas-cq',
+              'arm64-generic-cq',
+              'cave-cq',
+              'amd64-generic-incremental-cq',
+          ],
+          expected_completed_builds=[],
+          expected_additional_chrome_pupr_builders=[],
+      ),
+      api.git_footers.simulated_get_footers([],
+                                            'check disallow recycled builds'),
+      api.cros_relevance.simulated_run_build_planner(
+          necessary_builders=[
+              'arm-generic-cq',
+              'arm64-generic-cq',
+              'atlas-cq',
+              'cave-cq',
+              'amd64-generic-incremental-cq',
+          ], skipped_builders=[]),
+      api.post_check(post_process.StepTextEquals,
+                     'filter builds using cros query', 'not enabled'),
+  )
+
+  yield api.test(
       'cros-query-active',
       api.cv(run_mode=api.cv.FULL_RUN),
       cq_orchestrator_build_with_gerrit_change(experiments=[
