@@ -11,6 +11,7 @@ from recipe_engine import recipe_api
 from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import AutoRunnerUtilProperties, HostProjects, CLSignalEnum
 from RECIPE_MODULES.chromeos.gerrit.api import ChangeInfo
 from RECIPE_MODULES.chromeos.gerrit.api import change_info_to_gerrit_change
+from RECIPE_MODULES.chromeos.gerrit.api import Label
 
 # Maximum number of changes to query per request.
 DEFAULT_MAX_LIMIT_PER_QUERY = 50
@@ -28,6 +29,7 @@ QUERY_PARAMS = (
     ('label', 'verified>=0'),
     ('-is', 'wip'),
 )
+
 # Query parameters for Gerrit API used to fetch changes to calculate quota usage.
 QUERY_PARAMS_FOR_QUOTA_CHECK = (
     ('branch', 'main'),
@@ -64,6 +66,8 @@ DEFAULT_CL_UPDATED_AGE_MINS = 60
 
 # TODO: Replace this with real account
 AUTO_RUNNER_SERVICE_ACCOUNT_EMAIL = 'PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM'
+
+DEFAULT_ENABLE_AUTO_DRY_RUN = False
 
 
 class EnhancedChangeInfo():
@@ -217,6 +221,22 @@ class EnhancedChangeInfo():
         return True
     return False
 
+  def mark_for_cq_dry_run(self):
+    """Sets the CQ label to +1 (DRY RUN) and adds a comment to the change.
+
+    This method sets the Commit-Queue label to +1 on the Gerrit change and adds
+    a comment explaining that the change was automatically CQ+1'ed by AutoRunner.
+
+    """
+    labels = {
+        Label.COMMIT_QUEUE: 1,
+    }
+    comment = 'Automatically set CQ+1 by AutoRunner. See go/chromeos-cqw:auto-runner-doc for details. \n' \
+      'Report Bugs/Feedback: go/cros-auto-runner-bug. \n'
+
+    self._api.gerrit.set_change_labels_remote(self._gerrit_change_obj, labels)
+    self._api.gerrit.add_change_comment_remote(self._gerrit_change_obj, comment)
+
   @property
   def current_revision_number(self) -> str:
     """Returns the current revision number of the change.
@@ -237,6 +257,8 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     self._daily_quota = properties.daily_quota or DEFAULT_DAILY_QUOTA
     self._daily_quota_per_cl = properties.daily_quota_per_cl or DEFAULT_DAILY_QUOTA_PER_CL
     self._cl_updated_age_mins = properties.cl_updated_age_mins or DEFAULT_CL_UPDATED_AGE_MINS
+    self._enable_auto_dry_run = properties.enable_auto_dry_run or DEFAULT_ENABLE_AUTO_DRY_RUN
+
 
   def get_change_infos_from_gerrit(self, host_projects: List[HostProjects],
                                    query_params: Tuple[Tuple[str, str]],
@@ -328,7 +350,7 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
         changes: A set of EnhancedChangeInfo objects to find related changes for.
 
     Returns:
-        Set[EnhancedChangeInfo]: A set of all related EnhancedChangeInfo objects.
+        A set of all related EnhancedChangeInfo objects.
     """
     with self.m.step.nest('Querying relation chains'):
       return {
@@ -352,7 +374,7 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     4. Sorts the remaining changes and limits them to the available quota.
 
     Returns:
-        Set[EnhancedChangeInfo]: A set of EnhancedChangeInfos representing the eligible changes.
+        A set of EnhancedChangeInfos representing the eligible changes.
     """
     total_quota_usage = self.get_quota_stats()
     if total_quota_usage >= self._daily_quota:
@@ -400,3 +422,26 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     if remaining_changes:
       remaining_changes = sorted(remaining_changes)
     return set(list(remaining_changes)[:remaining_quota])
+
+  def auto_dry_run_cls(self, changes: Set[EnhancedChangeInfo]) -> int:
+    """Sets the Commit-Queue label to +1 (DRY RUN) for eligible changes.
+
+    This method iterates through the provided set of `EnhancedChangeInfo` objects
+    and sets the Commit-Queue label to +1 (DRY RUN) for each change. It also
+    adds a comment to the change explaining that the change was automatically
+    CQ+1'ed by AutoRunner.
+
+    Args:
+        changes: A set of `EnhancedChangeInfo` objects representing the changes
+                 to be CQ+1'ed.
+
+    Returns: The number of CLs that were marked for CQ+1.
+    """
+    if not self._enable_auto_dry_run:
+      with self.m.step.nest('Auto dry run disabled. Skipping'):
+        return 0
+
+    with self.m.step.nest('Setting CQ+1 to %d CLs' % len(changes)):
+      for change in changes:
+        change.mark_for_cq_dry_run()
+    return len(changes)

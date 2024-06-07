@@ -23,6 +23,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   } for cl in eligible_cls]
   api.easy.set_properties_step('Log eligible CLs in output property',
                                eligible_cls=eligible_cls_info)
+  api.auto_runner_util.auto_dry_run_cls(eligible_cls)
+
 
 def GenTests(api: RecipeApi) -> Generator[TestData, None, None]:
   yield api.test('basic', api.post_process(post_process.DropExpectation))
