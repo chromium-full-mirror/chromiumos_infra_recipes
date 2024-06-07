@@ -39,7 +39,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
     # TODO(b/316010599): Remove after experiment.
     # Store the result from calling the relevance service in order to compare
     # with the result of the portage relevance check at the end of the run.
-    self.cros_query_relevant_builder_configs = None
+    self.cros_query_relevant_builders = None
 
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
@@ -85,10 +85,13 @@ class BuildPlanApi(recipe_api.RecipeApi):
               'Please add following projects {} to manifest file and retry.'
               .format(not_in_manifest))
 
-  def get_relevant_builder_configs(self, builder_configs: List[BuilderConfig],
-                                   gerrit_changes: List[GerritChange]):
-    """Returns BuilderConfigs deemed relevant by the RelevancyService."""
+  def get_relevant_builders(self, builders: List[BuilderConfig],
+                            gerrit_changes: List[GerritChange]):
+    """Returns builders deemed relevant by the RelevancyService."""
     try:
+      builder_configs = [
+          self.m.cros_infra_config.get_builder_config(b) for b in builders
+      ]
       req = relevancy_pb2.GetRelevantBuildTargetsRequest(
           build_targets=[bc.build_target for bc in builder_configs])
 
@@ -110,20 +113,21 @@ class BuildPlanApi(recipe_api.RecipeApi):
             bc for bc in builder_configs if '-bazel-' in bc.id.name
         ]
 
-      self.cros_query_relevant_builder_configs = [
-          bc for bc in builder_configs
+      self.cros_query_relevant_builders = [
+          bc.id.name
+          for bc in builder_configs
           if bc.build_target in relevant_build_targets or
           bc in relevant_bazel_builder_configs or
           # Builders with an empty build_target should be assumed relevant
           # (e.g. chromite-cq).
           bc.build_target == common_pb2.BuildTarget()
       ]
-      return self.cros_query_relevant_builder_configs
+      return self.cros_query_relevant_builders
 
     except recipe_api.StepFailure:
       # If there is a failure calling the relevancy service, fallback to
       # scheduling all builders.
-      return builder_configs
+      return builders
 
   def _get_necessary_cq_child_specs(
       self, child_specs: List[BuilderConfig.Orchestrator.ChildSpec],
@@ -400,10 +404,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         found_green or 'chromeos.cq_orchestrator.full_sync'
         in self.m.cros_infra_config.experiments)
     if synced_checkout and not (is_retry or forced_relevant) and gerrit_changes:
-      _ = self.get_relevant_builder_configs([
-          self.m.cros_infra_config.get_builder_config(c.name)
-          for c in necessary_child_specs
-      ], gerrit_changes)
+      _ = self.get_relevant_builders(necessary_builders, gerrit_changes)
 
     for child_spec in necessary_child_specs:
       child_builder_config = self.m.cros_infra_config.get_builder_config(

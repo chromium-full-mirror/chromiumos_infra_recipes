@@ -917,6 +917,62 @@
         "manifest": "PUBLIC"
       },
       "id": {
+        "bucket": "cq",
+        "name": "amd64-generic-incremental-cq",
+        "type": "CQ"
+      },
+      "buildTarget": {
+        "profile": {"name": "BASE"},
+        "name": "amd64-generic"
+      }
+    },
+
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "legacy": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "IMAGE_ZIP",
+                  "AUTOTEST_FILES",
+                  "TAST_FILES",
+                  "PINNED_GUEST_IMAGES",
+                  "EBUILD_LOGS",
+                  "TEST_UPDATE_PAYLOAD"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PUBLIC",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true,
+        "installPackages": {
+          "dependencies": "ALL_DEPENDENCIES",
+          "runSpec": "RUN"
+        },
+        "installToolchain": {
+          "compileSource": false
+        },
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        }
+      },
+      "chrome": {
+        "internal": false
+      },
+      "general": {
+        "critical": true,
+        "manifest": "PUBLIC"
+      },
+      "id": {
         "bucket": "postsubmit",
         "name": "amd64-generic-snapshot",
         "type": "POSTSUBMIT"

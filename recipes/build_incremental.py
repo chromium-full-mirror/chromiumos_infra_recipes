@@ -7,7 +7,10 @@
 
 from typing import Generator, Optional
 
+from google.protobuf import json_format
+
 # pylint: disable=import-error
+from PB.chromite.api import relevancy as relevancy_pb2
 from PB.chromiumos import common as common_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
@@ -92,13 +95,9 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
     relevant = False
     if builder_is_private or not all_changes_are_private:
-      _build_target = common_pb2.BuildTarget(
-          name=api.build_menu.build_target.name,
-          profile=common_pb2.Profile(name='base'))
-      _builder_config = BuilderConfig(build_target=_build_target)
-      relevant_builder_configs = api.build_plan.get_relevant_builder_configs(
-          [_builder_config], public_gerrit_changes)
-      relevant = bool(relevant_builder_configs)
+      relevant_builders = api.build_plan.get_relevant_builders(
+          [api.buildbucket.build.builder.builder], public_gerrit_changes)
+      relevant = bool(relevant_builders)
     api.easy.set_properties_step(pointless_build=not relevant,
                                  relevant_build=relevant)
     api.cros_tags.add_tags_to_current_build(
@@ -281,10 +280,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       status='FAILURE',
   )
 
-  # Build with pointless build check enabled.
+  relevancy_service_ret = json_format.MessageToJson(
+      relevancy_pb2.GetRelevantBuildTargetsResponse(build_targets=[
+          relevancy_pb2.GetRelevantBuildTargetsResponse.RelevantTarget(
+              build_target=common_pb2.BuildTarget(
+                  name='amd64-generic', profile=common_pb2.Profile(
+                      name='BASE')))
+      ]))
   yield api.build_menu.test(
-      'inc-pointless-build-check',
-      api.buildbucket.ci_build(builder='cq-orchestrator'),
+      'inc-relevant',
+      api.cros_build_api.set_api_return(
+          parent_step_name='',
+          endpoint='RelevancyService/GetRelevantBuildTargets',
+          data=relevancy_service_ret),
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
+      api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
+      api.post_check(post_process.MustRun, 'install packages'),
+      build_target='amd64-generic',
+      builder_name='amd64-generic-incremental-cq',
+      status='SUCCESS',
+  )
+
+  yield api.build_menu.test(
+      'inc-not-relevant',
       api.cros_build_api.set_api_return(
           parent_step_name='',
           endpoint='RelevancyService/GetRelevantBuildTargets', data='{}'),
@@ -293,6 +312,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
       api.post_check(post_process.DoesNotRun, 'install packages'),
       build_target='amd64-generic',
+      builder_name='amd64-generic-incremental-cq',
       status='SUCCESS',
   )
 
