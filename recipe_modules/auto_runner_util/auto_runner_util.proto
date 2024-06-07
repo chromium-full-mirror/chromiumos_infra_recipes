@@ -18,6 +18,10 @@ message AutoRunnerUtilProperties {
   // Daily Quota per cl. i.e Max number of times Auto Runner can CQ+1 a CL per
   // day.
   int64 daily_quota_per_cl = 5;
+
+  // Time window (in minutes) for CLs to be considered based on their last
+  // update. Only CLs updated within this window will considered eligible.
+  int64 cl_updated_age_mins = 6;
 }
 
 message HostProjects {

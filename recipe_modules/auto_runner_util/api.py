@@ -27,7 +27,6 @@ QUERY_PARAMS = (
     ('label', 'Code-Review>=0'),
     ('label', 'verified>=0'),
     ('-is', 'wip'),
-    ('-age', '1d'),
 )
 # Query parameters for Gerrit API used to fetch changes to calculate quota usage.
 QUERY_PARAMS_FOR_QUOTA_CHECK = (
@@ -61,6 +60,7 @@ DEFAULT_HOST_PROJECTS_PREFIXES = [
 DEFAULT_CL_SIGNAL = CLSignalEnum.REVIEWER_ADDED
 DEFAULT_DAILY_QUOTA = 50
 DEFAULT_DAILY_QUOTA_PER_CL = 5
+DEFAULT_CL_UPDATED_AGE_MINS = 60
 
 # TODO: Replace this with real account
 AUTO_RUNNER_SERVICE_ACCOUNT_EMAIL = 'PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM'
@@ -227,6 +227,7 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     self._cl_signal = properties.cls_signal or DEFAULT_CL_SIGNAL
     self._daily_quota = properties.daily_quota or DEFAULT_DAILY_QUOTA
     self._daily_quota_per_cl = properties.daily_quota_per_cl or DEFAULT_DAILY_QUOTA_PER_CL
+    self._cl_updated_age_mins = properties.cl_updated_age_mins or DEFAULT_CL_UPDATED_AGE_MINS
 
   def get_change_infos_from_gerrit(self, host_projects: List[HostProjects],
                                    query_params: Tuple[Tuple[str, str]],
@@ -349,8 +350,10 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
       with self.m.step.nest('24 hr Quota exhausted for AutoRunner'):
         return set()
 
+    query_params_with_age = QUERY_PARAMS + (
+        ('-age', f'{self._cl_updated_age_mins}m'),)
     remaining_changes = self.get_change_infos_from_gerrit(
-        self._host_project_prefixs, QUERY_PARAMS, O_PARAMS,
+        self._host_project_prefixs, query_params_with_age, O_PARAMS,
         self._max_limit_per_query)
 
     # Filter changes that have hit or exceeded their daily quota

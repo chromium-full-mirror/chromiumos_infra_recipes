@@ -99,7 +99,7 @@ def GenTests(api):
               '--limit', '2', '-p', 'status=open', '-p', 'branch=main', '-p',
               'label=Bot-Commit<1', '-p', 'label=Commit-Queue<=0', '-p',
               'label=Code-Review>=0', '-p', 'label=verified>=0', '-p',
-              '-is=wip', '-p', '-age=1d', '-p', 'projects=mychromiumos', '-o',
+              '-is=wip', '-p', '-age=60m', '-p', 'projects=mychromiumos', '-o',
               'CURRENT_REVISION', '-o', 'COMMIT_FOOTERS', '-o',
               'REVIEWER_UPDATES', '-o', 'DETAILED_ACCOUNTS', '-o', 'MESSAGES'
           ]),
@@ -115,7 +115,8 @@ def GenTests(api):
                       max_limit_per_query=2, host_projects=[
                           HostProjects(host='mychromium',
                                        project_prefix=['mychromiumos']),
-                      ])
+                      ],
+                      cl_updated_age_mins=90)
           }, expected_changes={
               EnhancedChangeInfo({
                   '_number': 5590139,
@@ -156,7 +157,7 @@ def GenTests(api):
               '--limit', '2', '-p', 'status=open', '-p', 'branch=main', '-p',
               'label=Bot-Commit<1', '-p', 'label=Commit-Queue<=0', '-p',
               'label=Code-Review>=0', '-p', 'label=verified>=0', '-p',
-              '-is=wip', '-p', '-age=1d', '-p', 'projects=mychromiumos', '-o',
+              '-is=wip', '-p', '-age=90m', '-p', 'projects=mychromiumos', '-o',
               'CURRENT_REVISION', '-o', 'COMMIT_FOOTERS', '-o',
               'REVIEWER_UPDATES', '-o', 'DETAILED_ACCOUNTS', '-o', 'MESSAGES'
           ]),
