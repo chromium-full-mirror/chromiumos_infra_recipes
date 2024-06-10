@@ -143,7 +143,7 @@ def RunSteps(api):
   ] * 50
   final_result = api.failures.aggregate_failures(results)
   api.assertions.assertEqual(final_result.status, common_pb2.FAILURE)
-  api.assertions.assertIn('40 others', final_result.summary_markdown)
+  api.assertions.assertIn('35 others', final_result.summary_markdown)
 
   # Try to exceed the 4000 limit with really long test links.
   really_long_text = 'All code and no test makes failures a dull module.' * 4000

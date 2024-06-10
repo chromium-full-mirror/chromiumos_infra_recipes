@@ -213,13 +213,25 @@ def GenTests(api):
                           phase='COMPILE'))
               ]
           }).message,
+      api.test_util.test_child_build(
+          'zork', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='baz'),
+                          phase='TEST'))
+              ]
+          }).message,
   ]
   yield api.test(
-      'two-failure-reasons', api.properties(BuildProperties(builds=builds)),
+      'three-failure-reasons', api.properties(BuildProperties(builds=builds)),
       api.post_check(post_process.ResultReasonRE,
-                     '1 out of 2 builds failed compilation for foo/bar\n\n'),
+                     '1 out of 3 builds failed compilation for foo/bar\n\n'),
       api.post_check(post_process.ResultReasonRE,
-                     '1 out of 2 builds failed compilation for foo/baz\n\n'),
+                     '1 out of 3 builds failed compilation for foo/baz\n\n'),
+      api.post_check(post_process.ResultReasonRE,
+                     '1 out of 3 builds failed unit tests for foo/baz\n\n'),
       status='FAILURE')
 
   builds = [
@@ -231,6 +243,16 @@ def GenTests(api):
                           package=PackageInfo(category='foo',
                                               package_name='bar'),
                           phase='COMPILE'))
+              ]
+          }).message,
+      api.test_util.test_child_build(
+          'dedede', status='FAILURE', output_properties={
+              'package_failures': [
+                  json_format.MessageToDict(
+                      PackageFailure(
+                          package=PackageInfo(category='foo',
+                                              package_name='baz'),
+                          phase='TEST'))
               ]
           }).message,
       api.test_util.test_child_build(
@@ -246,7 +268,7 @@ def GenTests(api):
       api.test_util.test_child_build('zork', status='FAILURE').message,
   ]
   yield api.test(
-      'more-than-2-failure-reasons-does-not-bubble-up',
+      'more-than-3-failure-reasons-does-not-bubble-up',
       api.properties(BuildProperties(builds=builds)),
       api.post_check(post_process.ResultReasonRE,
-                     '3 out of 3 builds failed\n\n'), status='FAILURE')
+                     '4 out of 4 builds failed\n\n'), status='FAILURE')

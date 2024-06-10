@@ -39,7 +39,7 @@ class FailuresApi(RecipeApi):
 
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
-    self._failure_truncate_max = 10
+    self._failure_truncate_max = 15
     self._caught_exceptions = {}
     self._test_variant_to_fault_attribute = collections.defaultdict(
         lambda: None)
@@ -278,9 +278,9 @@ class FailuresApi(RecipeApi):
       reason_to_failure_map[f.failure_reason].append(f)
 
     failure_reasons_count = len(reason_to_failure_map.keys())
-    # TODO(b/327255136): Do at most 2 unique failure reasons as we play around
+    # TODO(b/327255136): Do at most 3 unique failure reasons as we play around
     # with space.
-    if failure_reasons_count > 2:
+    if failure_reasons_count > 3:
       return self.aggregate_failure_group(kind, build_failures, failure_count,
                                           total_count)
 
