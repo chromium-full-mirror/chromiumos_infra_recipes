@@ -212,6 +212,11 @@ class OrchMenuApi(recipe_api.RecipeApi):
     """
     with self.m.bot_cost.build_cost_context(), \
         self.m.cros_source.checkout_overlays_context():
+
+      if not self.m.gerrit.changes_submittable(self.gerrit_changes):
+        raise recipe_api.StepFailure(
+            'Merge conflict detected! Please rebase and retry.')
+
       with self.m.step.nest('set up orchestrator') as presentation:
         self.m.cros_source.configure_builder(
             self.m.buildbucket.gitiles_commit,
@@ -230,10 +235,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self._external_gitiles_commit = self.m.cros_source.checkout_manifests(
               is_staging=self.m.cros_infra_config.is_staging,
               checkout_internal=True)
-
-      if not self.m.gerrit.changes_submittable(self.gerrit_changes):
-        raise recipe_api.StepFailure(
-            'Merge conflict detected! Please rebase and retry.')
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()

@@ -651,23 +651,18 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator",
+    "name": "check for merge conflicts",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
+      "@@@STEP_TEXT@confirmed no merge conflicts@@@",
+      "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium-review.googlesource.com', 'change_number': 123456, 'patch_set': 7}]), ('temp_dir', Path([CLEANUP], 'submittable_check'))])@@@",
+      "@@@STEP_LOG_END@req@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.configure builder",
+    "name": "check for merge conflicts.ensure support",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up orchestrator.configure builder.ensure support",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -694,18 +689,18 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.configure builder.ensure support.read infrainfra golang version",
+    "name": "check for merge conflicts.ensure support.read infrainfra golang version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@infrainfra-golang.version@deadbeef@@@",
       "@@@STEP_LOG_END@infrainfra-golang.version@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.configure builder.ensure support.find cipd instance for support for infra/infra commit deadbeef",
+    "name": "check for merge conflicts.ensure support.find cipd instance for support for infra/infra commit deadbeef",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@cipd instance@https://chrome-infra-packages.appspot.com/p/chromiumos/infra/support/${platform}/+/wzCA5zCcIkg0uYroNN91fpH1oQLMVHYaXM8RS9SuQwUC@@@",
       "@@@STEP_LOG_END@cipd instance@@@"
     ]
@@ -733,9 +728,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.configure builder.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
+    "name": "check for merge conflicts.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -762,9 +757,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.configure builder.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
+    "name": "check for merge conflicts.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@cipd.json@{@@@",
       "@@@STEP_LOG_LINE@cipd.json@    \"result\": [@@@",
       "@@@STEP_LOG_LINE@cipd.json@        {@@@",
@@ -802,9 +797,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.configure builder.ensure support.ensure_installed",
+    "name": "check for merge conflicts.ensure support.ensure_installed",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
       "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
@@ -816,6 +811,47 @@
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/git-test-submit"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "check for merge conflicts.git-test-submit",
+    "stdin": "{\"gerrit_changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator",
+    "~followup_annotations": [
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.configure builder",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2073,42 +2109,6 @@
     "name": "set up orchestrator.read git footers",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check for merge conflicts",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@confirmed no merge conflicts@@@",
-      "@@@STEP_LOG_LINE@req@dict_items([('gerrit_changes', [{'host': 'chromium-review.googlesource.com', 'change_number': 123456, 'patch_set': 7}]), ('temp_dir', Path([CLEANUP], 'submittable_check'))])@@@",
-      "@@@STEP_LOG_END@req@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/git-test-submit"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "check for merge conflicts.git-test-submit",
-    "stdin": "{\"gerrit_changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 7}], \"temp_dir\": \"[CLEANUP]/submittable_check\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"errors\": []@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
