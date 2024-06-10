@@ -7,7 +7,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/builder/chromiumos_codesearch"
+      "[CACHE]/builder/chromeos_superproject"
     ],
     "infra_step": true,
     "name": "Remove previous clone"
@@ -19,12 +19,12 @@
       "--depth=1",
       "-b",
       "main",
-      "https://chromium.googlesource.com/chromiumos/codesearch",
-      "chromiumos_codesearch"
+      "https://chrome-internal.googlesource.com/chromeos/superproject",
+      "chromeos_superproject"
     ],
     "cwd": "[CACHE]/builder",
     "infra_step": true,
-    "name": "clone main of https://chromium.googlesource.com/chromiumos/codesearch"
+    "name": "clone main of https://chrome-internal.googlesource.com/chromeos/superproject"
   },
   {
     "cmd": [
@@ -32,7 +32,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[CACHE]/builder/chromiumos_codesearch",
+    "cwd": "[CACHE]/builder/chromeos_superproject",
     "infra_step": true,
     "name": "fetch hash"
   },
@@ -44,7 +44,7 @@
       "--format=%ct",
       "HEAD"
     ],
-    "cwd": "[CACHE]/builder/chromiumos_codesearch",
+    "cwd": "[CACHE]/builder/chromeos_superproject",
     "infra_step": true,
     "name": "fetch timestamp"
   },
@@ -56,7 +56,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "rmtree",
-      "[CACHE]/builder/chromiumos_manifest"
+      "[CACHE]/builder/chromeos_manifest-internal"
     ],
     "infra_step": true,
     "name": "Remove previous clone (2)"
@@ -68,12 +68,12 @@
       "--depth=1",
       "-b",
       "snapshot",
-      "https://chromium.googlesource.com/chromiumos/manifest",
-      "chromiumos_manifest"
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "chromeos_manifest-internal"
     ],
     "cwd": "[CACHE]/builder",
     "infra_step": true,
-    "name": "clone snapshot of https://chromium.googlesource.com/chromiumos/manifest"
+    "name": "clone snapshot of https://chrome-internal.googlesource.com/chromeos/manifest-internal"
   },
   {
     "cmd": [
@@ -81,7 +81,7 @@
       "rev-parse",
       "HEAD"
     ],
-    "cwd": "[CACHE]/builder/chromiumos_manifest",
+    "cwd": "[CACHE]/builder/chromeos_manifest-internal",
     "infra_step": true,
     "name": "fetch hash (2)"
   },
@@ -93,7 +93,7 @@
       "--format=%ct",
       "HEAD"
     ],
-    "cwd": "[CACHE]/builder/chromiumos_manifest",
+    "cwd": "[CACHE]/builder/chromeos_manifest-internal",
     "infra_step": true,
     "name": "fetch timestamp (2)"
   },
@@ -107,7 +107,7 @@
     ],
     "infra_step": true,
     "name": "luci-scheduler.EmitTriggers",
-    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"amd64-generic-codesearch\", \"project\": \"chromeos\"}, {\"job\": \"arm64-generic-codesearch\", \"project\": \"chromeos\"}], \"trigger\": {\"gitiles\": {\"properties\": {\"codesearch_mirror_revision\": \"d3adb33f\", \"codesearch_mirror_revision_timestamp\": \"\"}, \"ref\": \"refs/heads/snapshot\", \"repo\": \"https://chromium.googlesource.com/chromiumos/manifest\", \"revision\": \"\", \"tags\": [\"user_agent:recipe\"]}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"/0\"}}], \"timestamp\": 1337000001500000}",
+    "stdin": "{\"batches\": [{\"jobs\": [{\"job\": \"amd64-generic-codesearch\", \"project\": \"chromeos\"}, {\"job\": \"arm64-generic-codesearch\", \"project\": \"chromeos\"}], \"trigger\": {\"gitiles\": {\"properties\": {\"codesearch_mirror_revision\": \"d3adb33f\", \"codesearch_mirror_revision_timestamp\": \"\"}, \"ref\": \"refs/heads/snapshot\", \"repo\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"revision\": \"\", \"tags\": [\"user_agent:recipe\"]}, \"id\": \"6a0a73b0-070b-492b-9135-9f26a2a00001\", \"title\": \"/0\"}}], \"timestamp\": 1337000001500000}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@input@{@@@",
       "@@@STEP_LOG_LINE@input@    \"batches\": [@@@",
@@ -129,7 +129,7 @@
       "@@@STEP_LOG_LINE@input@                        \"codesearch_mirror_revision_timestamp\": \"\"@@@",
       "@@@STEP_LOG_LINE@input@                    },@@@",
       "@@@STEP_LOG_LINE@input@                    \"ref\": \"refs/heads/snapshot\",@@@",
-      "@@@STEP_LOG_LINE@input@                    \"repo\": \"https://chromium.googlesource.com/chromiumos/manifest\",@@@",
+      "@@@STEP_LOG_LINE@input@                    \"repo\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@input@                    \"revision\": \"\",@@@",
       "@@@STEP_LOG_LINE@input@                    \"tags\": [@@@",
       "@@@STEP_LOG_LINE@input@                        \"user_agent:recipe\"@@@",

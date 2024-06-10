@@ -4308,6 +4308,7 @@
     },
     {
       "build": {
+        "applyGerritChanges": true,
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_FACTORY",
@@ -4326,11 +4327,13 @@
           "sdk_update_run_spec": "RUN"
         }
       },
-      "chrome": {},
+      "chrome": {
+        "internal": true
+      },
       "general": {
         "critical": true,
         "environment": "PRODUCTION",
-        "manifest": "PUBLIC",
+        "manifest": "PRIVATE",
         "run_when": {
           "mode": "ALWAYS_RUN"
         },
@@ -4339,7 +4342,7 @@
       "id": {
         "bucket": "codesearch",
         "name": "amd64-generic-codesearch",
-        "type": "PUBLIC"
+        "type": "CODESEARCH"
       },
       "update_chroot": {
         "run_spec": "RUN"
@@ -4347,6 +4350,7 @@
     },
     {
       "build": {
+        "applyGerritChanges": true,
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_FACTORY",
@@ -4365,11 +4369,13 @@
           "sdk_update_run_spec": "RUN"
         }
       },
-      "chrome": {},
+      "chrome": {
+        "internal": true
+      },
       "general": {
         "critical": true,
         "environment": "PRODUCTION",
-        "manifest": "PUBLIC",
+        "manifest": "PRIVATE",
         "run_when": {
           "mode": "ALWAYS_RUN"
         },
@@ -4378,7 +4384,7 @@
       "id": {
         "bucket": "codesearch",
         "name": "arm64-generic-codesearch",
-        "type": "PUBLIC"
+        "type": "CODESEARCH"
       },
       "update_chroot": {
         "run_spec": "RUN"

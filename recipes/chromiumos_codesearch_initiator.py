@@ -2,10 +2,16 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Initialize ChromiumOS codesearch builders to create kzips.
+"""Builder that launches the chromiumos_codesearch builders.
 
-Checks out chromiumos manifest repo and uses the latest snapshot commit hash
-to initialize chromiumos codesearch builders.
+Each chromiumos_codesearch builder generates and uploads a kzip for a different
+build target. This builder finds the latest snapshot manifest to check out, and
+launches all the build targets' builders to ensure that they use the same
+manifest.
+
+Note: the "ChromiumOS" in the name is outdated. Originally this recipe was
+written with the assumption that it used the public ChromiumOS manifest. Now the
+internal manifest can be specified via input properties.
 """
 
 from typing import Any, Dict, Generator
@@ -86,16 +92,16 @@ def GenTests(
                   'arm64-generic-codesearch',
               ],
           ),
-          codesearch_repo='https://chromium.googlesource.com/chromiumos/codesearch',
-          manifest_repo='https://chromium.googlesource.com/chromiumos/manifest',
+          codesearch_repo='https://chrome-internal.googlesource.com/chromeos/superproject',
+          manifest_repo='https://chrome-internal.googlesource.com/chromeos/manifest-internal',
       ),
       api.post_check(
           post_process.MustRun,
-          'clone snapshot of https://chromium.googlesource.com/chromiumos/manifest'
+          'clone snapshot of https://chrome-internal.googlesource.com/chromeos/manifest-internal'
       ),
       api.post_check(
           post_process.MustRun,
-          'clone main of https://chromium.googlesource.com/chromiumos/codesearch'
+          'clone main of https://chrome-internal.googlesource.com/chromeos/superproject'
       ),
       api.step_data('fetch hash',
                     api.raw_io.stream_output_text('d3adb33f', stream='stdout')),

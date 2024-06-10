@@ -2,10 +2,18 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for enabling cross-references in code search for ChromiumOS.
+"""Upload a kzip so Kythe can provide language support services for ChromeOS.
 
-Checks out and builds ChromiumOS for amd64-generic, does some preprocessing for
-package_index, and generates then uploads a KZIP to GS.
+This recipe checks out a Chrom(e|ium)OS manifest, syncs it to the latest
+snapshot, and builds packages with FEATURES=noclean so that build artifacts are
+preserved. Then the `package_index_cros` script creates a compilation database
+for all supported packages, and the `package_index` script bundles it into a
+kzip file. That file gets uploaded to Kythe (go/kythe), which will index it to
+serve cross-references to both Code Search and Cider G.
+
+Note: the "ChromiumOS" in the name is outdated. Originally this recipe was
+written with the assumption that it used the public ChromiumOS manifest. Now the
+internal manifest can be specified via input properties.
 """
 
 from typing import Iterable
@@ -54,7 +62,7 @@ def RunSteps(api, properties):
   cache_dir = api.path.cache_dir / 'builder'
   api.gclient.set_config('infra_superproject')
 
-  # Set up and build ChromiumOS.
+  # Set up the workspace and build packages.
   with api.build_menu.configure_builder() as config, \
       api.build_menu.setup_workspace_and_chroot():
 
@@ -66,7 +74,7 @@ def RunSteps(api, properties):
     api.build_menu.install_packages(config=config, packages=env_info.packages,
                                     timeout_sec=60 * 60 * 12)
 
-    # Once ChromiumOS has been set up, start the process of creating a kzip.
+    # Start the process of creating a kzip.
     build_dir = api.cros_source.workspace_path / 'src' / 'out' / build_target
     with api.context(cwd=api.cros_source.workspace_path):
 
@@ -225,7 +233,7 @@ def GenTests(api):
       api.properties(
           codesearch_mirror_revision='a' * 40,
           codesearch_mirror_revision_timestamp='1531887759',
-          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
+          corpus='chrome-internal.googlesource.com/chromeos/superproject//main',
           packages=[
               'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
           ],
@@ -238,10 +246,17 @@ def GenTests(api):
       api.post_check(post_process.StepCommandDoesNotContain,
                      'create kythe index pack',
                      ['--clang_target_arch', 'amd64']),
+      api.post_process(
+          post_process.PropertyEquals, 'commit', '''{
+  "host": "chrome-internal.googlesource.com",
+  "project": "chromeos/manifest-internal",
+  "id": "d3adb33f",
+  "ref": "refs/heads/snapshot"
+}'''),
       builder_name='amd64-generic-codesearch',
       bucket='codesearch',
       git_ref='refs/heads/snapshot',
-      git_repo='chromium.googlesource.com/chromiumos/manifest',
+      git_repo='chrome-internal.googlesource.com/chromeos/manifest-internal',
       revision='d3adb33f',
   )
 
@@ -250,7 +265,7 @@ def GenTests(api):
       api.properties(
           codesearch_mirror_revision='a' * 40,
           codesearch_mirror_revision_timestamp='1531887759',
-          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
+          corpus='chrome-internal.googlesource.com/chromeos/superproject//main',
           packages=[
               'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
           ],
@@ -269,32 +284,6 @@ def GenTests(api):
       builder_name='arm64-generic-codesearch',
       bucket='codesearch',
       git_ref='refs/heads/snapshot',
-      git_repo='chromium.googlesource.com/chromiumos/manifest',
-      revision='d3adb33f',
-  )
-
-  yield api.build_menu.test(
-      'repo sync to manifest_hash',
-      api.properties(
-          codesearch_mirror_revision='a' * 40,
-          codesearch_mirror_revision_timestamp='1531887759',
-          corpus='chromium.googlesource.com/chromiumos/codesearch//main',
-          packages=[
-              'virtual/target-chromium-os', 'virtual/target-chromiumos-test'
-          ],
-          sync_generated_files=True,
-          experimental=False,
-      ),
-      api.post_process(
-          post_process.PropertyEquals, 'commit', '''{
-  "host": "chromium.googlesource.com",
-  "project": "chromiumos/manifest",
-  "id": "d3adb33f",
-  "ref": "refs/heads/snapshot"
-}'''),
-      builder_name='amd64-generic-codesearch',
-      bucket='codesearch',
-      git_ref='refs/heads/snapshot',
-      git_repo='chromium.googlesource.com/chromiumos/manifest',
+      git_repo='chrome-internal.googlesource.com/chromeos/manifest-internal',
       revision='d3adb33f',
   )
