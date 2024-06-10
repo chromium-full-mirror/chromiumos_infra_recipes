@@ -5,8 +5,6 @@
 
 """Tests for quota limits."""
 
-import os
-import json
 from recipe_engine.post_process import DropExpectation
 
 from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import AutoRunnerUtilProperties, HostProjects
@@ -19,14 +17,6 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/time',
 ]
-
-
-def get_test_output_as_jsonobj(filename: str) -> str:
-  with open(
-      os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
-      encoding='utf-8') as f:
-    return json.load(f)
-
 
 def RunSteps(api):
   actual = api.auto_runner_util.get_eligible_cls()
@@ -70,11 +60,13 @@ def GenTests(api):
           }, step_name='Querying relation chains'),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.gerrit.set_query_changes_response(
           step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.post_process(DropExpectation))
   yield api.test(
@@ -108,11 +100,13 @@ def GenTests(api):
           }, step_name='Querying relation chains'),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.gerrit.set_query_changes_response(
           step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.post_process(DropExpectation))
   yield api.test(
@@ -120,7 +114,8 @@ def GenTests(api):
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
       api.gerrit.set_query_changes_response(
           step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.properties(
           **{
@@ -137,7 +132,8 @@ def GenTests(api):
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
       api.gerrit.set_query_changes_response(
           step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.properties(
           **{

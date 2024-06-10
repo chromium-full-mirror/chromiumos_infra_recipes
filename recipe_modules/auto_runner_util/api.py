@@ -217,6 +217,15 @@ class EnhancedChangeInfo():
         return True
     return False
 
+  @property
+  def current_revision_number(self) -> str:
+    """Returns the current revision number of the change.
+
+    Returns:
+        str: The current revision number of the change.
+    """
+    return self._change_info.get('current_revision_number', '')
+
 
 class AutoRunnerUtilApi(recipe_api.RecipeApi):
 

@@ -5,8 +5,6 @@
 
 """Tests for get_eligible_cls function."""
 
-import os
-import json
 from recipe_engine import post_process
 from recipe_engine.post_process import DropExpectation, MustRun, MustRunRE, DoesNotRun
 
@@ -19,13 +17,6 @@ DEPS = [
     'gerrit',
     'recipe_engine/properties',
 ]
-
-
-def get_test_output_as_jsonobj(filename: str) -> str:
-  with open(
-      os.path.join(os.path.abspath(os.path.dirname(__file__)), filename),
-      encoding='utf-8') as f:
-    return json.load(f)
 
 
 def RunSteps(api):
@@ -76,7 +67,7 @@ def GenTests(api):
           dont_assert=False),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj('test_output.json'),
           host_url='https://mychromium-review.googlesource.com'),
       api.gerrit.set_gerrit_related_changes(
           {
@@ -134,7 +125,7 @@ def GenTests(api):
           dont_assert=False),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
-          changes=get_test_output_as_jsonobj('test_output.json'),
+          changes=api.auto_runner_util.get_test_output_as_jsonobj('test_output.json'),
           host_url='https://mychromium-review.googlesource.com'),
       api.gerrit.set_gerrit_related_changes(
           {
