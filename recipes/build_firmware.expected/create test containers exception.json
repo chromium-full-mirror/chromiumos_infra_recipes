@@ -5761,6 +5761,13 @@
   },
   {
     "cmd": [],
+    "name": "set suite_scheduling",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@suite_scheduling@\"False\"@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "finalize metadata"
   },
   {

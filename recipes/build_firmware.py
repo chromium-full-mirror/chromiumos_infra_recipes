@@ -7,7 +7,11 @@
 
 This recipe lives on its own because it is agnostic of ChromeOS build targets.
 This recipe should only be used for ToT firmware builds and build_legacy_fw
-(which is not deprecated) should be used for branch firmware builds.
+(which is not deprecated) should be used for branch firmware builds. It is
+also acceptable to use for short-lived EC branches. There is DANGER that
+there could be unexpected interactions between unbranched recipes and branched
+cros_build_api calls. You are on your own if you attempt to use this recipe on
+a branch, and that branch should be as short-lived as possible.
 """
 
 import collections
@@ -38,8 +42,10 @@ DEPS = [
     'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
+    'cros_release',
     'cros_sdk',
     'cros_source',
+    'cros_version',
     'easy',
     'failures',
     'src_state',
@@ -100,6 +106,9 @@ def CreateContainers(api, config):
 
 
 def RunSteps(api, properties):
+  commit = api.src_state.gitiles_commit
+  if properties.gitiles_commit:
+    commit = properties.gitiles_commit
   with api.failures.ignore_exceptions():
     with api.step.nest('checking attestation eligibility') as pres:
       # Config determines whether to report artifacts.
@@ -108,8 +117,13 @@ def RunSteps(api, properties):
         pres.step_text = f'{api.cros_infra_config.config.id.name} is attestation eligible'
       else:
         pres.step_text = f'{api.cros_infra_config.config.id.name} NOT attestation eligible'
-  with api.build_menu.configure_builder() \
+  with api.build_menu.configure_builder(commit=commit) \
      as config, api.build_menu.setup_workspace():
+    is_staging = api.cros_infra_config.is_staging
+    if properties.bump_version:
+      api.cros_version.bump_version(dry_run=is_staging)
+      api.cros_release.create_buildspec(
+          dry_run=is_staging, gs_location=properties.buildspec_gs_path)
     chromiumos_sdk_version = _read_chromiumos_sdk_pin(api, properties)
     api.build_menu.setup_chroot(sdk_version=chromiumos_sdk_version)
 
@@ -194,6 +208,9 @@ def RunSteps(api, properties):
 
     CreateTi50TastArtifacts(api, location, config)
 
+    api.easy.set_properties_step(
+        suite_scheduling=str(properties.set_suite_scheduling and
+                             not is_staging))
 
 def CreateTi50TastArtifacts(api, location, config):
   """Create directories and files of artifacts needed by Ti50 Tast tests."""
@@ -361,6 +378,22 @@ def GenTests(api):
 
   yield test('zephyr-cq', cq=True, builder='fw-ec-cq',
              input_properties={'firmware_location': common_pb2.PLATFORM_ZEPHYR})
+  yield test(
+      'ec-branch-postsubmit',
+      builder='firmware-R126-15885.B-branch',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'attestation_eligible': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'bump_version': True,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-R126-15885.B',
+          },
+          'set_suite_scheduling': True,
+      },
+  )
 
   sdk_pin_path = 'src/platform/ti50/sdk-version'
   yield test(

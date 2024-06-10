@@ -8,6 +8,7 @@ package recipes.chromeos.build_firmware;
 
 import "chromiumos/common.proto";
 import "recipes/chromeos/sign_image.proto";
+import "go.chromium.org/luci/buildbucket/proto/common.proto";
 
 message BuildFirmwareProperties {
   // Firmware location.  See chromite.api.firmware.
@@ -32,4 +33,21 @@ message BuildFirmwareProperties {
   string chromiumos_sdk_pin_file = 6;
 
   reserved 7;
+
+  // The manifest to check out. There is DANGER that there could be
+  // unexpected interactions between unbranched recipes and branched
+  // cros_build_api calls. You are on your own if you attempt to use this
+  // recipe on a branch, and that branch should be as short-lived as possible.
+  // You probably don't want this recipe, you want build_legacy_fw instead.
+  buildbucket.v2.GitilesCommit gitiles_commit = 8;
+
+  // Whether to bump the version.
+  bool bump_version = 9;
+
+  // Feature flag: whether to set suite_scheduling=True
+  bool set_suite_scheduling = 10;
+
+  // GS path to upload buildspecs to.
+  // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
+  string buildspec_gs_path = 11;
 }
