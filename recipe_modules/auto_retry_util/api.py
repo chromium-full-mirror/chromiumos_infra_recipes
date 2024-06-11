@@ -251,6 +251,11 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
             'cq-orchestrator').orchestrator.child_specs
     ]
 
+    # Set as the initial value for lookback_hours since the value of
+    # lookback_hours can be mutated in subsequent calls to
+    # resize_lfg_lookback().
+    self._lfg_lookback_hours = self.m.looks_for_green.lookback_hours
+
   @property
   def experimental_retries(self):
     return self._experimental_retries
@@ -476,7 +481,7 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       else:
         lfg_lookback_hours = self.m.looks_for_green.resize_lfg_lookback(
             cq_run.input.gerrit_changes, builders,
-            lookback_hours=self.lookback_seconds / 3600)
+            lookback_hours=self._lfg_lookback_hours)
         requested_snapshot_builders = self.m.looks_for_green.get_requested_snapshot_builders(
             builders)
         current_greenness = self._lfg_greenness(requested_snapshot_builders,
