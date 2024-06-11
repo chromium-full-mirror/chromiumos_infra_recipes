@@ -70,6 +70,21 @@ def GenTests(api):
               expected_is_snapshot_build=False,
           )))
 
+  # Non snapshot build with snapshot_identifier property
+  yield api.test(
+      'non-snapshot-with-property',
+      api.properties(
+          **{'$chromeos/cros_snapshot': {
+              'snapshot_identifier': '7654321',
+          }}),
+      api.cros_infra_config.use_custom_builder_config(
+          non_snapshot_config, step_name='configure builder'),
+      api.properties(
+          TestInputProperties(
+              expected_snapshot_identifier='7654321',
+              expected_is_snapshot_build=True,
+          )))
+
   yield api.test(
       'another-snapshot-identifier',
       api.git_footers.simulated_get_footers(['9999999'],

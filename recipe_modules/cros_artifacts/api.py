@@ -7,7 +7,7 @@
 
 import collections
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Union
 
 from google.protobuf import json_format
 
@@ -527,10 +527,17 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
     return futures
 
+  def _get_default_basedir(self) -> str:
+    """Returns the default value of the base directory name."""
+    return '{version}-{bid}'.format(version=self.m.cros_version.version,
+                                    bid=self.m.cros_infra_config.build_id)
+
   # Note that TestHaus has a dependency on artifact naming (see b/322343675).
   # Release artifacts should contain 'release' and staging release artifacts
   # should contain 'staging'.
-  def _artifacts_gs_path_dict(self, builder_name, target, kind):
+  def _artifacts_gs_path_dict(self, builder_name: str,
+                              target: common_pb2.BuildTarget,
+                              kind: Union[BuilderConfig.Id.Type, None]):
     """Returns the dictionary tokens for expanding location templates.
 
     Args:
@@ -546,31 +553,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     # the builder name.
     version = self.m.cros_version.version
     ret = {
-        'version':
-            str(version),
-        'legacy_version':
-            version.legacy_version,
-        # If this is a led launch, the ID will be in the format "led/user/id",
-        # which has the side effect of breaking path parsing (which assumes the
-        # last thing in this path starting with "/" will be version + build_id).
-        # As such, remove all "/"s and replace with underscores.
-        'build_id':
-            str(
-                self.m.buildbucket.build.id or
-                self.m.led.run_id.replace('/', '_')),
-        'target':
-            target.name,
-        'builder_name':
-            builder_name.replace('_', '-'),
-        'time':
-            str(self._timestamp_micros),
+        'version': str(version),
+        'legacy_version': version.legacy_version,
+        'build_id': self.m.cros_infra_config.build_id,
+        'target': target.name,
+        'builder_name': builder_name.replace('_', '-'),
+        'time': str(self._timestamp_micros),
     }
     if kind:
       ret['kind'] = BuilderConfig.Id.Type.Name(kind).lower().replace('_', '-')
       ret['label'] = ret['kind']
-    ret['gs_path'] = '{builder}/{version}-{bid}'.format(
-        builder=ret['builder_name'], version=ret['version'],
-        bid=ret['build_id'])
+    ret['gs_path'] = '{builder}/{basedir}'.format(
+        builder=ret['builder_name'], basedir=self._get_default_basedir())
     return ret
 
   def artifacts_gs_path(self, builder_name, target,
@@ -1280,6 +1274,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     artifacts:
      - LATEST-{version}
      - LATEST-{branch}
+     - LATEST-SNAPSHOT-{snapshot identifier} (only on snapshot builds)
 
     Will only write if the version is more recent than the existing contents.
 
@@ -1319,9 +1314,18 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               '{} has more recent version, skipping'.format(version_file_path)
 
     with self.m.step.nest('write LATEST files'):
-      # e.g. "R100-12345.0.0".
       version = self.m.cros_version.version
-      contents = str(version)
+      if self.m.cros_snapshot.is_snapshot_build():
+        # Snapshot builder uses the default gs path for its artifacts: the
+        # directory name is "{version}-{build id}".
+        # e.g. "R100-12345.0.0-12345-89xxxxxxx".
+        contents = self._get_default_basedir()
+      else:
+        # The other builders use the version string for the artifacts directory,
+        # that is specified by the builder config.
+        # e.g. "R100-12345.0.0" or "R100-12345.0.0-12345" ("12345" is a snapshot
+        # position).
+        contents = str(version)
 
       tmp_dir = self.m.path.mkdtemp(prefix='LATEST')
       tmp_file = tmp_dir / 'LATEST'
@@ -1337,7 +1341,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
 
       # 2-1) Retrieve the current branch name.
       config = self.m.cros_infra_config.config
-      if not config:
+      if not config:  # pragma: no cover
         raise StepFailure(
             'could not find builder config, needed to determine branch')
       branch = config.orchestrator.gitiles_commit.ref[len('refs/heads/'):]
@@ -1346,3 +1350,11 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       branch = 'main' if self.m.cros_source.is_tot else branch
       branch_file = 'LATEST-{}'.format(branch)
       copy_file_if_newer_or_same(tmp_file, gs_base_path, branch_file, version)
+
+      # 3) Write snapshot LATEST file, e.g. LATEST-SNAPSHOT-1234567 ("1234567"
+      # is a snapshot identifier).
+      snapshot_identifier = self.m.cros_snapshot.snapshot_identifier()
+      if snapshot_identifier and self.m.cros_snapshot.is_snapshot_build():
+        snapshot_file = 'LATEST-SNAPSHOT-%s' % snapshot_identifier
+        copy_file_if_newer_or_same(tmp_file, gs_base_path, snapshot_file,
+                                   version)

@@ -223,13 +223,11 @@ class SysrootArchiveApi(recipe_api.RecipeApi):
       response = self.m.cros_build_api.ArtifactsService.Get(
           request, infra_step=True)
 
-      build_id = str(
-          self.m.buildbucket.build.id or self.m.led.run_id.replace('/', '_'))
       gs_archive_folder = '%s/%s' % (
           build_target.name, self.sysroot_enabled.chromeos_start_version)
       if self.sysroot_enabled.chromeos_cl_diff_counts:
         gs_archive_folder += '~%d' % self.sysroot_enabled.chromeos_cl_diff_counts
-      gs_archive_folder += '-%s' % build_id
+      gs_archive_folder += '-%s' % self.m.cros_infra_config.build_id
 
       for artifact in response.artifacts.sysroot.artifacts:
         if not artifact.failed and artifact.artifact_type == common_pb2.ArtifactsByService.Sysroot.ArtifactType.SYSROOT_ARCHIVE:

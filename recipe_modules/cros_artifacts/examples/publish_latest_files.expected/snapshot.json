@@ -5,20 +5,8 @@
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"eve-release-main\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"RELEASE\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"release\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": true,@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"manifest\": \"PRIVATE\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@  \"orchestrator\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"gitilesCommit\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      \"host\": \"chrome-internal.googlesource.com\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      \"ref\": \"refs/heads/main\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    }@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"custom-builder\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"SNAPSHOT\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@}@@@",
       "@@@STEP_LOG_END@builder_config_json@@@"
@@ -53,11 +41,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -90,11 +77,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -129,11 +115,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -158,11 +143,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -198,11 +182,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -231,23 +214,22 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"main\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"main-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -265,7 +247,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"main-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/main\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -273,7 +255,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"main-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/main\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
     ]
   },
   {
@@ -307,7 +289,7 @@
     "name": "write LATEST files.read chromeos version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R99-1234.56.0@@@"
+      "@@@STEP_TEXT@found version: R99-1234.56.0-99999@@@"
     ]
   },
   {
@@ -324,11 +306,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -340,6 +321,87 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "write LATEST files.read chromeos version.read snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "write LATEST files.read chromeos version.read snapshot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "rev-parse",
+      "FETCH_HEAD"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "write LATEST files.read chromeos version.read snapshot.git rev-parse",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "write LATEST files.read chromeos version.read snapshot.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
     "cmd": [
       "vpython3",
       "-u",
@@ -347,23 +409,22 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "R99-1234.56.0",
+      "R99-1234.56.0-99999-8989898989898989898",
       "[CLEANUP]/LATEST_tmp_1/LATEST"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
-    "name": "write LATEST files.write \"R99-1234.56.0\" to tmp LATEST file",
+    "name": "write LATEST files.write \"R99-1234.56.0-99999-8989898989898989898\" to tmp LATEST file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -389,11 +450,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -419,11 +479,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -455,11 +514,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -485,11 +543,10 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -504,14 +561,15 @@
     "cmd": [],
     "name": "write LATEST files.read snapshot identifier",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@found snapshot_identifier: 1234567@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "main-HEAD-SHA",
+      "snapshot-HEAD-SHA",
       "--key",
       "Cr-Snapshot-Identifier"
     ],
@@ -519,17 +577,80 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:release"
+        "name": "chromeos:"
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "write LATEST files.read snapshot identifier.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "write LATEST files.write LATEST-SNAPSHOT-1234567",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cat",
+      "gs://chromeos-image-archive/eve-release/LATEST-SNAPSHOT-1234567"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "write LATEST files.write LATEST-SNAPSHOT-1234567.gsutil cat",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "----",
+      "cp",
+      "[CLEANUP]/LATEST_tmp_1/LATEST",
+      "gs://chromeos-image-archive/eve-release/LATEST-SNAPSHOT-1234567"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "write LATEST files.write LATEST-SNAPSHOT-1234567.gsutil write gs://chromeos-image-archive/eve-release/LATEST-SNAPSHOT-1234567",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]

@@ -57,9 +57,14 @@ class CrosSnapshotApi(RecipeApi):
     snapshot_identifier = self._read_workspace_snapshot_identifier(test_data)
     return self._snapshot_identifier or snapshot_identifier
 
-  def is_snapshot_build(self):
+  def is_snapshot_build(self) -> bool:
     """Return True if this build is a snapshot build running on a snapshot builder."""
     config = self.m.cros_infra_config.config
     if not config:  # pragma: no cover
       raise StepFailure('Missing builder config')
-    return config.id.type == BuilderConfig.Id.Type.SNAPSHOT
+    if config.id.type == BuilderConfig.Id.Type.SNAPSHOT:
+      return True
+
+    # Doing an additional check, since some of snapshot builders have
+    # POSTSUBMIT type.
+    return bool(self._snapshot_identifier)

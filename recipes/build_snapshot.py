@@ -81,10 +81,16 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
     # likely that upload artifacts failed as a result of those previous issues).
     raise failing_build_exception or sf
 
-    # Finally, if there was an exception caught above in building the image, but
-    # the upload succeeded, raise that exception.
+  # Finally, if there was an exception caught above in building the image, but
+  # the upload succeeded, raise that exception.
   if failing_build_exception:
     raise failing_build_exception  # pylint: disable=raising-bad-type
+
+  # Write LATEST-* files to the same directory as the artifacts on GS, if the
+  # build and upload succeeded.
+  api.build_menu.publish_latest_files(config.artifacts.artifacts_gs_bucket,
+                                      '{builder_name}')
+
   return None
 
 

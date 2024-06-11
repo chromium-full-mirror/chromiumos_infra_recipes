@@ -7,12 +7,15 @@
 # TODO(b/303696694): Add a simple docstring here.
 
 from recipe_engine import post_process
+from PB.chromiumos.builder_config import BuilderConfig
 
 DEPS = [
+    'recipe_engine/buildbucket',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
     'cros_artifacts',
     'cros_infra_config',
+    'git_footers',
     'test_util',
 ]
 
@@ -65,4 +68,28 @@ def GenTests(api):
       api.post_check(post_process.StepFailure, 'write LATEST files'),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
+  )
+
+  snapshot_config = BuilderConfig()
+  snapshot_config.id.type = BuilderConfig.Id.SNAPSHOT
+  yield api.test(
+      'snapshot',
+      api.properties(
+          **{'$recipe_engine/led': {
+              'led_run_id': '8989898989898989898',
+          }}),
+      api.cros_infra_config.use_custom_builder_config(
+          snapshot_config, step_name='configure builder'),
+      api.git_footers.simulated_get_footers(
+          ['99999'], 'write LATEST files.read chromeos version.read snapshot'),
+      api.git_footers.simulated_get_footers(
+          ['1234567'], 'write LATEST files.read snapshot identifier'),
+      api.post_check(
+          post_process.MustRun,
+          'write LATEST files.write "R99-1234.56.0-99999-8989898989898989898" to tmp LATEST file'
+      ),
+      api.post_check(post_process.MustRun,
+                     'write LATEST files.write LATEST-1234.56.0'),
+      api.post_check(post_process.MustRun,
+                     'write LATEST files.write LATEST-SNAPSHOT-1234567'),
   )

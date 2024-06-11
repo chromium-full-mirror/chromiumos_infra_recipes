@@ -113,6 +113,16 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         self.experiments)
 
   @property
+  def build_id(self) -> str:
+    """Returns the build ID of this build."""
+    # If this is a led launch, the ID will be in the format "led/user/id",
+    # which has the side effect of breaking path parsing (which assumes the
+    # last thing in this path starting with "/" will be version + build_id).
+    # As such, remove all "/"s and replace with underscores.
+    return str(
+        self.m.buildbucket.build.id or self.m.led.run_id.replace('/', '_'))
+
+  @property
   def is_configured(self) -> bool:
     return self._is_configured
 

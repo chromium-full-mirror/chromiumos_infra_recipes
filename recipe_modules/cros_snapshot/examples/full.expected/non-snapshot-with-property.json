@@ -3,7 +3,12 @@
     "cmd": [],
     "name": "configure builder",
     "~followup_annotations": [
-      "@@@STEP_TEXT@config not found, assuming deleted@@@"
+      "@@@STEP_LOG_LINE@builder_config_json@{@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"custom-builder\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@  }@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@}@@@",
+      "@@@STEP_LOG_END@builder_config_json@@@"
     ]
   },
   {
@@ -33,6 +38,17 @@
       "text"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
     "timeout": 180,
     "~followup_annotations": [
@@ -58,6 +74,17 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.ensure support.read infrainfra golang version",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -85,6 +112,17 @@
       "[CLEANUP]/cipd.json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
@@ -102,6 +140,17 @@
       "/path/to/tmp/"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
@@ -130,6 +179,17 @@
       "/path/to/tmp/json"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.ensure support.ensure_installed",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -151,6 +211,17 @@
       "[START_DIR]/cipd/support/gitiles-fetch-ref"
     ],
     "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
     "name": "configure builder.gitiles-fetch-ref",
     "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
@@ -210,68 +281,9 @@
   },
   {
     "cmd": [],
-    "name": "write LATEST files",
+    "name": "read snapshot identifier",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "write LATEST files.read chromeos version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@found version: R99-1234.56.0-101@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos/config/chromeos_version.sh",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "write LATEST files.read chromeos version.read chromeos_version.sh",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "write LATEST files.read chromeos version.read snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "fetch",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "write LATEST files.read chromeos version.read snapshot.git fetch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "rev-parse",
-      "FETCH_HEAD"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "name": "write LATEST files.read chromeos version.read snapshot.git rev-parse",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_TEXT@found snapshot_identifier: 1234567@@@"
     ]
   },
   {
@@ -279,20 +291,28 @@
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
       "snapshot-HEAD-SHA",
-      "--position-num"
+      "--key",
+      "Cr-Snapshot-Identifier"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
-    "name": "write LATEST files.read chromeos version.read snapshot.read git footers",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read snapshot identifier.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "Missing builder config"
-    },
     "name": "$result"
   }
 ]
