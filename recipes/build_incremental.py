@@ -84,20 +84,24 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   if not build_time_delta:
     raise StepFailure('build_time_delta input property is empty')
 
-  all_gerrit_changes = api.cros_infra_config.gerrit_changes
-  all_changes_are_private = all_gerrit_changes and all(
-      c.host != EXTERNAL_REVIEW_HOST for c in all_gerrit_changes)
-  builder_is_private = api.cros_infra_config.config.general.manifest == BuilderConfig.General.PRIVATE
-  public_gerrit_changes = [
-      c for c in all_gerrit_changes if c.host == EXTERNAL_REVIEW_HOST
-  ]
+  # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
   if properties.run_relevancy_check:
-    # TODO(sfrolov): remove manual check when cros query is in cq-orchestrator.
-    relevant = False
-    if builder_is_private or not all_changes_are_private:
-      relevant_builders = api.build_plan.get_relevant_builders(
-          [api.buildbucket.build.builder.builder], public_gerrit_changes)
-      relevant = bool(relevant_builders)
+    applicable_gerrit_changes = api.cros_infra_config.gerrit_changes
+    # Only changes in the external host are relevant to public build targets.
+    if (api.cros_infra_config.config.general.manifest ==
+        BuilderConfig.General.PUBLIC):
+      applicable_gerrit_changes = [
+          c for c in applicable_gerrit_changes if c.host == EXTERNAL_REVIEW_HOST
+      ]
+    # If all changes were filtered out, the builder is not relevant.
+    if not applicable_gerrit_changes:
+      relevant = False
+    else:
+      relevant = bool(
+          api.build_plan.get_relevant_builders(
+              [api.buildbucket.build.builder.builder],
+              applicable_gerrit_changes))
+
     api.easy.set_properties_step(pointless_build=not relevant,
                                  relevant_build=relevant)
     api.cros_tags.add_tags_to_current_build(
@@ -121,8 +125,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
   # Attempt to build the current snapshot.
   if not failing_build_exception:
     try:
-      api.workspace_util.apply_changes(changes=all_gerrit_changes,
-                                       ignore_missing_projects=True)
+      api.workspace_util.apply_changes(ignore_missing_projects=True)
       api.build_menu.setup_chroot(no_delete_out_dir=True)
       # If sysroot was deleted, there is no incrementality to test, so stop the
       # build. Make this check mockable for testing.
@@ -299,6 +302,20 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.MustRun, 'install packages'),
       build_target='amd64-generic',
       builder_name='amd64-generic-incremental-cq',
+      extra_changes=[common.GerritChange(host='chromium-review')],
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.build_menu.test(
+      'not-relevant-public-target-all-internal-changes',
+      api.properties(
+          IncrementalProperties(**{'build_time_delta': '7.days.ago'})),
+      api.properties(IncrementalProperties(**{'run_relevancy_check': True})),
+      api.post_check(post_process.DoesNotRun, 'install packages'),
+      build_target='amd64-generic',
+      builder_name='amd64-generic-incremental-cq',
+      extra_changes=[common.GerritChange(host='chrome-internal-review')],
       status='SUCCESS',
   )
 
@@ -313,6 +330,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'install packages'),
       build_target='amd64-generic',
       builder_name='amd64-generic-incremental-cq',
+      cq=True,
       status='SUCCESS',
   )
 
