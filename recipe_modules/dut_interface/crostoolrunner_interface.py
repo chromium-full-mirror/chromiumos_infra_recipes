@@ -708,7 +708,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           chromium_rdb_config = self._chromium_results_rdb_config(
               suite_execution_metadata,
               ctr_test_response, test_case_metadata_json,
-              temp_dir.join(self.TEST_METADATA_JSON), metadata,
+              temp_dir.joinpath(self.TEST_METADATA_JSON), metadata,
               skip_board_model_check, visibility_mode, custom_realm)
           self._api.cros_resultdb.upload(chromium_rdb_config,
                                          str(metadata.testhaus_logs_url))
@@ -721,9 +721,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                   test_cases=skylab_test_results))
           autotest_rdb_config = self._autotest_results_rdb_config(
               results_dir_str, skylab_test_runner_result,
-              temp_dir.join(self.TEST_RUNNER_RESULT_JSON),
-              test_case_metadata_json, temp_dir.join(self.TEST_METADATA_JSON),
-              metadata, skip_board_model_check, visibility_mode, custom_realm)
+              temp_dir.joinpath(self.TEST_RUNNER_RESULT_JSON),
+              test_case_metadata_json,
+              temp_dir.joinpath(self.TEST_METADATA_JSON), metadata,
+              skip_board_model_check, visibility_mode, custom_realm)
           self._api.cros_resultdb.upload(autotest_rdb_config,
                                          str(metadata.testhaus_logs_url))
       # Process tast/tast_via_tauto tests
