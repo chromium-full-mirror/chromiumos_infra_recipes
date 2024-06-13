@@ -10507,7 +10507,8 @@
       "@@@STEP_LOG_LINE@request@  ],@@@",
       "@@@STEP_LOG_LINE@request@  \"labels\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"builderType\": 1@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -10528,7 +10529,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"-chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"eve-cq.R99-1234.56.0-101-8945511751514863184\",\n  \"repository\": {\n    \"hostname\": \"us-docker.pkg.dev\",\n    \"project\": \"cros-registry/test-services-publicbuilds\"\n  },\n  \"tags\": [\n    \"eve-cq.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PRIVATE-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"eve\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"-chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"eve-cq.R99-1234.56.0-101-8945511751514863184\",\n  \"repository\": {\n    \"hostname\": \"us-docker.pkg.dev\",\n    \"project\": \"cros-registry/test-services-publicbuilds\"\n  },\n  \"tags\": [\n    \"eve-cq.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PRIVATE-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  },\n  \"builderType\": 1\n}",
       "[CLEANUP]/build_api_messages_tmp_28/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

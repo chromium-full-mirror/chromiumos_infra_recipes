@@ -1132,6 +1132,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if public:
       build_test_service_containers_request.repository.hostname = 'us-docker.pkg.dev'
       build_test_service_containers_request.repository.project = 'cros-registry/test-services-publicbuilds'
+      build_test_service_containers_request.builder_type = BuildTestServiceContainersRequest.BuilderType.PUBLIC
     return build_test_service_containers_request
 
   def create_containers(self, builder_config=None):
