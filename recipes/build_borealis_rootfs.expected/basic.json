@@ -1896,7 +1896,7 @@
   },
   {
     "cmd": [
-      "./tools/uprev_dlc.py",
+      "../borealis-private/tools/uprev_dlc.py",
       "--archive",
       "borealis-dlc-2012.05.14.125327.tar.xz",
       "--bucket_url",

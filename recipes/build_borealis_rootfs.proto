@@ -44,4 +44,10 @@ message BuildBorealisRootfsProperties {
   // Path to the Borealis repository relative to the CrOS SDK root.
   // Optional. Defaults to 'src/platform/borealis-vm'.
   string borealis_path = 9;
+
+  // Whether or not to use the legacy 'src/platform/borealis/tools' path.
+  // Some tools have been moved to platform/borealis-private/tools, but older
+  // builds (< M127) need to use the version in src/platform/borealis.
+  // Optional.
+  bool legacy_tools_dir = 10;
 }

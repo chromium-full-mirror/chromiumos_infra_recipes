@@ -124,8 +124,15 @@ def DoRunSteps(api: RecipeApi,
     with api.step.nest('upload VM imaage') as presentation:
       bucket_url = _gs_path(properties.destination_gs_bucket,
                             properties.destination_gs_path)
+
+      # TODO(b/339495402) uprev_dlc.py has been moved to borealis-private,
+      # support both flows until builders before M127 no longer exist
+      uprev_dlc_script = '../borealis-private/tools/uprev_dlc.py'
+      if properties.legacy_tools_dir:
+        uprev_dlc_script = './tools/uprev_dlc.py'
+
       api.step('uprev_dlc', [
-          './tools/uprev_dlc.py', '--archive', archive_name, '--bucket_url',
+          uprev_dlc_script, '--archive', archive_name, '--bucket_url',
           bucket_url, '--nouprev', f'--chroot={chroot_path}',
           f'--out-dir={out_dir}'
       ])
@@ -357,6 +364,30 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                        'upload VM imaage.uprev_dlc', [
                            '--archive',
                            'borealis-dlc-105.2012.05.14.125327.tar.xz',
+                       ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['legacy_tools_dir'] = True
+  yield api.test(
+      'legacy-tools-location',
+      api.properties(**props),
+      api.post_process(post_process.StepCommandContains,
+                       'upload VM imaage.uprev_dlc', [
+                           './tools/uprev_dlc.py',
+                       ]),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  props = good_props.copy()
+  props['legacy_tools_dir'] = False
+  yield api.test(
+      'new-tools-location',
+      api.properties(**props),
+      api.post_process(post_process.StepCommandContains,
+                       'upload VM imaage.uprev_dlc', [
+                           '../borealis-private/tools/uprev_dlc.py',
                        ]),
       api.post_process(post_process.DropExpectation),
   )
