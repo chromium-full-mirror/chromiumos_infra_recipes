@@ -5756,11 +5756,11 @@
       "--path_to_gn_targets",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/gn_targets.json",
       "--path_to_archive_output",
-      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromiumos_amd64-generic.kzip",
+      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromeos_amd64-generic.kzip",
       "--corpus",
       "chrome-internal.googlesource.com/chromeos/superproject//main",
       "--project",
-      "chromiumos",
+      "chromeos",
       "--clang_target_arch",
       "arm64",
       "--out_dir",
@@ -5790,8 +5790,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromiumos_amd64-generic.kzip",
-      "gs://chrome-codesearch/prod/chromiumos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip"
+      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromeos_amd64-generic.kzip",
+      "gs://chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -5809,7 +5809,7 @@
     },
     "name": "gsutil upload kythe index pack",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-codesearch/prod/chromiumos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/prod/chromeos_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa+1531887759.kzip@@@"
     ]
   },
   {
@@ -5822,7 +5822,7 @@
       "----",
       "cp",
       "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/compile_commands.json",
-      "gs://chrome-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json"
+      "gs://chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -5840,7 +5840,7 @@
     },
     "name": "gsutil upload compile_commands.json",
     "~followup_annotations": [
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chrome-internal-codesearch/debug/compile_commands_amd64-generic_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa.json@@@"
     ]
   },
   {
@@ -5851,7 +5851,7 @@
       "--path",
       "[CACHE]/generated",
       "--url",
-      "https://chromium.googlesource.com/chromiumos/codesearch/gen/amd64-generic"
+      "https://chrome-internal.googlesource.com/chromeos/codesearch/gen/amd64-generic"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -6049,7 +6049,7 @@
       "main",
       "[CACHE]/generated",
       "--kzip-prune",
-      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromiumos_amd64-generic.kzip",
+      "[CLEANUP]/chromiumos_workspace/src/out/amd64-generic/chromeos_amd64-generic.kzip",
       "--ignore",
       "[CACHE]/cros_chroot/chroot/home",
       "--ignore",

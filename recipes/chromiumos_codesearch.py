@@ -80,11 +80,11 @@ def RunSteps(api, properties):
 
       generate_compilation_database(api, build_dir, build_target, packages)
 
-      chromiumos_src_dir = api.cros_source.workspace_path / 'src'
+      chromeos_src_dir = api.cros_source.workspace_path / 'src'
       api.codesearch.set_config(
-          'chromiumos',
-          PROJECT='chromiumos',
-          CHECKOUT_PATH=chromiumos_src_dir,
+          'chromeos',
+          PROJECT='chromeos',
+          CHECKOUT_PATH=chromeos_src_dir,
           PLATFORM=build_target,
           EXPERIMENTAL=experimental,
           SYNC_GENERATED_FILES=sync_generated_files,
@@ -94,7 +94,7 @@ def RunSteps(api, properties):
       # Download chromium clang tools.
       clang_dir = api.codesearch.clone_clang_tools(cache_dir)
 
-      # Run the translation_unit tool in chromiumos/src dirs.
+      # Run the translation_unit tool in chromeos/src dirs.
       target_architecture = _get_target_architecture(api, build_target)
 
       # TODO: b/327501932#comment78 - translation_unit does not work properly
@@ -122,7 +122,7 @@ def RunSteps(api, properties):
       # that there are any missing references.
       translation_unit_args = {
           'clang_dir': clang_dir,
-          'run_dirs': [chromiumos_src_dir / 'platform2']
+          'run_dirs': [chromeos_src_dir / 'platform2']
       }
       if target_architecture != 'amd64':
         translation_unit_args['target_architecture'] = target_architecture
@@ -132,7 +132,7 @@ def RunSteps(api, properties):
       # Create the kythe index pack and upload it to google storage.
 
       # package_index needs a gn_targets.json file. Since we don't use one for
-      # chromiumos codesearch, write an empty json file.
+      # chromeos codesearch, write an empty json file.
       # TODO(gavinmak): Make gn_targets optional in package_index.
       api.file.write_json('write empty gn_targets.json file',
                           build_dir / 'gn_targets.json', {})
@@ -142,7 +142,7 @@ def RunSteps(api, properties):
           'commit_timestamp':
               int(codesearch_mirror_revision_timestamp or api.time.time()),
           'checkout_dir':
-              chromiumos_src_dir
+              chromeos_src_dir
       }
       if target_architecture != 'amd64':
         package_index_args['clang_target_arch'] = target_architecture
@@ -154,7 +154,7 @@ def RunSteps(api, properties):
       # Check out the generated files repo and sync the generated files
       # into this checkout.
       copy_config = {
-          # ~/chromiumos/src/out/${build_target};src/out/${build_target}
+          # ~/chromeos/src/out/${build_target};src/out/${build_target}
           build_dir: api.path.join('src', 'out', build_target),
 
           # ~/cros_chroot/chroot;chroot
