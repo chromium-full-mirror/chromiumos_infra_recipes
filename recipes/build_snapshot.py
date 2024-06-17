@@ -9,6 +9,7 @@ from typing import Generator
 from typing import Optional
 
 from PB.chromite.api.sysroot import InstallPackagesRequest
+from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import common
 from PB.recipe_engine.result import RawResult
@@ -22,23 +23,33 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/file',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'bot_scaling',
+    'build_reporting',
     'build_menu',
     'cros_history',
     'cros_infra_config',
+    'cros_sdk',
     'future_utils',
     'test_util',
 ]
 
-
+StepDetails = BuildReport.StepDetails
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
 
   api.bot_scaling.drop_cpu_cores(min_cpus_left=4, max_drop_ratio=.75)
 
-  with api.build_menu.configure_builder() as config, \
-      api.build_menu.setup_workspace_and_chroot():
-    return DoRunSteps(api, config)
+  api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_SNAPSHOT,
+                                     api.build_menu.build_target.name)
+
+  api.build_reporting.disable_pubsub = True
+  with api.build_reporting.publish_to_gs():
+    with api.build_reporting.step_reporting(StepDetails.STEP_OVERALL,
+                                            raise_on_failed_publish=True):
+      with api.build_menu.configure_builder() as config, \
+          api.build_menu.setup_workspace_and_chroot():
+        return DoRunSteps(api, config)
 
 
 def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
@@ -90,6 +101,11 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig) -> Optional[RawResult]:
   # build and upload succeeded.
   api.build_menu.publish_latest_files(config.artifacts.artifacts_gs_bucket,
                                       '{builder_name}')
+
+  with api.step.nest('publish toolchain metadata'):
+    toolchain_info = api.cros_sdk.get_toolchain_info(
+        api.build_menu.build_target.name)
+    api.build_reporting.publish_toolchain_info(toolchain_info)
 
   return None
 

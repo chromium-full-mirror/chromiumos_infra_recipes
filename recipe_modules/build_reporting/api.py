@@ -142,6 +142,18 @@ class BuildReportingApi(recipe_api.RecipeApi):
   def merged_build_report(self):
     return self._build_report
 
+  @property
+  def disable_pubsub(self):
+    """Disable the pubsub publishment"""
+    return self._disable_pubsub
+
+  @disable_pubsub.setter
+  def disable_pubsub(self, value):
+    verb = 'Disabling' if value else 'Enabling'
+    self.m.step.empty(f'{verb} the pubsub publication.')
+
+    self._disable_pubsub = value
+
   def set_build_type(self, build_type, build_target):
     """Set the type for the build, must be set once and only once using this method."""
     if not build_type in BuildReport.BuildType.values():
@@ -170,6 +182,7 @@ class BuildReportingApi(recipe_api.RecipeApi):
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._properties = properties
+    self._disable_pubsub = False
     self._pubsub_project = properties.pubsub_project
     self._pubsub_topic = properties.pubsub_topic
     self._build_type = None
@@ -243,6 +256,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
     with self.m.step.nest('build status pubsub update') as pres:
       build_report_json = MessageToJson(self._build_report)
       pres.logs['message'] = build_report_json
+
+      if self.disable_pubsub:
+        pres.step_text = 'Skipping pubsub update for configuration.'
+        return build_report
+
       self.m.cloud_pubsub.publish_message(
           self.pubsub_project,
           self.pubsub_topic,
