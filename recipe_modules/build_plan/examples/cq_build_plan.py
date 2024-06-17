@@ -161,9 +161,7 @@ def GenTests(api):
   yield api.test(
       'cros-query-dry-run',
       api.cv(run_mode=api.cv.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(experiments=[
-          'chromeos.cq_orchestrator.full_sync',
-      ]),
+      cq_orchestrator_build_with_gerrit_change(),
       api.properties(
           expected_build_requests=[
               'arm-generic-cq',
@@ -192,9 +190,8 @@ def GenTests(api):
   yield api.test(
       'cros-query-active',
       api.cv(run_mode=api.cv.FULL_RUN),
-      cq_orchestrator_build_with_gerrit_change(experiments=[
-          'chromeos.cq_orchestrator.full_sync', 'chromeos.build_plan.cros_query'
-      ]),
+      cq_orchestrator_build_with_gerrit_change(
+          experiments=['chromeos.build_plan.cros_query']),
       api.properties(
           expected_build_requests=[
               'arm-generic-cq',

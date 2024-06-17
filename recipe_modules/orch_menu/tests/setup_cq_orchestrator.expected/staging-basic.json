@@ -62,7 +62,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
@@ -457,7 +457,7 @@
       "/path/to/tmp/json",
       "copy",
       "initial-chromeos-source-snapshot",
-      "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
+      "[CACHE]/infra_versions/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
@@ -475,8 +475,8 @@
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromeos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@staging-chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromeos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -844,7 +844,7 @@
     "cmd": [],
     "name": "set up orchestrator",
     "~followup_annotations": [
-      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml@@@"
+      "@@@STEP_LINK@manifest snapshot revision@https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml@@@"
     ]
   },
   {
@@ -938,9 +938,9 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"cq-orchestrator\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"staging-cq-orchestrator\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"CQ\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"staging\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"critical\": true,@@@",
@@ -970,14 +970,6 @@
       "@@@STEP_LOG_LINE@builder_config_json@      },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@      {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        \"name\": \"cave-cq\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@        \"collectHandling\": \"COLLECT_AFTER_HW_TEST\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      },@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@        \"name\": \"coral-cq\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@        \"collectHandling\": \"COLLECT_AFTER_HW_TEST\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      },@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@      {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@        \"name\": \"eve-cq\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        \"collectHandling\": \"COLLECT_AFTER_HW_TEST\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@      }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    ]@@@",
@@ -1093,12 +1085,12 @@
       }
     },
     "name": "set up orchestrator.configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -1116,7 +1108,7 @@
     "name": "set up orchestrator.configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -1124,7 +1116,7 @@
     "name": "set up orchestrator.configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -1179,6 +1171,637 @@
     "name": "set up orchestrator.git config (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.set initial_repo_state",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "[CACHE]/chromeos/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "ensure-directory",
+      "--mode",
+      "0o777",
+      "[CACHE]/chromeos"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.ensure root path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "init",
+      "--manifest-url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
+      "--manifest-branch",
+      "staging-snapshot",
+      "--groups",
+      "all",
+      "--repo-rev=main",
+      "--verbose"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo init",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CACHE]/chromeos/.repo/repo",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "find",
+      ".repo/",
+      "-type",
+      "f",
+      "-name",
+      "*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.clear repo locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "find",
+      ".",
+      "-type",
+      "f",
+      "-path",
+      "./.git/*.lock",
+      "-print",
+      "-delete"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.clear git locks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.ensure clean checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "reset",
+      "--hard"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.ensure clean checkout.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "--ignore-missing",
+      "-j",
+      "32",
+      "-c",
+      "git",
+      "clean",
+      "-x",
+      "-d",
+      "-f"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.ensure clean checkout.repo forall (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "--event-log=[CLEANUP]/event_log__tmp_1",
+      "sync",
+      "--force-sync",
+      "--detach",
+      "--current-branch",
+      "--jobs",
+      "8",
+      "--no-tags",
+      "--optimized-fetch",
+      "--retry-fetches",
+      "8",
+      "--verbose",
+      "--force-remove-dirty",
+      "--force-checkout",
+      "--prune"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo sync",
+    "timeout": 3600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo stats",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@repo-event-log@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/event_log__tmp_1",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo stats.event-log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@event_log__tmp_1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo stats.set repo_retries",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 5}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo stats.set slowest_repos",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"2\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}, \"3\": {\"name\": \"infra/chromite-HEAD\", \"project\": \"chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.20728754997253418, \"try\": 1}}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
+      "@@@STEP_LOG_END@repo-info stdout@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "info"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo info.repo info",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "[CACHE]/chromeos/.recipes_state.json"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
+      "@@@STEP_LOG_END@.recipes_state.json@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "remote",
+      "update"
+    ],
+    "cwd": "[CACHE]/chromeos/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.sync chromeos/manifest-internal branches",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1397,10 +2020,43 @@
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.set initial_repo_state",
+    "name": "set up orchestrator.sync to gitiles commit",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
+      "--json-file",
+      "/path/to/tmp/json",
+      "--url",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml",
+      "--format",
+      "text",
+      "--accept-statuses",
+      "200,404"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync to gitiles commit.fetch staging-snapshot-HEAD-SHA:snapshot.xml",
+    "timeout": 180,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -1411,9 +2067,10 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
-      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
+      "<manifest></manifest>",
+      "[CLEANUP]/chromiumos_workspace/.repo/tmp_manifest"
     ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1427,51 +2084,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "ensure-directory",
-      "--mode",
-      "0o777",
-      "[CLEANUP]/chromiumos_workspace"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.ensure root path",
+    "name": "set up orchestrator.sync to gitiles commit.write manifest",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1482,11 +2095,13 @@
       "init",
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "--manifest-branch",
-      "snapshot",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
+      "--manifest-name",
+      "../tmp_manifest",
+      "--manifest-depth",
+      "0",
       "--verbose"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1511,326 +2126,27 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.ensure synced checkout.repo init",
+    "name": "set up orchestrator.sync to gitiles commit.repo init",
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
-    "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.repo binary update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.repo binary update.repo version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.repo binary update.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "selfupdate"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.repo binary update.repo selfupdate",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "version"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.repo binary update.repo version (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "find",
-      ".repo/",
-      "-type",
-      "f",
-      "-name",
-      "*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.clear repo locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "find",
-      ".",
-      "-type",
-      "f",
-      "-path",
-      "./.git/*.lock",
-      "-print",
-      "-delete"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.clear git locks",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.ensure clean checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/manifest-internal",
-      "chromiumos/manifest",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "git",
-      "reset",
-      "--hard"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.ensure clean checkout.repo forall",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "chromeos/manifest-internal",
-      "chromiumos/manifest",
-      "--ignore-missing",
-      "-j",
-      "32",
-      "-c",
-      "git",
-      "clean",
-      "-x",
-      "-d",
-      "-f"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.ensure synced checkout.ensure clean checkout.repo forall (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "--event-log=[CLEANUP]/event_log__tmp_1",
+      "--event-log=[CLEANUP]/event_log__tmp_2",
       "sync",
       "--force-sync",
       "--detach",
+      "--current-branch",
       "--jobs",
       "8",
-      "--no-tags",
       "--optimized-fetch",
       "--retry-fetches",
       "8",
       "--verbose",
-      "--force-remove-dirty",
-      "--force-checkout",
-      "--prune",
-      "chromeos/manifest-internal",
-      "chromiumos/manifest"
+      "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -1854,15 +2170,15 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.ensure synced checkout.repo sync",
-    "timeout": 3600,
+    "name": "set up orchestrator.sync to gitiles commit.repo sync",
+    "timeout": 10800,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.repo stats",
+    "name": "set up orchestrator.sync to gitiles commit.repo stats",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-event-log@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
@@ -1884,7 +2200,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/event_log__tmp_1",
+      "[CLEANUP]/event_log__tmp_2",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -1901,39 +2217,39 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.ensure synced checkout.repo stats.event-log",
+    "name": "set up orchestrator.sync to gitiles commit.repo stats.event-log",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
-      "@@@STEP_LOG_LINE@event_log__tmp_1@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
-      "@@@STEP_LOG_END@event_log__tmp_1@@@"
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.4291267, \"id\": [\"RepoOp\", 1], \"name\": \"sync\", \"start_time\": 1648842776.2575703, \"status\": \"pass\", \"task_name\": \"command\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842776.9434068, \"git_hash\": \"f0ce79ce66903acd2d7d7ecf5e6a47a0094a926e\", \"id\": [\"RepoOp\", 2], \"name\": \".repo/manifests\", \"parent\": [\"RepoOp\", 1], \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842776.2588115, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842833.1444788, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 3], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842777.3641763, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.1182754, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 4], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842833.144515, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 6}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.325574, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 5], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.1182864, \"status\": \"pass\", \"task_name\": \"sync-network\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842834.9186332, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 6], \"name\": \"chromite\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.7097511, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842835.0587008, \"git_hash\": \"90e5de465c1b75fbce147c08df1e057cb7600aa0\", \"id\": [\"RepoOp\", 7], \"name\": \"infra/chromite-HEAD\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"remote_url\": \"https://chromium.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842834.9186459, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 2}@@@",
+      "@@@STEP_LOG_LINE@event_log__tmp_2@{\"finish_time\": 1648842837.2514517, \"git_hash\": \"9b4856cd6ac254c50a7bdf061953cab3beb7209c\", \"id\": [\"RepoOp\", 8], \"name\": \"src/config-internal\", \"parent\": [\"RepoOp\", 1], \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"remote_url\": \"https://chrome-internal.googlesource.com\", \"revision\": \"refs/heads/main\", \"start_time\": 1648842835.0587158, \"status\": \"pass\", \"task_name\": \"sync-local\", \"try\": 1}@@@",
+      "@@@STEP_LOG_END@event_log__tmp_2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.repo stats.set repo_retries",
+    "name": "set up orchestrator.sync to gitiles commit.repo stats.set repo_retries",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 5}@@@"
+      "@@@SET_BUILD_PROPERTY@repo_retries@{\"project\": 10}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.repo stats.set slowest_repos",
+    "name": "set up orchestrator.sync to gitiles commit.repo stats.set slowest_repos",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"2\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}, \"3\": {\"name\": \"infra/chromite-HEAD\", \"project\": \"chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.20728754997253418, \"try\": 1}}@@@"
+      "@@@SET_BUILD_PROPERTY@slowest_repos@{\"0\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"1\": {\"name\": \"src/config-internal\", \"project\": \"chromeos/config-internal\", \"project_url\": \"https://chrome-internal.googlesource.com/chromeos/config-internal\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 55.78030252456665, \"try\": 1}, \"2\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"3\": {\"name\": \"chromite\", \"project\": \"chromiumos/chromite\", \"project_url\": \"https://chromium.googlesource.com/chromiumos/chromite\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.9737603664398193, \"try\": 6}, \"4\": {\"name\": \".repo/manifests\", \"project\": \"manifests\", \"revision\": \"refs/heads/main\", \"status\": \"pass\", \"time_delta_sec\": 0.6845953464508057, \"try\": 1}}@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set up orchestrator.ensure synced checkout.repo info",
+    "name": "set up orchestrator.sync to gitiles commit.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@repo-info stdout@Repo: info@@@",
@@ -1943,9 +2259,7 @@
   {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
-      "info",
-      "chromeos/manifest-internal",
-      "chromiumos/manifest"
+      "info"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -1961,85 +2275,35 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.ensure synced checkout.repo info.repo info",
+    "name": "set up orchestrator.sync to gitiles commit.repo info.repo info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
-      "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
-      "@@@STEP_LOG_END@.recipes_state.json@@@"
-    ]
-  },
-  {
     "cmd": [],
-    "name": "set up orchestrator.sync manifest branches",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "remote",
-      "update"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.sync manifest branches.sync chromeos/manifest-internal branches",
+    "name": "set up orchestrator.sync to gitiles commit.ensure manifest is pinned",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "git",
-      "remote",
-      "update"
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -2053,42 +2317,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "set up orchestrator.sync manifest branches.sync chromiumos/manifest branches",
+    "name": "set up orchestrator.sync to gitiles commit.ensure manifest is pinned.repo forall",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout",
-      "--force",
-      "snapshot-HEAD-SHA"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "set up orchestrator.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "staging-snapshot-HEAD-SHA",
       "--key",
       "Cr-External-Snapshot"
     ],
@@ -2115,7 +2354,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"checkout_manifests\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {

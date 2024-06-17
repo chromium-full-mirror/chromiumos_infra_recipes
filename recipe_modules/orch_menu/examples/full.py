@@ -679,8 +679,7 @@ def GenTests(api):
               expected_recipe_result=RawResult(status=common_pb2.SUCCESS),
               expected_enable_history=True)), cq=True, collect_builds=collect,
       history_builds=data.history_builds, collect_after_builds=collect_after,
-      with_history=True, git_footers=[],
-      experiments=['chromeos.cq_orchestrator.full_sync'])
+      with_history=True, git_footers=[])
 
   one_non_crit_fail_summary = ('1 non-critical build failed')
   collect, collect_after = api.orch_menu.orch_child_builds(
