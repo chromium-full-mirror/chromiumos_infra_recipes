@@ -53,6 +53,7 @@ PRE_UPREV_TEST_BUILDERS = [
     'chromeos-brya-chrome-preuprev',
     'chromeos-jacuzzi-chrome-preuprev',
     'chromeos-volteer-chrome-preuprev',
+    'chromeos-betty-chrome-preuprev',
     'chromeos-betty-pi-arc-chrome-preuprev',
     'linux-chromeos-chrome-preuprev',
 
