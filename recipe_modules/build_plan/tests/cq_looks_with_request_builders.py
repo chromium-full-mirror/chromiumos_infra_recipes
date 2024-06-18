@@ -126,13 +126,9 @@ def GenTests(api):
   staging_snap_orch.orchestrator.child_specs.add(
   ).name = 'staging-target-c-snapshot'
 
-  def _step_test_data(staging=False, disable_exp=False):
-    experiments = [] if disable_exp else [
-        'chromeos.looks_for_green.targeted_lfg'
-    ]
+  def _step_test_data(staging=False):
     ret = api.buildbucket.try_build(
-        builder='staging-cq-orchestrator' if staging else 'cq-orchestrator',
-        experiments=experiments)
+        builder='staging-cq-orchestrator' if staging else 'cq-orchestrator')
     ret += api.time.seed(TEST_SEED_TIME_SECONDS)
     # Step data enabling LFG.
     ret += api.properties(
@@ -166,26 +162,6 @@ def GenTests(api):
                   suggested=LooksForGreenStats.SnapshotStats(
                       snap_orch_greenness=75,
                       requested_builders_greenness=100,
-                      approx_snap_age_hours=3,
-                      snap_orch_bbid=111,
-                      snap_commit_sha='aaaa',
-                  )))),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'all-cq-builders-in-snapshot-but-experiment-not-enabled',
-      api.cq(run_mode=api.cq.FULL_RUN),
-      api.properties(
-          input_child_spec_names=['target-1-cq', 'target-2-slim-cq']),
-      _step_test_data(disable_exp=True),
-      api.post_process(
-          post_process.PropertyEquals, 'looks_for_green',
-          json_format.MessageToDict(
-              LooksForGreenStats(
-                  status='STATUS_RAN_OLDER', lookback_hours=10,
-                  suggested=LooksForGreenStats.SnapshotStats(
-                      snap_orch_greenness=75,
                       approx_snap_age_hours=3,
                       snap_orch_bbid=111,
                       snap_commit_sha='aaaa',

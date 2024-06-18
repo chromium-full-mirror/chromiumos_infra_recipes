@@ -649,12 +649,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
       self.m.looks_for_green.resize_lfg_lookback(gerrit_changes,
                                                  necessary_builder_names)
 
-      requested_snapshot_builders = None
-      # TODO(b/299561567): Remove experiment gating.
-      if ('chromeos.looks_for_green.targeted_lfg'
-          in self.m.cros_infra_config.experiments):
-        requested_snapshot_builders = self.m.looks_for_green.get_requested_snapshot_builders(
-            necessary_builder_names)
+      requested_snapshot_builders = self.m.looks_for_green.get_requested_snapshot_builders(
+          necessary_builder_names)
       suggested_internal = self.m.looks_for_green.find_green_snapshot(
           requested_snapshot_builders=requested_snapshot_builders)
 
