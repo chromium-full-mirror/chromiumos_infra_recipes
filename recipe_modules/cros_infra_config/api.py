@@ -108,10 +108,6 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     self._config_ref = (
         self._config_ref if self._is_staging and self._config_ref else 'HEAD')
 
-    self._properties.honor_gitiles_commit_ref |= (
-        'chromeos.cros_infra_config.honor_gitiles_commit_ref' in
-        self.experiments)
-
   @property
   def build_id(self) -> str:
     """Returns the build ID of this build."""
