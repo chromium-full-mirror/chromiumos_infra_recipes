@@ -49,12 +49,14 @@ def GenTests(api):
   test_summary = [
       {
           'builder_name': 'builder1',
+          'model': '',
           'status': 'SUCCESS',
           'critical': True,
           'name': 'builder1.hw.suite'
       },
       {
           'builder_name': 'builder2',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'builder2.tast_vm.suite',
@@ -63,6 +65,7 @@ def GenTests(api):
       # Non-critical counts as success.
       {
           'builder_name': 'builder2',
+          'model': '',
           'status': 'FAILURE',
           'critical': False,
           'name': 'builder2.tast_vm.non_crit_suite'
@@ -70,6 +73,7 @@ def GenTests(api):
       # Builder no longer a CQ verifier.
       {
           'builder_name': 'builder3',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'builder3.tast_gce.suite'

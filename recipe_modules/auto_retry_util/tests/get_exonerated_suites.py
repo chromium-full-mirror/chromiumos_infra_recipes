@@ -8,12 +8,7 @@
 
 from recipe_engine import post_process
 
-from google.protobuf import json_format
-
-from PB.chromiumos.common import BuildTarget
 from PB.chromiumos import test_disablement as test_disablement_pb2
-from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
-                                                       builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.auto_retry_util.auto_retry_util import AutoRetryUtilProperties
@@ -24,7 +19,6 @@ from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.steps.execution import ExecuteResponses
 from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.chromeos.auto_retry_util.api import EXPERIMENTAL_FEATURE_RETRY_PREJOB_FAILURES
-from RECIPE_MODULES.chromeos.tast_results.api import MISSING_TEST_FAILURE_SUMMARY
 
 DEPS = [
     'depot_tools/gitiles',
@@ -58,7 +52,7 @@ def GenTests(api):
   # HW test results mock data.
   execute_responses = ExecuteResponses(
       tagged_responses={
-          'a-cq.hw.suite':
+          'a-cq.model.hw.suite':
               ExecuteResponse(
                   state=TaskState(verdict=TaskState.VERDICT_FAILED,
                                   life_cycle=TaskState.LIFE_CYCLE_COMPLETED),
@@ -130,14 +124,16 @@ def GenTests(api):
           'builder_name': 'a-cq',
           'build_target': 'a',
           'board': 'a',
+          'model': 'model',
           'status': 'FAILURE',
           'critical': True,
-          'name': 'a-cq.hw.suite'
+          'name': 'a-cq.model.hw.suite'
       },
       {
           'builder_name': 'b-cq',
           'build_target': 'b',
           'board': 'b',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'b-cq.hw.suite'
@@ -146,6 +142,7 @@ def GenTests(api):
           'builder_name': 'e-cq',
           'build_target': 'e',
           'board': 'e',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'e-cq.hw.suite'
@@ -154,6 +151,7 @@ def GenTests(api):
           'builder_name': 'h-cq',
           'build_target': 'h',
           'board': 'h',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'h-cq.hw.cq-minimal'

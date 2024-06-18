@@ -102,6 +102,7 @@ def GenTests(api):
           'builder_name': 'a-cq',
           'build_target': 'a',
           'board': 'a',
+          'model': '',
           'status': 'FAILURE',
           'critical': True,
           'name': 'a-cq.hw.suite'

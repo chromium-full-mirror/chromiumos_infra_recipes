@@ -1461,14 +1461,13 @@ class AutoRetryUtilApi(recipe_api.RecipeApi):
       critical = test_summary_dict['critical']
       builder_name = test_summary_dict['builder_name']
       board = test_summary_dict['board']
+      model = test_summary_dict['model']
       suite = display_name.split('.')[-1]
       hw_test = HwTestCfg.HwTest(
           common=TestSuiteCommon(display_name=display_name,
                                  critical={'value': critical}),
           suite=suite,
-          # TODO(b/289095330): Populate model in test_summary and pass
-          # it in here when a specific model is requested.
-          skylab_model='',
+          skylab_model=model,
           skylab_board=board,
       )
       unit = HwTestUnit(
