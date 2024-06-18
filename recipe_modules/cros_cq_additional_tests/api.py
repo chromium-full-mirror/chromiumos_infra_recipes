@@ -54,20 +54,12 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
     self._not_runnable_addtnl_tests = []
     self._enabled = properties.enable_running_additional_tests
 
-  def initialize(self):
-    # TODO(b/299186790): Having the property set should be enough. Builder input
-    # properties should be cleaned up and the conditional on the builder name
-    # should be removed.
-    self._enable_running_additional_tests = (
-        self._properties.enable_running_additional_tests and
-        'cq-orchestrator' in self.m.buildbucket.build.builder.builder)
-
   def get_additional_test_builders(
       self, builds: List[build_pb2.Build],
       gerrit_changes: List[common_pb2.GerritChange]) -> List[str]:
     """Returns the builders that had additional testing specified via footer."""
     with self.m.step.nest('get additional testable builders') as pres:
-      if not self._enable_running_additional_tests:
+      if not self._enabled:
         pres.step_text = 'skipping: not enabled'
         return []
 
@@ -112,7 +104,7 @@ class CrosCqAdditionalTests(recipe_api.RecipeApi):
       CrosCqAddnlTestsMissingBuildTargetsError: When there are test suites not
         run due to failed or not built build targets.
     """
-    if self._enable_running_additional_tests:
+    if self._enabled:
       with self.m.step.nest('process additional test suites') as pres:
         test_suites, test_boards_build_targets, pool = (
             self._read_additional_test_suites_related_footers(gerrit_changes))
