@@ -354,7 +354,7 @@
     "name": "configure builder.cros_infra_config.set experiments",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@experiments@[\"chromeos.build_cq.upload_prebuilts\", \"chromeos.sysroot_util.clean_incrementals\"]@@@"
+      "@@@SET_BUILD_PROPERTY@experiments@[\"chromeos.sysroot_util.clean_incrementals\"]@@@"
     ]
   },
   {

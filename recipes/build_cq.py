@@ -107,9 +107,6 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
   packages = env_info.packages
 
-  upload_prebuilts_from_cq = 'chromeos.build_cq.upload_prebuilts' in \
-        api.buildbucket.build.input.experiments
-
   api.build_menu.bootstrap_sysroot(config)
   if api.build_menu.install_packages(config, packages):
     # Create the test containers async.
@@ -118,16 +115,15 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
       upload = False
       with api.step.nest(
           'Check if the CQ uploads the prebuilts') as presentation:
-        if upload_prebuilts_from_cq:
-          if len(api.src_state.gerrit_changes) == 1:
-            if api.chrome.is_chrome_pupr_atomic_uprev(
-                api.src_state.gerrit_changes[0]):
-              presentation.step_text = \
-                  'decided to upload by chrome pupr change'
-              upload = True
-            else:
-              presentation.step_text = \
-                  'decided not to upload: not Chrome pupr atomic uprev'
+        if (len(api.src_state.gerrit_changes) == 1 and
+            api.chrome.is_chrome_pupr_atomic_uprev(
+                api.src_state.gerrit_changes[0])):
+          presentation.step_text = \
+              'decided to upload by chrome pupr change'
+          upload = True
+        else:
+          presentation.step_text = \
+              'decided not to upload: not Chrome pupr atomic uprev'
 
       if upload:
         with api.step.nest('do upload'):
@@ -223,8 +219,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
           override_prebuilts_config=BuilderConfig.Artifacts.PUBLIC),
       build_target='amd64-generic',
       experiments=[
-          # Flag to enable to upload the prebuilts
-          'chromeos.build_cq.upload_prebuilts',
           # Why not test incrementals deletion too!
           'chromeos.sysroot_util.clean_incrementals',
       ],
@@ -239,10 +233,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       input_properties=api.test_util.build_menu_properties(
           override_prebuilts_config=BuilderConfig.Artifacts.PRIVATE),
       build_target='coral',
-      experiments=[
-          # Flag to enable to upload the prebuilts
-          'chromeos.build_cq.upload_prebuilts',
-      ],
   )
 
   # This covers the Relevance check.
