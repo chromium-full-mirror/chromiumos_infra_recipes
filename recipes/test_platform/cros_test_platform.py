@@ -1837,6 +1837,7 @@ def summarize(api, enumerations, responses, error_in_requests,
             log_step.logs[key + ' execution logs'] = suite_execution_logs[key]
 
     for tag, response in sorted(responses.items()):
+      sth_logged_for_tag = False
       with api.step.nest('%s task results' % tag) as results_step:
         if suite_execution_logs and 'totals' in suite_execution_logs:  # pragma: nocover
           ioStringReader = StringIO(suite_execution_logs['totals'])
@@ -1851,11 +1852,19 @@ def summarize(api, enumerations, responses, error_in_requests,
 
         if error_in_requests and tag in error_in_requests:
           _log_error_in_request(api, tag, error_in_requests[tag])
+          sth_logged_for_tag = True
 
         if enumerations and tag in enumerations:
           _log_enumeration_errors(api, enumerations[tag], tag)
+          sth_logged_for_tag = True
         if response.task_results:
           _log_task_results(api, response.task_results)
+        elif not sth_logged_for_tag:  # pragma: nocover
+          # no task results means enum error (to cover ctpv2 enum errors)
+          # we would wanna skip if sth is already logged for the tag though to avoid
+          # duplication in ctpv1.
+          enum_resp = EnumerationResponse(error_summary='no test found')
+          _log_enumeration_errors(api, enum_resp, tag)
         if response.state.verdict in _SUCCESSFUL_VERDICTS:
           request_classifications[_REQUEST_SUCCESS] += 1
         else:
