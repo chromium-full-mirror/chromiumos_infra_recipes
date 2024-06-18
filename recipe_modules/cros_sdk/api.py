@@ -478,7 +478,6 @@ class CrosSdkApi(RecipeApi):
           cl_affected_packages = self.m.cros_relevance.get_package_dependencies(
               self.default_sdk_sysroot, self.chroot,
               self.m.workspace_util.patch_sets, include_rev_deps=True)
-        # TODO(b/271120919): Specify that it is a host package.
         self.m.image_builder_failures.set_compile_failed_packages(
             pres, pkgs, cl_affected_packages)
       except StepFailure as e:
