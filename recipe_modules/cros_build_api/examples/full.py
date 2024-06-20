@@ -53,9 +53,7 @@ def GenTests(api):
 
   yield api.test(
       'reset-chromite',
-      api.buildbucket.ci_build(
-          builder='atlas-cq',
-          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data(
           'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
           api.file.read_text('deadbeef')),
@@ -72,9 +70,7 @@ def GenTests(api):
 
   yield api.test(
       'reset-chromite-with-fetch',
-      api.buildbucket.ci_build(
-          builder='atlas-cq',
-          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data(
           'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
           api.file.read_text('deadbeef')),
@@ -102,10 +98,7 @@ def GenTests(api):
   )
 
   yield api.test(
-      'reset-chromite-other-err',
-      api.buildbucket.ci_build(
-          builder='atlas-cq',
-          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      'reset-chromite-other-err', api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data(
           'call chromite.api.BinhostService/PrepareBinhostsUploads.read chromite version',
           api.file.read_text('deadbeef')),

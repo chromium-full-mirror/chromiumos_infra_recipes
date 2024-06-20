@@ -46,9 +46,7 @@ def RunSteps(api):
 def GenTests(api):
   yield api.test(
       'only-does-git-checkout-once',
-      api.buildbucket.ci_build(
-          builder='atlas-cq',
-          experiments=['chromeos.cros_build_api.deployable_chromite']),
+      api.buildbucket.ci_build(builder='atlas-cq'),
       api.step_data('read chromite version', api.file.read_text('deadbeef')),
       api.post_check(MustRun, 'git checkout'),
       api.post_check(StepCommandContains, 'git checkout', ['deadbeef']),

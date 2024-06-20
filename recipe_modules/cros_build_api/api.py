@@ -318,9 +318,7 @@ class CrosBuildApiApi(RecipeApi):
     assert self._parallel_operations is False
     self._parallel_operations = True
     try:
-      if ('chromeos.cros_build_api.deployable_chromite'
-          in self.m.cros_infra_config.experiments):
-        self.reset_checkout()
+      self.reset_checkout()
       yield
     finally:
       self._parallel_operations = False
@@ -596,9 +594,7 @@ class CrosBuildApiApi(RecipeApi):
       # We do this before every call because there is no guarantee that another
       # line of code doesn't redo the manifest checkout and blow away our set
       # version.
-      if ('chromeos.cros_build_api.deployable_chromite'
-          in self.m.cros_infra_config.experiments
-         ) and not self._parallel_operations:
+      if not self._parallel_operations:
         self.reset_checkout()
 
       cmd.extend([
