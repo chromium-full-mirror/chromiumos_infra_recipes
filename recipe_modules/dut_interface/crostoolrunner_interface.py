@@ -318,7 +318,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
           # infra_failure. We don't want to present an infra_failure because
           # nothing on our end has gone wrong and this will shield us from
           # potential misfiled bugs.
-          step.presentation.staus = self._api.step.FAILURE
+          step.status = self._api.step.FAILURE
           e = StepFailure('Prejob execution time limit of %.1f hours reached' %
                           (max_duration_seconds / HOUR))
         raise e
@@ -495,9 +495,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                     results_dir=results_dir)
             else:
               all_valid_result_dir = False
-              step.presentation.status = self._api.step.FAILURE
+              step.status = self._api.step.FAILURE
           else:
-            step.presentation.logs[
+            step.logs[
                 'TKO upload skipped'] = "TKO upload skipped for test '{}' which is of test harness type '{}'. Only '{}' harness type is allowed for TKO upload.".format(
                     test_case_id, test_harness_type, self.TEST_HARNESS_TAUTO)
     # Try to upload all valid results to TKO before failing
@@ -521,9 +521,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
       self._api.path.mock_add_paths(results_dir)
       if not self._api.path.exists(results_dir):
         # Fail this step
-        step.presentation.status = self._api.step.FAILURE
-        step.presentation.logs['details'] = '{} path is invalid'.format(
-            results_dir)
+        step.status = self._api.step.FAILURE
+        step.logs['details'] = '{} path is invalid'.format(results_dir)
         return False
     keyval_file_path = self._api.path.join(results_dir, self.KEYVAL_FILENAME)
     keyvals_list = []
@@ -580,10 +579,10 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
         infos['gsc_ro'] = info.gsc_ro
         infos['gsc_rw'] = info.gsc_rw
       elif resp.WhichOneof('response') == 'get_gfx_info_response':
-        step.presentation.logs['gfx'] = resp.get_gfx_info_response.gfx_labels
+        step.logs['gfx'] = resp.get_gfx_info_response.gfx_labels
         for k in resp.get_gfx_info_response.gfx_labels:
           infos[k] = resp.get_gfx_info_response.gfx_labels[k]
-    step.presentation.logs['infos'] = infos
+    step.logs['infos'] = infos
 
     return infos
 
@@ -639,10 +638,9 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                 if k and v:
                   metadata.rdb_base_tags.append((k, v))
         except Exception as e:  # pragma: nocover # pylint: disable=broad-except
-          step.presentation.status = self._api.step.FAILURE
-          step.presentation.logs[
-              'failure details'] = f'Exception during FW parsing: {e}'
-          step.presentation.logs[
+          step.status = self._api.step.FAILURE
+          step.logs['failure details'] = f'Exception during FW parsing: {e}'
+          step.logs[
               'full'] = f'Exception during PostProcess parsing: {traceback.format_exc()}'
       for test_dut_response in run_test_response:
         ctr_test_response = test_dut_response.data
@@ -994,7 +992,7 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
 
     with self._api.step.nest(
         'extracted resultdb config from test_args for chromium test') as step:
-      step.presentation.logs['base_rdb_config_for_chromium_test'] = json.dumps(
+      step.logs['base_rdb_config_for_chromium_test'] = json.dumps(
           rdb_config, indent=4)
 
     return rdb_config
@@ -1198,8 +1196,8 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
             ret2.append(resp)
             ret2_ids.append(resp.data.test_case_id.value)
 
-      step.presentation.logs['For_Output_Props_Test_Ids'] = ret1_ids
-      step.presentation.logs['For_Result_Uploading_Test_Ids'] = ret2_ids
+      step.logs['For_Output_Props_Test_Ids'] = ret1_ids
+      step.logs['For_Result_Uploading_Test_Ids'] = ret2_ids
 
       return RunTestResponsesTuple(
           ret1, cros_test_responses.any_test_failed), RunTestResponsesTuple(

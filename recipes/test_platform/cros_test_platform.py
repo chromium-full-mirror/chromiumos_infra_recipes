@@ -804,9 +804,8 @@ def _upload_filtered_test_cases_async(api, req, tests):  # pragma: nocover
           'filtered due to not meeting stability requirements')
     # Ensure filtered upload is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
-      step.presentation.logs['Exception'] = json.dumps({'exception': str(e)},
-                                                       separators=(',', ': '),
-                                                       indent=2)
+      step.logs['Exception'] = json.dumps({'exception': str(e)},
+                                          separators=(',', ': '), indent=2)
 
   if not tests:
     return
@@ -890,16 +889,16 @@ def _build_filtered_tests(api, r, test_suites, build_target, dryrun,
       pre_test_resp = api.cros_tool_runner.pre_process(req)
       if pre_test_resp.response.removed_tests:  # pragma: no cover
         removed = [str(test) for test in pre_test_resp.response.removed_tests]
-        step.presentation.logs['removed_tests'] = json.dumps(
-            {'removed': removed}, separators=(',', ': '), indent=2)
+        step.logs['removed_tests'] = json.dumps({'removed': removed},
+                                                separators=(',', ': '),
+                                                indent=2)
         return pre_test_resp.response.test_suites, removed  # pragma: no cover
       return test_suites, []
 
     # Ensure step is non-breaking
     except Exception as e:  # pragma: nocover # pylint: disable=broad-except
-      step.presentation.logs['Exception'] = json.dumps({'exception': str(e)},
-                                                       separators=(',', ': '),
-                                                       indent=2)
+      step.logs['Exception'] = json.dumps({'exception': str(e)},
+                                          separators=(',', ': '), indent=2)
       return test_suites, []
 
 
@@ -1698,8 +1697,8 @@ def _get_dut_use_flags(api, use_flag_gs_url):
     # pylint: disable=broad-except
     except StepFailure as e:  #pragma: nocover
       step.step_text = 'tast_use_flags.txt not found'
-      step.presentation.logs['tast use flags gs error'] = str(e)
-      step.presentation.status = api.step.SUCCESS
+      step.logs['tast use flags gs error'] = str(e)
+      step.status = api.step.SUCCESS
       return None
     step.logs['tast use flags list'] = res
   return res

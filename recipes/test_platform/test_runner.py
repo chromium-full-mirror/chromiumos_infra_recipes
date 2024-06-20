@@ -1486,7 +1486,7 @@ def _upload_steps_with_phosphorus(api, properties, interface, result,
       # infra_failure. We don't want to present an infra_failure because
       # nothing on our end has gone wrong and this will shield us from
       # potential misfiled bugs.
-      step.presentation.staus = api.step.FAILURE
+      step.status = api.step.FAILURE
       e = StepFailure(
           'Result upload execution timelimit of %.1f hours reached' %
           (_RESULT_PUBLISHING_LIMIT / HOUR))
@@ -1895,7 +1895,7 @@ def _upload_steps_with_ctr(api, properties, interface, result_for_output_props,
       # infra_failure. We don't want to present an infra_failure because
       # nothing on our end has gone wrong and this will shield us from
       # potential misfiled bugs.
-      step.presentation.staus = api.step.FAILURE
+      step.status = api.step.FAILURE
       e = StepFailure(
           'Result upload execution timelimit of %.1f hours reached' %
           (_RESULT_PUBLISHING_LIMIT / HOUR))
@@ -2097,7 +2097,7 @@ def _trv2_post_processing(api):
         os.path.join('**', 'cros-test', 'results', 'tauto'))
     if len(dirs) == 0:
       s_log(step, 'Skip processing', 'No directories found, skip CTS archiving')
-      step.presentation.step_summary_text = 'Skipped: no test directory found'
+      step.step_summary_text = 'Skipped: no test directory found'
       return
     for directory in dirs:
       api.cts_results_archive.archive(str(directory))

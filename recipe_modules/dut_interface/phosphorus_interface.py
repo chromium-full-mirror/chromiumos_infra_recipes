@@ -184,7 +184,7 @@ class PhosphorusInterface(dut_interface.DUTInterface):  # pragma: no cover
           # infra_failure. We don't want to present an infra_failure because
           # nothing on our end has gone wrong and this will shield us from
           # potential misfiled bugs.
-          step.presentation.staus = self._api.step.FAILURE
+          step.status = self._api.step.FAILURE
           e = StepFailure('Prejob execution time limit of %.1f hours reached' %
                           (max_duration_seconds / HOUR))
         raise e
