@@ -226,7 +226,7 @@
                     "author": {
                          "_account_id": 123455,
                          "name": "Jon Doe",
-                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                         "email": "chromeos-auto-runner@chromeos-bot.iam.gserviceaccount.com"
                     },
                     "date": "2024-05-31 20:41:33.000000000",
                     "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
@@ -238,7 +238,7 @@
                     "author": {
                          "_account_id": 123455,
                          "name": "Jon Doe",
-                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                         "email": "chromeos-auto-runner@chromeos-bot.iam.gserviceaccount.com"
                     },
                     "date": "2024-05-31 21:41:33.000000000",
                     "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
@@ -330,7 +330,7 @@
                     "author": {
                          "_account_id": 123455,
                          "name": "Jon Doe",
-                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                         "email": "chromeos-auto-runner@chromeos-bot.iam.gserviceaccount.com"
                     },
                     "date": "2024-05-31 20:41:33.000000000",
                     "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
@@ -422,7 +422,7 @@
                     "author": {
                          "_account_id": 123455,
                          "name": "Jon Doe",
-                         "email": "PLACEHOLDER_FOR_THE_TIMEBEING@GOOGLE.COM"
+                         "email": "chromeos-auto-runner@chromeos-bot.iam.gserviceaccount.com"
                     },
                     "date": "2024-05-31 20:41:33.000000000",
                     "message": "Patch Set 1: Commit-Queue+1 Verified+1\n\n(1 comment)",
