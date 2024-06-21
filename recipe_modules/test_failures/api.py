@@ -55,7 +55,7 @@ class TestFailuresApi(RecipeApi):
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:
-          if status == bb_common_pb2.FAILURE:
+          if status != bb_common_pb2.SUCCESS:
             results.failures.append(
                 Failure(kind=self.HW_TEST, title=title, link_map=link_map,
                         fatal=True, id=title, type=status, failure_reason=None))
