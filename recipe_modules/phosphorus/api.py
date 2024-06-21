@@ -39,7 +39,7 @@ class PhosphorusCommand(recipe_api.RecipeApi):
     # dut_hostname represents schedulable unit from inventory(e.g. UFS),
     # which can be hostname of a DUT itself(single DUT use case), or
     # name of a scheduling unit(multi-DUTs use case).
-    if env_vars.SWARMING_BOT_ID.startswith('cloudbots-'):
+    if env_vars.CLOUDBOTS_DUT_HOSTNAME:
       self._dut_hostname = env_vars.CLOUDBOTS_DUT_HOSTNAME
     else:
       self._dut_hostname = self._dut_hostname_from_bot_id(

@@ -210,7 +210,7 @@
       "@@@STEP_LOG_LINE@request@    \"crosInventoryService\": \"inv-service\",@@@",
       "@@@STEP_LOG_LINE@request@    \"crosUfsService\": \"ufs-service\"@@@",
       "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"dutName\": \"placeholder-cloudbots-dut-hostname\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"dutName\": \"cloudbots-prod-placeholder-asdf\",@@@",
       "@@@STEP_LOG_LINE@request@  \"runId\": \"placeholder-task-id\",@@@",
       "@@@STEP_LOG_LINE@request@  \"dutId\": \"placeholder-dut-id\",@@@",
       "@@@STEP_LOG_LINE@request@  \"testId\": \"test-id\"@@@",
@@ -233,7 +233,7 @@
     ],
     "infra_step": true,
     "name": "call `phosphorus` (12).load",
-    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"placeholder-cloudbots-dut-hostname\",\n  \"runId\": \"placeholder-task-id\",\n  \"dutId\": \"placeholder-dut-id\",\n  \"testId\": \"test-id\"\n}",
+    "stdin": "{\n  \"config\": {\n    \"adminService\": \"foo-service\",\n    \"autotestDir\": \"/path/to/autotest\",\n    \"crosInventoryService\": \"inv-service\",\n    \"crosUfsService\": \"ufs-service\"\n  },\n  \"dutName\": \"cloudbots-prod-placeholder-asdf\",\n  \"runId\": \"placeholder-task-id\",\n  \"dutId\": \"placeholder-dut-id\",\n  \"testId\": \"test-id\"\n}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

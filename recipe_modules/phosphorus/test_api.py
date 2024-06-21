@@ -3,6 +3,8 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
+"""Test API for issuing Phosphorus commands"""
+
 from recipe_engine import recipe_test_api
 
 from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
@@ -14,7 +16,7 @@ from PB.recipe_modules.chromeos.phosphorus.phosphorus import \
 class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
   """Test data for phosphorus api."""
 
-  def properties(self, dut_name=None, bot_prefix=None):
+  def properties(self, dut_name=None, bot_prefix=None, cloudbot_hostname=''):
     """Gets properties to pass to api.test().
 
     For use in recipes and modules using phosphorus.
@@ -46,4 +48,4 @@ class PhosphorusTestApi(recipe_test_api.RecipeTestApi):
             PhosphorusEnvProperties(SWARMING_BOT_ID=bot_id,
                                     SWARMING_TASK_ID='placeholder-task-id',
                                     SKYLAB_DUT_ID='placeholder-dut-id'),
-            CLOUDBOTS_DUT_HOSTNAME="placeholder-cloudbots-dut-hostname")
+            CLOUDBOTS_DUT_HOSTNAME=cloudbot_hostname)

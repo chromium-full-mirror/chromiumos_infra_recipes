@@ -97,5 +97,7 @@ def GenTests(api):
          + api.post_process(DropExpectation))
   yield (api.test(
       'cloudbots-dut-hostname',
-      api.cros_tool_runner.properties(bot_id='cloudbots-prod-0-zxcv')) +
+      api.cros_tool_runner.properties(
+          bot_id='cloudbots-prod-0-zxcv',
+          cloudbot_hostname='cloudbots-dut-hostname')) +
          api.post_process(DropExpectation))
