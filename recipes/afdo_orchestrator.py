@@ -20,6 +20,7 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/swarming',
     'orch_menu',
+    'test_util',
 ]
 
 
@@ -80,45 +81,56 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
 
 
 def GenTests(api: RecipeTestApi):
-
+  extra_child_properties = {
+      'artifacts': {
+          'files_by_artifact': {
+              'CHROME_DEBUG_BINARY': ['chrome.debug.bz2']
+          },
+          'gs_bucket': 'chromeos-image-archive',
+          'gs_path': 'GS_PATH/DIR'
+      }
+  }
   data = api.orch_menu.standard_test_data(
-      extra_output_properties={
-          'artifacts': {
-              'files_by_artifact': {
-                  'CHROME_DEBUG_BINARY': ['chrome.debug.bz2']
-              },
-              'gs_bucket': 'chromeos-image-archive',
-              'gs_path': 'GS_PATH/DIR'
-          }
-      })
+      extra_output_properties=extra_child_properties)
 
-  yield api.orch_menu.test('basic', data.ctp_normal,
-                           with_history=True, collect_builds=data.builds)
+  successful_needed_child_builds = [
+      api.test_util.test_child_build(
+          'benchmark-afdo-process',
+          status='SUCCESS',
+          bucket='toolchain',
+          output_properties=extra_child_properties,
+      ).message
+  ]
+
+  yield api.orch_menu.test('basic', data.ctp_normal, with_history=True,
+                           collect_builds=successful_needed_child_builds)
 
   find_inflight_name = 'find inflight orchestrator'
   wait_inflight_name = '%s.waiting for existing runs.wait' % find_inflight_name
   yield api.orch_menu.test(
       'join-if-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.MustRun, wait_inflight_name), git_footers=[],
-      collect_builds=data.builds, inflight_orch=[data.inflight_orchestrator],
-      cq=True, with_history=True)
+      collect_builds=successful_needed_child_builds,
+      inflight_orch=[data.inflight_orchestrator], cq=True, with_history=True)
 
   yield api.orch_menu.test(
       'runs-if-no-inflight-orchs', data.ctp_normal,
       api.post_check(post_process.MustRun, find_inflight_name),
-      api.post_check(post_process.DoesNotRun,
-                     wait_inflight_name), git_footers=[],
-      collect_builds=data.builds, inflight_orch=[], cq=True, with_history=True)
+      api.post_check(post_process.DoesNotRun, wait_inflight_name),
+      git_footers=[], collect_builds=successful_needed_child_builds,
+      inflight_orch=[], cq=True, with_history=True)
 
   yield api.orch_menu.test('dry-run',
-                           api.post_check(post_process.DoesNotRun, 'run tests'),
-                           cq=True, dry_run=True, collect_builds=data.builds,
+                           api.post_check(post_process.DoesNotRun,
+                                          'run tests'), cq=True, dry_run=True,
+                           collect_builds=successful_needed_child_builds,
                            with_history=True, git_footers=[])
 
   yield api.orch_menu.test(
       'orchestrator-with-process-child-and-followon', data.ctp_normal,
       api.properties(process_child='benchmark-afdo-process'),
-      collect_builds=data.builds, process_child=data.process_child,
+      collect_builds=successful_needed_child_builds,
+      process_child=data.process_child,
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
       builder='artifact-generate-orchestrator', with_history=True,
       git_footers=[])
@@ -144,7 +156,7 @@ def GenTests(api: RecipeTestApi):
       'orchestrator-with-failing-followon', data.ctp_normal,
       api.properties(process_child='benchmark-afdo-process'),
       api.post_process(post_process.DropExpectation),
-      collect_builds=data.builds, process_child=data.process_child,
-      follow_on_orch=failing_follow_on, bucket='toolchain',
-      builder='artifact-generate-orchestrator', with_history=True,
-      git_footers=[], status='FAILURE')
+      collect_builds=successful_needed_child_builds,
+      process_child=data.process_child, follow_on_orch=failing_follow_on,
+      bucket='toolchain', builder='artifact-generate-orchestrator',
+      with_history=True, git_footers=[], status='FAILURE')
