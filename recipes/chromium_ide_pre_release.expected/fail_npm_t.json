@@ -1926,13 +1926,13 @@
   {
     "cmd": [
       "npm",
-      "t"
+      "cq-test"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify with npm t",
+    "name": "verify with npm cq-test",
     "~followup_annotations": [
       "@@@STEP_FAILURE@@@"
     ]
@@ -2213,7 +2213,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('verify with npm t') (retcode: 1)"
+      "humanReason": "Step('verify with npm cq-test') (retcode: 1)"
     },
     "name": "$result"
   }
