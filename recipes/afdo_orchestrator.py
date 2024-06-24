@@ -49,7 +49,12 @@ def DoRunSteps(api: RecipeApi, properties: AfdoOrchestratorProperties):
   # Run any HW tests.
   builds_status = api.orch_menu.plan_and_run_tests()
 
-  if not builds_status.fatal_failures and properties.process_child:
+  # If hwtests failed, the AFDO profile either won't exist, or is nonsensical.
+  # Don't process it.
+  if builds_status.failures:
+    return
+
+  if properties.process_child:
     # Create InputArtifactInfo for the CHROME_DEBUG_BINARY from the creating
     # builder.
     art_property = lambda b: b.output.properties['artifacts']
@@ -134,6 +139,15 @@ def GenTests(api: RecipeTestApi):
       follow_on_orch=data.follow_on_orchestrator, bucket='toolchain',
       builder='artifact-generate-orchestrator', with_history=True,
       git_footers=[])
+
+  yield api.orch_menu.test(
+      'orchestrator-with-process-child-and-test-failure', data.ctp_failure,
+      api.properties(process_child='benchmark-afdo-process'),
+      api.post_check(post_process.DoesNotRun, 'run benchmark-afdo-process'),
+      api.post_process(post_process.DropExpectation),
+      collect_builds=successful_needed_child_builds, bucket='toolchain',
+      builder='artifact-generate-orchestrator', with_history=True,
+      git_footers=[], status='FAILURE')
 
   pointless_child_build = build_pb2.Build(
       builder={
