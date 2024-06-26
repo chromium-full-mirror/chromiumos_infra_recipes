@@ -212,8 +212,6 @@ class EnhancedChangeInfo():
         bool: True if the current revision has been CQed, False otherwise.
     """
     current_revision_number = self._change_info.get('current_revision_number')
-    if not current_revision_number:
-      return False
     for message in self._change_info.get('messages', []):
       if (message.get('_revision_number', '') == current_revision_number and
           re.search(r'Commit\-Queue\+[12]', message.get('message', ''))):
@@ -244,6 +242,15 @@ class EnhancedChangeInfo():
         str: The current revision number of the change.
     """
     return self._change_info.get('current_revision_number', '')
+
+  def is_author_googler(self) -> bool:
+    """Checks if the author of the change is a Google account.
+
+    Returns:
+        True if the author has a Google account, False otherwise.
+    """
+    return self._change_info.get('owner', {}).get('email', '').endswith(
+        ('@google.com', '@chromium.org'))
 
 
 class AutoRunnerUtilApi(recipe_api.RecipeApi):
@@ -385,6 +392,11 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     remaining_changes = self.get_change_infos_from_gerrit(
         self._host_project_prefixs, query_params_with_age, O_PARAMS,
         self._max_limit_per_query)
+
+    # Filter changes that are not from googlers
+    remaining_changes = self._filter_changes(
+        remaining_changes, 'Filtering CLs that are not from googlers',
+        lambda c: not c.is_author_googler())
 
     # Filter changes that have hit or exceeded their daily quota
     remaining_changes = self._filter_changes(

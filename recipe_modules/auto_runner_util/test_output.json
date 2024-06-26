@@ -15,6 +15,11 @@
           "messages": [],
           "current_revision_number": 2,
           "current_revision": "c1c7e176957311b311a6e6771e69e804b8351d59",
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google.com"
+          },
           "revisions": {
                "c1c7e176957311b311a6e6771e69e804b8351d59": {
                     "kind": "REWORK",
@@ -43,6 +48,11 @@
           "messages": [],
           "current_revision_number": 1,
           "current_revision": "b7b9e6df130e2f27d727b3e112e6725dc3289a08",
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google.com"
+          },
           "revisions": {
                "b7b9e6df130e2f27d727b3e112e6725dc3289a08": {
                     "kind": "REWORK",
@@ -73,6 +83,11 @@
           "meta_rev_id": "6c0da79223df415a921d14843e16cc5b3b2f92aa",
           "_number": 5590242,
           "virtual_id_number": 5590242,
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google.com"
+          },
           "reviewer_updates": [
                {
                     "updated": "2024-05-31 20:41:33.000000000",
@@ -113,6 +128,11 @@
           "meta_rev_id": "27e1160ac84031467f4e3f0bf009707a50d51ccf",
           "_number": 5588289,
           "virtual_id_number": 5588289,
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@chromium.org"
+          },
           "reviewer_updates": [
                {
                     "updated": "2024-05-31 20:41:33.000000000",
@@ -190,6 +210,11 @@
           "current_revision_number": 2,
           "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
           "_number": 5590139,
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google.com"
+          },
           "reviewer_updates": [
                {
                     "updated": "2024-05-31 23:30:04.000000000",
@@ -294,6 +319,11 @@
           "current_revision_number": 2,
           "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
           "_number": 5590140,
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@chromium.org"
+          },
           "reviewer_updates": [
                {
                     "updated": "2024-05-31 13:30:04.000000000",
@@ -386,6 +416,11 @@
           "current_revision_number": 2,
           "current_revision": "015dad0b554a8be5ed6d993ef3522f7f07a0a34f",
           "_number": 5590141,
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google.com"
+          },
           "reviewer_updates": [
                {
                     "updated": "2024-05-31 13:30:04.000000000",
@@ -462,5 +497,36 @@
                     "_revision_number": 2
                }
           ]
+     },
+     {
+          "id": "example that will get filtered out since its partner",
+          "project": "mychromiumos",
+          "branch": "main",
+          "change_id": "39ajdim43dsd",
+          "subject": "sample 2",
+          "status": "NEW",
+          "created": "2024-06-01 00:28:57.000000000",
+          "updated": "2024-06-01 02:02:21.000000000",
+          "submit_type": "REBASE_ALWAYS",
+          "has_review_started": true,
+          "_number": 55902394,
+          "reviewer_updates": [],
+          "messages": [],
+          "current_revision_number": 2,
+          "current_revision": "c1c7e176957311b311a6e6771e69e804b8351d59",
+          "owner": {
+               "_account_id": 12345,
+               "name": "Jon Googler",
+               "email": "a_typical@google-partner.com"
+          },
+          "revisions": {
+               "c1c7e176957311b311a6e6771e69e804b8351d59": {
+                    "kind": "REWORK",
+                    "_number": 2,
+                    "created": "2024-06-01 00:30:38.000000000",
+                    "branch": "refs/heads/main",
+                    "commit_with_footers": "crash: \n"
+               }
+          }
      }
 ]

@@ -33,6 +33,7 @@ def GenTests(api):
       'basic', api.properties(dont_assert=True),
       api.post_process(MustRunRE, r'Looking for CLs in host .*'),
       api.post_process(MustRun, 'Filtering CLs that have cq-depends'),
+      api.post_process(MustRun, 'Filtering CLs that are not from googlers'),
       api.post_process(MustRun, 'Filtering CLs that are in relation chain'),
       api.post_process(MustRun, 'Filtering CLs that do not have any reviewers'),
       api.post_process(DropExpectation))
