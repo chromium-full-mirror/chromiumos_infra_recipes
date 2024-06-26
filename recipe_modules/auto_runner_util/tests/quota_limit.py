@@ -49,6 +49,27 @@ def GenTests(api):
                   'project': 'mychromiumos'
               }, 'mychromium-review.googlesource.com', None),
           }),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590140,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590139,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590141,
+          revision=2,
+          value=True,
+      ),
       api.gerrit.set_gerrit_related_changes(
           {
               'related': [{
@@ -89,6 +110,20 @@ def GenTests(api):
                   'project': 'mychromiumos'
               }, 'mychromium-review.googlesource.com', None),
           }),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590140,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590141,
+          revision=2,
+          value=True,
+      ),
       api.gerrit.set_gerrit_related_changes(
           {
               'related': [{

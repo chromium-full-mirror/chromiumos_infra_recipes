@@ -36,6 +36,7 @@ def GenTests(api):
       api.post_process(MustRun, 'Filtering CLs that are not from googlers'),
       api.post_process(MustRun, 'Filtering CLs that are in relation chain'),
       api.post_process(MustRun, 'Filtering CLs that do not have any reviewers'),
+      api.post_process(MustRun, 'Filtering CLs that are not mergeable'),
       api.post_process(DropExpectation))
   yield api.test(
       'basic_with_props',
@@ -66,6 +67,34 @@ def GenTests(api):
               }, 'mychromium-review.googlesource.com', None)
           },
           dont_assert=False),
+          api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590139,
+      revision=2,
+      value=True,
+      ),
+       api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590140,
+      revision=2,
+      value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590242,
+      revision=1,
+      value=True,
+          ),
+      api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590141,
+      revision=2,
+      value=True,
+      ),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj('test_output.json'),
@@ -124,6 +153,25 @@ def GenTests(api):
               }, 'mychromium-review.googlesource.com', None),
           },
           dont_assert=False),
+      api.gerrit.set_get_change_mergeable(
+      '', gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590139,
+      revision=2,
+      value=True,),
+      api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590140,
+      revision=2,
+      value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+      '',
+      gerrit_host='mychromium-review.googlesource.com',
+      change_num=5590141,
+      revision=2,
+      value=True,
+      ),
       api.gerrit.set_query_changes_response(
           step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj('test_output.json'),
@@ -156,3 +204,66 @@ def GenTests(api):
       api.post_process(MustRun,
                        'Filtering CLs that do not have any reviewers'),
    api.post_process(DropExpectation))
+  yield api.test(
+      'test mergeable',
+      api.properties(
+          **{
+              '$chromeos/auto_runner_util':
+                  AutoRunnerUtilProperties(
+                      max_limit_per_query=2, host_projects=[
+                          HostProjects(host='mychromium',
+                                       project_prefix=['mychromiumos']),
+                      ], cls_signal=CLSignalEnum.PATCHSET_UPLOAD)
+          }, expected_changes={
+              EnhancedChangeInfo({
+                  '_number': 5590140,
+                  'project': 'mychromiumos'
+              }, 'mychromium-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 5590141,
+                  'project': 'mychromiumos'
+              }, 'mychromium-review.googlesource.com', None)
+          }, dont_assert=False),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590139,
+          revision=2,
+          value=False,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590140,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590242,
+          revision=1,
+          value=False,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590141,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_query_changes_response(
+          step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
+          host_url='https://mychromium-review.googlesource.com'),
+      api.gerrit.set_gerrit_related_changes(
+          {
+              'related': [{
+                  '_change_number': 5590294,
+                  '_revision_number': 1,
+                  'host': 'https://mychromium-review.googlesource.com',
+                  'project': 'mychromiumos'
+              }]
+          }, step_name='Querying relation chains'),
+      api.post_process(DropExpectation))

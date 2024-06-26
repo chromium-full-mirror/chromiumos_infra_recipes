@@ -93,7 +93,7 @@ class EnhancedChangeInfo():
         api (Any): The recipe_api object providing Gerrit and time functionality.
     """
     self._change_info = change
-    self._host = host
+    self._host = re.sub(r'^https?://', '', host)
     self._gerrit_change_obj = change_info_to_gerrit_change(change, host)
     self._api = api
     self._related_changes = None
@@ -252,6 +252,14 @@ class EnhancedChangeInfo():
     return self._change_info.get('owner', {}).get('email', '').endswith(
         ('@google.com', '@chromium.org'))
 
+  def is_mergeable(self) -> bool:
+    """Checks if the change is mergeable.
+
+    Returns:
+        True if the change is mergeable, False otherwise.
+    """
+    return self._api.gerrit.get_change_mergeable(self.change, self._host,
+                                                 self.current_revision_number)
 
 class AutoRunnerUtilApi(recipe_api.RecipeApi):
 
@@ -426,6 +434,11 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     remaining_changes = self._filter_changes(
         remaining_changes, 'Filtering CLs that are in relation chain',
         lambda c: c in related_changes)
+
+    # Filter changes that are not mergeable
+    remaining_changes = self._filter_changes(
+        remaining_changes, 'Filtering CLs that are not mergeable',
+        lambda c: not c.is_mergeable())
 
     # Sort the remaining changes and limit them to the available quota
     self.add_a_step_with_cl_links('Remaining eligible CLs', remaining_changes)
