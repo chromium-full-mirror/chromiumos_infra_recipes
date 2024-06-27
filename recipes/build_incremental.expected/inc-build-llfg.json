@@ -2493,6 +2493,13 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "buildbucket.add_tags_to_current_build",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/runtime-tags@{\"relevance\": [\"relevant\"]}@@@"
+    ]
+  },
+  {
     "cmd": [
       "git",
       "clone",

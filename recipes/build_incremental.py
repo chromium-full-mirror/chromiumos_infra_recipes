@@ -104,12 +104,13 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
     api.easy.set_properties_step(pointless_build=not relevant,
                                  relevant_build=relevant)
-    api.cros_tags.add_tags_to_current_build(
-        **{'relevance': '{}relevant'.format('' if relevant else 'not ')})
-
     if not relevant:
+      api.cros_tags.add_tags_to_current_build(**{'relevance': 'not relevant'})
       return RawResult(status=common.SUCCESS,
                        summary_markdown='Build was not relevant.')
+  # Set the relevancy tag to True, since we did not quit after the check above.
+  api.cros_tags.add_tags_to_current_build(**{'relevance': 'relevant'})
+
 
   try:
     api.incremental.DoOldBuild(api, config, properties)
