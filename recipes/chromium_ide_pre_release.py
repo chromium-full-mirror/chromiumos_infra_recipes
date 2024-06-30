@@ -76,7 +76,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
               f'https://cr-buildbucket.appspot.com/build/{api.buildbucket.build.id}'
           ], stdout=api.raw_io.output_text())
 
-          api.step('verify with npm cq-test', ['npm', 'cq-test'])
+          api.step('verify with npm run cq-test', ['npm', 'run', 'cq-test'])
 
           reviewers = []
           for reviewer in properties.reviewers:
@@ -97,7 +97,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
           api.gerrit.submit_change(change)
 
           # It is possible another commit is submitted during the stage.
-          # We checkout to the submitted commits and run npm cq-test again for
+          # We checkout to the submitted commits and run npm run cq-test again for
           # verification.
           # This is important before publishing a prerelease automatically.
           with api.step.nest('verify update post submit'):
@@ -113,7 +113,7 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
               if not bump_commit:
                 raise api.step.StepFailure('cannot find bump commit.')
               api.git.checkout(bump_commit)
-            api.step('npm cq-test', ['npm', 'cq-test'])
+            api.step('npm run cq-test', ['npm', 'run', 'cq-test'])
 
           with api.context(
               env={'FETCH_IDE_RELEASE_CREDENTIALS_FROM_GCLOUD': '1'}):
@@ -132,7 +132,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify with npm cq-test', retcode=0),
+      api.step_data('verify with npm run cq-test', retcode=0),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
@@ -141,7 +141,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify with npm cq-test'),
+      api.post_check(post_process.MustRun, 'verify with npm run cq-test'),
       api.post_check(post_process.MustRun, 'set labels on CL 123'),
       api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
@@ -150,7 +150,7 @@ def GenTests(api: RecipeTestApi):
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
           )),
       api.post_check(post_process.MustRun,
-                     'verify update post submit.npm cq-test'),
+                     'verify update post submit.npm run cq-test'),
       api.post_check(post_process.MustRun, 'publish prerelease'),
   )
 
@@ -161,7 +161,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=1),
       api.post_check(post_process.StepFailure, 'npm ci'),
       api.post_check(post_process.DoesNotRun, 'release update'),
-      api.post_check(post_process.DoesNotRun, 'verify with npm cq-test'),
+      api.post_check(post_process.DoesNotRun, 'verify with npm run cq-test'),
       api.post_check(post_process.DoesNotRun,
                      'create gerrit change for chromiumos/infra/ide'),
       api.post_check(post_process.DoesNotRunRE, r'set labels on CL .*'),
@@ -181,7 +181,7 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun,
           'submit change.create gerrit change for chromiumos/infra/ide'),
-      api.post_check(post_process.DoesNotRun, 'verify with npm cq-test'),
+      api.post_check(post_process.DoesNotRun, 'verify with npm run cq-test'),
       api.post_check(post_process.DoesNotRunRE,
                      r'submit change.set labels on CL .*'),
       api.post_check(post_process.DoesNotRunRE, 'submit change.submit CL .*'),
@@ -197,7 +197,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify with npm cq-test', retcode=1),
+      api.step_data('verify with npm run cq-test', retcode=1),
       api.post_check(
           post_process.DoesNotRun,
           'submit change.create gerrit change for chromiumos/infra/ide'),
@@ -217,7 +217,7 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify with npm cq-test', retcode=0),
+      api.step_data('verify with npm run cq-test', retcode=0),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
@@ -226,7 +226,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify with npm cq-test'),
+      api.post_check(post_process.MustRun, 'verify with npm run cq-test'),
       api.post_check(post_process.MustRun, 'set labels on CL 123'),
       api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
@@ -234,7 +234,7 @@ def GenTests(api: RecipeTestApi):
           stdout=api.raw_io.output_text(
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FAdd feature X\x00')),
       api.post_check(post_process.DoesNotRun,
-                     'verify update post submit.npm cq-test'),
+                     'verify update post submit.npm run cq-test'),
       api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )
@@ -248,8 +248,8 @@ def GenTests(api: RecipeTestApi):
       api.step_data('npm ci', retcode=0),
       api.step_data('release update', retcode=0),
       api.path.exists(api.src_state.workspace_path),
-      api.step_data('verify with npm cq-test', retcode=0),
-      api.step_data('verify update post submit.npm cq-test', retcode=1),
+      api.step_data('verify with npm run cq-test', retcode=0),
+      api.step_data('verify update post submit.npm run cq-test', retcode=1),
       api.url.json('Get oncaller of oncallator:ide_onduty',
                    {'emails': ['fqj@google.com']}),
       api.gerrit.simulated_create_change(
@@ -258,7 +258,7 @@ def GenTests(api: RecipeTestApi):
       ),
       api.post_check(post_process.MustRun, 'npm ci'),
       api.post_check(post_process.MustRun, 'release update'),
-      api.post_check(post_process.MustRun, 'verify with npm cq-test'),
+      api.post_check(post_process.MustRun, 'verify with npm run cq-test'),
       api.post_check(post_process.MustRun, 'set labels on CL 123'),
       api.post_check(post_process.MustRun, 'submit CL 123'),
       api.step_data(
@@ -267,7 +267,7 @@ def GenTests(api: RecipeTestApi):
               'deaddeaddeadbeefdeadbeefdeadbeefdeadbeef\x1FBump the version\x00'
           )),
       api.post_check(post_process.MustRun,
-                     'verify update post submit.npm cq-test'),
+                     'verify update post submit.npm run cq-test'),
       api.post_check(post_process.DoesNotRun, 'publish prerelease'),
       api.expect_status('FAILURE'),
   )

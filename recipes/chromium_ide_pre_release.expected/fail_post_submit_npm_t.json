@@ -1926,13 +1926,14 @@
   {
     "cmd": [
       "npm",
+      "run",
       "cq-test"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify with npm cq-test"
+    "name": "verify with npm run cq-test"
   },
   {
     "cmd": [
@@ -2346,13 +2347,14 @@
   {
     "cmd": [
       "npm",
+      "run",
       "cq-test"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify update post submit.npm cq-test",
+    "name": "verify update post submit.npm run cq-test",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_FAILURE@@@"
@@ -2634,7 +2636,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Step('verify update post submit.npm cq-test') (retcode: 1)"
+      "humanReason": "Step('verify update post submit.npm run cq-test') (retcode: 1)"
     },
     "name": "$result"
   }

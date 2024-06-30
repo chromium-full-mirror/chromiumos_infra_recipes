@@ -1926,13 +1926,14 @@
   {
     "cmd": [
       "npm",
+      "run",
       "cq-test"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
       "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
     },
-    "name": "verify with npm cq-test"
+    "name": "verify with npm run cq-test"
   },
   {
     "cmd": [
