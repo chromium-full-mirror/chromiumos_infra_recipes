@@ -412,20 +412,25 @@ class OrchMenuTestApi(recipe_test_api.RecipeTestApi):
     # need to update the orch_menu.test() function with a new option that adds
     # test_data for scheduling the NO_COLLECT builds but not collecting them.
     for c in orch_config.orchestrator.child_specs:
+      critical = 'YES'
+      for config in self.m.cros_infra_config.builder_configs_test_data.builder_configs:
+        if config.id.name == c.name:
+          critical = 'YES' if config.general.critical.value else 'NO'
+          break
       target = c.name.split(child_builder_suffix)[0]
       if c.collect_handling == BuilderConfig.Orchestrator.ChildSpec.COLLECT_AFTER_HW_TEST:
         collect_after_builds.append(
             _child_build_msg(target,
                              cq=orchestrator_name.endswith('cq-orchestrator'),
                              builder_name=c.name, build_id=start_build_id,
-                             critical='YES',
+                             critical=critical,
                              output_properties={'build_cost': 10.0}))
       else:
         collect_builds.append(
             _child_build_msg(target,
                              cq=orchestrator_name.endswith('cq-orchestrator'),
                              builder_name=c.name, build_id=start_build_id,
-                             critical='YES',
+                             critical=critical,
                              output_properties={'build_cost': 10.0}))
       start_build_id += 1
 

@@ -146,7 +146,7 @@ def GenTests(api: RecipeTestApi):
       data.ctp_normal,
       api.post_process(
           post_process.SummaryMarkdown,
-          '1 out of 7 builds failed\n\n- amd64-generic-cq: '
+          '1 out of 4 builds failed\n\n- amd64-generic-cq: '
           '[build page](https://cr-buildbucket.appspot.com/build/8922054662172514000)'
       ),
       cq=True,
