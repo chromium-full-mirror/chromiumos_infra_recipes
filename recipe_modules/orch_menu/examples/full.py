@@ -726,31 +726,30 @@ def GenTests(api):
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary))),
       api.step_data('run builds.collect.wait', retcode=1),
-      collect_builds=data.builds, history_builds=data.history_builds,
+      collect_builds=api.orch_menu.orch_child_builds('cq-orchestrator',
+                                                     '-cq')[0], cq=True,
       collect_timeout=True, with_manifest_refs=True, with_history=True)
 
   yield api.orch_menu.test(
-      'quota-scheduler-override', data.ctp_normal,
-      api.properties(
-          FullProperties(
-              expected_recipe_result=RawResult(
-                  status=common_pb2.SUCCESS,
-                  summary_markdown=one_non_crit_fail_summary))),
-      collect_builds=data.builds, history_builds=data.history_builds, cq=True,
-      with_history=True, git_footers=[],
+      'quota-scheduler-override', data.ctp_normal, cq=True, with_history=True,
+      git_footers=[],
       tags=api.cros_tags.tags(cq_cl_tag='pupr:chromeos-base/lacros-ash-atomic'))
 
   # Process-child
+  artifact_generate_toolchain_build = api.test_util.test_build(
+      builder='artifact-generate-toolchain', status='SUCCESS').message
   yield api.orch_menu.test(
       'with-process-child', data.ctp_normal,
       api.properties(
           FullProperties(
-              expected_completed_builds=data.builds + [data.process_child],
+              expected_completed_builds=[
+                  artifact_generate_toolchain_build, data.process_child
+              ],
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary),
               process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, history_builds=data.history_builds,
+          )), collect_builds=[artifact_generate_toolchain_build],
       process_child=data.process_child, bucket='toolchain',
       builder='artifact-generate-orchestrator')
 
@@ -759,14 +758,17 @@ def GenTests(api):
       'with-process-child-timeout', data.ctp_normal,
       api.properties(
           FullProperties(
-              expected_completed_builds=data.builds + [data.process_child],
+              expected_completed_builds=[
+                  artifact_generate_toolchain_build, data.process_child
+              ],
               expected_recipe_result=RawResult(
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary),
               process_child=data.process_child.builder.builder,
-          )), collect_builds=data.builds, history_builds=data.history_builds,
-      process_child=data.process_child, process_child_timeout=True,
-      bucket='toolchain', builder='artifact-generate-orchestrator')
+          )), collect_builds=[artifact_generate_toolchain_build],
+      history_builds=data.history_builds, process_child=data.process_child,
+      process_child_timeout=True, bucket='toolchain',
+      builder='artifact-generate-orchestrator')
 
   collect, collect_after = api.orch_menu.orch_child_builds(
       'cq-orchestrator', '-cq')
@@ -889,7 +891,6 @@ def GenTests(api):
       data.ctp_failure,
       input_properties=input_props_with_generate_ctpv1_format,
       builder='cq-orchestrator',
-      collect_builds=data.builds,
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,

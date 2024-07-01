@@ -142,7 +142,7 @@ def GenTests(api):
                     retcode=1),
       builder='snapshot-orchestrator',
       with_manifest_refs=True,
-      collect_builds=collect,
+      collect_builds=green_build_results,
       with_history=True,
   )
 
@@ -155,7 +155,7 @@ def GenTests(api):
                      'update manifest ref refs/heads/green.git push'),
       api.post_check(post_process.DoesNotRun,
                      'set up orchestrator.read git footers'),
-      collect_builds=collect,
+      collect_builds=green_build_results,
       with_manifest_refs=True,
       with_history=True,
       sheriff_rotations=['chromeos'],
@@ -175,7 +175,7 @@ def GenTests(api):
                                                summary_markdown=summary))),
       api.post_check(post_process.DoesNotRun,
                      'update manifest ref refs/heads/green.git push'),
-      collect_builds=collect,
+      collect_builds=green_build_results,
       with_manifest_refs=True,
       with_history=True,
       status='FAILURE',
@@ -214,8 +214,8 @@ def GenTests(api):
                   status=common_pb2.SUCCESS,
                   summary_markdown=one_non_crit_fail_summary))),
       api.step_data('run builds.collect.wait',
-                    retcode=1), collect_builds=data.builds,
-      collect_timeout=True, with_manifest_refs=True, with_history=True)
+                    retcode=1), collect_builds=collect, collect_timeout=True,
+      with_manifest_refs=True, with_history=True)
 
   input_props = {
       '$chromeos/cros_test_plan_v2': {
@@ -292,7 +292,7 @@ def GenTests(api):
       data.ctp_failure,
       input_properties=input_props_with_generate_ctpv1_format,
       builder='cq-orchestrator',
-      collect_builds=data.builds,
+      collect_builds=green_build_results,
       with_manifest_refs=True,
       with_history=True,
       extra_changes=gerrit_changes,

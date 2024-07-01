@@ -170,15 +170,13 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                      android_branch='android-branch', submit_uprev=True),
       api.post_check(post_process.MustRun, 'run builds'),
       api.post_check(post_process.MustRun,
-                     'commit and generate CL.submit CL 1'), with_history=True,
-      collect_builds=data.builds)
+                     'commit and generate CL.submit CL 1'))
 
   yield api.orch_menu.test(
       'no-submit', data.ctp_normal,
       api.properties(android_package='android-package'),
       api.post_check(post_process.DoesNotRun,
-                     'commit and generate CL.submit CL 1'), with_history=True,
-      collect_builds=data.builds)
+                     'commit and generate CL.submit CL 1'))
 
   yield api.orch_menu.test('android-package-not-set', status='FAILURE')
 
@@ -193,8 +191,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       'always-build', data.ctp_normal,
       api.properties(android_package='android-package', always_build=True),
       api.android.set_write_lkgb_response(modified_files=[]),
-      api.post_check(post_process.MustRun, 'run builds'), with_history=True,
-      collect_builds=data.builds)
+      api.post_check(post_process.MustRun, 'run builds'))
 
   yield api.orch_menu.test('build-failure', data.ctp_normal,
                            api.properties(android_package='android-package'),
@@ -203,5 +200,4 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.orch_menu.test('test-failure', data.ctp_failure,
                            api.properties(android_package='android-package'),
-                           with_history=True, collect_builds=data.builds,
                            status='FAILURE')

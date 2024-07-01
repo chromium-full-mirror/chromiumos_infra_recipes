@@ -146,9 +146,7 @@ def GenTests(api: RecipeTestApi):
 
   data = api.orch_menu.standard_test_data()
 
-  yield api.orch_menu.test('basic', data.ctp_normal,
-                           with_history=True, collect_builds=data.builds,
-                           with_manifest_refs=True)
+  yield api.orch_menu.test('basic', data.ctp_normal, with_manifest_refs=True)
 
   def get_public_orch():
     output = build_pb2.Build.Output()
@@ -196,7 +194,6 @@ def GenTests(api: RecipeTestApi):
                      ['$chromeos/metadata', 'sources_gitiles_commit_override']),
       builder='release-main-orchestrator',
       with_history=True,
-      collect_builds=data.builds,
       with_manifest_refs=True,
       sheriff_rotations=['chromeos'],
       bot_size='medium')
@@ -229,7 +226,6 @@ def GenTests(api: RecipeTestApi):
                      'set up orchestrator.schedule public build'),
       builder='release-main-orchestrator',
       with_history=True,
-      collect_builds=data.builds,
       with_manifest_refs=True,
       bot_size='medium')
 
@@ -248,8 +244,8 @@ def GenTests(api: RecipeTestApi):
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),
                       use_external_source_cache=True)
-          }), builder='public-main-orchestrator', with_history=True,
-      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+          }), builder='public-main-orchestrator', with_manifest_refs=True,
+      bot_size='medium')
 
   # Needed to check `cros_source` instantiation in extra_child_props.
   yield api.orch_menu.test(
@@ -258,8 +254,8 @@ def GenTests(api: RecipeTestApi):
           **{
               '$chromeos/cros_source':
                   CrosSourceProperties(use_external_source_cache=True)
-          }), builder='public-main-orchestrator', with_history=True,
-      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+          }), builder='public-main-orchestrator', with_manifest_refs=True,
+      bot_size='medium')
 
   yield api.orch_menu.test(
       'factory-orchestrator', data.ctp_normal,
@@ -270,18 +266,16 @@ def GenTests(api: RecipeTestApi):
                       sync_to_manifest=ManifestLocation(
                           manifest_gs_path='gs://foo/bar.xml'),
                       use_external_source_cache=True)
-          }), builder='factory-corsola-15197.B-orchestrator', with_history=True,
-      collect_builds=data.builds, with_manifest_refs=True, bot_size='medium')
+          }), builder='factory-corsola-15197.B-orchestrator',
+      with_manifest_refs=True, bot_size='medium')
 
   yield api.orch_menu.test('orchestrator-with-follow_on', data.ctp_normal,
-                           collect_builds=data.builds,
                            follow_on_orch=data.follow_on_orchestrator,
                            bucket='toolchain',
                            builder='artifact-generate-orchestrator')
 
   yield api.orch_menu.test('missing-gitiles-commit-with-defaults',
-                           data.ctp_normal,
-                           collect_builds=data.builds, revision=None,
+                           data.ctp_normal, revision=None,
                            with_manifest_refs=True)
 
   yield api.orch_menu.test(
