@@ -421,11 +421,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
     self._collect_remaining_children()
 
     with self.m.step.nest('clean up orchestrator'):
-      # Recheck the BuilderConfigs at HEAD, one last time, to see if any
-      # failed builders are now noncritical.
-      self._non_critical_build_check('final build criticality update',
-                                     self.builds_status.completed_builds,
-                                     self.builds_status.failures)
       self.m.greenness.print_step()
       # Set child output ids if any
       self.add_child_info_to_output_property()
@@ -461,22 +456,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
         b for b in builds if b.critical == common_pb2.YES and
         b.status == common_pb2.SUCCESS and self.cq_relevant(b)
     ])
-
-  def _non_critical_build_check(self, step_name, builds, failures):
-    """Update failures based on the current criticality of the builders.
-
-    Args:
-      step_name (str): the name for the step.
-      builds (list[Build]): Builds to review.
-      failures (list[Failure]): Failures to review.
-    """
-    with self.m.step.nest(step_name) as presentation:
-      self.m.cros_infra_config.force_reload()
-      configs = self.m.cros_infra_config.safe_get_builder_configs(
-          [b.builder.builder for b in builds])
-      failures = self.m.failures.update_non_critical_build_failures(
-          failures, configs, presentation)
-      self.builds_status.update(failures=failures, configs=configs)
 
   def _wait_for_inflight_orchestrator(self):
     """If there is an inflight orchestrator, wait for it."""
@@ -610,15 +589,12 @@ class OrchMenuApi(recipe_api.RecipeApi):
       return list(testable_builds)
 
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
-                            check_critical_step_name=None,
                             extra_child_props=None):
     """Plan, schedule, and run child builders.
 
     Args:
       run_step_name (str): Name for "run builds" step, or None.
       results_step_name (str): Name for "check build results" step, or None.
-      check_critical_step_name (str): Name for "non-critical build check" step,
-        or None.
       extra_child_props (dict): If set, extra properties to append to the child
         builder requests.
     Returns:
@@ -665,9 +641,8 @@ class OrchMenuApi(recipe_api.RecipeApi):
               self.m.checkpoint.builder_children()).values()
           collect_after = []
 
-    self._collect_and_check_build_results(
-        completed_builds, results_step_name=results_step_name,
-        check_critical_step_name=check_critical_step_name)
+    self._collect_and_check_build_results(completed_builds,
+                                          results_step_name=results_step_name)
     successful_child_bbids = self.m.checkpoint.successful_builder_children_bbids(
     )
     if self.m.checkpoint.is_run_step(
@@ -677,9 +652,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
         previously_successful_builds = self.m.buildbucket.get_multi(
             successful_child_bbids).values()
         completed_builds += previously_successful_builds
-        self._collect_and_check_build_results(
-            previously_successful_builds,
-            check_critical_step_name=check_critical_step_name)
+        self._collect_and_check_build_results(previously_successful_builds)
 
     self._builds_status.update(running=collect_after)
     self.m.greenness.update_build_info(completed_builds)
@@ -697,8 +670,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
     return ('relevant_build' not in build.output.properties or
             build.output.properties['relevant_build'])
 
-  def _collect_and_check_build_results(self, builds, results_step_name=None,
-                                       check_critical_step_name=None):
+  def _collect_and_check_build_results(self, builds, results_step_name=None):
     with self.m.step.nest(results_step_name or 'check build results') as pres:
       # Add the newly completed builds to build_status.
       self.builds_status.update(completed=builds)
@@ -731,12 +703,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
           builds, relevant_child_builder_names=self.relevant_child_builder_names
       ).failures
       self.builds_status.update(failures=failures)
-
-    # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
-    # non-critical.
-    self._non_critical_build_check(
-        check_critical_step_name or 'non-critical build check', builds,
-        failures)
 
   def _get_child_specs(self):
     """Get the list of child specs this builder should run.

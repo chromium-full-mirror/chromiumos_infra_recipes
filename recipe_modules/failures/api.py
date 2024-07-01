@@ -16,7 +16,6 @@ import re
 from typing import Dict, List, Optional, Tuple
 from google.protobuf import json_format
 
-from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
 from PB.recipe_engine import result as result_pb2
@@ -25,7 +24,6 @@ from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
 from PB.recipe_modules.chromeos.failures.failures import PackageFailure
 from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
-from recipe_engine.engine_types import StepPresentation
 from recipe_engine.recipe_api import RecipeApi
 
 
@@ -555,39 +553,6 @@ class FailuresApi(RecipeApi):
     """
     return (self.get_build_status(build) != bb_common_pb2.SUCCESS and
             self.m.buildbucket.is_critical(build))
-
-  def update_non_critical_build_failures(self, failures: List[Failure],
-                                         fresh_builder_configs: Dict[str, BuilderConfig],
-                                         presentation: Optional[StepPresentation] = None) -> List[Failure]:
-    """If builders are now non-critical or removed, failures are non-fatal.
-
-    Args:
-      failures: All failures encountered during execution.
-      fresh_builder_configs: name to builder config for all BuilderConfigs that
-        for all BuilderConfigs that should have criticality checked.
-      presentation: Parent step presentation.  If None, a StepPresentation will
-        be created.
-
-    Returns:
-      The list of Failures with 'fatal' statuses possibly updated.
-    """
-    updated_failures = []
-    new_non_critical_builds = []
-    for f in failures:
-      fatal = f.fatal
-      if f.kind == 'build':
-        if f.id in fresh_builder_configs:
-          cfg = fresh_builder_configs[f.id]
-          non_critical = cfg.general.critical and not cfg.general.critical.value
-        if f.fatal and non_critical:
-          new_non_critical_builds.append(f.id)
-          fatal = False
-      updated_failures.append(
-          Failure(kind=f.kind, title=f.title, link_map=f.link_map, fatal=fatal,
-                  id=f.id, type=f.type, failure_reason=f.failure_reason))
-    if new_non_critical_builds:
-      presentation.logs['new non-critical builders'] = new_non_critical_builds
-    return updated_failures
 
   def format_step_failures(self, step_failures):
     """Helper function to format the collected failures for presentation.

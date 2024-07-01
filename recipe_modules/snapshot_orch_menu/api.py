@@ -216,32 +216,14 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
             pres.status = self.m.step.WARNING
             pres.text = 'failed to push. continuing'
 
-  def _non_critical_build_check(self, step_name, builds, failures):
-    """Update failures based on the current criticality of the builders.
-
-    Args:
-      step_name (str): the name for the step.
-      builds (list[Build]): Builds to review.
-      failures (list[Failure]): Failures to review.
-    """
-    with self.m.step.nest(step_name) as presentation:
-      self.m.cros_infra_config.force_reload()
-      configs = self.m.cros_infra_config.safe_get_builder_configs(
-          [b.builder.builder for b in builds])
-      failures = self.m.failures.update_non_critical_build_failures(
-          failures, configs, presentation)
-      self.builds_status.update(failures=failures, configs=configs)
-
   def plan_and_run_children(self, run_step_name=None, results_step_name=None,
-                            check_critical_step_name=None,
                             extra_child_props=None):
     """Plan, schedule, and run child builders.
 
     Args:
       run_step_name (str): Name for "run builds" step, or None.
       results_step_name (str): Name for "check build results" step, or None.
-      check_critical_step_name (str): Name for "non-critical build check" step,
-        or None.
+
       extra_child_props (dict): If set, extra properties to append to the child
         builder requests.
     Returns:
@@ -256,9 +238,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
       self.m.orch_menu.add_child_info_to_output_property(
           self._relevant_child_builder_names)
 
-    self._collect_and_check_build_results(
-        completed_builds, results_step_name=results_step_name,
-        check_critical_step_name=check_critical_step_name)
+    self._collect_and_check_build_results(completed_builds,
+                                          results_step_name=results_step_name)
 
     self.m.greenness.update_build_info(completed_builds)
     self.m.greenness.print_step()
@@ -305,8 +286,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     # If relevance tag is not set, assume relevance
     return True
 
-  def _collect_and_check_build_results(self, builds, results_step_name=None,
-                                       check_critical_step_name=None):
+  def _collect_and_check_build_results(self, builds, results_step_name=None):
     with self.m.step.nest(results_step_name or 'check build results'):
       # Add the newly completed builds to build_status.
       self.builds_status.update(completed=builds)
@@ -335,12 +315,6 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
           builds, relevant_child_builder_names=self.relevant_child_builder_names
       ).failures
       self.builds_status.update(failures=failures)
-
-    # Recheck the BuilderConfigs at HEAD to see if any failed builds are now
-    # non-critical.
-    self._non_critical_build_check(
-        check_critical_step_name or 'non-critical build check', builds,
-        failures)
 
   def _get_child_specs(self):
     """Get the list of child specs this builder should run.
