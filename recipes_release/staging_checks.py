@@ -6,16 +6,12 @@
 """This file contains the staging builders (and associated configs) used for
 qualifying recipes releases."""
 
+import datetime
 import re
-import typing
-from typing import Any
-from typing import Callable
-from typing import Dict
-from typing import List
-from typing import Tuple
+from typing import Any, Callable, Dict, List, Tuple, NamedTuple
 
 
-class StagingReCheck(typing.NamedTuple):
+class StagingReCheck(NamedTuple):
   """A tuple containing the project, builder and regex used to search."""
   project: str
   bucket: str
@@ -114,12 +110,11 @@ def merge_conflict_exemption(build: Dict[str, Any]) -> bool:
   return False
 
 
-# TODO(b/299105459): Remove once paygen local signing is stable.
+# TODO: b/299105459 - Remove once paygen local signing is stable.
 def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
-  """Exemption function for paygen-orchs/paygen builds from the prototype
-    staging-atlas-signingnext builder.
+  """Exempt paygen builds from the staging-atlas-signingnext prototype builder.
 
-    See b/299105459 for more context.
+  For more context, see b/299105459.
   """
   if build['input']['properties'].get('builder_name') == 'atlas-signingnext':
     return True
@@ -133,6 +128,26 @@ def atlas_signingnext_exemption(build: Dict[str, Any]) -> bool:
   ] and build['input']['properties'].get('use_split_paygen', False):
     return True
   return False
+
+
+# TODO: b/350474581 - Remove after 2024-07-05.
+def r120_pushimage_exemption(build: Dict[str, Any]) -> bool:
+  """Exempt staging-release-R120 builds that failed during PushImage.
+
+  These builders temporarily failed while calling the build API endpoint
+  ImageService/PushImage due to a permissions issue. This issue was resolved on
+  2024-07-01 UTC. The fix occurred outside of recipes.
+
+  Since the failures are well-understood, won't affect the production builders,
+  and are not caused by a faulty recipes change, this failure mode should not
+  block recipes releases.
+  """
+  if 'release-R120-15662.B' not in build.get('builder', {}).get('builder', ''):
+    return False
+  if build['createTime'] > datetime.datetime(2024, 7, 1,
+                                             tzinfo=datetime.timezone.utc):
+    return False
+  return 'ImageService/PushImage' in build.get('summaryMarkdown', '')
 
 
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
@@ -173,10 +188,12 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     # to check fewer of the branched builders.
     StagingReCheck('chromeos', 'staging',
                    r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption], num_builds=3),
+                   [image_builder_exemption, r120_pushimage_exemption],
+                   num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-zork-release-R(?P<milestone>\d+)-\d+\.B',
-                   [image_builder_exemption], num_builds=3),
+                   [image_builder_exemption, r120_pushimage_exemption],
+                   num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-paygen',
                    [atlas_signingnext_exemption], num_builds=125),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator',
@@ -184,6 +201,6 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
     StagingReCheck('chromeos', 'staging', r'staging-release-triggerer',
                    num_builds=3),
-    # TODO(b/278066948): When lts staging runs are replicated, enable checking them.
+    # TODO: b/278066948 - When lts staging runs are replicated, enable checking them.
     # StagingReCheck('chromeos', 'staging', 'staging-release-R\d+-\d+\.B-cq-orchestrator'),
 )
