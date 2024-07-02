@@ -4442,6 +4442,21 @@
           }
         }
       }
+    },
+    {
+      "id": {
+        "bucket": "firmware",
+        "name": "standalone-firmware",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      }
     }
   ]
 }

@@ -380,6 +380,8 @@ class SigningApi(recipe_api.RecipeApi):
     skipped_artifacts = []
     for artifact_name in sorted(artifact_names):
       try:
+        # TODO(b/350787871): Remove when we can call pack_firmware to create our own shellball.
+        gs_dir = 'chromeos-throw-away-bucket/bshai' if artifact_name == 'chromeos-firmwareupdate' else gs_dir
         self.m.gsutil.download(
             gs_dir, artifact_name, self.m.path.join(local_dir, artifact_name),
             name='download {} from {}'.format(artifact_name, gs_dir),
@@ -431,6 +433,11 @@ class SigningApi(recipe_api.RecipeApi):
             'configured'] = 'Downloading artifacts based on signing config: {}'.format(
                 ','.join(signing_configured_artifacts))
 
+      # Local temp dir with artifacts should be group-readable.
+      chmod_cmd = ['sudo', '-n', 'chmod', '-R', 'u=rwx,g=r,-t', local_dir]
+      self.m.step('changing permissions of %s' % local_dir, chmod_cmd,
+                  infra_step=True)
+
       return relevant_signing_configs, local_dir
 
   def stage_paygen_artifacts(self,
@@ -480,8 +487,8 @@ class SigningApi(recipe_api.RecipeApi):
 
   def sign_artifacts(
       self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel']
-  ) -> List[BuildReport.SignedBuildMetadata]:
+      channels: List['common_pb2.Channel'],
+      include_paygen: bool = True) -> List[BuildReport.SignedBuildMetadata]:
     """Implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
@@ -524,7 +531,9 @@ class SigningApi(recipe_api.RecipeApi):
       docker_pull()
 
       gs_dirs = set()
-      gs_dirs.update(self.stage_paygen_artifacts(build_target_config, channels))
+      if include_paygen:
+        gs_dirs.update(
+            self.stage_paygen_artifacts(build_target_config, channels))
       gs_dirs.update(
           self.upload_unsigned_artifacts(archive_dir, build_target_config,
                                          channels))

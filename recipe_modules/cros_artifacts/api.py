@@ -26,15 +26,27 @@ from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
 ARTIFACTS_BY_IMAGE_TYPE = {
-    common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: 'firmware_from_source.tar.bz2',
-    common_pb2.IMAGE_TYPE_ACCESSORY_USBPD: 'firmware_from_source.tar.bz2',
-    common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
-    common_pb2.IMAGE_TYPE_FACTORY: 'factory_image.zip',
-    common_pb2.IMAGE_TYPE_FIRMWARE: 'firmware_from_source.tar.bz2',
-    common_pb2.IMAGE_TYPE_GSC_FIRMWARE: 'firmware_from_source.tar.bz2',
-    common_pb2.IMAGE_TYPE_HPS_FIRMWARE: 'firmware_from_source.tar.bz2',
-    common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',
-    common_pb2.IMAGE_TYPE_TEST: 'chromiumos_test_image.tar.xz',
+    common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG:
+        'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_ACCESSORY_USBPD:
+        'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_BASE:
+        'chromiumos_base_image.tar.xz',
+    common_pb2.IMAGE_TYPE_FACTORY:
+        'factory_image.zip',
+    common_pb2.IMAGE_TYPE_FIRMWARE:
+        'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_GSC_FIRMWARE:
+        'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_HPS_FIRMWARE:
+        'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_RECOVERY:
+        'recovery_image.tar.xz',
+    # TODO(b/352625756): Determine pre-signing artifact name.
+    common_pb2.IMAGE_TYPE_SHELLBALL:
+        'chromeos-firmwareupdate',
+    common_pb2.IMAGE_TYPE_TEST:
+        'chromiumos_test_image.tar.xz',
 }
 
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in
