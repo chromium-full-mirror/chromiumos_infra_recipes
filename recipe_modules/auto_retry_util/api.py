@@ -183,6 +183,7 @@ def _lfg_skipped(cq_orch: build_pb2.Build) -> bool:
       LooksForGreenStatus.STATUS_SKIPPED_STACKED_CHANGES,
       LooksForGreenStatus.STATUS_SKIPPED_DISALLOW,
       LooksForGreenStatus.STATUS_SKIPPED_MERGE_COMMIT,
+      LooksForGreenStatus.STATUS_SKIPPED_FAILED_CHERRY_PICK,
   )
 
 
