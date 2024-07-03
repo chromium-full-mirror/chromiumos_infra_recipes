@@ -221,10 +221,6 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
         f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
         f' {uprev_change_data.status}')
 
-    in_cq2 = ((uprev_change_data.status == 'NEW') and
-              any(vote['value'] == 2
-                  for vote in uprev_change_data.labels['Commit-Queue']['all']))
-
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
     failed_builds = []
@@ -266,13 +262,11 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
              'chrome + LKGM CrOS. The test is independent from CQ testing.\n\n')
     if failed_builds:
       text += 'The pre-uprev test is NOT passed. '
-      if in_cq2:
-        text += 'Dropping the CQ+2 vote. '
 
       text += (
           'Please check the result of failed builders. If failures are real, '
           'please fix them and trigger (or wait) next uprev. If not, please '
-          'ignore and add CR+2.\n\n'
+          'set Verified+1 and add CR+2 manually.\n\n'
           'See http://go/cros-gardening-preuprev-test for detail.')
     else:
       text += 'The test is PASSED. No action required. Please wait for the result from CQ.'
@@ -290,9 +284,18 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
                                 change=uprev_cl_number)
     api.gerrit.add_change_comment_remote(uprev_change, text)
 
-    # Drop CR+2 if it has, by overriding it with CR+1.
-    if failed_builds and in_cq2:
-      api.gerrit.set_change_labels_remote(uprev_change, {Label.CODE_REVIEW: 1})
+    # Clear Bot-Commit set by pupr generator.
+    # This would clear any overrides of Code-Review or Verified from Bot-Commit.
+    # Setting up Code-Review+1 alone won't stop automatic submission as Bot-Commit
+    # will override Code-Review(except -2) and Verified(except -1)
+    # We cannot do Verified-1 since it will require gardeners to rebase the CL to
+    # clear it. Rebasing the CL will change CL owner to the person and the person
+    # may not have Code-Owners on modified files.
+    if failed_builds:
+      api.gerrit.set_change_labels_remote(uprev_change, {
+          Label.BOT_COMMIT: 0,
+          Label.CODE_REVIEW: 1,
+      })
 
     overall_summary = (
         'Add a message to ' +

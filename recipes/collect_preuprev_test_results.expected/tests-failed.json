@@ -1324,7 +1324,7 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Dropping the CQ+2 vote. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please ignore and add CR+2.@@@",
+      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
       "@@@STEP_LOG_END@generated message@@@"
@@ -1474,7 +1474,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Dropping the CQ+2 vote. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please ignore and add CR+2.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 1 builds failed\\n\\n---\\n\\nFailed builds (1 of 1 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1498,7 +1498,7 @@
     "name": "Add a comment to the uprev CL.set labels on CL 123456",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Code-Review\": 1}@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Code-Review\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
     ]
@@ -1574,7 +1574,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"labels\": {\"Code-Review\": 1}}",
+      "{\"labels\": {\"Bot-Commit\": 0, \"Code-Review\": 1}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
