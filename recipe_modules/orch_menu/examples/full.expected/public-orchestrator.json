@@ -2137,6 +2137,134 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CACHE]/chromeos/.repo/repo",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CACHE]/chromeos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "set up orchestrator.sync cached directory.ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "find",
       ".repo/",

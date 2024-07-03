@@ -2080,6 +2080,86 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "source cache update.sync mounted cache directories (3).ensure synced checkout.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories (3).ensure synced checkout.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos/.repo/repo",
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories (3).ensure synced checkout.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories (3).ensure synced checkout.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/snapshot/chromiumos",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "name": "source cache update.sync mounted cache directories (3).ensure synced checkout.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "--event-log=[CLEANUP]/event_log__tmp_2",

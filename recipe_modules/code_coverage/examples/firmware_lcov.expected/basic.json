@@ -2134,6 +2134,134 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sync to gitiles commit.repo binary update",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync to gitiles commit.repo binary update.repo version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout",
+      "--force"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync to gitiles commit.repo binary update.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "selfupdate"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync to gitiles commit.repo binary update.repo selfupdate",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "version"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sync to gitiles commit.repo binary update.repo version (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "RECIPE_REPO[depot_tools]/repo",
       "--event-log=[CLEANUP]/event_log__tmp_2",

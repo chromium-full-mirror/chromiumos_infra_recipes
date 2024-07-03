@@ -13,7 +13,7 @@ from collections import namedtuple
 import distutils.version  # pylint: disable=no-name-in-module
 import json
 import re
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Set, Union
 from xml.etree import cElementTree as ElementTree
 
 from google.protobuf.json_format import MessageToDict
@@ -61,7 +61,7 @@ class RepoApi(recipe_api.RecipeApi):
     self._disable_source_cache_health = properties.disable_source_cache_health
     self._disable_repo_verify = properties.disable_repo_verify
     self._default_repo_url = properties.default_repo_url
-    self._binary_updated = False
+    self._repo_roots_with_updated_binary: Set[Path] = set()
     self._repo_url = None
     self._repo_rev = None
 
@@ -1086,7 +1086,7 @@ class RepoApi(recipe_api.RecipeApi):
       root_path: Path to the repo root.
       verify_repo: Whether to verify the signature on repo.
     """
-    if self._binary_updated:
+    if root_path in self._repo_roots_with_updated_binary:
       return
     with self.m.step.nest('repo binary update'):
       self.version()
@@ -1115,4 +1115,4 @@ class RepoApi(recipe_api.RecipeApi):
           # will noop and thus avoid the broken codepath.
           self._step(cmd, ok_ret={0})
       self.version()
-      self._binary_updated = True
+      self._repo_roots_with_updated_binary.add(root_path)
