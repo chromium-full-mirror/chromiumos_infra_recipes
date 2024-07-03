@@ -4381,7 +4381,7 @@
       "-json",
       "-nopage",
       "-n",
-      "1",
+      "1000",
       "-fields",
       "builder,create_time,created_by,critical,end_time,id,infra,input,number,output,start_time,status,update_time",
       "-predicate",

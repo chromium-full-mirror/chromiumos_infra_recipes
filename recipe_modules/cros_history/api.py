@@ -82,12 +82,15 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     # and to make setup tests easily, search_with_multiple_predicates()
     # here as well.
     builds = self.m.buildbucket.search_with_multiple_predicates(
-        [predicate], limit=1, url_title_fn=self.m.naming.get_build_title)
+        [predicate], url_title_fn=self.m.naming.get_build_title)
     if not builds:
       return None
-    assert len(builds) == 1
-    self._cached_annealing_builds[snapshot_id] = builds[0]
-    return builds[0]
+    # If a user relaunches a completed Annealing build, the new build will
+    # inherit the old build's tags, so both will appear in the search results.
+    # Thus, we want to capture the oldest matching build.
+    annealing_build = builds[-1]
+    self._cached_annealing_builds[snapshot_id] = annealing_build
+    return annealing_build
 
   def is_build_broken(self, build_snapshot: str,
                       broken_until_snapshot: str) -> Optional[bool]:
