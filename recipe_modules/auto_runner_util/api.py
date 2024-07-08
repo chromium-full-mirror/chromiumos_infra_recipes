@@ -103,11 +103,15 @@ class EnhancedChangeInfo():
     return self._gerrit_change_obj == other._gerrit_change_obj
 
   def __lt__(self, other: 'EnhancedChangeInfo') -> bool:
-    """Comparison based on recent auto runner CQ count (asc) and updated time (desc).
+    """Comparison based on reviewers, recent auto runner CQ count (asc) and updated time (desc).
 
     Returns:
         bool: True if `self` is less than `other`, False otherwise.
     """
+    # Prefer the cl where a reviewer was added
+    if self.has_reviewers() != other.has_reviewers():
+      return self.has_reviewers()
+
     if (self_count := self.cq_count_from_auto_runner_in_last_day) != (
         other_count := other.cq_count_from_auto_runner_in_last_day):
       return self_count < other_count
