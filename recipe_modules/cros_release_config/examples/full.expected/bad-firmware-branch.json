@@ -17,7 +17,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "bad firmware branch, add descriptor=Rxxx"
+      "humanReason": "bad firmware branch, must match firmware-([a-zA-Z0-9.]+-)+([0-9]+\\.)+B(-[a-z0-9_.-]+)?$"
     },
     "name": "$result"
   }

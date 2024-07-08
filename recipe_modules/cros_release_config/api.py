@@ -7,6 +7,7 @@
 
 import datetime
 import re
+from typing import Optional
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
@@ -50,7 +51,7 @@ TEST_DATA = ReleaseBuilders(builders=[
 
 RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
 MILESTONE_BRANCH_REGEX = r'(?:firmware|release)-R(\d+)-\d+.B'
-
+FIRMWARE_BRANCH_REGEX = r'firmware-([a-zA-Z0-9.]+-)+([0-9]+\.)+B(-[a-z0-9_.-]+)?$'
 
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
   CONFIG_PROJECT = 'chromeos/infra/config'
@@ -61,8 +62,17 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
     self._ccs = properties.ccs
     self._keep_n_milestones = properties.keep_n_milestones
 
-  def _extract_milestone(self, release_branch):
-    res = re.search(MILESTONE_BRANCH_REGEX, release_branch)
+  def _extract_milestone(self, branch: str) -> Optional[int]:
+    """Return the release milestone in the branch name, if there is one.
+
+    Args:
+      branch: A branch name which may or may not contain a milestone number.
+
+    Returns:
+      The milestone number found in the branch name (ex. 127 for a branch
+      containing "R127"), or None if no milestone number is found.
+    """
+    res = re.search(MILESTONE_BRANCH_REGEX, branch)
     if res:
       return int(res.group(1))
     return None
@@ -167,9 +177,14 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       is_firmware_branch = branch.startswith('firmware-')
       if is_firmware_branch:
         with self.m.step.nest('validate firmware branch'):
+          if not re.match(FIRMWARE_BRANCH_REGEX, branch):
+            raise StepFailure('bad firmware branch, must match {}'.format(
+                FIRMWARE_BRANCH_REGEX))
           milestone = self._extract_milestone(branch)
           if not milestone:
-            raise StepFailure('bad firmware branch, add descriptor=Rxxx')
+            # For firmware branches with a milestone in the name, we want to
+            # generate the . config; otherwise, return here.
+            return
 
     with self.m.step.nest('validate CL settings'):
       if not self._reviewers and not auto_submit:

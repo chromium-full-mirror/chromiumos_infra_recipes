@@ -248,7 +248,24 @@ def GenTests(api):
               expected_config(MAIN_BLOCK, BLOCK_EXPIRATION,
                               new_firmware_block(126, 'firmware-R126-12345.B'),
                               BLOCK_3, BLOCK_2, BLOCK_1)
-          ]), api.post_process(post_process.DropExpectation))
+          ]),
+      api.post_check(post_process.StepSuccess, 'update config'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'firmware-branch-android',
+      api.properties(
+          **{
+              'branch':
+                  'firmware-android-foo-12345.678.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='chromeos-firmware@google.com')]),
+          }),
+      api.post_check(post_process.StepSuccess,
+                     'validate branch.validate firmware branch'),
+      api.post_check(post_process.DoesNotRun, 'update config'))
 
   yield api.test(
       'bad-branch',

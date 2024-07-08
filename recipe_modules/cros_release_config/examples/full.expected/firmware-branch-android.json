@@ -1,0 +1,16 @@
+[
+  {
+    "cmd": [],
+    "name": "validate branch"
+  },
+  {
+    "cmd": [],
+    "name": "validate branch.validate firmware branch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "name": "$result"
+  }
+]
