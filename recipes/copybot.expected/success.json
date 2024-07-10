@@ -2504,7 +2504,10 @@
     "name": "Run Copybot.call chromite.api.CopybotService/RunCopybot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@request@{}@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildUrl\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildId\": \"8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
       "@@@STEP_LOG_LINE@response@  \"failure_reason\": \"FAILURE_UNKNOWN\",@@@",
@@ -2521,7 +2524,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{}",
+      "{\n  \"buildUrl\": \"https://cr-buildbucket.appspot.com/build/8945511751514863184\",\n  \"buildId\": \"8945511751514863184\"\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",

@@ -44,6 +44,8 @@ def run_copybot(api: RecipeApi, properties: CopybotProperties):
       nonlocal retcode
       retcode = result
 
+    properties.request.build_id = str(api.buildbucket.build.id)
+    properties.request.build_url = api.buildbucket.build_url()
     response = api.cros_build_api.CopybotService.RunCopybot(
         properties.request,
         retcode_fn=set_retcode,
