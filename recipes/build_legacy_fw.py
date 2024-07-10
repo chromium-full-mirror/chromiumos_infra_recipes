@@ -12,6 +12,8 @@ recipe.
 import re
 from collections import defaultdict
 from contextlib import contextmanager, nullcontext
+from pathlib import Path
+from typing import Dict
 
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.packages import GetTargetVersionsResponse
@@ -45,6 +47,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'gcloud',
     'git',
     'metadata_json',
     'repo',
@@ -54,6 +57,8 @@ DEPS = [
 
 
 PROPERTIES = BuildLegacyFwProperties
+# Return value in case GCS upload fails
+_GCS_PRECONDITION_FAILURE = 412
 _FIRMWARE_TARBALL_NAME = 'firmware_from_source.tar.bz2'
 _FIRMWARE_METADATA_NAME = 'firmware_metadata.jsonpb'
 
@@ -393,6 +398,80 @@ class FirmwareBuilder():
       ])
       self.sdk_call('install packages', cmd=cmd, infra_step=False)
 
+  def _build_per_device_firmware_archive(self, sysroot: Sysroot,
+                                         out_path: Path) -> None:
+    """Build per device AP & EC tarballs
+
+    This function iterates through the build directory and
+    searches for the required AP & EC firmware binaries.
+    Based on the file name regex, it'll find the required
+    binaries and pack individual binary as a separate tarballs.
+    This tarballs will be placed in the out_path provided to
+    the function.
+
+    Args:
+      sysroot: System root directory.
+      out_path: Output path to store the created tarballs.
+
+    """
+    with self.m.step.nest('create per device firmware archives'):
+      # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
+      self.m.file.ensure_directory('create tempdir', out_path)
+
+      # After _BUILD_VERSION_BUILD_DIR_MOVED, chroot/build was migrated to
+      # out/build. dest_path will help to determine where /build/<board_name>
+      # will be within build system.
+      # For versions after Build directory moved, build_path will point to
+      # out path which is outside chroot/
+      if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
+        build_path = self.m.path.abs_to_path(self.m.cros_sdk.chroot.out_path)
+      # We use a different chroot path for versions above
+      # _BUILD_VERSION_TMP_DIR_MOVED, see the sdk_call function.
+      elif self.m.cros_version.version.build >= _BUILD_VERSION_TMP_DIR_MOVED:
+        build_path = self.m.path.abs_to_path(self.m.cros_sdk.chroot.path)
+      else:
+        build_path = self._chroot
+      firmware_dir = build_path / sysroot.path / 'firmware'
+
+      files_list = self.m.file.listdir(
+          'list files', firmware_dir, recursive=True, test_data=[
+              'image-brya.bin', 'brya/ec.bin', 'image-redrix.serial.bin',
+              'firmware/brya0/coreboot.rom'
+          ])
+
+      ap_regex = re.compile(r'/image-([^\W]+)\.bin')
+      build_version = str(self._bcs_version.platform_version)
+
+      for file in files_list:
+        output_name = ''
+        relative_file_path = Path(self.m.path.relpath(file, firmware_dir))
+        # Regular expression to check if required AP Image file is present
+        res = ap_regex.search(str(file))
+        if res and res.group(1):
+          output_name = f'{res.group(1)}.{build_version}.tar.bz2'
+
+        if relative_file_path.name == 'ec.bin':
+          # Compressed file must follow the naming convention
+          # image-{Name}.bin is compressed as {Name}-{version}.tar.bz2
+          # For EC, we extract platform name by directory name.
+          board_name = relative_file_path.parts[-2]
+          output_name = f'{board_name}.EC.{build_version}.tar.bz2'
+
+        # In case File is not AP or EC firmware, skip the compression
+        # and go to next file.
+        if not output_name:
+          continue
+
+        tarball_full_path = out_path / output_name
+
+        create_tarball_cmd = [
+            'tar', 'cvjf',
+            str(tarball_full_path), '--null', '-T', '/dev/stdin',
+            str(file)
+        ]
+
+        self.m.step('create device tarball', cmd=create_tarball_cmd)
+
   def _build_firmware_archive(self, sysroot, out_path):
     with self.m.step.nest('create firmware archive'):
       # This code replicates chromite/service/artifacts.BuildFirmwareArchive.
@@ -401,7 +480,7 @@ class FirmwareBuilder():
       # After _BUILD_VERSION_BUILD_DIR_MOVED, chroot/build was migrated to
       # out/build.
       if self.m.cros_version.version.build >= _BUILD_VERSION_BUILD_DIR_MOVED:
-        # TODO(b/316429012): Update cros_sdk to expose out path as a Path,
+        # TODO: b/316429012 - Update cros_sdk to expose out path as a Path,
         # rather than only as a string.
         dest_path = self.m.cros_sdk._out_path  # pylint: disable=protected-access
         chroot_path = lambda x: x
@@ -526,6 +605,55 @@ class FirmwareBuilder():
       ret['FIRMWARE_TARBALL_INFO'].append(metadata_name)
     return ret
 
+  def _push_to_firmware_bucket(self, build_target: Dict[str, str],
+                               branch: str) -> None:
+    """Push images to firmware bucket.
+
+    This function uses branch name and build target to create
+    per device AP & EC tarballs and uploads it to firmware-image-archive
+    bucket.
+
+    Args:
+       build_target: Name of the build target
+       branch: Branch name for the firmware branch
+    """
+    with self.m.step.nest('push per device FW'):
+      self._ensure_chromite_main()
+      board = build_target.name
+      staging = self._is_staging
+      sysroot = Sysroot(path=f'/build/{build_target.name}',
+                        build_target=build_target)
+      # Defaults have changed over time. Other types are only signed based on
+      # builder config.
+      default_types = [common_pb2.IMAGE_TYPE_FIRMWARE]
+      if self._is_after('7618.0.0'):
+        default_types.append(common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG)
+
+      bucket = ('gs://chromeos-throw-away-bucket'
+                if staging else 'gs://firmware-image-archive')
+
+      temp_path = self.m.path.mkdtemp(prefix='firmware-bucket')
+      temp_path_name = self.m.path.basename(temp_path)
+      temp_dir = self._chroot / 'tmp' / temp_path_name / board
+
+      self._build_per_device_firmware_archive(sysroot, temp_dir)
+
+      tar_list = self.m.file.listdir(
+          'list files', temp_dir, recursive=True,
+          test_data=['foo/ec-private/fingerprint/bar', 'bar/file'])
+
+      for source in tar_list:
+        file_name = self.m.path.basename(source)
+        self.m.gcloud.storage_cp(
+            source,
+            f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}',
+            flags=[
+                '--if-generation-match=0',
+                '--predefined-acl=publicRead',
+            ],
+            ok_ret=(0, 1, _GCS_PRECONDITION_FAILURE),
+        )
+
   def _push_image(self, build_target):
     """Push images."""
     # TODO(b/181786185): As cros_artifacts.push_image evolves, this code should
@@ -645,6 +773,7 @@ class FirmwareBuilder():
                 continue
               all_uploaded.append(bt_uploaded)
               self._push_image(bt)
+              self._push_to_firmware_bucket(bt, branch)
 
     with self.m.failures.ignore_exceptions():
       if self.m.cros_infra_config.config.artifacts.attestation_eligible:
