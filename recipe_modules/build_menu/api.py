@@ -1128,7 +1128,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
     )
     # if builder is run on public bots then add the public repository info.
     # By default it uses private repository info
-    public = builder_config.id.type == BuilderConfig.Id.PUBLIC
+    public = (
+        builder_config.id.type == BuilderConfig.Id.PUBLIC or
+        builder_config.general.manifest == BuilderConfig.General.PUBLIC)
     if public:
       build_test_service_containers_request.repository.hostname = 'us-docker.pkg.dev'
       build_test_service_containers_request.repository.project = 'cros-registry/test-services-publicbuilds'
