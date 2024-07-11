@@ -308,9 +308,11 @@ class CrosPrebuiltsApi(recipe_api.RecipeApi):
           branch_parts[-1] = 'staging'
           branch = '/'.join(branch_parts)
 
-        self.set_binhosts_retry(binhosts, private, key, project, branch,
-                                overriding_max_uris)
-        self.m.git.checkout(current_commit)
+        try:
+          self.set_binhosts_retry(binhosts, private, key, project, branch,
+                                  overriding_max_uris)
+        finally:
+          self.m.git.checkout(current_commit)
 
   # There are instances when, in between fetching from remote and
   # then committing our changes, a different builder can commit its changes.
