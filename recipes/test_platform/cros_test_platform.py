@@ -493,6 +493,15 @@ def _enumerate_non_cft_tests(api, requests):
     return dict(enum_responses.tagged_responses)
 
 
+def _is_autotest_sharding_enabled(api, request):
+  is_experiment_enabled = False
+  if ('chromeos.cros_infra_config.autotest.sharding'
+      in api.cros_infra_config.experiments):
+    is_experiment_enabled = True  # pragma: no cover
+
+  return is_experiment_enabled or request.test_plan.enable_autotest_sharding
+
+
 def _enumerate_cft_tests(api, properties, requests):
   """Resolve CFT requests into list of tests and their metadata.
 
@@ -557,7 +566,7 @@ def _enumerate_cft_tests(api, properties, requests):
         autotest_invocations = _build_tast_invocations(api, properties, r,
                                                        test_suites, suite_name,
                                                        args)
-      elif r.test_plan.enable_autotest_sharding:
+      elif _is_autotest_sharding_enabled(api, r):
         # Sort test cases into test suites to be sharded or skipped based on whether their IDs start with 'tauto.tast'.
         test_cases_skip_shard = []
         test_cases_shard_eligible = []
