@@ -99,6 +99,18 @@ def RunSteps(api, properties):
         presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
         presentation.status = api.step.WARNING
 
+    with api.context(cwd=cipd_dir, infra_steps=True) as presentation:
+      try:
+        md_command = [cmd_path, 'run', '-multidut', '-run-id', run_uuid]
+
+        if not api.cros_infra_config.is_staging:
+          te_command.append('-prod')
+
+        api.step('launch MULTI_DUT tasks', md_command)
+      except Exception as e:  # pragma: no cover # pylint: disable=broad-except
+        presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
+        presentation.status = api.step.WARNING
+
 
 
 def GenTests(api):

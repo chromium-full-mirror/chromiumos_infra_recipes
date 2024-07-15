@@ -93,6 +93,21 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/kron/kron",
+      "run",
+      "-multidut",
+      "-run-id",
+      "test123"
+    ],
+    "cwd": "[START_DIR]/cipd/kron",
+    "infra_step": true,
+    "name": "Execute.launch MULTI_DUT tasks",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "name": "$result"
   }
 ]
