@@ -104,7 +104,7 @@ def RunSteps(api, properties):
         md_command = [cmd_path, 'run', '-multidut', '-run-id', run_uuid]
 
         if not api.cros_infra_config.is_staging:
-          te_command.append('-prod')
+          md_command.append('-prod')
 
         api.step('launch MULTI_DUT tasks', md_command)
       except Exception as e:  # pragma: no cover # pylint: disable=broad-except
