@@ -284,18 +284,27 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
                                 change=uprev_cl_number)
     api.gerrit.add_change_comment_remote(uprev_change, text)
 
-    # Clear Bot-Commit set by pupr generator.
-    # This would clear any overrides of Code-Review or Verified from Bot-Commit.
-    # Setting up Code-Review+1 alone won't stop automatic submission as Bot-Commit
-    # will override Code-Review(except -2) and Verified(except -1)
-    # We cannot do Verified-1 since it will require gardeners to rebase the CL to
-    # clear it. Rebasing the CL will change CL owner to the person and the person
-    # may not have Code-Owners on modified files.
     if failed_builds:
+      # Clear Bot-Commit set by pupr generator.
+      # This would clear any overrides of Code-Review or Verified from
+      # Bot-Commit.  Setting up Code-Review+1 alone won't stop automatic
+      # submission as Bot-Commit will override Code-Review(except -2) and
+      # Verified(except -1)
+      # We cannot do Verified-1 since it will require gardeners to rebase the
+      # CL to clear it. Rebasing the CL will change CL owner to the person and
+      # the person may not have Code-Owners on modified files.
       api.gerrit.set_change_labels_remote(uprev_change, {
           Label.BOT_COMMIT: 0,
           Label.CODE_REVIEW: 1,
       })
+    else:
+      # Add BOT_COMMIT+1 to override Code-Review and Verified, and set
+      # COMMIT_QUEUE+2 to trigger CQ submission.
+      api.gerrit.set_change_labels_remote(uprev_change, {
+          Label.BOT_COMMIT: 1,
+          Label.COMMIT_QUEUE: 2,
+      })
+
 
     overall_summary = (
         'Add a message to ' +
