@@ -33,7 +33,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_MODULE[chromeos::cros_lvfs_mirror]/resources/sync-pulp.py",
-      "https://cdn.fwupd.org/downloads",
+      "https://fwupd.org/downloads",
       "[CACHE]/lvfs",
       "[CACHE]/gs.txt"
     ],

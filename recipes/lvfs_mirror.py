@@ -15,8 +15,9 @@ DEPS = [
 
 def RunSteps(api: RecipeApi):
   api.cros_lvfs_mirror.configure(
-      mirror_address='https://cdn.fwupd.org/downloads',
-      gs_uri='gs://chromeos-localmirror/lvfs')
+      mirror_address='https://fwupd.org/downloads',
+      gs_uri='gs://chromeos-localmirror/lvfs',
+  )
   api.cros_lvfs_mirror.run()
 
 
