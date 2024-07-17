@@ -35,15 +35,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
     self._additional_chrome_pupr_builders = (
         properties.additional_chrome_pupr_builders or [])
 
-    # TODO(b/316010599): Remove after experiment.
-    # Store the result from calling the relevance service in order to compare
-    # with the result of the portage relevance check at the end of the run.
-    self.cros_query_relevant_builders = None
-
-  def initialize(self):
-    self.cros_query_active = ('chromeos.build_plan.cros_query'
-                              in self.m.cros_infra_config.experiments)
-
   # A Git footer that can be included in commit messages to tell the cq run to not
   # recycled builds for that builder.
   DISALLOW_RECYCLED_BUILDS_FOOTER = 'Disallow-Recycled-Builds'
@@ -286,21 +277,16 @@ class BuildPlanApi(recipe_api.RecipeApi):
         with self.m.step.nest('filter builds using cros query') as pres:
           relevant_builders = self.get_relevant_builders(
               necessary_builders, gerrit_changes)
-          # TODO(b/316010599): As we rollout into prod, continue getting data
-          # on runs where it is not active.
-          if not self.cros_query_active:
-            pres.step_text = 'not enabled'
-          else:
-            # Add logging about decisions.
-            skipped_builders = sorted(
-                [b for b in necessary_builders if b not in relevant_builders])
-            pres.step_text = f'filtered out {len(skipped_builders)} builders'
-            pres.logs['skipped builders'] = skipped_builders
-            pres.properties['cros_query_skipped_builders'] = skipped_builders
+          # Add logging about decisions.
+          skipped_builders = sorted(
+              [b for b in necessary_builders if b not in relevant_builders])
+          pres.step_text = f'filtered out {len(skipped_builders)} builders'
+          pres.logs['skipped builders'] = skipped_builders
+          pres.properties['cros_query_skipped_builders'] = skipped_builders
 
-            # Update our lists.
-            necessary_builders = relevant_builders
-            irrelevant_builders.update(skipped_builders)
+          # Update our lists.
+          necessary_builders = relevant_builders
+          irrelevant_builders.update(skipped_builders)
 
         # Public builders can only apply changes to the chromium host.
         # If all CLs are in chrome-internal then we know the build will not be
@@ -316,11 +302,6 @@ class BuildPlanApi(recipe_api.RecipeApi):
       forced_relevant = self.m.cros_relevance.check_force_relevance_footer(
           gerrit_changes, builder_configs)
       necessary_builders = list(set(necessary_builders) | set(forced_relevant))
-      # TODO(b/316010599): If we are dry-running add the forced relevant
-      # builders to this list so we don't dock ourselves for the false
-      # negative.
-      if self.cros_query_relevant_builders is not None:
-        self.cros_query_relevant_builders.extend(forced_relevant)
       # Given the build plan and forced relevancy results, get a list of all
       # necessary child specs. This includes creating child specs for
       # forced relevant and slim cq builds.

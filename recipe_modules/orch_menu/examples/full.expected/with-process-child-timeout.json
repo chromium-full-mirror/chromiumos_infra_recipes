@@ -2379,7 +2379,9 @@
     "name": "run builds.filter builds using cros query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@not enabled@@@"
+      "@@@STEP_TEXT@filtered out 0 builders@@@",
+      "@@@STEP_LOG_END@skipped builders@@@",
+      "@@@SET_BUILD_PROPERTY@cros_query_skipped_builders@[]@@@"
     ]
   },
   {

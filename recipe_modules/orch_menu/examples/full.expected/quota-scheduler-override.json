@@ -3019,7 +3019,9 @@
     "name": "run builds.filter builds using cros query",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@not enabled@@@"
+      "@@@STEP_TEXT@filtered out 0 builders@@@",
+      "@@@STEP_LOG_END@skipped builders@@@",
+      "@@@SET_BUILD_PROPERTY@cros_query_skipped_builders@[]@@@"
     ]
   },
   {
@@ -13538,20 +13540,6 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up orchestrator.set properties",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@collected_builders@[\"\"]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_correctly_predicted_not_relevant@[]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_false_negatives@[\"\"]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_false_positives@[\"amd64-generic-cq\", \"arm-generic-cq\", \"arm-generic-pointless-cq\", \"arm64-generic-cq\", \"atlas-cq\", \"cave-cq\", \"coral-cq\", \"eve-cq\"]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_relevant_builders@[\"amd64-generic-cq\", \"arm-generic-cq\", \"arm-generic-pointless-cq\", \"arm64-generic-cq\", \"atlas-cq\", \"cave-cq\", \"coral-cq\", \"eve-cq\"]@@@",
-      "@@@SET_BUILD_PROPERTY@cros_query_response_was_identical@false@@@",
-      "@@@SET_BUILD_PROPERTY@portage_relevant_builders@[\"\"]@@@"
     ]
   },
   {

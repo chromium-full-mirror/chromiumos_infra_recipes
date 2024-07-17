@@ -346,47 +346,6 @@ class OrchMenuApi(recipe_api.RecipeApi):
       # Set child output ids if any
       self.add_child_info_to_output_property(self._relevant_child_builder_names)
 
-      # TODO(b/316010599): Remove after the experiment.
-      with self.m.failures.ignore_exceptions():
-        if (not self.m.build_plan.cros_query_active and
-            self.m.build_plan.cros_query_relevant_builders is not None):
-
-          # All the builders that were scheduled and collected. Non-critical
-          # builds do not get collected.
-          collected_builders = {
-              x.builder.builder for x in self.builds_status.completed_builds
-          }
-          cros_query_relevant_builders = set(
-              self.m.build_plan.cros_query_relevant_builders)
-
-          portage_relevant_child_builders = set(
-              self._relevant_child_builder_names)
-
-          # CrOS query relevant, but not Portage relevant.
-          cros_query_false_positives = (
-              cros_query_relevant_builders - portage_relevant_child_builders)
-          # Portage relevant, not CrOS query relevant.
-          cros_query_false_negatives = (
-              portage_relevant_child_builders - cros_query_relevant_builders)
-          # Correctly predicated non-relevant builders. Not relevant by both
-          # CrOS query and Portage. This is the impact of CrOS query.
-          correctly_predicted_not_relevant = {
-              x for x in collected_builders
-              if x not in cros_query_relevant_builders and
-              x not in portage_relevant_child_builders
-          }
-
-          self.m.easy.set_properties_step(
-              cros_query_response_was_identical=cros_query_relevant_builders ==
-              portage_relevant_child_builders,
-              collected_builders=sorted(collected_builders),
-              cros_query_relevant_builders=sorted(cros_query_relevant_builders),
-              portage_relevant_builders=sorted(portage_relevant_child_builders),
-              cros_query_false_positives=sorted(cros_query_false_positives),
-              cros_query_false_negatives=sorted(cros_query_false_negatives),
-              cros_query_correctly_predicted_not_relevant=sorted(
-                  correctly_predicted_not_relevant))
-
     successes = {
         'build':
             self._count_successful_critical_relevant_cq_builds(

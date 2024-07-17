@@ -28,8 +28,6 @@ DEPS = [
     'cros_infra_config',
     'cros_lkgm',
     'cros_release',
-    # TODO(b/316010599): Remove after experiment concludes.
-    'cros_relevance',
     'cros_source',
     'cros_tags',
     'cros_test_plan',
