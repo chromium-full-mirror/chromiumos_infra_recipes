@@ -497,6 +497,15 @@ class SigningApi(recipe_api.RecipeApi):
                                     delay=datetime.timedelta(seconds=1))
 
       def docker_pull():
+        # Before pulling, prune the docker cache to remove stopped containers,
+        # and prevent the overlay2 cache from growing over time.
+        self.m.step('docker prune', [
+            'docker',
+            'container',
+            'prune',
+            '--force',
+        ])
+
         # BAPI is hermetic so need to pull down the specified docker image
         # ahead of time.
         self.m.step('docker pull', [
