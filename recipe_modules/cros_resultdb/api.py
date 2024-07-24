@@ -228,6 +228,8 @@ class ResultDBCommand(recipe_api.RecipeApi):
         '-arc-r',
         '-arc-s',
         '-arc-t',
+        '-arc-u',
+        '-arc-v',
         '-borealis',
         '-kernelnext',
         '-manatee-kernelnext',
