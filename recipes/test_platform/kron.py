@@ -64,9 +64,7 @@ def RunSteps(api, properties):
         if not api.cros_infra_config.is_staging:
           nb_command.append('-prod')
 
-        api.step(
-            'launch NEW_BUILD tasks', nb_command,
-            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+        api.step('launch NEW_BUILD tasks', nb_command)
       except Exception as e:  # pragma: no cover # pylint: disable=broad-except
         presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
         presentation.status = api.step.WARNING
@@ -78,9 +76,7 @@ def RunSteps(api, properties):
         if not api.cros_infra_config.is_staging:
           te_command.append('-prod')
 
-        api.step(
-            'launch TIMED_EVENT tasks', te_command,
-            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+        api.step('launch TIMED_EVENT tasks', te_command)
       except Exception as e:  # pragma: no cover # pylint: disable=broad-except
         presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
         presentation.status = api.step.WARNING
@@ -92,9 +88,7 @@ def RunSteps(api, properties):
         if not api.cros_infra_config.is_staging:
           nb_3d_command.append('-prod')
 
-        api.step(
-            'launch NEW_BUILD_3D tasks', nb_3d_command,
-            stdout=api.raw_io.output_text(name='stdout', add_output_log=True))
+        api.step('launch NEW_BUILD_3D tasks', nb_3d_command)
       except Exception as e:  # pragma: no cover # pylint: disable=broad-except
         presentation.step_summary_text = "Unexpected error: '{}'".format(str(e))
         presentation.status = api.step.WARNING

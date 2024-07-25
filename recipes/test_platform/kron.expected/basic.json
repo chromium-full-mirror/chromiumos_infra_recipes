@@ -54,8 +54,7 @@
     "infra_step": true,
     "name": "Execute.launch NEW_BUILD tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -71,8 +70,7 @@
     "infra_step": true,
     "name": "Execute.launch TIMED_EVENT tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -88,8 +86,7 @@
     "infra_step": true,
     "name": "Execute.launch NEW_BUILD_3D tasks",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@raw_io.output_text[stdout]@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
