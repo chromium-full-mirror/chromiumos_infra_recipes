@@ -91,7 +91,7 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.try_build(project='chromeos', git_repo=REPO_URL),
       api.step_data('get current file hashes.read file shimx64.efi',
                     api.file.read_raw('some arbitrary test data')),
-      api.post_check(post_process.ResultReason, 'shim binaries are stale'),
+      api.post_check(post_process.SummaryMarkdown, 'shim binaries are stale'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

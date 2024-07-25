@@ -531,7 +531,7 @@ def GenTests(api):
     ),
     api.expect_exception('RuntimeError'),
     api.post_check(
-      post_process.ResultReasonRE,
+      post_process.SummaryMarkdownRE,
       'Unknown fields found in version format string',
     ),
       api.post_process(post_process.DropExpectation),
@@ -551,7 +551,7 @@ def GenTests(api):
     ),
     api.expect_exception('RuntimeError'),
     api.post_check(
-      post_process.ResultReasonRE,
+      post_process.SummaryMarkdownRE,
       'Invalid tag format',
     ),
       api.post_process(post_process.DropExpectation),
@@ -570,7 +570,7 @@ def GenTests(api):
     ),
     api.expect_exception('RuntimeError'),
     api.post_check(
-      post_process.ResultReasonRE,
+      post_process.SummaryMarkdownRE,
       'Tag is too long',
     ),
       api.post_process(post_process.DropExpectation),

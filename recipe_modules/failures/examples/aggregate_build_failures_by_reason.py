@@ -33,7 +33,7 @@ def GenTests(api):
   builds = [api.test_util.test_child_build('atlas', status='FAILURE').message]
   yield api.test(
       'no-failure-reason', api.properties(BuildProperties(builds=builds)),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 1 build failed\n\n'), status='FAILURE')
 
   builds = [
@@ -50,7 +50,7 @@ def GenTests(api):
   ]
   yield api.test(
       'package-failure', api.properties(BuildProperties(builds=builds)),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 1 builds failed compilation for foo/bar\n\n'),
       status='FAILURE')
 
@@ -70,7 +70,7 @@ def GenTests(api):
       'package-failure-affected-by-changes',
       api.properties(BuildProperties(builds=builds)),
       api.post_check(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           r'1 out of 1 builds failed compilation for foo/bar \(affected by the CLs in the CQ run\)\n\n'
       ), status='FAILURE')
 
@@ -91,7 +91,7 @@ def GenTests(api):
       'package-failure-with-snapshot-comparison',
       api.properties(BuildProperties(builds=builds)),
       api.post_check(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           r'1 out of 1 builds failed compilation for foo/bar \(failure also seen on snapshot builds\)\n\n'
       ), status='FAILURE')
 
@@ -116,7 +116,7 @@ def GenTests(api):
                   }).message
           ])),
       api.post_check(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           r'1 out of 1 builds failed compilation for foo/bar, foo/baz \(affected by the CLs in the CQ run\)\n\n'
       ), status='FAILURE')
 
@@ -143,7 +143,7 @@ def GenTests(api):
       # Does not output fault attribution since the package failures have
       # different values.
       api.post_check(
-          post_process.ResultReasonRE,
+          post_process.SummaryMarkdownRE,
           r'1 out of 1 builds failed compilation for foo/bar, foo/baz\n\n'),
       status='FAILURE')
 
@@ -167,7 +167,7 @@ def GenTests(api):
                       ]
                   }).message
           ])),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      r'1 out of 1 build failed\n\n'), status='FAILURE')
 
   builds = [
@@ -186,9 +186,10 @@ def GenTests(api):
   yield api.test(
       'multiple-failure-reasons-with-some-unknown-still-bubbles-up',
       api.properties(BuildProperties(builds=builds)),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 2 builds failed compilation for foo/bar\n\n'),
-      api.post_check(post_process.ResultReasonRE, '1 other build failures\n\n'),
+      api.post_check(post_process.SummaryMarkdownRE,
+                     '1 other build failures\n\n'),
       status='FAILURE',
   )
 
@@ -226,11 +227,11 @@ def GenTests(api):
   ]
   yield api.test(
       'three-failure-reasons', api.properties(BuildProperties(builds=builds)),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 3 builds failed compilation for foo/bar\n\n'),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 3 builds failed compilation for foo/baz\n\n'),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '1 out of 3 builds failed unit tests for foo/baz\n\n'),
       status='FAILURE')
 
@@ -270,5 +271,5 @@ def GenTests(api):
   yield api.test(
       'more-than-3-failure-reasons-does-not-bubble-up',
       api.properties(BuildProperties(builds=builds)),
-      api.post_check(post_process.ResultReasonRE,
+      api.post_check(post_process.SummaryMarkdownRE,
                      '4 out of 4 builds failed\n\n'), status='FAILURE')

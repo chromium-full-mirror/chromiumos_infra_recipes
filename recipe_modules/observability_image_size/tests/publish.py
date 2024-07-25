@@ -192,7 +192,7 @@ def GenTests(api):
       'no-data-fails',
       test_build(),
       api.post_check(post_process.StepFailure, 'collect image size data'),
-      api.post_check(post_process.ResultReason, 'No images provided.'),
+      api.post_check(post_process.SummaryMarkdown, 'No images provided.'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
@@ -207,7 +207,8 @@ def GenTests(api):
           )),
       api.post_check(post_process.StepFailure,
                      'collect image size data.add version data'),
-      api.post_check(post_process.ResultReason, 'Invalid platform version 1.2'),
+      api.post_check(post_process.SummaryMarkdown,
+                     'Invalid platform version 1.2'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
