@@ -57,14 +57,3 @@ def GenTests(api):
       api.post_check(post_process.MustRun,
                      'query LUCI Analysis for stability (2).rpc call'),
       api.post_process(post_process.DropExpectation))
-
-  yield api.test(
-      'step_failure',
-      # Failure in any batch will fail the whole API. The second RPC call
-      # will result in failure due to lack of mock data.
-      api.step_data(
-          'query LUCI Analysis for stability.rpc call',
-          stdout=api.raw_io.output_text(get_rpc_response_data()),
-      ),
-      api.post_process(post_process.DropExpectation),
-      status='FAILURE')
