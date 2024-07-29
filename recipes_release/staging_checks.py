@@ -195,7 +195,7 @@ RELEASE_BUNDLE_STAGING_CHECKS_RE = (
                    [image_builder_exemption, r120_pushimage_exemption],
                    num_builds=3),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-mpa',
-                   [atlas_signingnext_exemption], num_builds=25),
+                   [atlas_signingnext_exemption], num_builds=20),
     StagingReCheck('chromeos', 'staging', r'staging-paygen-orchestrator-mpa',
                    [atlas_signingnext_exemption], num_builds=10),
     StagingReCheck('chromeos', 'staging', r'staging-release-main-orchestrator'),
