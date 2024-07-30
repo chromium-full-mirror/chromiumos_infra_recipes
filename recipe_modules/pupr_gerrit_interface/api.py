@@ -16,6 +16,7 @@ from PB.recipes.chromeos.generator import ABANDON
 from PB.recipes.chromeos.generator import BranchPolicy
 from PB.recipes.chromeos.generator import CR_REJECT
 from PB.recipes.chromeos.generator import DRY_RUN
+from PB.recipes.chromeos.generator import DRY_RUN_NOT_APPROVED
 from PB.recipes.chromeos.generator import FULL_RUN
 from PB.recipes.chromeos.generator import NO_RETRY
 from PB.recipes.chromeos.generator import OUTDATED_ABANDON
@@ -289,10 +290,16 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         ]
 
         message_lines.append({
-            DRY_RUN: 'Therefore, marking CL as CQ+1',
-            FULL_RUN: 'Therefore, marking CL as CQ+2',
-            ABANDON: 'Therefore, abandoning the CL',
-            SUBMIT: 'Therefore, will attempt to directly submit the CL.',
+            DRY_RUN:
+                'Therefore, marking CL as CQ+1',
+            DRY_RUN_NOT_APPROVED:
+                'Therefore, marking CL as CQ+1 without Bot-Commit',
+            FULL_RUN:
+                'Therefore, marking CL as CQ+2',
+            ABANDON:
+                'Therefore, abandoning the CL',
+            SUBMIT:
+                'Therefore, will attempt to directly submit the CL.',
         }.get(
             send_to_cq_policy,
             'Therefore, will NOT mark CL as CQ+1/CQ+2. Reviewers must do so. '
@@ -309,6 +316,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         labels = {
             DRY_RUN: {
                 Label.BOT_COMMIT: 1,
+                Label.COMMIT_QUEUE: 1,
+            },
+            DRY_RUN_NOT_APPROVED: {
                 Label.COMMIT_QUEUE: 1,
             },
             FULL_RUN: {

@@ -43,6 +43,10 @@ enum SendToCqPolicy {
 
   // Submit the CL directly.
   SUBMIT = 5;
+
+  // Send the CL through a CQ dry run, and leave the CL not approved.
+  // The CL must be approved by other job or by human.
+  DRY_RUN_NOT_APPROVED = 6;
 }
 
 // Describes what to do when PUpr finds CLs that are still open but

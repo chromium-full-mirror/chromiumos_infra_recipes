@@ -674,6 +674,15 @@ def GenTests(
   )
 
   yield _with_infos(
+      'with-uprev-dry-run-not-approved-policy',
+      _props(branch_policies=[
+          _policy(existing_cls_policy=generator_pb2.DRY_RUN_NOT_APPROVED)
+      ]),
+      api.scheduler(triggers=[chromite_gitiles_trigger]),
+      api.git.diff_check(True),
+  )
+
+  yield _with_infos(
       'with-uprev-full-run-policy',
       _props(
           branch_policies=[_policy(
