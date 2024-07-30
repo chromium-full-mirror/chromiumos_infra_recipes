@@ -447,7 +447,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return self.download_txt(
         'testingconfig/ctp2_pools',
         step_test_data=self.test_api.ctp2_pools_test_data).decode(
-            'utf-8').split(',')
+            'utf-8').strip().split(',')
 
   def get_dut_tracking_config(self) -> TrackingPolicyCfg:
     """Get TrackingPolicyCfg as defined in infra/config.
