@@ -20,6 +20,7 @@ DEPS = [
     'cros_infra_config',
     'cros_lkgm',
     'cros_release',
+    'cros_snapshot',
     'test_util',
 ]
 
@@ -33,10 +34,13 @@ def RunSteps(api, properties):
       gs_location='gs://chromeos-manifest-versions/buildspecs/')
   api.assertions.assertIsNotNone(api.cros_release.buildspec)
 
-  api.cros_lkgm.schedule_public_build()
-  api.cros_lkgm.collect_public_build()
+  if not properties.skip_public_build:
+    api.cros_lkgm.schedule_public_build()
+    api.cros_lkgm.collect_public_build()
+
   api.cros_lkgm.do_lkgm(properties.release_builds,
-                        use_branch=properties.use_branch)
+                        use_branch=properties.use_branch,
+                        use_snapshot=properties.use_snapshot)
 
 
 def GenTests(api):
@@ -58,33 +62,37 @@ def GenTests(api):
     release_builds = kwargs.pop('release_builds', [])
     public_builds = kwargs.pop('public_builds', None)
     use_branch = kwargs.pop('use_branch', False)
+    skip_public_build = kwargs.pop('skip_public_build', False)
 
-    output = build_pb2.Build.Output()
-    if public_builds is not None:
-      child_build_ids = [
-          str(PUBLIC_BUILDER_START_ID + x) for x in range(len(public_builds))
-      ]
-      output.properties.update({'child_builds': child_build_ids})
-    public_orch_status = kwargs.pop('public_orch_status', common_pb2.SUCCESS)
-    public_orch = build_pb2.Build(id=8922054662172514000, output=output,
-                                  status=public_orch_status)
+    if not skip_public_build:
+      output = build_pb2.Build.Output()
+      if public_builds is not None:
+        child_build_ids = [
+            str(PUBLIC_BUILDER_START_ID + x) for x in range(len(public_builds))
+        ]
+        output.properties.update({'child_builds': child_build_ids})
+      public_orch_status = kwargs.pop('public_orch_status', common_pb2.SUCCESS)
+      public_orch = build_pb2.Build(id=8922054662172514000, output=output,
+                                    status=public_orch_status)
 
-    args = list(args)
-    args.append(
-        api.buildbucket.simulated_collect_output(
-            [public_orch], step_name='collect public orchestrator.collect'))
-    if public_builds is not None:
+      args = list(args)
       args.append(
-          api.buildbucket.simulated_get_multi(
-              public_builds,
-              step_name='assess LKGM readiness.assess public build results.get public builders',
-          ))
+          api.buildbucket.simulated_collect_output(
+              [public_orch], step_name='collect public orchestrator.collect'))
+      if public_builds is not None:
+        args.append(
+            api.buildbucket.simulated_get_multi(
+                public_builds,
+                step_name='assess LKGM readiness.assess public build results.get public builders',
+            ))
 
     return api.test(
         name,
         api.properties(
             DoLkgmProperties(release_builds=release_builds,
-                             use_branch=use_branch)),
+                             use_branch=use_branch,
+                             skip_public_build=skip_public_build),
+            use_snapshot=kwargs.pop('use_snapshot', False)),
         api.properties(
             **{
                 '$chromeos/cros_lkgm': {
@@ -275,3 +283,24 @@ def GenTests(api):
       release_builds=create_builds(1, 0),
       public_builds=create_builds(1, 0, start_id=PUBLIC_BUILDER_START_ID),
       use_branch=True, simulate_absence_of_chromium_branch=True, full_run=True)
+
+  yield lgkm_test(
+      'snapshot',
+      api.test_util.test_orchestrator(bucket='postsubmit',
+                                      builder='snapshot-orchestrator').build,
+      api.cros_snapshot.simulated_snapshot_identifier(
+          9999999, 'create buildspec.read chromeos version.read snapshot'),
+      api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
+                     'LKGM candidate'), release_builds=create_builds(2, 1),
+      skip_public_build=True, full_run=True, use_snapshot=True)
+
+  yield lgkm_test(
+      'snapshot-not-candidate',
+      api.test_util.test_orchestrator(bucket='postsubmit',
+                                      builder='snapshot-orchestrator').build,
+      api.cros_snapshot.simulated_snapshot_identifier(
+          9999999, 'create buildspec.read chromeos version.read snapshot'),
+      api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
+                     'not an LKGM candidate'),
+      release_builds=create_builds(1, 2), skip_public_build=True, full_run=True,
+      use_snapshot=True)

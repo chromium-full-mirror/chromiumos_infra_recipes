@@ -87,8 +87,7 @@ def GenTests(api):
 
   yield api.test(
       'another-snapshot-identifier',
-      api.git_footers.simulated_get_footers(['9999999'],
-                                            'read snapshot identifier'),
+      api.cros_snapshot.simulated_snapshot_identifier(9999999),
       api.properties(
           TestInputProperties(
               expected_snapshot_identifier='9999999',

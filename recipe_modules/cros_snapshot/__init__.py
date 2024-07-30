@@ -8,11 +8,12 @@
 from PB.recipe_modules.chromeos.cros_snapshot.cros_snapshot import CrosSnapshotProperties
 
 DEPS = [
-    'recipe_engine/step',
     'recipe_engine/context',
+    'recipe_engine/properties',
+    'recipe_engine/step',
     'cros_infra_config',
-    'src_state',
     'git_footers',
+    'src_state',
 ]
 
 PROPERTIES = CrosSnapshotProperties

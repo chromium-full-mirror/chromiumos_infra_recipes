@@ -13,6 +13,7 @@ DEPS = [
     'cros_infra_config',
     'cros_release',
     'cros_schedule',
+    'cros_snapshot',
     'cros_source',
     'cros_version',
 ]

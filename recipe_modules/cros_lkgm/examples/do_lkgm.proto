@@ -14,4 +14,10 @@ message DoLkgmProperties {
 
   // Whether to pass `use_branch` to do_lkgm.
   bool use_branch = 2;
+
+  // Whether to skip public builds on preparation.
+  bool skip_public_build = 3;
+
+  // Whether to pass `use_snapshot` to do_lkgm.
+  bool use_snapshot = 4;
 }

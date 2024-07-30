@@ -6,8 +6,11 @@
 
 """Module for ChromeOS LKGM (Last Known Good Manifest)."""
 
+from typing import List
+
 from google.protobuf.json_format import MessageToDict
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
@@ -124,16 +127,19 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         success_percent, successful_builds, total_builds,
         self._builder_threshold_percentage)
 
-  def do_lkgm(self, release_build_results, use_branch=False):
+  def do_lkgm(self, release_build_results: List[build_pb2.Build],
+              use_branch: bool = False, use_snapshot: bool = False):
     """Performs the LGKM process if the build is an LKGM candidate.
 
     This should only be called from a release orchestrator.
 
     Args:
-      release_build_results (list(common_pb2.Build)): list of release build
+      release_build_results (list(build_pb2.Build)): list of release build
         results as returned by api.orch_menu.plan_and_run_children.
       use_branch (bool): if set, upload the LKGM CL to the Chrome branch
         (e.g. refs/branch-heads/5204) instead of ToT.
+      use_snapshot (bool): If set, generate a LKGM CL with snapshot identifier.
+        Can't use this with use_branch at the same time.
     """
     if not self._enable_lkgm:
       return
@@ -145,6 +151,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
     branch = None
     if use_branch:
+      assert not use_snapshot, 'Should not use both branch and snapshot flags'
       milestone = self.m.cros_version.version.milestone
       branch = self.m.cros_schedule.get_chrome_branch(milestone)
       if branch is None:
@@ -156,12 +163,17 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                           step_text=step_text)
         return
 
+    version_str = self.m.cros_version.version.platform_version
+    if use_snapshot and self.m.cros_snapshot.is_snapshot_build():
+      snapshot_identifier = self.m.cros_snapshot.snapshot_identifier()
+      version_str += f'-{snapshot_identifier}'
+
     script_path = self.m.cros_source.workspace_path.joinpath(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
     cmd = [
         script_path,
         '--lkgm',
-        self.m.cros_version.version.platform_version,
+        version_str,
         '--buildbucket-id',
         self.m.buildbucket.build.id,
     ]
@@ -213,6 +225,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
             'release builds: ' + self._build_result_text(release_build_results)
         if success_percent < self._builder_threshold_percentage:
           result = False
+
+    if not self.has_public_build:
+      return result
 
     with self.m.step.nest('assess public build results') as presentation:
       output_props = self._public_build_results.output.properties

@@ -22,6 +22,7 @@ DEPS = [
     'orch_menu',
     'snapshot_orch_menu',
     'cros_snapshot',
+    'cros_lkgm',
 ]
 
 
@@ -53,6 +54,7 @@ def DoRunSteps(api: RecipeApi):
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
+  api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
 
 def GenTests(api: RecipeTestApi):
 
