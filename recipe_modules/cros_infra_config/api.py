@@ -149,14 +149,14 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return {k: True for k in self.experiments}
 
   @property
-  def config(self) -> BuilderConfig:
+  def config(self) -> Optional[BuilderConfig]:
     """Return the config for this builder.
 
     This convenience property wraps cros_infra_config.get_builder_config,
     which caches the data.
 
     Returns:
-      BuilderConfig for this builder.
+      BuilderConfig for this builder, or None if this builder has no config.
     """
     return self.get_builder_config(self.m.buildbucket.build.builder.builder,
                                    missing_ok=True)
@@ -183,11 +183,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return self._is_staging
 
   @property
-  def fresh_config(self) -> BuilderConfig:
+  def fresh_config(self) -> Optional[BuilderConfig]:
     """Return a freshly loaded config for this builder.
 
     Returns:
-      BuilderConfig for this builder, freshly reloaded.
+      BuilderConfig for this builder, freshly reloaded, or None if this builder
+      has no config.
     """
     # Have cros_infra_config reload its configs.
     self.force_reload()
@@ -311,7 +312,7 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       *,
       bucket_name: Optional[str] = None,
       missing_ok: bool = False,
-  ) -> BuilderConfig:
+  ) -> Optional[BuilderConfig]:
     """Gets the BuilderConfig for the specified builder from HEAD.
 
     Finds the BuilderConfig whose id.name matches the specified Buildbucket
@@ -335,10 +336,12 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
       missing_ok: Whether to allow a missing config.
 
     Returns:
-      A BuilderConfigs proto.
+      A BuilderConfig proto for this builder if one exists, or None if this
+      builder has no config and missing_ok is True.
 
     Raises:
-      A LookupError if a BuilderConfig is not found for the specified builder.
+      LookupError: If a BuilderConfig is not found for the specified builder,
+        and missing_ok is False.
     """
     if bucket_name:
       if self.m.led.led_build:
@@ -460,7 +463,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
                                self.test_api.dut_tracking_test_data,
                                msg=TrackingPolicyCfg()))
 
-  def _has_valid_commit(self, config: BuilderConfig, commit: GitilesCommit,
+  def _has_valid_commit(self, config: Optional[BuilderConfig],
+                        commit: GitilesCommit,
                         manifest: src_state.ManifestProject) -> bool:
     """Determine if the builder has a valid commit.
 
@@ -488,8 +492,8 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
     return (commit in self.m.src_state.internal_manifest or
             commit in self.m.src_state.external_manifest)
 
-  def _determine_repo_state(self, config: BuilderConfig, commit: GitilesCommit,
-                            changes: List[GerritChange],
+  def _determine_repo_state(self, config: Optional[BuilderConfig],
+                            commit: GitilesCommit, changes: List[GerritChange],
                             choose_branch: bool) -> None:
     """Set _gitiles_commit and _gerrit_changes.
 
