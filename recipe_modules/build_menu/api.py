@@ -1024,7 +1024,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           except recipe_api.StepFailure as e:
             interval_presentation.step_summary_text = "Attempt failed due to unexpected error: '{}'".format(
                 e)
-            self.m.time.sleep(interval)
+            self.m.time.sleep(interval, with_step=True)
             attempt_counter = attempt_counter + 1
             continue
           if response.stdout:
