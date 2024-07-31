@@ -411,7 +411,7 @@
     "cmd": [
       "prpc",
       "call",
-      "luci-analysis.appspot.com",
+      "analysis.api.luci.app",
       "luci.analysis.v1.TestVariants.QueryFailureRate"
     ],
     "name": "Automated Exoneration Analysis.query LUCI Analysis for failure rates.rpc call",
