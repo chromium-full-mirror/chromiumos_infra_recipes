@@ -5787,6 +5787,58 @@
     ]
   },
   {
+    "cmd": [
+      "git",
+      "fetch",
+      "https://chromium.googlesource.com/chromiumos/manifest",
+      "snapshot-HEAD-SHA:"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create sysroot.git fetch",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "log",
+      "FETCH_HEAD~5..FETCH_HEAD",
+      "--pretty=%H"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Create test containers.create sysroot.git log",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Create test containers.create sysroot.call chromite.api.SysrootService/Create",
     "~followup_annotations": [
@@ -5802,6 +5854,15 @@
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"binhostLookupServiceData\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"snapshotShas\": [@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000000\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000001\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000002\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000003\",@@@",
+      "@@@STEP_LOG_LINE@request@      \"deadbeef00000000000000000000000000000004\"@@@",
+      "@@@STEP_LOG_LINE@request@    ]@@@",
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
@@ -5824,7 +5885,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"flags\": {\n    \"chrootCurrent\": true,\n    \"replace\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"buildTarget\": {\n    \"name\": \"amd64-generic\"\n  },\n  \"flags\": {\n    \"chrootCurrent\": true,\n    \"replace\": true\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"binhostLookupServiceData\": {\n    \"snapshotShas\": [\n      \"deadbeef00000000000000000000000000000000\",\n      \"deadbeef00000000000000000000000000000001\",\n      \"deadbeef00000000000000000000000000000002\",\n      \"deadbeef00000000000000000000000000000003\",\n      \"deadbeef00000000000000000000000000000004\"\n    ]\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_13/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -6002,6 +6063,15 @@
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"binhostLookupServiceData\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"snapshotShas\": [@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000000\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000001\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000002\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000003\",@@@",
+      "@@@STEP_LOG_LINE@published event@        \"deadbeef00000000000000000000000000000004\"@@@",
+      "@@@STEP_LOG_LINE@published event@      ]@@@",
       "@@@STEP_LOG_LINE@published event@    }@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"sysrootCreateResponse\": {@@@",
@@ -6023,7 +6093,7 @@
     "name": "Create test containers.create sysroot.call chromite.api.SysrootService/Create.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BOIBTgoPCg1hbWQ2NC1nZW5lcmljEgQIARABIjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dOoBKQonChQvYnVpbGQvYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2NC1nZW5lcmlj0ALQ7IDZrvG1knzaAmNDcmVhdGUgdGVzdCBjb250YWluZXJzfGNyZWF0ZSBzeXNyb290fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI6IDE/QQQgMq17gEiBgjqgMT9BOIBowIKDwoNYW1kNjQtZ2VuZXJpYxIECAEQASI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQy0gEKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDEKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDMKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDTqASkKJwoUL2J1aWxkL2FtZDY0LWdlbmVyaWMSDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJjQ3JlYXRlIHRlc3QgY29udGFpbmVyc3xjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -6055,7 +6125,7 @@
       }
     },
     "name": "Create test containers.create sysroot.call chromite.api.SysrootService/Create.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI6IDE/QQQgMq17gEiBgjqgMT9BOIBTgoPCg1hbWQ2NC1nZW5lcmljEgQIARABIjUKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290MhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dOoBKQonChQvYnVpbGQvYW1kNjQtZ2VuZXJpYxIPCg1hbWQ2NC1nZW5lcmlj0ALQ7IDZrvG1knzaAmNDcmVhdGUgdGVzdCBjb250YWluZXJzfGNyZWF0ZSBzeXNyb290fGNhbGwgY2hyb21pdGUuYXBpLlN5c3Jvb3RTZXJ2aWNlL0NyZWF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI6IDE/QQQgMq17gEiBgjqgMT9BOIBowIKDwoNYW1kNjQtZ2VuZXJpYxIECAEQASI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQy0gEKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDEKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDIKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDMKKGRlYWRiZWVmMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDTqASkKJwoUL2J1aWxkL2FtZDY0LWdlbmVyaWMSDwoNYW1kNjQtZ2VuZXJpY9AC0OyA2a7xtZJ82gJjQ3JlYXRlIHRlc3QgY29udGFpbmVyc3xjcmVhdGUgc3lzcm9vdHxjYWxsIGNocm9taXRlLmFwaS5TeXNyb290U2VydmljZS9DcmVhdGV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

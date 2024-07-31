@@ -122,9 +122,18 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                                          replace=replace,
                                          toolchain_changed=toolchain_cls,
                                          use_cq_prebuilts=use_cq_prebuilts)
+
+      snapshot_shas = self.m.cros_source.fetch_snapshot_shas(count=5)
+      lookup_data = prebuilts_cloud_pb2.BinhostLookupServiceData(
+          snapshot_shas=snapshot_shas,
+          private=self.m.cros_infra_config.config_or_default.artifacts.prebuilts
+          == builder_config_pb2.BuilderConfig.Artifacts.PRIVATE,
+          is_staging=self.m.cros_infra_config.is_staging)
+
       create_sysroot_response = self.m.cros_build_api.SysrootService.Create(
           SysrootCreateRequest(build_target=build_target, profile=profile,
-                               chroot=self.m.cros_sdk.chroot, flags=flags),
+                               chroot=self.m.cros_sdk.chroot, flags=flags,
+                               binhost_lookup_service_data=lookup_data),
           timeout=timeout_sec, test_output_data=test_data)
       self._sysroot = create_sysroot_response.sysroot
       return self.sysroot
