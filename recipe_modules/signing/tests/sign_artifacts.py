@@ -138,7 +138,9 @@ def RunSteps(api: RecipeApi):
   api.assertions.assertEqual(processed_config, expected_processed_config)
 
   # Call signing.
-  api.signing.sign_artifacts(sign_types, channels)
+  api.signing.sign_artifacts(
+      sign_types=sign_types, channels=channels,
+      local_artifact_dir=api.path.start_dir / 'shellball-dir')
 
 
 def GenTests(api: RecipeTestApi):

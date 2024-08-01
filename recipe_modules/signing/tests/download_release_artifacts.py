@@ -5,11 +5,12 @@
 
 """Tests for download_release_artifacts."""
 
-from PB.chromiumos.common import IMAGE_TYPE_RECOVERY
+from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_SHELLBALL
 
 from PB.chromiumos.signing import SigningConfig
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import \
   CrosArtifactsProperties
+from PB.recipe_modules.chromeos.signing.tests.signing_test import SigningTestProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -21,17 +22,11 @@ DEPS = [
     'signing',
 ]
 
+PROPERTIES = SigningTestProperties
 
 
-def RunSteps(api: RecipeApi):
-  signing_configs = [
-      SigningConfig(
-          image_type=IMAGE_TYPE_RECOVERY,
-          keyset='amd64-generic-foo-bar',
-          ensure_no_password=True,
-          firmware_update=True,
-      )
-  ]
+def RunSteps(api: RecipeApi, properties: SigningTestProperties):
+  signing_configs = properties.signing_configs
   relevant_signing_configs, archive_dir = api.signing.download_release_artifacts(
       signing_configs)
   api.assertions.assertEqual(signing_configs, relevant_signing_configs)
@@ -43,6 +38,14 @@ def RunSteps(api: RecipeApi):
 
 
 def GenTests(api: RecipeTestApi):
+  basic_signing_configs = [
+      SigningConfig(
+          image_type=IMAGE_TYPE_RECOVERY,
+          keyset='amd64-generic-foo-bar',
+          ensure_no_password=True,
+          firmware_update=True,
+      )
+  ]
   yield api.build_menu.test(
       'basic',
       api.properties(
@@ -51,6 +54,8 @@ def GenTests(api: RecipeTestApi):
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
           }),
+      api.properties(
+          SigningTestProperties(signing_configs=basic_signing_configs)),
       api.post_check(
           post_process.MustRun, 'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
@@ -71,9 +76,36 @@ def GenTests(api: RecipeTestApi):
                   CrosArtifactsProperties(
                       gs_upload_path='{target}-release/{version}'),
           }),
+      api.properties(
+          SigningTestProperties(signing_configs=basic_signing_configs)),
       api.step_data(
           'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
           'amd64-generic-release/R99-1234.56.0-101', retcode=1),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  shellball_signing_configs = [
+      SigningConfig(
+          image_type=IMAGE_TYPE_SHELLBALL,
+          keyset='amd64-generic-foo-bar',
+          ensure_no_password=True,
+          firmware_update=True,
+      )
+  ]
+  yield api.build_menu.test(
+      'shellball',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+          }),
+      api.properties(
+          SigningTestProperties(signing_configs=shellball_signing_configs)),
+      api.post_check(
+          post_process.DoesNotRun, 'download release artifacts.gsutil download '
+          'recovery_image.tar.xz from chromeos-image-archive/'
+          'amd64-generic-release/R99-1234.56.0-101'),
       api.post_process(post_process.DropExpectation),
   )

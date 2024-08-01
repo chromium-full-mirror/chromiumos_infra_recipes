@@ -12,7 +12,7 @@ import json
 import os
 import re
 from json import JSONDecodeError
-from typing import Any, Dict, List, NewType, Tuple
+from typing import Any, Dict, List, NewType, Optional, Tuple
 
 from google.protobuf.text_format import Parse
 
@@ -79,6 +79,11 @@ IMAGE_TYPE_TO_SUFFIX = {
     common_pb2.IMAGE_TYPE_RECOVERY: '.tar.xz',
     common_pb2.IMAGE_TYPE_TEST: '.tar.xz',
 }
+
+# Artifact types which exist locally and do not need to be downloaded from GS.
+LOCAL_ARTIFACT_TYPES = [
+    common_pb2.IMAGE_TYPE_SHELLBALL,
+]
 
 PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 
@@ -388,8 +393,6 @@ class SigningApi(recipe_api.RecipeApi):
     skipped_artifacts = []
     for artifact_name in sorted(artifact_names):
       try:
-        # TODO(b/350787871): Remove when we can call pack_firmware to create our own shellball.
-        gs_dir = 'chromeos-throw-away-bucket/bshai' if artifact_name == 'chromeos-firmwareupdate' else gs_dir
         self.m.gsutil.download(
             gs_dir, artifact_name, self.m.path.join(local_dir, artifact_name),
             name='download {} from {}'.format(artifact_name, gs_dir),
@@ -398,10 +401,34 @@ class SigningApi(recipe_api.RecipeApi):
         skipped_artifacts.append(artifact_name)
     return skipped_artifacts
 
+  def get_common_downloads(
+      self, sign_types: List['common_pb2.ImageType']) -> List[str]:
+    """Get a list of common files to be downloaded, depending on sign types."""
+    # Files to always download for shellballs.
+    if common_pb2.IMAGE_TYPE_SHELLBALL in sign_types:
+      return []
+    # Files to always download for other sign types.
+    build_target = self.m.build_menu.build_target.name
+    version = self.m.cros_version.version.platform_version
+    return [
+        'image.zip',
+        'chromiumos_test_image.tar.xz',
+        'debug.tgz',
+        f'chromeos-hwqual-{build_target}-{version}.tar.bz2',
+        'stateful.tgz',
+        'dlc',
+        'full_dev_part_KERN.bin.gz',
+        'full_dev_part_ROOT.bin.gz',
+        'full_dev_part_MINIOS.bin.gz',
+        'recovery_image.tar.xz',
+        'factory_image.zip',
+        'firmware_from_source.tar.bz2',
+    ]
+
   def download_release_artifacts(
       self, relevant_signing_configs: List[SigningConfig]
   ) -> Tuple[List[SigningConfig], Path]:
-    """Download artifacts so we can support retries with conductor.
+    """Download any needed artifacts so we can support retries with conductor.
 
     As opposed to in situ builds with local artifacts already present.
 
@@ -419,24 +446,8 @@ class SigningApi(recipe_api.RecipeApi):
     # Otherwise, only the image types specified in |sign_types| are marked for
     # signing.
     with self.m.step.nest('download release artifacts') as pres:
-      to_download = set()
-      # Files to always download.
-      build_target = self.m.build_menu.build_target.name
-      version = self.m.cros_version.version.platform_version
-      to_download.update([
-          'image.zip',
-          'chromiumos_test_image.tar.xz',
-          'debug.tgz',
-          f'chromeos-hwqual-{build_target}-{version}.tar.bz2',
-          'stateful.tgz',
-          'dlc',
-          'full_dev_part_KERN.bin.gz',
-          'full_dev_part_ROOT.bin.gz',
-          'full_dev_part_MINIOS.bin.gz',
-          'recovery_image.tar.xz',
-          'factory_image.zip',
-          'firmware_from_source.tar.bz2',
-      ])
+      sign_types = [sc.image_type for sc in relevant_signing_configs]
+      to_download = set(self.get_common_downloads(sign_types))
       signing_configured_artifacts = []
 
       for signing_config in relevant_signing_configs:
@@ -444,7 +455,8 @@ class SigningApi(recipe_api.RecipeApi):
             signing_config.image_type)
         if artifact_name:
           signing_config.archive_path = artifact_name
-          to_download.add(artifact_name)
+          if signing_config.image_type not in LOCAL_ARTIFACT_TYPES:
+            to_download.add(artifact_name)
           signing_configured_artifacts.append(artifact_name)
 
       skipped_artifacts = self.gs_download_if_present(gs_dir, local_dir,
@@ -453,10 +465,10 @@ class SigningApi(recipe_api.RecipeApi):
         pres.logs['skipped'] = 'Skipped artifacts not found in GS: {}'.format(
             ','.join(skipped_artifacts))
 
-      if signing_configured_artifacts:
+      if to_download:
         pres.logs[
             'configured'] = 'Downloading artifacts based on signing config: {}'.format(
-                ','.join(signing_configured_artifacts))
+                ','.join(sorted(to_download)))
 
       # Local temp dir with artifacts should be group-readable.
       chmod_cmd = ['sudo', '-n', 'chmod', '-R', 'u=rwx,g=r,-t', local_dir]
@@ -512,8 +524,9 @@ class SigningApi(recipe_api.RecipeApi):
 
   def sign_artifacts(
       self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel'],
-      include_paygen: bool = True) -> List[BuildReport.SignedBuildMetadata]:
+      channels: List['common_pb2.Channel'], include_paygen: bool = True,
+      local_artifact_dir: Optional[Path] = None
+  ) -> List[BuildReport.SignedBuildMetadata]:
     """Implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
@@ -524,6 +537,16 @@ class SigningApi(recipe_api.RecipeApi):
           sign_types, channels)
       config = BuildTargetSigningConfigs(
           build_target_signing_configs=[build_target_config])
+
+      # Stage local artifacts for signing, if specified.
+      if local_artifact_dir:
+        with self.m.step.nest('copying local artifacts to prepare for signing'):
+          artifacts = self.m.file.listdir('list artifacts to stage for signing',
+                                          local_artifact_dir, recursive=True,
+                                          test_data=['chromeos-firmwareupdate'])
+          for artifact in artifacts:
+            self.m.file.copy('stage artifact for signing', artifact,
+                             archive_dir)
 
       self.m.time.exponential_retry(retries=2,
                                     delay=datetime.timedelta(seconds=1))

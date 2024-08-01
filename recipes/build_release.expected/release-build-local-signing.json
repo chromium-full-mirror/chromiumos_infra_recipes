@@ -15260,7 +15260,7 @@
     "name": "sign artifacts.download release artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@configured@Downloading artifacts based on signing config: chromiumos_base_image.tar.xz@@@",
+      "@@@STEP_LOG_LINE@configured@Downloading artifacts based on signing config: chromeos-hwqual-kukui-1234.56.0.tar.bz2,chromiumos_base_image.tar.xz,chromiumos_test_image.tar.xz,debug.tgz,dlc,factory_image.zip,firmware_from_source.tar.bz2,full_dev_part_KERN.bin.gz,full_dev_part_MINIOS.bin.gz,full_dev_part_ROOT.bin.gz,image.zip,recovery_image.tar.xz,stateful.tgz@@@",
       "@@@STEP_LOG_END@configured@@@"
     ]
   },

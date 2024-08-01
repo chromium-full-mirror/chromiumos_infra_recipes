@@ -20,14 +20,19 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/buildbucket',
+    'recipe_engine/cipd',
+    'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
+    'cros_artifacts',
     'cros_build_api',
     'cros_release',
     'cros_source',
+    'git',
     'signing',
+    'src_state',
 ]
 
 
@@ -35,13 +40,52 @@ def RunSteps(api: RecipeApi):
   with api.cros_source.checkout_overlays_context():
     api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
     api.cros_source.ensure_synced_cache()
+    fw_config_path = api.src_state.workspace_path / 'firmware-config'
+    with api.step.nest('clone firmware-config'):
+      api.git.clone(
+          'https://chrome-internal.googlesource.com/chromeos/firmware-config',
+          target_path=fw_config_path, depth=1)
+
+    with api.step.nest('pack firmware') as pres:
+      # Ensure cipd packages are present.
+      fw_path = api.src_state.workspace_path / 'src/platform/firmware'
+      cipd_path = api.path.start_dir / 'cipd'
+      api.cipd.ensure(cipd_path, fw_path / 'cipd_manifest.txt',
+                      'ensure cipd packages for packing firmware')
+
+      # Call pack_firmware with cipd bins in PATH.
+      with api.context(env={
+          'PATH': api.path.pathsep.join([str(cipd_path / 'bin'), '%(PATH)s'])
+      }):
+        # Pack firmware uses config for the base target. Remove prefix if present.
+        base_target_name = api.build_menu.build_target.name.split(
+            'android-')[-1]
+        output_artifact_dir = api.path.mkdtemp('shellball-dir')
+        output_artifact_name = api.cros_artifacts.artifacts_by_image_type.get(
+            common_pb2.IMAGE_TYPE_SHELLBALL, 'chromeos-firmwareupdate')
+
+        pack_fw_cmd = [
+            'vpython3',
+            fw_path / 'pack_firmware.py',
+            '--imagedir',
+            'tmp/distfiles',
+            '--config',
+            fw_config_path / base_target_name,
+            '--output',
+            output_artifact_dir / output_artifact_name,
+            '--textproto',
+            '--download',
+        ]
+        api.step('call pack_firmware', pack_fw_cmd)
 
     # Sign shellball.
     api.cros_release.validate_sign_types()
+    # TODO(b/351853211): Ensure version is correct based on branch or config.
     with api.step.nest('sign firmware shellball') as pres:
       signed_build_list = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
-          channels=api.cros_release.channels, include_paygen=False)
+          channels=api.cros_release.channels, include_paygen=False,
+          local_artifact_dir=output_artifact_dir)
       pres.logs['signed builds'] = str(signed_build_list)
 
 
@@ -84,7 +128,7 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
           'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
-      ),
+      ), api.post_check(post_process.MustRun, 'pack firmware'),
       api.post_check(
           post_process.MustRun,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '

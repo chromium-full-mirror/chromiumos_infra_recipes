@@ -1,0 +1,14 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+
+package recipe_modules.chromeos.signing.tests;
+
+import "chromiumos/signing.proto";
+
+message SigningTestProperties {
+  // Configs to use for the test.
+  repeated chromiumos.SigningConfig signing_configs = 1;
+}
