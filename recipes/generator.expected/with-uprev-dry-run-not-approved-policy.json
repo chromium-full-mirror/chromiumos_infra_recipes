@@ -1294,14 +1294,14 @@
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN_NOT_APPROVED\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN_NOT_APPROVED\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}, \"reference\": null}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN_NOT_APPROVED\", \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN_NOT_APPROVED\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DO_NOTHING\", \"outdatedClsPolicy\": \"OUTDATED_DO_NOTHING\", \"pattern\": \".*\", \"reviewers\": [{\"email\": \"evanhernandez@chromium.org\"}, {\"email\": \"chromeos-continuous-integration-team@google.com\"}]}@@@"
     ]
   },
   {

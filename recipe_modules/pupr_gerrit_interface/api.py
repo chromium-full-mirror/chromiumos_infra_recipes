@@ -115,10 +115,59 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       A bool stating whether any open CLs remain after abandoning.
     """
     outdated_cls = self._get_outdated_cls(open_changes, most_recent_uprev)
-    abandoned_cls = self._abandon_cls(outdated_cls, most_recent_uprev,
-                                      policy.outdated_cls_policy,
-                                      retry_only_run)
+    abandoned_cls = self._abandon_outdated_cls(outdated_cls, most_recent_uprev,
+                                               policy.outdated_cls_policy,
+                                               retry_only_run)
     return len(abandoned_cls) < len(open_changes)
+
+  def handle_repeatedly_failing_changes(
+      self, open_changes: List[GerritChange],
+      max_cq_retry: int) -> List[GerritChange]:
+    """Abandon unpinned uprev CLs that have failed too many times and return the
+    remaining open CLs.
+
+    Args:
+      open_changes: A list of currently open, relevant PUpr CLs.
+      max_cq_retry: The maximum number of times an unpinned uprev CL is allowed
+        to fail full CQ before abandoning it. Negative number indicates no CL
+        should be abandoned no matter how many times it has failed.
+    """
+    # Do not abandon any CL.
+    if max_cq_retry < 0:
+      return open_changes
+
+    # Do nothing if there is no open changes (gerrit.fetch_patch_sets will
+    # exit with 'no changes requested' error).
+    if len(open_changes) == 0:
+      return open_changes
+
+    with self.m.step.nest('get CLs repeatedly failing CQ') as presentation:
+      open_patch_sets = self.m.gerrit.fetch_patch_sets(
+          open_changes,
+          include_messages=True,
+      )
+
+      failing_patchsets = []
+      remaining_open_cls = []
+      for i, ps in enumerate(open_patch_sets):
+        if (self.m.pupr.is_cl_pinned(ps) or
+            self.m.pupr.num_full_cq_failures(ps) <= max_cq_retry):
+          remaining_open_cls.append(open_changes[i])
+        else:
+          failing_patchsets.append(ps)
+
+      presentation.logs['max CQ retry'] = str(max_cq_retry)
+
+    if failing_patchsets:
+      with self.m.step.nest('abandon unpinned CLs repeatedly failing CQ'):
+        for ps in failing_patchsets:
+          comment_message = (
+              'This CL is abandoned by PUpr since it has failed CQ > {} times.'
+          ).format(max_cq_retry)
+          self.m.gerrit.abandon_change(ps.to_gerrit_change_proto(),
+                                       message=comment_message)
+
+    return remaining_open_cls
 
   def find_most_recently_merged_uprev(self,
                                       projects_by_remote: ProjectsByRemote,
@@ -190,10 +239,11 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       presentation.logs['outdated CLs'] = [cl.display_id for cl in outdated_cls]
     return outdated_cls
 
-  def _abandon_cls(self, outdated_cls: List[PatchSet],
-                   obviating_uprev: PatchSet,
-                   outdated_cls_policy: OutdatedClsPolicy, retry_only_run: bool,
-                   step_name: Optional[str] = None) -> List[PatchSet]:
+  def _abandon_outdated_cls(self, outdated_cls: List[PatchSet],
+                            obviating_uprev: PatchSet,
+                            outdated_cls_policy: OutdatedClsPolicy,
+                            retry_only_run: bool,
+                            step_name: Optional[str] = None) -> List[PatchSet]:
     """Abandon uprev CLs according to the outdated_cls_policy.
 
     Args:
@@ -434,9 +484,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
       if cl_passed_dry_run:
         cls_to_abandon = [cl for cl in open_patch_sets \
             if cl.created < patch_set_to_retry.created]
-        self._abandon_cls(cls_to_abandon, patch_set_to_retry,
-                          policy.outdated_cls_policy, retry_only_run,
-                          step_name='abandon CLs before passed CQ+1 CL')
+        self._abandon_outdated_cls(
+            cls_to_abandon, patch_set_to_retry, policy.outdated_cls_policy,
+            retry_only_run, step_name='abandon CLs before passed CQ+1 CL')
 
   def _get_outdated_timestamp(self, most_recent_uprev: PatchSet) -> str:
     """Determine the cutoff time at which CLs become outdated.

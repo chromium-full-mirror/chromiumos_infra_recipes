@@ -261,6 +261,9 @@ class GeneratorRun:
 
       open_changes = self.m.pupr_gerrit_interface.find_open_uprev_cls(
           self._projects_by_remote, self.topic)
+      open_changes = (
+          self.m.pupr_gerrit_interface.handle_repeatedly_failing_changes(
+              open_changes, self.policy.max_cq_retry))
       most_recent_uprev = (
           self.m.pupr_gerrit_interface.find_most_recently_merged_uprev(
               self._projects_by_remote, self.topic) if open_changes else None)
@@ -574,6 +577,7 @@ def GenTests(
     kwargs.setdefault('no_existing_cls_policy', generator_pb2.DO_NOTHING)
     kwargs.setdefault('outdated_cls_policy', generator_pb2.OUTDATED_DO_NOTHING)
     kwargs.setdefault('retry_cl_policy', generator_pb2.NO_RETRY)
+    kwargs.setdefault('max_cq_retry', -1)
     return generator_pb2.BranchPolicy(**kwargs)
 
   def _props(**kwargs) -> generator_pb2.GeneratorProperties:

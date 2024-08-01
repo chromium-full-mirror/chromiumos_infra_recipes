@@ -175,6 +175,10 @@ message BranchPolicy {
 
   // Policy to determine how to vote for Code-Review. Defaults to CR_DO_NOTHING.
   CrPolicy cr_policy = 10;
+
+  // Abandon CL when it has failed CQ full run for this many times. Negative
+  // value means the CL can fail arbitrarily many times. Defaults to -1.
+  int32 max_cq_retry = 11;
 }
 
 // Holds information needed for packages who need to fetch a file from the

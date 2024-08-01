@@ -146,6 +146,18 @@ class PuprApi(recipe_api.RecipeApi):
     """
     return any(HASHTAG_FREEZE_RETRIES in c.hashtags for c in changes)
 
+  @staticmethod
+  def is_cl_pinned(cl) -> bool:
+    """Return if the CL (PatchSet) is pinned."""
+    return HASHTAG_PINNED_RETRY in cl.hashtags
+
+  @staticmethod
+  def num_full_cq_failures(cl) -> int:
+    """Return the number of times the CL (PathcSet) has failed full CQ."""
+    return sum(1 for m in cl.messages
+               if ('tag' in m and FULL_RUN_TAG_RE.match(m['tag']) and
+                   FAILED_RE.match(m['message'])))
+
   def identify_retry(self, retry_policy, no_existing_cls_policy, open_cls):
     """Identify the CL to be retried based on retry_policy.
 
@@ -208,7 +220,7 @@ class PuprApi(recipe_api.RecipeApi):
     # Pinned CLs (i.e. CLs with the HASHTAG_PINNED_RETRY) take precendence.
     # Here, we looked for the most recent pinned CL.
     for cl in open_cls:
-      if HASHTAG_PINNED_RETRY in cl.hashtags:
+      if PuprApi.is_cl_pinned(cl):
         # (Most recent) pinned CL identified. If the CL has not previously
         # failed, no retry is necessary and we can return.
 

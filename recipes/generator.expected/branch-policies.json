@@ -1308,14 +1308,14 @@
     "name": "select policy.set chosen_policy_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"release-R79-*.B\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}, \"reference\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"release-R79-*.B\"]}@@@"
+      "@@@SET_BUILD_PROPERTY@chosen_policy_info@{\"branch\": \"release-R79-*.B\", \"policy\": {\"existingClsPolicy\": \"DRY_RUN\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}, \"reference\": [\"deadbeefdeadbeefdeadbeefdeadbeefdeadbeef\", \"release-R79-*.B\"]}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "set policy",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@policy@{\"existingClsPolicy\": \"DRY_RUN\", \"maxCqRetry\": -1, \"noExistingClsPolicy\": \"DRY_RUN\", \"outdatedClsPolicy\": \"OUTDATED_ABANDON\", \"pattern\": \"refs/tags/([0-9]*).*\", \"repl\": \"release-R\\\\1-*.B\", \"reviewers\": [{\"email\": \"dburger@chromium.org\"}]}@@@"
     ]
   },
   {
