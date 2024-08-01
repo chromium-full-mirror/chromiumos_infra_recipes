@@ -50,7 +50,7 @@ sample_response = SignImageResponse(
     output_archive_dir='/archive_dir/',
     signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(archive_artifacts=[
         signing_pb2.ArchiveArtifacts(
-            build_target='brya-firmware',
+            build_target='android-kukui',
             channel=common_pb2.CHANNEL_CANARY,
             image_type=common_pb2.IMAGE_TYPE_SHELLBALL,
             signed_artifacts=[
@@ -90,4 +90,25 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
           'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY'),
       api.post_process(post_process.DropExpectation), build_target='kukui',
-      builder='standalone-firmware')
+      builder='firmware-packager-android-kukui-main')
+
+  yield api.build_menu.test(
+      'use-dev-keys',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware',
+                                        use_dev_keys=True)),
+          }),
+      api.post_check(
+          post_process.LogContains,
+          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.'
+          'ImageService/SignImage', 'request',
+          ['\"keyset\": \"DevPreMPKeys\"']),
+      api.post_process(post_process.DropExpectation), build_target='kukui',
+      builder='firmware-packager-android-kukui-main')

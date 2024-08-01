@@ -25,4 +25,8 @@ message SigningProperties {
 
   // GS upload bucket, not including gs:// prefix. E.g. 'chromeos-releases'.
   string gs_upload_bucket = 5;
+
+  // Whether to override configured keyset configured in config-internal with
+  // dev keys. Useful for testing with CQ.
+  bool use_dev_keys = 6;
 }

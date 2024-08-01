@@ -98,6 +98,7 @@ class SigningApi(recipe_api.RecipeApi):
     self._signing_image = None
     self._gs_upload_bucket = properties.gs_upload_bucket or 'chromeos-throw-away-bucket'
     self._paygen_keyset = None
+    self._use_dev_keys = properties.use_dev_keys
 
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
@@ -123,6 +124,10 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def gs_upload_bucket(self) -> str:
     return self._gs_upload_bucket
+
+  @property
+  def get_use_dev_keys(self) -> bool:
+    return self._use_dev_keys
 
   def get_paygen_keyset(self) -> str:
     """Return the keyset for use in paygen.
@@ -284,7 +289,7 @@ class SigningApi(recipe_api.RecipeApi):
     """Fetch signing config from the appropriate branch of config-internal."""
     if self._signing_config:
       return self._signing_config
-    with self.m.step.nest('fetch signing config'):
+    with self.m.step.nest('fetch signing config') as pres:
       try:
         branch = self.m.cros_infra_config.config.orchestrator.gitiles_commit.ref
       except AttributeError as e:
@@ -299,13 +304,16 @@ class SigningApi(recipe_api.RecipeApi):
       build_target = self.m.build_menu.build_target.name
       for config in signing_config.build_target_signing_configs:
         if config.build_target == build_target:
-          # If we're staging, override the keyset to be the staging keyset.
-          if self.m.cros_infra_config.is_staging:
+          # If we're staging or if we specify by property, override the keyset
+          # to be the staging keyset.
+          if self.m.cros_infra_config.is_staging or self.get_use_dev_keys:
             config.keyset = STAGING_KEYSET
             for signing_config in config.signing_configs:
               if signing_config.keyset:
                 signing_config.keyset = STAGING_KEYSET
-
+            pres.logs['override keyset'] = (
+                f'Now using: {STAGING_KEYSET} because this is staging or '
+                'use_dev_keys property was specified.')
           self._signing_config = config
           return self._signing_config
       raise StepFailure(
