@@ -162,11 +162,6 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
             f'[bbid/{b.id}](https://ci.chromium.org/ui/b/{b.id})\n',
             pre_uprev_builders))
 
-  with api.step.nest('Wait for completion of pre-uprev tests') as presentation:
-    PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
-    api.buildbucket.collect_builds(pre_uprev_builder_ids,
-                                   timeout=PRE_UPREV_TEST_TIMEOUT)
-
   with api.step.nest(
       'Wait for completion of pupr-generator builder') as presentation:
     PUPR_GENERATOR_INTERVAL = 5 * 60  # 5 min
@@ -220,6 +215,30 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     presentation.step_summary_text = (
         f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
         f' {uprev_change_data.status}')
+
+  with api.step.nest('Post progress message') as presentation:
+    text = 'Pre-Uprev Test RUNNING\n\n'
+    text += '\n'
+
+    pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
+    for builder in pre_uprev_builders:
+      text += (f'- {builder.builder.builder}: '
+               f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+
+    text += '\n\n'
+    text += ('Pre-uprev test verifies the soundness of upreved revision of '
+             'chrome by running a small subset of tast tests with the upreved '
+             'chrome + LKGM CrOS. The test is independent from CQ testing.\n\n')
+    text += 'Please make sure pre-uprev test succeeds before submitting this CL!\n'
+    presentation.logs['generated message'] = text
+    uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
+                                change=uprev_cl_number)
+    api.gerrit.add_change_comment_remote(uprev_change, text)
+
+  with api.step.nest('Wait for completion of pre-uprev tests') as presentation:
+    PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
+    api.buildbucket.collect_builds(pre_uprev_builder_ids,
+                                   timeout=PRE_UPREV_TEST_TIMEOUT)
 
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
@@ -408,6 +427,7 @@ def GenTests(api: RecipeTestApi):
       build += api.post_check(post_process.DoesNotRun, PUPR_GENERATOR_STEP_NAME)
 
     PREUPREV_STEP_NAME = 'Find pre-uprev tests.buildbucket'
+    RUNNING_TEST_STEP_NAME = 'Post progress message.buildbucket'
     PREPARE_RESULT_STEP_NAME = 'Prepare the result message.buildbucket'
     if uprev_test_builds:
       build += api.buildbucket.simulated_search_results(
@@ -416,10 +436,15 @@ def GenTests(api: RecipeTestApi):
       )
       build += api.buildbucket.simulated_search_results(
           uprev_test_builds,
+          step_name=RUNNING_TEST_STEP_NAME + '.search',
+      )
+      build += api.buildbucket.simulated_search_results(
+          uprev_test_builds,
           step_name=PREPARE_RESULT_STEP_NAME + '.search',
       )
     else:
       build += api.post_check(post_process.DoesNotRun, PREUPREV_STEP_NAME)
+      build += api.post_check(post_process.DoesNotRun, RUNNING_TEST_STEP_NAME)
       build += api.post_check(post_process.DoesNotRun, PREPARE_RESULT_STEP_NAME)
 
     UPREV_GERRIT_CHANGE_STEP_NAME = 'Find the uprev CL on gerrit'

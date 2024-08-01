@@ -1042,10 +1042,6 @@
   },
   {
     "cmd": [],
-    "name": "Wait for completion of pre-uprev tests"
-  },
-  {
-    "cmd": [],
     "name": "Wait for completion of pupr-generator builder",
     "~followup_annotations": [
       "@@@STEP_SUMMARY_TEXT@pupr-generator: [bbid/300](https://ci.chromium.org/ui/b/300)@@@"
