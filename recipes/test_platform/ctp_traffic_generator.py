@@ -44,10 +44,12 @@ def RunSteps(api, properties):  # pragma: no cover
   _replay_builds(api, properties.ctp_builder,
                  ctp1_live_builds + ctp2_live_builds)
 
-  # Replay 3D builds in dry-run mode.
-  ddd_dry_run_builds = _ddd_builds_to_dry_run_replay(prod_builds,
-                                                     _DDD_DRY_RUN_COUNT)
-  _replay_builds(api, properties.ctp_builder, ddd_dry_run_builds, dry_run=True)
+  if properties.ctp_builder.endswith('staging'):
+    # Replay 3D builds in dry-run mode.
+    ddd_dry_run_builds = _ddd_builds_to_dry_run_replay(prod_builds,
+                                                       _DDD_DRY_RUN_COUNT)
+    _replay_builds(api, properties.ctp_builder, ddd_dry_run_builds,
+                   dry_run=True)
 
 
 def _bb_time_range(api, hours_back):  # pragma: no cover
@@ -93,7 +95,6 @@ def _get_ctp2_pools(api):  # pragma: no cover
     # pylint: disable=broad-except
   except Exception:
     pass
-  step.logs['allowed pools'] = '\n'.join(ctp2_pools)
   return ctp2_pools
 
 
@@ -108,7 +109,7 @@ def _already_replayed_prod_build_ids(api, replay_builder,
           }, create_time=time_range), fields=['tags'],
       step_name='filter out already-replayed builds')
 
-  replayed_prod_build_ids = {}
+  replayed_prod_build_ids = set()
   for build in ctp_builds_in_replay_builder:
     for tag in build.tags:
       if tag.key == _REPLAYED_PROD_BUILD_ID_TAG:
@@ -145,7 +146,7 @@ def _ddd_builds_to_dry_run_replay(prod_builds, count):  # pragma: no cover
 
   ddd_builds = []
   for build in prod_builds:
-    # Only replay CTPv2 builds.
+    # Only replay 3D builds.
     if not _is_ddd_build(build):
       continue
     ddd_builds.append(build)
@@ -210,15 +211,14 @@ def _modify_reqs_for_replay(replay_builder, reqs_dict,
 
   new_reqs_dict = {}
   for tag, req in reqs_dict.items():
-    params = req.get('params')
-    if not params:
+    if not req.get('params'):
       continue
 
     if dry_run:
-      params['dryRunCtpv2'] = True
+      req['params']['dryRunCtpv2'] = True
 
     # TODO(b/267268890): Remove after TRv2 rolls to prod.
-    if dev and params.get('runViaCft'):
+    if dev and req['params'].get('runViaCft'):
       # Run the request in trv2
       req['params']['runViaTrv2'] = True
       new_reqs_dict[tag] = req
