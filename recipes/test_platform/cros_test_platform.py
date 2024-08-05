@@ -493,6 +493,28 @@ def _enumerate_non_cft_tests(api, requests):
     return dict(enum_responses.tagged_responses)
 
 
+def _enable_cft_based_on_experiment(api, requests):
+  """Enable CFT based on experiment in cros_infra_config.
+
+  Args:
+    * api: API object containing configuration and utility methods.
+    * requests: obj/dict of requests to be modified.
+
+  """
+  experiment_name = 'chromeos.cros_infra_config.enable_cft'
+
+  if experiment_name in api.cros_infra_config.experiments:  # pragma: no cover
+    for name, request in requests.items():
+      params = api.ctpv2.get_val_from_obj_or_dict(request, 'params')
+      if params is not None:
+        if isinstance(params, dict):
+          params['run_via_cft'] = True
+        else:
+          setattr(params, 'run_via_cft', True)
+      else:
+        raise ValueError(f'Params not found for request: {name}')
+
+
 def _is_autotest_sharding_enabled(api, request):
   is_experiment_enabled = False
   if ('chromeos.cros_infra_config.autotest.sharding'
@@ -1407,6 +1429,8 @@ def DoRunSteps(api, properties):
   error_in_requests = {}
   suite_execution_logs = None
   runner = api.future_utils.create_parallel_runner()
+  # enable cft for requests if experiment is enabled. This will be default in ctpv2
+  _enable_cft_based_on_experiment(api, properties.requests)
 
   # If ctpv2 req is provided, run the ctpv2 flow
   if properties.HasField(

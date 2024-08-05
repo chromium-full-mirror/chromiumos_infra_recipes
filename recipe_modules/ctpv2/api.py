@@ -88,7 +88,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return result
 
   def _meets_ctpv2_criteria(self, request):
-    params = self._get_val_from_obj_or_dict(request, 'params')
+    params = self.get_val_from_obj_or_dict(request, 'params')
     if not params:  # pragma: no cover
       return False
     if self._is_ctpv2_with_qs_request(params):
@@ -96,18 +96,18 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return self._is_allowed_pool(params)
 
   def _is_ctpv2_with_qs_request(self, params):
-    run_via_cft = self._get_val_from_obj_or_dict(params, 'run_via_cft',
-                                                 'runViaCft')
-    run_ctpv2_with_qs = self._get_val_from_obj_or_dict(params,
-                                                       'run_ctpv2_with_qs',
-                                                       'runCtpv2WithQs')
+    run_via_cft = self.get_val_from_obj_or_dict(params, 'run_via_cft',
+                                                'runViaCft')
+    run_ctpv2_with_qs = self.get_val_from_obj_or_dict(params,
+                                                      'run_ctpv2_with_qs',
+                                                      'runCtpv2WithQs')
     return run_via_cft and run_ctpv2_with_qs
 
   def _is_allowed_pool(self, params):
-    decorations = self._get_val_from_obj_or_dict(params, 'decorations')
+    decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False
-    tags = self._get_val_from_obj_or_dict(decorations, 'tags')
+    tags = self.get_val_from_obj_or_dict(decorations, 'tags')
     if not tags:  # pragma: no cover
       return False
     for tag in tags:
@@ -121,8 +121,8 @@ class Ctpv2Command(recipe_api.RecipeApi):
         return True
     return False
 
-  def _get_val_from_obj_or_dict(self, obj_or_dict, field,
-                                key=None):  # pragma: no cover
+  def get_val_from_obj_or_dict(self, obj_or_dict, field,
+                               key=None):  # pragma: no cover
     """Retrieves the value from the obj/dict using the field/key.
 
     This is needed because filter legacy requests is called with both a proto
