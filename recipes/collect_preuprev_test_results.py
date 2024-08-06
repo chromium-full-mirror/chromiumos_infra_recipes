@@ -130,6 +130,10 @@ def RunSteps(api: RecipeApi, properties: CollectPreuprevTestResults):
                       uprev_cl_number_overridden_for_testing)
 
 
+def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
+  return list(map(lambda b: int(b.id), builders))
+
+
 def DoRunSteps(api: RecipeApi, current_build_id: int,
                uprev_cl_number_overridden_for_testing: Optional[int]):
   with api.step.nest('Find pupr-coordinator builder') as presentation:
@@ -152,10 +156,12 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     presentation.step_summary_text = summary_text
 
   with api.step.nest('Find pre-uprev tests') as presentation:
-    pre_uprev_builder_ids = []
+    # Wait for up to 10 minutes until pre-uprev builder is scheduled.
+    PRE_UPREV_SCHEDULE_DEALAY = 10 * 60  # 10 min
+    api.time.sleep(secs=PRE_UPREV_SCHEDULE_DEALAY, with_step=True)
+
     pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
-    for builder in pre_uprev_builders:
-      pre_uprev_builder_ids.append(int(builder.id))
+
     presentation.step_summary_text = ''.join(
         map(
             lambda b: f'- {b.builder.builder}: ' +
@@ -220,7 +226,6 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     text = 'Pre-Uprev Test RUNNING\n\n'
     text += '\n'
 
-    pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
     for builder in pre_uprev_builders:
       text += (f'- {builder.builder.builder}: '
                f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
@@ -237,15 +242,14 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
   with api.step.nest('Wait for completion of pre-uprev tests') as presentation:
     PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
-    api.buildbucket.collect_builds(pre_uprev_builder_ids,
-                                   timeout=PRE_UPREV_TEST_TIMEOUT)
+    pre_uprev_builders = api.buildbucket.collect_builds(
+        ToBuilderIds(pre_uprev_builders), fields=BUILD_FIELDS_TO_RETRIEVE,
+        timeout=PRE_UPREV_TEST_TIMEOUT).values()
 
   with api.step.nest('Prepare the result message') as presentation:
     successful_builds = []
     failed_builds = []
 
-    # Get the latest data since the data might be updated after sleep.
-    pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
     for builder in pre_uprev_builders:
       if builder.status == common_pb2.SUCCESS:
         successful_builds.append(
@@ -426,26 +430,21 @@ def GenTests(api: RecipeTestApi):
     else:
       build += api.post_check(post_process.DoesNotRun, PUPR_GENERATOR_STEP_NAME)
 
-    PREUPREV_STEP_NAME = 'Find pre-uprev tests.buildbucket'
-    RUNNING_TEST_STEP_NAME = 'Post progress message.buildbucket'
-    PREPARE_RESULT_STEP_NAME = 'Prepare the result message.buildbucket'
+    PREUPREV_STEP_NAME = 'Find pre-uprev tests'
+    PREUPREV_COLLECT_RESULT_NAME = 'Wait for completion of pre-uprev tests'
     if uprev_test_builds:
       build += api.buildbucket.simulated_search_results(
           uprev_test_builds,
-          step_name=PREUPREV_STEP_NAME + '.search',
+          step_name=PREUPREV_STEP_NAME + '.buildbucket.search',
       )
-      build += api.buildbucket.simulated_search_results(
+      build += api.buildbucket.simulated_collect_output(
           uprev_test_builds,
-          step_name=RUNNING_TEST_STEP_NAME + '.search',
-      )
-      build += api.buildbucket.simulated_search_results(
-          uprev_test_builds,
-          step_name=PREPARE_RESULT_STEP_NAME + '.search',
-      )
+          step_name=PREUPREV_COLLECT_RESULT_NAME + '.buildbucket.collect')
     else:
-      build += api.post_check(post_process.DoesNotRun, PREUPREV_STEP_NAME)
-      build += api.post_check(post_process.DoesNotRun, RUNNING_TEST_STEP_NAME)
-      build += api.post_check(post_process.DoesNotRun, PREPARE_RESULT_STEP_NAME)
+      build += api.post_check(post_process.DoesNotRun,
+                              PREUPREV_STEP_NAME + '.buildbucket')
+      build += api.post_check(post_process.DoesNotRun,
+                              PREUPREV_COLLECT_RESULT_NAME + '.buildbucket')
 
     UPREV_GERRIT_CHANGE_STEP_NAME = 'Find the uprev CL on gerrit'
     if uprev_gerrit_change:

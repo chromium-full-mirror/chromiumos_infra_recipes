@@ -993,6 +993,13 @@
     "name": "Find pre-uprev tests"
   },
   {
+    "cmd": [],
+    "name": "Find pre-uprev tests.sleep 600",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
     "cmd": [
       "bb",
       "batch",
