@@ -31,26 +31,11 @@
       "clone",
       "--depth",
       "1",
-      "https://chromium.googlesource.com/chromiumos/infra/suite_scheduler",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal",
       "[CLEANUP]/tmp_tmp_2"
     ],
     "infra_step": true,
     "name": "set up.git clone (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "--depth",
-      "1",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal",
-      "[CLEANUP]/tmp_tmp_3"
-    ],
-    "infra_step": true,
-    "name": "set up.git clone (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -75,7 +60,7 @@
       "[CLEANUP]/config"
     ],
     "infra_step": true,
-    "name": "set up.git clone (4)",
+    "name": "set up.git clone (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2379,7 +2364,7 @@
       "./board_config/generate",
       "-b"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2399,7 +2384,7 @@
       "./test/exoneration/generate",
       "-b"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2412,102 +2397,6 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "/bin/bash",
-      "test/suite_scheduler/regenerate_configs.sh",
-      "-b"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate binary config.regenerate suite scheduler configs",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate binary config.copy suite scheduler configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.ini",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.lab_config.ini",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.ini",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.ini",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.cfg",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.lab_config.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.cfg",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
@@ -2977,467 +2866,6 @@
   },
   {
     "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.query https://chromium-review.googlesource.com",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 1 matching CLs@@@",
-      "@@@STEP_LINK@found CL 12345@https://chromium-review.googlesource.com/c/chromiumos/infra/suite_scheduler/+/12345@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--verbose",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "project=chromiumos/infra/suite_scheduler",
-      "-p",
-      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
-      "-p",
-      "topic=StarDoctor",
-      "-p",
-      "hashtag=config-update",
-      "-p",
-      "status=open",
-      "-o",
-      "LABELS"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.query https://chromium-review.googlesource.com.gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": 12345,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"labels\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"Commit-Queue\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromiumos/infra/suite_scheduler\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.abandon CL 12345",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/suite_scheduler/+/12345@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "abandon",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--change",
-      "12345",
-      "--json_file",
-      "/path/to/tmp/json"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.abandon CL 12345.gerrit abandon",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": \"12345\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"change_id\": \"Ideadbeef\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"has_review_started\": false,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"id\": \"fully~qualified~changeid\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromium/src\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revisions\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"184ebe53805e102605d11f6b143486d15c23a09c\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": \"1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Change commit message\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        }@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"status\": \"ABANDONED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"subject\": \"Change title\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.query https://chromium-review.googlesource.com (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@found 0 matching CLs@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/gerrit_client.py",
-      "changes",
-      "--verbose",
-      "--host",
-      "https://chromium-review.googlesource.com",
-      "--json_file",
-      "/path/to/tmp/json",
-      "-p",
-      "project=chromiumos/infra/suite_scheduler",
-      "-p",
-      "owner=chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com",
-      "-p",
-      "topic=StarDoctor",
-      "-p",
-      "hashtag=config-update",
-      "-p",
-      "status=open",
-      "-o",
-      "LABELS"
-    ],
-    "env": {
-      "PATH": "<PATH>:RECIPE_REPO[depot_tools]"
-    },
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.query https://chromium-review.googlesource.com (2).gerrit changes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@json.output@[@@@",
-      "@@@STEP_LOG_LINE@json.output@  {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"_number\": 12345,@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"labels\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"Commit-Queue\": {}@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"project\": \"chromiumos/infra/suite_scheduler\"@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@]@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LINK@change uploaded@https://crrev.com/i/somenumber@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "symbolic-ref",
-      "--short",
-      "HEAD"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.git symbolic-ref",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@branch@main@@@",
-      "@@@STEP_LOG_END@branch@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "status",
-      "--porcelain"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.git status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "add",
-      "changed.txt",
-      "new.txt"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.git add",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Automatic config update\n\nGenerated by StarDoctor, see https://cr-buildbucket.appspot.com/build/0 for the recipe.\n\nBUG=None\nTEST=regenerated configs",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.write commit message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automatic config update@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by StarDoctor, see https://cr-buildbucket.appspot.com/build/0 for the recipe.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=regenerated configs@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "commit",
-      "--file",
-      "[CLEANUP]/commit_msg_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.git commit",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/chromite/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git branch",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "remote"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git remote",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "branch",
-      "main",
-      "/main"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git branch (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "upload",
-      "--bypass-hooks",
-      "--force",
-      "--topic",
-      "StarDoctor",
-      "--hashtag",
-      "config-update",
-      "--send-mail",
-      "--target-branch",
-      "refs/heads/main"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git_cl upload",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "issue",
-      "-r"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git_cl issue",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.create gerrit change for chromiumos/infra/suite_scheduler.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2, \"Verified\": 1}@@@",
-      "@@@STEP_LOG_END@labels@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromiumos/infra/suite_scheduler/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "luci-auth",
-      "token",
-      "-scopes",
-      "https://www.googleapis.com/auth/gerritcodereview",
-      "-json-output",
-      "-"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_2"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "infra_step": true,
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.ensure auth token.Write auth token to temp file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "curl",
-      "-f",
-      "-X",
-      "POST",
-      "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_2",
-      "-H",
-      "Content-Type: application/json",
-      "-d",
-      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2, \"Verified\": 1}}",
-      "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "status",
-      "--field",
-      "url",
-      "--fast"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_2",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler.git_cl status",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "commit changes.chromeos/config-internal",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -3610,7 +3038,7 @@
       "--short",
       "HEAD"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.git symbolic-ref",
     "~followup_annotations": [
@@ -3625,7 +3053,7 @@
       "status",
       "--porcelain"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.git status",
     "~followup_annotations": [
@@ -3639,7 +3067,7 @@
       "changed.txt",
       "new.txt"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.git add",
     "~followup_annotations": [
@@ -3655,20 +3083,20 @@
       "/path/to/tmp/json",
       "copy",
       "Automatic config update\n\nGenerated by StarDoctor, see https://cr-buildbucket.appspot.com/build/0 for the recipe.\n\nBUG=None\nTEST=regenerated configs",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Automatic config update@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@Generated by StarDoctor, see https://cr-buildbucket.appspot.com/build/0 for the recipe.@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@BUG=None@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_3@TEST=regenerated configs@@@",
-      "@@@STEP_LOG_END@commit_msg_tmp_3@@@"
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Automatic config update@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@Generated by StarDoctor, see https://cr-buildbucket.appspot.com/build/0 for the recipe.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@BUG=None@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_2@TEST=regenerated configs@@@",
+      "@@@STEP_LOG_END@commit_msg_tmp_2@@@"
     ]
   },
   {
@@ -3676,9 +3104,9 @@
       "git",
       "commit",
       "--file",
-      "[CLEANUP]/commit_msg_tmp_3"
+      "[CLEANUP]/commit_msg_tmp_2"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.git commit",
     "~followup_annotations": [
@@ -3698,7 +3126,7 @@
       "git",
       "branch"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.create gerrit change for chromeos/config-internal.git branch",
     "~followup_annotations": [
@@ -3710,7 +3138,7 @@
       "git",
       "remote"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.create gerrit change for chromeos/config-internal.git remote",
     "~followup_annotations": [
@@ -3724,7 +3152,7 @@
       "main",
       "/main"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.create gerrit change for chromeos/config-internal.git branch (2)",
     "~followup_annotations": [
@@ -3746,7 +3174,7 @@
       "--target-branch",
       "refs/heads/main"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3767,7 +3195,7 @@
       "issue",
       "-r"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3790,7 +3218,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -3830,7 +3258,7 @@
       "-json-output",
       "-"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@"
@@ -3845,9 +3273,9 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_3"
+      "[CLEANUP]/service_account_auth_token_tmp_2"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "infra_step": true,
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
@@ -3861,14 +3289,14 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_3",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
       "-H",
       "Content-Type: application/json",
       "-d",
       "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2, \"Verified\": 1}}",
       "https://chromium-review.googlesource.com/changes/1/revisions/current/review"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "name": "commit changes.chromeos/config-internal.committing to chromeos/config-internal.set labels on CL 1.curl https://chromium-review.googlesource.com/changes/1/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@"
@@ -3883,7 +3311,7 @@
       "url",
       "--fast"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"

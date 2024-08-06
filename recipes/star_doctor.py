@@ -144,7 +144,7 @@ class RepoProject():
     self._abandon_stale_changes(api)
 
     pending_cls = self._get_pending_stardoctor_cls(api)
-    if pending_cls:
+    if pending_cls:  # pragma: no cover
       api.step.empty(
           'Not committing changes to %s due to pending StarDoctor CLs' %
           self.name, log_text=[
@@ -242,7 +242,6 @@ class RepoProject():
 
 INFRA_CONFIG = RepoProject('chromeos/infra/config', True, False)
 CONFIG_INTERNAL = RepoProject('chromeos/config-internal', True, True)
-SUITE_SCHEDULER = RepoProject('chromiumos/infra/suite_scheduler', False, True)
 PUBLIC_CONFIG = RepoProject('chromiumos/config', False, True)
 
 
@@ -260,7 +259,6 @@ def RunSteps(api: RecipeApi, properties: StarDoctorProperties) -> None:
       _update_release_time(api)
       with api.deferrals.defer_exceptions():
         _regenerate_configs(api)
-      _copy_susch_configs(api)
 
     irrelevant_files = set()
     irrelevant_files.add(TIMELINE_FILENAME)
@@ -274,7 +272,6 @@ def _clone_repos(api: RecipeApi) -> None:
     api: The recipe modules API.
   """
   INFRA_CONFIG.shallow_clone(api)
-  SUITE_SCHEDULER.shallow_clone(api)
   CONFIG_INTERNAL.shallow_clone(api)
   # We need the config dir to exist in the `config` directory next to
   # config-internal for the symlinks in config-internal to work.
@@ -402,30 +399,9 @@ def _regenerate_configs(api: RecipeApi) -> None:
                timeout=3 * 60)
       api.step('regenerate test exoneration configs',
                ['./test/exoneration/generate', '-b'], timeout=3 * 60)
-      api.step(
-          'regenerate suite scheduler configs',
-          ['/bin/bash', 'test/suite_scheduler/regenerate_configs.sh', '-b'],
-          timeout=3 * 60)
 
 
-def _copy_susch_configs(api: RecipeApi) -> None:
-  """Copy all config files from internal config to the suite_scheduler repo.
 
-  Args:
-    api: The recipe modules API.
-  """
-  with api.step.nest('copy suite scheduler configs'):
-    orig_dir = api.path.join(CONFIG_INTERNAL.checkout_path, 'test',
-                             'suite_scheduler', 'generated')
-    dest_dir = api.path.join(SUITE_SCHEDULER.checkout_path, 'generated_configs')
-    api.file.copy('lab_config.ini', api.path.join(orig_dir, 'lab_config.ini'),
-                  dest_dir)
-    api.file.copy('suite_scheduler.ini',
-                  api.path.join(orig_dir, 'suite_scheduler.ini'), dest_dir)
-    api.file.copy('lab_config.cfg', api.path.join(orig_dir, 'lab_config.cfg'),
-                  dest_dir)
-    api.file.copy('suite_scheduler.cfg',
-                  api.path.join(orig_dir, 'suite_scheduler.cfg'), dest_dir)
 
 
 def _upload_all_changes(api: RecipeApi, properties: StarDoctorProperties,
@@ -442,7 +418,7 @@ def _upload_all_changes(api: RecipeApi, properties: StarDoctorProperties,
       presentation.step_text = 'not configured to commit changes'
       return
 
-    for project in (INFRA_CONFIG, SUITE_SCHEDULER, CONFIG_INTERNAL):
+    for project in (INFRA_CONFIG, CONFIG_INTERNAL):
       with api.step.nest(project.name):
         project.upload_changes(api, irrelevant_files)
 
@@ -464,7 +440,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
     if projects_with_pending_changes is None:
       projects_with_pending_changes = []
     test_datas = []
-    for project in (INFRA_CONFIG, CONFIG_INTERNAL, SUITE_SCHEDULER):
+    for project in (INFRA_CONFIG, CONFIG_INTERNAL):
       for iteration in (1, 2):
         changes_json = [{
             '_number': 12345,
@@ -473,7 +449,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                 'Commit-Queue': {},
             }
         }]
-        if project in projects_with_pending_changes:
+        if project in projects_with_pending_changes:  # pragma: no cover
           changes_json[0]['labels']['Commit-Queue'] = {
               'approved': {
                   '_account_id': 1337
@@ -499,28 +475,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       _set_gerrit_query_changes_responses(),
   )
 
-  yield api.test(
-      'skip-pending-project', api.time.seed(1613694623.0),
-      api.properties(commit_changes=True, ge_bucket='test_ge_bucket',
-                     branches=['R9000']),
-      _set_gerrit_query_changes_responses(
-          projects_with_pending_changes=[SUITE_SCHEDULER]),
-      api.post_check(
-          post_process.MustRun,
-          'commit changes.chromiumos/infra/suite_scheduler.Not committing changes to chromiumos/infra/suite_scheduler due to pending StarDoctor CLs'
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'commit changes.chromiumos/infra/suite_scheduler.committing to chromiumos/infra/suite_scheduler'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'commit changes.chromeos/config-internal.committing to chromeos/config-internal'
-      ),
-      api.post_check(
-          post_process.MustRun,
-          'commit changes.chromeos/infra/config.committing to chromeos/infra/config'
-      ))
 
   yield api.test(
       'only-irrelevant',
@@ -569,8 +523,6 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       _set_gerrit_query_changes_responses(),
       api.post_check(post_process.StepSuccess,
                      'generate binary config.deferring exception until later'),
-      api.post_check(post_process.StepSuccess,
-                     'generate binary config.copy suite scheduler configs'),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

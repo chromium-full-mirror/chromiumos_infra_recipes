@@ -31,26 +31,11 @@
       "clone",
       "--depth",
       "1",
-      "https://chromium.googlesource.com/chromiumos/infra/suite_scheduler",
+      "https://chrome-internal.googlesource.com/chromeos/config-internal",
       "[CLEANUP]/tmp_tmp_2"
     ],
     "infra_step": true,
     "name": "set up.git clone (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "clone",
-      "--depth",
-      "1",
-      "https://chrome-internal.googlesource.com/chromeos/config-internal",
-      "[CLEANUP]/tmp_tmp_3"
-    ],
-    "infra_step": true,
-    "name": "set up.git clone (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -75,7 +60,7 @@
       "[CLEANUP]/config"
     ],
     "infra_step": true,
-    "name": "set up.git clone (4)",
+    "name": "set up.git clone (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -2361,7 +2346,7 @@
       "./board_config/generate",
       "-b"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2381,7 +2366,7 @@
       "./test/exoneration/generate",
       "-b"
     ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
+    "cwd": "[CLEANUP]/tmp_tmp_2",
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
         "0"
@@ -2394,102 +2379,6 @@
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "/bin/bash",
-      "test/suite_scheduler/regenerate_configs.sh",
-      "-b"
-    ],
-    "cwd": "[CLEANUP]/tmp_tmp_3",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
-    "name": "generate binary config.regenerate suite scheduler configs",
-    "timeout": 180,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate binary config.copy suite scheduler configs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.ini",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.lab_config.ini",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.ini",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.ini",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/lab_config.cfg",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.lab_config.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/tmp_tmp_3/test/suite_scheduler/generated/suite_scheduler.cfg",
-      "[CLEANUP]/tmp_tmp_2/generated_configs"
-    ],
-    "infra_step": true,
-    "name": "generate binary config.copy suite scheduler configs.suite_scheduler.cfg",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
