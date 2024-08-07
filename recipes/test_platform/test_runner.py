@@ -622,6 +622,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
         e.g. "CHAMELEON_CONNECTION_TYPE_USB"
     * board_type: the board type,
         e.g. "HW", "VM"
+    * requester: Requester for the test run,
+        e.g. "ldap@google.com"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -641,6 +643,20 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
   declared_name = api.cros_tags.get_values('display_name')
   if declared_name:
     base_tags.append(('declared_name', declared_name[0]))
+
+  # Fetches the requester from the user tag of the current test runner build
+  # first. If not existed, falls back to the parent_created_by tag which
+  # indicates the requester for the parent CTP build.
+  requester = api.cros_tags.get_values('user')
+  if not requester:
+    requester = api.cros_tags.get_values('parent_created_by')
+  if requester:
+    user_prefix = 'user:'
+    requester_name = requester[0]
+    # Removes the user prefix if it exists to store the email account only.
+    if requester_name.startswith(user_prefix):
+      requester_name = requester_name[len(user_prefix):]
+    base_tags.append(('requester', requester_name))
 
   qs_account = api.cros_tags.get_values('qs_account')
   if qs_account:
@@ -3747,6 +3763,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'qs_account': 'unmanaged_p2',
               'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
               'branch-trigger': 'DEV',
+              'parent_created_by': 'user:ldap@google.com',
           }, swarming_tags={
               'drone':
                   'fake-drone-1234',
@@ -3818,6 +3835,7 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
               'qs_account': 'unmanaged_p2',
               'ctp-fwd-task-name': 'Bluetooth_Sa_Perbuild',
               'branch-trigger': 'DEV',
+              'user': 'user:ldap@google.com',
           }, swarming_tags={
               'drone': 'fake-drone-1234',
               'drone_server': 'fakeserver1-row2-drone3',
