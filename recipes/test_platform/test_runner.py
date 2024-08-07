@@ -43,7 +43,7 @@ from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.skylab_test_runner.request import Request
 from PB.test_platform.skylab_test_runner.result import Result
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure, RecipeScriptApi
+from recipe_engine.recipe_api import StepFailure, RecipeScriptApi, InfraFailure
 from recipe_engine.recipe_utils import check_type
 
 TestExecutionBehavior = TestPlatformRequest.Params.TestExecutionBehavior
@@ -2202,6 +2202,18 @@ def RunSteps(api, properties):
   Returns:
     None
   """
+
+  # NOTE: these produce a list of strings
+  board = api.cros_tags.get_values('label-board')
+  displayName = api.cros_tags.get_values('display_name')
+
+  # TODO: remove once the brox R127 issue is resolved.
+  if 'brox' in board:  # pragma: nocover
+    for item in displayName:
+      if 'R127' in item:
+        raise InfraFailure(
+            'Temporary failure: skipping brox R127 runs due to testing issues.')
+
   try:
     run_and_upload(api, properties)
   finally:
