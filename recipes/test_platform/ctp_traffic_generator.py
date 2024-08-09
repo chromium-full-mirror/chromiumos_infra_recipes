@@ -44,7 +44,7 @@ def RunSteps(api, properties):  # pragma: no cover
   _replay_builds(api, properties.ctp_builder,
                  ctp1_live_builds + ctp2_live_builds)
 
-  if properties.ctp_builder.endswith('staging'):
+  if 'staging' in properties.ctp_builder:
     # Replay 3D builds in dry-run mode.
     ddd_dry_run_builds = _ddd_builds_to_dry_run_replay(prod_builds,
                                                        _DDD_DRY_RUN_COUNT)
@@ -205,7 +205,7 @@ def _replay_builds(api, replay_builder, builds,
 def _modify_reqs_for_replay(replay_builder, reqs_dict,
                             dry_run):  # pragma: no cover
   # TODO(b/267268890): Remove after TRv2 rolls to prod.
-  dev = replay_builder.endswith('dev')
+  dev = 'dev' in replay_builder
   if not dev and not dry_run:
     return reqs_dict
 
