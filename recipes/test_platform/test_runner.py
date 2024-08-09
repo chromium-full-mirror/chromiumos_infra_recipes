@@ -64,7 +64,6 @@ DEPS = [
     'recipe_engine/swarming',
     'recipe_engine/time',
     'recipe_engine/uuid',
-    'bot_cost',
     'cros_infra_config',
     'cros_resultdb',
     'cros_tags',
@@ -2203,23 +2202,21 @@ def RunSteps(api, properties):
   Returns:
     None
   """
-  with api.bot_cost.build_cost_context():
-    # NOTE: these produce a list of strings
-    board = api.cros_tags.get_values('label-board')
-    displayName = api.cros_tags.get_values('display_name')
+  # NOTE: these produce a list of strings
+  board = api.cros_tags.get_values('label-board')
+  displayName = api.cros_tags.get_values('display_name')
 
-    # TODO: remove once the brox R127 issue is resolved.
-    if 'brox' in board:  # pragma: nocover
-      for item in displayName:
-        if 'R127' in item:
-          raise InfraFailure(
-              'Temporary failure: skipping brox R127 runs due to testing issues.'
-          )
+  # TODO: remove once the brox R127 issue is resolved.
+  if 'brox' in board:  # pragma: nocover
+    for item in displayName:
+      if 'R127' in item:
+        raise InfraFailure(
+            'Temporary failure: skipping brox R127 runs due to testing issues.')
 
-    try:
-      run_and_upload(api, properties)
-    finally:
-      pass
+  try:
+    run_and_upload(api, properties)
+  finally:
+    pass
 
 
 def GenTests(api):
