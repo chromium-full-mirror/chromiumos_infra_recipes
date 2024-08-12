@@ -37,15 +37,24 @@ def RunSteps(api, properties):  # pragma: no cover
   ctp2_pools = _get_ctp2_pools(api)
 
   # Replay a mix of CTP1 and CTP2 builds on live DUTs.
-  ctp1_live_builds = _short_builds_to_live_replay(prod_builds, _CTP1_LIVE_COUNT,
-                                                  ctp2_pools, replay_ctp2=False)
-  ctp2_live_builds = _short_builds_to_live_replay(prod_builds, _CTP2_LIVE_COUNT,
-                                                  ctp2_pools, replay_ctp2=True)
-  _replay_builds(api, properties.ctp_builder,
-                 ctp1_live_builds + ctp2_live_builds)
+  with api.step.nest('live replays'):
+    ctp1_live_builds = _short_builds_to_live_replay(prod_builds,
+                                                    _CTP1_LIVE_COUNT,
+                                                    ctp2_pools,
+                                                    replay_ctp2=False)
+    ctp2_live_builds = _short_builds_to_live_replay(prod_builds,
+                                                    _CTP2_LIVE_COUNT,
+                                                    ctp2_pools,
+                                                    replay_ctp2=True)
+    _replay_builds(api, properties.ctp_builder,
+                   ctp1_live_builds + ctp2_live_builds)
 
-  if 'staging' in properties.ctp_builder:
-    # Replay 3D builds in dry-run mode.
+  # Skip dry-run replays outside of ctp-staging-traffic-generator.
+  if 'staging' not in properties.ctp_builder:
+    return
+
+  # Replay 3D builds in dry-run mode.
+  with api.step.nest('dry-run replays'):
     ddd_dry_run_builds = _ddd_builds_to_dry_run_replay(prod_builds,
                                                        _DDD_DRY_RUN_COUNT)
     _replay_builds(api, properties.ctp_builder, ddd_dry_run_builds,
@@ -145,14 +154,17 @@ def _ddd_builds_to_dry_run_replay(prod_builds, count):  # pragma: no cover
     return []
 
   ddd_builds = []
+  print(f'considering {len(prod_builds)} builds for 3D dry-runs')
   for build in prod_builds:
     # Only replay 3D builds.
-    if not _is_ddd_build(build):
+    is_3d = _is_ddd_build(build)
+    print(f'is_3d == {is_3d} for build {build}')
+    if not is_3d:
       continue
     ddd_builds.append(build)
     if len(ddd_builds) >= count:
       break
-
+  print(f'3D builds to dry-run: {ddd_builds}')
   return ddd_builds
 
 
