@@ -2212,6 +2212,9 @@ def RunSteps(api, properties):
       if 'R127' in item:
         raise InfraFailure(
             'Temporary failure: skipping brox R127 runs due to testing issues.')
+      if 'R128' in item:
+        raise InfraFailure(
+            'Temporary failure: skipping brox R128 runs due to testing issues.')
 
   try:
     run_and_upload(api, properties)
