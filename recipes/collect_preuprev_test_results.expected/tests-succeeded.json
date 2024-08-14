@@ -1151,7 +1151,7 @@
     "cmd": [],
     "name": "Find the uprev CL on gerrit",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@[chromium:123456](https://crrev.com/c/123456) NEW@@@"
+      "@@@STEP_SUMMARY_TEXT@[chromium:123456](https://chromium-review.googlesource.com/c/123456) NEW@@@"
     ]
   },
   {
@@ -1178,12 +1178,12 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"changes\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 1,@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"change_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@      \"host\": \"chromium-review.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@json.output@      \"info\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"_number\": 123456,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"branch\": \"main\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"change_id\": \"123456\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"created\": \"2017-01-30 13:11:20.000000000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"current_revision\": \"f000f000f000f000f000f000f000f000f000f000\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"has_review_started\": false,@@@",
@@ -1217,7 +1217,7 @@
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/01/1/1\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/1\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
@@ -1228,7 +1228,7 @@
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/01/1/1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/1\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -1469,8 +1469,8 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@ - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
-      "@@@STEP_LOG_LINE@generated message@ - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
@@ -1482,7 +1482,7 @@
     "cmd": [],
     "name": "Add a comment to the uprev CL",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@https://crrev.com/c/123456@@@"
+      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@"
     ]
   },
   {
@@ -1563,7 +1563,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n - chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n - chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1741,6 +1741,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "Add a message to [chromium:123456](https://crrev.com/c/123456)"
+    "summaryMarkdown": "CL: [chromium:123456](https://chromium-review.googlesource.com/c/123456)\n\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\n"
   }
 ]

@@ -24,7 +24,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipes.chromeos.collect_preuprev_test_results import (
     CollectPreuprevTestResults)
 from RECIPE_MODULES.chromeos.gerrit.api import JSONObject as GerritJSONObject
-from RECIPE_MODULES.chromeos.gerrit.api import Label
+from RECIPE_MODULES.chromeos.gerrit.api import Label, PatchSet
 
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -134,6 +134,14 @@ def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
   return list(map(lambda b: int(b.id), builders))
 
 
+def ToBuildersLinkMd(builders: List[build_pb2.Build]) -> str:
+  text = ''
+  for builder in builders:
+    text += (f'- {builder.builder.builder}: ' +
+             f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+  return text
+
+
 def DoRunSteps(api: RecipeApi, current_build_id: int,
                uprev_cl_number_overridden_for_testing: Optional[int]):
   with api.step.nest('Find pupr-coordinator builder') as presentation:
@@ -219,16 +227,14 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     uprev_change_data = api.gerrit.fetch_patch_set_from_change(
         uprev_change, include_detailed_labels=True)
     presentation.step_summary_text = (
-        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})' +
+        f'[{uprev_change_data.display_id}]({uprev_change_data.display_url})' +
         f' {uprev_change_data.status}')
 
   with api.step.nest('Post progress message') as presentation:
     text = 'Pre-Uprev Test RUNNING\n\n'
     text += '\n'
 
-    for builder in pre_uprev_builders:
-      text += (f'- {builder.builder.builder}: '
-               f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+    text += ToBuildersLinkMd(pre_uprev_builders)
 
     text += '\n\n'
     text += ('Pre-uprev test verifies the soundness of upreved revision of '
@@ -237,9 +243,26 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     text += 'Please make sure pre-uprev test succeeds before submitting this CL!\n'
     presentation.logs['generated message'] = text
     uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
-                                change=uprev_cl_number)
+                                change=uprev_change_data.change_id)
     api.gerrit.add_change_comment_remote(uprev_change, text)
 
+  # Terminate early without waiting for preuprev results.
+  if uprev_change_data.status != 'NEW':
+    return RawResult(
+        status=common_pb2.FAILURE, summary_markdown=(
+            f'Uprev CL [{uprev_change_data.display_id}]({uprev_change_data.display_url})'
+            ' is not clean state'))
+
+  pre_uprev_builders = CollectResult(api, pre_uprev_builders, uprev_change_data)
+  overall_summary = (
+      f'CL: [{uprev_change_data.display_id}]({uprev_change_data.display_url})\n\n'
+  )
+  overall_summary += ToBuildersLinkMd(pre_uprev_builders)
+  return RawResult(status=common_pb2.SUCCESS, summary_markdown=overall_summary)
+
+
+def CollectResult(api: RecipeApi, pre_uprev_builders: List[build_pb2.Build],
+                  uprev_change_data: PatchSet):
   with api.step.nest('Wait for completion of pre-uprev tests') as presentation:
     PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
     pre_uprev_builders = api.buildbucket.collect_builds(
@@ -252,13 +275,9 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
     for builder in pre_uprev_builders:
       if builder.status == common_pb2.SUCCESS:
-        successful_builds.append(
-            f' - {builder.builder.builder}: ' +
-            f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+        successful_builds.append(builder)
       else:
-        failed_builds.append(
-            f' - {builder.builder.builder}: ' +
-            f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+        failed_builds.append(builder)
 
     total_build_len = len(pre_uprev_builders)
 
@@ -272,12 +291,12 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
       text += '---\n\n'
       text += 'Failed builds '
       text += f'({len(failed_builds)} of {total_build_len} builds):\n\n'
-      text += ''.join(failed_builds)
+      text += ToBuildersLinkMd(failed_builds)
     if successful_builds:
       text += '---\n\n'
       text += 'Successful builds '
       text += f'({len(successful_builds)} of {total_build_len} builds):\n\n'
-      text += ''.join(successful_builds)
+      text += ToBuildersLinkMd(successful_builds)
 
     text += '\n'
     text += ('Pre-uprev test verifies the soundness of upreved revision of '
@@ -297,14 +316,10 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     presentation.logs['generated message'] = text
 
   with api.step.nest('Add a comment to the uprev CL') as presentation:
-    if uprev_change_data.status != 'NEW':
-      return RawResult(status=common_pb2.FAILURE,
-                       summary_markdown='Uprev CL is not clean state')
-
-    presentation.step_summary_text = f'https://crrev.com/c/{uprev_cl_number}'
+    presentation.step_summary_text = uprev_change_data.display_url
 
     uprev_change = GerritChange(host=GERRIT_HOST, project=CHROMIUM_PROJECT,
-                                change=uprev_cl_number)
+                                change=uprev_change_data.change_id)
     api.gerrit.add_change_comment_remote(uprev_change, text)
 
     if failed_builds:
@@ -328,17 +343,22 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
           Label.COMMIT_QUEUE: 2,
       })
 
-
-    overall_summary = (
-        'Add a message to ' +
-        f'[chromium:{uprev_cl_number}](https://crrev.com/c/{uprev_cl_number})')
-
-  return RawResult(status=common_pb2.SUCCESS, summary_markdown=overall_summary)
-
+  return pre_uprev_builders
 
 def GenTests(api: RecipeTestApi):
   UPREV_GERRIT_CHANGE_VALUES = {
-      'change_id': '1',
+      'change_id': '123456',
+      'status': 'NEW',
+      'labels': {
+          'Commit-Queue': {
+              'all': [{
+                  'value': 2
+              }]
+          }
+      }
+  }
+  UPREV_GERRIT_CHANGE_OVERRIDEN_VALUES = {
+      'change_id': '98765',
       'status': 'NEW',
       'labels': {
           'Commit-Queue': {
@@ -349,7 +369,7 @@ def GenTests(api: RecipeTestApi):
       }
   }
   UPREV_GERRIT_CHANGE_VALUES_MERGED = {
-      'change_id': '1',
+      'change_id': '123456',
       'status': 'MERGED',
       'labels': {
           'Commit-Queue': {
@@ -508,10 +528,6 @@ def GenTests(api: RecipeTestApi):
       status='FAILURE',
       current_build=CURRENT_BUILD,
       pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
-      uprev_test_builds=[
-          PRE_UPREV_TEST_BUILDER_1,
-          PRE_UPREV_TEST_BUILDER_2,
-      ],
       # Returns the merged chrome uprev CL.
       uprev_gerrit_change=UPREV_GERRIT_CHANGE_VALUES_MERGED,
   )
@@ -567,7 +583,7 @@ def GenTests(api: RecipeTestApi):
           PRE_UPREV_TEST_BUILDER_1,
           PRE_UPREV_TEST_BUILDER_2,
       ],
-      uprev_gerrit_change=UPREV_GERRIT_CHANGE_VALUES,
+      uprev_gerrit_change=UPREV_GERRIT_CHANGE_OVERRIDEN_VALUES,
   )
 
   # Fails if this build has less than 2 ancestor builds
