@@ -992,7 +992,7 @@
     "cmd": [],
     "name": "Find pre-uprev tests",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-skylab: [bbid/201](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [bbid/202](https://ci.chromium.org/ui/b/202)\n@@@"
+      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-skylab: [bbid/203](https://ci.chromium.org/ui/b/203)\n- chromeos-brya-chrome-skylab: [bbid/202](https://ci.chromium.org/ui/b/202)\n@@@"
     ]
   },
   {
@@ -1034,8 +1034,28 @@
       "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"201\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"203\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"id\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"ref\": \"refs/tags/129.0.6658.0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              },@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"chrome_version\": \"129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"triggers\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@                  {@@@",
+      "@@@STEP_LOG_LINE@json.output@                    \"gitiles\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"ref\": \"refs/tags/129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"repo\": \"https://chromium.googlesource.com/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                      \"revision\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                    }@@@",
+      "@@@STEP_LOG_LINE@json.output@                  }@@@",
+      "@@@STEP_LOG_LINE@json.output@                ]@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
@@ -1065,7 +1085,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@",
+      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@",
       "@@@STEP_LINK@202@https://cr-buildbucket.appspot.com/build/202@@@"
     ]
   },
@@ -1114,7 +1134,7 @@
       "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"300\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"created https://crrev.com/c/123456\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"created [chromium:123456](https://crrev.com/c/123456)\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -1245,7 +1265,7 @@
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test RUNNING@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
       "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
@@ -1333,7 +1353,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1371,7 +1391,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "201",
+      "203",
       "202"
     ],
     "infra_step": true,
@@ -1412,7 +1432,7 @@
       }
     },
     "name": "Wait for completion of pre-uprev tests.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"201\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"202\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"203\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"202\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1422,8 +1442,28 @@
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"201\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"203\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"input\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/tags/129.0.6658.0\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"chrome_version\": \"129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"triggers\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@              {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"gitiles\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"ref\": \"refs/tags/129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"repo\": \"https://chromium.googlesource.com/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"revision\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                }@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            ]@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -1443,7 +1483,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"201\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"203\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
@@ -1455,7 +1495,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@",
+      "@@@STEP_LINK@203@https://cr-buildbucket.appspot.com/build/203@@@",
       "@@@STEP_LINK@202@https://cr-buildbucket.appspot.com/build/202@@@"
     ]
   },
@@ -1463,18 +1503,24 @@
     "cmd": [],
     "name": "Prepare the result message",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test PASSED: All builds succeeded@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 2 builds failed@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@---@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@---@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Successful builds (1 of 2 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@The test is PASSED. No action required. Please wait for the result from CQ.@@@",
+      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
       "@@@STEP_LOG_END@generated message@@@"
     ]
   },
@@ -1563,7 +1609,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 2 builds failed\\n\\n---\\n\\nFailed builds (1 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n---\\n\\nSuccessful builds (1 of 2 builds):\\n\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1587,7 +1633,7 @@
     "name": "Add a comment to the uprev CL.set labels on CL 123456",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 0, \"Code-Review\": 1}@@@",
       "@@@STEP_LOG_END@labels@@@",
       "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
     ]
@@ -1663,7 +1709,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
+      "{\"labels\": {\"Bot-Commit\": 0, \"Code-Review\": 1}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1678,6 +1724,527 @@
       }
     },
     "name": "Add a comment to the uprev CL.set labels on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retry failed builds"
+  },
+  {
+    "cmd": [],
+    "name": "retry failed builds.retrying chromeos-jacuzzi-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "retry failed builds.retrying chromeos-jacuzzi-chrome-skylab.buildbucket.schedule",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"builder\": \"chromeos-jacuzzi-chrome-skylab\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\", \"project\": \"chromium/src\", \"ref\": \"refs/tags/129.0.6658.0\"}, \"properties\": {\"chrome_version\": \"129.0.6658.0\", \"triggers\": [{\"gitiles\": {\"ref\": \"refs/tags/129.0.6658.0\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\"}}]}, \"requestId\": \"301-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"301\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"201\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"experimental\": \"NO\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"experiments\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"luci.buildbucket.parent_tracking\": false@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"gitilesCommit\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"host\": \"chromium.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"id\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"project\": \"chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"ref\": \"refs/tags/129.0.6658.0\"@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"chrome_version\": \"129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"triggers\": [@@@",
+      "@@@STEP_LOG_LINE@request@            {@@@",
+      "@@@STEP_LOG_LINE@request@              \"gitiles\": {@@@",
+      "@@@STEP_LOG_LINE@request@                \"ref\": \"refs/tags/129.0.6658.0\",@@@",
+      "@@@STEP_LOG_LINE@request@                \"repo\": \"https://chromium.googlesource.com/chromium/src\",@@@",
+      "@@@STEP_LOG_LINE@request@                \"revision\": \"b6b086b2111573c43c2f620cca8ccc7133a9dc2c\"@@@",
+      "@@@STEP_LOG_LINE@request@              }@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          ]@@@",
+      "@@@STEP_LOG_LINE@request@        },@@@",
+      "@@@STEP_LOG_LINE@request@        \"requestId\": \"301-00000000-0000-0000-0000-000000001337\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"parent_buildbucket_id\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"301\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          {@@@",
+      "@@@STEP_LOG_LINE@request@            \"key\": \"user_agent\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"value\": \"recipe\"@@@",
+      "@@@STEP_LOG_LINE@request@          }@@@",
+      "@@@STEP_LOG_LINE@request@        ]@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "add comment on CL 123456"
+  },
+  {
+    "cmd": [],
+    "name": "add comment on CL 123456.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "add comment on CL 123456.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_4"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "add comment on CL 123456.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_4",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Retrying Following Builders:\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n\\n\\nPlease wait for retried builder to succeed before submission.\"}]}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Wait for completion of pre-uprev tests (2)"
+  },
+  {
+    "cmd": [],
+    "name": "Wait for completion of pre-uprev tests (2).buildbucket.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "collect",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-interval",
+      "60s",
+      "201",
+      "202"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Wait for completion of pre-uprev tests (2).buildbucket.collect.wait",
+    "timeout": 21600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Wait for completion of pre-uprev tests (2).buildbucket.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"201\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"202\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"201\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-brya-chrome-skylab\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"202\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"201\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"202\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@201@https://cr-buildbucket.appspot.com/build/201@@@",
+      "@@@STEP_LINK@202@https://cr-buildbucket.appspot.com/build/202@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Prepare the result message (2)",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test PASSED: All builds succeeded@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@---@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@The test is PASSED. No action required. Please wait for the result from CQ.@@@",
+      "@@@STEP_LOG_END@generated message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL (2)",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL (2).add comment on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL (2).add comment on CL 123456.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).add comment on CL 123456.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_5"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).add comment on CL 123456.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_5",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).add comment on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL (2).set labels on CL 123456",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@labels@{\"Bot-Commit\": 1, \"Commit-Queue\": 2}@@@",
+      "@@@STEP_LOG_END@labels@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Add a comment to the uprev CL (2).set labels on CL 123456.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).set labels on CL 123456.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_6"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).set labels on CL 123456.ensure auth token.Write auth token to temp file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_6",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"labels\": {\"Bot-Commit\": 1, \"Commit-Queue\": 2}}",
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Add a comment to the uprev CL (2).set labels on CL 123456.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
