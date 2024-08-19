@@ -1265,8 +1265,8 @@
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test RUNNING@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
@@ -1353,7 +1353,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)\\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1501,7 +1501,7 @@
   },
   {
     "cmd": [],
-    "name": "Prepare the result message",
+    "name": "Process pre-uprev results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 2 builds failed@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
@@ -1509,19 +1509,35 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
       "@@@STEP_LOG_LINE@generated message@---@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Successful builds (1 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
-      "@@@STEP_LOG_END@generated message@@@"
+      "@@@STEP_LOG_END@generated message@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results.chromeos-jacuzzi-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results.chromeos-brya-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1609,7 +1625,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 2 builds failed\\n\\n---\\n\\nFailed builds (1 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/203)\\n---\\n\\nSuccessful builds (1 of 2 builds):\\n\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test FAILED: 1 of 2 builds failed\\n\\n---\\n\\nFailed builds (1 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)\\n---\\n\\nSuccessful builds (1 of 2 builds):\\n\\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.\\n\\nSee http://go/cros-gardening-preuprev-test for detail.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -1900,7 +1916,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Retrying Following Builders:\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n\\n\\nPlease wait for retried builder to succeed before submission.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Retrying Following Builders:\\n\\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\\n\\n\\nPlease wait for retried builder to succeed before submission.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -2028,7 +2044,7 @@
   },
   {
     "cmd": [],
-    "name": "Prepare the result message (2)",
+    "name": "Process pre-uprev results (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test PASSED: All builds succeeded@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
@@ -2036,13 +2052,27 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@The test is PASSED. No action required. Please wait for the result from CQ.@@@",
       "@@@STEP_LOG_END@generated message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results (2).chromeos-jacuzzi-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results (2).chromeos-brya-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2130,7 +2160,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
       "https://chromium-review.googlesource.com/changes/123456/revisions/current/review"
     ],
     "luci_context": {
@@ -2308,6 +2338,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "CL: [chromium:123456](https://chromium-review.googlesource.com/c/123456)\n\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\n"
+    "summaryMarkdown": "CL: [chromium:123456](https://chromium-review.googlesource.com/c/123456)\n\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\n"
   }
 ]

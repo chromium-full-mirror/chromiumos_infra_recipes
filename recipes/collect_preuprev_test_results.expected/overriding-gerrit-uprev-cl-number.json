@@ -1252,8 +1252,8 @@
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test RUNNING@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
@@ -1340,7 +1340,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test RUNNING\\n\\n\\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\\n\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nPlease make sure pre-uprev test succeeds before submitting this CL!\\n\"}]}}",
       "https://chromium-review.googlesource.com/changes/98765/revisions/current/review"
     ],
     "luci_context": {
@@ -1468,7 +1468,7 @@
   },
   {
     "cmd": [],
-    "name": "Prepare the result message",
+    "name": "Process pre-uprev results",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test PASSED: All builds succeeded@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
@@ -1476,13 +1476,27 @@
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Successful builds (2 of 2 builds):@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
       "@@@STEP_LOG_LINE@generated message@@@@",
       "@@@STEP_LOG_LINE@generated message@The test is PASSED. No action required. Please wait for the result from CQ.@@@",
       "@@@STEP_LOG_END@generated message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results.chromeos-jacuzzi-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Process pre-uprev results.chromeos-brya-chrome-skylab",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -1570,7 +1584,7 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
+      "{\"comments\": {\"/PATCHSET_LEVEL\": [{\"message\": \"Pre-Uprev Test PASSED: All builds succeeded\\n\\n---\\n\\nSuccessful builds (2 of 2 builds):\\n\\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\\n\\nPre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.\\n\\nThe test is PASSED. No action required. Please wait for the result from CQ.\"}]}}",
       "https://chromium-review.googlesource.com/changes/98765/revisions/current/review"
     ],
     "luci_context": {
@@ -1748,6 +1762,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "CL: [chromium:98765](https://chromium-review.googlesource.com/c/98765)\n\n- chromeos-jacuzzi-chrome-skylab: [build page](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [build page](https://ci.chromium.org/ui/b/202)\n"
+    "summaryMarkdown": "CL: [chromium:98765](https://chromium-review.googlesource.com/c/98765)\n\n- chromeos-jacuzzi-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/201)\n- chromeos-brya-chrome-skylab: [SUCCESS](https://ci.chromium.org/ui/b/202)\n"
   }
 ]

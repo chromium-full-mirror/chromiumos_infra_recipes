@@ -144,9 +144,21 @@ def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
 def ToBuildersLinkMd(builders: List[build_pb2.Build]) -> str:
   text = ''
   for builder in builders:
+    status = common_pb2.Status.Name(builder.status)
     text += (f'- {builder.builder.builder}: ' +
-             f'[build page](https://ci.chromium.org/ui/b/{builder.id})\n')
+             f'[{status}](https://ci.chromium.org/ui/b/{builder.id})\n')
   return text
+
+
+def FilterBuildsStatus(builders: List[build_pb2.Build],
+                       status: common_pb2.Status):
+  true_builders, false_builders = [], []
+  for builder in builders:
+    if builder.status == status:
+      true_builders.append(builder)
+    else:
+      false_builders.append(builder)
+  return true_builders, false_builders
 
 
 def DoRunSteps(api: RecipeApi, current_build_id: int,
@@ -265,7 +277,10 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
       f'CL: [{uprev_change_data.display_id}]({uprev_change_data.display_url})\n\n'
   )
   overall_summary += ToBuildersLinkMd(pre_uprev_builders)
-  return RawResult(status=common_pb2.SUCCESS, summary_markdown=overall_summary)
+  _, failed_builds = FilterBuildsStatus(pre_uprev_builders, common_pb2.SUCCESS)
+  return RawResult(
+      status=common_pb2.FAILURE if failed_builds else common_pb2.SUCCESS,
+      summary_markdown=overall_summary)
 
 
 def DoRetry(api: RecipeApi, builder_to_retry: build_pb2.Build):
@@ -292,13 +307,10 @@ def CollectResult(api: RecipeApi, pre_uprev_builders: List[build_pb2.Build],
                                            uprev_change_data)
 
   for _ in range(0, RETRY_PREUPREV_MAX_COUNT):
-    has_failed_builds = False
-    for builder in pre_uprev_builders:
-      if builder.status != common_pb2.SUCCESS:
-        has_failed_builds = True
-        break
+    _, failed_builds = FilterBuildsStatus(pre_uprev_builders,
+                                          common_pb2.SUCCESS)
 
-    if not has_failed_builds:
+    if not failed_builds:
       break
 
     new_pre_uprev_builders = []
@@ -335,15 +347,21 @@ def CollectSingleResult(api: RecipeApi,
         ToBuilderIds(pre_uprev_builders), fields=BUILD_FIELDS_TO_RETRIEVE,
         timeout=PRE_UPREV_TEST_TIMEOUT).values()
 
-  with api.step.nest('Prepare the result message') as presentation:
-    successful_builds = []
-    failed_builds = []
+  with api.step.nest('Process pre-uprev results') as presentation:
+    successful_builds, failed_builds = FilterBuildsStatus(
+        pre_uprev_builders, common_pb2.SUCCESS)
 
     for builder in pre_uprev_builders:
-      if builder.status == common_pb2.SUCCESS:
-        successful_builds.append(builder)
-      else:
-        failed_builds.append(builder)
+      # Create steps that represent builder status of each builder as step
+      # status.
+      with api.step.nest(f'{builder.builder.builder}',
+                         status='last') as task_step:
+        if builder.status == common_pb2.FAILURE:
+          task_step.status = api.step.FAILURE
+        elif builder.status == common_pb2.SUCCESS:
+          task_step.status = api.step.SUCCESS
+        else:  # pragma: no cover
+          task_step.status = api.step.EXCEPTION
 
     total_build_len = len(pre_uprev_builders)
 
@@ -634,6 +652,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'Add a comment to the uprev CL (2).add comment on CL 123456'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results.chromeos-jacuzzi-chrome-skylab'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results (2).chromeos-jacuzzi-chrome-skylab'),
+      status='FAILURE',
       current_build=CURRENT_BUILD,
       pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
       uprev_test_builds=[
@@ -654,6 +679,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'Add a comment to the uprev CL (2).add comment on CL 123456'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results.chromeos-jacuzzi-chrome-skylab'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results (2).chromeos-jacuzzi-chrome-skylab'),
+      status='FAILURE',
       current_build=CURRENT_BUILD,
       pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
       uprev_test_builds=[
@@ -676,6 +708,12 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'Add a comment to the uprev CL (2).add comment on CL 123456'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results.chromeos-jacuzzi-chrome-skylab'),
+      api.post_process(
+          post_process.StepSuccess,
+          'Process pre-uprev results (2).chromeos-jacuzzi-chrome-skylab'),
       current_build=CURRENT_BUILD,
       pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
       uprev_test_builds=[
