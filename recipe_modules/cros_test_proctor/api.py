@@ -7,20 +7,24 @@
 
 from collections import defaultdict
 from collections import OrderedDict
-from typing import Dict, List
+import typing
 
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
 from RECIPE_MODULES.chromeos.cros_test_proctor import structs
+from RECIPE_MODULES.chromeos.failures_util.api import Failure
 from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
+from PB.chromiumos.build.api.container_metadata import ContainerMetadata
+from PB.chromiumos.test.plan import source_test_plan as source_test_plan_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
+from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_api
@@ -55,19 +59,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._builders_tested_in_this_run = set()
 
   @property
-  def builders_tested_in_this_run(self):
+  def builders_tested_in_this_run(self) -> typing.List[str]:
     if self._test_data.get('builders_tested_in_this_run') is not None:
       return self._test_data.get('builders_tested_in_this_run')
 
     return self._builders_tested_in_this_run
 
   @property
-  def test_summary(self):
+  def test_summary(self) -> typing.List[typing.Dict[str, str]]:
     """Returns the test_summary for this build."""
     return self._test_summary
 
   @test_summary.setter
-  def test_summary(self, test_summary):
+  def test_summary(self, test_summary: typing.List[typing.Dict[str, str]]):
     """Set the test_summary for this build.
 
     Args:
@@ -76,8 +80,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     self._test_summary = test_summary
     self.m.easy.set_properties_step(**{TEST_SUMMARY_KEY: self._test_summary})
 
-  def get_testable_builders(self, gerrit_changes: List[GerritChange],
-                            builds: List[Build]) -> List[str]:
+  def get_testable_builders(self, gerrit_changes: typing.List[GerritChange],
+                            builds: typing.List[Build]) -> typing.List[str]:
     """Returns the names of the builders whose images may be tested in this run.
 
     Uses the builds being considered by this CQ run and the relevant test plans
@@ -108,7 +112,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return self.m.cros_test_plan_v2.get_testable_builders(
         starlark_files, filtered_builds)
 
-  def _fetch_starlark_files(self, source_test_plans):
+  def _fetch_starlark_files(
+      self, source_test_plans: typing.List[source_test_plan_pb2.SourceTestPlan]
+  ) -> typing.List[StarlarkPackage]:
     """Fetches a list of TestPlanStarlarkFiles to a local temp directory.
 
     Note that a given repo will only be cloned once. For example, if multiple
@@ -118,8 +124,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     local path the repo was cloned to.
 
     Args:
-      source_test_plans (list[SourceTestPlan]): A list of SourceTestPlans
-        containing TestPlanStarlarkFiles to fetch.
+      source_test_plans: A list of SourceTestPlans containing
+          TestPlanStarlarkFiles to fetch.
 
     Returns:
       A list of StarlarkPackages for the fetched plans.
@@ -159,30 +165,34 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     return starlark_packages
 
-  def run_proctor(self, need_tests_builds, snapshot, gerrit_changes,
-                  enable_history, run_async=False, container_metadata=None,
-                  require_stable_devices=False, use_test_plan_v2=False,
-                  build_target_critical_allowlist=None):
+  def run_proctor(
+      self, need_tests_builds: typing.List[Build],
+      snapshot: common_pb2.GitilesCommit,
+      gerrit_changes: typing.List[common_pb2.GerritChange],
+      enable_history: bool, run_async: bool = False,
+      container_metadata: typing.Optional[ContainerMetadata] = None,
+      require_stable_devices: bool = False, use_test_plan_v2: bool = False,
+      build_target_critical_allowlist: typing.Optional[typing.List[str]] = None
+  ) -> typing.List[Failure]:
     """Runs the test platform for a given bunch of builds.
 
     This is the entry point into the CrOS infra test platform via recipes.
 
     Args:
-      need_tests_builds (list[Build]): builds that are eligible for testing,
+      need_tests_builds: Builds that are eligible for testing,
           i.e. ones that didn't suffer build failures.
-      snapshot (common_pb2.GitilesCommit): the manifest snapshot at the time
-          the included builds were created.
-      gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
-          in the provided builds, or None.
-      enable_history (bool): whether to prune test history for previously
-          successful tests on images with the same build inputs.
-      run_async (bool): whether to stop and collect, if set we return no
-          failures (an empty list).
-      container_metadata (ContainerMetadata): Information on container
-        images used for test execution.
-      require_stable_devices (bool): whether to only run on devices with
+      snapshot: The manifest snapshot at the time the included builds were
+          created.
+      gerrit_changes: The changes that resulted in the provided builds, or None.
+      enable_history: Whether to prune test history for previously successful
+          tests on images with the same build inputs.
+      run_async: Whether to stop and collect, if set we return no failures
+          (an empty list).
+      container_metadata: Information on container images used for test
+          execution.
+      require_stable_devices: Whether to only run on devices with
         label-device-stable: True
-      use_test_plan_v2 (bool): whether to use the v2 testplan tool in cros test
+      use_test_plan_v2: Whether to use the v2 testplan tool in cros test
         platform v1 compatibility mode. The v2 testplan tool will return
         GenerateTestPlanResponse protos, so it is interchangable with the v1
         testplan tool.
@@ -190,7 +200,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         build targets specified can have tests run as critical. If None,
         criticality will not be modified for any build targets.
     Returns
-      list[failures.Failure]: failures encountered running tests
+      Failures encountered running tests
     """
     with self.m.step.nest('run tests') as pres:
       # Filter Bazel builders.
@@ -311,21 +321,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           self._not_runnable_addtnl_tests)
     return failures
 
-  def _get_test_plan(self, builds, gerrit_changes, snapshot, use_test_plan_v2):
+  def _get_test_plan(self, builds: typing.List[Build],
+                     gerrit_changes: typing.List[common_pb2.GerritChange],
+                     snapshot: common_pb2.GitilesCommit,
+                     use_test_plan_v2: bool) -> GenerateTestPlanResponse:
     """Returns the test plan that should be executed for this invocation.
 
     Args:
-      builds (list[build_pb2.Build]): builds to test.
-      gerrit_changes (list[common_pb2.GerritChange]): the changes that resulted
-          in the provided builds, or None.
-      snapshot (GitilesCommit): Start ref of the child builds.
-      use_test_plan_v2 (bool): whether to use the v2 testplan tool in cros test
+      builds: Builds to test.
+      gerrit_changes: The changes that resulted in the provided builds, or None.
+      snapshot: Start ref of the child builds.
+      use_test_plan_v2: Whether to use the v2 testplan tool in cros test
         platform v1 compatibility mode. The v2 testplan tool will return
         GenerateTestPlanResponse protos, so it is interchangable with the v1
         testplan tool.
 
     Returns:
-      GenerateTestPlanResponse: the test plan.
+      The test plan.
     """
     if use_test_plan_v2:
       relevant_plans = self.m.cros_test_plan_v2.relevant_plans(gerrit_changes)
@@ -351,28 +363,30 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     return test_plan
 
-  def schedule_tests(self, test_plan, passed_tests,
-                     previously_failed_now_exonerable_hw_suites, timeout,
-                     is_retry=False, run_async=False, container_metadata=None,
-                     require_stable_devices=False,
-                     build_target_critical_allowlist=None):
+  def schedule_tests(
+      self, test_plan: GenerateTestPlanResponse, passed_tests: typing.List[str],
+      previously_failed_now_exonerable_hw_suites: typing.List[str],
+      timeout: duration_pb2.Duration, is_retry: bool = False,
+      run_async: bool = False,
+      container_metadata: typing.Optional[ContainerMetadata] = None,
+      require_stable_devices: bool = False,
+      build_target_critical_allowlist: typing.Optional[typing.List[str]] = None
+  ) -> MetaTestTuple:
     """Schedule all tests from the test_plan.
 
     Args:
-      test_plan (GenerateTestPlanResponse): A plan for all tests to
-          be scheduled.
-      passed_tests (list[string]): A list of names for the tests that
-          have passed before.
-      previously_failed_now_exonerable_hw_suites (list[string]): Previously
-          failed tests that are now eligible for exoneration.
-      timeout (Duration): Timeout in duration_pb2.Duration.
-      is_retry (bool): Whether this is a CQ retry.
-      run_async (bool): whether to stop and collect, if set we return no
-          failures (an empty list).
-      container_metadata (ContainerMetadata): Information on container
-        images used for test execution.
-      require_stable_devices (bool): whether to only run on devices with
-        label-device-stable: True
+      test_plan: A plan for all tests to be scheduled.
+      passed_tests: A list of names for the tests that have passed before.
+      previously_failed_now_exonerable_hw_suites: Previously failed tests that
+          are now eligible for exoneration.
+      timeout: Timeout in duration_pb2.Duration.
+      is_retry: Whether this is a CQ retry.
+      run_async: Whether to stop and collect, if set we return no failures
+          (an empty list).
+      container_metadata: Information on container images used for test
+          execution.
+      require_stable_devices: Whether to only run on devices with
+          label-device-stable: True
       build_target_critical_allowlist: If set (including empty list), only the
         build targets specified can have tests run as critical. If None,
         criticality will not be modified for any build targets.
@@ -407,12 +421,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     _persist_task_ids_in_properties(tests_tasks)
     return tests_tasks
 
-  def _collect_tests(self, test_tasks, timeout):
+  def _collect_tests(self, test_tasks: MetaTestTuple,
+                     timeout: duration_pb2.Duration) -> MetaTestTuple:
     """Collect on all tests from test_tasks.
 
     Args:
-      test_tasks (MetaTestTuple): lists of tests to collect.
-      timeout (Duration): Timeout in duration_pb2.Duration.
+      test_tasks: Lists of tests to collect.
+      timeout: Timeout in duration_pb2.Duration.
 
     Returns:
       MetaTestTuple of lists of tests collected.
@@ -437,42 +452,45 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     runner.wait_for_and_get_responses()
     return self.MetaTestTuple(**results)
 
-  def get_test_failures(self, test_results):
+  def get_test_failures(self,
+                        test_results: MetaTestTuple) -> typing.List[Failure]:
     """Logs all test failures to the UI and raises on failed tests.
 
     Args:
       test_results: MetaTestTuple of the tests on the changes.
     Returns:
-      list[Failure]: All failures discovered in the given run.
+      All failures discovered in the given run.
     """
     failures = self.m.test_failures.get_hw_test_results(
         test_results.skylab).failures
     return failures
 
   def _schedule_skylab_tests(
-      self, test_plan, passed_tests, previously_failed_now_exonerable_hw_suites,
-      timeout, is_retry=False, run_async=False, container_metadata=None,
-      require_stable_devices=False, task_per_build_target=False,
-      build_target_critical_allowlist=None):
+      self, test_plan: GenerateTestPlanResponse, passed_tests: typing.List[str],
+      previously_failed_now_exonerable_hw_suites: typing.List[str],
+      timeout: duration_pb2.Duration, is_retry: bool = False,
+      run_async: bool = False,
+      container_metadata: typing.Optional[ContainerMetadata] = None,
+      require_stable_devices: bool = False, task_per_build_target: bool = False,
+      build_target_critical_allowlist: typing.Optional[
+          typing.List[str]] = None):
     """Schedule skylab tests from the test_plan.
 
     Args:
-      test_plan (GenerateTestPlanResponse): A plan for all tests to
-          be scheduled.
-      passed_tests (list[string]): A list of names for the tests that
-          have passed before.
-      previously_failed_now_exonerable_hw_suites (list[string]): Previously
-          failed tests that are now eligible for exoneration.
-      timeout (Duration): Timeout in duration_pb2.Duration.
-      is_retry (bool): Whether this is a CQ retry.
-      run_async (bool): Should the tests be ran async and not cancel
-          on the termination of the parent (this caller).
-      container_metadata (ContainerMetadata): Information on container
-          images used for test execution.
-      require_stable_devices (bool): Whether to only run on devices with
+      test_plan: A plan for all tests to be scheduled.
+      passed_tests: A list of names for the tests that have passed before.
+      previously_failed_now_exonerable_hw_suites: Previously failed tests that
+          are now eligible for exoneration.
+      timeout: Timeout in duration_pb2.Duration.
+      is_retry: Whether this is a CQ retry.
+      run_async: Should the tests be ran async and not cancel on the termination
+          of the parent (this caller).
+      container_metadata: Information on container images used for test
+          execution.
+      require_stable_devices: Whether to only run on devices with
           label-device-stable: True
-      task_per_build_target (bool): Should we schedule a unique invocation
-          of cros_test_platform per build target.
+      task_per_build_target: Should we schedule a unique invocation of
+          cros_test_platform per build target.
       build_target_critical_allowlist: If set (including empty list), only the
         build targets specified can have tests run as critical. If None,
         criticality will not be modified for any build targets.
@@ -496,7 +514,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       # A map from {build_target_name: [test_name]}.
       tests_to_run = defaultdict(list)
       hw_build_targets = set()
-      # pylint: disable=unused-variable
       previous_test_results = self._previous_test_results()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
@@ -540,17 +557,20 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         self.m.easy.set_properties_step(scheduled_hw_tests=scheduled_test_names)
     return skylab_tasks
 
-  def _generate_test_summary(self, test_plan, passed_test_names, test_builds):
+  def _generate_test_summary(
+      self, test_plan: GenerateTestPlanResponse,
+      passed_test_names: typing.List[str],
+      test_builds: typing.List[Build]) -> typing.List[typing.Dict[str, str]]:
     """Creates a summary of the test results.
 
     Args:
-      test_plan (GenerateTestPlanResponse): The test plan.
-      passed_test_names (list[str]): The names of the passed tests.
-      test_builds (list[Build]): Builds that are eligible for testing.
+      test_plan: The test plan.
+      passed_test_names: The names of the passed tests.
+      test_builds: Builds that are eligible for testing.
 
     Returns:
-      test_summary (list[dict]):  A summary of tests, one item per test
-        detailing display name, criticality, and last status.
+      test_summary:  A summary of tests, one item per test detailing
+        display name, criticality, and last status.
     """
     # Use cases:
     # * CQ test and build planning.
@@ -563,22 +583,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                    test_builds))
     return test_summary
 
-  def _extract_test_summary(self, units, cfg_func, tests_func,
-                            passed_test_names, test_builds):
+  def _extract_test_summary(
+      self, units: typing.List[HwTestUnit], cfg_func: typing.Callable,
+      tests_func: typing.Callable, passed_test_names: typing.List[str],
+      test_builds: typing.List[Build]) -> typing.List[typing.Dict[str, str]]:
     """Returns a summary of the tests within `units`.
 
     Args:
-      units (list[HwTestUnit]): Units to count the
-          critical tests within.
-      cfg_func (lambda): Lambda function that takes a unit from units and
-          returns the *test_cfg field.
-      tests_func (lambda): Lambda function that takes the *test_cfg field and
-          returns the *test field holding the list of tests.
-      passed_test_names (list[str]): The names of the passed tests.
-      test_builds (list[Build]): Builds that are eligible for testing.
+      units: Units to count the critical tests within.
+      cfg_func: Lambda function that takes a unit from units and returns the
+          *test_cfg field.
+      tests_func: Lambda function that takes the *test_cfg field and returns the
+          *test field holding the list of tests.
+      passed_test_names: The names of the passed tests.
+      test_builds: Builds that are eligible for testing.
 
     Returns:
-      list[dict]: A summary of tests, one item per test.
+      A summary of tests, one item per test.
     """
     result = []
     for unit in units:
@@ -614,22 +635,23 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         })
     return result
 
-  def _get_revision_for_builder(self, builder_name, test_builds):
+  def _get_revision_for_builder(self, builder_name: str,
+                                test_builds: typing.List[Build]) -> str:
     """Gets the gitiles commit of the build used for testing.
 
     Args:
-      builder_name (str): Name of the builder.
-      test_builds (list[Build]): Builds that are eligible for testing.
+      builder_name: Name of the builder.
+      test_builds: Builds that are eligible for testing.
 
     Returns:
-      str: The gitiles commit if found, otherwise, empty string.
+      The gitiles commit if found, otherwise, empty string.
     """
     for build in test_builds:
       if build.builder.builder == builder_name:
         return build.input.gitiles_commit.id
     return ''
 
-  def _previous_test_results(self) -> Dict[str, ExecuteResponse]:
+  def _previous_test_results(self) -> typing.Dict[str, ExecuteResponse]:
     """Gets the test results from the latest test invocation.
 
     Returns:
