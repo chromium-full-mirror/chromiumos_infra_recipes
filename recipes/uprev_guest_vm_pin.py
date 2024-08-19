@@ -219,8 +219,11 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
 
     for branch, (version, sanitized_version) in sorted(version_map.items()):
       with api.step.nest('upreving pin for branch {}'.format(branch)):
-        api.cros_source.checkout_branch(api.src_state.internal_manifest.url,
-                                        branch, sync_opts={'detach': True})
+        api.cros_source.checkout_branch(
+            api.src_state.internal_manifest.url, branch, sync_opts={
+                'detach': True,
+                'force_remove_dirty': True,
+            })
 
         version_path = api.cros_source.workspace_path.joinpath(
             properties.version_file)

@@ -2797,6 +2797,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-remove-dirty",
       "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -3570,6 +3571,7 @@
       "--retry-fetches",
       "8",
       "--verbose",
+      "--force-remove-dirty",
       "--force-checkout"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
