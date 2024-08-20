@@ -25,6 +25,8 @@ DEPS = [
     'cros_lkgm',
 ]
 
+# Set the LGKM uprev freqency as every 12 snapshots (= 6 hours).
+SNAPSHOT_LGKM_UPREV_FREQUENCY = 12
 
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
@@ -36,6 +38,7 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
 
 
 def DoRunSteps(api: RecipeApi):
+  snapshot_identifier = api.cros_snapshot.snapshot_identifier()
 
   # Run the child builders.
   extra_child_props = {}
@@ -44,8 +47,7 @@ def DoRunSteps(api: RecipeApi):
           MessageToDict(api.build_menu.resultdb_gitiles_commit)
   }
   extra_child_props['$chromeos/cros_snapshot'] = MessageToDict(
-      CrosSnapshotProperties(
-          snapshot_identifier=api.cros_snapshot.snapshot_identifier()))
+      CrosSnapshotProperties(snapshot_identifier=snapshot_identifier))
   builds_status = api.snapshot_orch_menu.plan_and_run_children(
       extra_child_props=extra_child_props,
   )
@@ -54,15 +56,24 @@ def DoRunSteps(api: RecipeApi):
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
-  api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
+  # Generate LKGM uprev CL if the condition meets.
+  if snapshot_identifier:
+    if int(snapshot_identifier) % SNAPSHOT_LGKM_UPREV_FREQUENCY == 0:
+      api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
 
 def GenTests(api: RecipeTestApi):
 
   data = api.snapshot_orch_menu.standard_test_data()
   lfg_props = api.properties(
-      **{'$chromeos/greenness': {
-          'publish_property': True
-      }})
+      **{
+          '$chromeos/greenness': {
+              'publish_property': True
+          },
+          '$chromeos/cros_lkgm': {
+              'enable_lkgm': True,
+              'full_run': True
+          }
+      })
 
   collect, collect_after = api.orch_menu.orch_child_builds(
       'snapshot-orchestrator', '-snapshot')
@@ -82,6 +93,22 @@ def GenTests(api: RecipeTestApi):
                                     collect_builds=green_build_results,
                                     with_manifest_refs=True,
                                     builder='snapshot-orchestrator')
+
+  yield api.snapshot_orch_menu.test(
+      'lkgm-uprev-generated', data.ctp_normal, lfg_props,
+      api.cros_snapshot.simulated_snapshot_identifier(
+          SNAPSHOT_LGKM_UPREV_FREQUENCY),
+      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
+      collect_builds=green_build_results, with_manifest_refs=True,
+      builder='snapshot-orchestrator')
+
+  yield api.snapshot_orch_menu.test(
+      'lkgm-uprev-not-generated', data.ctp_normal, lfg_props,
+      api.cros_snapshot.simulated_snapshot_identifier(
+          SNAPSHOT_LGKM_UPREV_FREQUENCY + 1),
+      api.post_check(post_process.DoesNotRun, 'call chrome_chromeos_lkgm'),
+      collect_builds=green_build_results, with_manifest_refs=True,
+      builder='snapshot-orchestrator')
 
   crit_failure_build_results = collect + collect_after
   for b in crit_failure_build_results:

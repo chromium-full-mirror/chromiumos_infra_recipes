@@ -2099,7 +2099,10 @@
   },
   {
     "cmd": [],
-    "name": "read snapshot identifier"
+    "name": "read snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@found snapshot_identifier: 12@@@"
+    ]
   },
   {
     "cmd": [
@@ -2214,7 +2217,7 @@
       }
     },
     "name": "run builds.schedule new builds.amd64-generic-snapshot",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {\"snapshotIdentifier\": \"12\"}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2256,7 +2259,9 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"snapshotIdentifier\": \"12\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"$chromeos/metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"sources_gitiles_commit_override\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"commitHash\": \"snapshot-HEAD-SHA\",@@@",
@@ -2319,7 +2324,7 @@
       }
     },
     "name": "run builds.schedule new builds.arm-generic-snapshot",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\", \"project\": \"chromiumos/manifest\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {\"snapshotIdentifier\": \"12\"}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133a\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2361,7 +2366,9 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"snapshotIdentifier\": \"12\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"$chromeos/metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"sources_gitiles_commit_override\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"commitHash\": \"snapshot-HEAD-SHA\",@@@",
@@ -2424,7 +2431,7 @@
       }
     },
     "name": "run builds.schedule new builds.grunt-snapshot",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-snapshot\", \"project\": \"chromeos\"}, \"canOutliveParent\": \"NO\", \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}, \"priority\": 30, \"properties\": {\"$chromeos/cros_snapshot\": {\"snapshotIdentifier\": \"12\"}, \"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-00000000133d\", \"tags\": [{\"key\": \"commit_position\", \"value\": \"0\"}, {\"key\": \"hide-test-results-in-gerrit\", \"value\": \"true\"}, {\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"snapshot\", \"value\": \"snapshot-HEAD-SHA\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2466,7 +2473,9 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {},@@@",
+      "@@@STEP_LOG_LINE@request@          \"$chromeos/cros_snapshot\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"snapshotIdentifier\": \"12\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"$chromeos/metadata\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"sources_gitiles_commit_override\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"commitHash\": \"snapshot-HEAD-SHA\",@@@",
@@ -2760,7 +2769,7 @@
       "@@@STEP_LOG_LINE@json.output@            }@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -2920,17 +2929,13 @@
   },
   {
     "cmd": [],
-    "name": "check build results",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "check build results"
   },
   {
     "cmd": [],
     "name": "check build results.build results",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2938,17 +2943,7 @@
     "name": "check build results.build results.relevant non-critical build results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@1 build failed, 1 succeeded@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "check build results.build results.relevant non-critical build results.grunt-snapshot",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_TEXT@failed but is not critical@@@",
-      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
+      "@@@STEP_TEXT@all relevant non-critical builds succeeded@@@"
     ]
   },
   {
@@ -2957,6 +2952,14 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "check build results.build results.relevant non-critical build results.grunt-snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514002@@@"
     ]
   },
   {
@@ -2979,7 +2982,7 @@
     "cmd": [],
     "name": "print greenness",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('grunt-snapshot', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('amd64-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('grunt-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('amd64-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
@@ -2995,7 +2998,7 @@
     "name": "print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"arm-generic-snapshot\", \"metric\": \"100\"}, {\"builder\": \"grunt-snapshot\"}, {\"buildMetric\": \"100\", \"builder\": \"amd64-generic-snapshot\", \"metric\": \"100\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"arm-generic-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"grunt-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"amd64-generic-snapshot\", \"metric\": \"100\"}]}@@@"
     ]
   },
   {
@@ -3234,12 +3237,21 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@skipped build info@amd64-generic-snapshot - containers not configured@@@",
       "@@@STEP_LOG_LINE@skipped build info@arm-generic-snapshot - containers not configured@@@",
+      "@@@STEP_LOG_LINE@skipped build info@grunt-snapshot - containers not configured@@@",
       "@@@STEP_LOG_END@skipped build info@@@"
     ]
   },
   {
     "cmd": [],
     "name": "aggregating metadata.container metadata.processing arm-generic-snapshot",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "aggregating metadata.container metadata.processing grunt-snapshot",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@containers not configured, skipping@@@"
@@ -3467,6 +3479,9 @@
       "@@@STEP_LOG_LINE@planner_input@  \"buildbucketProtos\": [@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNGtpKubruDoexIsCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoUYXJtLWdlbmVyaWMtc25hcHNob3QiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgDHrXAQpyCkUKFCRjaHJvbWVvcy9idWlsZF9tZW51Ei0qKwopCgxidWlsZF90YXJnZXQSGSoXChUKBG5hbWUSDRoLYXJtLWdlbmVyaWMKKQoMYnVpbGRfdGFyZ2V0EhkqFwoVCgRuYW1lEg0aC2FybS1nZW5lcmljEmEKGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWluggGOAQqLAQpFChQkY2hyb21lb3MvYnVpbGRfbWVudRItKisKKQoMYnVpbGRfdGFyZ2V0EhkqFwoVCgRuYW1lEg0aC2FybS1nZW5lcmljChcKCmJ1aWxkX2Nvc3QSCREAAAAAAAAkQAopCgxidWlsZF90YXJnZXQSGSoXChUKBG5hbWUSDRoLYXJtLWdlbmVyaWOSAZQBKicSJWludm9jYXRpb25zL2J1aWxkOjg5MjIwNTQ2NjIxNzI1MTQwMDE6aQoXChUKCHByaW9yaXR5EgkRAAAAAAAAPkASTgobChlzd2FybWluZzovL2Nocm9taXVtLXN3YXJtMi8KLQoOYm90X2RpbWVuc2lvbnMSGyoZChcKCGJvdF9zaXplEgsyCQoHGgVsYXJnZagBAg==\"@@@",
+      "@@@STEP_LOG_LINE@planner_input@    },@@@",
+      "@@@STEP_LOG_LINE@planner_input@    {@@@",
+      "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNKtpKubruDoexImCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoOZ3J1bnQtc25hcHNob3QiL3VzZXI6bHVjaS1zY2hlZHVsZXJAYXBwc3BvdC5nc2VydmljZWFjY291bnQuY29tMgYIucKi2AVgDHrLAQpmCj8KFCRjaHJvbWVvcy9idWlsZF9tZW51EicqJQojCgxidWlsZF90YXJnZXQSEyoRCg8KBG5hbWUSBxoFZ3J1bnQKIwoMYnVpbGRfdGFyZ2V0EhMqEQoPCgRuYW1lEgcaBWdydW50EmEKGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWluggGBAQp/Cj8KFCRjaHJvbWVvcy9idWlsZF9tZW51EicqJQojCgxidWlsZF90YXJnZXQSEyoRCg8KBG5hbWUSBxoFZ3J1bnQKFwoKYnVpbGRfY29zdBIJEQAAAAAAACRACiMKDGJ1aWxkX3RhcmdldBITKhEKDwoEbmFtZRIHGgVncnVudJIBlAEqJxIlaW52b2NhdGlvbnMvYnVpbGQ6ODkyMjA1NDY2MjE3MjUxNDAwMjppChcKFQoIcHJpb3JpdHkSCREAAAAAAAA+QBJOChsKGXN3YXJtaW5nOi8vY2hyb21pdW0tc3dhcm0yLwotCg5ib3RfZGltZW5zaW9ucxIbKhkKFwoIYm90X3NpemUSCzIJCgcaBWxhcmdlqAEC\"@@@",
       "@@@STEP_LOG_LINE@planner_input@    },@@@",
       "@@@STEP_LOG_LINE@planner_input@    {@@@",
       "@@@STEP_LOG_LINE@planner_input@      \"serializedProto\": \"CNCtpKubruDoexIuCghjaHJvbWVvcxIKcG9zdHN1Ym1pdBoWYW1kNjQtZ2VuZXJpYy1zbmFwc2hvdCIvdXNlcjpsdWNpLXNjaGVkdWxlckBhcHBzcG90LmdzZXJ2aWNlYWNjb3VudC5jb20yBgi5wqLYBWAMetsBCnYKRwoUJGNocm9tZW9zL2J1aWxkX21lbnUSLyotCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljCisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljEmEKGWNocm9taXVtLmdvb2dsZXNvdXJjZS5jb20SCXByb2plY3QtYRooMmQ3MjUxMGU0NDdhYjYwYTk3MjhhZWVhMjM2MmQ4YmUyY2JkNzc4OSIPcmVmcy9oZWFkcy9tYWluggGSAQqPAQpHChQkY2hyb21lb3MvYnVpbGRfbWVudRIvKi0KKwoMYnVpbGRfdGFyZ2V0EhsqGQoXCgRuYW1lEg8aDWFtZDY0LWdlbmVyaWMKFwoKYnVpbGRfY29zdBIJEQAAAAAAACRACisKDGJ1aWxkX3RhcmdldBIbKhkKFwoEbmFtZRIPGg1hbWQ2NC1nZW5lcmljkgGUASonEiVpbnZvY2F0aW9ucy9idWlsZDo4OTIyMDU0NjYyMTcyNTE0MDAwOmkKFwoVCghwcmlvcml0eRIJEQAAAAAAAD5AEk4KGwoZc3dhcm1pbmc6Ly9jaHJvbWl1bS1zd2FybTIvCi0KDmJvdF9kaW1lbnNpb25zEhsqGQoXCghib3Rfc2l6ZRILMgkKBxoFbGFyZ2WoAQE=\"@@@",
@@ -7824,7 +7839,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "*\ufffd\u0004\n\ufffd\u0004\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012,\n\bchromeos\u0012\npostsubmit\u001a\u0014arm-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514001:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0002*\ufffd\u0005\n\ufffd\u0005\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012.\n\bchromeos\u0012\npostsubmit\u001a\u0016amd64-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514000:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
+      "*\ufffd\u0004\n\ufffd\u0004\b\u046d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012,\n\bchromeos\u0012\npostsubmit\u001a\u0014arm-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nr\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nE\n\u0014$chromeos/build_menu\u0012-*+\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n)\n\fbuild_target\u0012\u0019*\u0017\n\u0015\n\u0004name\u0012\r\u001a\u000barm-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514001:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0002*\ufffd\u0004\n\ufffd\u0004\b\u04ad\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012&\n\bchromeos\u0012\npostsubmit\u001a\u000egrunt-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nf\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\u007f\n?\n\u0014$chromeos/build_menu\u0012'*%\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n#\n\fbuild_target\u0012\u0013*\u0011\n\u000f\n\u0004name\u0012\u0007\u001a\u0005grunt\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514002:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0002*\ufffd\u0005\n\ufffd\u0005\b\u042d\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd{\u0012.\n\bchromeos\u0012\npostsubmit\u001a\u0016amd64-generic-snapshot\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00a2\ufffd\u0005`\fz\ufffd\u0001\nv\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\u0012a\n\u0019chromium.googlesource.com\u0012\tproject-a\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\ufffd\u0001\n\ufffd\u0001\nG\n\u0014$chromeos/build_menu\u0012/*-\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\n\u0017\n\nbuild_cost\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000$@\n+\n\fbuild_target\u0012\u001b*\u0019\n\u0017\n\u0004name\u0012\u000f\u001a\ramd64-generic\ufffd\u0001\ufffd\u0001*'\u0012%invocations/build:8922054662172514000:i\n\u0017\n\u0015\n\bpriority\u0012\t\u0011\u0000\u0000\u0000\u0000\u0000\u0000>@\u0012N\n\u001b\n\u0019swarming://chromium-swarm2/\n-\n\u000ebot_dimensions\u0012\u001b*\u0019\n\u0017\n\bbot_size\u0012\u000b2\t\n\u0007\u001a\u0005large\ufffd\u0001\u0001:\u0011snapshot-HEAD-SHAJh\nf\n chrome-internal.googlesource.com\u0012\u001achromeos/manifest-internal\u001a\u0011snapshot-HEAD-SHA\"\u0013refs/heads/snapshot",
       "[CLEANUP]/test-plan-_tmp_1/input.binaryproto"
     ],
     "infra_step": true,
@@ -11281,6 +11296,74 @@
   },
   {
     "cmd": [],
+    "name": "assess LKGM readiness",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@LKGM candidate@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "assess LKGM readiness.assess release build results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@release builds: 100.00% (3 of 3) builds succeeded, threshold: 0%@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "read snapshot identifier (2)"
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "read snapshot identifier (2).read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/chrome_chromeos_lkgm",
+      "--lkgm",
+      "1234.56.0-12",
+      "--buildbucket-id",
+      "8945511751514863184"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "call chrome_chromeos_lkgm"
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator"
   },
   {
@@ -11296,7 +11379,7 @@
     "name": "clean up orchestrator.print greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('grunt-snapshot', GreennessTuple(score=0, build_score=0, critical=False, relevant=True)), ('amd64-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
+      "@@@STEP_LOG_LINE@builder_greenness@OrderedDict([('arm-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('grunt-snapshot', GreennessTuple(score=100, build_score=100, critical=False, relevant=True)), ('amd64-generic-snapshot', GreennessTuple(score=100, build_score=100, critical=True, relevant=True)), ('test-builder', GreennessTuple(score=100, build_score=100, critical=True, relevant=True))])@@@",
       "@@@STEP_LOG_END@builder_greenness@@@"
     ]
   },
@@ -11312,7 +11395,7 @@
     "name": "clean up orchestrator.print greenness.set greenness",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"arm-generic-snapshot\", \"metric\": \"100\"}, {\"builder\": \"grunt-snapshot\"}, {\"buildMetric\": \"100\", \"builder\": \"amd64-generic-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"test-builder\", \"metric\": \"100\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@greenness@{\"aggregateBuildMetric\": \"100\", \"aggregateMetric\": \"100\", \"builderGreenness\": [{\"buildMetric\": \"100\", \"builder\": \"arm-generic-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"grunt-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"amd64-generic-snapshot\", \"metric\": \"100\"}, {\"buildMetric\": \"100\", \"builder\": \"test-builder\", \"metric\": \"100\"}]}@@@"
     ]
   },
   {
@@ -11472,7 +11555,7 @@
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"FAILURE\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
       "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
@@ -11586,7 +11669,7 @@
     "name": "clean up orchestrator.set child_build_info",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"YES\", \"id\": \"8922054662172514000\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514000\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"build_target\": {\"name\": \"amd64-generic\"}}}, \"relevant\": true, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}, {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"NO\", \"id\": \"8922054662172514001\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514001\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}, \"build_target\": {\"name\": \"arm-generic\"}}}, \"relevant\": true, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}, {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"NO\", \"id\": \"8922054662172514002\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514002\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"grunt\"}}, \"build_target\": {\"name\": \"grunt\"}}}, \"relevant\": true, \"status\": \"FAILURE\", \"tested_in_this_run\": false}]@@@"
+      "@@@SET_BUILD_PROPERTY@child_build_info@[{\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"amd64-generic-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"YES\", \"id\": \"8922054662172514000\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514000\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"amd64-generic\"}}, \"build_target\": {\"name\": \"amd64-generic\"}}}, \"relevant\": true, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}, {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"arm-generic-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"NO\", \"id\": \"8922054662172514001\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514001\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"arm-generic\"}}, \"build_target\": {\"name\": \"arm-generic\"}}}, \"relevant\": true, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}, {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"grunt-snapshot\", \"project\": \"chromeos\"}, \"collect_value\": \"COLLECT_HANDLING_UNSPECIFIED\", \"createTime\": \"2018-05-25T23:50:17Z\", \"createdBy\": \"user:luci-scheduler@appspot.gserviceaccount.com\", \"critical\": \"NO\", \"id\": \"8922054662172514002\", \"infra\": {\"backend\": {\"config\": {\"priority\": 30.0}, \"task\": {\"details\": {\"bot_dimensions\": {\"bot_size\": [\"large\"]}}, \"id\": {\"target\": \"swarming://chromium-swarm\"}}}, \"resultdb\": {\"invocation\": \"invocations/build:8922054662172514002\"}}, \"input\": {\"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"properties\": {\"$chromeos/build_menu\": {\"build_target\": {\"name\": \"grunt\"}}, \"build_target\": {\"name\": \"grunt\"}}}, \"relevant\": true, \"status\": \"SUCCESS\", \"tested_in_this_run\": false}]@@@"
     ]
   },
   {
