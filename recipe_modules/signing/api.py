@@ -555,7 +555,8 @@ class SigningApi(recipe_api.RecipeApi):
                 path=common_pb2.Path(
                     path=self.m.path.abspath(archive_dir),
                     location=common_pb2.Path.Location.OUTSIDE,
-                )), docker_image=self.signing_docker_image)
+                )), tmp_path='/b/s/docker/tmp',
+            docker_image=self.signing_docker_image)
         response = self.m.cros_build_api.ImageService.SignImage(request)
         self.add_kms_logs_as_step_logs(presentation, archive_dir)
 
