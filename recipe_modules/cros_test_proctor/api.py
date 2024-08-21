@@ -430,27 +430,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       timeout: Timeout in duration_pb2.Duration.
 
     Returns:
-      MetaTestTuple of lists of tests collected.
+      The test results collected.
     """
-    results = OrderedDict({
-        'skylab': [],
-        'autotest_vm': [],
-        'tast_vm': [],
-        'tast_gce': []
-    })
-
-    def update_results(key, resp):
-      results[key] = resp
-
-    # TODO(b/315338399): Cleanup parallel collection as we don't need it anymore.
-    runner = self.m.future_utils.create_parallel_runner()
-    # Collect hw test results.
-    runner.run_function_async(
-        lambda _, _2: self.m.skylab.wait_on_suites(test_tasks.skylab, timeout),
-        None, success_handler=lambda resp: update_results('skylab', resp))
-
-    runner.wait_for_and_get_responses()
-    return self.MetaTestTuple(**results)
+    hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
+    return self.MetaTestTuple(skylab=hw_results, autotest_vm=[], tast_vm=[],
+                              tast_gce=[])
 
   def get_test_failures(self,
                         test_results: MetaTestTuple) -> typing.List[Failure]:

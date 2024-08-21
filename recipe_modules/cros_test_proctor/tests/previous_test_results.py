@@ -58,8 +58,6 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.buildbucket.try_build(
-          experiments=['chromeos.skylab.direct_tast_testing']),
       api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.simulated_multi_predicates_search_results(
           [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
