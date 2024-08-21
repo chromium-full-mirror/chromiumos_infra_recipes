@@ -559,6 +559,10 @@ class SigningApi(recipe_api.RecipeApi):
             docker_image=self.signing_docker_image)
         response = self.m.cros_build_api.ImageService.SignImage(request)
         self.add_kms_logs_as_step_logs(presentation, archive_dir)
+        # Turn the step red if any failures are present.
+        for archive in response.signed_artifacts.archive_artifacts:
+          if archive.signing_status != PASSED:
+            presentation.status = self.m.step.FAILURE
 
       self.upload_signed_artifacts(response)
 
@@ -663,8 +667,9 @@ class SigningApi(recipe_api.RecipeApi):
         else:
           # Allow for any success artifacts to upload, so just store the
           # exception.
-          ex = StepFailure('Failed to sign artifact. Check stdout of signing'
-                           ' build API call for more information.')
+          ex = StepFailure(
+              'Failed to sign artifact. Check stdout of signing'
+              ' build API call for more information. See go/cros-signing-help.')
 
       if not to_upload_by_channel and not ex:
         presentation.step_text = 'no signed artifacts'

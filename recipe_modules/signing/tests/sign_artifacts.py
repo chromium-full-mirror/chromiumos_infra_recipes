@@ -242,6 +242,7 @@ def GenTests(api: RecipeTestApi):
                      'log1', ['this is log 1']),
       api.post_check(post_process.LogContains, 'sign artifacts.call BAPI',
                      'log2', ['this is log 2']),
+      api.post_check(post_process.StepFailure, 'sign artifacts.call BAPI'),
       api.post_check(
           post_process.DoesNotRun,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_UNSPECIFIED'
