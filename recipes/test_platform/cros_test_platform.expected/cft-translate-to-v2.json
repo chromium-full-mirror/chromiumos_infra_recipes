@@ -456,10 +456,45 @@
     ]
   },
   {
+    "cmd": [
+      "[START_DIR]/cipd/ctpv2/ctpv2",
+      "--output",
+      "[CLEANUP]/tmp_tmp_1/sub_build.pb"
+    ],
+    "env": {
+      "MAC_CHROMIUM_TMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TEMP": "[CLEANUP]/tmp_tmp_2",
+      "TEMPDIR": "[CLEANUP]/tmp_tmp_2",
+      "TMP": "[CLEANUP]/tmp_tmp_2",
+      "TMPDIR": "[CLEANUP]/tmp_tmp_2"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:testplatform"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:42",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "ctpv2 sub-build (async)",
+    "stdin": "\b*\u0012,\n\bchromeos\u0012\ftestplatform\u001a\u0012cros_test_platform\"/user:luci-scheduler@appspot.gserviceaccount.com2\u0006\b\ufffd\u00af\ufffd\u0005:\u0006\b\ufffd\u00af\ufffd\u0005`\u0002zb\u0012`\n\u0019chromium.googlesource.com\u0012\bchromeos\u001a(2d72510e447ab60a9728aeea2362d8be2cbd7789\"\u000frefs/heads/main\ufffd\u0001\u001c\u0012\u0002 \u001e*\u0016\u0012\u0014invocations/build:42\ufffd\u0001\u001a\n\nlabel-pool\u0012\fschedukeTest",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Merge Step Error: Can't find the final build output for luciexe.@@@",
+      "@@@STEP_LOG_LINE@step.sub_build (read error)@Proto file was missing or unreadable:@@@",
+      "@@@STEP_LOG_LINE@step.sub_build (read error)@  [CLEANUP]/tmp_tmp_1/sub_build.pb@@@",
+      "@@@STEP_LOG_END@step.sub_build (read error)@@@",
+      "@@@STEP_EXCEPTION@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "ctpv2 async error handler",
     "~followup_annotations": [
-      "@@@STEP_TEXT@Value not set@@@"
+      "@@@STEP_TEXT@Infra Failure: Step('ctpv2 sub-build (async)') (retcode: 0)@@@"
     ]
   },
   {

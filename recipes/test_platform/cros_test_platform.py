@@ -1460,7 +1460,7 @@ def DoRunSteps(api, properties):
 
     runner.run_function_async(api.ctpv2.execute_luciexe, (True, True),
                               error_handler=errorHandlerFunc)
-    if not properties.requests or v2_request_count < len(properties.requests):
+    if properties.requests and v2_request_count < len(properties.requests):
       # If ctpv2 was invoked, nest the ctpv1 steps under a parent step
       with api.step.nest('ctpv1'):
         v1_responses, enumerations, error_in_requests, suite_execution_logs = RunCtpv1(
@@ -1476,7 +1476,7 @@ def DoRunSteps(api, properties):
   if runner_resp is not None and len(runner_resp) > 0:  # pragma: no cover
     # there should be only one response since there should be at max one async call to ctpv2
     resp = runner_resp[0].resp
-    if resp is not None:
+    if resp is not None and hasattr(resp, 'step'):
       if 'compressed_responses' in resp.step.sub_build.output.properties:
         compressed_responses = resp.step.sub_build.output.properties[
             'compressed_responses']
