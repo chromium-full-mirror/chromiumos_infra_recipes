@@ -9,9 +9,8 @@ from collections import defaultdict
 import typing
 
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
-from RECIPE_MODULES.chromeos.cros_test_proctor import structs
 from RECIPE_MODULES.chromeos.failures_util.api import Failure
-from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest
+from RECIPE_MODULES.chromeos.skylab_results.structs import UnitHwTest, SkylabResult, SkylabTask
 from google.protobuf import duration_pb2
 from google.protobuf import json_format
 
@@ -35,8 +34,6 @@ CROS_EXPERIMENTS_FOOTER = 'Cros-Experiments'
 
 
 class CrosTestProctorApi(recipe_api.RecipeApi):
-
-  MetaTestTuple = structs.MetaTestTuple
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -246,13 +243,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         return []
 
       with self.m.step.nest('collect tests'):
-        test_results = self._collect_tests(test_tasks, timeout=self.timeout)
+        test_results = self.m.skylab.wait_on_suites(test_tasks, self.timeout)
         # Record test results.
         passed_test_names = []
         passed_test_names.extend(exonerable_hw_suites_names)
         crit_failure_test_names = []
         non_crit_failure_test_names = []
-        for test_result in test_results.skylab:
+        for test_result in test_results:
           if test_result.status == common_pb2.SUCCESS:
             passed_test_names.append(self.m.naming.get_test_title(test_result))
           elif self.m.test_failures.is_critical_test_failure(test_result):
@@ -279,14 +276,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     with self.m.step.nest('check test results') as pres:
       # Output a link to the CTP build. Some orchestrators (ie postsubmit)
       # schedule multiple CTP builds; do not output a link in this case.
-      if not self._skylab_task_per_build_target and len(
-          test_results.skylab) > 0:
+      if not self._skylab_task_per_build_target and len(test_results) > 0:
         pres.links[
             'cros_test_platform build'] = self.m.urls.get_skylab_task_url(
-                test_results.skylab[0].task)
+                test_results[0].task)
       with self.m.step.nest('manual exoneration'):
         manually_exonerated_hw_results, manually_exonerated_hw_tests = (
-            self.m.exonerate.exonerate_hwtests(test_results.skylab))
+            self.m.exonerate.exonerate_hwtests(test_results))
         passed_test_names += manually_exonerated_hw_tests
         self.m.exonerate.print_stats(property_name='exoneration_stats')
 
@@ -302,19 +298,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
           passed_test_names += auto_exonerated_hw_tests
           self.m.exonerate.print_stats(property_name='autoex_stats')
 
-      test_results = test_results._replace(
-          skylab=auto_exonerated_hw_results +
+      test_results = (
+          auto_exonerated_hw_results +
           previously_failed_now_exonerable_hw_results)
       self.m.cros_resultdb.apply_exonerated_exonerations(
           [self.m.cros_resultdb.current_invocation_id])
 
       with self.m.step.nest('fault attribution'):
         self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
-            test_results.skylab, snapshot)
+            test_results, snapshot)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
-      self.m.greenness.update_hwtest_info(test_results.skylab)
-      failures = self.get_test_failures(test_results)
+      self.m.greenness.update_hwtest_info(test_results)
+      failures = self._get_test_failures(test_results)
       failures += self.m.test_failures.get_additional_hw_test_not_run_failures(
           self._not_runnable_addtnl_tests)
     return failures
@@ -369,7 +365,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       container_metadata: typing.Optional[ContainerMetadata] = None,
       require_stable_devices: bool = False,
       build_target_critical_allowlist: typing.Optional[typing.List[str]] = None
-  ) -> MetaTestTuple:
+  ) -> typing.List[SkylabTask]:
     """Schedule all tests from the test_plan.
 
     Args:
@@ -390,18 +386,17 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         criticality will not be modified for any build targets.
 
     Returns:
-      MetaTestTuple of lists of the tests scheduled.
+      A list of the SkylabTasks scheduled.
     """
 
-    def _persist_task_ids_in_properties(test_tasks: structs.MetaTestTuple):
-      skylab_ids = sorted(
-          {str(skylab_task.id) for skylab_task in test_tasks.skylab})
+    def _persist_task_ids_in_properties(test_tasks: typing.List[SkylabTask]):
+      skylab_ids = sorted({str(skylab_task.id) for skylab_task in test_tasks})
       self.m.easy.set_properties_step(test_tasks={
           'skylab_builder_ids': skylab_ids,
           'tast_vm_tests_builder_ids': [],
       })
 
-    skylab_tasks = self._schedule_skylab_tests(
+    test_tasks = self._schedule_skylab_tests(
         test_plan,
         passed_tests,
         previously_failed_now_exonerable_hw_suites,
@@ -414,37 +409,13 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         build_target_critical_allowlist=build_target_critical_allowlist,
     )
     self.m.easy.set_properties_step()
-    tests_tasks = self.MetaTestTuple(skylab=skylab_tasks or [], autotest_vm=[],
-                                     tast_vm=[], tast_gce=[])
-    _persist_task_ids_in_properties(tests_tasks)
-    return tests_tasks
+    _persist_task_ids_in_properties(test_tasks)
+    return test_tasks
 
-  def _collect_tests(self, test_tasks: MetaTestTuple,
-                     timeout: duration_pb2.Duration) -> MetaTestTuple:
-    """Collect on all tests from test_tasks.
-
-    Args:
-      test_tasks: Lists of tests to collect.
-      timeout: Timeout in duration_pb2.Duration.
-
-    Returns:
-      The test results collected.
-    """
-    hw_results = self.m.skylab.wait_on_suites(test_tasks.skylab, timeout)
-    return self.MetaTestTuple(skylab=hw_results, autotest_vm=[], tast_vm=[],
-                              tast_gce=[])
-
-  def get_test_failures(self,
-                        test_results: MetaTestTuple) -> typing.List[Failure]:
-    """Logs all test failures to the UI and raises on failed tests.
-
-    Args:
-      test_results: MetaTestTuple of the tests on the changes.
-    Returns:
-      All failures discovered in the given run.
-    """
-    failures = self.m.test_failures.get_hw_test_results(
-        test_results.skylab).failures
+  def _get_test_failures(
+      self, test_results: typing.List[SkylabResult]) -> typing.List[Failure]:
+    """Logs all test failures to the UI and raises on failed tests."""
+    failures = self.m.test_failures.get_hw_test_results(test_results).failures
     return failures
 
   def _schedule_skylab_tests(
