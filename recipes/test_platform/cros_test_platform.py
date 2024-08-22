@@ -521,8 +521,15 @@ def _is_autotest_sharding_enabled(api, request):
       in api.cros_infra_config.experiments):
     is_experiment_enabled = True  # pragma: no cover
 
-  return (is_experiment_enabled or request.test_plan.enable_autotest_sharding
-         ) and request.test_plan.max_in_shard in [None, 0]
+  return (request.test_plan.enable_autotest_sharding or
+          (is_experiment_enabled and not _is_public_image_testing(request) and
+           request.test_plan.max_in_shard in [None, 0]))
+
+
+def _is_public_image_testing(request):
+  if "public" in _extract_build_from_request(request):  # pragma: no cover
+    return True
+  return False  # pragma: no cover
 
 
 def _enumerate_cft_tests(api, properties, requests):
