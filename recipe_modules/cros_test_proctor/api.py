@@ -6,7 +6,6 @@
 """Functions for sending requests and processing results from cros test platform."""
 
 from collections import defaultdict
-from collections import OrderedDict
 import typing
 
 from RECIPE_MODULES.chromeos.cros_test_plan_v2.api import StarlarkPackage
@@ -24,7 +23,6 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.testplans.common import ProtoBytes
 from PB.testplans.generate_test_plan import GenerateTestPlanRequest
 from PB.testplans.generate_test_plan import GenerateTestPlanResponse
-from PB.testplans.generate_test_plan import HwTestUnit
 from PB.testplans.target_test_requirements_config import HwTestCfg
 from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_api
@@ -560,36 +558,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     # * CQ test and build planning.
     # * Assist analysis of test results by dashboards with access to the
     #   buildbucket tables.
-    test_summary = (
-        self._extract_test_summary(test_plan.hw_test_units,
-                                   lambda unit: unit.hw_test_cfg,
-                                   lambda cfg: cfg.hw_test, passed_test_names,
-                                   test_builds))
-    return test_summary
-
-  def _extract_test_summary(
-      self, units: typing.List[HwTestUnit], cfg_func: typing.Callable,
-      tests_func: typing.Callable, passed_test_names: typing.List[str],
-      test_builds: typing.List[Build]) -> typing.List[typing.Dict[str, str]]:
-    """Returns a summary of the tests within `units`.
-
-    Args:
-      units: Units to count the critical tests within.
-      cfg_func: Lambda function that takes a unit from units and returns the
-          *test_cfg field.
-      tests_func: Lambda function that takes the *test_cfg field and returns the
-          *test field holding the list of tests.
-      passed_test_names: The names of the passed tests.
-      test_builds: Builds that are eligible for testing.
-
-    Returns:
-      A summary of tests, one item per test.
-    """
-    result = []
-    for unit in units:
+    test_summary = []
+    for unit in test_plan.hw_test_units:
       build_target = unit.common.build_target.name
       builder_name = unit.common.builder_name
-      for test in tests_func(cfg_func(unit)):
+      for test in unit.hw_test_cfg.hw_test:
         name = test.common.display_name
         status = 'SUCCESS' if name in passed_test_names else 'FAILURE'
         critical = test.common.critical and test.common.critical.value
@@ -599,7 +572,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
                                                 HwTestCfg.HwTest) else None
         # This is extensible to other fields beyond criticality if needed in
         # future (did the test pass previously, did it pass this time, etc.).
-        result.append({
+        test_summary.append({
             'name':
                 name,
             'board':
@@ -617,7 +590,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             'revision':
                 self._get_revision_for_builder(builder_name, test_builds),
         })
-    return result
+    return test_summary
 
   def _get_revision_for_builder(self, builder_name: str,
                                 test_builds: typing.List[Build]) -> str:
