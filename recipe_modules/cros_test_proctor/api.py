@@ -310,7 +310,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       with self.m.step.nest('fault attribution'):
         self.m.cq_fault_attribution.set_cq_fault_attribute_properties(
-            test_results, snapshot)
+            test_results.skylab, snapshot)
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_hwtest_info(test_results.skylab)

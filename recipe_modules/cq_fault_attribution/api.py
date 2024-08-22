@@ -11,13 +11,13 @@ import re
 from typing import Any, Dict, List, Set, Tuple
 from collections import defaultdict
 from recipe_engine import recipe_api
-from google.protobuf import timestamp_pb2, json_format
+from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
                                                        builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit, \
-  Status, StringPair, TimeRange, Trinary
+  Status, StringPair, TimeRange
 from PB.go.chromium.org.luci.buildbucket.proto.builder_common import BuilderID
 from PB.go.chromium.org.luci.resultdb.proto.v1.test_result import TestResult, \
   TestStatus
@@ -29,7 +29,6 @@ from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
   FaultAttributionProperties, SnapshotProperties
 from PB.test_platform.taskstate import TaskState
 from RECIPE_MODULES.recipe_engine.resultdb.common import Invocation
-from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 TEST_ID_REGEX = 'invocations/.*/tests/(?P<test_id>.*)/results/'
@@ -107,7 +106,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
   def set_cq_fault_attribute_properties(
       self,
-      test_results: MetaTestTuple,
+      test_results: List[SkylabResult],
       orch_snapshot: GitilesCommit,
   ) -> CqTestFailureFaultAttributionStats:
     """Compares test failures between a snapshot and CQ build, and assigns
@@ -115,7 +114,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       snapshot is found. Sets and returns failure attributes.
 
       Args:
-        test_results: HW and VM test results.
+        test_results: HW results.
         orch_snapshot: The manifest snapshot at the orchestrator level.
       """
     if not self._enable_fault_attribution:
@@ -124,8 +123,7 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
         'set fault attributes'), self.m.failures.ignore_exceptions():
 
       # names of tests that failed across hw, vm and gce tests.
-      failed_test_names = self._get_failed_test_names(
-          test_results.skylab, test_results.tast_vm + test_results.tast_gce)
+      failed_test_names = self._get_failed_test_names(test_results)
       if len(failed_test_names) > TEST_QUERY_LIMIT or \
           len(failed_test_names) == 0:
         # Too many failed tests to query for, or none.
@@ -174,8 +172,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
                                     invocation_id_to_snapshot)
       with self.m.step.nest('set hw test fault attributes'):
         self._set_hwtest_fault_attributes()
-      with self.m.step.nest('set vm & gce test fault attributes'):
-        self._set_vm_gce_test_fault_attributes()
 
     fault_attributed_build_targets = []
     for k, v in self._dut_to_test_fault_attributes.items():
@@ -186,21 +182,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       fault_attributed_build_targets.append(fault_attributed_build_target)
 
     return fault_attributed_build_targets
-
-  def _set_vm_gce_test_fault_attributes(self):
-    """ Creates and sets fault attribution properties for a vm and gce tests and
-      appends the fault attribution instance to the fault attribute list for the
-      corresponding build target.
-      """
-    for failed_vm_test in self._failed_vm_tests:
-      test_case = failed_vm_test['test_case']
-      build = failed_vm_test['build']
-      model = EMPTY_MODEL
-      build_target = self.m.cros_infra_config.get_build_target_name(build)
-      test_id = self._get_vm_test_id(test_case)
-      failure_reason = test_case.get('humanReadableSummary', '')
-      self._set_fault_attribution_properties(build_target, model, test_id,
-                                             failure_reason)
 
   def _set_hwtest_fault_attributes(self):
     """ Creates and sets fault attribution properties for a HW test case and
@@ -333,10 +314,8 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
 
     test_fault_attribute.snapshot_comparison_fault_attribution = CqFailureAttribute.NO_COMPARISON
 
-  def _get_failed_test_names(self, hw_tests: SkylabResult,
-                             vm_gce_tests: List[build_pb2.Build]):
-    """Returns a list of all failed test names, and also sets failed HW and VM
-    test properties on the class instance."""
+  def _get_failed_test_names(self, hw_tests: SkylabResult):
+    """Returns a list of failed test names."""
     failed_test_names = set()
     for skylab_res in hw_tests:
       if not skylab_res.task.test.common.critical.value:
@@ -363,18 +342,6 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
               'test_case': test_case
           })
           failed_test_names.add(test_case.name)
-
-    # Store failed VM tests and get failed test names.
-    for build in vm_gce_tests:
-      if build.critical == Trinary.NO or build.status == Status.SUCCESS:
-        continue
-      if 'failed_test_cases' in build.output.properties:
-        prop_struct = build.output.properties['failed_test_cases']
-        test_failures = json_format.MessageToDict(prop_struct)
-        for test_case in test_failures:
-          self._failed_vm_tests.append({'build': build, 'test_case': test_case})
-          test_id = self._get_vm_test_id(test_case)
-          failed_test_names.add(test_id)
 
     return failed_test_names
 
@@ -528,16 +495,3 @@ class CqFailureAttributionApi(recipe_api.RecipeApi):
       comparison_snapshot.start_time.seconds
 
     return comparison_snapshot_properties
-
-  def _get_vm_test_id(self, test_case: Dict) -> str:
-    """Returns the test_id for a vm / gce test prefixed with 'tast'.
-    """
-
-    # Some failed vm / gce test names within the build are not prefixed with
-    # 'tast.' like how the invocation results are. For those cases, let's add
-    # the prefix.
-    test_prefix = 'tast.'
-    test_id = test_case['name'] if test_case['name'].startswith(test_prefix) \
-      else test_prefix + test_case['name']
-
-    return test_id

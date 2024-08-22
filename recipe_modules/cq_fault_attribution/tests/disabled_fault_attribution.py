@@ -24,7 +24,6 @@ from PB.recipe_modules.chromeos.cq_fault_attribution.tests.tests import \
   DisabledFaultAttributionProperties
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
-from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from RECIPE_MODULES.recipe_engine.resultdb.common import Invocation
 
@@ -86,9 +85,7 @@ def RunSteps(api, properties):
         id=ORCH_SNAPSHOT_COMMIT_SHA,
         ref='refs/heads/snapshot')
   cq_test_failure_attributes = \
-    api.cq_fault_attribution.set_cq_fault_attribute_properties(
-        MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
-                      tast_gce=[]),
+    api.cq_fault_attribution.set_cq_fault_attribute_properties(hw_test_failures,
         orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions),

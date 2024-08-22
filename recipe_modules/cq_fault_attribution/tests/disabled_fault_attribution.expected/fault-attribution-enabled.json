@@ -148,13 +148,6 @@
   },
   {
     "cmd": [],
-    "name": "set fault attributes.set vm & gce test fault attributes",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set fault attributes.set cq_fault_attributions",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

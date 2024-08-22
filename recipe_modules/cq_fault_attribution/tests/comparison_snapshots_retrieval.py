@@ -15,7 +15,6 @@ from PB.recipe_modules.chromeos.looks_for_green.looks_for_green import \
   LooksForGreenStatus
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
-from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from recipe_engine import post_process
 
@@ -92,8 +91,7 @@ def RunSteps(api):
     api.looks_for_green.stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
 
   api.cq_fault_attribution.set_cq_fault_attribute_properties(
-      MetaTestTuple(skylab=hw_test_failures, autotest_vm=[], tast_vm=[],
-                    tast_gce=[]), orch_snapshot)
+      hw_test_failures, orch_snapshot)
 
 
 def GenTests(api):

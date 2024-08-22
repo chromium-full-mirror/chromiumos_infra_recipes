@@ -14,7 +14,6 @@ from PB.recipe_modules.chromeos.cq_fault_attribution.cq_fault_attribution \
 from PB.test_platform.taskstate import TaskState
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
-from RECIPE_MODULES.chromeos.cros_test_proctor.structs import MetaTestTuple
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 
 DEPS = [
@@ -58,8 +57,7 @@ def RunSteps(api):
   # Testing the case of when no comparison snapshots are found with using the
   # orchestrator commit sha.
   cq_test_failure_attributes = \
-    api.cq_fault_attribution.set_cq_fault_attribute_properties(
-      MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
+    api.cq_fault_attribution.set_cq_fault_attribute_properties(hw_tests,
       orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
@@ -68,8 +66,7 @@ def RunSteps(api):
   # commit sha selected by LFG.
   api.looks_for_green.stats.status = LooksForGreenStatus.STATUS_RAN_OLDER
   cq_test_failure_attributes = \
-    api.cq_fault_attribution.set_cq_fault_attribute_properties(
-      MetaTestTuple(skylab=hw_tests, autotest_vm=[], tast_vm=[], tast_gce=[]),
+    api.cq_fault_attribution.set_cq_fault_attribute_properties(hw_tests,
       orch_snapshot)
   api.assertions.assertEqual(
       len(cq_test_failure_attributes.test_failure_attributions), 0)
