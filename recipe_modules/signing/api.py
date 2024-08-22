@@ -511,15 +511,20 @@ class SigningApi(recipe_api.RecipeApi):
       self.m.time.exponential_retry(retries=2,
                                     delay=datetime.timedelta(seconds=1))
 
-      def docker_pull():
-        # Before pulling, prune the docker cache to remove stopped containers,
-        # and prevent the overlay2 cache from growing over time.
+      def docker_prune():
+        """Prunes the docker cache to remove stopped containers. The docker
+        root is the boot partition, so we don't want the cache to grow over
+        time.
+        """
         self.m.step('docker prune', [
             'docker',
             'container',
             'prune',
             '--force',
         ])
+
+      def docker_pull():
+        docker_prune()
 
         # BAPI is hermetic so need to pull down the specified docker image
         # ahead of time.
@@ -565,6 +570,7 @@ class SigningApi(recipe_api.RecipeApi):
             presentation.status = self.m.step.FAILURE
 
       self.upload_signed_artifacts(response)
+      docker_prune()
 
       return self.m.signing_utils.signing_response_to_metadata(response)
 
