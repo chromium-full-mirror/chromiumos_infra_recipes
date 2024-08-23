@@ -620,6 +620,8 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
     * chameleon_connection_types: Chameleon connection types, which indicates
         the connection port to the peripherals,
         e.g. "CHAMELEON_CONNECTION_TYPE_USB"
+    * board_type: the board type,
+        e.g. "HW", "VM"
 
     Args:
     * api (RecipeScriptApi): Ubiquitous recipe api.
@@ -716,6 +718,13 @@ def _generate_resultdb_base_tags(api, properties, test_metadata,
                                       api.buildbucket.swarming_bot_dimensions)
   if hostname:
     base_tags.append(('hostname', hostname[0]))
+
+  bot_role = api.cros_tags.get_values('role',
+                                      api.buildbucket.swarming_bot_dimensions)
+  if hostname or bot_role:
+    base_tags.append(
+        ('board_type',
+         'VM' if hostname == 'vm' or bot_role == 'vmlab' else 'HW'))
 
   pool = api.cros_tags.get_values('pool',
                                   api.buildbucket.swarming_bot_dimensions)
@@ -3747,6 +3756,8 @@ Linux localhost 5.4.190-18482-g9cffa68a11c1 #1 SMP PREEMPT Wed Apr 27 18:24:08 P
                   'fakedut1-row2-rack3-host4',
               'pool':
                   'ChromeOSSkylab',
+              'role':
+                  'vmlab',
               'label-wifi_chip':
                   'marvell',
               'label-wifi_router_models':
