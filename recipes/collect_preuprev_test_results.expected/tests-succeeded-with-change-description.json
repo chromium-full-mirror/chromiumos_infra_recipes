@@ -1213,22 +1213,8 @@
       "@@@STEP_LOG_LINE@json.output@      \"revision_info\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"_number\": 1,@@@",
       "@@@STEP_LOG_LINE@json.output@        \"commit\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"message\": \"a quick description\\n\\nChange-Id: deadbeef\\n\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"fetch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"http\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"ref\": \"refs/changes/56/123456/1\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"url\": \"https://chromium.googlesource.com/chromium/src\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"files\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"my/fake/file\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"size_delta\": 0,@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"A\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"ref\": \"refs/changes/56/123456/1\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"message\": \"Uprev Chrome to 1234\\n\\nPre-Uprev Testing: Not Tested\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        }@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -1481,7 +1467,94 @@
     "cmd": [],
     "name": "update change description",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@message does not need update.@@@"
+      "@@@STEP_LOG_LINE@new message@Uprev Chrome to 1234@@@",
+      "@@@STEP_LOG_LINE@new message@@@@",
+      "@@@STEP_LOG_LINE@new message@Pre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301@@@",
+      "@@@STEP_LOG_END@new message@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update change description.set CL 123456 description",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@description text@Uprev Chrome to 1234@@@",
+      "@@@STEP_LOG_LINE@description text@@@@",
+      "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301@@@",
+      "@@@STEP_LOG_END@description text@@@",
+      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "RECIPE_REPO[depot_tools]/repo",
+      "forall",
+      "-v",
+      "chromium/src",
+      "-c",
+      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "update change description.set CL 123456 description.repo forall",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_cl.py",
+      "description",
+      "-n",
+      "-",
+      "https://chromium-review.googlesource.com/c/chromium/src/+/123456"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "update change description.set CL 123456 description.git_cl set description",
+    "stdin": "Uprev Chrome to 1234\n\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301\n",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

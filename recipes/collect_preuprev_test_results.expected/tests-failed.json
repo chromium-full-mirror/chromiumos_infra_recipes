@@ -1183,7 +1183,7 @@
       }
     },
     "name": "Find the uprev CL on gerrit.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": false, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium-review.googlesource.com\", \"patch_set\": 1}], \"include_commit_info\": true, \"include_detailed_labels\": true, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1246,7 +1246,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": true}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium-review.googlesource.com\", \"change_number\": 123456, \"patch_set\": 1}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": true}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -1477,20 +1477,6 @@
     "cmd": [],
     "name": "Process pre-uprev results",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 1 builds failed@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@---@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
-      "@@@STEP_LOG_END@generated message@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -1506,7 +1492,21 @@
     "cmd": [],
     "name": "Add a comment to the uprev CL",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@"
+      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 1 builds failed@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@---@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
+      "@@@STEP_LOG_END@generated message@@@"
     ]
   },
   {
@@ -2031,20 +2031,6 @@
     "cmd": [],
     "name": "Process pre-uprev results (2)",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 1 builds failed@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@---@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
-      "@@@STEP_LOG_LINE@generated message@@@@",
-      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
-      "@@@STEP_LOG_END@generated message@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },
@@ -2060,7 +2046,21 @@
     "cmd": [],
     "name": "Add a comment to the uprev CL (2)",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@"
+      "@@@STEP_SUMMARY_TEXT@https://chromium-review.googlesource.com/c/123456@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-Uprev Test FAILED: 1 of 1 builds failed@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@---@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Failed builds (1 of 1 builds):@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@- chromeos-jacuzzi-chrome-skylab: [FAILURE](https://ci.chromium.org/ui/b/203)@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@Pre-uprev test verifies the soundness of upreved revision of chrome by running a small subset of tast tests with the upreved chrome + LKGM CrOS. The test is independent from CQ testing.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@The pre-uprev test is NOT passed. Please check the result of failed builders. If failures are real, please fix them and trigger (or wait) next uprev. If not, please set Verified+1 and add CR+2 manually.@@@",
+      "@@@STEP_LOG_LINE@generated message@@@@",
+      "@@@STEP_LOG_LINE@generated message@See http://go/cros-gardening-preuprev-test for detail.@@@",
+      "@@@STEP_LOG_END@generated message@@@"
     ]
   },
   {
