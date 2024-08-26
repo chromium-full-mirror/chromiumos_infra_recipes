@@ -27,6 +27,11 @@ RUNNING_RE = re.compile(r'^Patch Set \d+:\s*C[QV] is trying the patch')
 # but included for symmetry's sake.
 PASSED_RE = re.compile(
     r'^Patch Set \d+:\s*Change has been successfully rebased and submitted')
+# CLs on this doesn't have votes satisfying submit requirement and should be ignored from full run retry.
+IGNORE_RE = re.compile(
+    r'^Patch Set \d+:\s*CV cannot start a Run because this CL is not satisfying .* submit requirement.'
+)
+
 
 FAILED_DRY_RUN_RE = re.compile(r'^Patch Set \d+:\s*(Dry run: Failed builds|'
                                r'This CL has failed the run\. Reason:)')
@@ -115,6 +120,9 @@ def is_cl_in_state(c, desired_state, dry_run=False):
     if not run_tag_re.match(m['tag']):
       continue  # pragma: nocover
 
+    # If we encounter a message that CV cannot start, ignore this CL.
+    if not dry_run and IGNORE_RE.match(m['message']):
+      return False
     # If we encounter a message of the desired type, then the CL is in that
     # state for this run type.
     if desired_state_re.match(m['message']):
