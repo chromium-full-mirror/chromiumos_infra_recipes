@@ -56,16 +56,20 @@
   },
   {
     "cmd": [],
-    "name": "check if Ctpv2 needs to run"
+    "name": "remove requests for blocked pools",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@blocked requests@@@@",
+      "@@@STEP_LOG_END@blocked requests@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2",
+    "name": "remove requests for blocked pools.get blocked pools",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@allowed pools@schedukeTest@@@",
-      "@@@STEP_LOG_LINE@allowed pools@examplePool@@@",
-      "@@@STEP_LOG_END@allowed pools@@@"
+      "@@@STEP_LOG_LINE@blocked pools@blockedPool@@@",
+      "@@@STEP_LOG_END@blocked pools@@@"
     ]
   },
   {
@@ -76,20 +80,13 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/ctp2_pools.txt",
+      "https://chrome-internal.googlesource.com/chromeos/infra/config/+/HEAD/testingconfig/blocked_pools.txt",
       "--format",
       "text"
     ],
-    "name": "check if Ctpv2 needs to run.get allowed pools for ctpv2.fetch HEAD:testingconfig/ctp2_pools.txt",
+    "name": "remove requests for blocked pools.get blocked pools.fetch HEAD:testingconfig/blocked_pools.txt",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "publish build ID",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@Skipped: Build ID not set@@@"
     ]
   },
   {
@@ -145,7 +142,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Must set \"requests\" in input properties (found {})"
+      "humanReason": "No requests found for pools that are not currently blocked; nothing to run"
     },
     "name": "$result"
   }

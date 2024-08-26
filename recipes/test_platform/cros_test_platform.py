@@ -1440,6 +1440,9 @@ def DoRunSteps(api, properties):
   # enable cft for requests if experiment is enabled. This will be default in ctpv2
   _enable_cft_based_on_experiment(api, properties.requests)
 
+  # Check for any requests on blocked pools and delete them.
+  remove_requests_on_blocked_pools(api, properties)  #pragma: nocover
+
   # If ctpv2 req is provided, run the ctpv2 flow
   if properties.HasField(
       'ctpv2_request') and api.ctpv2.is_enabled():  # pragma: nocover
@@ -1529,6 +1532,47 @@ def CheckIfCtpv2NeedsToRun(api, properties):
       pass
     api.ctpv2.set_allowed_pools(ctp2_pools)
     return len(api.ctpv2.filter_legacy_requests(properties.requests))
+
+
+def remove_requests_on_blocked_pools(api, properties):  #pragma: nocover
+  with api.step.nest('remove requests for blocked pools') as step:
+    blocked_pools = _get_blocked_pools(api)
+    blocked_req_names = []
+    for name, req in properties.requests.items():
+      if _pool_is_blocked(req, blocked_pools):
+        blocked_req_names.append(name)
+    for name in blocked_req_names:
+      del properties.requests[name]
+    step.logs['blocked requests'] = '\n'.join(blocked_req_names)
+    if not properties.requests:
+      raise api.step.StepFailure('No requests found for pools that are not '
+                                 'currently blocked; nothing to run')
+
+
+def _get_blocked_pools(api):  #pragma: nocover
+  blocked_pools = []
+  try:
+    with api.step.nest('get blocked pools') as step:
+      blocked_pools = api.cros_infra_config.get_blocked_pools_config()
+      step.logs['blocked pools'] = '\n'.join(blocked_pools)
+  # pylint: disable=broad-except
+  except Exception:  # pragma: no cover
+    pass
+  return blocked_pools
+
+
+def _pool_is_blocked(req, blocked_pools):  #pragma: nocover
+  tags = req.params.decorations.tags
+  for tag in tags:
+    if tag.startswith('label-pool:'):
+      val = tag.removeprefix('label-pool:')
+    elif tag.startswith('pool:'):
+      val = tag.removeprefix('pool:')
+    else:
+      continue
+    if val in blocked_pools:
+      return True
+  return False
 
 
 def RunCtpv1(api, properties):
@@ -1937,7 +1981,7 @@ def _get_requests_from_properties(api, properties):
         'This request was made using an outdated version of the skylab tool. '
         "Please `skylab update` and try again. If you're stuck on this, "
         'please see http://go/skylab-cli')
-  if not properties.requests:
+  if not properties.requests:  #pragma: nocover
     raise api.step.StepFailure(
         'Must set "requests" in input properties (found %s)' %
         properties.requests)

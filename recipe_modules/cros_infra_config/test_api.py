@@ -130,6 +130,11 @@ class CrosInfraConfigTestApi(recipe_test_api.RecipeTestApi):
     # Humans can edit the txt file for test data.
     return self._read_txt('test_ctp2_pools_config.txt')
 
+  def blocked_pools_test_data(self) -> recipe_test_api.StepTestData:
+    """A function for step_test_data to generate blocked pools config."""
+    # Humans can edit the txt file for test data.
+    return self._read_txt('test_blocked_pools_config.txt')
+
   def dut_tracking_test_data(self) -> recipe_test_api.StepTestData:
     """A function for step_test_data to generate TrackingPolicyCfg."""
     # Humans can edit the JSON file for test data, impl reads binary proto.

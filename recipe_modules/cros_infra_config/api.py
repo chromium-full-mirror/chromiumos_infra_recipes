@@ -452,6 +452,17 @@ class CrosInfraConfigApi(recipe_api.RecipeApi):
         step_test_data=self.test_api.ctp2_pools_test_data).decode(
             'utf-8').strip().split(',')
 
+  def get_blocked_pools_config(self) -> List[str]:
+    """Download blocked pools config and return list of blocked pools.
+
+    Returns:
+      List[str]: List of blocked pools.
+    """
+    return self.download_txt(
+        'testingconfig/blocked_pools',
+        step_test_data=self.test_api.blocked_pools_test_data).decode(
+            'utf-8').strip().split(',')
+
   def get_dut_tracking_config(self) -> TrackingPolicyCfg:
     """Get TrackingPolicyCfg as defined in infra/config.
 
