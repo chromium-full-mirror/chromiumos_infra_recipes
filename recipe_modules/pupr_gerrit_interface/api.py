@@ -414,9 +414,15 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
     """Retry sending the CL through CQ by setting its Gerrit labels."""
     with self.m.step.nest('retry CL {}'.format(patch_set.change_id)):
       labels = {
-          Label.BOT_COMMIT: 1,
           Label.COMMIT_QUEUE: cq_label,
       }
+      if cq_label > 1:
+        # Only ensure Bot-Commit +1 if cq_label is CQ+2
+        # Some dry-run SendToCqPolicy does not vote Bot-Commit by default.
+        # Bot-Commit will only be ensured if we really want to submit this CL.
+        # For example, a FULL_RUN CL, or DRY_RUN_NOT_APPROVED approved by
+        # someone/sometask else.
+        labels[Label.BOT_COMMIT] = 1
       if self.m.cros_infra_config.is_staging:
         labels.pop(Label.BOT_COMMIT, None)
       gerrit_change = patch_set.to_gerrit_change_proto()
