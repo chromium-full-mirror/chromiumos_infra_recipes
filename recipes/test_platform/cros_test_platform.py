@@ -527,7 +527,7 @@ def _is_autotest_sharding_enabled(api, request):
 
 
 def _is_public_image_testing(request):
-  if "public" in _extract_build_from_request(request):  # pragma: no cover
+  if 'public' in _extract_build_from_request(request):  # pragma: no cover
     return True
   return False  # pragma: no cover
 
@@ -1459,7 +1459,7 @@ def DoRunSteps(api, properties):
         pres.step_text = '{}'.format(resp)
 
     runner.run_function_async(api.ctpv2.execute_luciexe, (True, True),
-                              error_handler=lambda resp: errorHandlerFunc(resp))
+                              error_handler=errorHandlerFunc)
     if not properties.requests or v2_request_count < len(properties.requests):
       # If ctpv2 was invoked, nest the ctpv1 steps under a parent step
       with api.step.nest('ctpv1'):
@@ -1803,7 +1803,7 @@ def postprocess(api, requests, responses, skip_postprocess=True):
       step.step_summary_text = 'Skipped: Postprocess disabled'
       return
     for tag, response in sorted(responses.items()):
-      request = requests[tag]
+      request = requests.get(tag, Request())
       if not request.params.metadata.debug_symbols_archive_url:
         continue  # pragma: no cover
 

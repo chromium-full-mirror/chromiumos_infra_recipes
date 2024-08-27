@@ -3,16 +3,15 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API to call into the CTPv2 binary"""
+"""API to call into the CTPv2 binary."""
 
-import copy
 from recipe_engine import recipe_api
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
 
 class Ctpv2Command(recipe_api.RecipeApi):
-  """Module for issuing ctpv2 commands"""
+  """Module for issuing ctpv2 commands."""
 
   def __init__(self, properties, **kwargs):
     super().__init__(**kwargs)
@@ -22,11 +21,8 @@ class Ctpv2Command(recipe_api.RecipeApi):
         'chromiumos/infra/ctpv2/${platform}'
     self.allowed_pools = []
 
-  def is_enabled(self):
-    """Checks if ctpv2 is enabled for use.
-
-        Returns: bool
-        """
+  def is_enabled(self) -> bool:
+    """Check if ctpv2 is enabled for use."""
     return self._cipd_label is not None
 
   def execute_luciexe(self, use_legacy=False, runningAsync=False):
@@ -67,25 +63,25 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return self._cipd_label
 
   def set_allowed_pools(self, allowed_pools):  # pragma: no cover
-    """Set the allowed ctp2 pools"""
+    """Set the allowed ctp2 pools."""
     self.allowed_pools = allowed_pools
 
-  def filter_legacy_requests(self, requests, reverse=False):  # pragma: no cover
+  def filter_legacy_requests(self, requests, reverse: bool = False):
     """Filter out the legacy requests based on allowed pools.
 
-        Args:
-          * requests: Dict of legacy v1 requests.
-          * reverse: boolean to flip the filter result.
+    Args:
+      requests: Map of legacy v1 requests.
+      reverse: If true, flip the filter result.
 
-        Returns dict of filtered legacy v1 requests.
-        """
-    result = copy.deepcopy(requests)
-    for name, request in requests.items():
-      # XOR meets_criteria with reverse to
-      # produce the reversing boolean algebra.
-      if not self._meets_ctpv2_criteria(request) ^ reverse:
-        del result[name]
-    return result
+    Returns:
+      Dict of legacy v1 requests that meet ctpv2 criteria (unless reversed).
+    """
+    return {
+        name: request
+        for name, request in requests.items()
+        # XOR with reverse inverts the result.
+        if self._meets_ctpv2_criteria(request) ^ reverse
+    }
 
   def _meets_ctpv2_criteria(self, request):
     params = self.get_val_from_obj_or_dict(request, 'params')
@@ -123,7 +119,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
 
   def get_val_from_obj_or_dict(self, obj_or_dict, field,
                                key=None):  # pragma: no cover
-    """Retrieves the value from the obj/dict using the field/key.
+    """Retrieve the value from the obj/dict using the field/key.
 
     This is needed because filter legacy requests is called with both a proto
     object and a proto dict.
