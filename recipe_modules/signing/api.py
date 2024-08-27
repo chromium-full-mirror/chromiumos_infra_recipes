@@ -420,6 +420,23 @@ class SigningApi(recipe_api.RecipeApi):
     # signing.
     with self.m.step.nest('download release artifacts') as pres:
       to_download = set()
+      # Files to always download.
+      build_target = self.m.build_menu.build_target.name
+      version = self.m.cros_version.version.platform_version
+      to_download.update([
+          'image.zip',
+          'chromiumos_test_image.tar.xz',
+          'debug.tgz',
+          f'chromeos-hwqual-{build_target}-{version}.tar.bz2',
+          'stateful.tgz',
+          'dlc',
+          'full_dev_part_KERN.bin.gz',
+          'full_dev_part_ROOT.bin.gz',
+          'full_dev_part_MINIOS.bin.gz',
+          'recovery_image.tar.xz',
+          'factory_image.zip',
+          'firmware_from_source.tar.bz2',
+      ])
       signing_configured_artifacts = []
 
       for signing_config in relevant_signing_configs:
@@ -606,7 +623,9 @@ class SigningApi(recipe_api.RecipeApi):
                             image_type: common_pb2.ImageType) -> str:
     """Map artifacts to versioned name expected for paygen signing.
     """
-    img_type = self.m.cros_release_util.image_type_to_str(image_type)
+    img_type = None
+    if image_type is not None:
+      img_type = self.m.cros_release_util.image_type_to_str(image_type)
     img = ('%s-' % img_type) if img_type else ''
     suffix = IMAGE_TYPE_TO_SUFFIX.get(image_type, '')
     return 'ChromeOS-%s%s-%s%s' % (img, version, build_target, suffix)
@@ -636,8 +655,62 @@ class SigningApi(recipe_api.RecipeApi):
               gs_dir[len('gs://'):])
 
           uploaded = set()
-
           version = self.m.cros_version.version.legacy_version
+
+          # Files that are always copied if they're present.
+          # Logic lifted from pushimage.py.
+          files_to_copy = (
+              # (<src>, <dst>, <suffix>),
+              ('image.zip',
+               self._get_gs_artifact_name(build_target_config.build_target,
+                                          version, None), 'zip'),
+              ('chromiumos_test_image.tar.xz',
+               self._get_gs_artifact_name(build_target_config.build_target,
+                                          version, common_pb2.IMAGE_TYPE_TEST),
+               'tar.xz'),
+              ('debug.tgz',
+               f'debug-{build_target_config.build_target.replace("_", "-")}',
+               'tgz'),
+              ('chromeos-hwqual-%s-%s.tar.bz2' %
+               (build_target_config.build_target, version), None, None),
+              ('stateful.tgz', None, None),
+              ('dlc', None, None),
+              ('full_dev_part_KERN.bin.gz', None, None),
+              ('full_dev_part_ROOT.bin.gz', None, None),
+              ('full_dev_part_MINIOS.bin.gz', None, None),
+              ('recovery_image.tar.xz',
+               self._get_gs_artifact_name(build_target_config.build_target,
+                                          version,
+                                          common_pb2.IMAGE_TYPE_RECOVERY),
+               'tar.xz'),
+              ('factory_image.zip',
+               self._get_gs_artifact_name(build_target_config.build_target,
+                                          version,
+                                          common_pb2.IMAGE_TYPE_FACTORY),
+               'zip'),
+              ('firmware_from_source.tar.bz2',
+               self._get_gs_artifact_name(build_target_config.build_target,
+                                          version,
+                                          common_pb2.IMAGE_TYPE_FIRMWARE),
+               'tar.bz2'),
+          )
+          for src, dst, suffix in files_to_copy:
+            if dst is None:
+              dst = src
+            elif suffix is not None:
+              dst = f'{dst}.{suffix}'
+            src_path = os.path.join(str(archive_dir), src)
+            if self.m.path.isfile(src_path):
+              uploaded.add(src)
+              # -n so we don't clobber existing destination artifacts.
+              self.m.gsutil([
+                  'cp',
+                  '-n',
+                  src_path,
+                  os.path.join(gs_dir, dst),
+              ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
+
+          # Files to sign are copied.
           for signing_config in build_target_config.signing_configs:
             artifact_upload_name = self._get_gs_artifact_name(
                 build_target_config.build_target, version,
