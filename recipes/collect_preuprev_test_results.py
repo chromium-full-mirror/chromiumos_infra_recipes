@@ -285,7 +285,8 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
 
 def DoRetry(api: RecipeApi, builder_to_retry: build_pb2.Build):
-  with api.step.nest(f'retrying {builder_to_retry.builder.builder}'):
+  with api.step.nest(
+      f'retrying {builder_to_retry.builder.builder}') as presentation:
     request = api.buildbucket.schedule_request(
         project=builder_to_retry.builder.project,
         builder=builder_to_retry.builder.builder,
@@ -299,7 +300,11 @@ def DoRetry(api: RecipeApi, builder_to_retry: build_pb2.Build):
         gitiles_commit=builder_to_retry.input.gitiles_commit,
         fields=BUILD_FIELDS_TO_RETRIEVE,
     )
-    return api.buildbucket.schedule([request])[0]
+    try:
+      return api.buildbucket.schedule([request])[0]
+    except api.step.InfraFailure:
+      presentation.status = api.step.EXCEPTION
+      return None
 
 
 def CollectResult(api: RecipeApi, pre_uprev_builders: List[build_pb2.Build],
@@ -322,8 +327,11 @@ def CollectResult(api: RecipeApi, pre_uprev_builders: List[build_pb2.Build],
           new_pre_uprev_builders.append(builder)
           continue
         new_builder = DoRetry(api, builder)
-        new_pre_uprev_builders.append(new_builder)
-        retried_builders.append(new_builder)
+        if new_builder:
+          new_pre_uprev_builders.append(new_builder)
+          retried_builders.append(new_builder)
+        else:
+          new_pre_uprev_builders.append(builder)
 
     if retried_builders:
       text = 'Pre-Uprev Retrying Following Builders:\n\n'
@@ -333,9 +341,9 @@ def CollectResult(api: RecipeApi, pre_uprev_builders: List[build_pb2.Build],
                                   change=uprev_change_data.change_id)
       api.gerrit.add_change_comment_remote(uprev_change, text)
 
-    pre_uprev_builders = CollectSingleResult(api, new_pre_uprev_builders,
-                                             uprev_change_data,
-                                             current_build_id)
+      pre_uprev_builders = CollectSingleResult(api, new_pre_uprev_builders,
+                                               uprev_change_data,
+                                               current_build_id)
 
   return pre_uprev_builders
 
@@ -563,6 +571,7 @@ def GenTests(api: RecipeTestApi):
            pupr_generater_build_resps: Optional[List[build_pb2.Build]] = None,
            uprev_test_builds: Optional[List[build_pb2.Build]] = None,
            uprev_test_retry_builds: Optional[List[build_pb2.Build]] = None,
+           uprev_test_retry_builds_creation_failed: Optional[List[str]] = None,
            uprev_gerrit_change: Optional[GerritJSONObject] = None,
            **kwargs: Any):
     build = api.buildbucket.build(current_build)
@@ -631,11 +640,24 @@ def GenTests(api: RecipeTestApi):
       build += api.buildbucket.simulated_collect_output(
           collect_result,
           step_name=PREUPREV_COLLECT_RETRY_RESULT_NAME + '.buildbucket.collect')
+    elif uprev_test_retry_builds_creation_failed:
+      for builder in uprev_test_retry_builds_creation_failed:
+        build += api.buildbucket.simulated_schedule_output(
+            builds_service_pb2.BatchResponse(responses=[{
+                'error': {
+                    'code': 7,
+                    'message': 'You do not have permission to schedule.'
+                }
+            }]),
+            step_name=f'retry failed builds.retrying {builder}.buildbucket.schedule'
+        )
+      build += api.post_process(post_process.DoesNotRun,
+                                PREUPREV_COLLECT_RETRY_RESULT_NAME)
     else:
       build += api.post_check(
           post_process.DoesNotRun,
           PREUPREV_COLLECT_RETRY_RESULT_NAME + '.buildbucket')
-      build += api.post_check(post_process.DoesNotRun, 'retrying failed builds')
+      build += api.post_check(post_process.DoesNotRun, 'retry failed builds')
 
     UPREV_GERRIT_CHANGE_STEP_NAME = 'Find the uprev CL on gerrit'
     if uprev_gerrit_change:
@@ -716,6 +738,36 @@ def GenTests(api: RecipeTestApi):
       uprev_test_retry_builds=[
           # Retry also failed
           PRE_UPREV_TEST_BUILDER_FAILED,
+      ],
+      uprev_gerrit_change=UPREV_GERRIT_CHANGE_VALUES,
+  )
+
+  yield test(
+      'tests-failed-retry-creation-failed',
+      api.post_check(post_process.MustRun,
+                     'Add a comment to the uprev CL.add comment on CL 123456'),
+      api.post_check(
+          post_process.DoesNotRun,
+          'Add a comment to the uprev CL (2).add comment on CL 123456'),
+      api.post_process(
+          post_process.StepFailure,
+          'Process pre-uprev results.chromeos-jacuzzi-chrome-skylab'),
+      api.post_process(
+          post_process.DoesNotRun,
+          'Process pre-uprev results (2).chromeos-jacuzzi-chrome-skylab'),
+      api.post_process(
+          post_process.StepException,
+          'retry failed builds.retrying chromeos-jacuzzi-chrome-skylab'),
+      status='FAILURE',
+      current_build=CURRENT_BUILD,
+      pupr_generater_build_resps=[PUPR_GENERATOR_BUILD],
+      uprev_test_builds=[
+          # Returns a failed pre-uprev test builder.
+          PRE_UPREV_TEST_BUILDER_FAILED
+      ],
+      uprev_test_retry_builds_creation_failed=[
+          # Retry build failed to schedule
+          PRE_UPREV_TEST_BUILDER_FAILED.builder.builder,
       ],
       uprev_gerrit_change=UPREV_GERRIT_CHANGE_VALUES,
   )
