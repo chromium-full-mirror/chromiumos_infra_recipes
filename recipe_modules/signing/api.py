@@ -570,6 +570,8 @@ class SigningApi(recipe_api.RecipeApi):
       for gs_dir in sorted(gs_dirs):
         self.m.bot_cost.set_upload_size(gs_dir)
 
+      docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
+
       with self.m.step.nest('call BAPI') as presentation:
         request = SignImageRequest(
             signing_configs=config, archive_dir=str(archive_dir),
@@ -577,7 +579,7 @@ class SigningApi(recipe_api.RecipeApi):
                 path=common_pb2.Path(
                     path=self.m.path.abspath(archive_dir),
                     location=common_pb2.Path.Location.OUTSIDE,
-                )), tmp_path='/b/s/docker',
+                )), tmp_path=self.m.path.abspath(docker_tmp_dir),
             docker_image=self.signing_docker_image)
         response = self.m.cros_build_api.ImageService.SignImage(request)
         self.add_kms_logs_as_step_logs(presentation, archive_dir)
