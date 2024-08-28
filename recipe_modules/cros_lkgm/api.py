@@ -163,10 +163,16 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                           step_text=step_text)
         return
 
-    version_str = self.m.cros_version.version.platform_version
-    if use_snapshot and self.m.cros_snapshot.is_snapshot_build():
-      snapshot_identifier = self.m.cros_snapshot.snapshot_identifier()
-      version_str += f'-{snapshot_identifier}'
+    with self.m.step.nest('retrieving platform version') as presentation:
+      version_str = self.m.cros_version.version.platform_version
+      if use_snapshot:
+        with self.m.step.nest(
+            'retrieving snapshot identifier') as presentation2:
+          snapshot_identifier = self.m.cros_snapshot.snapshot_identifier()
+          if snapshot_identifier:
+            presentation2.step_text = snapshot_identifier
+            version_str += f'-{snapshot_identifier}'
+      presentation.step_text = version_str
 
     script_path = self.m.cros_source.workspace_path.joinpath(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')

@@ -1259,7 +1259,25 @@
   },
   {
     "cmd": [],
-    "name": "read snapshot identifier"
+    "name": "retrieving platform version",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@1234.56.0-9999999@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@9999999@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
   },
   {
     "cmd": [
@@ -1283,9 +1301,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "read snapshot identifier.read git footers",
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier.read git footers",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
