@@ -3315,6 +3315,20 @@
         "applyGerritChanges": true
       },
       "general": {
+        "critical": false,
+        "manifest": "PRIVATE"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "chrome-uprev-cq",
+        "type": "CQ"
+      }
+    },
+    {
+      "build": {
+        "applyGerritChanges": true
+      },
+      "general": {
         "critical": true,
         "manifest": "PRIVATE"
       },
