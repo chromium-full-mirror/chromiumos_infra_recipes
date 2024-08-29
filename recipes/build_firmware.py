@@ -180,9 +180,15 @@ def RunSteps(api, properties):
         api.bcid_reporter.report_stage('upload-complete')
 
     # Invoke signing if applies.
-    if _invoke_signing_for_current_build(build.builder.builder,
-                                         uploaded_artifacts, properties):
-      with api.step.nest('schedule signing build'):
+    with api.step.nest('schedule signing build') as pres:
+      pres.step_text = '\n'.join([
+          f'builder_name={build.builder.builder}',
+          f'signing_allowed_builder_names={properties.signing_allowed_builder_names}',
+          f'sign_image_properties={properties.sign_image_properties}',
+          f'uploaded_artifacts={uploaded_artifacts}',
+      ])
+      if _invoke_signing_for_current_build(build.builder.builder,
+                                           uploaded_artifacts, properties):
         requests = []
         sign_image_props = MessageToDict(properties.sign_image_properties,
                                          preserving_proto_field_name=True)

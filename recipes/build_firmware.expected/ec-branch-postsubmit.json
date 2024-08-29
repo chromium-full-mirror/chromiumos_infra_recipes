@@ -6446,6 +6446,13 @@
   },
   {
     "cmd": [],
+    "name": "schedule signing build",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@builder_name=firmware-R126-15885.B-branch<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['../../[START_DIR]/fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['../../[START_DIR]/tokens.bin'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Upload EC Firmware test results"
   },
   {
