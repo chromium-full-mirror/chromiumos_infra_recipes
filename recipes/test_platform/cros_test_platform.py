@@ -1544,9 +1544,6 @@ def remove_requests_on_blocked_pools(api, properties):  #pragma: nocover
     for name in blocked_req_names:
       del properties.requests[name]
     step.logs['blocked requests'] = '\n'.join(blocked_req_names)
-    if not properties.requests:
-      raise api.step.StepFailure('No requests found for pools that are not '
-                                 'currently blocked; nothing to run')
 
 
 def _get_blocked_pools(api):  #pragma: nocover
