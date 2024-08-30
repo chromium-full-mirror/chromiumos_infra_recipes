@@ -1477,32 +1477,52 @@
     "cmd": [],
     "name": "update change description.set CL 123456 description",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@description text@Uprev Chrome to 1234@@@",
-      "@@@STEP_LOG_LINE@description text@@@@",
-      "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301@@@",
-      "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium-review.googlesource.com/c/chromium/src/+/123456@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "update change description.set CL 123456 description.ensure auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/repo",
-      "forall",
-      "-v",
-      "chromium/src",
-      "-c",
-      "echo $REPO_PROJECT\\|$REPO_PATH\\|$REPO_REMOTE\\|$REPO_RREV\\|$REPO_UPSTREAM"
+      "luci-auth",
+      "token",
+      "-scopes",
+      "https://www.googleapis.com/auth/gerritcodereview",
+      "-json-output",
+      "-"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
     },
+    "name": "update change description.set CL 123456 description.ensure auth token.Retrieve service_account auth token",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "Authorization: Bearer TEST_TOKEN",
+      "[CLEANUP]/service_account_auth_token_tmp_2"
+    ],
     "infra_step": true,
     "luci_context": {
       "realm": {
@@ -1515,31 +1535,25 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update change description.set CL 123456 description.repo forall",
+    "name": "update change description.set CL 123456 description.ensure auth token.Write auth token to temp file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@raw_io.output_text@chromium/src|src/chromium/src|cros|refs/heads/main|refs/heads/main@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
+      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
     "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_cl.py",
-      "description",
-      "-n",
-      "-",
-      "https://chromium-review.googlesource.com/c/chromium/src/+/123456"
+      "curl",
+      "-f",
+      "-X",
+      "POST",
+      "-H",
+      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "-H",
+      "Content-Type: application/json",
+      "-d",
+      "{\"description\": \"Uprev Chrome to 1234\\n\\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301\"}",
+      "https://chromium-review.googlesource.com/changes/123456/description"
     ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/src/chromium/src",
-    "env_suffixes": {
-      "DEPOT_TOOLS_UPDATE": [
-        "0"
-      ],
-      "PATH": [
-        "RECIPE_REPO[depot_tools]"
-      ]
-    },
     "luci_context": {
       "realm": {
         "name": ":"
@@ -1551,8 +1565,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update change description.set CL 123456 description.git_cl set description",
-    "stdin": "Uprev Chrome to 1234\n\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301\n",
+    "name": "update change description.set CL 123456 description.curl https://chromium-review.googlesource.com/changes/123456/description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1625,7 +1638,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_2"
+      "[CLEANUP]/service_account_auth_token_tmp_3"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1651,7 +1664,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_2",
+      "@[CLEANUP]/service_account_auth_token_tmp_3",
       "-H",
       "Content-Type: application/json",
       "-d",
@@ -1725,7 +1738,7 @@
       "/path/to/tmp/json",
       "copy",
       "Authorization: Bearer TEST_TOKEN",
-      "[CLEANUP]/service_account_auth_token_tmp_3"
+      "[CLEANUP]/service_account_auth_token_tmp_4"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1751,7 +1764,7 @@
       "-X",
       "POST",
       "-H",
-      "@[CLEANUP]/service_account_auth_token_tmp_3",
+      "@[CLEANUP]/service_account_auth_token_tmp_4",
       "-H",
       "Content-Type: application/json",
       "-d",

@@ -928,6 +928,24 @@ class GerritApi(RecipeApi):
         if amend_local:
           self.m.git.amend_head_message(description)
 
+  def set_change_description_remote(self, gerrit_change: GerritChange,
+                                    description: str):
+    """Set the description of the given Gerrit change.
+
+    set_change_description_remote uses Gerrit API to update CL description. You
+    don't need any local checkout to make this updates unlike
+    set_change_description.
+
+    Args:
+      gerrit_change: The change of interest.
+      description: The new description, in full. Be sure this still includes the
+        Change-Id and other essential metadata.
+    """
+    with self.m.step.nest(f'set CL {gerrit_change.change} description'):
+      self._do_post(
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/description',
+          {'description': description}, test_output_data='{}')
+
   def abandon_change(self, gerrit_change: GerritChange,
                      message: Optional[str] = None):
     """Abandon the given change.
