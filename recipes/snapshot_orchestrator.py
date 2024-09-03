@@ -29,9 +29,15 @@ DEPS = [
 # Set the LGKM uprev freqency as every 12 snapshots (= 6 hours).
 SNAPSHOT_LGKM_UPREV_FREQUENCY = 12
 
+# Projects to be refered in this build.
+_SYNC_PROJECTS = [
+    # To read the current chromeos version.
+    'src/third_party/chromiumos-overlay',
+]
 
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
-  with api.snapshot_orch_menu.setup_orchestrator() as config:
+  with api.snapshot_orch_menu.setup_orchestrator(
+      additional_sync_project=_SYNC_PROJECTS) as config:
     if config:
       DoRunSteps(api)
 

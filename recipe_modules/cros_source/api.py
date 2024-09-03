@@ -620,8 +620,11 @@ class CrosSourceApi(RecipeApi):
                        ['%s:' % commit_id])
       self.m.git.checkout(commit_id, force=force)
 
-  def checkout_manifests(self, commit=None, is_staging=False,
-                         checkout_internal=True, checkout_external=False):
+  def checkout_manifests(self, commit: bb_common_pb2.GitilesCommit = None,
+                         is_staging: bool = False,
+                         checkout_internal: bool = True,
+                         checkout_external: bool = False,
+                         additional_sync_project: Optional[List[str]] = None):
     """Check out the manifest projects.
 
     Syncs the manifest projects into the workspace, at the appropriate revision.
@@ -643,6 +646,8 @@ class CrosSourceApi(RecipeApi):
         Defaults to true.
       checkout_external (bool): Whether to checkout the external manifest.
         Defaults to false.
+      additional_sync_project (List[str]): List of projects to be checked out
+        in addition to the manifest projects.
 
     Returns:
       (GitilesCommit) The GitilesCommit to use for the external manifest.
@@ -668,6 +673,7 @@ class CrosSourceApi(RecipeApi):
     projects = self.m.src_state.manifest_projects
     if not checkout_internal:
       projects = [self.m.src_state.external_manifest.project]
+    projects += additional_sync_project or []
 
     # Sync only the manifest projects, into the workspace directory.
     self.ensure_synced_cache(cache_path_override=self.workspace_path,

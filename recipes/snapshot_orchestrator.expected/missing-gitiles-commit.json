@@ -1599,6 +1599,7 @@
       "forall",
       "chromeos/manifest-internal",
       "chromiumos/manifest",
+      "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
       "32",
@@ -1641,6 +1642,7 @@
       "forall",
       "chromeos/manifest-internal",
       "chromiumos/manifest",
+      "src/third_party/chromiumos-overlay",
       "--ignore-missing",
       "-j",
       "32",
@@ -1697,7 +1699,8 @@
       "--force-checkout",
       "--prune",
       "chromeos/manifest-internal",
-      "chromiumos/manifest"
+      "chromiumos/manifest",
+      "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -1812,7 +1815,8 @@
       "RECIPE_REPO[depot_tools]/repo",
       "info",
       "chromeos/manifest-internal",
-      "chromiumos/manifest"
+      "chromiumos/manifest",
+      "src/third_party/chromiumos-overlay"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

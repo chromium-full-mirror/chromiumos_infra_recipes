@@ -96,7 +96,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     return _manifest_info(manifest.relpath, commit, manifest.path, manifest.url)
 
   @contextlib.contextmanager
-  def setup_orchestrator(self):
+  def setup_orchestrator(self,
+                         additional_sync_project: Optional[List[str]] = None):
     """Initial setup steps for the orchestrator.
 
     This context manager returns with all of the contexts that the orchestrator
@@ -106,6 +107,10 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
     Raises:
       StepFailure if no config is found.
+
+    Args:
+      additional_sync_project (List[str]): List of projects to be checked out
+        in addition to the manifest projects.
 
     Returns:
       BuilderConfig or None, with an active context.
@@ -124,7 +129,8 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         external_commit = self.m.cros_source.checkout_manifests(
             is_staging=self.m.cros_infra_config.is_staging,
             checkout_internal=not use_external,
-            checkout_external=self._update_manifest_refs or use_external)
+            checkout_external=self._update_manifest_refs or use_external,
+            additional_sync_project=additional_sync_project)
         self._external_gitiles_commit = external_commit
 
         # We cannot push manifest refs to unpinned branches.
