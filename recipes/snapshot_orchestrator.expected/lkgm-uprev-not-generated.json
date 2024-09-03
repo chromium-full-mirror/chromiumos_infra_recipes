@@ -11296,6 +11296,13 @@
   },
   {
     "cmd": [],
+    "name": "generate a LKGM uprev CL",
+    "~followup_annotations": [
+      "@@@STEP_TEXT@Skipped. A CL is generated only every 12 runs@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator"
   },
   {

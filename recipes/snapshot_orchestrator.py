@@ -18,6 +18,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/properties',
+    'recipe_engine/step',
     'build_menu',
     'orch_menu',
     'snapshot_orch_menu',
@@ -58,8 +59,14 @@ def DoRunSteps(api: RecipeApi):
 
   # Generate LKGM uprev CL if the condition meets.
   if snapshot_identifier:
-    if int(snapshot_identifier) % SNAPSHOT_LGKM_UPREV_FREQUENCY == 0:
-      api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
+    with api.step.nest('generate a LKGM uprev CL') as presentation:
+      if int(snapshot_identifier) % SNAPSHOT_LGKM_UPREV_FREQUENCY == 0:
+        api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
+      else:
+        presentation.step_text = (
+            f'Skipped. A CL is generated only every {SNAPSHOT_LGKM_UPREV_FREQUENCY} runs'
+        )
+
 
 def GenTests(api: RecipeTestApi):
 
@@ -98,7 +105,8 @@ def GenTests(api: RecipeTestApi):
       'lkgm-uprev-generated', data.ctp_normal, lfg_props,
       api.cros_snapshot.simulated_snapshot_identifier(
           SNAPSHOT_LGKM_UPREV_FREQUENCY),
-      api.post_check(post_process.MustRun, 'call chrome_chromeos_lkgm'),
+      api.post_check(post_process.MustRun,
+                     'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
       collect_builds=green_build_results, with_manifest_refs=True,
       builder='snapshot-orchestrator')
 
@@ -106,7 +114,8 @@ def GenTests(api: RecipeTestApi):
       'lkgm-uprev-not-generated', data.ctp_normal, lfg_props,
       api.cros_snapshot.simulated_snapshot_identifier(
           SNAPSHOT_LGKM_UPREV_FREQUENCY + 1),
-      api.post_check(post_process.DoesNotRun, 'call chrome_chromeos_lkgm'),
+      api.post_check(post_process.DoesNotRun,
+                     'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
       collect_builds=green_build_results, with_manifest_refs=True,
       builder='snapshot-orchestrator')
 
