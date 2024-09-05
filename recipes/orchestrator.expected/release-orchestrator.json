@@ -13799,6 +13799,13 @@
   },
   {
     "cmd": [],
+    "name": "set lkgm",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@lkgm@{\"uprev_cl_generated\": true, \"uprev_dryrun\": false, \"version\": \"1234.56.0\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "clean up orchestrator"
   },
   {

@@ -304,3 +304,12 @@ def GenTests(api):
                      'not an LKGM candidate'),
       release_builds=create_builds(1, 2), skip_public_build=True, full_run=True,
       use_snapshot=True)
+
+  # Test the case of failure on `chrome_chromeos_lkgm` script call.
+  yield lgkm_test(
+      'lkgm-script-failed',
+      api.test_util.test_orchestrator(
+          bucket='release', builder='release-main-orchestrator').build,
+      api.step_data('call chrome_chromeos_lkgm',
+                    retcode=1), release_builds=create_builds(1, 0),
+      skip_public_build=True, status='FAILURE')

@@ -10,6 +10,7 @@ from PB.recipe_modules.chromeos.cros_lkgm.cros_lkgm import (CrosLkgmProperties)
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/step',
+    'easy',
     'cros_infra_config',
     'cros_release',
     'cros_schedule',

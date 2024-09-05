@@ -187,7 +187,19 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])
     if not self._full_run:
       cmd.append('--dryrun')
-    self.m.step('call chrome_chromeos_lkgm', cmd)
+
+    try:
+      self.m.step('call chrome_chromeos_lkgm', cmd)
+    except StepFailure as e:
+      self.m.easy.set_properties_step(lkgm={'uprev_cl_generated': False})
+      raise e
+
+    self.m.easy.set_properties_step(
+        lkgm={
+            'uprev_cl_generated': True,
+            'uprev_dryrun': not self._full_run,
+            'version': version_str,
+        })
 
   def cleanup_cls(self):
     """Performs the LGKM cleaning-up process.
