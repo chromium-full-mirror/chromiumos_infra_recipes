@@ -1365,6 +1365,13 @@
   },
   {
     "cmd": [],
+    "name": "include pre-uprev link to commit message",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@message does not need update.@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Wait for completion of pre-uprev tests"
   },
   {

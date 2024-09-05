@@ -272,6 +272,19 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
             f'Uprev CL [{uprev_change_data.display_id}]({uprev_change_data.display_url})'
             ' is not clean state'))
 
+  with api.step.nest(
+      'include pre-uprev link to commit message') as presentation:
+    message = uprev_change_data.commit_info.get('message')
+    new_message = message.replace(
+        'Pre-Uprev Testing: Not Tested',
+        f'Pre-Uprev Testing: See https://ci.chromium.org/ui/b/{current_build_id}'
+    )
+    if new_message != message:
+      api.gerrit.set_change_description_remote(uprev_change, new_message)
+      presentation.logs['new message'] = new_message
+    else:
+      presentation.step_summary_text = 'message does not need update.'
+
   pre_uprev_builders = CollectResult(api, pre_uprev_builders, uprev_change_data,
                                      current_build_id)
   overall_summary = (
