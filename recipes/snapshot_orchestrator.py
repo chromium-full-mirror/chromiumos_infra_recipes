@@ -24,6 +24,7 @@ DEPS = [
     'snapshot_orch_menu',
     'cros_snapshot',
     'cros_lkgm',
+    'cros_version',
 ]
 
 # Set the LGKM uprev freqency as every 12 snapshots (= 6 hours).
@@ -38,11 +39,25 @@ _SYNC_PROJECTS = [
 def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
   with api.snapshot_orch_menu.setup_orchestrator(
       additional_sync_project=_SYNC_PROJECTS) as config:
+    with api.step.nest('retrieving CrOS version') as presentation:
+      version_str = api.cros_version.version.platform_version
+      snapshot_identifier = api.cros_snapshot.snapshot_identifier()
+      if snapshot_identifier:
+        version_str += f'-{snapshot_identifier}'
+      presentation.step_text = version_str
+
     if config:
       DoRunSteps(api)
+    raw_result = api.snapshot_orch_menu.create_recipe_result()
 
-    return api.snapshot_orch_menu.create_recipe_result()
+    summary_markdown = f'Version: {version_str}'
+    if raw_result.summary_markdown:
+      summary_markdown += '\n\n'
+      summary_markdown += raw_result.summary_markdown
 
+    result = result_pb2.RawResult(status=raw_result.status,
+                                  summary_markdown=summary_markdown)
+    return result
 
 def DoRunSteps(api: RecipeApi):
   snapshot_identifier = api.cros_snapshot.snapshot_identifier()
