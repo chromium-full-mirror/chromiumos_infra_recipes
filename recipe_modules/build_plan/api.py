@@ -7,6 +7,8 @@
 
 from typing import List, Optional, Set, Tuple
 
+from google.protobuf import json_format
+
 from PB.chromite.api import relevancy as relevancy_pb2
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos import common as common_pb2
@@ -501,7 +503,7 @@ class BuildPlanApi(recipe_api.RecipeApi):
         # Filter out non-child builds like vm_test, dry run orchestrator or
         # hw_tests in the future.
         builder = build.builder.builder
-        with self.m.step.nest(f'checking {builder}'):
+        with self.m.step.nest(f'checking {builder}') as pres:
           child_builders = [cs.name for cs in child_specs] + [
               self.get_slim_builder_name(cs.name) for cs in child_specs
           ]
@@ -515,6 +517,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
             continue
 
           builder_config = self.m.cros_infra_config.get_builder_config(builder)
+          pres.logs['builder_config_json'] = json_format.MessageToJson(
+              builder_config)
           broken_until_snapshot = builder_config.general.broken_until
           if broken_until_snapshot:
             # broken_until only works with ToT CQ (ie not LTS).
@@ -533,6 +537,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
                   '{} is skipped because its snapshot {} was broken until {}'
                   .format(builder, build_snapshot, broken_until_snapshot))
               continue
+          else:
+            pres.step_text = 'Unable to determine if build is broken.'
 
           # Refresh the criticality of the builders.
           build.critical = (
