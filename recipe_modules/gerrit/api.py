@@ -805,6 +805,31 @@ class GerritApi(RecipeApi):
                                    test_stdout=test_output_data)
     return data.decode()
 
+  @exponential_retry(retries=4, delay=timedelta(seconds=5))
+  def _do_put(self, url: str, json_data: Dict[str, Any],
+              test_output_data: str) -> str:
+    """Send a PUT request with json_data to url.
+
+    This method gets a token from luci-auth and includes it in the request.
+
+    Args:
+      url: The url to send the request to.
+      json_data: A dict to include in the request as JSON.
+
+    Returns:
+      The PUT response.
+    """
+    auth_token_path = self._get_auth_token()
+    curl_params = [
+        '-f', '-X', 'PUT', '-H', f'@{auth_token_path}', '-H',
+        'Content-Type: application/json', '-d',
+        self.m.json.dumps(json_data)
+    ]
+    data = self.m.easy.stdout_step(f'curl {url}',
+                                   ['curl'] + curl_params + [url],
+                                   test_stdout=test_output_data)
+    return data.decode()
+
   def set_change_labels(self, gerrit_change: GerritChange,
                         labels: Dict[Label, int], branch: Optional[str] = None,
                         ref: Optional[str] = None) -> str:
@@ -942,7 +967,7 @@ class GerritApi(RecipeApi):
         Change-Id and other essential metadata.
     """
     with self.m.step.nest(f'set CL {gerrit_change.change} description'):
-      self._do_post(
+      self._do_put(
           f'https://{gerrit_change.host}/changes/{gerrit_change.change}/description',
           {'description': description}, test_output_data='{}')
 

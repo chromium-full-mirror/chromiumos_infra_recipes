@@ -140,7 +140,7 @@
       "curl",
       "-f",
       "-X",
-      "POST",
+      "PUT",
       "-H",
       "@[CLEANUP]/service_account_auth_token_tmp_1",
       "-H",
