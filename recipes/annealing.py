@@ -25,8 +25,10 @@ import zlib
 
 from google.protobuf import json_format
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
+from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.annealing import AnnealingProperties
 from PB.chromite.api.packages import RevBumpChromeRequest
 
@@ -188,7 +190,8 @@ def RunSteps(api, properties):
         # If there are zero diffs (empty array) then there is nothing
         # interesting to be done.
         if len(manifest_diffs) == 0:
-          return
+          return result_pb2.RawResult(status=common_pb2.SUCCESS,
+                                      summary_markdown='no manifest diff')
 
         # Pushing to staging-infra-{$BRANCH} may fail since the commit histories
         # have different acestors. If we can verify that they are reachable
@@ -283,6 +286,12 @@ def RunSteps(api, properties):
         api.binhost_lookup_service.publish_snapshot_metadata(
             internal_snapshot_commit.id, snapshot_identifier, False,
             api.buildbucket.build.id)
+
+      summary_markdown = f'Published Snapshot: {snapshot_identifier}'
+
+      return result_pb2.RawResult(status=common_pb2.SUCCESS,
+                                  summary_markdown=summary_markdown)
+
 
 
 def _sync_manifest(api, _properties, manifest_ref, prior_internal,

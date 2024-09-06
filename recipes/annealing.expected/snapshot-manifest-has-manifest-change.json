@@ -3792,6 +3792,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "Published Snapshot: 1000001"
   }
 ]

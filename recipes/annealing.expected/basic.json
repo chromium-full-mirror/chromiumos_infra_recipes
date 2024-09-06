@@ -3083,6 +3083,7 @@
     ]
   },
   {
-    "name": "$result"
+    "name": "$result",
+    "summaryMarkdown": "no manifest diff"
   }
 ]
