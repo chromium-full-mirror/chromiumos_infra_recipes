@@ -8,6 +8,7 @@ DEPS = [
     'recipe_engine/file',
     'recipe_engine/path',
     'recipe_engine/step',
+    'build_menu',
+    'cros_release_util',
     'cros_version',
 ]
-

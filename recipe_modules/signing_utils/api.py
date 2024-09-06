@@ -12,6 +12,7 @@ from google.protobuf.json_format import MessageToDict
 from recipe_engine import recipe_api
 
 from PB.chromite.api.image import SignImageResponse
+from PB.chromiumos import common as common_pb2  # pylint: disable=unused-import
 from PB.chromiumos.build_report import BuildReport
 from PB.chromiumos import signing as signing_pb2
 
@@ -142,6 +143,17 @@ class SigningUtilsApi(recipe_api.RecipeApi):
                 value=f'{archive.keyset_versions.kernel_version}'),
     ]
 
+  def get_gs_dir_for_channel(self, channel: common_pb2.Channel) -> str:
+    """Get the gs dir for the given channel.
+
+    Example:
+      dev-channel/atlas-signingnext/123.0.0/
+    """
+    channel = self.m.cros_release_util.channel_to_long_string(channel)
+    build_target = self.m.build_menu.build_target.name
+    version = self.m.cros_version.version.platform_version
+    return f'{channel}/{build_target}/{version}'
+
   def signing_response_to_metadata(
       self, sign_image_response: SignImageResponse
   ) -> List[BuildReport.SignedBuildMetadata]:
@@ -168,7 +180,8 @@ class SigningUtilsApi(recipe_api.RecipeApi):
         signed_build.type = archive.image_type
         signed_build.keyset = archive.keyset
         signed_build.keyset_is_mp = archive.keyset_is_mp
-        signed_build.release_directory = local_artifact_dir
+        signed_build.release_directory = self.get_gs_dir_for_channel(
+            archive.channel)
         signed_build.status = archive.signing_status
 
         all_versions = [

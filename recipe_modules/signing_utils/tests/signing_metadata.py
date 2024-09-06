@@ -29,7 +29,7 @@ FAILED = BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
 
 def RunSteps(api: RecipeApi):
   signing_response = SignImageResponse(
-      output_archive_dir='/archive_dir/',
+      output_archive_dir='dev-channel/kukui/1234.56.0',
       signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(
           archive_artifacts=[
               signing_pb2.ArchiveArtifacts(
@@ -128,7 +128,7 @@ def RunSteps(api: RecipeApi):
 
   expected_metadata = [
       BuildReport.SignedBuildMetadata(
-          release_directory='/archive_dir/',
+          release_directory='dev-channel/kukui/1234.56.0',
           status=FAILED,
           board='kukui',
           channel=CHANNEL_DEV,
@@ -145,7 +145,7 @@ def RunSteps(api: RecipeApi):
           versions=expected_versions,
       ),
       BuildReport.SignedBuildMetadata(
-          release_directory='/archive_dir/',
+          release_directory='canary-channel/kukui/1234.56.0',
           status=PASSED,
           board='kukui',
           channel=CHANNEL_CANARY,

@@ -615,11 +615,9 @@ class SigningApi(recipe_api.RecipeApi):
     Example:
       gs://{bucket}/dev-channel/atlas-signingnext/123.0.0/
     """
-    channel = self.m.cros_release_util.channel_to_long_string(channel)
     bucket = self.gs_upload_bucket
-    build_target = self.m.build_menu.build_target.name
-    version = self.m.cros_version.version.platform_version
-    return f'gs://{bucket}/{channel}/{build_target}/{version}/'
+    gs_dir = self.m.signing_utils.get_gs_dir_for_channel(channel)
+    return f'gs://{bucket}/{gs_dir}/'
 
   def _get_gs_artifact_name(self, build_target: str, version: str,
                             image_type: common_pb2.ImageType) -> str:
