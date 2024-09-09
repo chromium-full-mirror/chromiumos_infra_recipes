@@ -280,8 +280,12 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
         f'Pre-Uprev Testing: See https://ci.chromium.org/ui/b/{current_build_id}'
     )
     if new_message != message:
-      api.gerrit.set_change_description_remote(uprev_change, new_message)
-      presentation.logs['new message'] = new_message
+      try:
+        api.gerrit.set_change_description_remote(uprev_change, new_message)
+        presentation.logs['new message'] = new_message
+      except api.step.StepFailure:  # pragma: nocover
+        presentation.status = api.step.FAILURE
+        presentation.step_summary_text = 'Failed to update commit message.'
     else:
       presentation.step_summary_text = 'message does not need update.'
 
@@ -399,8 +403,12 @@ def CollectSingleResult(api: RecipeApi,
           f'Pre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/{current_build_id}'
       )
       if new_message != message:
-        api.gerrit.set_change_description_remote(uprev_change, new_message)
-        presentation.logs['new message'] = new_message
+        try:
+          api.gerrit.set_change_description_remote(uprev_change, new_message)
+          presentation.logs['new message'] = new_message
+        except api.step.StepFailure:  # pragma: nocover
+          presentation.status = api.step.FAILURE
+          presentation.step_summary_text = 'Failed to update change description'
       else:
         presentation.step_summary_text = 'message does not need update.'
 

@@ -1427,7 +1427,7 @@
       "Content-Type: application/json",
       "-d",
       "{\"description\": \"Uprev Chrome to 1234\\n\\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/301\"}",
-      "https://chromium-review.googlesource.com/changes/123456/description"
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/description"
     ],
     "luci_context": {
       "realm": {
@@ -1440,7 +1440,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "include pre-uprev link to commit message.set CL 123456 description.curl https://chromium-review.googlesource.com/changes/123456/description",
+    "name": "include pre-uprev link to commit message.set CL 123456 description.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -1659,7 +1659,7 @@
       "Content-Type: application/json",
       "-d",
       "{\"description\": \"Uprev Chrome to 1234\\n\\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/301\"}",
-      "https://chromium-review.googlesource.com/changes/123456/description"
+      "https://chromium-review.googlesource.com/changes/123456/revisions/current/description"
     ],
     "luci_context": {
       "realm": {
@@ -1672,7 +1672,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "update change description.set CL 123456 description.curl https://chromium-review.googlesource.com/changes/123456/description",
+    "name": "update change description.set CL 123456 description.curl https://chromium-review.googlesource.com/changes/123456/revisions/current/description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
