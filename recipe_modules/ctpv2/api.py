@@ -30,8 +30,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     self.ensure_ctpv2()
     build = build_pb2.Build()
     build.CopyFrom(self.m.buildbucket.build)
-    if use_legacy and hasattr(build.input.properties,
-                              'requests'):  # pragma: no cover
+    if use_legacy and 'requests' in build.input.properties:  # pragma: no cover
       build.input.properties['requests'] = self.filter_legacy_requests(
           build.input.properties['requests'])
 
