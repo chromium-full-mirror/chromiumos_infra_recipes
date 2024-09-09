@@ -48,9 +48,11 @@ class CrosCqDependsApi(RecipeApi):
         git_commits = self.m.git.log(manifest_diff.from_rev,
                                      manifest_diff.to_rev)
         for commit in git_commits:
-          # Accumulate Cq-Depend CLs from commits
+          # Accumulate Cq-Depend CLs from commits. Only consider Cq-Depend at
+          # the start of a line since in the case of reverts, Cq-Depend can
+          # appear in the middle of a line from the original commit message.
           found_commits += 1
-          dep_lines = re.findall(r'\s*Cq-Depend:\s*(.*)', commit.message,
+          dep_lines = re.findall(r'\n*Cq-Depend:\s*(.*)', commit.message,
                                  re.IGNORECASE)
           if len(dep_lines) == 0:
             continue
