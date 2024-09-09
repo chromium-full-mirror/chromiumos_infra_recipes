@@ -169,7 +169,7 @@
       }
     },
     "name": "gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": false, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -223,7 +223,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": false, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -240,7 +240,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -261,7 +261,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description.gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -302,7 +302,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -322,7 +322,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -343,7 +343,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (2).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -384,7 +384,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -404,7 +404,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -425,7 +425,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (3).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -466,7 +466,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -486,7 +486,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -507,7 +507,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (4).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -548,7 +548,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -568,7 +568,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -589,7 +589,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (5).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -630,7 +630,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -650,7 +650,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -671,7 +671,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (6).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -712,7 +712,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -732,7 +732,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -753,7 +753,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (7).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -794,7 +794,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -814,7 +814,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -835,7 +835,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (8).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -876,7 +876,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -896,7 +896,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -917,7 +917,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (9).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -958,7 +958,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },
@@ -978,7 +978,7 @@
       "@@@STEP_LOG_LINE@description text@@@@",
       "@@@STEP_LOG_LINE@description text@Pre-Uprev Testing: Not Tested@@@",
       "@@@STEP_LOG_END@description text@@@",
-      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456/7@@@"
+      "@@@STEP_LINK@gerrit change@https://chromium.googlesource.com/c/chromiumos/overlays/chromiumos-overlay/+/123456@@@"
     ]
   },
   {
@@ -999,7 +999,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.get CL 123456 description (10).gerrit-fetch-changes",
-    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
+    "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 0}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -1040,7 +1040,7 @@
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@",
-      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 7}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
+      "@@@STEP_LOG_LINE@request@{\"changes\": [{\"host\": \"chromium.googlesource.com\", \"change_number\": 123456, \"patch_set\": 0}], \"include_files\": false, \"include_commit_info\": true, \"include_messages\": false, \"include_submittable\": false, \"include_detailed_labels\": false}@@@",
       "@@@STEP_LOG_END@request@@@"
     ]
   },

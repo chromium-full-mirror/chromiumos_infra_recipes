@@ -83,6 +83,7 @@ def RunSteps(api: RecipeApi):
   if not cl:
     return NO_CL_FOUND
   cl = cl[0]
+  cl.patchset = 0
   patch_sets = api.gerrit.fetch_patch_sets([cl])
   if patch_sets[0].topic != UPREV_CL_TOPIC:
     return NOT_AN_UPREV_CL
