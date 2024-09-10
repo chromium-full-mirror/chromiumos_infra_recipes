@@ -683,8 +683,7 @@ class ExonerateApi(recipe_api.RecipeApi):
       if dry_run:
         return []
 
-      _, hw_test_results = self.m.cros_history.get_previous_test_results(
-          test_plan)
+      hw_test_results = self.m.cros_history.get_previous_test_results(test_plan)
       passed_tests = self.m.cros_history.get_passed_tests()
 
       # Exonerate HW test results.

@@ -98,8 +98,5 @@ def GenTests(api):
           )),
       api.post_check(PropertyEquals, 'scheduled_hw_tests',
                      expected_hw_test_names),
-      api.post_check(
-          PropertyEquals, 'test_tasks', {
-              'skylab_builder_ids': ['8922054662172514000'],
-              'tast_vm_tests_builder_ids': []
-          }))
+      api.post_check(PropertyEquals, 'test_tasks',
+                     {'skylab_builder_ids': ['8922054662172514000']}))

@@ -22,9 +22,7 @@ DEPS = [
 def RunSteps(api):
 
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
-  vm_results, hw_results = api.cros_history.get_previous_test_results(test_plan)
-  api.assertions.assertEqual(
-      len(vm_results), api.properties.get('expected_vm_results_count'))
+  hw_results = api.cros_history.get_previous_test_results(test_plan)
   api.assertions.assertEqual(
       len(hw_results), api.properties.get('expected_hw_results_count'))
 
@@ -36,7 +34,7 @@ def GenTests(api):
       api.buildbucket.simulated_multi_predicates_search_results(
           [], step_name=('get previous test results'
                          '.find matching builds.buildbucket.search')),
-      api.properties(expected_vm_results_count=0, expected_hw_results_count=0),
+      api.properties(expected_hw_results_count=0),
   )
 
   yield api.test(
@@ -45,14 +43,14 @@ def GenTests(api):
           [api.cros_history.empty_build_with_test_build_info('test-builder')],
           step_name=('get previous test results'
                      '.find matching builds.buildbucket.search')),
-      api.properties(expected_vm_results_count=0, expected_hw_results_count=0),
+      api.properties(expected_hw_results_count=0),
   )
 
   yield api.test(
       'basic',
       api.buildbucket.simulated_multi_predicates_search_results([
           api.cros_history.build_with_test_build_ids_properties(
-              hw_ids=['1', '2'], vm_ids=['3', '4'])
+              hw_ids=['1', '2'])
       ], step_name=('get previous test results'
                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
@@ -69,9 +67,5 @@ def GenTests(api):
               test_cases_verdict=TaskState.VERDICT_FAILED),
       ], step_name=('get previous test results'
                     '.get previous skylab tasks v2.buildbucket.get_multi')),
-      api.buildbucket.simulated_get_multi(
-          api.cros_history.create_vm_builds(num_success=3, num_failure=2),
-          step_name=('get previous test results'
-                     '.get tast vm tests from previous run')),
-      api.properties(expected_vm_results_count=5, expected_hw_results_count=3),
+      api.properties(expected_hw_results_count=3),
   )

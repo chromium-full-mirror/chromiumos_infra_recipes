@@ -60,12 +60,11 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_multi_predicates_search_results([
-          api.cros_history.build_with_test_build_ids_properties(['1', '2'],
-                                                                ['3', '4'])
-      ], step_name=('get previous failed and now exonerable suites'
-                    '.get previous test results'
-                    '.find matching builds.buildbucket.search')),
+      api.buildbucket.simulated_multi_predicates_search_results(
+          [api.cros_history.build_with_test_build_ids_properties(['1', '2'])],
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
           api.skylab_results.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],
@@ -90,8 +89,7 @@ def GenTests(api):
           ('Test Suites that previously failed but now exonerable \n'
            '\n\nHW test suites:\n htarget.hw.some-other-suite')))
 
-  prev_orch = api.cros_history.build_with_test_build_ids_properties(['1', '2'],
-                                                                    ['3', '4'])
+  prev_orch = api.cros_history.build_with_test_build_ids_properties(['1', '2'])
   prev_orch.output.properties['passed_tests'] = [
       'htarget.hw.some-other-suite', 'test_name_5'
   ]
@@ -157,12 +155,11 @@ def GenTests(api):
               '$chromeos/exonerate':
                   ExonerateProperties(enable_exoneration=True)
           }),
-      api.buildbucket.simulated_multi_predicates_search_results([
-          api.cros_history.build_with_test_build_ids_properties(['1', '2'],
-                                                                ['3', '4'])
-      ], step_name=('get previous failed and now exonerable suites'
-                    '.get previous test results'
-                    '.find matching builds.buildbucket.search')),
+      api.buildbucket.simulated_multi_predicates_search_results(
+          [api.cros_history.build_with_test_build_ids_properties(['1', '2'])],
+          step_name=('get previous failed and now exonerable suites'
+                     '.get previous test results'
+                     '.find matching builds.buildbucket.search')),
       api.buildbucket.simulated_get_multi([
           api.skylab_results.test_with_multi_response(
               1234, names=['htarget.hw.bvt-cq'],

@@ -245,21 +245,18 @@ class CrosHistoryApi(recipe_api.RecipeApi):
       self._passed_tests = all_passed_tests
       return self._passed_tests
 
-  def get_previous_test_task_ids(self) -> Tuple[List[int], List[int]]:
-    """Get the task ids of the latest test invocations.
+  def get_previous_test_task_ids(self) -> List[int]:
+    """Returns the task ids of the latest test invocations.
 
     Returns:
-      A tuple (vm_build_ids, hw_build_ids), where:
-      * vm_build_ids is a list of buildbucket IDs for all Tast VM tests for the
-        latest invocation of this builder with the same set of Gerrit changes.
-      * hw_build_ids is a list of buildbucket IDs for all Skylab tests for the
-        latest invocation of this builder with the same set of Gerrit changes.
+      A list of buildbucket IDs for all Skylab tests for the latest invocation
+          of this builder with the same set of Gerrit changes.
     """
     current_build = self.m.buildbucket.build
     past_builds = self.get_matching_builds(current_build,
                                            statuses=TERMINAL_STATUSES)
     if not past_builds:
-      return [], []
+      return []
 
     # TODO(b/271938042): Iterate through the list until we find a build that
     # does has the TEST_TASKS_KEY. This is useful in case the previous build was
@@ -268,13 +265,10 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     build_output = json_format.MessageToDict(last_build.output.properties)
     test_tasks = build_output.get(TEST_TASKS_KEY)
     if not test_tasks:
-      return [], []
+      return []
 
-    vm_build_ids = [
-        int(b) for b in test_tasks.get('tast_vm_tests_builder_ids', [])
-    ]
     hw_build_ids = [int(b) for b in test_tasks.get('skylab_builder_ids', [])]
-    return vm_build_ids, hw_build_ids
+    return hw_build_ids
 
   def get_previous_test_results(
       self, test_plan: GenerateTestPlanResponse
@@ -291,13 +285,9 @@ class CrosHistoryApi(recipe_api.RecipeApi):
     """
 
     with self.m.step.nest('get previous test results'):
-      vm_build_ids, hw_build_ids = self.get_previous_test_task_ids()
-      if not (vm_build_ids or hw_build_ids):
-        return [], []
-
-      vm_test_results = self.m.buildbucket.get_multi(
-          vm_build_ids,
-          step_name='get tast vm tests from previous run').values()
+      hw_build_ids = self.get_previous_test_task_ids()
+      if not hw_build_ids:
+        return []
 
       hw_test_results = []
       unit_hw_tests = []
@@ -307,7 +297,7 @@ class CrosHistoryApi(recipe_api.RecipeApi):
             unit_hw_tests.append(UnitHwTest(unit=unit, hw_test=test))
         hw_test_results = self.m.skylab_results.get_previous_results(
             hw_build_ids, unit_hw_tests)
-      return vm_test_results, hw_test_results
+      return hw_test_results
 
   def set_passed_tests(self, tests: Iterable[str]):
     """Record the tests that passed in the current run.

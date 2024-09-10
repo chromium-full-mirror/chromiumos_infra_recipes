@@ -7,15 +7,12 @@
 
 from typing import List
 
-from google.protobuf import json_format, timestamp_pb2
+from google.protobuf import timestamp_pb2
 
-from PB.chromiumos.common import BuildTarget
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
                                                        builder_common_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
-from PB.test_platform.taskstate import TaskState
-from PB.test_platform.steps.execution import ExecuteResponse
 from recipe_engine import recipe_test_api
 
 COMPRESSED_UPREV_RESPONSE = '''
@@ -143,13 +140,12 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
 
   @staticmethod
   def build_with_test_build_ids_properties(
-      hw_ids: List[int], vm_ids: List[int], build_id: int = 12345,
+      hw_ids: List[int], build_id: int = 12345,
       create_time: int = 1562475240) -> build_pb2.Build:
     """Generate a test build with build_ids of test builds tests in the output.
 
     Args:
       hw_ids: List of hw builder ids.
-      vm_ids: List of vm builder ids.
       build_id: The id for the build.
       create_time: The create_time for the build in seconds.
 
@@ -163,57 +159,13 @@ class CrosHistoryTestApi(recipe_test_api.RecipeTestApi):
         start_time=timestamp_pb2.Timestamp(seconds=create_time + 1),
         end_time=timestamp_pb2.Timestamp(seconds=create_time + 2),
         status=common_pb2.SUCCESS)
-    build.output.properties.update({
-        'test_tasks': {
-            'skylab_builder_ids': hw_ids,
-            'tast_vm_tests_builder_ids': vm_ids
-        }
-    })
+    build.output.properties.update(
+        {'test_tasks': {
+            'skylab_builder_ids': hw_ids
+        }})
     build.input.gerrit_changes.extend([common_pb2.GerritChange(change=1234)])
     return build
 
-  @staticmethod
-  def create_vm_builds(num_success: int, num_failure: int,
-                       start_id: int = 1) -> List[build_pb2.Build]:
-    """Create a list of VM test build.
-
-    Args:
-      num_success: The number of successful builds to create.
-      num_failure: The number of failed builds to create.
-      start_id: The ID of the first build to create. Defaults to 1.
-
-    Returns:
-      A list of VM test build objects.
-    """
-    builds = []
-    bbid = start_id
-    for _ in range(num_success):
-      build = build_pb2.Build(
-          id=bbid,
-          builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
-          status=common_pb2.SUCCESS)
-      build.input.properties.update({'name': 'test_name_' + str(bbid)})
-      builds.append(build)
-      bbid += 1
-
-    failed_test_case_result1 = ExecuteResponse.TaskResult.TestCaseResult(
-        name='camera.TakesGreatPhotos', verdict=TaskState.VERDICT_FAILED,
-        human_readable_summary='something wrong here')
-    failed_test_case_dict1 = json_format.MessageToDict(failed_test_case_result1)
-    for _ in range(num_failure):
-      build = build_pb2.Build(
-          id=bbid,
-          builder=builder_common_pb2.BuilderID(builder='something-direct-vm'),
-          status=common_pb2.FAILURE)
-      build.output.properties.update(
-          {'failed_test_cases': [failed_test_case_dict1]})
-      build.input.properties.update({
-          'buildTarget': json_format.MessageToDict(BuildTarget(name='target'))
-      })
-      build.input.properties.update({'name': 'test_name_' + str(bbid)})
-      builds.append(build)
-      bbid += 1
-    return builds
 
   @staticmethod
   def build_with_uprev_response(end_time: int = None) -> build_pb2.Build:

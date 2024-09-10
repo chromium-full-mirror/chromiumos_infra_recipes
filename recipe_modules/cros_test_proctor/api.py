@@ -391,10 +391,8 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
     def _persist_task_ids_in_properties(test_tasks: typing.List[SkylabTask]):
       skylab_ids = sorted({str(skylab_task.id) for skylab_task in test_tasks})
-      self.m.easy.set_properties_step(test_tasks={
-          'skylab_builder_ids': skylab_ids,
-          'tast_vm_tests_builder_ids': [],
-      })
+      self.m.easy.set_properties_step(
+          test_tasks={'skylab_builder_ids': skylab_ids})
 
     test_tasks = self._schedule_skylab_tests(
         test_plan,
@@ -590,7 +588,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       return previous_test_results
 
     with self.m.step.nest('get previous test results') as presentation:
-      _, test_task_ids = self.m.cros_history.get_previous_test_task_ids()
+      test_task_ids = self.m.cros_history.get_previous_test_task_ids()
       # CQ only launches one cros_test_platform builder.
       if len(test_task_ids) == 1:
         build = self.m.buildbucket.get(test_task_ids[0])

@@ -10697,7 +10697,7 @@
     "name": "run tests.schedule tests.set test_tasks",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [\"4321\"], \"tast_vm_tests_builder_ids\": []}@@@"
+      "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [\"4321\"]}@@@"
     ]
   },
   {

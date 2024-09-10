@@ -164,8 +164,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.buildbucket.simulated_get_multi(
@@ -180,8 +179,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': [222, 333]
+                  'skylab_builder_ids': [111]
               },
               'passed_tests': ['b-cq.hw.suite'],
           }).build,
@@ -197,8 +195,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.properties(
@@ -215,8 +212,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.properties(
@@ -266,8 +262,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.step_data(
@@ -290,8 +285,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.step_data(
@@ -314,8 +308,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.properties(
@@ -348,8 +341,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.step_data(
@@ -372,8 +364,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.step_data(
@@ -396,8 +387,7 @@ def GenTests(api):
           cq=True, output_properties={
               'test_summary': test_summary,
               'test_tasks': {
-                  'skylab_builder_ids': [111],
-                  'tast_vm_tests_builder_ids': []
+                  'skylab_builder_ids': [111]
               }
           }).build,
       api.properties(

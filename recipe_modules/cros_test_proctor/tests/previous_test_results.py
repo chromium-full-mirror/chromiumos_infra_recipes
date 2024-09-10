@@ -60,7 +60,7 @@ def GenTests(api):
       'basic',
       api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.simulated_multi_predicates_search_results(
-          [api.cros_history.build_with_test_build_ids_properties([1], [2, 3])],
+          [api.cros_history.build_with_test_build_ids_properties([1])],
           'get previous test results.find matching builds.buildbucket.search'),
       api.buildbucket.simulated_get(
           ctp_build, 'get previous test results.buildbucket.get'),
