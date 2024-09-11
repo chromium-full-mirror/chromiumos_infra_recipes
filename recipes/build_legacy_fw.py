@@ -436,7 +436,8 @@ class FirmwareBuilder():
       files_list = self.m.file.listdir(
           'list files', firmware_dir, recursive=True, test_data=[
               'image-brya.bin', 'brya/ec.bin', 'image-redrix.serial.bin',
-              'firmware/brya0/coreboot.rom'
+              'firmware/brya0/coreboot.rom', 'build/poppy/firmware/image.bin',
+              'build/reef/firmware/ec.bin'
           ])
 
       ap_regex = re.compile(r'/image-([^\W]+)\.bin')
@@ -444,17 +445,32 @@ class FirmwareBuilder():
 
       for file in files_list:
         output_name = ''
-        relative_file_path = Path(self.m.path.relpath(file, firmware_dir))
+        relative_file_path = Path(self.m.path.relpath(file, build_path))
         # Regular expression to check if required AP Image file is present
         res = ap_regex.search(str(file))
         if res and res.group(1):
           output_name = f'{res.group(1)}.{build_version}.tar.bz2'
+
+        # For older pre-unibuild boards, the artifact structure is different.
+        # we need to look for image.bin under build/poppy/firmware.
+        # We can grab the name of directory since the format is fixed.
+        if relative_file_path.name == 'image.bin':
+          board_name = relative_file_path.parts[-3]
+          output_name = f'{board_name}.{build_version}.tar.bz2'
 
         if relative_file_path.name == 'ec.bin':
           # Compressed file must follow the naming convention
           # image-{Name}.bin is compressed as {Name}-{version}.tar.bz2
           # For EC, we extract platform name by directory name.
           board_name = relative_file_path.parts[-2]
+
+          # In case of pre-unibuild platforms, ec.bin will be inside
+          # build/poppy/firmware/ec.bin
+          # This will cause us to grab firmware as a platform name.
+          # To avoid this issue, traverse one directory above.
+          if board_name == 'firmware':
+            board_name = relative_file_path.parts[-3]
+
           output_name = f'{board_name}.EC.{build_version}.tar.bz2'
 
         # In case File is not AP or EC firmware, skip the compression

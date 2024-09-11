@@ -4305,6 +4305,8 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/brya/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/poppy/firmware/image.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/reef/firmware/ec.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/firmware/brya0/coreboot.rom@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/image-brya.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/image-redrix.serial.bin@@@",
@@ -4351,6 +4353,78 @@
     "cmd": [
       "tar",
       "cvjf",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/poppy.15236.0.0.tar.bz2",
+      "--null",
+      "-T",
+      "/dev/stdin",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/poppy/firmware/image.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.create per device firmware archives.create device tarball (2)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "cvjf",
+      "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/reef.EC.15236.0.0.tar.bz2",
+      "--null",
+      "-T",
+      "/dev/stdin",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/target/firmware/build/reef/firmware/ec.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "DEPOT_TOOLS_UPDATE": [
+        "0"
+      ],
+      "PATH": [
+        "RECIPE_REPO[depot_tools]"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "push per device FW.create per device firmware archives.create device tarball (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "cvjf",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/target/brya.15236.0.0.tar.bz2",
       "--null",
       "-T",
@@ -4378,7 +4452,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "push per device FW.create per device firmware archives.create device tarball (2)",
+    "name": "push per device FW.create per device firmware archives.create device tarball (4)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
