@@ -20,6 +20,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     self._cipd_package = str(properties.version.cipd_package) or \
         'chromiumos/infra/ctpv2/${platform}'
     self.allowed_pools = []
+    self._prefixed_tags_to_check = ['label-suite:', 'suite:', 'analytics_name:']
 
   def is_enabled(self) -> bool:
     """Check if ctpv2 is enabled for use."""
@@ -87,9 +88,25 @@ class Ctpv2Command(recipe_api.RecipeApi):
     params = self.get_val_from_obj_or_dict(request, 'params')
     if not params:  # pragma: no cover
       return False
-    if self._is_ctpv2_with_qs_request(params):
+    if self._is_ctpv2_with_qs_request(params) \
+      or self._has_ctpv2_allowed_prefix(params):
       return True
     return self._is_allowed_pool(params)
+
+  def _has_ctpv2_allowed_prefix(self, params):
+    decorations = self.get_val_from_obj_or_dict(params, 'decorations')
+    if not decorations:  # pragma: no cover
+      return False
+    tags = self.get_val_from_obj_or_dict(decorations, 'tags')
+    if not tags:  # pragma: no cover
+      return False
+    for tag in tags:
+      for tag_to_check in self._prefixed_tags_to_check:
+        if tag.startswith(tag_to_check):  # pragma: no cover
+          tag = tag.removeprefix(tag_to_check)
+          if tag.startswith('AL.'):
+            return True
+    return False
 
   def _is_ctpv2_with_qs_request(self, params):
     run_via_cft = self.get_val_from_obj_or_dict(params, 'run_via_cft',
