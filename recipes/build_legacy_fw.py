@@ -437,7 +437,8 @@ class FirmwareBuilder():
           'list files', firmware_dir, recursive=True, test_data=[
               'image-brya.bin', 'brya/ec.bin', 'image-redrix.serial.bin',
               'firmware/brya0/coreboot.rom', 'build/poppy/firmware/image.bin',
-              'build/reef/firmware/ec.bin'
+              'build/reef/firmware/ec.bin',
+              'build/reef/firmware/npcx_monitor.bin'
           ])
 
       ap_regex = re.compile(r'/image-([^\W]+)\.bin')
@@ -482,9 +483,17 @@ class FirmwareBuilder():
 
         create_tarball_cmd = [
             'tar', 'cvjf',
-            str(tarball_full_path), '--null', '-T', '/dev/stdin',
-            str(file)
+            str(tarball_full_path), '-C', file.parent, file.name
         ]
+
+        # npcx_monitor.bin will be in the same directory as ec.bin
+        # In case npcx_monitor.bin is present, we need to add it to the
+        # EC tarball.
+        # Code will reach here only if the file name is image-*.bin or ec.bin
+        # Hence explicit checking of EC directory is not required.
+        npcx_monitor = file.parent / 'npcx_monitor.bin'
+        if npcx_monitor in files_list:
+          create_tarball_cmd.extend(['npcx_monitor.bin'])
 
         self.m.step('create device tarball', cmd=create_tarball_cmd)
 

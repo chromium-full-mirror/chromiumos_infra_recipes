@@ -5254,6 +5254,7 @@
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/npcx_monitor.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/firmware/brya0/coreboot.rom@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/image-brya.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/image-redrix.serial.bin@@@",
@@ -5265,10 +5266,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/brya.EC.15236.0.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.bin"
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya",
+      "ec.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5301,10 +5301,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/poppy.15236.0.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/poppy/firmware/image.bin"
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/poppy/firmware",
+      "image.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5337,10 +5336,10 @@
       "tar",
       "cvjf",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/reef.EC.15236.0.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/ec.bin"
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware",
+      "ec.bin",
+      "npcx_monitor.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -5373,10 +5372,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/brya.15236.0.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/image-brya.bin"
+      "-C",
+      "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware",
+      "image-brya.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {

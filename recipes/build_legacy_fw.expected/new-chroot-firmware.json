@@ -4319,6 +4319,7 @@
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/brya/ec.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/npcx_monitor.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/firmware/brya0/coreboot.rom@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/image-brya.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/image-redrix.serial.bin@@@",
@@ -4330,10 +4331,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/brya.EC.15709.22.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CACHE]/cros_chroot/out/build/target/firmware/brya/ec.bin"
+      "-C",
+      "[CACHE]/cros_chroot/out/build/target/firmware/brya",
+      "ec.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4366,10 +4366,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/poppy.15709.22.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CACHE]/cros_chroot/out/build/target/firmware/build/poppy/firmware/image.bin"
+      "-C",
+      "[CACHE]/cros_chroot/out/build/target/firmware/build/poppy/firmware",
+      "image.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4402,10 +4401,10 @@
       "tar",
       "cvjf",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/reef.EC.15709.22.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/ec.bin"
+      "-C",
+      "[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware",
+      "ec.bin",
+      "npcx_monitor.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
@@ -4438,10 +4437,9 @@
       "tar",
       "cvjf",
       "[CLEANUP]/tmp_tmp_1/chroot/tmp/firmware-bucket_tmp_1/target/brya.15709.22.0.tar.bz2",
-      "--null",
-      "-T",
-      "/dev/stdin",
-      "[CACHE]/cros_chroot/out/build/target/firmware/image-brya.bin"
+      "-C",
+      "[CACHE]/cros_chroot/out/build/target/firmware",
+      "image-brya.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env_suffixes": {
