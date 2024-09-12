@@ -48,17 +48,7 @@ def RunSteps(api):
   vm_context = api.tast_exec.create_qemu_vm_context(
       qcow_image, second_image_path=vm_dir / 'second_disk.bin')
 
-  # Run with retry
-  api.buildbucket.build.critical = common_pb2.YES
-  api.tast_exec.run_vm(
-      'tast_vm', vm_context,
-      api.tast_exec.TastInputs(['!informational'], test_artifacts,
-                               BuildPayload(
-                                   artifacts_gs_bucket='artifacts-bucket',
-                                   artifacts_gs_path='artifacts-path',
-                               )))
 
-  # Run without retry
   api.buildbucket.build.critical = common_pb2.NO
   results_dir = api.path.mkdtemp(prefix='temp')
   api.tast_exec.run_direct_vm(
@@ -84,8 +74,7 @@ def RunSteps(api):
 
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build(),
-                 api.tast_exec.simulate_test_list_ret('some.test'),
-                 api.post_check(post_process.MustRun, 'second tast iteration'))
+                 api.tast_exec.simulate_test_list_ret('some.test'))
 
   yield api.test(
       'public',

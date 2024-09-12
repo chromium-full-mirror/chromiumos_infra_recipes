@@ -7,10 +7,8 @@ import contextlib
 import copy
 import datetime
 import os
-from google.protobuf import json_format as jsonpb
 from recipe_engine.recipe_api import RecipeApi, StepFailure
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
-from PB.test_platform.taskstate import TaskState
 
 SYS_LOG_DIR = '/var/log'
 VM_ARTIFACT_TARBALL = '/tmp/artifacts.tar'
@@ -182,63 +180,6 @@ class TastExecApi(RecipeApi):
       self.fetch_partner_key()
 
     return qcow_image_path
-
-  def run_vm(self, suite_name, vm_context, tast_inputs):
-    """Run tast tests in a VM with one retry and upload logs to Google storage.
-
-    Args:
-      suite_name (str): Unique name used to record test results.
-      vm_context (contextlib.contextmanager): The VM context manager, created
-        by create_qemu_vm_context/create_gce_vm_context.
-      tast_inputs (TastInputs): Common inputs for running tast tests.
-
-    Returns:
-      A tuple of list(Failures), a bool indicating whether the results were
-       empty and a dict mapping a task kind with the number of successes.
-    """
-    task_result = self._retry_iter(suite_name, vm_context, tast_inputs, 'first')
-    tests_to_retry, _ = self.m.tast_results.get_tests_to_retry(task_result)
-    all_test_cases = []
-    if task_result.test_cases:
-      all_test_cases = jsonpb.MessageToDict(task_result)['testCases']
-    tests_to_retry = tests_to_retry if self.m.buildbucket.is_critical() else []
-    results, failed_test_cases = self.m.tast_results.convert_results(
-        task_result, tests_to_retry)
-    empty_result = task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-    if tests_to_retry:
-      tast_inputs = tast_inputs.copy()
-      tast_inputs.expressions = tests_to_retry
-      retry_task_result = self._retry_iter(suite_name, vm_context, tast_inputs,
-                                           'second', new_invocation=True)
-      if retry_task_result.test_cases:
-        all_test_cases += jsonpb.MessageToDict(retry_task_result)['testCases']
-      retry_results, retry_tcs = self.m.tast_results.convert_results(
-          retry_task_result)
-      empty_result = \
-          retry_task_result.state.verdict == TaskState.VERDICT_UNSPECIFIED
-      results.add_results(retry_results)
-      failed_test_cases += retry_tcs
-
-    self.m.easy.set_properties_step(all_test_cases=all_test_cases,
-                                    failed_test_cases=failed_test_cases)
-    if all_test_cases:
-      passed_tc_count = len(all_test_cases) - len(failed_test_cases)
-      greenness = int(100 * passed_tc_count / len(all_test_cases))
-      self.m.easy.set_properties_step(greenness=greenness)
-    self.m.tast_results.record_logs(SYS_LOG_DIR)
-
-    return results, empty_result
-
-  def _retry_iter(self, suite_name, vm_context, tast_inputs, tag,
-                  new_invocation=False):
-    with self.m.step.nest('%s tast iteration' % tag) as pres:
-      test_results_dir = self.m.path.mkdtemp(prefix='test-results')
-      tests = self.run_direct_vm(vm_context, test_results_dir, tast_inputs)
-      pres.logs['tests'] = tests
-      return self.m.tast_results.get_results(test_results_dir, suite_name, tag,
-                                             tests,
-                                             tast_inputs.build_artifacts_url(),
-                                             new_invocation=new_invocation)
 
   def _amend_tast_inputs(self, tast_inputs: TastInputs) -> TastInputs:
     """Modifies TastInputs based on the given Tast version.
