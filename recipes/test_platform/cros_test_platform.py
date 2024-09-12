@@ -1458,7 +1458,11 @@ def DoRunSteps(api, properties):
       with api.step.nest('ctpv2 async error handler') as pres:
         pres.step_text = '{}'.format(resp)
 
-    runner.run_function_async(api.ctpv2.execute_luciexe, (True, True),
+    ctpv2_req = {
+        'useLegacy': True,
+        'runningAsync': True,
+    }
+    runner.run_function_async(api.ctpv2.execute_luciexe, ctpv2_req,
                               error_handler=errorHandlerFunc)
     if properties.requests and v2_request_count < len(properties.requests):
       # If ctpv2 was invoked, nest the ctpv1 steps under a parent step

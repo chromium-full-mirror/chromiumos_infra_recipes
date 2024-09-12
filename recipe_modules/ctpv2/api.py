@@ -26,8 +26,13 @@ class Ctpv2Command(recipe_api.RecipeApi):
     """Check if ctpv2 is enabled for use."""
     return self._cipd_label is not None
 
-  def execute_luciexe(self, use_legacy=False, runningAsync=False):
+  def execute_luciexe(self, req=None, tryCount=1):
     """Execute work via ctpv2 luciexe binary."""
+    del tryCount
+    if req is None:
+      req = {}
+    use_legacy = req.get('useLegacy', False)
+    runningAsync = req.get('runningAsync', False)
     self.ensure_ctpv2()
     build = build_pb2.Build()
     build.CopyFrom(self.m.buildbucket.build)
