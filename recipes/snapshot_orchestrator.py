@@ -17,11 +17,14 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
+    'git_footers',
     'orch_menu',
     'snapshot_orch_menu',
+    'src_state',
     'cros_snapshot',
     'cros_lkgm',
     'cros_version',
@@ -78,11 +81,25 @@ def DoRunSteps(api: RecipeApi):
   # Run any HW tests.
   api.snapshot_orch_menu.plan_and_run_tests(testable_builds=testable_builds)
 
+  with api.context(cwd=api.src_state.external_manifest.path):
+    external_manifest_position = api.git_footers.position_num('HEAD')
+    # The above method returns 1 on error.
+    external_manifest_position = (0 if external_manifest_position == 1 else
+                                  external_manifest_position)
+  with api.context(cwd=api.src_state.internal_manifest.path):
+    internal_manifest_position = api.git_footers.position_num('HEAD')
+    # The above method returns 1 on error.
+    internal_manifest_position = (0 if internal_manifest_position == 1 else
+                                  internal_manifest_position)
+
   # Generate LKGM uprev CL if the condition meets.
   if snapshot_identifier:
     with api.step.nest('generate a LKGM uprev CL') as presentation:
       if int(snapshot_identifier) % SNAPSHOT_LGKM_UPREV_FREQUENCY == 0:
-        api.cros_lkgm.do_lkgm(builds_status.completed_builds, use_snapshot=True)
+        api.cros_lkgm.do_lkgm(
+            builds_status.completed_builds, use_snapshot=True,
+            internal_manifest_position=internal_manifest_position,
+            external_manifest_position=external_manifest_position)
       else:
         presentation.step_text = (
             f'Skipped. A CL is generated only every {SNAPSHOT_LGKM_UPREV_FREQUENCY} runs'

@@ -1283,7 +1283,11 @@
       "1234.56.0",
       "--buildbucket-id",
       "8945511751514863184",
-      "--dryrun"
+      "--dryrun",
+      "--internal-manifest-position",
+      "123456",
+      "--external-manifest-position",
+      "7654321"
     ],
     "luci_context": {
       "realm": {

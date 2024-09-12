@@ -20,4 +20,7 @@ message DoLkgmProperties {
 
   // Whether to pass `use_snapshot` to do_lkgm.
   bool use_snapshot = 4;
+
+  uint32 internal_manifest_position = 5;
+  uint32 external_manifest_position = 6;
 }

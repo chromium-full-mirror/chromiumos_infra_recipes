@@ -128,7 +128,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         self._builder_threshold_percentage)
 
   def do_lkgm(self, release_build_results: List[build_pb2.Build],
-              use_branch: bool = False, use_snapshot: bool = False):
+              use_branch: bool = False, use_snapshot: bool = False,
+              internal_manifest_position: int = 0,
+              external_manifest_position: int = 0):
     """Performs the LGKM process if the build is an LKGM candidate.
 
     This should only be called from a release orchestrator.
@@ -140,6 +142,10 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         (e.g. refs/branch-heads/5204) instead of ToT.
       use_snapshot (bool): If set, generate a LKGM CL with snapshot identifier.
         Can't use this with use_branch at the same time.
+      internal_manifest_position (int): If a positive number is set, pass the
+        number of internal manifest position to the script.
+      external_manifest_position (int): If a positive number is set, pass the
+        number of external manifest position to the script.
     """
     if not self._enable_lkgm:
       return
@@ -187,6 +193,10 @@ class CrosLkgmApi(recipe_api.RecipeApi):
       cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])
     if not self._full_run:
       cmd.append('--dryrun')
+    if internal_manifest_position > 0:
+      cmd.extend(['--internal-manifest-position', internal_manifest_position])
+    if external_manifest_position > 0:
+      cmd.extend(['--external-manifest-position', external_manifest_position])
 
     try:
       self.m.step('call chrome_chromeos_lkgm', cmd)

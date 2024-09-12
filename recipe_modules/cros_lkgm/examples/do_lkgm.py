@@ -38,9 +38,11 @@ def RunSteps(api, properties):
     api.cros_lkgm.schedule_public_build()
     api.cros_lkgm.collect_public_build()
 
-  api.cros_lkgm.do_lkgm(properties.release_builds,
-                        use_branch=properties.use_branch,
-                        use_snapshot=properties.use_snapshot)
+  api.cros_lkgm.do_lkgm(
+      properties.release_builds, use_branch=properties.use_branch,
+      use_snapshot=properties.use_snapshot,
+      internal_manifest_position=properties.internal_manifest_position,
+      external_manifest_position=properties.external_manifest_position)
 
 
 def GenTests(api):
@@ -92,7 +94,10 @@ def GenTests(api):
             DoLkgmProperties(release_builds=release_builds,
                              use_branch=use_branch,
                              skip_public_build=skip_public_build),
-            use_snapshot=kwargs.pop('use_snapshot', False)),
+            use_snapshot=kwargs.pop('use_snapshot', False),
+            internal_manifest_position=123456,
+            external_manifest_position=7654321,
+        ),
         api.properties(
             **{
                 '$chromeos/cros_lkgm': {
