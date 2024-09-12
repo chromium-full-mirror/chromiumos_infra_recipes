@@ -1485,8 +1485,36 @@ def DoRunSteps(api, properties):
         v2_responses = ExecuteResponses()
         v2_responses.ParseFromString(decompressed_responses)
 
+  # TODO: remove when we can directly writing to output props from ctpv2 sub-build
+  if v2_responses and len(v2_responses.tagged_responses) > 0:
+    set_counts_to_output_props(
+        api, v2_responses.tagged_responses)  # pragma: no cover
+
   merged_responses = mergeV1AndV2Responses(api, v1_responses, v2_responses)
   return merged_responses, enumerations, error_in_requests, suite_execution_logs
+
+
+def set_counts_to_output_props(api, v2_responses):  # pragma: no cover
+  with api.step.nest('set counts to output props') as step:
+    total_test_count = 0
+    failed_test_count = 0
+    failed_test_run_count = 0
+    for _, response in v2_responses.items():
+      if response.task_results:
+        for task_result in response.task_results:
+          if hasattr(task_result, 'test_cases') and task_result.test_cases:
+            for test_case in task_result.test_cases:
+              total_test_count = total_test_count + 1
+              if test_case.verdict in _FAILED_VERDICTS:
+                failed_test_count = failed_test_count + 1
+
+    step.logs[
+        'counts'] = 'total test count: %d \nfailed test count: %d\nfailed test run count: %d' % (
+            total_test_count, failed_test_count, failed_test_run_count)
+    step.properties['total_test_count'] = total_test_count
+    step.properties['failed_test_count'] = failed_test_count
+    # TODO: Get this properly when test_runner provides this info to CTP
+    step.properties['failed_test_run_count'] = failed_test_run_count
 
 
 def mergeV1AndV2Responses(api, v1_responses, v2_responses):  # pragma: no cover
