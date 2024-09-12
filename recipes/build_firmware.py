@@ -22,15 +22,20 @@ from google.protobuf.json_format import MessageToDict
 
 import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest
+from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
+from PB.chromite.api.packages import GetTargetVersionsResponse
+from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
 from recipe_engine.recipe_api import StepFailure
+from RECIPE_MODULES.chromeos.cros_artifacts.api import UploadedArtifacts
 
 DEPS = [
     'depot_tools/gsutil',
     'recipe_engine/bcid_reporter',
     'recipe_engine/buildbucket',
+    'recipe_engine/cv',
     'recipe_engine/file',
     'recipe_engine/json',
     'recipe_engine/path',
@@ -39,6 +44,7 @@ DEPS = [
     'recipe_engine/resultdb',
     'recipe_engine/step',
     'build_menu',
+    'build_reporting',
     'cros_artifacts',
     'cros_build_api',
     'cros_infra_config',
@@ -171,7 +177,7 @@ def RunSteps(api, properties):
       UploadTestResults(api, location, build.builder.builder)
       raise ex
 
-    uploaded_artifacts, _ = api.build_menu.upload_artifacts(
+    uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
         config=config, report_to_spike=api.cros_infra_config.config.artifacts
         .attestation_eligible)
 
@@ -207,6 +213,44 @@ def RunSteps(api, properties):
                                                properties=sign_image_props))
 
         api.buildbucket.schedule(requests)
+
+    # Publish tar files to pubsub.
+    if not api.cv.active:
+      api.build_reporting.set_build_type(BuildReport.BUILD_TYPE_FIRMWARE, None)
+      branch = api.src_state.gitiles_commit.ref
+      if branch.startswith('refs/heads/'):
+        branch = branch[len('refs/heads/'):]
+      bcs_version = api.cros_version.version
+      target_versions = GetTargetVersionsResponse(
+          milestone_version=str(bcs_version.milestone),
+          platform_version=bcs_version.platform_version)
+      for metadata_path in uploaded_artifacts.files_by_artifact.get(
+          'FIRMWARE_TARBALL_INFO', []):
+        api.path.mock_add_file(metadata_path)
+        if api.path.exists(metadata_path):
+          metadata = api.file.read_proto(
+              'read fw metadata',
+              metadata_path,
+              FirmwareArtifactInfo,
+              'JSONPB',
+              test_proto=FirmwareArtifactInfo(objects=[
+                  FirmwareArtifactInfo.ObjectInfo(
+                      file_name='brox_EC.tbz2',
+                      tarball_info=FirmwareArtifactInfo.TarballInfo(
+                          type='EC', board=('brox')))
+              ]),
+          )
+          for obj in metadata.objects:
+            if obj.HasField('tarball_info'):
+              for board in obj.tarball_info.board:
+                api.build_reporting.reset_build_report(board)
+                api.build_reporting.publish_branch(branch)
+                api.build_reporting.publish_versions(target_versions)
+                api.build_reporting.publish_build_artifacts(
+                    UploadedArtifacts(uploaded_artifacts.gs_bucket,
+                                      uploaded_artifacts.gs_path,
+                                      {'FIRMWARE_TARBALL': [obj.file_name]}),
+                    artifact_dir)
 
     UploadTestResults(api, location, build.builder.builder)
 
@@ -345,6 +389,43 @@ def _find_files_with_suffix(api, bucket, path, suffix):
 
 def GenTests(api):
 
+  ARTIFACTS = '''{
+  "artifacts": {
+    "artifacts": [
+      {
+        "artifactType": 31,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifactsd33fvz7t/firmware_metadata.jsonpb"
+          }
+        ]
+      },
+      {
+        "artifactType": 30,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifactsd33fvz7t/myst.firmware.tbz2"
+          }
+        ]
+      },
+      {
+        "artifactType": 55,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifactsd33fvz7t/tokens.bin"
+          }
+        ]
+      }
+    ]
+  }
+}'''
+
   def get_signing_image_props_for_test(is_staging=False):
     """
     Get SignImageProperties for test.
@@ -386,6 +467,9 @@ def GenTests(api):
              input_properties={'firmware_location': common_pb2.PLATFORM_ZEPHYR})
   yield test(
       'ec-branch-postsubmit',
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ARTIFACTS),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
