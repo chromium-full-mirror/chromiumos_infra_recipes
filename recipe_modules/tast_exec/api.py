@@ -567,43 +567,6 @@ class TastExecApi(RecipeApi):
       presentation.logs['kvm.monitor.serial'] = self.m.file.read_text(
           'reading file', kvm_monitor_serial_file)
 
-  def create_gce_vm_context(self, image, project, machine, zone, network,
-                            subnet):
-    """Creates a context manager which performs setup/teardown of a GCE VM.
-
-    Args:
-      image(str): GCE image to use for the instance.
-      project(str): Google Cloud project name.
-      machine(str): GCE machine type
-      zone(str): GCE zone to create instance (e.g. us-central1-b).
-      network(str): Network name to use.
-      subnet(str): Network subnet on which to create instance.
-
-    Returns:
-      A context manager that
-        - when entered, prepares a VM to test against, and yields a
-          VmInfo object for connecting to it.
-        - when exited, terminates the VM and performs cleanup.
-    """
-
-    @contextlib.contextmanager
-    def gce_vm_context():
-      instance, ip_addr, _ = self.m.gcloud.create_instance(
-          image, project, machine, zone, network, subnet)
-      try:
-        self._test_ssh_conn(ip_addr, GCE_VM_PORT)
-        yield TastExecApi.VmInfo(ip_addr, GCE_VM_PORT)
-      finally:
-        try:
-          self.m.gcloud.get_instance_serial_output(instance, project, zone)
-        finally:
-          # Ignore any exceptions when deleting the instance as to not block
-          # test result reporting.
-          with self.m.failures.ignore_exceptions():
-            self.m.gcloud.delete_instance(instance, project, zone)
-
-    return gce_vm_context
-
   @exponential_retry(retries=3, delay=datetime.timedelta(minutes=1))
   def _test_ssh_conn(self, host, port):
     cmd = self._get_ssh_cmd(host, port, ['true'])

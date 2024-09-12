@@ -81,28 +81,11 @@ def RunSteps(api):
     with vm_context():
       pass
 
-  # Run with GCE VM
-  vm_context = api.tast_exec.create_gce_vm_context('image', 'project',
-                                                   'machine', 'zone', 'network',
-                                                   'subnet')
-  api.tast_exec.run_vm(
-      'tast_vm', vm_context,
-      api.tast_exec.TastInputs(['!informational'], test_artifacts,
-                               BuildPayload(
-                                   artifacts_gs_bucket='artifacts-bucket',
-                                   artifacts_gs_path='artifacts-path',
-                               )))
-
 
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build(),
                  api.tast_exec.simulate_test_list_ret('some.test'),
                  api.post_check(post_process.MustRun, 'second tast iteration'))
-
-  yield api.test(
-      'forgives-delete-instance-failures', api.buildbucket.ci_build(),
-      api.tast_exec.simulate_test_list_ret('some.test'),
-      api.step_data('first tast iteration (2).delete instance', retcode=1))
 
   yield api.test(
       'public',
