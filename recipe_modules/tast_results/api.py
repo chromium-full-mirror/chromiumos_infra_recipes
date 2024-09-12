@@ -7,15 +7,12 @@
 """Functions for reporting and parsing Tast VM test results."""
 
 import datetime
-from typing import List
 
 from google.protobuf import json_format as jsonpb
 from recipe_engine import recipe_api
 from RECIPE_MODULES.recipe_engine.time.api import exponential_retry
 from RECIPE_MODULES.chromeos.failures_util.api import Failure
 
-from PB.go.chromium.org.luci.buildbucket.proto.build import Build
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.test_platform.request import Request as TestPlatformRequest
 from PB.test_platform.steps.execution import ExecuteResponse
 from PB.test_platform.taskstate import TaskState
@@ -552,25 +549,3 @@ class TastResultsApi(recipe_api.RecipeApi):
       behavior = TestPlatformRequest.Params.TestExecutionBehavior.NON_CRITICAL
       self.m.cros_resultdb.apply_exonerations(
           [self.m.cros_resultdb.current_invocation_id], behavior)
-
-  def extract_failed_test_names(self, vm_test_build: Build) -> List[str]:
-    """Returns the failed test names from the output properties of the build."""
-    props = jsonpb.MessageToDict(vm_test_build.output.properties)
-    failed_test_cases = props.get('failed_test_cases', [])
-    failed_test_names = [test_case['name'] for test_case in failed_test_cases]
-    return failed_test_names
-
-  def had_no_unexpected_skips(self, vm_test_build: Build) -> bool:
-    """Returns whether all test cases were attempted."""
-
-    if vm_test_build.status == common_pb2.SUCCESS:
-      return True
-
-    failed_test_cases = vm_test_build.output.properties.get_or_create_list(
-        'failed_test_cases')
-    if not failed_test_cases:
-      return False
-
-    return all(
-        jsonpb.MessageToDict(t).get('humanReadableSummary') !=
-        MISSING_TEST_FAILURE_SUMMARY for t in failed_test_cases)
