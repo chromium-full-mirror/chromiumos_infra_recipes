@@ -146,10 +146,10 @@
       "-H",
       "Content-Type: application/json",
       "-d",
-      "{\"description\": \"my new desc\"}",
-      "https://chromium-review.googlesource.com/changes/123/revisions/current/description"
+      "{\"message\": \"my new desc\"}",
+      "https://chromium-review.googlesource.com/changes/123/message"
     ],
-    "name": "set CL 123 description (2).curl https://chromium-review.googlesource.com/changes/123/revisions/current/description",
+    "name": "set CL 123 description (2).curl https://chromium-review.googlesource.com/changes/123/message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

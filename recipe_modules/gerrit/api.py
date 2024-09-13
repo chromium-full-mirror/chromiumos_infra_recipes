@@ -968,8 +968,8 @@ class GerritApi(RecipeApi):
     """
     with self.m.step.nest(f'set CL {gerrit_change.change} description'):
       self._do_put(
-          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/revisions/current/description',
-          {'description': description}, test_output_data='{}')
+          f'https://{gerrit_change.host}/changes/{gerrit_change.change}/message',
+          {'message': description}, test_output_data='{}')
 
   def abandon_change(self, gerrit_change: GerritChange,
                      message: Optional[str] = None):

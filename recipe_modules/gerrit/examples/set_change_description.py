@@ -34,8 +34,8 @@ def GenTests(api):
       'basic',
       api.post_check(
           post_process.StepCommandContains,
-          'set CL 123 description (2).curl https://chromium-review.googlesource.com/changes/123/revisions/current/description',
+          'set CL 123 description (2).curl https://chromium-review.googlesource.com/changes/123/message',
           [
-              '-d', '{"description": "my new desc"}',
-              'https://chromium-review.googlesource.com/changes/123/revisions/current/description'
+              '-d', '{"message": "my new desc"}',
+              'https://chromium-review.googlesource.com/changes/123/message'
           ]))
