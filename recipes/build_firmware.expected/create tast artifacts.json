@@ -10103,42 +10103,6 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",\n  \"snapshot_hash\": \"snapshot-HEAD-SHA\",\n  \"version\": 1\n}",
-      "[CACHE]/cros_chroot/sdk_cache_state.json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "clean up SDK chroot.write sdk cache state file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@{@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_branch\": \"snapshot\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"manifest_url\": \"https://chromium.googlesource.com/chromiumos/manifest\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"snapshot_hash\": \"snapshot-HEAD-SHA\",@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@  \"version\": 1@@@",
-      "@@@STEP_LOG_LINE@sdk_cache_state.json@}@@@",
-      "@@@STEP_LOG_END@sdk_cache_state.json@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "clean up SDK chroot.unlink chroot in chromiumos_workspace",
     "~followup_annotations": [

@@ -150,47 +150,6 @@ class CrosSdkApi(RecipeApi):
     """Returns the default SDK Sysroot."""
     return sysroot.Sysroot(path='/')
 
-  @property
-  def sdk_cache_state(self):
-    """Returns default values if not set and cache state file does not exist."""
-    if not self._sdk_cache_state:
-      self._sdk_cache_state = self._read_sdk_cache_state_file(
-          self._sdk_cache_state_file)
-    return self._sdk_cache_state
-
-  def _read_sdk_cache_state_file(self, path,
-                                 step_name='read sdk cache state json'):
-    """Read SdkCacheState proto from file.
-
-    Args:
-      path (Path): Path to read SdkCacheState file from.
-      step_name (string): Name for the step.
-
-    Returns:
-      sdk_state (SdkCacheState): The SdkCacheState proto from the file or an
-        SdkCacheProto with default values if the file does not exist.
-    """
-    self.m.path.mock_add_paths(path)
-    sdk_state = SdkCacheState()
-    if self.m.path.exists(self._sdk_cache_state_file):
-      sdk_state = self.m.file.read_proto(step_name, self._sdk_cache_state_file,
-                                         SdkCacheState, 'JSONPB')
-      self.m.file.remove('remove sdk version file', self._sdk_cache_state_file)
-    sdk_state.version = sdk_state.version or _DEFAULT_SDK_CACHE_VERSION
-    return sdk_state
-
-  def _write_sdk_cache_state(self):
-    """Set sdk cache state and write to file.
-
-    Args:
-      version (int): new sdk cache version to set.
-    """
-    if self.sdk_is_dirty or not self._sdk_cache_state:
-      return
-    self.m.file.write_proto('write sdk cache state file',
-                            self._sdk_cache_state_file, self._sdk_cache_state,
-                            'JSONPB')
-
   def set_chrome_root(self, chrome_root):
     """Set chrome root with synced sources.
 
@@ -508,7 +467,6 @@ class CrosSdkApi(RecipeApi):
         try:
           if self._chroot_initialized:
             self.cleanup_sysroot()
-            self._write_sdk_cache_state()
 
             if self._sdk_is_dirty:
               self._delete_chroot(name='Invalidating SDK due to dirty state')
