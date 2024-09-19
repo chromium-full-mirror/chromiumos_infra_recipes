@@ -68,10 +68,6 @@ BLOCK_NEW = '''builders {
     branch_name: "%(branch_name)s"
   }%(expiration_block)s
   android_branches {
-    key: "android-container-pi"
-    value: "git_pi-arc-m%(number)s"
-  }
-  android_branches {
     key: "android-container-rvc"
     value: "git_rvc-arc-m%(number)s"
   }
