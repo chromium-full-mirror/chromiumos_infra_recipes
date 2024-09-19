@@ -342,6 +342,10 @@ def initialize_directories(api: RecipeApi, properties: PaygenProperties):
     if exception:
       raise exception  # pylint: disable-msg=E0702
 
+    # 120 predates SDK prebuilts, so update chroot.
+    if config_internal_branch == 'release-R120-15662.B':
+      api.cros_sdk.update_chroot(timeout_sec=24 * 60 * 60)
+
 
 def split_generation_request(
     req: GenerationRequest
@@ -1004,5 +1008,12 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains, 'doing paygen.docker pull',
           ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.cros_source.test(
+      '120-update-chroot',
+      'release-R120-15662.B',
+      api.post_check(post_process.MustRun, 'initialization.update sdk'),
       api.post_process(post_process.DropExpectation),
   )
