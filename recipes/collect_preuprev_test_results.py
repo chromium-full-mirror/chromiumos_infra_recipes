@@ -141,12 +141,26 @@ def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
   return list(map(lambda b: int(b.id), builders))
 
 
-def ToBuildersLinkMd(builders: List[build_pb2.Build]) -> str:
+def QuoteMd(s: Optional[str]) -> str:
+  if not s:
+    return ''
+  result = ''
+  for l in s.splitlines():
+    result += '> '
+    result += l
+    result += '\n'
+  return result
+
+
+def ToBuildersLinkMd(builders: List[build_pb2.Build],
+                     include_details=False) -> str:
   text = ''
   for builder in builders:
     status = common_pb2.Status.Name(builder.status)
     text += (f'- {builder.builder.builder}: ' +
              f'[{status}](https://ci.chromium.org/ui/b/{builder.id})\n')
+    if include_details:
+      text += QuoteMd(builder.summary_markdown)
   return text
 
 
@@ -294,7 +308,7 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
   overall_summary = (
       f'CL: [{uprev_change_data.display_id}]({uprev_change_data.display_url})\n\n'
   )
-  overall_summary += ToBuildersLinkMd(pre_uprev_builders)
+  overall_summary += ToBuildersLinkMd(pre_uprev_builders, include_details=True)
   _, failed_builds = FilterBuildsStatus(pre_uprev_builders, common_pb2.SUCCESS)
   return RawResult(
       status=common_pb2.FAILURE if failed_builds else common_pb2.SUCCESS,
@@ -423,7 +437,7 @@ def CollectSingleResult(api: RecipeApi,
       text += '---\n\n'
       text += 'Failed builds '
       text += f'({len(failed_builds)} of {total_build_len} builds):\n\n'
-      text += ToBuildersLinkMd(failed_builds)
+      text += ToBuildersLinkMd(failed_builds, include_details=True)
     if successful_builds:
       text += '---\n\n'
       text += 'Successful builds '
@@ -580,7 +594,9 @@ def GenTests(api: RecipeTestApi):
                   'id': 'b6b086b2111573c43c2f620cca8ccc7133a9dc2c',
                   'project': 'chromium/src',
                   'ref': 'refs/tags/129.0.6658.0',
-              }))
+              }),
+      summary_markdown='1 Test Suite(s) failed.\n\n**chrome_all_tast_tests RELEASE_LKGM** failed because of:\n\n- tast.audio.CrasDLCManager'
+  )
 
   CURRENT_BUILD = build_pb2.Build(
       id=CURRENT_BUILD_ID, ancestor_ids=[
