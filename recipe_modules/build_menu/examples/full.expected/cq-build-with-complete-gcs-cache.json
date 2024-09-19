@@ -10092,7 +10092,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "ls",
-      "gs://chromeos-image-archive/cft-container-json/led-launch-00000000-0000-0000-0000-000000001337"
+      "gs://chromeos-image-archive/cft-container-json/private/led-launch-00000000-0000-0000-0000-000000001337"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

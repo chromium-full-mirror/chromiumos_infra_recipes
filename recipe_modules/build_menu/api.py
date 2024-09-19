@@ -933,7 +933,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return 'gs://{gs_bucket}/{gs_path}'.format(gs_bucket=gs_bucket,
                                                gs_path=gs_path)
 
-  def _should_run_cft_cache_build(self, builder_config) -> bool:
+  def _should_run_cft_cache_build(self) -> bool:
     """
     Determines whether the CFT cache build should be triggered.
 
@@ -946,9 +946,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         (self.m.cros_version.version.milestone == 126 and
          self.m.cros_version.version.is_after('15870.0.0')))
 
-    public = builder_config.general.manifest == BuilderConfig.General.PUBLIC
-    is_experiment_enabled = 'chromeos.build_cq.cft_cache_build' in self.m.cros_infra_config.experiments
-    return is_experiment_enabled and not public and is_supported_version
+    return is_supported_version
 
   def _read_container_info_gcs_file(
       self, gs_path) -> Optional[BuildTestServiceContainersResponse]:
@@ -1049,7 +1047,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       presentation.step_summary_text = 'no cached container found at timeout, builder should build fresh container and upload to gcs'
       return None
 
-  def _update_container_info_gcs(self, status, parent_build_id,
+  def _update_container_info_gcs(self, status, parent_build_id, public,
                                  build_test_container_response=None):
     """Updates gcs with test service container info and build status
 
@@ -1060,6 +1058,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     Args:
       status (str): The status of building container step. "started" or "completed"
       parent_build_id (str): Unique gspath prefix where file will be updated
+      public (bool): Build type manifest info, can be public or private
       build_test_container_response (BuildTestServiceContainersResponse): BuildTestServiceContainersResponse or None
 
     Returns:
@@ -1080,9 +1079,14 @@ class BuildMenuApi(recipe_api.RecipeApi):
         file_path = tmp_dir.joinpath(str(build_id) + '.json')
         self.m.file.write_json('Writing response', file_path,
                                container_build_update)
-
-      gs_path = self.m.path.join('cft-container-json', parent_build_id,
-                                 str(build_id) + '.json')
+      if public:  # pragma: no cover
+        gs_path = self.m.path.join('cft-container-json', 'public',
+                                   parent_build_id,
+                                   str(build_id) + '.json')
+      else:
+        gs_path = self.m.path.join('cft-container-json', 'private',
+                                   parent_build_id,
+                                   str(build_id) + '.json')
       self.m.gsutil.upload(file_path, 'chromeos-image-archive', gs_path)
       presentation.logs[
           'gs upload path'] = 'gs://chromeos-image-archive/' + gs_path
@@ -1160,15 +1164,18 @@ class BuildMenuApi(recipe_api.RecipeApi):
           build_id = self.m.buildbucket.build.id
           parent_build_id = self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') or 'led-launch-' + self.m.uuid.random()
-          cached_container_gs_path = 'gs://chromeos-image-archive/cft-container-json/' + parent_build_id
+          public = builder_config.general.manifest == BuilderConfig.General.PUBLIC
+          if public:
+            cached_container_gs_path = 'gs://chromeos-image-archive/cft-container-json/public/' + parent_build_id
+          else:
+            cached_container_gs_path = 'gs://chromeos-image-archive/cft-container-json/private/' + parent_build_id
           # if test train then reduce it to 5 seconds to explore all code path for 100% code coverage
           timeout = 1 * 25 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 5
           interval = 1 * 60 if self.m.cros_tags.get_single_value(
               'parent_buildbucket_id') else 1
 
-          cft_cache_build_enabled = self._should_run_cft_cache_build(
-              builder_config)
+          cft_cache_build_enabled = self._should_run_cft_cache_build()
 
           response = None
           # check if container info exists for parent builder in gcs. Skips building if found or creates fresh containers.
@@ -1181,7 +1188,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             if cft_cache_build_enabled:
               self._update_container_info_gcs(
                   status='started', parent_build_id=parent_build_id,
-                  build_test_container_response=None)
+                  public=public, build_test_container_response=None)
             BuildTestServiceContainers = \
               self.m.cros_build_api.TestService.BuildTestServiceContainers
             version = self.container_version
@@ -1195,7 +1202,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
             if cft_cache_build_enabled:
               self._update_container_info_gcs(
                   status='completed', parent_build_id=parent_build_id,
-                  build_test_container_response=response)
+                  public=public, build_test_container_response=response)
 
           # Set up links to built containers.
           container_metadata = ContainerMetadata()
