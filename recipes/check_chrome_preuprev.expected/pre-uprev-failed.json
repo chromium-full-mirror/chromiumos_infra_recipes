@@ -535,7 +535,7 @@
       }
     },
     "name": "Fetch pre-uprev testing result.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"id\": \"998876\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"998876\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -543,7 +543,8 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"998876\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"CL: xxx \\n\\n- chromeos-betty-chrome: FAILED\\n> chrome_all_tast_tests_failed\\n- chromeos-brya-chrome: SUCCESS\\n\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -553,7 +554,7 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"998876\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -641,7 +642,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "No passing pre-uprev testing after 21600 seconds"
+      "humanReason": "Pre-uprev testing not passed, details:\n\nCL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev. You can override by chump the CL but it is discouraged."
     },
     "name": "$result"
   }

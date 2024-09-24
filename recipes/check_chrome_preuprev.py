@@ -11,6 +11,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 import re
 
 from PB.recipe_engine.result import RawResult
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -29,26 +30,59 @@ FETCH_DESCRIPTION_TIMEOUT_SEC = 600  # 10 minutes
 WAIT_PREUPREV_TIMEOUT_SEC = 3600 * 6  # 6 hour
 UPREV_CL_TOPIC = 'chromeos-base/lacros-ash-atomic'
 
+NO_CL_FOUND_SUMMARY = 'No CL found.'
+NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
+NO_PRE_UPREV_TESTING_EXPECTED_SUMMARY = 'This Uprev CL does not expect any pre-uprev testing.'
+PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed.'
+NO_PRE_UPREV_FOUND_SUMMARY = (
+    # Error notice
+    f'No pre-uprev testing identified after {FETCH_DESCRIPTION_TIMEOUT_SEC} seconds.\n\n'
+    # Possible action items
+    'Please wait for next uprev or evaulate very carefully if you want to skip pre-uprev testing by chump the CL.'
+)
+NO_PASSING_PRE_UPREV_FOUND_SUMMARY = (
+    # Error notice
+    f'No passing pre-uprev testing after {WAIT_PREUPREV_TIMEOUT_SEC} seconds.\n\n'
+    # Possible action items
+    'Please wait for next uprev or evaulate very carefully if you want to skip pre-uprev testing by chump the CL.'
+)
+FAILED_PRE_UPREVS_SUMMARY_TEMPLATE = (
+    # Error notice
+    'Pre-uprev testing not passed, details:\n\n{builder.summary_markdown}\n\n'
+    # Possible action items
+    'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
+    'and wait for next pre-uprev. You can override by chump the CL but it is discouraged.'
+)
+
 NO_CL_FOUND = RawResult(status=common_pb2.SUCCESS,
-                        summary_markdown='No CL found.')
+                        summary_markdown=NO_CL_FOUND_SUMMARY)
 NOT_AN_UPREV_CL = RawResult(status=common_pb2.SUCCESS,
-                            summary_markdown='Not Chrome uprev CL.')
+                            summary_markdown=NOT_AN_UPREV_CL_SUMMARY)
 NO_PRE_UPREV_TESTING_EXPECTED = RawResult(
     status=common_pb2.SUCCESS,
-    summary_markdown='This Uprev CL does not expect any pre-uprev testing.')
+    summary_markdown=NO_PRE_UPREV_TESTING_EXPECTED_SUMMARY)
 PRE_UPREV_PASS = RawResult(status=common_pb2.SUCCESS,
-                           summary_markdown='Pre-uprev testing passed.')
-NO_PRE_UPREV_FOUND = RawResult(
+                           summary_markdown=PRE_UPREV_PASS_SUMMARY)
+NO_PRE_UPREV_FOUND = RawResult(status=common_pb2.FAILURE,
+                               summary_markdown=NO_PRE_UPREV_FOUND_SUMMARY)
+NO_PASSING_PRE_UPREV_FOUND = RawResult(
     status=common_pb2.FAILURE,
-    summary_markdown=f'No pre-uprev testing identified after {FETCH_DESCRIPTION_TIMEOUT_SEC} seconds'
-)
-NO_PASSING_PRE_UPREV = RawResult(
-    status=common_pb2.FAILURE,
-    summary_markdown=f'No passing pre-uprev testing after {WAIT_PREUPREV_TIMEOUT_SEC} seconds'
-)
+    summary_markdown=NO_PASSING_PRE_UPREV_FOUND_SUMMARY)
+
 
 PRE_UPREV_STATUS_BBID_EXTRACTOR = re.compile(
     r'[A-Za-z]* https://ci.chromium.org/ui/b/(\d+)')
+
+BUILD_FIELDS_TO_RETRIEVE = [
+    'builder',
+    'cancellation_markdown',
+    'id',
+    'input',
+    'output',
+    'status',
+    'steps',
+    'summary_markdown',
+]
 
 
 def GetClPreUprevTesting(api: RecipeTestApi, cl: common_pb2.GerritChange):
@@ -104,10 +138,19 @@ def RunSteps(api: RecipeApi):
         break
     if not bbid:
       return NO_PRE_UPREV_FOUND
-    api.buildbucket.collect_builds([bbid], timeout=WAIT_PREUPREV_TIMEOUT_SEC)
+    builds = api.buildbucket.collect_builds([bbid],
+                                            fields=BUILD_FIELDS_TO_RETRIEVE,
+                                            timeout=WAIT_PREUPREV_TIMEOUT_SEC)
     if PreUprevTestPassed(GetClPreUprevTesting(api, cl)):
       return PRE_UPREV_PASS
-    return NO_PASSING_PRE_UPREV
+    builders = list(builds.values())
+    if builders:
+      return RawResult(
+          status=common_pb2.FAILURE,
+          summary_markdown=FAILED_PRE_UPREVS_SUMMARY_TEMPLATE.format(
+              builder=builders[0]),
+      )
+    return NO_PASSING_PRE_UPREV_FOUND
 
 
 def GenTests(api: RecipeTestApi):
@@ -274,7 +317,7 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'pre-uprev-crashed-before-finishes',
+      'pre-uprev-failed',
       try_build([
           # First 2 fetches are not tested (patchset unchagned).
           ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
@@ -284,14 +327,51 @@ def GenTests(api: RecipeTestApi):
            1),
           # Collect build finishes.
           # The pre-uprev status is not updated to commit message. probably
-          # because the build didn't finish normally.
+          # because the build didn't finish normally or did not pass.
           ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
            1)
       ]),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(
+              id=998876, status=common_pb2.FAILURE,
+              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n'
+          )
+      ], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
+      api.post_process(post_process.MustRun,
+                       'Fetch pre-uprev testing result.buildbucket.collect'),
+      api.post_check(
+          post_process.SummaryMarkdown,
+          ('Pre-uprev testing not passed, details:\n\n'
+           'CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n\n\n'
+           'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
+           'and wait for next pre-uprev. You can override by chump the CL but it is discouraged.'
+          ),
+      ),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'collect-empty-results',
+      try_build([
+          # First 2 fetches are not tested (patchset unchagned).
+          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
+           2),
+          # The next fetches is test running.
+          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
+           1),
+          # Collect build finishes.
+          # The pre-uprev status is not updated to commit message. probably
+          # because the build didn't finish normally or did not pass.
+          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
+           1)
+      ]),
+      api.buildbucket.simulated_collect_output(
+          [], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
       api.post_process(post_process.MustRun,
                        'Fetch pre-uprev testing result.buildbucket.collect'),
       api.post_check(post_process.SummaryMarkdown,
-                     NO_PASSING_PRE_UPREV.summary_markdown),
+                     NO_PASSING_PRE_UPREV_FOUND_SUMMARY),
       cq=True,
       status='FAILURE',
   )

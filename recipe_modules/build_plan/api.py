@@ -415,7 +415,9 @@ class BuildPlanApi(recipe_api.RecipeApi):
         child_build_snapshot = external_snapshot
 
       tags = self.m.cros_tags.make_schedule_tags(child_build_snapshot)
-      if not critical and child_spec.name.endswith('-cq'):
+      # TODO(b/362196750): remove chrome-uprev-cq override when it is critical.
+      if not critical and child_spec.name.endswith(
+          '-cq') and 'chrome-uprev-cq' not in child_spec.name:
         tags.extend(
             self.m.cros_tags.tags(**{'hide-in-gerrit': 'non-critical-builder'}))
 
