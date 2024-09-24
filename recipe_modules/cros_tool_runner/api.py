@@ -104,6 +104,11 @@ class CrosToolRunnerCommand(recipe_api.RecipeApi):
           'CLOUDBOTS_LAB_DOMAIN',
           'CLOUDBOTS_PROXY_ADDRESS',
           'SWARMING_BOT_ID',
+
+          # GCE Metadata Server EnvVars
+          'GCE_METADATA_HOST',
+          'GCE_METADATA_IP',
+          'GCE_METADATA_ROOT',
       ]
       cmd = [
           'sudo',
