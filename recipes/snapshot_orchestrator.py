@@ -30,8 +30,8 @@ DEPS = [
     'cros_version',
 ]
 
-# Set the LGKM uprev freqency as every 12 snapshots (= 6 hours).
-SNAPSHOT_LGKM_UPREV_FREQUENCY = 12
+# Set the LGKM uprev freqency as every 6 snapshots (= 6 hours).
+SNAPSHOT_LGKM_UPREV_FREQUENCY = 6
 
 # Projects to be refered in this build.
 _SYNC_PROJECTS = [
