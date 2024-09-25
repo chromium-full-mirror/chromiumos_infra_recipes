@@ -5780,6 +5780,16 @@
   },
   {
     "cmd": [],
+    "name": "sending pub/sub notifications",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
+      "@@@STEP_LOG_END@debug@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='amd64-generic-snapshot/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'IMAGE_ZIP': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'AUTOTEST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'TAST_FILES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'PINNED_GUEST_IMAGES': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'TEST_UPDATE_PAYLOAD': ['../../[START_DIR]/tmp/artifact.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@",
+      "@@@STEP_LOG_END@uploaded_artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Create test containers"
   },
   {
