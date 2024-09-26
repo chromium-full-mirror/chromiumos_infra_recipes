@@ -13,7 +13,6 @@ from recipe_engine.recipe_api import RecipeApi, StepFailure
 
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
-from PB.chromiumos.sdk_cache_state import SdkCacheState
 from PB.chromite.api import sysroot
 from PB.chromite.api import toolchain
 from PB.chromite.api.sdk import CleanRequest as CleanSdkRequest
@@ -276,10 +275,6 @@ class CrosSdkApi(RecipeApi):
                     no_delete_out_dir=False):
     """Initialize the chroot and link it into the workspace.
 
-    Create a chroot if one does not already exist in the chroot path. If one
-    already exists, but is not reusable by this build (see _ensure_cache_state)
-    or replace is True, delete the existing chroot and create a new one.
-
     Args:
       version (int): Required SDK cache version, if any.  Some recipes do not
           care what version the SDK is, they just need any SDK.
@@ -328,18 +323,6 @@ class CrosSdkApi(RecipeApi):
         if self.m.workspace_util.detect_toolchain_cls(
             self.chroot, test_value=test_toolchain_cls):
           self.mark_sdk_as_dirty()
-
-        if not self.sdk_is_dirty:
-          # If we succeeded in creating the SDK and it is not dirty yet then
-          # record the cache state data.
-          # It will be written to the SDK cache state file if the build succeeds
-          # and it did not get marked as dirty later on.
-          self._sdk_cache_state = SdkCacheState(
-              version=version,
-              manifest_branch=self.m.cros_source.manifest_branch or 'snapshot',
-              manifest_url=self.m.src_state.build_manifest.url,
-              snapshot_hash=self.m.src_state.gitiles_commit.id,
-          )
 
       except StepFailure:
         # Invalidate the cache if the InitSDK call fails.
