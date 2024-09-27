@@ -97,7 +97,7 @@ class FailuresUtilApi(recipe_api.RecipeApi):
     return self.m.step.FAILURE
 
   def present_run(self, title, link_map, status, critical=True):
-    with self.m.step.nest(title) as presentation:
+    with self.m.step.nest(title or 'present run') as presentation:
       if status != bb_common_pb2.SUCCESS and not critical:
         presentation.step_text = 'failed but is not critical'
         presentation.status = self.m.step.SUCCESS

@@ -5116,7 +5116,7 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results.",
+    "name": "final build collect.check build results.build results.relevant critical build results.present run",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514005@@@"
@@ -5124,7 +5124,7 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results. (2)",
+    "name": "final build collect.check build results.build results.relevant critical build results.present run (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514006@@@"
@@ -5132,7 +5132,7 @@
   },
   {
     "cmd": [],
-    "name": "final build collect.check build results.build results.relevant critical build results. (3)",
+    "name": "final build collect.check build results.build results.relevant critical build results.present run (3)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LINK@build page@https://cr-buildbucket.appspot.com/build/8922054662172514007@@@"
