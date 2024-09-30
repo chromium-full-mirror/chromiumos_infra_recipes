@@ -856,7 +856,7 @@
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['firmware_from_source.tar.bz2']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['some_other_build_target/firmware_from_source.tar.bz2']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -868,7 +868,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/path/to/artifacts/firmware_from_source.tar.bz2"
+      "/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
     "name": "publish artifacts to pubsub.Compute file hash",
@@ -885,13 +885,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "filesizes",
-      "/path/to/artifacts/firmware_from_source.tar.bz2"
+      "/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
-    "name": "publish artifacts to pubsub.compute file size for firmware_from_source.tar.bz2",
+    "name": "publish artifacts to pubsub.compute file size for some_other_build_target/firmware_from_source.tar.bz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2: \t111@@@",
       "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
@@ -915,7 +915,7 @@
       "@@@STEP_LOG_LINE@message@    {@@@",
       "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
       "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-firmware/R12-12345.0.0/firmware_from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/build_target-firmware/R12-12345.0.0/some_other_build_target/firmware_from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@message@      },@@@",
       "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
       "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
@@ -931,7 +931,7 @@
     "name": "publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIhsaGQoXc29tZV9vdGhlcl9idWlsZF90YXJnZXQ6bggDEl4KXGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtZmlybXdhcmUvUjEyLTEyMzQ1LjAuMC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAg=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CAAQARoDCMgBIhsaGQoXc29tZV9vdGhlcl9idWlsZF90YXJnZXQ6hgEIAxJ2CnRnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LWZpcm13YXJlL1IxMi0xMjM0NS4wLjAvc29tZV9vdGhlcl9idWlsZF90YXJnZXQvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AI',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': 'led-launch',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -945,7 +945,7 @@
     ],
     "infra_step": true,
     "name": "publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CAAQARoDCMgBIhsaGQoXc29tZV9vdGhlcl9idWlsZF90YXJnZXQ6bggDEl4KXGdzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9idWlsZF90YXJnZXQtZmlybXdhcmUvUjEyLTEyMzQ1LjAuMC9maXJtd2FyZV9mcm9tX3NvdXJjZS50YXIuYnoyGghkZWFkYmVlZihvQAg=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CAAQARoDCMgBIhsaGQoXc29tZV9vdGhlcl9idWlsZF90YXJnZXQ6hgEIAxJ2CnRnczovL2Nocm9tZW9zLWltYWdlLWFyY2hpdmUvYnVpbGRfdGFyZ2V0LWZpcm13YXJlL1IxMi0xMjM0NS4wLjAvc29tZV9vdGhlcl9idWlsZF90YXJnZXQvZmlybXdhcmVfZnJvbV9zb3VyY2UudGFyLmJ6MhoIZGVhZGJlZWYob0AI\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"led-launch\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",

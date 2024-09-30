@@ -856,7 +856,7 @@
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['firmware_from_source.tar.bz2']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['some_other_build_target/firmware_from_source.tar.bz2']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -868,7 +868,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "/path/to/artifacts/firmware_from_source.tar.bz2"
+      "/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
     "name": "publish artifacts to pubsub.Compute file hash",
@@ -885,13 +885,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "filesizes",
-      "/path/to/artifacts/firmware_from_source.tar.bz2"
+      "/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2"
     ],
     "infra_step": true,
-    "name": "publish artifacts to pubsub.compute file size for firmware_from_source.tar.bz2",
+    "name": "publish artifacts to pubsub.compute file size for some_other_build_target/firmware_from_source.tar.bz2",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/firmware_from_source.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_LINE@filesizes@/path/to/artifacts/some_other_build_target/firmware_from_source.tar.bz2: \t111@@@",
       "@@@STEP_LOG_END@filesizes@@@"
     ]
   },

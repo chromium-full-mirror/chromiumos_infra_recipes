@@ -153,8 +153,10 @@ def RunSteps(api):
   api.build_reporting.publish_status(BuildStatus.RUNNING)
   api.build_reporting.publish_build_artifacts(
       cros_artifacts_api.UploadedArtifacts(
-          'chromeos-image-archive', 'build_target-firmware/R12-12345.0.0',
-          {'FIRMWARE': ['firmware_from_source.tar.bz2']}), '/path/to/artifacts')
+          'chromeos-image-archive', 'build_target-firmware/R12-12345.0.0', {
+              'FIRMWARE':
+                  ['some_other_build_target/firmware_from_source.tar.bz2']
+          }), '/path/to/artifacts')
   build_report = api.build_reporting.merged_build_report
   api.assertions.assertEqual(
       build_report.buildbucket_id,
