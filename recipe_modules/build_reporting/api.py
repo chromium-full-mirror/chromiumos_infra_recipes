@@ -22,6 +22,7 @@ the unfiltered top-level topic for all builds.
 
 import base64
 import contextlib
+import re
 from typing import Dict, List, Union
 
 from google.protobuf import json_format
@@ -642,36 +643,40 @@ class BuildReportingApi(recipe_api.RecipeApi):
       files_by_artifact = uploaded_artifacts.files_by_artifact
       build_report_supported_artifacts = {
           BuilderConfig.Artifacts.DEBUG_SYMBOLS:
-              (BuildReport.BuildArtifact.DEBUG_ARCHIVE, 'debug.tgz'),
+              (BuildReport.BuildArtifact.DEBUG_ARCHIVE,
+               re.compile(r'debug\.tgz')),
           BuilderConfig.Artifacts.FACTORY_IMAGE:
-              (BuildReport.BuildArtifact.FACTORY_IMAGE_ZIP, 'factory_image.zip'
-              ),
+              (BuildReport.BuildArtifact.FACTORY_IMAGE_ZIP,
+               re.compile(r'factory_image\.zip')),
           BuilderConfig.Artifacts.FIRMWARE:
               (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
-               'firmware_from_source.tar.bz2'),
+               re.compile(r'firmware_from_source\.tar\.bz2')),
           BuilderConfig.Artifacts.FIRMWARE_TARBALL:
               (BuildReport.BuildArtifact.FIRMWARE_IMAGE_ARCHIVE,
-               'firmware_from_source.tar.bz2'),
+               re.compile(r'.*')),
           BuilderConfig.Artifacts.HWQUAL:
               (BuildReport.BuildArtifact.HWQUAL_ARCHIVE,
-               files_by_artifact.get('HWQUAL', [None])[0]),
+               re.compile(
+                   re.escape(
+                       files_by_artifact.get('HWQUAL',
+                                             [r'invalid/filename'])[0]))),
           BuilderConfig.Artifacts.IMAGE_ARCHIVES:
               (BuildReport.BuildArtifact.TEST_IMAGE_ARCHIVE,
-               'chromiumos_test_image.tar.xz'),
+               re.compile(r'chromiumos_test_image\.tar\.xz')),
           BuilderConfig.Artifacts.IMAGE_ZIP:
-              (BuildReport.BuildArtifact.IMAGE_ZIP, 'image.zip'),
+              (BuildReport.BuildArtifact.IMAGE_ZIP, re.compile(r'image\.zip')),
       }
 
       build_report = BuildReport()
       for artifact_type, files in files_by_artifact.items():
         enum_val = BuilderConfig.Artifacts.ArtifactTypes.Value(artifact_type)
-        build_report_artifact_type, desired_file = build_report_supported_artifacts.get(
+        build_report_artifact_type, desired_file_re = build_report_supported_artifacts.get(
             enum_val, (None, None))
         # Supported artifact.
         if build_report_artifact_type:
           # TODO(b/303704765): Throw error if file is missing?
           for f in files:
-            if desired_file == self.m.path.basename(f):
+            if desired_file_re.fullmatch(self.m.path.basename(f)):
               # Firmware artifacts paths include build target for
               # supporting multiple targets in the same build.
               artifact_local_path = self.m.path.join(artifact_dir, f)
@@ -680,11 +685,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
               if self._build_type == BuildReport.BUILD_TYPE_FIRMWARE:
                 uri = 'gs://' + self.m.path.join(
                     uploaded_artifacts.gs_bucket, uploaded_artifacts.gs_path,
-                    self._build_target, desired_file)
+                    self._build_target, self.m.path.basename(f))
               else:
                 uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
                                                  uploaded_artifacts.gs_path,
-                                                 desired_file)
+                                                 self.m.path.basename(f))
               build_report.artifacts.append(
                   BuildReport.BuildArtifact(
                       type=build_report_artifact_type,
