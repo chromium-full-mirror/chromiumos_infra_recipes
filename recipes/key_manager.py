@@ -95,6 +95,9 @@ def RunSteps(api: RecipeApi, properties: KeyManagerProperties):
     commit_message = '\n'.join(commit_lines) + '\n'
     with api.step.nest('commit keyset to release-keys'), api.context(
         cwd=release_keys_path):
+      # Regenerate generated files and copy paygen public key.
+      api.step('regenerate generated files',
+               ['./keyset/public/scripts/regenerate_keysets.sh', '--all'])
       # TODO(b/318522770): Plumb keyset dir through from docker/BAPI
       # instead of obliviously calling `git add -A`.
       api.git.add_all()
@@ -141,6 +144,10 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
       api.post_check(
+          post_process.MustRun,
+          'create PreMP keys.commit keyset to release-keys.regenerate generated files',
+      ),
+      api.post_check(
           post_process.StepCommandContains,
           'create PreMP keys.commit keyset to release-keys.create gerrit change for [CLEANUP]/chromiumos_workspace/src/platform/signing/keys.git_cl upload',
           [
@@ -180,6 +187,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.MustRun,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
+      api.post_check(
+          post_process.MustRun,
+          'create PreMP keys.commit keyset to release-keys.regenerate generated files',
+      ),
       api.post_check(
           post_process.MustRun,
           'create PreMP keys.commit keyset to release-keys.abandon CL 1',
