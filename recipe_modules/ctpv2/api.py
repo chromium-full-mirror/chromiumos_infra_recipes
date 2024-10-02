@@ -6,6 +6,7 @@
 """API to call into the CTPv2 binary."""
 
 from recipe_engine import recipe_api
+from google.protobuf.struct_pb2 import Struct
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 
@@ -37,6 +38,7 @@ class Ctpv2Command(recipe_api.RecipeApi):
     build = build_pb2.Build()
     build.CopyFrom(self.m.buildbucket.build)
     if use_legacy and 'requests' in build.input.properties:  # pragma: no cover
+      self.mark_requests_for_ctpv2_with_qs(build.input.properties['requests'])
       build.input.properties['requests'] = self.filter_legacy_requests(
           build.input.properties['requests'])
 
@@ -113,6 +115,48 @@ class Ctpv2Command(recipe_api.RecipeApi):
           tag = tag.removeprefix(tag_to_check)
           if tag.startswith('AL.'):
             return True
+    return False
+
+  def mark_requests_for_ctpv2_with_qs(self, requests):
+    """Marks requests for CTPv2 execution with QS if the experiment is enabled and the request is intended for the main pool.
+
+    Args:
+        requests: A dictionary of legacy V1 requests.
+
+    Returns:
+        A dictionary/Struct of legacy V1 requests, with the `runCtpv2WithQs` field set to True for requests that meet the criteria
+        of being both targeted for the main pool and part of the enabled experiment.
+    """
+    if 'chromeos.cros_infra_config.ctpv2_main_pool' in self.m.cros_infra_config.experiments:  # pragma: no cover
+      for request in requests.values():
+        params = self.get_val_from_obj_or_dict(request, 'params')
+        if params is not None and self._is_main_pool_request(params):
+          # If params is a dict
+          if isinstance(params, dict):
+            params['runCtpv2WithQs'] = True
+          # If params is a protobuf Struct
+          elif isinstance(params, Struct):
+            params.fields['runCtpv2WithQs'].bool_value = True
+          # If params is another type of object
+          else:
+            setattr(params, 'run_ctpv2_with_qs', True)
+
+  def _is_main_pool_request(self, params):  # pragma: no cover
+    # get scheduling info from params
+    scheduling = self.get_val_from_obj_or_dict(params, 'scheduling')
+    if scheduling is not None:
+      # get managed_pool info from scheduling object
+      managed_pool = self.get_val_from_obj_or_dict(scheduling, 'managed_pool',
+                                                   'managedPool')
+
+      # Check if the managed pool is one of the expected values
+      if managed_pool is not None:
+        if isinstance(managed_pool,
+                      str) and managed_pool == 'MANAGED_POOL_QUOTA':
+          return True
+        if isinstance(managed_pool, int) and managed_pool == 8:  #enum int value
+          return True
+
     return False
 
   def _is_ctpv2_with_qs_request(self, params):

@@ -1563,6 +1563,7 @@ def CheckIfCtpv2NeedsToRun(api, properties):
     except Exception:  # pragma: no cover
       pass
     api.ctpv2.set_allowed_pools(ctp2_pools)
+    api.ctpv2.mark_requests_for_ctpv2_with_qs(properties.requests)
     return len(api.ctpv2.filter_legacy_requests(properties.requests))
 
 
