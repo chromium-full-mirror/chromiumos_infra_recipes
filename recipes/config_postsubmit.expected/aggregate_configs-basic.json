@@ -2580,8 +2580,15 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.diff check",
+    "cmd": [
+      "git",
+      "status",
+      "--porcelain",
+      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler",
+    "infra_step": true,
+    "name": "Do regenerate_suite_scheduler_configs and create CL.regenerating suite scheduler configs.diffing to find changes.git status",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@"
     ]
@@ -2625,11 +2632,9 @@
     "cmd": [
       "git",
       "add",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.cfg",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.cfg",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/lab_config.ini",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/suite_scheduler.ini",
-      "[CLEANUP]/chromiumos_workspace/src/config-internal/test/suite_scheduler/generated/rule_schedule_categories.ini"
+      "changed.txt",
+      "deleted.txt",
+      "new.txt"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/config-internal",
     "infra_step": true,

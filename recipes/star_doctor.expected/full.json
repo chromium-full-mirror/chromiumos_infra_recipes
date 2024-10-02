@@ -2604,6 +2604,7 @@
       "git",
       "add",
       "changed.txt",
+      "deleted.txt",
       "new.txt"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_1",
@@ -3065,6 +3066,7 @@
       "git",
       "add",
       "changed.txt",
+      "deleted.txt",
       "new.txt"
     ],
     "cwd": "[CLEANUP]/tmp_tmp_2",

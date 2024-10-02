@@ -365,38 +365,28 @@ def _regenerate_suite_scheduler_configs(api, _properties, _project_infos,
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  del dry_run
+  del dry_run  # Unused.
 
-  config_internal = api.context.cwd / 'src/config-internal'
-  cfg_int_ss = config_internal / 'test/suite_scheduler'
+  config_internal_dir = api.context.cwd / 'src/config-internal'
+  susch_dir = config_internal_dir / 'test/suite_scheduler'
+  generated_dir = susch_dir / 'generated'
+  message = f'''Updating Suite Scheduler's generated rules.
 
-  regenerated_files = [
-      cfg_int_ss / 'generated/suite_scheduler.cfg',
-      cfg_int_ss / 'generated/lab_config.cfg',
-      cfg_int_ss / 'generated/lab_config.ini',
-      cfg_int_ss / 'generated/suite_scheduler.ini',
-      cfg_int_ss / 'generated/rule_schedule_categories.ini',
-  ]
-
-  message = '''Updating Suite Scheduler's generated rules.
-
-Cr-Build-Url: %s
-Cr-Automation-Id: %s''' % (api.buildbucket.build_url(),
-                           'config_postsubmit/regenerate_suite_scheduler')
+Cr-Build-Url: {api.buildbucket.build_url()}
+Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler'''
 
   with api.step.nest('regenerating suite scheduler configs') as presentation, \
-      api.context(cfg_int_ss):
+      api.context(susch_dir):
 
     api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
 
     with api.step.nest('diffing to find changes'):
-      nothing_changed = not any(
-          api.git.diff_check(x) for x in regenerated_files)
-      if nothing_changed:
-        presentation.step_text = 'no changes'
+      changed_files = api.git.get_working_dir_diff_files(pathspec=generated_dir)
+      if not changed_files:
+        presentation.step_summary_text = 'no changes'
         return []
 
-    return [CommitInfo(config_internal, message, regenerated_files)]
+  return [CommitInfo(config_internal_dir, message, changed_files)]
 
 
 def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
@@ -832,6 +822,24 @@ def GenTests(api):
           'ConfigBundles to config-internal', retcode=1),
       # TODO (b/275363240): audit this test.
       status='FAILURE',
+  )
+
+  yield api.test(
+      'regenerate_suite_scheduler_configs-no-diff',
+      default_properties(),
+      config_repos_step_data(api),
+      config_dlm_step_data(api),
+      api.step_data(
+          'Do regenerate_suite_scheduler_configs and create CL'
+          '.regenerating suite scheduler configs'
+          '.diffing to find changes'
+          '.git status',
+          stdout=api.raw_io.output_text(''),
+      ),
+      api.post_process(
+          post_process.StepSummaryEquals,
+          'Do regenerate_suite_scheduler_configs and create CL'
+          '.regenerating suite scheduler configs', 'no changes'),
   )
 
   yield api.test(

@@ -73,7 +73,14 @@ def RunSteps(api):
                                ['a/b/text.txt', 'other_test.txt'])
     api.assertions.assertFalse(api.git.get_diff_files(test_stdout='\n'), [])
     api.assertions.assertEqual(api.git.get_working_dir_diff_files(),
-                               ['changed.txt', 'new.txt'])
+                               ['changed.txt', 'deleted.txt', 'new.txt'])
+    api.assertions.assertEqual(
+        api.git.get_working_dir_diff_files(
+            pathspec='some_dir/',
+            test_stdout='''
+ D some_dir/foo.txt
+?? some_dir/bar.txt''',
+        ), ['some_dir/foo.txt', 'some_dir/bar.txt'])
     api.assertions.assertIsNone(api.git.merge_base('commit1', 'commit2'))
     api.assertions.assertEqual(
         api.git.merge_base('commit1', 'commit2', test_stdout='commit3'),

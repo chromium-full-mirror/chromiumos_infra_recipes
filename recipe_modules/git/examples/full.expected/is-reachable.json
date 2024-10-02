@@ -425,6 +425,16 @@
   {
     "cmd": [
       "git",
+      "status",
+      "--porcelain",
+      "some_dir/"
+    ],
+    "infra_step": true,
+    "name": "git status (2)"
+  },
+  {
+    "cmd": [
+      "git",
       "merge-base",
       "commit1",
       "commit2"

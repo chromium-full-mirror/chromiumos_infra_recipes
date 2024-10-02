@@ -2281,6 +2281,7 @@
       "git",
       "add",
       "changed.txt",
+      "deleted.txt",
       "new.txt"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/private-overlays/chromeos-partner-overlay",
