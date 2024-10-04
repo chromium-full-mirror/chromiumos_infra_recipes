@@ -278,6 +278,9 @@ class OrchMenuApi(recipe_api.RecipeApi):
         if config and config.id.type == BuilderConfig.Id.FACTORY:
           self._is_factory_orchestrator = True
           with self.m.workspace_util.sync_to_commit(staging=is_staging):
+            # Uprev packages on factory branches so packages are not stale.
+            if not self.m.cros_source.uprev_and_push_packages():
+              raise StepFailure('Failed to uprev all changes')
             bump_version = self._properties.bump_version and not is_staging
             self.m.cros_version.bump_version(dry_run=not bump_version)
             self.m.cros_release.create_buildspec(
@@ -314,7 +317,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
             # If we're not on ToT, we need to uprev packages since we don't
             # have annealing.
             if not self.m.cros_source.is_tot:
-              if not self.m.cros_release.uprev_packages():
+              if not self.m.cros_source.uprev_and_push_packages():
                 raise StepFailure('Failed to uprev all changes')
 
             bump_version = self._properties.bump_version and not self.m.cros_infra_config.is_staging

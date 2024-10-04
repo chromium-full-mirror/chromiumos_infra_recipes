@@ -4,6 +4,7 @@
 # found in the LICENSE file.
 
 """API for working with CrOS source."""
+import base64
 import datetime
 from collections import defaultdict
 from collections import OrderedDict
@@ -13,6 +14,7 @@ import copy
 import multiprocessing
 import re
 from typing import Any, Dict, List, Optional, OrderedDict as OrderedDict_type
+import zlib
 
 from google.protobuf.json_format import MessageToDict
 
@@ -1576,6 +1578,33 @@ class CrosSourceApi(RecipeApi):
               if self.m.path.exists(snapshot_path) else self.m.repo.manifest(
                   manifest_file=manifest.path / 'default.xml', pinned=False))
 
+  def uprev_and_push_packages(self,
+                              push_subject='Marking set of ebuilds as stable'):
+    """Uprev and push any packages that contain differences.
+
+    Intended to be run by non-ToT release and factory orchestrators.
+
+    Return:
+      all_uprevs_passed(bool): True if all uprevs succeed, False if ANY failed.
+    """
+    uprev_info = []
+    with self.m.step.nest('uprev and push packages'):
+      response = self.m.cros_source.uprev_packages(
+          workspace_path=self.m.src_state.workspace_path)
+      compressed_response = base64.b64encode(
+          zlib.compress(response.SerializeToString()))
+      self.m.easy.set_properties_step(
+          compressed_uprev_response=compressed_response)
+
+      for ebuild in response.modified_ebuilds:
+        uprev_info.append(
+            self.m.cros_source.PushUprevRequest([ebuild.path], push_subject))
+
+      # Push the uprevs to the remote.
+      return self.m.cros_source.push_uprev(
+          uprev_info, False, is_staging=self.m.cros_infra_config.is_staging,
+          discard_unpushed_changes=True)
+
   def uprev_packages(self, workspace_path=None, build_targets=None,
                      timeout_sec=(10 * 60), name='uprev packages'):
     """Uprev packages.
@@ -1642,7 +1671,7 @@ class CrosSourceApi(RecipeApi):
                                                       item.message_subject)
 
       with self.m.step.nest('commit uprevs'):
-        # Cycle through the modifed ebuild and push the change.
+        # Cycle through the modified ebuild and push the change.
         for repository, requests in sorted(
             modified_ebuilds_by_repository.items()):
           repo_name = self.m.path.relpath(repository,

@@ -32,7 +32,7 @@ def RunSteps(api, properties):
   if properties.manifest_branch:
     api.cros_source.test_api.manifest_branch = properties.manifest_branch
 
-  api.assertions.assertEqual(api.cros_release.uprev_packages(),
+  api.assertions.assertEqual(api.cros_source.uprev_and_push_packages(),
                              not properties.expect_uprev_packages_failure)
 
   api.cros_release.create_buildspec()
@@ -54,7 +54,8 @@ def RunSteps(api, properties):
 def GenTests(api):
   yield api.orch_menu.test(
       'basic', api.git.diff_check(True),
-      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+      api.post_check(post_process.LogEquals,
+                     'uprev and push packages.push uprevs', 'Passed Uprevs',
                      ('src/overlay\nsrc/private-overlay')),
       api.post_check(
           post_process.MustRun,
@@ -72,13 +73,15 @@ def GenTests(api):
           ),
       ), api.git.diff_check(True),
       api.step_data(
-          ('push uprevs.push to src/private-overlay.git push src/private-overlay'
+          ('uprev and push packages.push uprevs.push to src/private-overlay.git push src/private-overlay'
           ),
           retcode=1,
       ),
-      api.post_check(post_process.LogEquals, 'push uprevs', 'Passed Uprevs',
+      api.post_check(post_process.LogEquals,
+                     'uprev and push packages.push uprevs', 'Passed Uprevs',
                      ('src/overlay')),
-      api.post_check(post_process.LogEquals, 'push uprevs', 'Failed Uprevs',
+      api.post_check(post_process.LogEquals,
+                     'uprev and push packages.push uprevs', 'Failed Uprevs',
                      ('src/private-overlay')),
       api.post_check(
           post_process.MustRun,

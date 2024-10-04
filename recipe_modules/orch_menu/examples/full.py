@@ -143,10 +143,11 @@ def GenTests(api):
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
       # Uprev logic should not run on ToT.
+      api.post_check(
+          post_process.DoesNotRun,
+          'set up orchestrator.uprev and push packages.uprev packages'),
       api.post_check(post_process.DoesNotRun,
-                     'set up orchestrator.uprev packages'),
-      api.post_check(post_process.DoesNotRun,
-                     'set up orchestrator.push uprevs'),
+                     'set up orchestrator.uprev and push packages.push uprevs'),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
@@ -515,10 +516,11 @@ def GenTests(api):
       ),
       api.post_check(post_process.StepTextEquals,
                      'set up orchestrator.bump version', ''),
+      api.post_check(
+          post_process.StepSuccess,
+          'set up orchestrator.uprev and push packages.uprev packages'),
       api.post_check(post_process.StepSuccess,
-                     'set up orchestrator.uprev packages'),
-      api.post_check(post_process.StepSuccess,
-                     'set up orchestrator.push uprevs'),
+                     'set up orchestrator.uprev and push packages.push uprevs'),
       api.post_process(post_process.DropExpectation),
       input_properties=orch_menu_properties(
           update_manifest_refs={'test': 'refs/heads/test'},
@@ -546,12 +548,12 @@ def GenTests(api):
                   summary_markdown='Full version: R99-1234.56.0')),
       ),
       api.step_data(
-          ('set up orchestrator.push uprevs.push to src/private-overlay.git push src/private-overlay'
+          ('set up orchestrator.uprev and push packages.push uprevs.push to src/private-overlay.git push src/private-overlay'
           ),
           retcode=1,
       ),
       api.post_check(post_process.StepException,
-                     'set up orchestrator.push uprevs'),
+                     'set up orchestrator.uprev and push packages.push uprevs'),
       api.post_check(post_process.StepFailure, 'set up orchestrator'),
       api.post_process(post_process.DropExpectation),
       builder='release-stabilize-15185.B-orchestrator',
@@ -593,6 +595,24 @@ def GenTests(api):
       builder='factory-corsola-15197.B-orchestrator',
       with_history=True,
       bot_size='medium',
+  )
+
+  yield api.orch_menu.test(
+      'factory-orchestrator-uprev-fail',
+      api.step_data(
+          'set up orchestrator.uprev and push packages.push uprevs.push to src/overlay.git push src/overlay',
+          retcode=1),
+      api.post_check(post_process.SummaryMarkdown,
+                     'Failed to uprev all changes'),
+      api.post_process(post_process.DropExpectation),
+      input_properties=orch_menu_properties(
+          update_manifest_refs={'test': 'refs/heads/test'},
+          buildspec_gs_path='gs://buildspecbucket/buildspecs/',
+          bump_version=True, manifest_versions_branch='main'),
+      builder='factory-corsola-15197.B-orchestrator',
+      with_history=True,
+      bot_size='medium',
+      status='FAILURE',
   )
 
   collect, _ = api.orch_menu.orch_child_builds('snapshot-orchestrator',
