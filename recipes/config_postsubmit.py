@@ -24,7 +24,7 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.config_postsubmit import ConfigPostsubmitProperties
 from recipe_engine import post_process
-from recipe_engine.recipe_api import StepFailure
+from recipe_engine import recipe_api
 
 DEPS = [
     'recipe_engine/buildbucket',
@@ -441,18 +441,24 @@ _ACTIONS = OrderedDict([
 ])
 
 
-def _create_cl(api, _properties, commit_info, branch_name, cl_config):
+def _create_cl(
+    api: recipe_api.RecipeApi,
+    _properties: ConfigPostsubmitProperties,
+    commit_info: CommitInfo,
+    branch_name: str,
+    cl_config: ConfigPostsubmitProperties.ActionCLConfig,
+) -> common_pb2.GerritChange:
   """Creates a CL based on commit_info.
 
   Args:
-    api (RecipeApi): See RunSteps documentation.
-    commit_info (CommitInfo): A CommitInfo object describing how to create the
+    api: See RunSteps documentation.
+    commit_info: A CommitInfo object describing how to create the
       commit.
-    branch_name (str): Name of the branch to create the commit on.
-    cl_config (ActionCLConfig_pb2): CL parameters & configuration.
+    branch_name: Name of the branch to create the commit on.
+    cl_config: CL parameters & configuration.
 
     Returns:
-      GerritChange: The newly created change.
+      The newly created change.
   """
   with api.context(cwd=commit_info.project_path):
     if api.git.get_working_dir_diff_files():
@@ -470,12 +476,14 @@ def _create_cl(api, _properties, commit_info, branch_name, cl_config):
                                         ccs=cl_config.ccs,
                                         hashtags=cl_config.hashtags,
                                         topic=cl_config.topic)
-      if change and cl_config.send_to_cq:
+      if cl_config.send_to_cq:
         with api.step.nest('send to CQ'):
           api.gerrit.set_change_labels(change, {
               Label.BOT_COMMIT: 1,
               Label.COMMIT_QUEUE: 2,
           })
+      if cl_config.abandon:
+        api.gerrit.abandon_change(change)
 
 
 def RunSteps(api, properties):
@@ -534,7 +542,7 @@ def RunSteps(api, properties):
                                   dry_run=not cl_config.send_to_cq)
             for commit_info in commit_infos:
               _create_cl(api, properties, commit_info, action_name, cl_config)
-          except StepFailure as e:
+          except recipe_api.StepFailure as e:
             step_failures.append(e)
 
       # return RawResult directly to set the markdown (only with luciexe)
@@ -546,7 +554,8 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
-  def default_properties(allowed_projects=None, allowed_programs=None):
+  def default_properties(allowed_projects=None, allowed_programs=None,
+                         abandon: bool = False):
     if allowed_projects is None:
       allowed_projects = [{'repo_name': 'chromeos/project/galaxy/milkyway'}]
 
@@ -556,7 +565,7 @@ def GenTests(api):
     aclc = PROPERTIES.ActionCLConfig(
         reviewers=['test1@google.com'],
         ccs=['test2@google.com', 'test3@google.com'], topic='test topic',
-        hashtags=['ht1', 'ht2'], send_to_cq=True)
+        hashtags=['ht1', 'ht2'], send_to_cq=True, abandon=abandon)
     return api.properties(
         PROPERTIES(
             cl_configs={
@@ -628,6 +637,7 @@ def GenTests(api):
                   'project_public/galaxy/milkyway/sw_build_config',
           ],
       ),
+      api.post_check(post_process.DoesNotRunRE, r'.*\.abandon CL.*'),
   )
 
   yield api.test(
@@ -651,6 +661,13 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )
+
+  yield api.test(
+      'abandon-cl', default_properties(abandon=True),
+      config_repos_step_data(api), config_dlm_step_data(api),
+      api.post_check(post_process.MustRunRE,
+                     r'Do \w* and create CL.abandon CL 1'),
+      api.post_process(post_process.DropExpectation))
 
   # flattening stage tests
 

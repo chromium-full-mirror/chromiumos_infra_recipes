@@ -41,6 +41,9 @@ message ConfigPostsubmitProperties {
 
     // Should the CLs created be sent to CQ (+2) immediately?
     bool send_to_cq = 5;
+
+    // Should the CLs be abandoned immediately?
+    bool abandon = 6;
   }
 
   message AllowedRepo {
