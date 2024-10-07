@@ -54,28 +54,10 @@ def RunSteps(api: RecipeApi, properties: TestManifestProperties):
   with _setup():
     gerrit_changes = api.src_state.gerrit_changes
 
-    with api.step.nest('get current project infos'):
-      old_project_infos = {p.path: p.name for p in api.repo.project_infos()}
-
     patch_sets = []
     if gerrit_changes:
       with api.step.nest('cherry-pick gerrit changes'):
         patch_sets = api.cros_source.apply_gerrit_changes(gerrit_changes)
-
-    with api.step.nest('get new project infos'):
-      new_project_infos = {p.path: p.name for p in api.repo.project_infos()}
-    with api.step.nest('test b/260600258 name change'):
-      for project_path, project_old_name in old_project_infos.items():
-        if project_path in new_project_infos and new_project_infos[
-            project_path] != project_old_name:
-          raise api.step.StepFailure(
-              ('Project %s changed from %s to %s, '
-               'but change name without changing path is not allowed.\n'
-               'See b/260600258, crbug.com/gerrit/14051 for more details.') % (
-                   project_path,
-                   project_old_name,
-                   new_project_infos[project_path],
-               ))
 
     # If we get this far, we were successful in syncing to the manifest that was
     # provided by buildbucket (generally emtpy for CQ), or builder-config (if
@@ -147,21 +129,3 @@ def GenTests(api: RecipeTestApi):
       api.buildbucket.try_build(project='chromeos/manifest-internal'),
       api.properties(test_branch_projects=['no-tests']), internal_exists,
       no_tests_internal, *common_args)
-
-  yield api.test(
-      'with-manifest-name-only-changes',
-      api.buildbucket.try_build(project='chromeos/manifest-internal'),
-      api.properties(test_branch_projects=['chromeos/manifest-internal']),
-      internal_exists,
-      no_tests_internal,
-      *common_args,
-      api.repo.project_infos_step_data(
-          'get new project infos', data=[
-              {
-                  'project': 'new-project-c',
-                  'path': 'src/project-c'
-              },
-          ]),
-      # TODO (b/275363240): audit this test.
-      status='FAILURE',
-  )
