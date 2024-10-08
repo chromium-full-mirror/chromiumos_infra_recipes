@@ -44,6 +44,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -124,6 +125,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -162,6 +164,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -190,6 +193,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -229,6 +233,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -261,6 +266,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -318,6 +324,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -368,6 +375,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -403,6 +411,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -446,6 +455,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -489,6 +499,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -540,6 +551,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -577,6 +589,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -606,6 +619,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -635,6 +649,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -662,6 +677,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -691,6 +707,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -724,6 +741,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -752,6 +770,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -789,6 +808,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -832,6 +852,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -861,6 +882,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -890,6 +912,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -919,6 +942,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -950,6 +974,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1016,13 +1041,14 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "Find pre-uprev tests.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"102\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"102\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1035,6 +1061,11 @@
       "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"id\": \"201\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-201-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@          },@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
@@ -1055,7 +1086,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"childOf\": \"102\"@@@",
@@ -1094,13 +1125,14 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "Wait for completion of pupr-generator builder.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"300\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"300\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1127,7 +1159,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"childOf\": \"300\"@@@",
@@ -1172,6 +1204,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1291,6 +1324,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1319,6 +1353,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1349,6 +1384,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1395,6 +1431,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1420,13 +1457,14 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "Wait for completion of pre-uprev tests.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"201\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\", \"id\": \"202\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"201\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"202\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1437,6 +1475,11 @@
       "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-jacuzzi-chrome-skylab\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"201\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-201-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    },@@@",
@@ -1456,13 +1499,13 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"201\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"202\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -1547,6 +1590,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1575,6 +1619,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1605,6 +1650,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1647,6 +1693,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1675,6 +1722,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1705,6 +1753,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1713,6 +1762,49 @@
     "name": "Add a comment to the uprev CL.set labels on CL 98765.curl https://chromium-review.googlesource.com/changes/98765/revisions/current/review",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "including pre-uprev builder results",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@invocations/build-201-rdb@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "UpdateIncludedInvocations",
+      "-include-update-token"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": ":"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "including pre-uprev builder results.include invocations from pre-uprev builders",
+    "stdin": "{\"addInvocations\": [\"invocations/build-201-rdb\"], \"includingInvocation\": \"invocations/inv-9999\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-201-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.input@  ],@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/inv-9999\"@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
     ]
   },
   {
@@ -1738,6 +1830,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -1762,6 +1855,7 @@
       },
       "resultdb": {
         "current_invocation": {
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"

@@ -20,6 +20,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import (
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
+from PB.go.chromium.org.luci.lucictx import (
+    sections as sections_pb2,)
 
 from PB.recipes.chromeos.collect_preuprev_test_results import (
     CollectPreuprevTestResults)
@@ -34,14 +36,16 @@ from google.protobuf import json_format
 from google.protobuf import struct_pb2
 
 DEPS = [
-    'recipe_engine/buildbucket',
+    'recipe_engine/context',
     'cros_source',
+    'cros_tags',
     'gerrit',
+    'recipe_engine/buildbucket',
+    'recipe_engine/json',
     'recipe_engine/properties',
+    'recipe_engine/resultdb',
     'recipe_engine/step',
     'recipe_engine/time',
-    'recipe_engine/json',
-    'cros_tags',
 ]
 
 
@@ -79,6 +83,7 @@ BUILD_FIELDS_TO_RETRIEVE = [
     'status',
     'steps',
     'summary_markdown',
+    'infra.resultdb',
 ]
 
 RETRY_PREUPREV_MAX_COUNT = 1
@@ -310,6 +315,18 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
   )
   overall_summary += ToBuildersLinkMd(pre_uprev_builders, include_details=True)
   _, failed_builds = FilterBuildsStatus(pre_uprev_builders, common_pb2.SUCCESS)
+  with api.step.nest('including pre-uprev builder results') as step:
+    invocations = [
+        i.infra.resultdb.invocation
+        for i in pre_uprev_builders
+        if i.infra.resultdb.invocation
+    ]
+    step.step_summary_text = '\n'.join(invocations)
+    for inv in invocations:
+      assert inv.startswith('invocations/')
+    api.resultdb.include_invocations(
+        [inv[len('invocations/'):] for inv in invocations],
+        'include invocations from pre-uprev builders')
   return RawResult(
       status=common_pb2.FAILURE if failed_builds else common_pb2.SUCCESS,
       summary_markdown=overall_summary)
@@ -567,9 +584,16 @@ def GenTests(api: RecipeTestApi):
 
   PRE_UPREV_TEST_BUILDER_1 = build_pb2.Build(
       id=201, status=common_pb2.SUCCESS, builder=builder_common_pb2.BuilderID(
-          builder='chromeos-jacuzzi-chrome-skylab'))
+          builder='chromeos-jacuzzi-chrome-skylab'), infra=build_pb2.BuildInfra(
+              resultdb=build_pb2.BuildInfra.ResultDB(
+                  invocation='invocations/build-201-rdb'),
+          ))
   PRE_UPREV_TEST_BUILDER_2 = build_pb2.Build(
-      id=202, status=common_pb2.SUCCESS, builder=builder_common_pb2.BuilderID(
+      id=202,
+      status=common_pb2.SUCCESS,
+      builder=builder_common_pb2.BuilderID(
+          # This one doesn't mock any invocation result to mimic any unexpected
+          # case.
           builder='chromeos-brya-chrome-skylab'))
   PRE_UPREV_TEST_BUILDER_FAILED = build_pb2.Build(
       id=203, status=common_pb2.FAILURE, builder=builder_common_pb2.BuilderID(
@@ -595,8 +619,11 @@ def GenTests(api: RecipeTestApi):
                   'project': 'chromium/src',
                   'ref': 'refs/tags/129.0.6658.0',
               }),
-      summary_markdown='1 Test Suite(s) failed.\n\n**chrome_all_tast_tests RELEASE_LKGM** failed because of:\n\n- tast.audio.CrasDLCManager'
-  )
+      summary_markdown='1 Test Suite(s) failed.\n\n**chrome_all_tast_tests RELEASE_LKGM** failed because of:\n\n- tast.audio.CrasDLCManager',
+      infra=build_pb2.BuildInfra(
+          resultdb=build_pb2.BuildInfra.ResultDB(
+              invocation='invocations/build-203-rdb'),
+      ))
 
   CURRENT_BUILD = build_pb2.Build(
       id=CURRENT_BUILD_ID, ancestor_ids=[
@@ -612,6 +639,14 @@ def GenTests(api: RecipeTestApi):
            uprev_gerrit_change: Optional[GerritJSONObject] = None,
            **kwargs: Any):
     build = api.buildbucket.build(current_build)
+    build += api.context.luci_context(
+        resultdb=sections_pb2.ResultDB(
+            current_invocation=sections_pb2.ResultDBInvocation(
+                name='invocations/inv-9999',
+                update_token='token',
+            ),
+            hostname='rdbhost',
+        ))
     build += api.buildbucket.simulated_get(
         current_build,
         step_name='Find pupr-coordinator builder.buildbucket.get')
