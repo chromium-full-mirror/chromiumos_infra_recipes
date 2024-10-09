@@ -531,6 +531,15 @@ class BuildSDKRun:
         gitiles=triggers_pb2.GitilesTrigger(ref=upload_ref))
 
     pupr_properties = {
+        '$chromeos/metadata': {
+            # b/372434018: some logic here requires the tree we sync to be
+            # identical to the one the SDK builder built. Further, syncing to
+            # the SDK builder's tree makes racing invocations of the SDK
+            # builder fail more consistently with merge conflicts.
+            'sources_gitiles_commit_override':
+                json_format.MessageToDict(
+                    self.m.build_menu.resultdb_gitiles_commit),
+        },
         '$chromeos/pupr_local_uprev':
             json_format.MessageToDict(
                 pupr_local_uprev_pb2.PuprLocalUprevProperties(

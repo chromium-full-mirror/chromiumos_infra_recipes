@@ -2990,6 +2990,17 @@
   },
   {
     "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--position-num"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "name": "read git footers (2)"
+  },
+  {
+    "cmd": [
       "bb",
       "batch",
       "-host",
@@ -2998,7 +3009,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "name": "schedule uprev",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chromiumos-sdk-pupr-generator\"}, \"canOutliveParent\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"$chromeos/pupr_local_uprev\": {\"sdkUprevSpec\": {\"binhostGsBucket\": \"gs://chromeos-prebuilt\", \"sdkGsBucket\": \"gs://chromiumos-sdk\", \"sdkVersion\": \"1970.01.01.999\", \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.999.tar.xz\"}}, \"triggers\": [{\"gitiles\": {\"ref\": \"refs/heads/main\"}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chromiumos-sdk-pupr-generator\"}, \"canOutliveParent\": \"YES\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"properties\": {\"$chromeos/metadata\": {\"sources_gitiles_commit_override\": {\"commitHash\": \"snapshot-HEAD-SHA\", \"host\": \"chrome-internal.googlesource.com\", \"position\": \"999\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}, \"$chromeos/pupr_local_uprev\": {\"sdkUprevSpec\": {\"binhostGsBucket\": \"gs://chromeos-prebuilt\", \"sdkGsBucket\": \"gs://chromiumos-sdk\", \"sdkVersion\": \"1970.01.01.999\", \"toolchainTemplate\": \"1970/01/%(target)s-1970.01.01.999.tar.xz\"}}, \"triggers\": [{\"gitiles\": {\"ref\": \"refs/heads/main\"}}]}, \"requestId\": \"0-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"0\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
@@ -3029,6 +3040,15 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\",@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
+      "@@@STEP_LOG_LINE@request@          \"$chromeos/metadata\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"sources_gitiles_commit_override\": {@@@",
+      "@@@STEP_LOG_LINE@request@              \"commitHash\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"host\": \"chrome-internal.googlesource.com\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"position\": \"999\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"project\": \"chromeos/manifest-internal\",@@@",
+      "@@@STEP_LOG_LINE@request@              \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@request@            }@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"$chromeos/pupr_local_uprev\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"sdkUprevSpec\": {@@@",
       "@@@STEP_LOG_LINE@request@              \"binhostGsBucket\": \"gs://chromeos-prebuilt\",@@@",
