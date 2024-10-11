@@ -116,6 +116,15 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
     """
     return '-bazel-' in builder_name
 
+  def is_sdknext_builder(self, builder_name: str) -> bool:
+    """Returns whether the builder is a *-sdknext-* builder.
+
+    *-sdknext-* builders are filtered out of testing since these builders are
+    only used to catch potential SDK builder breakages before the SDK PUpr job
+    is run.
+    """
+    return '-sdknext-' in builder_name
+
   def enabled_on_changes(self, gerrit_changes):
     """Returns true if test planning v2 is enabled on gerrit_changes.
 
@@ -587,8 +596,10 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       # Bazel builders should not be considered testable right now.
       # TODO(b/330338112): Add test planning support for Bazel builders.
+      # Tests should not be run on sdknext builders.
       testable_builders = [
-          b for b in testable_builders if not self.is_bazel_builder(b)
+          b for b in testable_builders
+          if not (self.is_bazel_builder(b) or self.is_sdknext_builder(b))
       ]
 
       pres.logs['testable_builders'] = testable_builders

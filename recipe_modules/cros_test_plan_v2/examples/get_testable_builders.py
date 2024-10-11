@@ -51,10 +51,15 @@ def RunSteps(api):
   build_3 = build_pb2.Build()
   build_3.builder.builder = 'target1-bazel-cq'
   build_3.input.properties['build_target'] = {'name': 'target1'}
+  # This builder will be excluded from the results because its name contains
+  # "-sdknext-".
+  build_4 = build_pb2.Build()
+  build_4.builder.builder = 'target1-sdknext-cq'
+  build_4.input.properties['build_target'] = {'name': 'target1'}
 
   api.assertions.assertCountEqual(
-      api.cros_test_plan_v2.get_testable_builders(starlark_packages,
-                                                  [build_1, build_2, build_3]),
+      api.cros_test_plan_v2.get_testable_builders(
+          starlark_packages, [build_1, build_2, build_3, build_4]),
       ['target1-cq', 'target2-cq'])
 
 
@@ -80,7 +85,8 @@ def GenTests(api):
               'copy',
               ('{"builder": {"builder": "target1-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}\n'
                '{"builder": {"builder": "target2-cq"},"input": {"properties": {"build_target": {"name": "target2"}}}}\n'
-               '{"builder": {"builder": "target1-bazel-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}'
+               '{"builder": {"builder": "target1-bazel-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}\n'
+               '{"builder": {"builder": "target1-sdknext-cq"},"input": {"properties": {"build_target": {"name": "target1"}}}}'
               ),
               '[CLEANUP]/tmp_tmp_1/builds.jsonl',
           ],
