@@ -15,6 +15,10 @@ from google.protobuf import json_format
 
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import (builder_common as
+                                                       builder_common_pb2)
+from PB.go.chromium.org.luci.buildbucket.proto import (builds_service as
+                                                       builds_service_pb2)
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from recipe_engine.engine_types import StepPresentation
@@ -29,6 +33,14 @@ CHILD_BUILD_SEARCH_FIELDS = frozenset({
 
 _manifest_info = namedtuple('_manifest_info',
                             ['name', 'gitiles_commit', 'path', 'url'])
+
+# Set the minimum interval as 5.5 hours, so that the CL generation is triggered
+# if more than 5.5 hours passes after the last generation.
+# It indended to trigger it roughly every 6 hours.
+SNAPSHOT_LGKM_UPREV_INTERVAL_IN_SEC = int(5.5 * 60 * 60)
+
+# Number of results to be retrieved on chcking the previous builds.
+LIMIT_BUILD_SEARCH = 100
 
 
 class SnapshotOrchMenuApi(recipe_api.RecipeApi):
@@ -508,3 +520,58 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     self._builds_status.update([], test_failures)
 
     return self._builds_status
+
+  def should_generate_lkgm_cl(self):
+    """
+    Determine whether should generate a LKGM CL by checking the previous runs.
+
+    Returns:
+      True if we should generate a LKGM uprev CL.
+    """
+
+    with self.m.step.nest(
+        'Check the previous LKGM CL generation') as presentation:
+      last = self._retrieve_last_build_generating_lkgm_cl()
+      if last is None:
+        presentation.step_text = ('No previous generation found in the recent '
+                                  f'{LIMIT_BUILD_SEARCH} builds.')
+        return True
+
+      elapsed = int(self.m.time.time() - last.end_time.seconds)
+      presentation.step_text = (
+          f'Previous generation was {elapsed} sec ago in go/bbid/{last.id}.')
+      if elapsed > SNAPSHOT_LGKM_UPREV_INTERVAL_IN_SEC:
+        return True
+
+      return False
+
+  def _retrieve_last_build_generating_lkgm_cl(self):
+    """Get the last build that generated a LKGM CL
+
+    This method reteieves the build by querying the builds of
+    snapshot-orchstrator.
+    """
+
+    FIELDS = ['output.properties', 'end_time']
+
+    is_staging = self.m.cros_infra_config.is_staging
+    builder_and_bucket = ('staging-snapshot-orchestrator',
+                          'staging') if is_staging else (
+                              'snapshot-orchestrator', 'postsubmit')
+
+    builder = builder_common_pb2.BuilderID(builder=builder_and_bucket[0],
+                                           bucket=builder_and_bucket[1],
+                                           project='chromeos')
+    search_predicate = builds_service_pb2.BuildPredicate(builder=builder)
+
+    prev_runs = self.m.buildbucket.search(search_predicate, fields=FIELDS,
+                                          limit=LIMIT_BUILD_SEARCH)
+    for r in prev_runs:
+      r_props = json_format.MessageToDict(r.output.properties)
+      lkgm = r_props.get('lkgm', None)
+
+      if lkgm and lkgm['uprev_cl_generated']:
+        if is_staging or not lkgm['uprev_dryrun']:
+          return r
+
+    return None

@@ -30,9 +30,6 @@ DEPS = [
     'cros_version',
 ]
 
-# Set the LGKM uprev freqency as every 6 snapshots (= 6 hours).
-SNAPSHOT_LGKM_UPREV_FREQUENCY = 6
-
 # Projects to be refered in this build.
 _SYNC_PROJECTS = [
     # To read the current chromeos version.
@@ -95,15 +92,13 @@ def DoRunSteps(api: RecipeApi):
   # Generate LKGM uprev CL if the condition meets.
   if snapshot_identifier:
     with api.step.nest('generate a LKGM uprev CL') as presentation:
-      if int(snapshot_identifier) % SNAPSHOT_LGKM_UPREV_FREQUENCY == 0:
+      if api.snapshot_orch_menu.should_generate_lkgm_cl():
         api.cros_lkgm.do_lkgm(
             builds_status.completed_builds, use_snapshot=True,
             internal_manifest_position=internal_manifest_position,
             external_manifest_position=external_manifest_position)
       else:
-        presentation.step_text = (
-            f'Skipped. A CL is generated only every {SNAPSHOT_LGKM_UPREV_FREQUENCY} runs'
-        )
+        presentation.step_text = 'Skipped generating a LKGM CL.'
 
 
 def GenTests(api: RecipeTestApi):
@@ -141,8 +136,9 @@ def GenTests(api: RecipeTestApi):
 
   yield api.snapshot_orch_menu.test(
       'lkgm-uprev-generated', data.ctp_normal, lfg_props,
-      api.cros_snapshot.simulated_snapshot_identifier(
-          SNAPSHOT_LGKM_UPREV_FREQUENCY),
+      api.cros_snapshot.simulated_snapshot_identifier(111111),
+      api.snapshot_orch_menu.set_should_generate_lkgm_cl(
+          True, step_name='generate a LKGM uprev CL'),
       api.post_check(post_process.MustRun,
                      'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
       collect_builds=green_build_results, with_manifest_refs=True,
@@ -150,8 +146,9 @@ def GenTests(api: RecipeTestApi):
 
   yield api.snapshot_orch_menu.test(
       'lkgm-uprev-not-generated', data.ctp_normal, lfg_props,
-      api.cros_snapshot.simulated_snapshot_identifier(
-          SNAPSHOT_LGKM_UPREV_FREQUENCY + 1),
+      api.cros_snapshot.simulated_snapshot_identifier(111111),
+      api.snapshot_orch_menu.set_should_generate_lkgm_cl(
+          False, step_name='generate a LKGM uprev CL'),
       api.post_check(post_process.DoesNotRun,
                      'generate a LKGM uprev CL.call chrome_chromeos_lkgm'),
       collect_builds=green_build_results, with_manifest_refs=True,

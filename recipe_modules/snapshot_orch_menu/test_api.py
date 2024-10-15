@@ -12,6 +12,8 @@ consistent.
 from collections import namedtuple
 import typing
 
+from google.protobuf import timestamp_pb2
+
 from recipe_engine import recipe_test_api
 from PB.go.chromium.org.luci.buildbucket.proto.build import Build
 from PB.go.chromium.org.luci.buildbucket.proto.builds_service import (
@@ -336,3 +338,33 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
       start_build_id += 1
 
     return collect_builds, collect_after_builds
+
+  def set_should_generate_lkgm_cl(self, value, step_name=None,
+                                  current_time=None):
+    """Set the mock return value of `should_generate_lkgm_cl` method.
+    """
+    step_name = ('' if step_name is None else f'{step_name}.'
+                ) + 'Check the previous LKGM CL generation.buildbucket.search'
+
+    if value:
+      return self.m.buildbucket.simulated_search_results([], step_name)
+
+    GREEN_SNAPSHOT_OUTPUT_PROPERTIES = Build.Output()
+    GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['lkgm'] = {
+        'uprev_cl_generated': True,
+        'uprev_dryrun': False
+    }
+
+    if current_time is None:
+      current_time = 1717214400
+
+    # Finished at 5 min before the current time.
+    task_end_time = current_time - 5 * 60 * 60
+
+    builds = [
+        Build(
+            end_time=timestamp_pb2.Timestamp(seconds=task_end_time),
+            output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+        ),
+    ]
+    return self.m.buildbucket.simulated_search_results(builds, step_name)
