@@ -398,6 +398,8 @@ class SigningApi(recipe_api.RecipeApi):
             name='download {} from {}'.format(artifact_name, gs_dir),
             timeout=GSUTIL_TIMEOUT_SECONDS)
       except StepFailure:
+        # If the artifact is not found, we don't want to fail the step.
+        self.m.step.active_result.presentation.status = self.m.step.SUCCESS
         skipped_artifacts.append(artifact_name)
     return skipped_artifacts
 
