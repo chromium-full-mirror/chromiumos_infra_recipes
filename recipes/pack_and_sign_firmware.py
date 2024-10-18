@@ -85,7 +85,7 @@ def RunSteps(api: RecipeApi):
       signed_build_list = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
           channels=api.cros_release.channels, include_paygen=False,
-          local_artifact_dir=output_artifact_dir)
+          local_artifact_dir=output_artifact_dir, upload_unsigned=False)
       pres.logs['signed builds'] = str(signed_build_list)
 
 
@@ -125,7 +125,7 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
       api.post_check(
-          post_process.MustRun,
+          post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
           'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
       ), api.post_check(post_process.MustRun, 'pack firmware'),

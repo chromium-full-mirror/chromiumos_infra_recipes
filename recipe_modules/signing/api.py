@@ -527,7 +527,8 @@ class SigningApi(recipe_api.RecipeApi):
   def sign_artifacts(
       self, sign_types: List['common_pb2.ImageType'],
       channels: List['common_pb2.Channel'], include_paygen: bool = True,
-      local_artifact_dir: Optional[Path] = None
+      local_artifact_dir: Optional[Path] = None,
+      upload_unsigned: Optional[bool] = True
   ) -> List[BuildReport.SignedBuildMetadata]:
     """Implementation for local signing flow."""
     if not self.local_signing:
@@ -589,9 +590,10 @@ class SigningApi(recipe_api.RecipeApi):
       if include_paygen:
         gs_dirs.update(
             self.stage_paygen_artifacts(build_target_config, channels))
-      gs_dirs.update(
-          self.upload_unsigned_artifacts(archive_dir, build_target_config,
-                                         channels))
+      if upload_unsigned:
+        gs_dirs.update(
+            self.upload_unsigned_artifacts(archive_dir, build_target_config,
+                                           channels))
       for gs_dir in sorted(gs_dirs):
         self.m.bot_cost.set_upload_size(gs_dir)
 
