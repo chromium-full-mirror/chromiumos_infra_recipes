@@ -182,10 +182,8 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
     StagingReCheck('chromeos', 'staging',
-                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator'),
-    # Branched staging only runs once daily, as opposed to ToT which runs 4
-    # times a day. We're enforcing 5 builds on ToT, so we can probably afford
-    # to check fewer of the branched builders.
+                   r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator',
+                   num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-octopus-release-R(?P<milestone>\d+)-\d+\.B',
                    [image_builder_exemption, r120_pushimage_exemption],
