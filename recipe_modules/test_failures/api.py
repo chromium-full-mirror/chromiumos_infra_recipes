@@ -5,6 +5,8 @@
 
 """API for raising e2e test failures and presenting them."""
 
+import typing
+
 from RECIPE_MODULES.chromeos.failures_util.api import Failure
 from RECIPE_MODULES.chromeos.skylab_results.structs import SkylabResult
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
@@ -21,17 +23,21 @@ class TestFailuresApi(RecipeApi):
   def __init__(self, **kwargs):
     super().__init__(**kwargs)
 
-  def get_hw_test_results(self, hw_tests):
+  def get_hw_test_results(
+      self, hw_tests: typing.List[SkylabResult],
+      exonerated_tests: typing.Optional[typing.List[str]] = None):
     """Logs hardware test status to UI, and raises on failed tests.
 
     Args:
-      hw_tests (list[SkylabResult]): List of Skylab suite results.
+      hw_tests: List of Skylab suite results.
+      exonerated_tests: List of exonerated test names.
 
     Returns:
       A Results object containing the list[Failure] of all failures discovered
       in the given runs and a dict mapping a task kind with the number of
       successes.
     """
+    exonerated_tests = exonerated_tests or []
     get_id = self.m.naming.get_skylab_result_title
     with self.m.step.nest('test results') as results_pres:
       results = self.m.failures_util.Results(failures=[], successes={})
@@ -50,8 +56,10 @@ class TestFailuresApi(RecipeApi):
         link_map = self.m.urls.get_skylab_result_link_map(run)
         status = self.get_hwtest_status(run)
         critical = self.is_hw_test_critical(run)
+        exonerated = title in exonerated_tests
 
-        self.m.failures_util.present_run(title, link_map, status, critical)
+        self.m.failures_util.present_run(title, link_map, status, critical,
+                                         exonerated)
         only_infra_failure &= (status == bb_common_pb2.INFRA_FAILURE)
 
         if critical:

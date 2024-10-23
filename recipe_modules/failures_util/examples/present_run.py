@@ -16,15 +16,39 @@ DEPS = [
 
 
 def RunSteps(api):
-  api.failures_util.present_run('test suite', {'bvt-tast-cq': 'www.google.com'},
+  api.failures_util.present_run('test suite 1',
+                                {'bvt-tast-cq': 'www.google.com'},
                                 bb_common_pb2.SUCCESS, critical=True)
-  api.failures_util.present_run('test suite', {'bvt-tast-cq': 'www.google.com'},
+  api.failures_util.present_run('test suite 2',
+                                {'bvt-tast-cq': 'www.google.com'},
+                                bb_common_pb2.SUCCESS, critical=True,
+                                exonerated=True)
+  api.failures_util.present_run('test suite 3',
+                                {'bvt-tast-cq': 'www.google.com'},
                                 bb_common_pb2.INFRA_FAILURE, critical=True)
-  api.failures_util.present_run('test suite', {'bvt-tast-cq': 'www.google.com'},
+  api.failures_util.present_run('test suite 4',
+                                {'bvt-tast-cq': 'www.google.com'},
                                 bb_common_pb2.FAILURE, critical=True)
-  api.failures_util.present_run('test suite', {'bvt-tast-cq': 'www.google.com'},
+  api.failures_util.present_run('test suite 5',
+                                {'bvt-tast-cq': 'www.google.com'},
                                 bb_common_pb2.FAILURE, critical=False)
 
 
 def GenTests(api):
-  yield api.test('basic', api.post_process(post_process.DropExpectation))
+  yield api.test(
+      'basic', api.post_process(post_process.StepSuccess, 'test suite 1'),
+      api.post_process(post_process.StepSuccess, 'test suite 2'),
+      api.post_process(
+          post_process.StepTextEquals,
+          'test suite 2',
+          'failed but was exonerated',
+      ), api.post_process(post_process.StepException, 'test suite 3'),
+      api.post_process(post_process.StepFailure, 'test suite 4'),
+      api.post_process(post_process.StepSuccess, 'test suite 5'),
+      api.post_process(
+          post_process.StepTextEquals,
+          'test suite 5',
+          'failed but is not critical',
+      ), api.post_process(
+          post_process.DropExpectation,
+      ))

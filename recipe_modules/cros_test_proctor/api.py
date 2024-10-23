@@ -310,7 +310,9 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
 
       self.m.cros_history.set_passed_tests(passed_test_names)
       self.m.greenness.update_hwtest_info(test_results)
-      failures = self._get_test_failures(test_results)
+      failures = self._get_test_failures(
+          test_results, exonerated_test_names=manually_exonerated_hw_tests +
+          auto_exonerated_hw_tests)
       failures += self.m.test_failures.get_additional_hw_test_not_run_failures(
           self._not_runnable_addtnl_tests)
     return failures
@@ -411,9 +413,11 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
     return test_tasks
 
   def _get_test_failures(
-      self, test_results: typing.List[SkylabResult]) -> typing.List[Failure]:
+      self, test_results: typing.List[SkylabResult],
+      exonerated_test_names: typing.List[str]) -> typing.List[Failure]:
     """Logs all test failures to the UI and raises on failed tests."""
-    failures = self.m.test_failures.get_hw_test_results(test_results).failures
+    failures = self.m.test_failures.get_hw_test_results(
+        test_results, exonerated_test_names).failures
     return failures
 
   def _schedule_skylab_tests(
