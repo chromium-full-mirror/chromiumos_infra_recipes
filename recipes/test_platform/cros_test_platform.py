@@ -1481,9 +1481,10 @@ def DoRunSteps(api, properties):
     # there should be only one response since there should be at max one async call to ctpv2
     resp = runner_resp[0].resp
     if resp is not None and hasattr(resp, 'step'):
-      if 'compressed_responses' in resp.step.sub_build.output.properties:
+      if 'ctpv2/sub-build' in resp.step.sub_build.output.properties and 'compressed_responses' in resp.step.sub_build.output.properties[
+          'ctpv2/sub-build']:
         compressed_responses = resp.step.sub_build.output.properties[
-            'compressed_responses']
+            'ctpv2/sub-build']['compressed_responses']
         decompressed_responses = zlib.decompress(
             base64.b64decode(compressed_responses))
         v2_responses = ExecuteResponses()
