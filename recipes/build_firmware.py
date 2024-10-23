@@ -62,7 +62,12 @@ DEPS = [
 PROPERTIES = BuildFirmwareProperties
 
 # Artifacts that don't need to be signed.
-SKIP_SIGNING_RE = re.compile(r'^(host_emulation|opentitan)-')
+# `host_emulation` (and `he`) will never need to be signed.
+# `nuvotitan_cw310_a1 fpga` will never need to be signed.
+# `opentitan` (and `nt`) will need to be signed in the future, but signing
+# isn't set up for that target yet.
+SKIP_SIGNING_RE = re.compile(
+    r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310_a1)-')
 
 
 def UploadTestResults(api, location, builder_name):
