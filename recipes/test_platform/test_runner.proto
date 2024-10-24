@@ -52,4 +52,6 @@ message TestRunnerProperties {
 
   // Configuration related to results upload of the particular test.
   .test_platform.Request.Params.ResultsUploadConfig results_upload_config = 11;
+  // if current run is an AL run
+  bool is_al_run = 12;
 }
