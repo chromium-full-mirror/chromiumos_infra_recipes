@@ -96,14 +96,10 @@ class FailuresUtilApi(recipe_api.RecipeApi):
       return self.m.step.EXCEPTION
     return self.m.step.FAILURE
 
-  def present_run(self, title, link_map, status, critical=True,
-                  exonerated=False):
+  def present_run(self, title, link_map, status, critical=True):
     with self.m.step.nest(title or 'present run') as presentation:
       if status != bb_common_pb2.SUCCESS and not critical:
         presentation.step_text = 'failed but is not critical'
-        presentation.status = self.m.step.SUCCESS
-      elif status == bb_common_pb2.SUCCESS and exonerated:
-        presentation.step_text = 'failed but was exonerated'
         presentation.status = self.m.step.SUCCESS
       else:
         presentation.status = self._proto_to_step_status(status)
