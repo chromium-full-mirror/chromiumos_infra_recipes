@@ -149,12 +149,22 @@ class Ctpv2Command(recipe_api.RecipeApi):
       managed_pool = self.get_val_from_obj_or_dict(scheduling, 'managed_pool',
                                                    'managedPool')
 
+      # get unmanaged_pool info from scheduling object
+      unmanaged_pool = self.get_val_from_obj_or_dict(scheduling,
+                                                     'unmanaged_pool',
+                                                     'unmanagedPool')
+
       # Check if the managed pool is one of the expected values
       if managed_pool is not None:
         if isinstance(managed_pool,
                       str) and managed_pool == 'MANAGED_POOL_QUOTA':
           return True
         if isinstance(managed_pool, int) and managed_pool == 8:  #enum int value
+          return True
+
+      if unmanaged_pool is not None:
+        if isinstance(unmanaged_pool,
+                      str) and unmanaged_pool in ('DUT_POOL_QUOTA', 'quota'):
           return True
 
     return False
