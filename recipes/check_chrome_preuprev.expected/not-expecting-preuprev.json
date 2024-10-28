@@ -21,7 +21,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -60,7 +60,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -89,7 +89,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -129,7 +129,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -162,7 +162,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -255,7 +255,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -321,7 +321,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
@@ -355,14 +355,14 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"
       }
     },
     "name": "Search Chrome builders matching buildset.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -378,7 +378,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -477,7 +477,7 @@
       },
       "resultdb": {
         "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
+          "name": "invocations/inv-9999",
           "update_token": "token"
         },
         "hostname": "rdbhost"

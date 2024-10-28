@@ -17,6 +17,7 @@ from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
+from PB.go.chromium.org.luci.lucictx import sections as sections_pb2
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
@@ -24,6 +25,8 @@ from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/context',
+    'recipe_engine/resultdb',
     'recipe_engine/time',
     'recipe_engine/step',
     'recipe_engine/raw_io',
@@ -36,6 +39,7 @@ FETCH_DESCRIPTION_INTERVAL_SEC = 60
 FETCH_DESCRIPTION_TIMEOUT_SEC = 600  # 10 minutes
 WAIT_PREUPREV_TIMEOUT_SEC = 3600 * 6  # 6 hour
 UPREV_CL_TOPIC = 'chromeos-base/lacros-ash-atomic'
+INVOCATION_PREFIX = 'invocations/'
 
 NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
@@ -89,6 +93,7 @@ BUILD_FIELDS_TO_RETRIEVE = [
     'status',
     'steps',
     'summary_markdown',
+    'infra.resultdb',
 ]
 
 
@@ -225,9 +230,21 @@ def RunSteps(api: RecipeApi):
     builds = api.buildbucket.collect_builds([bbid],
                                             fields=BUILD_FIELDS_TO_RETRIEVE,
                                             timeout=WAIT_PREUPREV_TIMEOUT_SEC)
+    builders = list(builds.values())
+    with api.step.nest('including pre-uprev builder results') as step:
+      invocations = [
+          i.infra.resultdb.invocation
+          for i in builders
+          if i.infra.resultdb.invocation
+      ]
+      step.step_summary_text = '\n'.join(invocations)
+      for inv in invocations:
+        assert inv.startswith(INVOCATION_PREFIX)
+      api.resultdb.include_invocations(
+          [inv[len(INVOCATION_PREFIX):] for inv in invocations],
+          'include invocations from pre-uprev builders')
     if PreUprevTestPassed(GetClPreUprevTesting(api, cl)):
       return PRE_UPREV_PASS
-    builders = list(builds.values())
     if builders:
       return RawResult(
           status=common_pb2.FAILURE,
@@ -254,6 +271,15 @@ def GenTests(api: RecipeTestApi):
                 patchset=PATCHSET,
             )
         ])
+
+    build += api.context.luci_context(
+        resultdb=sections_pb2.ResultDB(
+            current_invocation=sections_pb2.ResultDBInvocation(
+                name='invocations/inv-9999',
+                update_token='token',
+            ),
+            hostname='rdbhost',
+        ))
 
     change = {
         '_number': CHANGE_NUMBER,
@@ -344,6 +370,17 @@ def GenTests(api: RecipeTestApi):
           ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/998876\n',
            1)
       ]),
+      api.buildbucket.simulated_collect_output([
+          build_pb2.Build(
+              id=998876,
+              status=common_pb2.SUCCESS,
+              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: SUCCESS\n- chromeos-brya-chrome: SUCCESS\n',
+              infra=build_pb2.BuildInfra(
+                  resultdb=build_pb2.BuildInfra.ResultDB(
+                      invocation='invocations/build-998876-rdb'),
+              ),
+          ),
+      ], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
       api.post_check(post_process.SummaryMarkdown,
                      PRE_UPREV_PASS.summary_markdown),
       api.post_process(post_process.MustRun,
@@ -431,9 +468,14 @@ def GenTests(api: RecipeTestApi):
       ]),
       api.buildbucket.simulated_collect_output([
           build_pb2.Build(
-              id=998876, status=common_pb2.FAILURE,
-              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n'
-          )
+              id=998876,
+              status=common_pb2.FAILURE,
+              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n',
+              infra=build_pb2.BuildInfra(
+                  resultdb=build_pb2.BuildInfra.ResultDB(
+                      invocation='invocations/build-998876-rdb'),
+              ),
+          ),
       ], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
       api.post_process(post_process.MustRun,
                        'Fetch pre-uprev testing result.buildbucket.collect'),

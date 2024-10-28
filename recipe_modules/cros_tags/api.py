@@ -11,12 +11,15 @@ from recipe_engine import recipe_api
 class CrosTagsApi(recipe_api.RecipeApi):
   """A module for generating tags."""
 
-  def make_schedule_tags(self, snapshot, inherit_buildsets=True):
+  def make_schedule_tags(self, snapshot, inherit_buildsets=True,
+                         include_test_results_in_gerrit=False):
     """Returns the tags typically added to scheduled child builders.
 
     Args:
       snapshot (GitilesCommit): snapshot the build was synced on
       inherit_buildsets (bool): whether to include non-gitiles_commit buildsets.
+      include_test_results_in_gerrit (bool): allow non-standard buidlers to
+        produce rdb test results into gerrit.
 
     Returns:
       list[StringPair] to pass as buildbucket tags
@@ -26,8 +29,10 @@ class CrosTagsApi(recipe_api.RecipeApi):
         'parent_buildbucket_id': str(self.m.buildbucket.build.id),
         'snapshot': snapshot.id,
         'commit_position': str(snapshot.position),
-        'hide-test-results-in-gerrit': 'true',
     }
+
+    if not include_test_results_in_gerrit:
+      tag_dict['hide-test-results-in-gerrit'] = 'true'
 
     # TODO(b/186218358): Reevaluate if we need to create buildsets.
     if inherit_buildsets:
