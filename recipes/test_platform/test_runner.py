@@ -2168,6 +2168,14 @@ def raise_on_trv2_result(api, res):  # pragma: nocover
     if error_summary:
       raise api.step.StepFailure(error_summary)
 
+  # some child processes report this field a touch differently.
+  elif 'error_summary_markdown' in res.step.sub_build.output.properties:
+    error_summary = res.step.sub_build.output.properties[
+        'error_summary_markdown']
+    if error_summary:
+      raise api.step.StepFailure(error_summary)
+
+
 
 def run_and_upload(api, properties):
   """Run test and upload results.
