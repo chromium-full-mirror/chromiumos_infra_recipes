@@ -7,7 +7,7 @@
 
 import dataclasses
 import json
-from typing import Dict, Generator, List, Optional, Set
+from typing import Dict, Generator, Optional
 
 from google.protobuf import json_format
 from PB.recipes.chromeos import robocrop as robocrop_pb2
@@ -43,34 +43,12 @@ class ProjectStats:
 def RunSteps(api: recipe_api.RecipeApi,
              properties: robocrop_pb2.RoboCropProperties) -> None:
   with api.deferrals.raise_exceptions_at_end():
-    projects = get_robocrop_projects(properties)
     all_project_stats = {}
-    for project in projects:
+    for project in properties.robocrop_projects:
       all_project_stats[project.application] = scale_bot_groups_for_project(
           api, project)
 
     output_project_stats(api, all_project_stats)
-
-def get_robocrop_projects(
-    properties: robocrop_pb2.RoboCropProperties
-) -> List[robocrop_pb2.ProjectProperties]:
-  """Find which projects this RoboCrop build should scale."""
-  # TODO(b/329139593): Remove when RoboCropProperties are not directly used.
-  # De-dupe projects to scale.
-  found_applications: Set[str] = set()
-  projects = []
-  for project in properties.robocrop_projects:
-    if project.application not in found_applications:
-      projects.append(project)
-      found_applications.add(project.application)
-  main_application = properties.application or 'ChromeOS'
-  if main_application not in found_applications:
-    projects.append(
-        robocrop_pb2.RoboCropProperties(
-            commit_changes=properties.commit_changes,
-            application=main_application))
-  return projects
-
 
 def scale_bot_groups_for_project(
     api: recipe_api.RecipeApi,
@@ -237,21 +215,39 @@ def GenTests(
 ) -> Generator[recipe_test_api.TestData, None, None]:
   yield api.test(
       'basic',
-      api.properties(commit_changes=True),
+      api.properties(
+          robocrop_pb2.RoboCropProperties(robocrop_projects=[
+              robocrop_pb2.ProjectProperties(commit_changes=True,
+                                             application='ChromeOS')
+          ])),
       # Test ultimately fails due to prefix-fifth not being found, but failure should not affect other behavior.
       status='FAILURE',
   )
   yield api.test(
       'no-commit-changes',
-      api.properties(commit_changes=False),
+      api.properties(
+          robocrop_pb2.RoboCropProperties(robocrop_projects=[
+              robocrop_pb2.ProjectProperties(commit_changes=False,
+                                             application='ChromeOS')
+          ])),
       # Test ultimately fails due to prefix-fifth not being found, but failure should not affect other behavior.
       status='FAILURE',
   )
-  yield api.test('basic-chrome',
-                 api.properties(commit_changes=True, application='Chrome'))
+  yield api.test(
+      'basic-chrome',
+      api.properties(
+          robocrop_pb2.RoboCropProperties(robocrop_projects=[
+              robocrop_pb2.ProjectProperties(commit_changes=True,
+                                             application='Chrome')
+          ])),
+  )
   yield api.test(
       'bot-fallbacks',
-      api.properties(commit_changes=True),
+      api.properties(
+          robocrop_pb2.RoboCropProperties(robocrop_projects=[
+              robocrop_pb2.ProjectProperties(commit_changes=True,
+                                             application='ChromeOS')
+          ])),
       api.override_step_data(
           'scale bot groups for ChromeOS.get current swarming stats.query swarming for cq.get bot count query result for cq',
           retcode=1),
@@ -268,37 +264,14 @@ def GenTests(
       api.properties(
           robocrop_pb2.RoboCropProperties(robocrop_projects=[
               robocrop_pb2.ProjectProperties(application='ChromeOSMPA',
-                                             commit_changes=True)
-          ])),
-      api.post_check(
-          post_process.MustRun,
-          'scale bot groups for ChromeOS',
-          'scale bot groups for ChromeOSMPA',
-      ),
-      # Test ultimately fails due to prefix-fifth not being found, but failure should not affect other behavior.
-      status='FAILURE',
-  )
-  # TODO(b/329139593): Remove when RoboCropProperties are not directly used and we don't need to dedupe.
-  # Application defaults to ChromeOS, but don't scale twice.
-  yield api.test(
-      'multiple-applications-deduped',
-      api.properties(
-          robocrop_pb2.RoboCropProperties(robocrop_projects=[
-              robocrop_pb2.ProjectProperties(application='ChromeOSMPA',
                                              commit_changes=True),
               robocrop_pb2.ProjectProperties(application='ChromeOS',
-                                             commit_changes=True)
+                                             commit_changes=False),
           ])),
       api.post_check(
           post_process.MustRun,
           'scale bot groups for ChromeOS',
-          'scale bot groups for ChromeOS.update GCE Provider configs',
           'scale bot groups for ChromeOSMPA',
-          'scale bot groups for ChromeOSMPA.update GCE Provider configs',
-      ),
-      api.post_check(
-          post_process.DoesNotRun,
-          'scale bot groups for ChromeOS (2)',
       ),
       # Test ultimately fails due to prefix-fifth not being found, but failure should not affect other behavior.
       status='FAILURE',
