@@ -12,7 +12,50 @@ from recipe_engine import recipe_test_api
 from recipe_engine.recipe_test_api import TestData
 
 
+SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
+  build_target: "kukui"
+  keyset: "kukui-foo-bar"
+  signing_configs {
+    image_type: IMAGE_TYPE_BASE
+    keyset: "kukui-foo-bar"
+    ensure_no_password: true
+    firmware_update: true
+  }
+  signing_configs {
+    image_type: IMAGE_TYPE_FACTORY
+    keyset: "kukui-foo-bar-factory"
+    ensure_no_password: true
+    firmware_update: true
+  }
+  signing_configs {
+    image_type: IMAGE_TYPE_FIRMWARE
+    ensure_no_password: true
+    firmware_update: true
+  }
+  signing_configs {
+    image_type: IMAGE_TYPE_RECOVERY
+    ensure_no_password: true
+    firmware_update: true
+  }
+}'''
+
+
 class SigningTestApi(recipe_test_api.RecipeTestApi):
+
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self._signing_config_test_data = None
+
+  @property
+  def signing_config_test_data(self):
+    return self._signing_config_test_data or SIGNING_CONFIG_TEST_DATA
+
+  @signing_config_test_data.setter
+  def signing_config_test_data(self, val):
+    self._signing_config_test_data = val
+
+  def get_config_data(self) -> TestData:
+    return self.m.gitiles.make_encoded_file(self.signing_config_test_data)
 
   def setup_mocks(self, channel: str = 'dev', board: str = 'eve') -> TestData:
     """Set up mocks based on the instructions files from the build_api.

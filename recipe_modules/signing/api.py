@@ -38,32 +38,6 @@ InstructionsMetadata = NewType('InstructionsMetadata', Any)
 
 CONFIG_INTERNAL_REPO_URL = 'https://chrome-internal.googlesource.com/chromeos/config-internal'
 SIGNING_CONFIG_FILEPATH = 'board_config/generated/signing_config.textproto'
-SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
-  build_target: "kukui"
-  keyset: "kukui-foo-bar"
-  signing_configs {
-    image_type: IMAGE_TYPE_BASE
-    keyset: "kukui-foo-bar"
-    ensure_no_password: true
-    firmware_update: true
-  }
-  signing_configs {
-    image_type: IMAGE_TYPE_FACTORY
-    keyset: "kukui-foo-bar-factory"
-    ensure_no_password: true
-    firmware_update: true
-  }
-  signing_configs {
-    image_type: IMAGE_TYPE_FIRMWARE
-    ensure_no_password: true
-    firmware_update: true
-  }
-  signing_configs {
-    image_type: IMAGE_TYPE_RECOVERY
-    ensure_no_password: true
-    firmware_update: true
-  }
-}'''
 
 
 # How long to wait on gsutil ops.
@@ -301,8 +275,7 @@ class SigningApi(recipe_api.RecipeApi):
         raise StepFailure('could not get branch from builder config') from e
       signing_config_textproto = self.m.gitiles.download_file(
           CONFIG_INTERNAL_REPO_URL, SIGNING_CONFIG_FILEPATH, branch=branch,
-          step_test_data=lambda: self.m.gitiles.test_api.make_encoded_file(
-              SIGNING_CONFIG_TEST_DATA))
+          step_test_data=self.m.signing.test_api.get_config_data)
       signing_config = Parse(signing_config_textproto,
                              BuildTargetSigningConfigs())
 

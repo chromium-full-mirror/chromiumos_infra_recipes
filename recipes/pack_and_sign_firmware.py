@@ -4,6 +4,8 @@
 
 """Pack and sign standalone firmware shellball."""
 
+import re
+
 from google.protobuf.json_format import MessageToDict
 from google.protobuf.json_format import MessageToJson
 
@@ -34,6 +36,14 @@ DEPS = [
     'signing',
     'src_state',
 ]
+
+TEST_SIGNING_CONFIG = '''build_target_signing_configs {
+      build_target: "kukui"
+      keyset: "kukui-premp"
+      signing_configs {
+        image_type: IMAGE_TYPE_SHELLBALL
+      }
+    }'''
 
 
 def RunSteps(api: RecipeApi):
@@ -79,6 +89,8 @@ def RunSteps(api: RecipeApi):
         api.step('call pack_firmware', pack_fw_cmd)
 
     # Sign shellball.
+    if api._test_data.enabled:  # pylint: disable=protected-access
+      api.signing.test_api.signing_config_test_data = TEST_SIGNING_CONFIG
     api.cros_release.validate_sign_types()
     # TODO(b/351853211): Ensure version is correct based on branch or config.
     with api.step.nest('sign firmware shellball') as pres:
@@ -129,6 +141,10 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
           'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
       ), api.post_check(post_process.MustRun, 'pack firmware'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 20.*')]),
       api.post_check(
           post_process.MustRun,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '

@@ -36,6 +36,8 @@ FAILED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_FAILED
 
 
 def RunSteps(api: RecipeApi):
+  # For coverage, set to the default value.
+  api.signing.test_api.signing_config_test_data = api.signing.test_api.signing_config_test_data
   # Fetch config.
   config = api.signing.get_config()
   expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
