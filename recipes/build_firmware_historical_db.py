@@ -49,7 +49,7 @@ DEPS = [
 PROPERTIES = BuildFirmwareHistoricalDbProperties
 PRECONDITION_FAILURE = 412
 HISTORICAL_DB = 'historical.bin'
-TOKEN_BUCKET = 'gs://chromeos-localmirror/cros_ec/tokens'
+TOKEN_BUCKET = 'gs://chromeos-localmirror/distfiles/cros_ec/tokens'
 TOKEN_VERSION_BUCKET = f'{TOKEN_BUCKET}/version'
 
 def RunSteps(api, properties):
@@ -243,7 +243,7 @@ def GenTests(api):
     ]
   }
 }'''
-  GSUTIL_STAT = '''gs://chromeos-localmirror/cros_ec/historical.bin:
+  GSUTIL_STAT = '''gs://chromeos-localmirror/distfiles/cros_ec/historical.bin:
       Creation time:          Mon, 11 Dec 2023 18:12:19 GMT
       Storage class:          MULTI_REGIONAL
       Cache-Control:          private, max-age=0

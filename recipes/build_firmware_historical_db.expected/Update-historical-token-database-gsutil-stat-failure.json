@@ -4305,7 +4305,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,

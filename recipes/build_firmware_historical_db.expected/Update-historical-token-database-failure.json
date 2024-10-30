@@ -4305,7 +4305,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4335,7 +4335,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4417,7 +4417,7 @@
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4446,7 +4446,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4476,7 +4476,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4558,7 +4558,7 @@
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4587,7 +4587,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4617,7 +4617,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4699,7 +4699,7 @@
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -5410,7 +5410,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Failed to update gs://chromeos-localmirror/cros_ec/tokens/historical.bin"
+      "humanReason": "Failed to update gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
     },
     "name": "$result"
   }
