@@ -229,10 +229,7 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset",
-    "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
-    ]
+    "name": "Search Chrome builders matching buildset"
   },
   {
     "cmd": [],
@@ -370,7 +367,85 @@
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {}@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-betty-chrome-preuprev\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"102114593\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-102114593-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test 2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-brya-chrome-preuprev\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"284564751\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-284564751-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test 2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-jacuzzi-chrome-preuprev\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"281483114\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-281483114-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test 2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-volteer-chrome-preuprev\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"425179835\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-425179835-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test 2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          },@@@",
+      "@@@STEP_LOG_LINE@json.output@          {@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"linux-chromeos-chrome-preuprev\",@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"992625145\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-992625145-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@              }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test 2\"@@@",
+      "@@@STEP_LOG_LINE@json.output@          }@@@",
+      "@@@STEP_LOG_LINE@json.output@        ]@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
@@ -398,60 +473,204 @@
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@"
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@102114593@https://cr-buildbucket.appspot.com/build/102114593@@@",
+      "@@@STEP_LINK@284564751@https://cr-buildbucket.appspot.com/build/284564751@@@",
+      "@@@STEP_LINK@281483114@https://cr-buildbucket.appspot.com/build/281483114@@@",
+      "@@@STEP_LINK@425179835@https://cr-buildbucket.appspot.com/build/425179835@@@",
+      "@@@STEP_LINK@992625145@https://cr-buildbucket.appspot.com/build/992625145@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Search Chrome builders matching buildset.filtering for useful builders",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing betty",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-betty-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-betty-chrome-preuprev']@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[bbid/102114593](https://ci.chromium.org/ui/b/102114593)@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing brya",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-brya-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-brya-chrome-preuprev', 'chromeos-brya-chrome-preuprev-skylab']@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[bbid/284564751](https://ci.chromium.org/ui/b/284564751)@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing jacuzzi",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-jacuzzi-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-jacuzzi-chrome-preuprev']@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[bbid/281483114](https://ci.chromium.org/ui/b/281483114)@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing linux",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found linux-chromeos-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['linux-chromeos-chrome-preuprev']@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[bbid/992625145](https://ci.chromium.org/ui/b/992625145)@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing volteer",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-volteer-chrome-preuprev",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-volteer-chrome-preuprev']@@@",
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[bbid/425179835](https://ci.chromium.org/ui/b/425179835)@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Check pre-uprev results"
+  },
+  {
+    "cmd": [],
+    "name": "Check pre-uprev results.buildbucket.collect",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "collect",
+      "-host",
+      "cr-buildbucket.appspot.com",
+      "-interval",
+      "60s",
+      "102114593",
+      "284564751",
+      "281483114",
+      "992625145",
+      "425179835"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Check pre-uprev results.buildbucket.collect.wait",
+    "timeout": 21600,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "bb",
+      "batch",
+      "-host",
+      "cr-buildbucket.appspot.com"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/inv-9999",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Check pre-uprev results.buildbucket.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"102114593\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"284564751\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"281483114\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"992625145\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"425179835\"}}]}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"102114593\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"284564751\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"281483114\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"992625145\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    },@@@",
+      "@@@STEP_LOG_LINE@json.output@    {@@@",
+      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"425179835\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@      }@@@",
+      "@@@STEP_LOG_LINE@json.output@    }@@@",
+      "@@@STEP_LOG_LINE@json.output@  ]@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"102114593\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"284564751\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"281483114\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"992625145\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    {@@@",
+      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"425179835\"@@@",
+      "@@@STEP_LOG_LINE@request@      }@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  ]@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LINK@102114593@https://cr-buildbucket.appspot.com/build/102114593@@@",
+      "@@@STEP_LINK@284564751@https://cr-buildbucket.appspot.com/build/284564751@@@",
+      "@@@STEP_LINK@281483114@https://cr-buildbucket.appspot.com/build/281483114@@@",
+      "@@@STEP_LINK@992625145@https://cr-buildbucket.appspot.com/build/992625145@@@",
+      "@@@STEP_LINK@425179835@https://cr-buildbucket.appspot.com/build/425179835@@@"
     ]
   },
   {
