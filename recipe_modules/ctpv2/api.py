@@ -118,28 +118,30 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return False
 
   def mark_requests_for_ctpv2_with_qs(self, requests):
-    """Marks requests for CTPv2 execution with QS if the experiment is enabled and the request is intended for the main pool.
+    """Marks requests for CTPv2 execution with QS if (1) the CTPv2 with QS
+    experiment is enabled and the request is intended for the main pool, or (2)
+    the request has a CTPv2-allowed prefix but is not intended for the Scheduke
+    pools allowlist.
 
     Args:
         requests: A dictionary of legacy V1 requests.
 
     Returns:
-        A dictionary/Struct of legacy V1 requests, with the `runCtpv2WithQs` field set to True for requests that meet the criteria
-        of being both targeted for the main pool and part of the enabled experiment.
+        A dictionary/Struct of legacy V1 requests, with the `runCtpv2WithQs`
+        field set to True for requests that meet either (1) the criteria of
+        being targeted for the main pool and part of the enabled experiment, or
+        (2) having a CTPv2-allowed prefix but not being in the Scheduke pools
+        allowlist
     """
-    if 'chromeos.cros_infra_config.ctpv2_main_pool' in self.m.cros_infra_config.experiments:  # pragma: no cover
-      for request in requests.values():
-        params = self.get_val_from_obj_or_dict(request, 'params')
-        if params is not None and self._is_main_pool_request(params):
-          # If params is a dict
-          if isinstance(params, dict):
-            params['runCtpv2WithQs'] = True
-          # If params is a protobuf Struct
-          elif isinstance(params, Struct):
-            params.fields['runCtpv2WithQs'].bool_value = True
-          # If params is another type of object
-          else:
-            setattr(params, 'run_ctpv2_with_qs', True)
+    for request in requests.values():  # pragma: no cover
+      params = self.get_val_from_obj_or_dict(request, 'params')
+      ctp2_exp_enabled = 'chromeos.cros_infra_config.ctpv2_main_pool' in self.m.cros_infra_config.experiments
+      in_main_pool = params is not None and self._is_main_pool_request(params)
+      ctpv2_outside_of_pool_allowlist = (
+          self._has_ctpv2_allowed_prefix(params) and
+          not self._is_allowed_pool(params))
+      if (in_main_pool and ctp2_exp_enabled) or ctpv2_outside_of_pool_allowlist:
+        _set_run_ctpv2_with_qs_param(params)
 
   def _is_main_pool_request(self, params):  # pragma: no cover
     # get scheduling info from params
@@ -208,3 +210,15 @@ class Ctpv2Command(recipe_api.RecipeApi):
     if key in obj_or_dict:
       return obj_or_dict[key]
     return None
+
+
+def _set_run_ctpv2_with_qs_param(params):  # pragma: no cover
+  # If params is a dict
+  if isinstance(params, dict):
+    params['runCtpv2WithQs'] = True
+  # If params is a protobuf Struct
+  elif isinstance(params, Struct):
+    params.fields['runCtpv2WithQs'].bool_value = True
+  # If params is another type of object
+  else:
+    setattr(params, 'run_ctpv2_with_qs', True)
