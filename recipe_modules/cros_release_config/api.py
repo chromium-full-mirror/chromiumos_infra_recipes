@@ -50,6 +50,7 @@ TEST_DATA = ReleaseBuilders(builders=[
 
 RELEASE_BRANCH_REGEX = r'release-R(\d+)-\d+.B'
 MILESTONE_BRANCH_REGEX = r'(?:firmware|release)-R(\d+)-\d+.B'
+FW_MILESTONE_BRANCH_REGEX = r'firmware-ec-R(\d+)-\d+\.\d+.B'
 FIRMWARE_BRANCH_REGEX = r'firmware-([a-zA-Z0-9.]+-)+([0-9]+\.)+B(-[a-z0-9_.-]+)?$'
 
 class CrosReleaseConfigApi(recipe_api.RecipeApi):
@@ -72,6 +73,9 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
       containing "R127"), or None if no milestone number is found.
     """
     res = re.search(MILESTONE_BRANCH_REGEX, branch)
+    if res:
+      return int(res.group(1))
+    res = re.search(FW_MILESTONE_BRANCH_REGEX, branch)
     if res:
       return int(res.group(1))
     return None
@@ -156,7 +160,8 @@ class CrosReleaseConfigApi(recipe_api.RecipeApi):
 
     Args:
       branch: Release, stabilize or firmware branch, e.g. "release-R89-13729.B",
-        "stabilize-15129.B", or "firmware-R126-12345.B".
+        "stabilize-15129.B", or "firmware-R126-12345.B",
+        or "firmware-ec-R126-12345.2.B".
       auto_submit: Whether to autosubmit the config change.
       dryrun: If in dryrun mode, we'll abandon the change.
     """

@@ -250,6 +250,30 @@ def GenTests(api):
   )
 
   yield api.test(
+      'firmware-ec-branch',
+      api.properties(
+          **{
+              'branch':
+                  'firmware-ec-R126-12345.2.B',
+              '$chromeos/cros_release_config':
+                  CrosReleaseConfigProperties(
+                      reviewers=[Email(email='jbettis@google.com')], ccs=[
+                          Email(email='chromeos-firmware@google.com')
+                      ], keep_n_milestones=3)
+          }),
+      api.post_process(
+          post_process.StepCommandContains,
+          'update config.write release/firmware_builders.textpb', [
+              expected_config(
+                  MAIN_BLOCK, BLOCK_EXPIRATION,
+                  new_firmware_block(126, 'firmware-ec-R126-12345.2.B'),
+                  BLOCK_3, BLOCK_2, BLOCK_1)
+          ]),
+      api.post_check(post_process.StepSuccess, 'update config'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
       'firmware-branch-android',
       api.properties(
           **{

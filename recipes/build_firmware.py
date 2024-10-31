@@ -522,7 +522,7 @@ def GenTests(api):
              input_properties={'firmware_location': common_pb2.PLATFORM_ZEPHYR})
 
   yield test(
-      'ec-branch-postsubmit',
+      'fw-branch-postsubmit',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
@@ -538,6 +538,28 @@ def GenTests(api):
               'host': 'chrome-internal.googlesource.com',
               'project': 'chromeos/manifest-internal',
               'ref': 'refs/heads/firmware-R126-15885.B',
+          },
+          'set_suite_scheduling': True,
+      },
+  )
+
+  yield test(
+      'ec-branch-postsubmit',
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifactsd33fvz7t/firmware_metadata.jsonpb'),
+      builder='firmware-ec-R126-15886.2.B-branch',
+      input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'attestation_eligible': True,
+          'buildspec_gs_path': 'gs://chromeos-manifest-versions/buildspecs/',
+          'bump_version': True,
+          'gitiles_commit': {
+              'host': 'chrome-internal.googlesource.com',
+              'project': 'chromeos/manifest-internal',
+              'ref': 'refs/heads/firmware-ec-R126-15886.2.B',
           },
           'set_suite_scheduling': True,
       },

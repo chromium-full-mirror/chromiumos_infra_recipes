@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "checking attestation eligibility",
     "~followup_annotations": [
-      "@@@STEP_TEXT@firmware-ec-R126-15886.2.B-branch NOT attestation eligible@@@"
+      "@@@STEP_TEXT@firmware-R126-15885.B-branch NOT attestation eligible@@@"
     ]
   },
   {
@@ -59,7 +59,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"firmware-ec-R126-15886.2.B-branch\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"firmware-R126-15885.B-branch\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"firmware\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
@@ -268,12 +268,12 @@
       }
     },
     "name": "configure builder.cros_infra_config.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"firmware-ec-R126-15886.2.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"firmware-R126-15885.B\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"firmware-ec-R126-15886.2.B-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"firmware-R126-15885.B-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -291,7 +291,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"firmware-ec-R126-15886.2.B-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/firmware-ec-R126-15886.2.B\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"firmware-R126-15885.B-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/firmware-R126-15885.B\\\"\\n}\"@@@"
     ]
   },
   {
@@ -299,7 +299,7 @@
     "name": "configure builder.cros_infra_config.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-ec-R126-15886.2.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-ec-R126-15886.2.B\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-R126-15885.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-R126-15885.B\"}@@@"
     ]
   },
   {
@@ -1304,7 +1304,7 @@
     "cmd": [],
     "name": "set initial_repo_state",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"firmware-ec-R126-15886.2.B\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"firmware-R126-15885.B\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1315,7 +1315,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"firmware-ec-R126-15886.2.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"firmware-R126-15885.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1334,7 +1334,7 @@
     "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"firmware-ec-R126-15886.2.B\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"firmware-R126-15885.B\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1345,7 +1345,7 @@
     "cmd": [],
     "name": "ensure synced checkout",
     "~followup_annotations": [
-      "@@@STEP_TEXT@cache tracking \"firmware-ec-R126-15886.2.B\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"firmware-R126-15885.B\" branch@@@"
     ]
   },
   {
@@ -1385,7 +1385,7 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "firmware-ec-R126-15886.2.B",
+      "firmware-R126-15885.B",
       "--groups",
       "all",
       "--repo-rev=stable",
@@ -1873,7 +1873,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"firmware-ec-R126-15886.2.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"firmware-R126-15885.B\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CLEANUP]/chromiumos_workspace/.recipes_state.json"
     ],
     "infra_step": true,
@@ -1892,7 +1892,7 @@
     "name": "Write proto to [CLEANUP]/chromiumos_workspace/.recipes_state.json (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"firmware-ec-R126-15886.2.B\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"firmware-R126-15885.B\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1965,7 +1965,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/firmware-ec-R126-15886.2.B-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/firmware-R126-15885.B-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -1985,7 +1985,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to gitiles commit.fetch firmware-ec-R126-15886.2.B-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit.fetch firmware-R126-15885.B-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2304,7 +2304,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA:"
+      "firmware-R126-15885.B-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2354,7 +2354,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA",
+      "firmware-R126-15885.B-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -2387,7 +2387,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA",
+      "firmware-R126-15885.B-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -2418,7 +2418,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gitiles_commit\": {\n    \"commit_hash\": \"firmware-ec-R126-15886.2.B-HEAD-SHA\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"refs/heads/firmware-ec-R126-15886.2.B\"\n  }\n}",
+      "{\n  \"gitiles_commit\": {\n    \"commit_hash\": \"firmware-R126-15885.B-HEAD-SHA\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"refs/heads/firmware-R126-15885.B\"\n  }\n}",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -2440,11 +2440,11 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@  \"gitiles_commit\": {@@@",
-      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"firmware-ec-R126-15886.2.B-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"firmware-R126-15885.B-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"host\": \"chrome-internal.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"position\": \"999\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"refs/heads/firmware-ec-R126-15886.2.B\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"refs/heads/firmware-R126-15885.B\"@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@  }@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
       "@@@STEP_LOG_END@sources.jsonpb@@@"
@@ -2460,7 +2460,7 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
-      "gs://chromeos-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+      "gs://chromeos-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -2480,7 +2480,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
     ]
   },
   {
@@ -2491,7 +2491,7 @@
     "cmd": [
       "git",
       "checkout",
-      "firmware-ec-R126-15886.2.B"
+      "firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
@@ -2646,7 +2646,7 @@
       "--chromiumos_overlay_repo",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
       "--bump_from_branch_name",
-      "firmware-ec-R126-15886.2.B"
+      "firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
@@ -2716,7 +2716,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA:"
+      "firmware-R126-15885.B-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -2766,7 +2766,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA",
+      "firmware-R126-15885.B-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -2837,7 +2837,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "Increment to version R99-1234.56.0-101\n\nGenerated by firmware-ec-R126-15886.2.B-branch.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_version/bump_version",
+      "Increment to version R99-1234.56.0-101\n\nGenerated by firmware-R126-15885.B-branch.\n\nCr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184\nCr-Automation-Id: cros_version/bump_version",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
@@ -2859,7 +2859,7 @@
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Increment to version R99-1234.56.0-101@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by firmware-ec-R126-15886.2.B-branch.@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@Generated by firmware-R126-15885.B-branch.@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Build-Url: https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@Cr-Automation-Id: cros_version/bump_version@@@",
@@ -2896,7 +2896,7 @@
     "cmd": [
       "git",
       "branch",
-      "--set-upstream-to=cros/firmware-ec-R126-15886.2.B"
+      "--set-upstream-to=cros/firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
@@ -3056,8 +3056,8 @@
     "cmd": [
       "git",
       "branch",
-      "firmware-ec-R126-15886.2.B",
-      "/firmware-ec-R126-15886.2.B"
+      "firmware-R126-15885.B",
+      "/firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
@@ -3087,7 +3087,7 @@
       "--force",
       "--send-mail",
       "--target-branch",
-      "refs/heads/firmware-ec-R126-15886.2.B"
+      "refs/heads/firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "env_suffixes": {
@@ -3378,7 +3378,7 @@
       "git",
       "fetch",
       "cros",
-      "firmware-ec-R126-15886.2.B:"
+      "firmware-R126-15885.B:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "infra_step": true,
@@ -3430,7 +3430,7 @@
       "git",
       "reset",
       "--hard",
-      "cros/firmware-ec-R126-15886.2.B"
+      "cros/firmware-R126-15885.B"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay",
     "luci_context": {
@@ -3500,7 +3500,7 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA:"
+      "firmware-R126-15885.B-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
@@ -3550,7 +3550,7 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "firmware-ec-R126-15886.2.B-HEAD-SHA",
+      "firmware-R126-15885.B-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
@@ -5715,7 +5715,7 @@
     "cmd": [],
     "name": "output got_revision",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@got_revision@\"firmware-ec-R126-15886.2.B-HEAD-SHA\"@@@"
+      "@@@SET_BUILD_PROPERTY@got_revision@\"firmware-R126-15885.B-HEAD-SHA\"@@@"
     ]
   },
   {
@@ -6026,7 +6026,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -6397,7 +6397,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184\"@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -6414,7 +6414,7 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -6441,14 +6441,14 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../artifactsd33fvz7t/myst.firmware.tbz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../artifactsd33fvz7t/firmware_metadata.jsonpb\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../artifactsd33fvz7t/tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../artifactsd33fvz7t/myst.firmware.tbz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../artifactsd33fvz7t/firmware_metadata.jsonpb\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../artifactsd33fvz7t/tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184\"}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "schedule signing build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-ec-R126-15886.2.B-branch<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL_INFO': ['../artifactsd33fvz7t/firmware_metadata.jsonpb'], 'FIRMWARE_TARBALL': ['../artifactsd33fvz7t/myst.firmware.tbz2'], 'FIRMWARE_TOKEN_DATABASE': ['../artifactsd33fvz7t/tokens.bin'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@"
+      "@@@STEP_TEXT@builder_name=firmware-R126-15885.B-branch<br/>signing_allowed_builder_names=[]<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL_INFO': ['../artifactsd33fvz7t/firmware_metadata.jsonpb'], 'FIRMWARE_TARBALL': ['../artifactsd33fvz7t/myst.firmware.tbz2'], 'FIRMWARE_TOKEN_DATABASE': ['../artifactsd33fvz7t/tokens.bin'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@"
     ]
   },
   {
@@ -6471,7 +6471,7 @@
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@Publishing ti50.tar.bz2@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL_INFO': ['../artifactsd33fvz7t/firmware_metadata.jsonpb'], 'FIRMWARE_TARBALL': ['../artifactsd33fvz7t/myst.firmware.tbz2'], 'FIRMWARE_TOKEN_DATABASE': ['../artifactsd33fvz7t/tokens.bin'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL_INFO': ['../artifactsd33fvz7t/firmware_metadata.jsonpb'], 'FIRMWARE_TARBALL': ['../artifactsd33fvz7t/myst.firmware.tbz2'], 'FIRMWARE_TOKEN_DATABASE': ['../artifactsd33fvz7t/tokens.bin'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },
@@ -6532,7 +6532,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox_EC.tbz2']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['brox_EC.tbz2']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -6549,7 +6549,7 @@
       "@@@STEP_LOG_LINE@message@  },@@@",
       "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-ec-R126-15886.2.B\"@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-R126-15885.B\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"name\": \"brox\"@@@",
@@ -6575,7 +6575,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI9ChwKGmZpcm13YXJlLWVjLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMEAB',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI4ChcKFWZpcm13YXJlLVIxMjYtMTU4ODUuQhoGCgRicm94MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAQ==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -6602,7 +6602,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI9ChwKGmZpcm13YXJlLWVjLVIxMjYtMTU4ODYuMi5CGgYKBGJyb3gyBggFEgI5OTINCAQSCTEyMzQuNTYuMEAB\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI4ChcKFWZpcm13YXJlLVIxMjYtMTU4ODUuQhoGCgRicm94MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6616,7 +6616,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ec-R126-15886.2.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['ti50.tar.bz2']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-R126-15885.B-branch/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['ti50.tar.bz2']})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },
@@ -6633,7 +6633,7 @@
       "@@@STEP_LOG_LINE@message@  },@@@",
       "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
       "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-ec-R126-15886.2.B\"@@@",
+      "@@@STEP_LOG_LINE@message@      \"name\": \"firmware-R126-15885.B\"@@@",
       "@@@STEP_LOG_LINE@message@    },@@@",
       "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
       "@@@STEP_LOG_LINE@message@      \"name\": \"betty\"@@@",
@@ -6659,7 +6659,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI+ChwKGmZpcm13YXJlLWVjLVIxMjYtMTU4ODYuMi5CGgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAg==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCI5ChcKFWZpcm13YXJlLVIxMjYtMTU4ODUuQhoHCgViZXR0eTIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wQAI=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -6686,7 +6686,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI+ChwKGmZpcm13YXJlLWVjLVIxMjYtMTU4ODYuMi5CGgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAg==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCI5ChcKFWZpcm13YXJlLVIxMjYtMTU4ODUuQhoHCgViZXR0eTIGCAUSAjk5Mg0IBBIJMTIzNC41Ni4wQAI=\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -6737,7 +6737,7 @@
       "rdb",
       "stream",
       "-var",
-      "builder_name:firmware-ec-R126-15886.2.B-branch",
+      "builder_name:firmware-R126-15885.B-branch",
       "--",
       "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
@@ -6767,7 +6767,7 @@
       "rdb",
       "stream",
       "-var",
-      "builder_name:firmware-ec-R126-15886.2.B-branch",
+      "builder_name:firmware-R126-15885.B-branch",
       "--",
       "vpython3",
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/util/zephyr_to_resultdb.py",
@@ -7137,7 +7137,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-ec-R126-15886.2.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-ec-R126-15886.2.B\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"firmware-R126-15885.B-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/firmware-R126-15885.B\"}}@@@"
     ]
   },
   {

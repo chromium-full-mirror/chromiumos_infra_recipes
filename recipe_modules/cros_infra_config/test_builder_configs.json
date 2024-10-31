@@ -3809,6 +3809,34 @@
               {
                 "artifactTypes": [
                   "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "firmware",
+        "name": "firmware-ec-R126-15886.2.B-branch",
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO"
                 ]
               }
