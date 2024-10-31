@@ -24,7 +24,6 @@ import PB.chromiumos.common as common_pb2
 from PB.chromite.api.firmware import BuildAllFirmwareRequest
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
-from PB.chromite.api.packages import GetTargetVersionsResponse
 from PB.chromiumos.build_report import BuildReport
 from PB.recipes.chromeos.build_firmware import BuildFirmwareProperties
 from recipe_engine import post_process
@@ -229,9 +228,6 @@ def RunSteps(api, properties):
         if branch.startswith('refs/heads/'):
           branch = branch[len('refs/heads/'):]
         bcs_version = api.cros_version.version
-        target_versions = GetTargetVersionsResponse(
-            milestone_version=str(bcs_version.milestone),
-            platform_version=bcs_version.platform_version)
         step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
         step.logs[
             'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
@@ -247,11 +243,16 @@ def RunSteps(api, properties):
                 metadata_path,
                 FirmwareArtifactInfo,
                 'JSONPB',
+                # The test data can't vary by test case, so include every file
                 test_proto=FirmwareArtifactInfo(objects=[
                     FirmwareArtifactInfo.ObjectInfo(
                         file_name='brox_EC.tbz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
-                            type='EC', board=['brox']))
+                            type='EC', board=['brox'])),
+                    FirmwareArtifactInfo.ObjectInfo(
+                        file_name='ti50.tar.bz2',
+                        tarball_info=FirmwareArtifactInfo.TarballInfo(
+                            board=['betty'])),
                 ]),
             )
             for obj in metadata.objects:
@@ -260,8 +261,16 @@ def RunSteps(api, properties):
                 for board in obj.tarball_info.board:
                   step.logs['debug'] += f'Publishing {obj.file_name}\n'
                   api.build_reporting.reset_build_report(board)
-                  api.build_reporting.publish_branch(branch)
-                  api.build_reporting.publish_versions(target_versions)
+                  build_report = api.build_reporting.merged_build_report
+                  build_report.status.value = BuildReport.BuildStatus.SUCCESS
+                  build_config = build_report.config
+                  build_config.branch.name = branch
+                  new_ver = build_config.versions.add()
+                  new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
+                  new_ver.value = str(bcs_version.milestone)
+                  new_ver = build_config.versions.add()
+                  new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
+                  new_ver.value = bcs_version.platform_version
                   api.build_reporting.publish_build_artifacts(
                       UploadedArtifacts(uploaded_artifacts.gs_bucket,
                                         uploaded_artifacts.gs_path,
@@ -408,7 +417,7 @@ def _find_files_with_suffix(api, bucket, path, suffix):
 
 def GenTests(api):
 
-  ARTIFACTS = '''{
+  ZEPHYR_ARTIFACTS = '''{
   "artifacts": {
     "artifacts": [
       {
@@ -438,6 +447,33 @@ def GenTests(api):
           {
             "location": 2,
             "path": "[CLEANUP]/artifactsd33fvz7t/tokens.bin"
+          }
+        ]
+      }
+    ]
+  }
+}'''
+
+  TI50_ARTIFACTS = '''{
+  "artifacts": {
+    "artifacts": [
+      {
+        "artifactType": 31,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifactsd33fvz7t/firmware_metadata.jsonpb"
+          }
+        ]
+      },
+      {
+        "artifactType": 30,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifactsd33fvz7t/ti50.tar.bz2"
           }
         ]
       }
@@ -489,7 +525,7 @@ def GenTests(api):
       'ec-branch-postsubmit',
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          ARTIFACTS),
+          ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifactsd33fvz7t/firmware_metadata.jsonpb'),
       builder='firmware-R126-15885.B-branch',
@@ -522,10 +558,24 @@ def GenTests(api):
 
   yield test(
       'firmware-ti50-postsubmit',
-      api.post_process(post_process.DropExpectation),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          TI50_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifactsd33fvz7t/firmware_metadata.jsonpb'),
       builder='firmware-ti50-postsubmit', input_properties={
-          'firmware_location': 3,
-          'chromiumos_sdk_pin_file': sdk_pin_path,
+          'firmware_location':
+              common_pb2.PLATFORM_TI50,
+          'chromiumos_sdk_pin_file':
+              sdk_pin_path,
+          'set_suite_scheduling':
+              True,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit',
+              'firmware-ti50-guc-14778.B-postsubmit',
+              'firmware-ti50-prepvt-15974.B-branch',
+              'firmware-ti50-mp-15980.B-branch'
+          ],
       })
 
   yield test(
