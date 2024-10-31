@@ -45,50 +45,24 @@ INVOCATION_PREFIX = 'invocations/'
 
 NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
-NO_PRE_UPREV_TESTING_EXPECTED_SUMMARY = 'This Uprev CL does not expect any pre-uprev testing.'
-PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed.'
-NO_PRE_UPREV_FOUND_SUMMARY = (
+PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed. \n\nDetails: \n\n{}\n'
+FAILED_PRE_UPREVS_SUMMARY = (
     # Error notice
-    f'No pre-uprev testing identified after {FETCH_DESCRIPTION_TIMEOUT_SEC} seconds.\n\n'
+    'Pre-uprev testing not passed, details:\n\n{}\n\n'
     # Possible action items
-    'Please wait for next uprev or evaulate very carefully if you want to skip pre-uprev testing by chump the CL.'
-)
-NO_PASSING_PRE_UPREV_FOUND_SUMMARY = (
-    # Error notice
-    f'No passing pre-uprev testing after {WAIT_PREUPREV_TIMEOUT_SEC} seconds.\n\n'
-    # Possible action items
-    'Please wait for next uprev or evaulate very carefully if you want to skip pre-uprev testing by chump the CL.'
-)
-FAILED_PRE_UPREVS_SUMMARY_TEMPLATE = (
-    # Error notice
-    'Pre-uprev testing not passed, details:\n\n{builder.summary_markdown}\n\n'
-    # Possible action items
-    'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
-    'and wait for next pre-uprev. You can override by chump the CL but it is discouraged.'
-)
+    'Please check the test failures, fix the failures (land a fix or revert '
+    'culprit on Chromium) and wait for next pre-uprev. You can override by '
+    'chump the CL but it is strongly discouraged.')
 REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
     # Error notice
     'Failed to find required pre-uprev builders\n'
     # Possible action items
     'Please retry later or wait for next uprev\n.')
 
-NO_CL_FOUND = RawResult(status=common_pb2.SUCCESS,
+NO_CL_FOUND = RawResult(status=common_pb2.INFRA_FAILURE,
                         summary_markdown=NO_CL_FOUND_SUMMARY)
 NOT_AN_UPREV_CL = RawResult(status=common_pb2.SUCCESS,
                             summary_markdown=NOT_AN_UPREV_CL_SUMMARY)
-NO_PRE_UPREV_TESTING_EXPECTED = RawResult(
-    status=common_pb2.SUCCESS,
-    summary_markdown=NO_PRE_UPREV_TESTING_EXPECTED_SUMMARY)
-PRE_UPREV_PASS = RawResult(status=common_pb2.SUCCESS,
-                           summary_markdown=PRE_UPREV_PASS_SUMMARY)
-NO_PRE_UPREV_FOUND = RawResult(status=common_pb2.FAILURE,
-                               summary_markdown=NO_PRE_UPREV_FOUND_SUMMARY)
-NO_PASSING_PRE_UPREV_FOUND = RawResult(
-    status=common_pb2.FAILURE,
-    summary_markdown=NO_PASSING_PRE_UPREV_FOUND_SUMMARY)
-REQUIRED_PRE_UPREV_BUILDERS_MISSING = RawResult(
-    status=common_pb2.FAILURE,
-    summary_markdown=REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY)
 
 
 
@@ -106,33 +80,6 @@ BUILD_FIELDS_TO_RETRIEVE = [
     'summary_markdown',
     'infra.resultdb',
 ]
-
-
-def GetClPreUprevTesting(api: RecipeTestApi, cl: common_pb2.GerritChange):
-  # We're not able to use api.git_footers.from_gerrit_change because the
-  # initial placeholder is part of the commit message added by pupr, which
-  # cannot be put as footer. so parse line-by-line.
-  label = 'Pre-Uprev Testing: '
-  desc = api.gerrit.get_change_description(cl)
-  for line in desc.splitlines():
-    if not line.startswith(label):
-      continue
-    line = line[len(label):].strip()
-    return line
-  return None
-
-
-def PreUprevTestPassed(desc: str):
-  return desc.startswith('PASSED')
-
-
-def GetPreUprevId(api, desc: str):
-  m = PRE_UPREV_STATUS_BBID_EXTRACTOR.match(desc)
-  if m:
-    with api.step.nest('Extract pre-uprev bbid') as step:
-      step.step_summary_text = m.group(1)
-      return int(m.group(1))
-  return None
 
 
 WantedBuildConfig = namedtuple('WantedBuildConfig', ['oneof'])
@@ -186,12 +133,34 @@ def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
   return list(map(lambda b: int(b.id), builders))
 
 
+def QuoteMd(s: Optional[str]) -> str:
+  if not s:  # pragma: nocover
+    return ''
+  result = ''
+  for l in s.splitlines():
+    result += '> '
+    result += l
+    result += '\n'
+  return result
+
+
+def ToBuildersLinkMd(builders: List[build_pb2.Build],
+                     include_details=False) -> str:
+  text = ''
+  for builder in builders:
+    status = common_pb2.Status.Name(builder.status)
+    text += (f'- {builder.builder.builder}: ' +
+             f'[{status}](https://ci.chromium.org/ui/b/{builder.id})\n')
+    if include_details:
+      text += QuoteMd(builder.summary_markdown)
+  return text
+
+
 def RunSteps(api: RecipeApi):
   cl = api.buildbucket.build.input.gerrit_changes
   if not cl:
     return NO_CL_FOUND
   cl = cl[0]
-  cl.patchset = 0
   patch_sets = api.gerrit.fetch_patch_sets([cl])
   if patch_sets[0].topic != UPREV_CL_TOPIC:
     return NOT_AN_UPREV_CL
@@ -213,33 +182,29 @@ def RunSteps(api: RecipeApi):
     )
     preuprevs = PreUprevBuilders(api, builds)
     if preuprevs is None:
-      return REQUIRED_PRE_UPREV_BUILDERS_MISSING
+      return RawResult(
+          status=common_pb2.FAILURE,
+          summary_markdown=REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY)
   with api.step.nest('Check pre-uprev results') as step:
-    # TODO(b/375115029): implement details of result processing.
-    api.buildbucket.collect_builds(
+    builds = api.buildbucket.collect_builds(
         ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
         timeout=WAIT_PREUPREV_TIMEOUT_SEC)
-  with api.step.nest('Fetch pre-uprev testing result'):
-    bbid = None
-    for _ in range(0, FETCH_DESCRIPTION_TIMEOUT_SEC,
-                   FETCH_DESCRIPTION_INTERVAL_SEC):
-      detail = GetClPreUprevTesting(api, cl)
-      if not detail:
-        return NO_PRE_UPREV_TESTING_EXPECTED
-      if detail == 'Not Tested':
-        api.time.sleep(FETCH_DESCRIPTION_INTERVAL_SEC, with_step=True)
-        continue
-      if PreUprevTestPassed(detail):
-        return PRE_UPREV_PASS
-      bbid = GetPreUprevId(api, detail)
-      if bbid:
-        break
-    if not bbid:
-      return NO_PRE_UPREV_FOUND
-    builds = api.buildbucket.collect_builds([bbid],
-                                            fields=BUILD_FIELDS_TO_RETRIEVE,
-                                            timeout=WAIT_PREUPREV_TIMEOUT_SEC)
     builders = list(builds.values())
+
+    successful_builds, failed_builds = [], []
+    for builder in builders:
+      with api.step.nest(f'{builder.builder.builder}',
+                         status='last') as task_step:
+        if builder.status == common_pb2.SUCCESS:
+          successful_builds.append(builder)
+          task_step.status = api.step.SUCCESS
+        else:
+          failed_builds.append(builder)
+          task_step.status = (
+              api.step.FAILURE
+              if builder.status == common_pb2.FAILURE else api.step.EXCEPTION)
+          task_step.step_summary_text = builder.summary_markdown
+
     with api.step.nest('including pre-uprev builder results') as step:
       invocations = [
           i.infra.resultdb.invocation
@@ -252,15 +217,17 @@ def RunSteps(api: RecipeApi):
       api.resultdb.include_invocations(
           [inv[len(INVOCATION_PREFIX):] for inv in invocations],
           'include invocations from pre-uprev builders')
-    if PreUprevTestPassed(GetClPreUprevTesting(api, cl)):
-      return PRE_UPREV_PASS
-    if builders:
+
+    if len(failed_builds) > 0:
       return RawResult(
           status=common_pb2.FAILURE,
-          summary_markdown=FAILED_PRE_UPREVS_SUMMARY_TEMPLATE.format(
-              builder=builders[0]),
-      )
-    return NO_PASSING_PRE_UPREV_FOUND
+          summary_markdown=FAILED_PRE_UPREVS_SUMMARY.format(
+              ToBuildersLinkMd(builders, include_details=True)))
+    return RawResult(
+        status=common_pb2.SUCCESS,
+        summary_markdown=PRE_UPREV_PASS_SUMMARY.format(
+            ToBuildersLinkMd(builders)))
+
 
 
 def GenTests(api: RecipeTestApi):
@@ -285,34 +252,57 @@ def GenTests(api: RecipeTestApi):
       return newid
     raise Exception('hash collision')  # pragma: nocover
 
-  def simulate_pre_uprev_builders(api, step, **kwargs):
-    return api.buildbucket.simulated_search_results([
-        build_pb2.Build(
-            id=_name_to_id(k),
-            builder=builder_common_pb2.BuilderID(project='chrome', bucket='ci',
-                                                 builder=_name(k)),
-            status=v,
-            summary_markdown=f'Test {v}',
-            infra=build_pb2.BuildInfra(
-                resultdb=build_pb2.BuildInfra.ResultDB(
-                    invocation='invocations/build-{}-rdb'.format(
-                        _name_to_id(k))),
-            ),
-        ) for k, v in kwargs.items()
-    ], step_name=step)
-
-  def all_pre_uprev_started(api, step):
-    return simulate_pre_uprev_builders(
-        api,
-        step,
-        chromeos_betty_chrome_preuprev=common_pb2.STARTED,
-        chromeos_brya_chrome_preuprev=common_pb2.STARTED,
-        chromeos_jacuzzi_chrome_preuprev=common_pb2.STARTED,
-        chromeos_volteer_chrome_preuprev=common_pb2.STARTED,
-        linux_chromeos_chrome_preuprev=common_pb2.STARTED,
+  def build(name, status):
+    return build_pb2.Build(
+        id=_name_to_id(name),
+        builder=builder_common_pb2.BuilderID(project='chrome', bucket='ci',
+                                             builder=_name(name)),
+        status=status,
+        summary_markdown=f'Test {common_pb2.Status.Name(status)}',
+        infra=build_pb2.BuildInfra(
+            resultdb=build_pb2.BuildInfra.ResultDB(
+                invocation='invocations/build-{}-rdb'.format(_name_to_id(
+                    name))),
+        ),
     )
 
-  def try_build_init(message, topic=UPREV_CL_TOPIC):
+  def simulate_search_pre_uprev_builders(api, step, **kwargs):
+    return api.buildbucket.simulated_search_results(
+        [build(k, v) for k, v in kwargs.items()], step_name=step)
+
+  def pre_uprev_started(
+      api,
+      step,
+      chromeos_betty_chrome_preuprev=common_pb2.STARTED,
+      chromeos_brya_chrome_preuprev=common_pb2.STARTED,
+      chromeos_jacuzzi_chrome_preuprev=common_pb2.STARTED,
+      chromeos_volteer_chrome_preuprev=common_pb2.STARTED,
+      linux_chromeos_chrome_preuprev=common_pb2.STARTED,
+  ):
+    # pylint: disable=unused-argument
+    # locals() will include GenTests.locals() aka other functions defined under
+    # GenTests. We exclude them to only include parameters of this function.
+    # We also exclude None builders.
+    v = {k: v for k, v in locals().items() if not callable(v) and v is not None}
+    return simulate_search_pre_uprev_builders(**v)
+
+  def simulate_collect_pre_uprev_builders(api, step, **kwargs):
+    return api.buildbucket.simulated_collect_output(
+        [build(k, v) for k, v in kwargs.items()], step_name=step)
+
+  def pre_uprev_completed(api, step,
+                          chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
+                          chromeos_brya_chrome_preuprev=common_pb2.SUCCESS,
+                          chromeos_jacuzzi_chrome_preuprev=common_pb2.SUCCESS,
+                          chromeos_volteer_chrome_preuprev=common_pb2.SUCCESS,
+                          linux_chromeos_chrome_preuprev=common_pb2.SUCCESS):
+    # pylint: disable=unused-argument
+    # locals() will include GenTests.locals() aka other functions defined under
+    # GenTests. We exclude them to only include parameters of this function.
+    v = {k: v for k, v in locals().items() if not callable(v)}
+    return simulate_collect_pre_uprev_builders(**v)
+
+  def try_build_with_cl(message, topic=UPREV_CL_TOPIC):
     build = api.buildbucket.try_build(
         builder='chrome-uprev-cq', gerrit_changes=[
             common_pb2.GerritChange(
@@ -334,7 +324,7 @@ def GenTests(api: RecipeTestApi):
 
     change = {
         '_number': CHANGE_NUMBER,
-        'topic': topic,
+        'topic': topic if topic else '',
         'change_id': str(CHANGE_NUMBER),
         'status': 'NEW',
     }
@@ -344,7 +334,7 @@ def GenTests(api: RecipeTestApi):
                                     change=CHANGE_NUMBER, patchset=PATCHSET)
         ], {CHANGE_NUMBER: change})
 
-    if not message:
+    if not message or not topic:
       return build
 
     change = {
@@ -373,113 +363,49 @@ def GenTests(api: RecipeTestApi):
 
     return build
 
-  def try_build(messages, topic=UPREV_CL_TOPIC):
-    build = try_build_init(messages[0][0] if messages else None, topic)
-
-    cnt = 1
-    for idx, message in enumerate(messages):
-      change = {
-          '_number': CHANGE_NUMBER,
-          'topic': topic,
-          'change_id': str(CHANGE_NUMBER),
-          'status': 'NEW',
-          'revision_info': {
-              '_number': PATCHSET + idx,
-              'commit': {
-                  'message': message[0],
-              }
-          }
-      }
-
-      for _ in range(message[1]):
-        step_name = 'Fetch pre-uprev testing result.'
-        if cnt == 1:
-          step_name += f'get CL {CHANGE_NUMBER} description'
-        else:
-          step_name += f'get CL {CHANGE_NUMBER} description ({cnt})'
-        build += api.gerrit.set_gerrit_fetch_changes_response(
-            step_name, [
-                common_pb2.GerritChange(host=GERRIT_HOST, project=PROJECT,
-                                        change=CHANGE_NUMBER, patchset=PATCHSET)
-            ], {CHANGE_NUMBER: change})
-        cnt += 1
-    return build
-
-  def try_build_once(message, **kwargs):
-    return try_build([(message, 1)], **kwargs)
-
   yield api.test(
-      'success-immediate',
-      all_pre_uprev_started(
+      'success',
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          # First 2 fetches are not tested (patchset unchagned).
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           2),
-          # The next fetch returns a new patchset with PASSED result.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/998876\n',
-           1)
-      ]),
-      api.post_check(post_process.SummaryMarkdown,
-                     PRE_UPREV_PASS.summary_markdown),
-      api.post_process(post_process.DoesNotRun,
-                       'Fetch pre-uprev testing result.buildbucket.collect'),
-      cq=True,
-      status='SUCCESS',
-  )
-
-  yield api.test(
-      'success-wait',
-      all_pre_uprev_started(
-          api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          # First 2 fetches are not tested (patchset unchagned).
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           2),
-          # The next fetches is test running.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
-           1),
-          # Collect build finishes.
-          # The next fetch returns a new patchset with PASSED result.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: PASSED https://ci.chromium.org/ui/b/998876\n',
-           1)
-      ]),
-      api.buildbucket.simulated_collect_output([
-          build_pb2.Build(
-              id=998876,
-              status=common_pb2.SUCCESS,
-              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: SUCCESS\n- chromeos-brya-chrome: SUCCESS\n',
-              infra=build_pb2.BuildInfra(
-                  resultdb=build_pb2.BuildInfra.ResultDB(
-                      invocation='invocations/build-998876-rdb'),
-              ),
-          ),
-      ], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
-      api.post_check(post_process.SummaryMarkdown,
-                     PRE_UPREV_PASS.summary_markdown),
-      api.post_process(post_process.MustRun,
-                       'Fetch pre-uprev testing result.buildbucket.collect'),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      api.post_check(post_process.SummaryMarkdown, (
+          'Pre-uprev testing passed. \n\nDetails: \n\n'
+          '- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n'
+          '- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n'
+          '- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n'
+          '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
+          '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
+      )),
       cq=True,
       status='SUCCESS',
   )
 
   yield api.test(
       'not-cq-build', api.buildbucket.ci_build(builder='chrome-uprev-snapshot'),
-      api.post_check(post_process.DoesNotRun, 'Fetch pre-uprev testing result'),
+      api.post_check(post_process.DoesNotRun,
+                     'Search Chrome builders matching buildset'),
+      api.post_check(post_process.DoesNotRun, 'Check pre-uprev results'),
       api.post_check(post_process.SummaryMarkdown,
-                     NO_CL_FOUND.summary_markdown), cq=True, status='SUCCESS')
+                     NO_CL_FOUND.summary_markdown), cq=True,
+      status='INFRA_FAILURE')
 
   yield api.test(
       'cq-build-no-cl',
       api.buildbucket.try_build(builder='chrome-uprev-cq', gerrit_changes=[]),
-      api.post_check(post_process.DoesNotRun, 'Fetch pre-uprev testing result'),
+      api.post_check(post_process.DoesNotRun,
+                     'Search Chrome builders matching buildset'),
+      api.post_check(post_process.DoesNotRun, 'Check pre-uprev results'),
       api.post_check(post_process.SummaryMarkdown,
-                     NO_CL_FOUND.summary_markdown), cq=True, status='SUCCESS')
+                     NO_CL_FOUND.summary_markdown), cq=True,
+      status='INFRA_FAILURE')
 
   yield api.test(
       'not-chrome-uprev-cl',
-      try_build([], topic=''),
-      api.post_check(post_process.DoesNotRun, 'Fetch pre-uprev testing result'),
+      try_build_with_cl('chromeos-chrome: update ebulid.\n', topic=None),
+      api.post_check(post_process.DoesNotRun,
+                     'Search Chrome builders matching buildset'),
+      api.post_check(post_process.DoesNotRun, 'Check pre-uprev results'),
       api.post_check(post_process.SummaryMarkdown,
                      NOT_AN_UPREV_CL.summary_markdown),
       cq=True,
@@ -487,8 +413,8 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'no-pre-uprev-builders',
-      try_build_init('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      'missing-pre-uprevs',
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
       api.post_check(post_process.SummaryMarkdown,
                      REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY),
       cq=True,
@@ -496,115 +422,41 @@ def GenTests(api: RecipeTestApi):
   )
 
   yield api.test(
-      'not-expecting-preuprev',
-      all_pre_uprev_started(
-          api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build_once('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      'missing-pre-uprevs-partial',
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search',
+          chromeos_betty_chrome_preuprev=None),
       api.post_check(post_process.SummaryMarkdown,
-                     NO_PRE_UPREV_TESTING_EXPECTED.summary_markdown),
-      cq=True,
-      status='SUCCESS',
-  )
-
-  yield api.test(
-      'no-preuprev-results',
-      all_pre_uprev_started(
-          api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          # Infinite fetches returns Not Tested message
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           int(FETCH_DESCRIPTION_TIMEOUT_SEC / FETCH_DESCRIPTION_INTERVAL_SEC)),
-      ]),
-      api.post_check(post_process.SummaryMarkdown,
-                     NO_PRE_UPREV_FOUND.summary_markdown),
-      cq=True,
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'unexpected',
-      all_pre_uprev_started(
-          api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           1),
-          # Infinite fetches returns unexpected message.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Broken\n',
-           int(FETCH_DESCRIPTION_TIMEOUT_SEC / FETCH_DESCRIPTION_INTERVAL_SEC) -
-           1),
-      ]),
-      api.post_check(post_process.SummaryMarkdown,
-                     NO_PRE_UPREV_FOUND.summary_markdown),
-      api.post_process(post_process.DropExpectation),
+                     REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY),
       cq=True,
       status='FAILURE',
   )
 
   yield api.test(
       'pre-uprev-failed',
-      all_pre_uprev_started(
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          # First 2 fetches are not tested (patchset unchagned).
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           2),
-          # The next fetches is test running.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
-           1),
-          # Collect build finishes.
-          # The pre-uprev status is not updated to commit message. probably
-          # because the build didn't finish normally or did not pass.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
-           1)
-      ]),
-      api.buildbucket.simulated_collect_output([
-          build_pb2.Build(
-              id=998876,
-              status=common_pb2.FAILURE,
-              summary_markdown='CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n',
-              infra=build_pb2.BuildInfra(
-                  resultdb=build_pb2.BuildInfra.ResultDB(
-                      invocation='invocations/build-998876-rdb'),
-              ),
-          ),
-      ], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
-      api.post_process(post_process.MustRun,
-                       'Fetch pre-uprev testing result.buildbucket.collect'),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect',
+                          chromeos_betty_chrome_preuprev=common_pb2.FAILURE),
       api.post_check(
           post_process.SummaryMarkdown,
           ('Pre-uprev testing not passed, details:\n\n'
-           'CL: xxx \n\n- chromeos-betty-chrome: FAILED\n> chrome_all_tast_tests_failed\n- chromeos-brya-chrome: SUCCESS\n\n\n'
+           '- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n'
+           '> Test FAILURE\n'
+           '- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n'
+           '> Test SUCCESS\n'
+           '- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n'
+           '> Test SUCCESS\n'
+           '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
+           '> Test SUCCESS\n'
+           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n'
+           '> Test SUCCESS\n\n\n'
            'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
-           'and wait for next pre-uprev. You can override by chump the CL but it is discouraged.'
+           'and wait for next pre-uprev. You can override by chump the CL but it is strongly discouraged.'
           ),
       ),
-      cq=True,
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'collect-empty-results',
-      all_pre_uprev_started(
-          api, 'Search Chrome builders matching buildset.buildbucket.search'),
-      try_build([
-          # First 2 fetches are not tested (patchset unchagned).
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: Not Tested\n',
-           2),
-          # The next fetches is test running.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
-           1),
-          # Collect build finishes.
-          # The pre-uprev status is not updated to commit message. probably
-          # because the build didn't finish normally or did not pass.
-          ('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n\nPre-Uprev Testing: See https://ci.chromium.org/ui/b/998876\n',
-           1)
-      ]),
-      api.buildbucket.simulated_collect_output(
-          [], step_name='Fetch pre-uprev testing result.buildbucket.collect'),
-      api.post_process(post_process.MustRun,
-                       'Fetch pre-uprev testing result.buildbucket.collect'),
-      api.post_check(post_process.SummaryMarkdown,
-                     NO_PASSING_PRE_UPREV_FOUND_SUMMARY),
       cq=True,
       status='FAILURE',
   )
