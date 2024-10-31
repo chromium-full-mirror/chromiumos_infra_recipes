@@ -427,8 +427,8 @@ class SkylabApi(recipe_api.RecipeApi):
       return tasks
 
   def _set_pool(self, scheduling, pool_name):
-    if pool_name == 'DUT_POOL_QUOTA':
-      scheduling.managed_pool = Request.Params.Scheduling.MANAGED_POOL_QUOTA
+    if pool_name in ('MANAGED_POOL_QUOTA', 'quota'):  #pragma: no cover
+      scheduling.unmanaged_pool = 'DUT_POOL_QUOTA'
     else:
       scheduling.unmanaged_pool = pool_name
 
