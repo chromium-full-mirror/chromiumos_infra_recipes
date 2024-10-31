@@ -6,7 +6,9 @@
 
 DEPS = [
     'recipe_engine/file',
+    'depot_tools/gsutil',
     'recipe_engine/path',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
     'cros_release_util',

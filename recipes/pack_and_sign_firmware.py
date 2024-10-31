@@ -26,6 +26,7 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/path',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'build_menu',
     'cros_artifacts',
@@ -34,6 +35,7 @@ DEPS = [
     'cros_source',
     'git',
     'signing',
+    'signing_utils',
     'src_state',
 ]
 
@@ -88,11 +90,14 @@ def RunSteps(api: RecipeApi):
         ]
         api.step('call pack_firmware', pack_fw_cmd)
 
+    # Get shellball version by channel.
+    new_shellball_versions = api.signing.get_shellball_versions(
+        api.cros_release.channels)
+
     # Sign shellball.
     if api._test_data.enabled:  # pylint: disable=protected-access
       api.signing.test_api.signing_config_test_data = TEST_SIGNING_CONFIG
     api.cros_release.validate_sign_types()
-    # TODO(b/351853211): Ensure version is correct based on branch or config.
     with api.step.nest('sign firmware shellball') as pres:
       signed_build_list = api.signing.sign_artifacts(
           sign_types=[common_pb2.IMAGE_TYPE_SHELLBALL],
@@ -100,6 +105,8 @@ def RunSteps(api: RecipeApi):
           local_artifact_dir=output_artifact_dir, upload_unsigned=False)
       pres.logs['signed builds'] = str(signed_build_list)
 
+    # Advance LATEST-SHELLBALL for each channel.
+    api.signing.upload_shellball_latest_files(new_shellball_versions)
 
 # Sample SignImageResponse for testing.
 sample_response = SignImageResponse(
@@ -136,11 +143,15 @@ def GenTests(api: RecipeTestApi):
       api.cros_build_api.set_api_return(
           'sign firmware shellball.sign artifacts.call BAPI',
           'ImageService/SignImage', MessageToJson(sample_response)),
+      api.step_data(
+          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          stdout=api.raw_io.output('3.0')),
       api.post_check(
           post_process.DoesNotRun,
           'sign firmware shellball.sign artifacts.upload unsigned artifacts to '
           'signed-firmware bucket.upload unsigned artifacts for CHANNEL_CANARY'
-      ), api.post_check(post_process.MustRun, 'pack firmware'),
+      ),
+      api.post_check(post_process.MustRun, 'pack firmware'),
       api.post_check(
           post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
@@ -149,8 +160,10 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
           'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY'),
-      api.post_process(post_process.DropExpectation), build_target='kukui',
-      builder='firmware-packager-android-kukui-main')
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='firmware-packager-android-kukui-main',
+  )
 
   yield api.build_menu.test(
       'use-dev-keys',
@@ -165,10 +178,15 @@ def GenTests(api: RecipeTestApi):
                                         gs_upload_bucket='signed-firmware',
                                         use_dev_keys=True)),
           }),
+      api.step_data(
+          'get latest shellball version by channel.gsutil reading LATEST-SHELLBALL version for canary-channel',
+          retcode=1),
       api.post_check(
           post_process.LogContains,
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.'
           'ImageService/SignImage', 'request',
           ['\"keyset\": \"DevPreMPKeys\"']),
-      api.post_process(post_process.DropExpectation), build_target='kukui',
-      builder='firmware-packager-android-kukui-main')
+      api.post_process(post_process.DropExpectation),
+      build_target='kukui',
+      builder='firmware-packager-android-kukui-main',
+  )

@@ -777,3 +777,31 @@ class SigningApi(recipe_api.RecipeApi):
 
       if ex:
         raise ex
+
+  def get_shellball_versions(
+      self, channels: List[common_pb2.Channel]) -> Dict[str, str]:
+    """Returns mapping of channel -> shellball version.
+
+    Fetch LATEST-SHELLBALL per-channel from GS and increment to return the new
+    version. Shellball versions are separate from platform version since they
+    are based on pinned config.
+    """
+    current_shellball_versions = self.m.signing_utils.get_current_shellball_versions(
+        channels, self.gs_upload_bucket)
+    return self.m.signing_utils.increment_shellball_major_versions(
+        current_shellball_versions)
+
+  def upload_shellball_latest_files(self,
+                                    shellball_versions: Dict[str, str]) -> None:
+    """Upload LATEST-SHELLBALL files per channel."""
+    latest_filename = 'LATEST-SHELLBALL'
+    for channel_str, shellball_version in shellball_versions.items():
+      local_version_file_path = self.m.path.cleanup_dir / f'{channel_str}-{latest_filename}'
+      self.m.file.write_text(f'write latest file for {channel_str}',
+                             local_version_file_path, shellball_version)
+
+      remote_version_file_bucket = f'{self.gs_upload_bucket}/{channel_str}/{self.m.build_menu.build_target.name}'
+      self.m.gsutil.upload(local_version_file_path, remote_version_file_bucket,
+                           latest_filename,
+                           name='upload {}'.format(latest_filename))
+    self.m.easy.set_properties_step(**{latest_filename: shellball_versions})
