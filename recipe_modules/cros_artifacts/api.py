@@ -66,7 +66,8 @@ _DEFAULT_MAX_CONCURRENT_BUNDLING_REQUESTS = 1
 
 class UploadedArtifacts(
     collections.namedtuple('UploadedArtifacts',
-                           'gs_bucket gs_path files_by_artifact')):
+                           'gs_bucket gs_path files_by_artifact published',
+                           defaults=(None,))):
   __slots__ = ()
 
   def union(self, other):
@@ -74,8 +75,9 @@ class UploadedArtifacts(
 
     gs_bucket and gs_path must be the same.
 
-    Keys (i.e. artifact types) in files_by_artifacts are unioned. If both self
-    and other have the same key, the values (i.e. files) are unioned.
+    Keys (i.e. artifact types) in files_by_artifacts and published are unioned.
+    If both self and other have the same key, the values (i.e. files) are
+    unioned.
 
     Args:
       other: Another UploadedArtifacts.
@@ -85,15 +87,24 @@ class UploadedArtifacts(
     """
     assert self.gs_bucket == other.gs_bucket, f'{self.gs_bucket} != {other.gs_bucket}'
     assert self.gs_path == other.gs_path, f'{self.gs_path} != {other.gs_path}'
+
     value = lambda inst, key: inst.files_by_artifact.get(key, [])
     keys = set(self.files_by_artifact.keys()) | set(
         other.files_by_artifact.keys())
-
-    result = {
+    merged_files_by_artifact = {
         k: sorted(set(value(self, k) + value(other, k))) for k in sorted(keys)
     }
 
-    return UploadedArtifacts(self.gs_bucket, self.gs_path, result)
+    value = lambda inst, key: inst.published.get(key, []
+                                                ) if inst.published else []
+    keys = set(self.published.keys() if self.published else []) | set(
+        other.published.keys() if other.published else [])
+    merged_published = {
+        k: value(self, k) + value(other, k) for k in sorted(keys)
+    }
+
+    return UploadedArtifacts(self.gs_bucket, self.gs_path,
+                             merged_files_by_artifact, merged_published)
 
 
 class CrosArtifactsApi(recipe_api.RecipeApi):
@@ -620,7 +631,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       name (str): The step name.  Defaults to 'publish artifacts'.
 
     Returns:
-      {name: link} of gs publishing directories used.
+      A tuple (links, published), where:
+        links is a dict {name: link} of gs publishing directories used
+        published is a dict {name: link} of published locations for each file
     """
     published = collections.defaultdict(list)
     links = {}
@@ -635,7 +648,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         if out_info.get('gsLocations') and out_info.get('artifactTypes'):
           to_publish.append(out_info)
     if not to_publish:
-      return links
+      return links, published
 
     # At this point, we know that we have at least one output artifact that has
     # both artifactTypes and gsLocations for publication.
@@ -682,7 +695,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     self.m.easy.set_properties_step(published=published,
                                     step_name='publish artifact GS paths')
 
-    return links
+    return links, published
 
   @staticmethod
   def has_output_artifacts(artifacts_info: ArtifactsByService) -> bool:
@@ -974,9 +987,12 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # successfully, and can therefore copy them GS->GS, and avoid
         # re-uploading. Publishing is intentionally nested under upload
         # artifacts.
-        links = self._publish_artifacts(builder_name, sysroot.build_target,
-                                        kind, artifacts_info, upload_uri,
-                                        files_by_artifact)
+        links, published = self._publish_artifacts(builder_name,
+                                                   sysroot.build_target, kind,
+                                                   artifacts_info, upload_uri,
+                                                   files_by_artifact)
+        uploaded_artifacts = UploadedArtifacts(
+            gs_bucket, gs_path, {}, published).union(uploaded_artifacts)
         for k, v in sorted(links.items()):
           presentation.links[k] = v
     if failed_artifacts:

@@ -3822,7 +3822,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-cq/R109-15236.0.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"target/firmware_from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"target/firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-atlas-cq/R109-15236.0.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {

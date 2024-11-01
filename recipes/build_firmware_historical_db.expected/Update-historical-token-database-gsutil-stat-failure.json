@@ -4224,7 +4224,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../artifactsd33fvz7t/myst.firmware.tbz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../artifactsd33fvz7t/firmware_metadata.jsonpb\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../artifactsd33fvz7t/tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-zephyr-informational/R99-1234.56.0-101-8945511751514863184\"}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../artifactsd33fvz7t/myst.firmware.tbz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../artifactsd33fvz7t/firmware_metadata.jsonpb\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../artifactsd33fvz7t/tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-zephyr-informational/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {

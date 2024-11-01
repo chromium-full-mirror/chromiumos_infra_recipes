@@ -471,7 +471,7 @@
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-release/R12-12345.0.0', files_by_artifact={'DEBUG_SYMBOLS': ['debug.tgz'], 'FACTORY_IMAGE': ['factory_image.zip'], 'FIRMWARE': ['firmware_from_source.tar.bz2'], 'IMAGE_ARCHIVES': ['chromiumos_base_image.tar.xz', 'chromiumos_test_image.tar.xz', 'recovery_image.tar.xz', 'vmlinuz.tar.xz'], 'IMAGE_ZIP': ['image.zip'], 'HWQUAL': ['chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2'], 'SDK_TARBALL': ['/path/to/tarball.tgz']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-release/R12-12345.0.0', files_by_artifact={'DEBUG_SYMBOLS': ['debug.tgz'], 'FACTORY_IMAGE': ['factory_image.zip'], 'FIRMWARE': ['firmware_from_source.tar.bz2'], 'IMAGE_ARCHIVES': ['chromiumos_base_image.tar.xz', 'chromiumos_test_image.tar.xz', 'recovery_image.tar.xz', 'vmlinuz.tar.xz'], 'IMAGE_ZIP': ['image.zip'], 'HWQUAL': ['chromeos-hwqual-build_target-R78-12438.0.0.tar.bz2'], 'SDK_TARBALL': ['/path/to/tarball.tgz']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },

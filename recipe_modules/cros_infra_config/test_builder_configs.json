@@ -3783,6 +3783,9 @@
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO",
                   "FIRMWARE_TOKEN_DATABASE"
+                ],
+                "gsLocations": [
+                  "firmware-image-archive/{builder_name}/{legacy_version}"
                 ]
               }
             ]
@@ -3811,6 +3814,9 @@
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO",
                   "FIRMWARE_TOKEN_DATABASE"
+                ],
+                "gsLocations": [
+                  "firmware-image-archive/{builder_name}/{legacy_version}"
                 ]
               }
             ]
@@ -3868,6 +3874,9 @@
                 "artifactTypes": [
                   "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO"
+                ],
+                "gsLocations": [
+                  "chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}"
                 ]
               }
             ]

@@ -235,6 +235,7 @@ def RunSteps(api, properties):
         step.logs['uploaded_artifacts'] = str(uploaded_artifacts)
         step.logs[
             'debug'] += 'Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO\n'
+        metadata_by_name = {}
         for metadata_path in uploaded_artifacts.files_by_artifact.get(
             'FIRMWARE_TARBALL_INFO', []):
           # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
@@ -250,38 +251,47 @@ def RunSteps(api, properties):
                 # The test data can't vary by test case, so include every file
                 test_proto=FirmwareArtifactInfo(objects=[
                     FirmwareArtifactInfo.ObjectInfo(
-                        file_name='brox_EC.tbz2',
+                        file_name='../../[START_DIR]/brox_EC.tbz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
                             type='EC', board=['brox'])),
                     FirmwareArtifactInfo.ObjectInfo(
-                        file_name='ti50.tar.bz2',
+                        file_name='../../[START_DIR]/ti50.tar.bz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
                             board=['betty'])),
                 ]),
             )
             for obj in metadata.objects:
-              step.logs['debug'] += f'Inspecting object {obj}\n'
-              if obj.HasField('tarball_info'):
-                for board in obj.tarball_info.board:
-                  step.logs['debug'] += f'Publishing {obj.file_name}\n'
-                  api.build_reporting.reset_build_report(board)
-                  build_report = api.build_reporting.merged_build_report
-                  build_report.status.value = BuildReport.BuildStatus.SUCCESS
-                  build_config = build_report.config
-                  build_config.branch.name = branch
-                  new_ver = build_config.versions.add()
-                  new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
-                  new_ver.value = str(bcs_version.milestone)
-                  new_ver = build_config.versions.add()
-                  new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
-                  new_ver.value = bcs_version.platform_version
-                  api.build_reporting.publish_build_artifacts(
-                      UploadedArtifacts(uploaded_artifacts.gs_bucket,
-                                        uploaded_artifacts.gs_path,
-                                        {'FIRMWARE_TARBALL': [obj.file_name]}),
-                      artifact_dir)
+              step.logs[
+                  'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
+              metadata_by_name[obj.file_name] = obj.tarball_info
           else:
             step.logs['debug'] += f'{metadata_path} does not exist\n'
+        if uploaded_artifacts.published:
+          for atype, dests in uploaded_artifacts.published.items():
+            step.logs['debug'] += f'published: {atype}:{dests}\n'
+            for loc in dests:
+              for file in loc['files']:
+                metadata = metadata_by_name.get(file)
+                step.logs[
+                    'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
+                if metadata:
+                  for board in metadata.board:
+                    step.logs['debug'] += f'Publishing {file}\n'
+                    api.build_reporting.reset_build_report(board)
+                    build_report = api.build_reporting.merged_build_report
+                    build_report.status.value = BuildReport.BuildStatus.SUCCESS
+                    build_config = build_report.config
+                    build_config.branch.name = branch
+                    new_ver = build_config.versions.add()
+                    new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_MILESTONE
+                    new_ver.value = str(bcs_version.milestone)
+                    new_ver = build_config.versions.add()
+                    new_ver.kind = BuildReport.BuildConfig.VERSION_KIND_PLATFORM
+                    new_ver.value = bcs_version.platform_version
+                    gs_bucket, gs_path = loc['gs_location'].split('/', 1)
+                    api.build_reporting.publish_build_artifacts(
+                        UploadedArtifacts(gs_bucket, gs_path, {atype: [file]}),
+                        artifact_dir)
 
 
     UploadTestResults(api, location, build.builder.builder)
@@ -430,7 +440,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifactsd33fvz7t/firmware_metadata.jsonpb"
+            "path": "[START_DIR]/firmware_metadata.jsonpb"
           }
         ]
       },
@@ -440,7 +450,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifactsd33fvz7t/myst.firmware.tbz2"
+            "path": "[START_DIR]/brox_EC.tbz2"
           }
         ]
       },
@@ -450,7 +460,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifactsd33fvz7t/tokens.bin"
+            "path": "[START_DIR]/tokens.bin"
           }
         ]
       }
@@ -467,7 +477,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifactsd33fvz7t/firmware_metadata.jsonpb"
+            "path": "[START_DIR]/firmware_metadata.jsonpb"
           }
         ]
       },
@@ -477,7 +487,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifactsd33fvz7t/ti50.tar.bz2"
+            "path": "[START_DIR]/ti50.tar.bz2"
           }
         ]
       }
@@ -531,7 +541,7 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           'artifactsd33fvz7t/firmware_metadata.jsonpb'),
+                           '[START_DIR]/firmware_metadata.jsonpb'),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -553,7 +563,7 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           'artifactsd33fvz7t/firmware_metadata.jsonpb'),
+                           '[START_DIR]/firmware_metadata.jsonpb'),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -588,7 +598,7 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           TI50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           'artifactsd33fvz7t/firmware_metadata.jsonpb'),
+                           '[START_DIR]/firmware_metadata.jsonpb'),
       builder='firmware-ti50-postsubmit', input_properties={
           'firmware_location':
               common_pb2.PLATFORM_TI50,

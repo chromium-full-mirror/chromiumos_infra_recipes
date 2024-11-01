@@ -988,7 +988,7 @@
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['some_other_build_target/firmware_from_source.tar.bz2']})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='build_target-firmware/R12-12345.0.0', files_by_artifact={'FIRMWARE': ['some_other_build_target/firmware_from_source.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },

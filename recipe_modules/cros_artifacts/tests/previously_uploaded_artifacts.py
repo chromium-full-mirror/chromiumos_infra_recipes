@@ -142,7 +142,8 @@ def GenTests(api):
                   'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile']
               },
               'gs_bucket': 'test_bucket',
-              'gs_path': 'builder/R99-1234.56.0-101-'
+              'gs_path': 'builder/R99-1234.56.0-101-',
+              'published': {},
           }),
       api.post_process(post_process.DoesNotRunRE,
                        'upload artifacts.call chromite.api.ToolchainService.*'),
