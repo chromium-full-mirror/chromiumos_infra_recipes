@@ -21,7 +21,7 @@ import os
 from google.protobuf.json_format import MessageToDict
 
 import PB.chromiumos.common as common_pb2
-from PB.chromite.api.firmware import BuildAllFirmwareRequest
+from PB.chromite.api.firmware import BuildAllFirmwareRequest, FirmwareTarget
 from PB.chromite.api.firmware import FirmwareArtifactInfo
 from PB.chromite.api.firmware import TestAllFirmwareRequest
 from PB.chromiumos.build_report import BuildReport
@@ -144,9 +144,13 @@ def RunSteps(api, properties):
     with api.failures.ignore_exceptions():
       if api.cros_infra_config.config.artifacts.attestation_eligible:
         api.bcid_reporter.report_stage('compile')
+    firmware_targets = [
+        FirmwareTarget(Name=bt.name) for bt in properties.build_targets
+    ]
     response = service.BuildAllFirmware(
         BuildAllFirmwareRequest(firmware_location=location, chroot=chroot,
-                                code_coverage=properties.code_coverage),
+                                code_coverage=properties.code_coverage,
+                                firmware_targets=firmware_targets),
         name='build firmware')
     binary_sizes = {}
     if response.metrics and response.metrics.value:

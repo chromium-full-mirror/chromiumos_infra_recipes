@@ -50,4 +50,7 @@ message BuildFirmwareProperties {
   // GS path to upload buildspecs to.
   // Defaults to 'gs://chromeos-manifest-versions/buildspecs/'.
   string buildspec_gs_path = 11;
+
+  // The build targets to build.
+  repeated chromiumos.BuildTarget build_targets = 12;
 }
