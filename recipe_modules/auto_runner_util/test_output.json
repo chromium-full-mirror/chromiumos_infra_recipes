@@ -131,7 +131,7 @@
           "owner": {
                "_account_id": 12345,
                "name": "Jon Googler",
-               "email": "a_typical@chromium.org"
+               "email": "a_typical@google.com"
           },
           "reviewer_updates": [
                {
@@ -322,7 +322,7 @@
           "owner": {
                "_account_id": 12345,
                "name": "Jon Googler",
-               "email": "a_typical@chromium.org"
+               "email": "a_typical@google.com"
           },
           "reviewer_updates": [
                {

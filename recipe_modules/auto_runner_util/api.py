@@ -254,7 +254,7 @@ class EnhancedChangeInfo():
         True if the author has a Google account, False otherwise.
     """
     return self._change_info.get('owner', {}).get('email', '').endswith(
-        ('@google.com', '@chromium.org'))
+        ('@google.com'))
 
   def is_mergeable(self) -> bool:
     """Checks if the change is mergeable.
