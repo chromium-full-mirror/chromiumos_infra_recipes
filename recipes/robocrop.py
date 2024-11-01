@@ -118,12 +118,8 @@ def get_current_swarming_stats(
     api: recipe_api.RecipeApi, bot_policy_config: bot_scaling_pb2.BotPolicyCfg
 ) -> bot_scaling_api.SwarmingStats:
   """Query Swarming for the current bot and task stats."""
-  with api.step.nest('get current swarming stats') as pres:
+  with api.step.nest('get current swarming stats'):
     swarming_stats = api.bot_scaling.get_swarming_stats(bot_policy_config)
-    # TODO(b/329139593): Clean up when consumers are using per-project stats.
-    api.easy.set_properties_step(
-        swarming_stats=dataclasses.astuple(swarming_stats))
-    pres.logs['swarming_stats'] = str(swarming_stats)
   return swarming_stats
 
 
@@ -133,13 +129,9 @@ def get_robocrop_action(
     swarming_stats: bot_scaling_api.SwarmingStats
 ) -> bot_scaling_pb2.RoboCropAction:
   """Determine the comprehensive scaling actions to take."""
-  with api.step.nest('compute scaling actions') as pres:
+  with api.step.nest('compute scaling actions'):
     robocrop_action = api.bot_scaling.get_robocrop_action(
         bot_policy, gce_configs, swarming_stats=swarming_stats)
-    # TODO(b/329139593): Clean up when consumers are using per-project stats.
-    api.easy.set_properties_step(
-        robocrop_action=json_format.MessageToDict(robocrop_action))
-    pres.logs['robocrop_action'] = json_format.MessageToJson(robocrop_action)
   return robocrop_action
 
 
