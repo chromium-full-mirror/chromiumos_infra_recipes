@@ -93,6 +93,7 @@ def RunSteps(api: RecipeApi):
     # Get shellball version by channel.
     new_shellball_versions = api.signing.get_shellball_versions(
         api.cros_release.channels)
+    api.signing_utils.custom_artifact_versions = new_shellball_versions
 
     # Sign shellball.
     if api._test_data.enabled:  # pylint: disable=protected-access
@@ -157,9 +158,12 @@ def GenTests(api: RecipeTestApi):
           'sign firmware shellball.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
           [re.compile('.*"imageType": 20.*')]),
       api.post_check(
-          post_process.MustRun,
+          post_process.StepCommandContains,
           'sign firmware shellball.sign artifacts.upload signed artifacts to '
-          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY'),
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
+          'gsutil cp', [
+              'gs://signed-firmware/canary-channel/kukui/4.0/',
+          ]),
       api.post_process(post_process.DropExpectation),
       build_target='kukui',
       builder='firmware-packager-android-kukui-main',
