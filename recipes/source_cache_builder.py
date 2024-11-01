@@ -256,7 +256,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
@@ -282,7 +281,6 @@ def GenTests(api: RecipeTestApi):
           ],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
@@ -314,7 +312,6 @@ def GenTests(api: RecipeTestApi):
           ],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ))
 
   yield api.test(
@@ -329,7 +326,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
       ),
       api.step_data((
           'source cache update.sync mounted cache directories.Write proto to [CLEANUP]/snapshot/chromiumos/.recipes_state.json (2)'
@@ -349,7 +345,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           full_sync_modulo=1337,  # Not going to match this modulo.
       ),
       api.properties(
@@ -395,7 +390,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           full_sync_modulo=1,  # Always full sync when mod == 1.
       ),
       api.properties(
@@ -437,7 +431,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           full_sync_modulo=1,  # Always full sync when mod == 1.
       ),
       api.post_check(post_process.DoesNotRunRE,
@@ -455,7 +448,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           full_sync_modulo=0,  # Full sync unspecified (default proto val == 0).
       ),
       api.properties(
@@ -495,7 +487,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           regenerate_recovery_image_modulo=1337,  # Not going to match this modulo.
       ),
       api.properties(
@@ -541,7 +532,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           regenerate_recovery_image_modulo=1337,  # Not going to match this modulo.
       ),
       api.properties(
@@ -588,7 +578,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
       ),
       api.properties(
@@ -651,7 +640,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           full_sync_modulo=1,  # Always regenerate recovery image when mod == 1.
           regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
       ),
@@ -715,7 +703,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           regenerate_recovery_image_modulo=1,  # Always regenerate recovery image when mod == 1.
       ),
       api.post_check(post_process.DoesNotRun,
@@ -733,7 +720,6 @@ def GenTests(api: RecipeTestApi):
           }],
           cache_bucket='chromeos-bot-cache',
           retention_days=7,
-          protected_snapshots=['staging-chromeos-cache-snapshot-1625886728983'],
           regenerate_recovery_image_modulo=0,  # Regenerate recovery image unspecified (default proto val == 0).
       ),
       api.properties(

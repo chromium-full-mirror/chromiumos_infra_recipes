@@ -33,15 +33,15 @@ message SourceCacheDefinition {
   // Default false.
   bool can_update_recovery_image = 8;
 }
+
 message SourceCacheBuilderProperties {
+  reserved 4;
   // The list of the buildbucket pools to monitor and scale.
   repeated SourceCacheDefinition cache_definition = 1;
   // Google Storage bucket to write version files
   string cache_bucket = 2;
   // Number of days of snapshots to retain.0
   int32 retention_days = 3;
-  // List of snapshots to exclude from cleanup
-  repeated string protected_snapshots = 4;
   // List of images to exclude from cleanup
   repeated string protected_images = 5;
   // Full sync modulo (proportion that should be full syncs).
