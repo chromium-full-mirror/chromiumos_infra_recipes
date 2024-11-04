@@ -625,13 +625,15 @@ class BuildReportingApi(recipe_api.RecipeApi):
     self.publish(build_report)
 
   def publish_build_artifacts(self, uploaded_artifacts: UploadedArtifacts,
-                              artifact_dir: config_types.Path):
+                              artifact_dir: config_types.Path,
+                              force_publish: bool = False):
     """Publish metadata about the specified artifacts(s).
 
     Args:
       uploaded_artifacts: Information about uploaded artifacts as returned
         by cros_artifacts.upload_artifacts.
       artifact_dir: Local dir where artifacts are staged.
+      force_publish: If true, publish all artifacts regardless of the file name.
     """
     if self._build_report.artifacts:
       raise StepFailure(
@@ -676,7 +678,8 @@ class BuildReportingApi(recipe_api.RecipeApi):
         if build_report_artifact_type:
           # TODO(b/303704765): Throw error if file is missing?
           for f in files:
-            if desired_file_re.fullmatch(self.m.path.basename(f)):
+            if force_publish or desired_file_re.fullmatch(
+                self.m.path.basename(f)):
               # Firmware artifacts paths include build target for
               # supporting multiple targets in the same build.
               artifact_local_path = self.m.path.join(artifact_dir, f)
