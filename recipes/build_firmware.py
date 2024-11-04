@@ -258,7 +258,8 @@ def RunSteps(api, properties):
                     FirmwareArtifactInfo.ObjectInfo(
                         file_name='dt-ti50.tar.bz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
-                            board=['betty'])),
+                            board=['betty'], publish_to_goldeneye=True,
+                            type='GSC')),
                 ]),
             )
             for obj in metadata.objects:
@@ -277,7 +278,7 @@ def RunSteps(api, properties):
                     'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
                 if metadata:
                   for board in metadata.board:
-                    step.logs['debug'] += f'Publishing {file}\n'
+                    step.logs['debug'] += f'Publishing {file} for {board}\n'
                     api.build_reporting.reset_build_report(board)
                     build_report = api.build_reporting.merged_build_report
                     build_report.status.value = BuildReport.BuildStatus.SUCCESS
@@ -291,8 +292,9 @@ def RunSteps(api, properties):
                     new_ver.value = bcs_version.platform_version
                     gs_bucket, gs_path = loc['gs_location'].split('/', 1)
                     api.build_reporting.publish_build_artifacts(
-                        UploadedArtifacts(gs_bucket, gs_path, {atype: [file]}),
-                        artifact_dir)
+                        UploadedArtifacts(gs_bucket, gs_path,
+                                          {atype: [file]}), artifact_dir,
+                        force_publish=metadata.publish_to_goldeneye)
 
 
     UploadTestResults(api, location, build.builder.builder)

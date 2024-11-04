@@ -4940,12 +4940,16 @@
       "@@@STEP_LOG_LINE@debug@metadata_by_name[brox_EC.tbz2]=type: EC@@@",
       "@@@STEP_LOG_LINE@debug@board: \"brox\"@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@metadata_by_name[dt-ti50.tar.bz2]=board: \"betty\"@@@",
+      "@@@STEP_LOG_LINE@debug@metadata_by_name[dt-ti50.tar.bz2]=type: GSC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
+      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}]@@@",
-      "@@@STEP_LOG_LINE@debug@dt-ti50.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=board: \"betty\"@@@",
+      "@@@STEP_LOG_LINE@debug@dt-ti50.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=type: GSC@@@",
+      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
+      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Publishing dt-ti50.tar.bz2@@@",
+      "@@@STEP_LOG_LINE@debug@Publishing dt-ti50.tar.bz2 for betty@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
       "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
       "@@@STEP_LOG_END@debug@@@",
@@ -4997,7 +5001,9 @@
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"tarball_info\": {@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"betty\"@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ]@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"publish_to_goldeneye\": true,@@@",
+      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"GSC\"@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
       "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
@@ -5012,6 +5018,67 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit-firmware/R99-1234.56.0/', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2']}, published=None)@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "filesizes",
+      "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sending pub/sub notifications.publish artifacts to pubsub.compute file size for dt-ti50.tar.bz2",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2: \t111@@@",
+      "@@@STEP_LOG_END@filesizes@@@"
     ]
   },
   {
@@ -5043,6 +5110,16 @@
       "@@@STEP_LOG_LINE@message@      }@@@",
       "@@@STEP_LOG_LINE@message@    ]@@@",
       "@@@STEP_LOG_LINE@message@  },@@@",
+      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@message@    {@@@",
+      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
+      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/dt-ti50.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@message@      },@@@",
+      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
+      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
+      "@@@STEP_LOG_LINE@message@    }@@@",
+      "@@@STEP_LOG_LINE@message@  ],@@@",
       "@@@STEP_LOG_LINE@message@  \"count\": \"1\"@@@",
       "@@@STEP_LOG_LINE@message@}@@@",
       "@@@STEP_LOG_END@message@@@"
@@ -5053,7 +5130,7 @@
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAQ==',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjA6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
@@ -5080,7 +5157,7 @@
       }
     },
     "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjBAAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
+    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjA6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
