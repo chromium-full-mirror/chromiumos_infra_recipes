@@ -761,8 +761,11 @@ class SigningApi(recipe_api.RecipeApi):
                       timeout=GSUTIL_TIMEOUT_SECONDS)
 
       # Upload the artifacts for each channel.
+      signed_upload_paths = {}
       for channel, artifacts in to_upload_by_channel.items():
         gs_dir = self._get_gs_path_for_channel(channel)
+        signed_upload_paths[self.m.cros_release_util.channel_to_long_string(
+            channel)] = gs_dir
 
         with self.m.step.nest(
             f'upload signed artifacts for {common_pb2.Channel.Name(channel)}'
@@ -774,6 +777,9 @@ class SigningApi(recipe_api.RecipeApi):
           for artifact in artifacts:
             _gs_upload(self, os.path.join(response.output_archive_dir,
                                           artifact), gs_dir)
+
+      self.m.easy.set_properties_step(
+          **{'signed_upload_paths': signed_upload_paths})
 
       if ex:
         raise ex

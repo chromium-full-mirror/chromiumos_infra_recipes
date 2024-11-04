@@ -16181,6 +16181,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.set signed_upload_paths",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@SET_BUILD_PROPERTY@signed_upload_paths@{\"canary-channel\": \"gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/\"}@@@"
+    ]
+  },
+  {
     "cmd": [
       "docker",
       "container",
