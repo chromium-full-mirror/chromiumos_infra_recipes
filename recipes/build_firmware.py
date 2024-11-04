@@ -249,13 +249,14 @@ def RunSteps(api, properties):
                 FirmwareArtifactInfo,
                 'JSONPB',
                 # The test data can't vary by test case, so include every file
+                # that any test might want.
                 test_proto=FirmwareArtifactInfo(objects=[
                     FirmwareArtifactInfo.ObjectInfo(
-                        file_name='../../[START_DIR]/brox_EC.tbz2',
+                        file_name='brox_EC.tbz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
                             type='EC', board=['brox'])),
                     FirmwareArtifactInfo.ObjectInfo(
-                        file_name='../../[START_DIR]/ti50.tar.bz2',
+                        file_name='dt-ti50.tar.bz2',
                         tarball_info=FirmwareArtifactInfo.TarballInfo(
                             board=['betty'])),
                 ]),
@@ -440,7 +441,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[START_DIR]/firmware_metadata.jsonpb"
+            "path": "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
           }
         ]
       },
@@ -450,7 +451,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[START_DIR]/brox_EC.tbz2"
+            "path": "[CLEANUP]/artifacts_tmp_1/brox_EC.tbz2"
           }
         ]
       },
@@ -460,7 +461,7 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[START_DIR]/tokens.bin"
+            "path": "[CLEANUP]/artifacts_tmp_1/tokens.bin"
           }
         ]
       }
@@ -473,21 +474,21 @@ def GenTests(api):
     "artifacts": [
       {
         "artifactType": 31,
-        "location": 2,
+        "location": 3,
         "paths": [
           {
             "location": 2,
-            "path": "[START_DIR]/firmware_metadata.jsonpb"
+            "path": "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb"
           }
         ]
       },
       {
         "artifactType": 30,
-        "location": 2,
+        "location": 3,
         "paths": [
           {
             "location": 2,
-            "path": "[START_DIR]/ti50.tar.bz2"
+            "path": "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
           }
         ]
       }
@@ -538,10 +539,13 @@ def GenTests(api):
   yield test(
       'fw-branch-postsubmit',
       api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           '[START_DIR]/firmware_metadata.jsonpb'),
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -560,10 +564,13 @@ def GenTests(api):
   yield test(
       'ec-branch-postsubmit',
       api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           '[START_DIR]/firmware_metadata.jsonpb'),
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -595,10 +602,13 @@ def GenTests(api):
   yield test(
       'firmware-ti50-postsubmit',
       api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           TI50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           '[START_DIR]/firmware_metadata.jsonpb'),
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
       builder='firmware-ti50-postsubmit', input_properties={
           'firmware_location':
               common_pb2.PLATFORM_TI50,
