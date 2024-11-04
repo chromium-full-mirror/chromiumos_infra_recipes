@@ -680,19 +680,11 @@ class BuildReportingApi(recipe_api.RecipeApi):
           for f in files:
             if force_publish or desired_file_re.fullmatch(
                 self.m.path.basename(f)):
-              # Legacy firmware artifacts paths include build target for
-              # supporting multiple targets in the same build.
               artifact_local_path = self.m.path.join(artifact_dir, f)
               file_hash = self.m.file.file_hash(artifact_local_path,
                                                 test_data='deadbeef')
-              if not force_publish and self._build_type == BuildReport.BUILD_TYPE_FIRMWARE:
-                uri = 'gs://' + self.m.path.join(
-                    uploaded_artifacts.gs_bucket, uploaded_artifacts.gs_path,
-                    self._build_target, self.m.path.basename(f))
-              else:
-                uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
-                                                 uploaded_artifacts.gs_path,
-                                                 self.m.path.basename(f))
+              uri = 'gs://' + self.m.path.join(uploaded_artifacts.gs_bucket,
+                                               uploaded_artifacts.gs_path, f)
               build_report.artifacts.append(
                   BuildReport.BuildArtifact(
                       type=build_report_artifact_type,
