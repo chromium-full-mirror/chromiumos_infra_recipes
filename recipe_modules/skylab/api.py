@@ -480,7 +480,7 @@ class SkylabApi(recipe_api.RecipeApi):
     Args:
       params: A request.Request object.
     """
-    req.params.retry.max = 30
+    req.params.retry.max = 1
     req.params.retry.allow = True
 
   def _tests_to_retry(self, response: ExecuteResponse,
