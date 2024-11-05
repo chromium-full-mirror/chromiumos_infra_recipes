@@ -109,9 +109,13 @@ def GenTests(api):
       api.post_check(lambda check, steps: check('tast.test1' in steps[
           'schedule skylab tests v2.create test requests.configure test-builder'
       ].logs['request'])),
-      api.post_check(lambda check, steps: check('tast.shard-0' in steps[
+      # TODO(b/377059387): Determine if we should revert the check back.
+      api.post_check(lambda check, steps: check('tast.shard-0' not in steps[
           'schedule skylab tests v2.create test requests.configure test-builder (2)'
       ].logs['request'])),
+      #   api.post_check(lambda check, steps: check('tast.shard-0' in steps[
+      #       'schedule skylab tests v2.create test requests.configure test-builder (2)'
+      #   ].logs['request'])),
       # Non-CFT test suites are not elegible for direct test retries during the
       # initial rollout.
       api.post_check(lambda check, steps: check('tast.shard-0' not in steps[

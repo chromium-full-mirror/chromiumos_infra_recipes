@@ -124,7 +124,9 @@ class SkylabApi(recipe_api.RecipeApi):
   def _direct_test_retries_elegible(self, uht: UnitHwTest,
                                     tast_first_class: bool) -> bool:
     """Returns whether the hw test is elegible for direct test retries."""
-
+    # TODO(b/377059387): Re-enable or permanently disable for Autotest suites.
+    if not tast_first_class:
+      return False
     tast_first_class_last_run = (
         self.m.skylab_results.request_tag(uht.hw_test)
         in self.last_run_tast_first_class_tests)
