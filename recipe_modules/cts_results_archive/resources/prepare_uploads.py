@@ -30,7 +30,9 @@ except ImportError:
   from urllib.parse import unquote
 
 D = '[0-9][0-9]'
-TIMESTAMP_PATTERN = '%s%s.%s.%s_%s.%s.%s' % (D, D, D, D, D, D, D)
+# Wildcard in the end to match output format of ATS console while being
+# backwards-compatible with Tradefed console. b/339791684#comment17
+TIMESTAMP_PATTERN = '%s%s.%s.%s_%s.%s.%s*' % (D, D, D, D, D, D, D)
 CTS_RESULT_PATTERN = 'testResult.xml'
 CTS_COMPRESSED_RESULT_PATTERN = 'testResult.xml.tgz'
 CTS_V2_RESULT_PATTERN = 'test_result.xml'
@@ -119,6 +121,8 @@ def _prepare_uploads(data):
         (sts_v2_path, CTS_V2_RESULT_PATTERN)
     ]:
       for path in glob.glob(result_path):
+        if not os.path.isdir(path):
+          continue
         instructions += _prepare_uploads_for_test(test_dir, path,
                                                   result_pattern, data)
   return instructions
