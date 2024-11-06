@@ -248,19 +248,6 @@ def RunSteps(api, properties):
                 metadata_path,
                 FirmwareArtifactInfo,
                 'JSONPB',
-                # The test data can't vary by test case, so include every file
-                # that any test might want.
-                test_proto=FirmwareArtifactInfo(objects=[
-                    FirmwareArtifactInfo.ObjectInfo(
-                        file_name='brox_EC.tbz2',
-                        tarball_info=FirmwareArtifactInfo.TarballInfo(
-                            type='EC', board=['brox'])),
-                    FirmwareArtifactInfo.ObjectInfo(
-                        file_name='dt-ti50.tar.bz2',
-                        tarball_info=FirmwareArtifactInfo.TarballInfo(
-                            board=['betty'], publish_to_goldeneye=True,
-                            type='GSC')),
-                ]),
             )
             for obj in metadata.objects:
               step.logs[
@@ -548,6 +535,15 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data(
+          'sending pub/sub notifications.read fw metadata',
+          api.file.read_proto(
+              FirmwareArtifactInfo(objects=[
+                  FirmwareArtifactInfo.ObjectInfo(
+                      file_name='brox_EC.tbz2',
+                      tarball_info=FirmwareArtifactInfo.TarballInfo(
+                          type='EC', board=['brox'])),
+              ]))),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -573,6 +569,15 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data(
+          'sending pub/sub notifications.read fw metadata',
+          api.file.read_proto(
+              FirmwareArtifactInfo(objects=[
+                  FirmwareArtifactInfo.ObjectInfo(
+                      file_name='brox_EC.tbz2',
+                      tarball_info=FirmwareArtifactInfo.TarballInfo(
+                          type='EC', board=['brox'])),
+              ]))),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -611,7 +616,17 @@ def GenTests(api):
           TI50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      builder='firmware-ti50-postsubmit', input_properties={
+      api.step_data(
+          'sending pub/sub notifications.read fw metadata',
+          api.file.read_proto(
+              FirmwareArtifactInfo(objects=[
+                  FirmwareArtifactInfo.ObjectInfo(
+                      file_name='dt-ti50.tar.bz2',
+                      tarball_info=FirmwareArtifactInfo.TarballInfo(
+                          board=['betty'], publish_to_goldeneye=True,
+                          type='GSC')),
+              ]))), builder='firmware-ti50-postsubmit',
+      input_properties={
           'firmware_location':
               common_pb2.PLATFORM_TI50,
           'chromiumos_sdk_pin_file':
