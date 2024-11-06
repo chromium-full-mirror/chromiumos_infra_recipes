@@ -1,0 +1,23 @@
+// Copyright 2024 The ChromiumOS Authors
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
+syntax = "proto3";
+package recipes.chromeos.chrome_uprev_orchestrator;
+
+message InputProperties {
+  // The version of Chrome that is being triggered, such as 98.0.1234.0.
+  string chrome_version = 1;
+
+  // Information to forward to the PUpr builds that are about to be triggered.
+  repeated GitilesTrigger triggers = 2;
+}
+
+message GitilesTrigger { Trigger gitiles = 1; }
+
+message Trigger {
+  // List of fields required by the PUpr.
+  string ref = 1;
+  string repo = 2;
+  string revision = 3;
+}
