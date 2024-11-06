@@ -296,10 +296,6 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             self.m.cros_sdk.configure_remoteexec()
           elif not install_packages.disable_goma:
             self.m.cros_sdk.configure_goma()
-        elif ('chromeos.build_menu.chrome_sync'
-              in self.m.cros_infra_config.experiments):
-          # Since we don't need chrome source, delete the checkout.
-          self.m.chrome.delete_chrome_checkout()
 
       if self.m.cv.active:
         self.m.android.uprev_if_unstable_ebuild_changed(

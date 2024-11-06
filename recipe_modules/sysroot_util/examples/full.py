@@ -194,8 +194,8 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'install packages.check chrome source needed',
           'PackageService/NeedsChromeSource', '{"needs_chrome_source": false}'),
-      api.post_check(
-          post_process.StepSuccess,
+      api.post_process(
+          post_process.DoesNotRun,
           'install packages.check chrome source needed.deleting chrome checkout'
       ),
       api.post_process(post_process.DropExpectation),
