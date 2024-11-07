@@ -158,13 +158,14 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
         image_artifacts_uploaded_time=json_format.MessageToDict(
             image_artifacts_uploaded_time))
 
-    # We have no steps following unit_test_images, so we don't need to
-    # check the return value.
-    api.build_menu.unit_test_images(config)
+    # Run unit tests, and calculate and publish image and package sizes.
+    tests_and_size_runner = api.future_utils.create_parallel_runner()
+    tests_and_size_runner.run_function_async(
+        lambda cfg, _: api.build_menu.unit_test_images(cfg), config)
+    tests_and_size_runner.run_function_async(
+        lambda cfg, _: api.build_menu.publish_image_size_data(cfg), config)
 
-    # Publish image and package sizes.
-    # This method, as written, is expected to never raise exceptions.
-    api.build_menu.publish_image_size_data(config)
+    tests_and_size_runner.wait_for_and_throw()
   return None
 
 
