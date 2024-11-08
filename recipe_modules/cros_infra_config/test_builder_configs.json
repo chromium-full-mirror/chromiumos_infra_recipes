@@ -3727,6 +3727,37 @@
               {
                 "artifactTypes": [
                   "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ]
+              }
+            ]
+          }
+        },
+        "prebuilts": "PRIVATE",
+        "prebuiltsGsBucket": "chromeos-prebuilt"
+      },
+      "build": {
+        "applyGerritChanges": true
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "cq",
+        "name": "firmware-zephyr-cq",
+        "type": "CQ"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
                   "FIRMWARE_TARBALL_INFO"
                 ]
               }
@@ -3892,6 +3923,37 @@
       "id": {
         "bucket": "postsubmit",
         "name": "firmware-ti50-postsubmit",
+        "type": "POSTSUBMIT"
+      }
+    },
+    {
+      "artifacts": {
+        "artifactsGsBucket": "chromeos-image-archive",
+        "artifactsInfo": {
+          "firmware": {
+            "outputArtifacts": [
+              {
+                "artifactTypes": [
+                  "FIRMWARE_TARBALL",
+                  "FIRMWARE_TARBALL_INFO",
+                  "FIRMWARE_TOKEN_DATABASE"
+                ],
+                "gsLocations": [
+                  "chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}"
+                ]
+              }
+            ]
+          }
+        },
+        "attestationEligible": true,
+        "prebuilts": "NONE"
+      },
+      "general": {
+        "firmwareLocation": "PLATFORM_ZEPHYR"
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "firmware-zephyr-postsubmit",
         "type": "POSTSUBMIT"
       }
     },

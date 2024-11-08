@@ -440,7 +440,27 @@ def GenTests(api):
         "paths": [
           {
             "location": 2,
-            "path": "[CLEANUP]/artifacts_tmp_1/brox_EC.tbz2"
+            "path": "[CLEANUP]/artifacts_tmp_1/brox.EC.tar.bz2"
+          }
+        ]
+      },
+      {
+        "artifactType": 30,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/karis.EC.tar.bz2"
+          }
+        ]
+      },
+      {
+        "artifactType": 30,
+        "location": 2,
+        "paths": [
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC.tar.bz2"
           }
         ]
       },
@@ -457,6 +477,17 @@ def GenTests(api):
     ]
   }
 }'''
+  ZEPHYR_METADATA = FirmwareArtifactInfo(objects=[
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='karis.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['rex'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='screebo.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='EC', board=['rex'])),
+  ])
 
   TI50_ARTIFACTS = '''{
   "artifacts": {
@@ -522,8 +553,39 @@ def GenTests(api):
                                   'snoop: report_stage'), cq=True,
              builder='fw-ec-cq')
 
-  yield test('zephyr-cq', cq=True, builder='fw-ec-cq',
-             input_properties={'firmware_location': common_pb2.PLATFORM_ZEPHYR})
+  yield test(
+      'firmware-zephyr-cq',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'), cq=True,
+      builder='firmware-zephyr-cq', input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'bump_version': False,
+          'set_suite_scheduling': True,
+      })
+
+  yield test(
+      'firmware-zephyr-postsubmit',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          ZEPHYR_ARTIFACTS),
+      api.path.files_exist(api.path.cleanup_dir /
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      api.step_data('sending pub/sub notifications.read fw metadata',
+                    api.file.read_proto(ZEPHYR_METADATA)),
+      builder='firmware-zephyr-postsubmit', input_properties={
+          'firmware_location': common_pb2.PLATFORM_ZEPHYR,
+          'bump_version': False,
+          'set_suite_scheduling': True,
+      })
 
   yield test(
       'fw-branch-postsubmit',
@@ -535,15 +597,8 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data(
-          'sending pub/sub notifications.read fw metadata',
-          api.file.read_proto(
-              FirmwareArtifactInfo(objects=[
-                  FirmwareArtifactInfo.ObjectInfo(
-                      file_name='brox_EC.tbz2',
-                      tarball_info=FirmwareArtifactInfo.TarballInfo(
-                          type='EC', board=['brox'])),
-              ]))),
+      api.step_data('sending pub/sub notifications.read fw metadata',
+                    api.file.read_proto(ZEPHYR_METADATA)),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -569,15 +624,8 @@ def GenTests(api):
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data(
-          'sending pub/sub notifications.read fw metadata',
-          api.file.read_proto(
-              FirmwareArtifactInfo(objects=[
-                  FirmwareArtifactInfo.ObjectInfo(
-                      file_name='brox_EC.tbz2',
-                      tarball_info=FirmwareArtifactInfo.TarballInfo(
-                          type='EC', board=['brox'])),
-              ]))),
+      api.step_data('sending pub/sub notifications.read fw metadata',
+                    api.file.read_proto(ZEPHYR_METADATA)),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
