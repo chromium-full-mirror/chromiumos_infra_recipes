@@ -185,6 +185,21 @@ def RunSteps(api: RecipeApi):
       return RawResult(
           status=common_pb2.FAILURE,
           summary_markdown=REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY)
+
+  with api.step.nest('including pre-uprev builder results') as step:
+    invocations = [
+        i.infra.resultdb.invocation
+        for i in preuprevs
+        if i.infra.resultdb.invocation
+    ]
+    step.step_summary_text = '\n'.join(invocations)
+    for inv in invocations:
+      assert inv.startswith(INVOCATION_PREFIX), (
+          f'Unexpected invocation: {inv}')
+    api.resultdb.include_invocations(
+        [inv[len(INVOCATION_PREFIX):] for inv in invocations],
+        'include invocations from pre-uprev builders')
+
   with api.step.nest('Check pre-uprev results') as step:
     builds = api.buildbucket.collect_builds(
         ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
@@ -204,19 +219,6 @@ def RunSteps(api: RecipeApi):
               api.step.FAILURE
               if builder.status == common_pb2.FAILURE else api.step.EXCEPTION)
           task_step.step_summary_text = builder.summary_markdown
-
-    with api.step.nest('including pre-uprev builder results') as step:
-      invocations = [
-          i.infra.resultdb.invocation
-          for i in builders
-          if i.infra.resultdb.invocation
-      ]
-      step.step_summary_text = '\n'.join(invocations)
-      for inv in invocations:
-        assert inv.startswith(INVOCATION_PREFIX)
-      api.resultdb.include_invocations(
-          [inv[len(INVOCATION_PREFIX):] for inv in invocations],
-          'include invocations from pre-uprev builders')
 
     if len(failed_builds) > 0:
       return RawResult(
