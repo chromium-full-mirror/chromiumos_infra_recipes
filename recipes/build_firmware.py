@@ -187,7 +187,7 @@ def RunSteps(api, properties):
 
     uploaded_artifacts, artifact_dir = api.build_menu.upload_artifacts(
         config=config, report_to_spike=api.cros_infra_config.config.artifacts
-        .attestation_eligible)
+        .attestation_eligible, use_file_paths=True)
 
     with api.failures.ignore_exceptions():
       if api.cros_infra_config.config.artifacts.attestation_eligible:
@@ -265,7 +265,11 @@ def RunSteps(api, properties):
                     'debug'] += f'{file} was published to {loc["gs_location"]} metadata={metadata}\n'
                 if metadata:
                   for board in metadata.board:
-                    step.logs['debug'] += f'Publishing {file} for {board}\n'
+                    if metadata.type == FirmwareArtifactInfo.TarballInfo.FirmwareType.EC and branch == 'snapshot':
+                      step.logs[
+                          'debug'] += f'SKIPPING Pub/sub {file} for {board}\n'
+                      continue
+                    step.logs['debug'] += f'Pub/sub {file} for {board}\n'
                     api.build_reporting.reset_build_report(board)
                     build_report = api.build_reporting.merged_build_report
                     build_report.status.value = BuildReport.BuildStatus.SUCCESS
@@ -441,26 +445,22 @@ def GenTests(api):
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/brox.EC.tar.bz2"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 2,
-        "paths": [
+          },
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/karis.EC.tar.bz2"
-          }
-        ]
-      },
-      {
-        "artifactType": 30,
-        "location": 2,
-        "paths": [
+          },
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/screebo.EC.tar.bz2"
+          },
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/brox/firmware_from_source.tar.bz2"
+          },
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/rex/firmware_from_source.tar.bz2"
           }
         ]
       },
@@ -487,6 +487,14 @@ def GenTests(api):
       FirmwareArtifactInfo.ObjectInfo(
           file_name='screebo.EC.tar.bz2', tarball_info=FirmwareArtifactInfo
           .TarballInfo(type='EC', board=['rex'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='brox/firmware_from_source.tar.bz2',
+          tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
+                                                        board=['brox'])),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='rex/firmware_from_source.tar.bz2',
+          tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
+                                                        board=['rex'])),
   ])
 
   TI50_ARTIFACTS = '''{
@@ -562,8 +570,14 @@ def GenTests(api):
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
           ZEPHYR_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
-                           'artifacts_tmp_1/firmware_metadata.jsonpb'), cq=True,
-      builder='firmware-zephyr-cq', input_properties={
+                           'artifacts_tmp_1/firmware_metadata.jsonpb'),
+      # CQ runs should not send pub/sub.
+      api.post_check(
+          post_process.DoesNotRun,
+          'sending pub/sub notifications.publish artifacts to pubsub'),
+      cq=True,
+      builder='firmware-zephyr-cq',
+      input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'bump_version': False,
           'set_suite_scheduling': True,
@@ -581,7 +595,12 @@ def GenTests(api):
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('sending pub/sub notifications.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
-      builder='firmware-zephyr-postsubmit', input_properties={
+      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
+      api.post_check(
+          post_process.DoesNotRun,
+          'sending pub/sub notifications.publish artifacts to pubsub'),
+      builder='firmware-zephyr-postsubmit',
+      input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
           'bump_version': False,
           'set_suite_scheduling': True,
@@ -599,6 +618,33 @@ def GenTests(api):
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('sending pub/sub notifications.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
+      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0/brox/firmware_from_source.tar.bz2'
+          ]),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0/rex/firmware_from_source.tar.bz2'
+          ]),
       builder='firmware-R126-15885.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,
@@ -626,6 +672,33 @@ def GenTests(api):
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
       api.step_data('sending pub/sub notifications.read fw metadata',
                     api.file.read_proto(ZEPHYR_METADATA)),
+      # TODO(b/358654822): When DLM can handle multiple artifacts per version, revisit this.
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (2).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogDoesNotContain,
+          'sending pub/sub notifications.publish artifacts to pubsub (3).build status pubsub update',
+          'message', ['artifacts']),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0/brox/firmware_from_source.tar.bz2'
+          ]),
+      api.post_check(
+          post_process.LogContains,
+          'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
+          'message', [
+              'artifacts',
+              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0/rex/firmware_from_source.tar.bz2'
+          ]),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={
           'firmware_location': common_pb2.PLATFORM_ZEPHYR,

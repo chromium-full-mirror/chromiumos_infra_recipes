@@ -10,6 +10,7 @@ from PB.chromite.api import sysroot
 from PB.chromiumos import common
 from PB.chromiumos.builder_config import BuilderConfig
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import CrosArtifactsProperties
+from recipe_engine.recipe_api import Property
 
 from recipe_engine import post_process
 
@@ -23,9 +24,15 @@ DEPS = [
     'cros_build_api',
 ]
 
+PROPERTIES = {
+    'use_file_paths':
+        Property(kind=bool,
+                 help='Turn the use_file_paths flag on (default off)',
+                 default=False),
+}
 
 
-def RunSteps(api):
+def RunSteps(api, use_file_paths):
   api.assertions.assertEqual(
       api.cros_artifacts.artifacts_by_image_type[common.IMAGE_TYPE_RECOVERY],
       'recovery_image.tar.xz',
@@ -76,7 +83,8 @@ def RunSteps(api):
       artifacts_info=artifacts_info,
       chroot=common.Chroot(path='/path/to/chroot'),
       sysroot=sysroot.Sysroot(path='/build/{}'.format(target.name),
-                              build_target=target))
+                              build_target=target),
+      use_file_paths=use_file_paths)
 
   api.cros_artifacts.upload_metadata(
       'test',
@@ -124,6 +132,16 @@ def GenTests(api):
 
   yield api.test(
       'firmware-postsubmit-with-target',
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
+              '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_TARBALL",'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2","location":2}],'
+              '"location": "PLATFORM_EC"}'
+              ']}}')))
+
+  yield api.test(
+      'firmware-postsubmit-with-target-and-use_file_paths',
+      api.properties(use_file_paths=True),
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
               '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_TARBALL",'

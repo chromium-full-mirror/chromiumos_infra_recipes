@@ -604,7 +604,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         **self._artifacts_gs_path_dict(builder_name, target, kind))
 
   def _publish_artifacts(self, builder_name, target, kind, artifacts_info,
-                         upload_uri, files_by_artifact, name=None):
+                         upload_uri, files_by_artifact, name=None,
+                         use_file_paths=False):
     """Publish the artifacts that were uploaded.
 
     Some artifacts need to also be published in a better-known place than the
@@ -630,6 +631,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       upload_uri (string): gs path were the artifacts were uploaded.
       files_by_artifact (dict{name: list[string]}): artifact file dictionary.
       name (str): The step name.  Defaults to 'publish artifacts'.
+      use_file_paths (bool): Use the directory path of the artifact in the
+          publish url.  Defaults to False.
 
     Returns:
       A tuple (links, published), where:
@@ -673,28 +676,38 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               publish_uri = 'gs://' + publish_loc
               if not publish_uri.endswith('/'):
                 publish_uri += '/'
-              for path in files:
-                path_dir, filename = os.path.split(path)
-                if path_dir and not publish_uri.endswith(f'/{path_dir}/'):
-                  presentation.step_text += (
-                      f'Possible loss of path: {path} '
-                      f'published as {publish_uri}{filename}\n')
-                  presentation.status = self.m.step.WARNING
-              cmd = ['cp', '-r']
-              if info.get('aclName'):
-                cmd += ['-a', info.get('aclName')]
-              cmd += ['%s/%s' % (upload_uri, path) for path in files]
-              cmd.append(publish_uri)
-              max_retries = 3
-              for retries in range(max_retries):
-                try:
-                  self.m.gsutil(cmd, multithreaded=True,
-                                timeout=self.test_api.gsutil_timeout_seconds)
-                  break
-                except recipe_api.StepFailure as ex:
-                  if ex.had_timeout and retries < max_retries - 1:
-                    continue
-                  raise
+              dir_to_files = collections.defaultdict(list)
+              if use_file_paths:
+                for path in files:
+                  path_dir, filename = os.path.split(path)
+                  if path_dir:
+                    path_dir += '/'
+                  dir_to_files[path_dir].append(path)
+              else:
+                dir_to_files[''] = files
+                for path in files:
+                  path_dir, filename = os.path.split(path)
+                  if path_dir and not publish_uri.endswith(f'/{path_dir}/'):
+                    presentation.step_text += (
+                        f'Possible loss of path: {path} '
+                        f'published as {publish_uri}{filename}\n')
+                    presentation.status = self.m.step.WARNING
+              for publish_loc_suffix, files_in_group in dir_to_files.items():
+                cmd = ['cp', '-r']
+                if info.get('aclName'):
+                  cmd += ['-a', info.get('aclName')]
+                cmd += ['%s/%s' % (upload_uri, path) for path in files_in_group]
+                cmd.append(publish_uri + publish_loc_suffix)
+                max_retries = 3
+                for retries in range(max_retries):
+                  try:
+                    self.m.gsutil(cmd, multithreaded=True,
+                                  timeout=self.test_api.gsutil_timeout_seconds)
+                    break
+                  except recipe_api.StepFailure as ex:
+                    if ex.had_timeout and retries < max_retries - 1:
+                      continue
+                    raise
               published[aname].append({
                   'gs_location': publish_loc,
                   'files': files
@@ -797,7 +810,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       private_bundle_func=None, report_to_spike=False,
       attestation_eligible=False, upload_coverage=True,
       previously_uploaded_artifacts=None,
-      ignore_breakpad_symbol_generation_errors=False
+      ignore_breakpad_symbol_generation_errors=False, use_file_paths=False
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Bundle and upload the given artifacts for the given build target.
 
@@ -837,6 +850,8 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
       ignore_breakpad_symbol_generation_errors: If True, the
         BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
         generation.
+      use_file_paths (bool): Use the directory path of the artifact in the
+          publish url.  Defaults to False.
 
     Returns:
       (UploadedArtifacts) information about uploaded artifacts.
@@ -995,10 +1010,9 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         # successfully, and can therefore copy them GS->GS, and avoid
         # re-uploading. Publishing is intentionally nested under upload
         # artifacts.
-        links, published = self._publish_artifacts(builder_name,
-                                                   sysroot.build_target, kind,
-                                                   artifacts_info, upload_uri,
-                                                   files_by_artifact)
+        links, published = self._publish_artifacts(
+            builder_name, sysroot.build_target, kind, artifacts_info,
+            upload_uri, files_by_artifact, use_file_paths=use_file_paths)
         uploaded_artifacts = UploadedArtifacts(
             gs_bucket, gs_path, {}, published).union(uploaded_artifacts)
         for k, v in sorted(links.items()):

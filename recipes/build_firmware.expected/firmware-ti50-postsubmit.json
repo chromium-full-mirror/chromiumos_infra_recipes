@@ -4946,7 +4946,7 @@
       "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
       "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
       "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Publishing dt-ti50.tar.bz2 for betty@@@",
+      "@@@STEP_LOG_LINE@debug@Pub/sub dt-ti50.tar.bz2 for betty@@@",
       "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
       "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
       "@@@STEP_LOG_END@debug@@@",

@@ -859,7 +859,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
       self, config=None, private_bundle_func=None, sysroot=None,
       report_to_spike=False, name='upload artifacts',
       previously_uploaded_artifacts=None,
-      ignore_breakpad_symbol_generation_errors=False
+      ignore_breakpad_symbol_generation_errors=False, use_file_paths=False
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Upload artifacts from the build.
 
@@ -880,6 +880,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
       ignore_breakpad_symbol_generation_errors: If True, the
         BREAKPAD_DEBUG_SYMBOLS step will ignore any errors during symbol
         generation.
+      use_file_paths (bool): Use the directory path of the artifact in the
+          publish url.  Defaults to False.
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -896,14 +898,20 @@ class BuildMenuApi(recipe_api.RecipeApi):
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
       return self.m.cros_artifacts.upload_artifacts(
-          config.id.name, config.id.type, config.artifacts.artifacts_gs_bucket,
-          artifacts_info=config.artifacts.artifacts_info, chroot=self.chroot,
-          sysroot=sysroot, private_bundle_func=private_bundle_func,
+          config.id.name,
+          config.id.type,
+          config.artifacts.artifacts_gs_bucket,
+          artifacts_info=config.artifacts.artifacts_info,
+          chroot=self.chroot,
+          sysroot=sysroot,
+          private_bundle_func=private_bundle_func,
           report_to_spike=report_to_spike,
           attestation_eligible=config.artifacts.attestation_eligible,
-          upload_coverage=run_upload_coverage, name=name,
+          upload_coverage=run_upload_coverage,
+          name=name,
           previously_uploaded_artifacts=previously_uploaded_artifacts,
-          ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors
+          ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors,
+          use_file_paths=use_file_paths,
       )
     return (None, None)
 
