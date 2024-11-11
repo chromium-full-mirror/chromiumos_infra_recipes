@@ -5,7 +5,9 @@
 """Recipe to orchestrate necessary builders and pupr for Chrome uprev."""
 
 import base64
+from typing import List, Optional
 
+from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.chrome_uprev_orchestrator import InputProperties
@@ -21,11 +23,37 @@ DEPS = [
     'recipe_engine/json',
     'recipe_engine/properties',
     'recipe_engine/step',
+    'recipe_engine/time',
 ]
 
 CHROMIUM_SRC_GIT = 'https://chromium.googlesource.com/chromium/src.git/'
 CHROMIUM_VERSION_FILE = 'chrome/VERSION'
 
+CHROME_SIDE_BUILDERS = [
+    'chromeos-betty-chrome-preuprev',
+    'chromeos-brya-chrome-preuprev',
+    'chromeos-jacuzzi-chrome-preuprev',
+    'chromeos-volteer-chrome-preuprev',
+    'linux-chromeos-chrome-preuprev',
+]
+
+BUILD_FIELDS_TO_RETRIEVE = [
+    'builder',
+    'cancellation_markdown',
+    'id',
+    'input',
+    'output',
+    'status',
+    'steps',
+    'summary_markdown',
+    'infra.resultdb',
+]
+
+PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
+
+
+def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
+  return list(map(lambda b: int(b.id), builders))
 
 def IsVersionAvailable(api: RecipeApi, chrome_version: str) -> bool:
   """Returns True if the given version exists.
@@ -165,6 +193,39 @@ def TriggerCrosBuild(api: RecipeApi, properties: dict, bucket: str,
     s.presentation.logs['triggers_properties'] = str(properties)
 
 
+def TriggerChromeBuild(
+    api: RecipeApi, builder: str,
+    buildset: common_pb2.GitilesCommit) -> Optional[build_pb2.Build]:
+  with api.step.nest(f'scheduling {builder}') as presentation:
+    request = api.buildbucket.schedule_request(
+        project='chrome',
+        bucket='ci',
+        builder=builder,
+        gitiles_commit=buildset,
+        fields=BUILD_FIELDS_TO_RETRIEVE,
+    )
+    try:
+      return api.buildbucket.schedule([request])[0]
+    except api.step.InfraFailure:  # pragma: nocover
+      presentation.status = api.step.EXCEPTION
+      return None
+
+
+def TriggerChromeBuilds(
+    api: RecipeApi, builders: List[str],
+    buildset: common_pb2.GitilesCommit) -> List[build_pb2.Build]:
+  with api.step.nest('trigger browser side builders') as presentation:
+    builds = []
+    for builder in builders:
+      build = TriggerChromeBuild(api, builder, buildset)
+      if build:
+        builds.append(build)
+      else:  # pragma: nocover
+        presentation.status = api.step.EXCEPTION
+        presentation.step_summary_text = 'Some builds failed to create.'
+    return builds
+
+
 def RunSteps(api: RecipeApi,
              properties: InputProperties) -> result_pb2.RawResult:
   # * On a trunk
@@ -196,7 +257,8 @@ def RunSteps(api: RecipeApi,
     if patch_number == 0:
       # Even on a release branch, if it's at the root of the release branch, we
       # do Chrome (non-atomic) uprev to the ToT on CrOS repo.
-      TriggerUprevBuilds(api, properties)
+      TriggerUprevBuilds(api, properties,
+                         api.buildbucket.build.input.gitiles_commit)
       summary_markdown = 'On trunk (at the root of release branch)'
     else:
       summary_markdown = 'On release branches'
@@ -206,7 +268,8 @@ def RunSteps(api: RecipeApi,
 
   # On a non-release branch, we do Chrome (non-atomic) uprev to the ToT on CrOS
   # repo.
-  TriggerUprevBuilds(api, properties)
+  TriggerUprevBuilds(api, properties,
+                     api.buildbucket.build.input.gitiles_commit)
 
   if patch_number == 0:
     summary_markdown = 'On trunk (at the root of non-release branch)'
@@ -217,9 +280,18 @@ def RunSteps(api: RecipeApi,
                               summary_markdown=summary_markdown)
 
 
-def TriggerUprevBuilds(api: RecipeApi, properties: InputProperties) -> None:
+def TriggerUprevBuilds(api: RecipeApi, properties: InputProperties,
+                       buildset: common_pb2.GitilesCommit) -> None:
+  # Wait for 3 minutes to ensure critical pre-uprev builders are started.
+  api.time.sleep(180)
+  # Launch non-critical pre-uprev builders for new orchestrator flow.
+  preuprevs = TriggerChromeBuilds(api, CHROME_SIDE_BUILDERS, buildset)
   TriggerPUprBuild(api, properties, 'lacros-ash-atomic-pupr-generator')
   TriggerCrosBuild(api, {}, 'infra', 'collect-preuprev-test-results')
+  # Wait for new pre-uprev builders to complete.
+  api.buildbucket.collect_builds(
+      ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
+      timeout=PRE_UPREV_TEST_TIMEOUT)
 
 
 def GenTests(api: RecipeTestApi):
