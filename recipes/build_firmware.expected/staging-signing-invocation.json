@@ -4217,7 +4217,7 @@
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[START_DIR]/from_source.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      },@@@",
@@ -4227,7 +4227,7 @@
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[START_DIR]/fw_metadata.json\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/fw_metadata.json\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      },@@@",
@@ -4237,7 +4237,7 @@
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[START_DIR]/tokens.bin\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/tokens.bin\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -4587,14 +4587,14 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../../[START_DIR]/tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "schedule signing build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=fw-ec-postsubmit<br/>signing_allowed_builder_names=['fw-ec-postsubmit']<br/>sign_image_properties=image_type: IMAGE_TYPE_GSC_FIRMWARE<br/>keyset: \"test-keyset\"<br/>signer_type: SIGNER_STAGING<br/>gsc_instructions {<br/>  target: PREPVT<br/>}<br/>allow_non_release_signer_bucket: true<br/><br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['../../[START_DIR]/fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['../../[START_DIR]/tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
+      "@@@STEP_TEXT@builder_name=fw-ec-postsubmit<br/>signing_allowed_builder_names=['fw-ec-postsubmit']<br/>sign_image_properties=image_type: IMAGE_TYPE_GSC_FIRMWARE<br/>keyset: \"test-keyset\"<br/>signer_type: SIGNER_STAGING<br/>gsc_instructions {<br/>  target: PREPVT<br/>}<br/>allow_non_release_signer_bucket: true<br/><br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
     ]
   },
   {
@@ -4619,7 +4619,7 @@
       }
     },
     "name": "schedule signing build.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-sign-image\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"allow_non_release_signer_bucket\": true, \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/from_source.tar.bz2\", \"gsc_instructions\": {\"target\": \"PREPVT\"}, \"image_type\": \"IMAGE_TYPE_GSC_FIRMWARE\", \"keyset\": \"test-keyset\", \"signer_type\": \"SIGNER_STAGING\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-sign-image\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"allow_non_release_signer_bucket\": true, \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/from_source.tar.bz2\", \"gsc_instructions\": {\"target\": \"PREPVT\"}, \"image_type\": \"IMAGE_TYPE_GSC_FIRMWARE\", \"keyset\": \"test-keyset\", \"signer_type\": \"SIGNER_STAGING\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4661,7 +4661,7 @@
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"allow_non_release_signer_bucket\": true,@@@",
-      "@@@STEP_LOG_LINE@request@          \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/from_source.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/from_source.tar.bz2\",@@@",
       "@@@STEP_LOG_LINE@request@          \"gsc_instructions\": {@@@",
       "@@@STEP_LOG_LINE@request@            \"target\": \"PREPVT\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
@@ -4693,9 +4693,9 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@[CLEANUP]/[START_DIR]/fw_metadata.json does not exist@@@",
+      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['../../[START_DIR]/fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['../../[START_DIR]/tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
     ]
   },

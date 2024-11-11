@@ -109,13 +109,13 @@ def GenTests(api):
       'firmware-cq', api.cv(run_mode=api.cv.FULL_RUN),
       api.buildbucket.try_build(),
       api.cros_build_api.set_api_return(
-          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
-          data=('{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
-                '"paths": [{"path":"[START_DIR]/coverage.tbz2","location":2}],'
-                '"location": "PLATFORM_EC"},'
-                '{"artifact_type":"CODE_COVERAGE_HTML",'
-                '"paths": [{"path":"[START_DIR]/html.tbz2","location":2}],'
-                '"location": "PLATFORM_EC"}]}}')))
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
+              '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/coverage.tbz2","location":2}],'
+              '"location": "PLATFORM_EC"},'
+              '{"artifact_type":"CODE_COVERAGE_HTML",'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/html.tbz2","location":2}],'
+              '"location": "PLATFORM_EC"}]}}')))
 
   yield api.test('no-ArtifactsService/Get',
                  api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))

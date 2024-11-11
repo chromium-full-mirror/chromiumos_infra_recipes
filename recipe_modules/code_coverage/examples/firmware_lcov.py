@@ -29,7 +29,7 @@ def GenTests(api):
       api.cros_build_api.set_api_return(
           'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
               '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_LCOV",'
-              '"paths": [{"path":"[CLEANUP]/generated/coverage.tbz2","location":2}],'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/coverage.tbz2","location":2}],'
               '"location": "PLATFORM_EC"}]}}')),
       api.post_check(
           post_process.MustRun,
