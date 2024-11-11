@@ -177,7 +177,7 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     }
     # Legacy, migrating to Get.
     bundle_response = jsonify(artifacts=[{
-        'path': self.path('tmp/artifact.tar.gz')
+        'path': '[CLEANUP]/artifacts_tmp_1/artifact.tar.gz'
     }])
     bundle_endpoints = [
         'BundleImageZip',

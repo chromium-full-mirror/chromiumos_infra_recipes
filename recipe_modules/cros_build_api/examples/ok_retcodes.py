@@ -24,7 +24,10 @@ def RunSteps(api):
 
   # Got here and did not raise.
   api.assertions.assertTrue(
-      output_proto.artifacts[0].path.endswith('/tmp/artifact.tar.gz'))
+      output_proto.artifacts[0].path.endswith(
+          'artifacts_tmp_1/artifact.tar.gz'),
+      msg=f'{output_proto.artifacts[0].path} must end with artifacts_tmp_1/artifact.tar.gz'
+  )
 
 
 def GenTests(api):

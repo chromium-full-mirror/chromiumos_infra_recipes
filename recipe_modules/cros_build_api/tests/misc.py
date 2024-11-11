@@ -62,7 +62,10 @@ def RunSteps(api):
   input_proto = artifacts.BundleRequest(build_target=BuildTarget(name='target'))
   output_proto = api.cros_build_api.ArtifactsService.BundleFirmware(input_proto)
   api.assertions.assertTrue(
-      output_proto.artifacts[0].path.endswith('/tmp/artifact.tar.gz'))
+      output_proto.artifacts[0].path.endswith(
+          'artifacts_tmp_1/artifact.tar.gz'),
+      msg=f'{output_proto.artifacts[0].path} must end with artifacts_tmp_1/artifact.tar.gz'
+  )
 
   # Check stubs throw error on bad method calls.
   api.assertions.assertRaises(KeyError,

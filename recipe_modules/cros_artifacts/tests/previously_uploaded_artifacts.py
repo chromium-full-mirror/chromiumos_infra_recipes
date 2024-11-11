@@ -54,7 +54,7 @@ def RunSteps(api):
   previously_uploaded_artifacts = api.cros_artifacts.UploadedArtifacts(
       gs_bucket='test_bucket', gs_path='builder/R99-1234.56.0-101-',
       files_by_artifact={
-          'EBUILD_LOGS': ['../../[START_DIR]/tmp/artifact.tar.gz'],
+          'EBUILD_LOGS': ['artifact.tar.gz'],
           'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['testafdofile'],
           'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
       })
@@ -134,7 +134,7 @@ def GenTests(api):
       api.post_process(
           post_process.PropertyEquals, 'artifacts', {
               'files_by_artifact': {
-                  'EBUILD_LOGS': ['../../[START_DIR]/tmp/artifact.tar.gz'],
+                  'EBUILD_LOGS': ['artifact.tar.gz'],
                   'FIRMWARE_TARBALL': ['../../[START_DIR]/from_source.tar.bz2'],
                   'FIRMWARE_TARBALL_INFO':
                       ['../../[START_DIR]/fw_metadata.json'],
