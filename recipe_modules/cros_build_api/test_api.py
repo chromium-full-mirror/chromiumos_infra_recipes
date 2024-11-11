@@ -833,9 +833,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
     responses = {}
     responses['PrepareForBuild'] = jsonify(build_relevance='UNKNOWN')
     responses['BundleArtifacts'] = jsonify(artifacts_info=[{
-        'artifact_type': 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE',
+        'artifact_type':
+            'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE',
         'artifacts': [{
-            'path': 'my_output_artifact',
+            'path': '[CLEANUP]/artifacts_tmp_1/my_output_artifact',
         },]
     }])
     responses['SetupToolchains'] = jsonify()
