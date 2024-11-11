@@ -7,6 +7,7 @@
 
 import collections
 import time
+import os
 from typing import Dict, List, Optional, Tuple, Union
 
 from google.protobuf import json_format
@@ -672,6 +673,13 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
               publish_uri = 'gs://' + publish_loc
               if not publish_uri.endswith('/'):
                 publish_uri += '/'
+              for path in files:
+                path_dir, filename = os.path.split(path)
+                if path_dir and not publish_uri.endswith(f'/{path_dir}/'):
+                  presentation.step_text += (
+                      f'Possible loss of path: {path} '
+                      f'published as {publish_uri}{filename}\n')
+                  presentation.status = self.m.step.WARNING
               cmd = ['cp', '-r']
               if info.get('aclName'):
                 cmd += ['-a', info.get('aclName')]

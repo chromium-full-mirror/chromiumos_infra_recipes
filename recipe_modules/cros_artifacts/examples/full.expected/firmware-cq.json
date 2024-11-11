@@ -57,6 +57,8 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: CODE_COVERAGE_HTML@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_LCOV@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
@@ -205,6 +207,9 @@
       "@@@STEP_LOG_LINE@request@          33,@@@",
       "@@@STEP_LOG_LINE@request@          44@@@",
       "@@@STEP_LOG_LINE@request@        ],@@@",
+      "@@@STEP_LOG_LINE@request@        \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"@@@",
+      "@@@STEP_LOG_LINE@request@        ],@@@",
       "@@@STEP_LOG_LINE@request@        \"aclName\": \"public-read\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
@@ -251,7 +256,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          33,\n          44\n        ],\n        \"aclName\": \"public-read\"\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          33,\n          44\n        ],\n        \"gsLocations\": [\n          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"\n        ],\n        \"aclName\": \"public-read\"\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -1032,6 +1037,9 @@
       "@@@STEP_LOG_LINE@request@            33,@@@",
       "@@@STEP_LOG_LINE@request@            44@@@",
       "@@@STEP_LOG_LINE@request@          ],@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@            \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"@@@",
+      "@@@STEP_LOG_LINE@request@          ],@@@",
       "@@@STEP_LOG_LINE@request@          \"aclName\": \"public-read\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
@@ -1095,7 +1103,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/target\",\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    },\n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            15\n          ],\n          \"gsLocations\": [\n            \"publish_gs_location\",\n            \"pub2/{gs_path}\"\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            33,\n            44\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/target\",\n    \"buildTarget\": {\n      \"name\": \"target\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            7\n          ]\n        }\n      ]\n    },\n    \"toolchain\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            15\n          ],\n          \"gsLocations\": [\n            \"publish_gs_location\",\n            \"pub2/{gs_path}\"\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31,\n            33,\n            44\n          ],\n          \"gsLocations\": [\n            \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"\n          ],\n          \"aclName\": \"public-read\"\n        }\n      ]\n    },\n    \"infra\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            36\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "infra_step": true,
@@ -1489,7 +1497,9 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_LCOV@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: CODE_COVERAGE_HTML@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@"
     ]
   },
   {
@@ -1563,11 +1573,81 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/coverage.tbz2",
+      "gs://chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.publish artifacts.gsutil cp (3)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/html.tbz2",
+      "gs://chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0/"
+    ],
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "project:try"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload artifacts.publish artifacts.gsutil cp (4)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"CODE_COVERAGE_HTML\": [{\"files\": [\"html.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"FIRMWARE_LCOV\": [{\"files\": [\"coverage.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}@@@"
     ]
   },
   {
@@ -1831,7 +1911,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"html.tbz2\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_LCOV\": [\"coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": {\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}, {\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"html.tbz2\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_LCOV\": [\"coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": {\"CODE_COVERAGE_HTML\": [{\"files\": [\"html.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}, {\"files\": [\"html.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"FIRMWARE_LCOV\": [{\"files\": [\"coverage.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}, {\"files\": [\"coverage.tbz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}, {\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}}@@@"
     ]
   },
   {

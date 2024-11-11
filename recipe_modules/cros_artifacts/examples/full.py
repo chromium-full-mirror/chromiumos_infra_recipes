@@ -54,7 +54,12 @@ def RunSteps(api):
                   common.ArtifactsByService.Firmware.FIRMWARE_TARBALL_INFO,
                   common.ArtifactsByService.Firmware.FIRMWARE_LCOV,
                   common.ArtifactsByService.Firmware.CODE_COVERAGE_HTML,
-              ], acl_name='public-read')
+              ],
+              acl_name='public-read',
+              gs_locations=[
+                  'chromeos-image-archive/{builder_name}-firmware/{legacy_version}'
+              ],
+          )
       ]),
       infra=common.ArtifactsByService.Infra(output_artifacts=[
           common.ArtifactsByService.Infra.ArtifactInfo(artifact_types=[
@@ -116,6 +121,24 @@ def GenTests(api):
               '{"artifact_type":"CODE_COVERAGE_HTML",'
               '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/html.tbz2","location":2}],'
               '"location": "PLATFORM_EC"}]}}')))
+
+  yield api.test(
+      'firmware-postsubmit-with-target',
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
+              '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_TARBALL",'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/target/firmware_from_source.tar.bz2","location":2}],'
+              '"location": "PLATFORM_EC"}'
+              ']}}')))
+
+  yield api.test(
+      'firmware-postsubmit-without-target',
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts', data=(
+              '{"artifacts": {"artifacts": [{"artifact_type":"FIRMWARE_TARBALL",'
+              '"paths": [{"path":"[CLEANUP]/artifacts_tmp_1/firmware_from_source.tar.bz2","location":2}],'
+              '"location": "PLATFORM_EC"}'
+              ']}}')))
 
   yield api.test('no-ArtifactsService/Get',
                  api.cros_build_api.remove_endpoints(['ArtifactsService/Get']))

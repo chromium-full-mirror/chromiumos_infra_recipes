@@ -33,6 +33,8 @@
     "name": "upload artifacts",
     "~followup_annotations": [
       "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
       "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-@@@"
     ]
   },
@@ -133,6 +135,9 @@
       "@@@STEP_LOG_LINE@request@          33,@@@",
       "@@@STEP_LOG_LINE@request@          44@@@",
       "@@@STEP_LOG_LINE@request@        ],@@@",
+      "@@@STEP_LOG_LINE@request@        \"gsLocations\": [@@@",
+      "@@@STEP_LOG_LINE@request@          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"@@@",
+      "@@@STEP_LOG_LINE@request@        ],@@@",
       "@@@STEP_LOG_LINE@request@        \"aclName\": \"public-read\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
@@ -189,7 +194,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          33,\n          44\n        ],\n        \"aclName\": \"public-read\"\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"/path/to/chroot\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31,\n          33,\n          44\n        ],\n        \"gsLocations\": [\n          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}\"\n        ],\n        \"aclName\": \"public-read\"\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "infra_step": true,
@@ -773,7 +778,9 @@
     "name": "upload artifacts.publish artifacts",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-@@@"
+      "@@@STEP_LINK@gs publish dir: UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE@https://console.cloud.google.com/storage/browser/pub2/target-toolchain/R99-1234.56.0-101-@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@",
+      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0@@@"
     ]
   },
   {
@@ -823,11 +830,57 @@
     ]
   },
   {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/from_source.tar.bz2",
+      "gs://chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0/"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.publish artifacts.gsutil cp (3)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "python3",
+      "-u",
+      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
+      "--",
+      "RECIPE_REPO[depot_tools]/gsutil.py",
+      "-m",
+      "----",
+      "cp",
+      "-r",
+      "-a",
+      "public-read",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-/fw_metadata.json",
+      "gs://chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0/"
+    ],
+    "infra_step": true,
+    "name": "upload artifacts.publish artifacts.gsutil cp (4)",
+    "timeout": 900,
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"fw_metadata.json\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}]}@@@"
     ]
   },
   {
@@ -1007,7 +1060,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"artifact.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"my_output_artifact\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-\", \"published\": {\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"artifact.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"my_output_artifact\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-\", \"published\": {\"FIRMWARE_TARBALL\": [{\"files\": [\"from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}, {\"files\": [\"from_source.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"fw_metadata.json\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}, {\"files\": [\"fw_metadata.json\"], \"gs_location\": \"chromeos-image-archive/target-toolchain-firmware/R99-1234.56.0\"}], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"my_output_artifact\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-\"}]}}@@@"
     ]
   },
   {
