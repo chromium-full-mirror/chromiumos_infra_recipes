@@ -1390,13 +1390,6 @@
   },
   {
     "cmd": [],
-    "name": "include pre-uprev link to commit message",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@message does not need update.@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "Wait for completion of pre-uprev tests"
   },
   {
@@ -1525,13 +1518,6 @@
     "name": "Process pre-uprev results.chromeos-brya-chrome-skylab",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "update change description",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@message does not need update.@@@"
     ]
   },
   {
