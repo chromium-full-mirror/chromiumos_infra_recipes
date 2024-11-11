@@ -1,41 +1,12 @@
 {
   "builderConfigs": [
     {
-      "id": {
-        "name": "chromite-snapshot",
-        "type": "POSTSUBMIT",
-        "bucket": "postsubmit"
-      },
-      "general": {
-        "critical": true,
-        "environment": "PRODUCTION",
-        "runWhen": {
-          "mode": "ONLY_RUN_ON_FILE_MATCH",
-          "filePatterns": [
-            "chromite/**",
-            "infra/chromite-HEAD/**"
-          ]
-        },
-        "sdkCacheVersion": 1,
-        "manifest": "PRIVATE"
-      },
       "artifacts": {
-        "prebuilts": "NONE",
-        "artifactsInfo": {}
-      },
-      "chrome": {
-        "internal": true
+        "artifactsInfo": {},
+        "prebuilts": "NONE"
       },
       "build": {
-        "useFlags": [
-          {
-            "flag": "chrome_internal"
-          }
-        ],
         "applyGerritChanges": true,
-        "sdkUpdate": {
-          "sdkUpdateRunSpec": "RUN"
-        },
         "buildImages": {
           "imageTypes": [
             "IMAGE_TYPE_TEST",
@@ -44,14 +15,43 @@
           "verifyImageSizeDelta": true
         },
         "installPackages": {
-          "runSpec": "RUN",
+          "dependencies": "ALL_DEPENDENCIES",
           "disableGoma": true,
-          "dependencies": "ALL_DEPENDENCIES"
-        }
+          "runSpec": "RUN"
+        },
+        "sdkUpdate": {
+          "sdkUpdateRunSpec": "RUN"
+        },
+        "useFlags": [
+          {
+            "flag": "chrome_internal"
+          }
+        ]
+      },
+      "chrome": {
+        "internal": true
+      },
+      "general": {
+        "critical": true,
+        "environment": "PRODUCTION",
+        "manifest": "PRIVATE",
+        "runWhen": {
+          "filePatterns": [
+            "chromite/**",
+            "infra/chromite-HEAD/**"
+          ],
+          "mode": "ONLY_RUN_ON_FILE_MATCH"
+        },
+        "sdkCacheVersion": 1
+      },
+      "id": {
+        "bucket": "postsubmit",
+        "name": "chromite-snapshot",
+        "type": "POSTSUBMIT"
       },
       "unitTests": {
-        "ebuildsRunSpec": "RUN",
-        "dependencies": "CL_AFFECTED_DEPENDENCIES"
+        "dependencies": "CL_AFFECTED_DEPENDENCIES",
+        "ebuildsRunSpec": "RUN"
       },
       "updateChroot": {
         "runSpec": "RUN"
@@ -895,18 +895,24 @@
       },
       "build": {
         "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
         "installPackages": {
           "dependencies": "ALL_DEPENDENCIES",
           "runSpec": "RUN"
         },
         "installToolchain": {
           "compileSource": false
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
+        }
+      },
+      "buildTarget": {
+        "name": "amd64-generic",
+        "profile": {
+          "name": "BASE"
         }
       },
       "chrome": {
@@ -920,13 +926,8 @@
         "bucket": "cq",
         "name": "amd64-generic-incremental-cq",
         "type": "CQ"
-      },
-      "buildTarget": {
-        "profile": {"name": "BASE"},
-        "name": "amd64-generic"
       }
     },
-
     {
       "artifacts": {
         "artifactsGsBucket": "chromeos-image-archive",
@@ -951,18 +952,18 @@
       },
       "build": {
         "applyGerritChanges": true,
+        "buildImages": {
+          "imageTypes": [
+            "IMAGE_TYPE_BASE",
+            "IMAGE_TYPE_TEST"
+          ]
+        },
         "installPackages": {
           "dependencies": "ALL_DEPENDENCIES",
           "runSpec": "RUN"
         },
         "installToolchain": {
           "compileSource": false
-        },
-        "buildImages": {
-          "imageTypes": [
-            "IMAGE_TYPE_BASE",
-            "IMAGE_TYPE_TEST"
-          ]
         }
       },
       "chrome": {
@@ -4470,13 +4471,7 @@
       }
     },
     {
-      "id": {
-        "bucket": "infra",
-        "name": "build-chromiumos-sdk",
-        "type": "SDK"
-      },
       "artifacts": {
-        "prebuilts": "NONE",
         "artifactsGsBucket": "chromeos-image-archive",
         "artifactsInfo": {
           "toolchain": {
@@ -4491,7 +4486,13 @@
               }
             ]
           }
-        }
+        },
+        "prebuilts": "NONE"
+      },
+      "id": {
+        "bucket": "infra",
+        "name": "build-chromiumos-sdk",
+        "type": "SDK"
       }
     },
     {
