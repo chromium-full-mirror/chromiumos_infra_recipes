@@ -4759,7 +4759,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/log.tar.gz\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -4772,7 +4772,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/afdo\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -4941,7 +4941,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {
@@ -4965,7 +4965,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/afdo",
+      "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184/afdo",
       "gs://chromeos-toolchain-artifacts/afdo/unvetted/benchmark/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5001,7 +5001,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/afdo",
+      "gs://chromeos-image-archive/benchmark-afdo-process/R99-1234.56.0-101-8945511751514863184/afdo",
       "gs://chromeos-prebuilt/afdo-job/llvm/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -5029,7 +5029,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"chromeos-prebuilt/afdo-job/llvm\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"chromeos-toolchain-artifacts/afdo/unvetted/benchmark\"}, {\"files\": [\"afdo\"], \"gs_location\": \"chromeos-prebuilt/afdo-job/llvm\"}]}@@@"
     ]
   },
   {

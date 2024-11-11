@@ -119,7 +119,10 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
   @property
   def artifact_service_responses(self) -> Dict[_MethodName, _ResponseJson]:
     """Generate responses for ArtifactsService."""
-    _uploaded_path = lambda name: {'path': self.path(name), 'location': 2}
+    _uploaded_path = lambda name: {
+        'path': f'[CLEANUP]/artifacts_tmp_1/{name}',
+        'location': 2
+    }
 
     ret = {
         'FetchMetadata':

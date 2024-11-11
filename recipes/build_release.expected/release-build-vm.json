@@ -13304,7 +13304,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/log.tar.gz\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -13317,7 +13317,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/afdo\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -13546,7 +13546,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"artifact.tar.gz\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"DEBUG_SYMBOLS\": [\"artifact.tar.gz\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"GCE_TARBALL\": [\"artifact.tar.gz\"], \"IMAGE_ZIP\": [\"artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"artifact.tar.gz\"], \"TAST_FILES\": [\"artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"betty-arc-r-release/R99-1234.56.0-101\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"AUTOTEST_FILES\": [\"artifact.tar.gz\"], \"BUILD_MANIFEST\": [\"manifest.xml\"], \"DEBUG_SYMBOLS\": [\"artifact.tar.gz\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"GCE_TARBALL\": [\"artifact.tar.gz\"], \"IMAGE_ZIP\": [\"artifact.tar.gz\"], \"PINNED_GUEST_IMAGES\": [\"artifact.tar.gz\"], \"TAST_FILES\": [\"artifact.tar.gz\"], \"TEST_UPDATE_PAYLOAD\": [\"artifact.tar.gz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-releases-test\", \"gs_path\": \"betty-arc-r-release/R99-1234.56.0-101\", \"published\": null}@@@"
     ]
   },
   {
@@ -13723,7 +13723,7 @@
       "----",
       "cp",
       "-r",
-      "gs://chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101/../../[START_DIR]/log.tar.gz",
+      "gs://chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101/log.tar.gz",
       "gs://chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -13865,14 +13865,14 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"AUTOTEST_FILES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"DEBUG_SYMBOLS\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"EBUILD_LOGS\": [{\"files\": [\"../../[START_DIR]/log.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"GCE_TARBALL\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"IMAGE_ZIP\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"PINNED_GUEST_IMAGES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"TAST_FILES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"TEST_UPDATE_PAYLOAD\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"AUTOTEST_FILES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"DEBUG_SYMBOLS\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"EBUILD_LOGS\": [{\"files\": [\"log.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"GCE_TARBALL\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"IMAGE_ZIP\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"PINNED_GUEST_IMAGES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"TAST_FILES\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}], \"TEST_UPDATE_PAYLOAD\": [{\"files\": [\"artifact.tar.gz\"], \"gs_location\": \"chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101\"}]}@@@"
     ]
   },
   {
     "cmd": [],
     "name": "publish artifacts to pubsub",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-releases-test', gs_path='betty-arc-r-release/R99-1234.56.0-101', files_by_artifact={'AUTOTEST_FILES': ['artifact.tar.gz'], 'BUILD_MANIFEST': ['manifest.xml'], 'DEBUG_SYMBOLS': ['artifact.tar.gz'], 'EBUILD_LOGS': ['../../[START_DIR]/log.tar.gz'], 'GCE_TARBALL': ['artifact.tar.gz'], 'IMAGE_ZIP': ['artifact.tar.gz'], 'PINNED_GUEST_IMAGES': ['artifact.tar.gz'], 'TAST_FILES': ['artifact.tar.gz'], 'TEST_UPDATE_PAYLOAD': ['artifact.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['../../[START_DIR]/afdo']}, published={'AUTOTEST_FILES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'DEBUG_SYMBOLS': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'EBUILD_LOGS': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['../../[START_DIR]/log.tar.gz']}], 'GCE_TARBALL': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'IMAGE_ZIP': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'PINNED_GUEST_IMAGES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'TAST_FILES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'TEST_UPDATE_PAYLOAD': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-releases-test', gs_path='betty-arc-r-release/R99-1234.56.0-101', files_by_artifact={'AUTOTEST_FILES': ['artifact.tar.gz'], 'BUILD_MANIFEST': ['manifest.xml'], 'DEBUG_SYMBOLS': ['artifact.tar.gz'], 'EBUILD_LOGS': ['log.tar.gz'], 'GCE_TARBALL': ['artifact.tar.gz'], 'IMAGE_ZIP': ['artifact.tar.gz'], 'PINNED_GUEST_IMAGES': ['artifact.tar.gz'], 'TAST_FILES': ['artifact.tar.gz'], 'TEST_UPDATE_PAYLOAD': ['artifact.tar.gz'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={'AUTOTEST_FILES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'DEBUG_SYMBOLS': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'EBUILD_LOGS': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['log.tar.gz']}], 'GCE_TARBALL': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'IMAGE_ZIP': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'PINNED_GUEST_IMAGES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'TAST_FILES': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}], 'TEST_UPDATE_PAYLOAD': [{'gs_location': 'chromeos-releases-test/betty-arc-r-release/R99-1234.56.0-101', 'files': ['artifact.tar.gz']}]})@@@",
       "@@@STEP_LOG_END@uploaded artifacts@@@"
     ]
   },

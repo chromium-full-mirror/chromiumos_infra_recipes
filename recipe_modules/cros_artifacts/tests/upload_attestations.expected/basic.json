@@ -804,7 +804,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/log.tar.gz\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -817,7 +817,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/afdo\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -1026,7 +1026,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../../[START_DIR]/tokens.bin\"], \"IMAGE_ARCHIVES\": [\"../../chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"../../[START_DIR]/from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"../../[START_DIR]/fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"../../[START_DIR]/tokens.bin\"], \"IMAGE_ARCHIVES\": [\"../../chromiumos_base_image.tar.xz\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"test-bucket\", \"gs_path\": \"builder/R99-1234.56.0-101-\", \"published\": null}@@@"
     ]
   },
   {
@@ -1050,7 +1050,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/afdo",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/afdo",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
@@ -1073,7 +1073,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://test-bucket/builder/R99-1234.56.0-101-/../../[START_DIR]/afdo",
+      "gs://test-bucket/builder/R99-1234.56.0-101-/afdo",
       "gs://pub2/builder/R99-1234.56.0-101-/"
     ],
     "infra_step": true,
@@ -1088,7 +1088,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/builder/R99-1234.56.0-101-\"}]}@@@"
     ]
   },
   {

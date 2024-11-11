@@ -1063,7 +1063,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/log.tar.gz\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -1076,7 +1076,7 @@
       "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@            {@@@",
       "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@              \"path\": \"[START_DIR]/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/afdo\"@@@",
       "@@@STEP_LOG_LINE@response@            }@@@",
       "@@@STEP_LOG_LINE@response@          ]@@@",
       "@@@STEP_LOG_LINE@response@        }@@@",
@@ -1241,7 +1241,7 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"../../[START_DIR]/html.tbz2\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"../../[START_DIR]/html.tbz2\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
   },
   {
@@ -1282,7 +1282,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/afdo",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/afdo",
       "gs://publish_gs_location/"
     ],
     "infra_step": true,
@@ -1317,7 +1317,7 @@
       "-r",
       "-a",
       "public-read",
-      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/../../[START_DIR]/afdo",
+      "gs://artifacts_gs_bucket/target-toolchain/R99-1234.56.0-101-8945511751514863184/afdo",
       "gs://pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184/"
     ],
     "infra_step": true,
@@ -1344,7 +1344,7 @@
     "name": "upload artifacts.publish artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}@@@"
+      "@@@SET_BUILD_PROPERTY@published@{\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}@@@"
     ]
   },
   {
@@ -1608,7 +1608,7 @@
     "cmd": [],
     "name": "output artifact GS paths",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"../../[START_DIR]/html.tbz2\"], \"EBUILD_LOGS\": [\"../../[START_DIR]/log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"../../[START_DIR]/afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": {\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"../../[START_DIR]/afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"BUILD_MANIFEST\": [\"manifest.xml\"], \"CODE_COVERAGE_HTML\": [\"../../[START_DIR]/html.tbz2\"], \"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_LCOV\": [\"../../[START_DIR]/coverage.tbz2\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"artifacts_gs_bucket\", \"gs_path\": \"target-toolchain/R99-1234.56.0-101-8945511751514863184\", \"published\": {\"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [{\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}, {\"files\": [\"afdo\"], \"gs_location\": \"publish_gs_location\"}, {\"files\": [\"afdo\"], \"gs_location\": \"pub2/target-toolchain/R99-1234.56.0-101-8945511751514863184\"}]}}@@@"
     ]
   },
   {

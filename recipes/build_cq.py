@@ -34,6 +34,7 @@ DEPS = [
     'bot_scaling',
     'build_menu',
     'chrome',
+    'cros_build_api',
     'cros_infra_config',
     'deferrals',
     'easy',
@@ -171,9 +172,26 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
+  SECOND_GET_ARTIFACTS_DATA = '''{
+    "artifacts": {
+      "legacy": {"artifacts": [
+        {"artifact_type": "EBUILD_LOGS", "paths": [
+          {"location": 2, "path": "[CLEANUP]/artifacts_tmp_2/log.tar.gz"}
+        ]}
+      ]},
+      "toolchain": {"artifacts": [{
+        "artifact_type": "UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE",
+        "paths": [{"location": 2, "path": "[CLEANUP]/artifacts_tmp_2/afdo"}]
+      }]}
+    }
+  }'''
   # Normal CQ build, with one gerrit_change.
   yield api.build_menu.test(
-      'cq-build', api.post_check(post_process.MustRun, 'build images'),
+      'cq-build',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
+      api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'final upload artifacts'),
@@ -198,6 +216,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # CQ build on uprev CL, with uploading the prebuilts.
   yield api.build_menu.test(
       'upload-prebuilts-delete-incrementals-experiment',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.post_check(post_process.MustRun, 'upload prebuilts.do upload'),
       api.step_data(
           'upload prebuilts.Check if the CQ uploads the prebuilts.' + \
@@ -229,6 +250,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # CQ build on non-uprev CL, without uploading the prebuilts.
   yield api.build_menu.test(
       'upload-prebuilts-experiment-on-non-uprev-cq',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.post_check(post_process.DoesNotRun, 'upload prebuilts.do upload'),
       cq=True,
       input_properties=api.test_util.build_menu_properties(
@@ -340,6 +364,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # This covers any staging-specific logic.
   yield api.build_menu.test(
       'staging-cq-build', api.post_check(post_process.MustRun, 'build images'),
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.post_check(post_process.MustRun, 'run ebuild tests'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.post_check(post_process.MustRun, 'final upload artifacts'),
@@ -349,6 +376,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.build_menu.test(
       'publish-image-size-fails',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'collect image size data'),
       api.build_menu.set_build_api_return(
@@ -372,6 +402,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield api.build_menu.test(
       'publish-image-size-succeeds',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.post_check(post_process.MustRun, 'build images'),
       api.post_check(post_process.MustRun, 'collect image size data'),
       api.post_check(post_process.MustRun,
@@ -397,6 +430,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Build that uses Bazel for all its build steps.
   yield api.build_menu.test(
       'bazel',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.build_menu.assert_step_uses_bazel('install packages',
                                             'SysrootService/InstallPackages'),
       api.build_menu.assert_step_uses_bazel('build images',
@@ -411,6 +447,9 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
   # Bazel Lite build.
   yield api.build_menu.test(
       'bazel-lite',
+      api.cros_build_api.set_api_return(
+          'final upload artifacts.call artifacts service',
+          'ArtifactsService/Get', SECOND_GET_ARTIFACTS_DATA),
       api.build_menu.assert_step_uses_bazel('install packages',
                                             'SysrootService/InstallPackages'),
       api.post_check(
