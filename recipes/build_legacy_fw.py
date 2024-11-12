@@ -435,10 +435,14 @@ class FirmwareBuilder():
 
       files_list = self.m.file.listdir(
           'list files', firmware_dir, recursive=True, test_data=[
-              'image-brya.bin', 'brya/ec.bin', 'image-redrix.serial.bin',
-              'firmware/brya0/coreboot.rom', 'build/poppy/firmware/image.bin',
+              'image-brya.bin',
+              'brya/ec.bin',
+              'image-redrix.serial.bin',
+              'firmware/brya0/coreboot.rom',
+              'build/poppy/firmware/image.bin',
               'build/reef/firmware/ec.bin',
-              'build/reef/firmware/npcx_monitor.bin'
+              'build/reef/firmware/npcx_monitor.bin',
+              'build/reef/firmware/component_manifest.json',
           ])
 
       ap_regex = re.compile(r'/image-([^\W]+)\.bin')
@@ -485,6 +489,12 @@ class FirmwareBuilder():
             'tar', 'cvjf',
             str(tarball_full_path), '-C', file.parent, file.name
         ]
+
+        # EC firmware also requires component_manifest.json to be present
+        # in the tarball along with ec.bin.
+        # The file resides in the same directory as ec.bin.
+        if file.parent / 'component_manifest.json' in files_list:
+          create_tarball_cmd.append('component_manifest.json')
 
         # npcx_monitor.bin will be in the same directory as ec.bin
         # In case npcx_monitor.bin is present, we need to add it to the

@@ -5253,6 +5253,7 @@
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/brya/ec.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/poppy/firmware/image.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/ec.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware/npcx_monitor.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/firmware/brya0/coreboot.rom@@@",
@@ -5339,6 +5340,7 @@
       "-C",
       "[CLEANUP]/chromiumos_workspace/chroot/build/board2/firmware/build/reef/firmware",
       "ec.bin",
+      "component_manifest.json",
       "npcx_monitor.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
