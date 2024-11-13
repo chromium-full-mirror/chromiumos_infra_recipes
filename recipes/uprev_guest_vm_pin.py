@@ -283,8 +283,10 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
 
           labels = {
               Label.BOT_COMMIT: 1,
-              Label.COMMIT_QUEUE: 2,
           }
+          if branch == 'main':
+            labels[Label.COMMIT_QUEUE] = 2
+
           api.gerrit.set_change_labels(change, labels)
           api.gerrit.submit_change(change)
 
