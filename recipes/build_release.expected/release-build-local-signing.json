@@ -16288,9 +16288,8 @@
   },
   {
     "cmd": [],
-    "name": "sign artifacts.parse SignImageResponse",
+    "name": "parse SignImageResponse",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@signed build metadata@[@@@",
       "@@@STEP_LOG_LINE@signed build metadata@  {@@@",
       "@@@STEP_LOG_LINE@signed build metadata@    \"releaseDirectory\": \"canary-channel/kukui/1234.56.0\",@@@",
@@ -16363,9 +16362,9 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sign artifacts.parse SignImageResponse.compute file size",
+    "name": "parse SignImageResponse.compute file size",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@filesizes@/path/to/signing/archive/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys: \t111@@@",
       "@@@STEP_LOG_END@filesizes@@@"
     ]

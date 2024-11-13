@@ -64,6 +64,7 @@ DEPS = [
     'failures',
     'mass_deploy',
     'signing',
+    'signing_utils',
     'src_state',
     'vmlab',
 ]
@@ -270,10 +271,12 @@ def DoRunSteps(api, config, properties):
   if api.signing.local_signing:
     release_sign_types = api.cros_release.sign_types
     channels = api.cros_release.channels
-    signed_build_list = api.signing.sign_artifacts(
+    signed_image_response = api.signing.sign_artifacts(
         sign_types=release_sign_types, channels=channels,
         attestation_eligible=api.cros_infra_config.config.artifacts
         .attestation_eligible)
+    signed_build_list = api.signing_utils.signing_response_to_metadata(
+        signed_image_response)
     api.build_reporting.publish_signed_build_metadata(signed_build_list)
 
   gs_image_dir = None

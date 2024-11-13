@@ -511,7 +511,7 @@ class SigningApi(recipe_api.RecipeApi):
       local_artifact_dir: Optional[Path] = None,
       upload_unsigned: Optional[bool] = True,
       attestation_eligible: bool = False,
-  ) -> List[BuildReport.SignedBuildMetadata]:
+  ) -> SignImageResponse:
     """Implementation for local signing flow."""
     if not self.local_signing:
       raise StepFailure(
@@ -603,7 +603,7 @@ class SigningApi(recipe_api.RecipeApi):
 
       docker_prune()
 
-      return self.m.signing_utils.signing_response_to_metadata(response)
+      return response
 
   def add_kms_logs_as_step_logs(self, presentation: StepPresentation,
                                 result_path: Path):
