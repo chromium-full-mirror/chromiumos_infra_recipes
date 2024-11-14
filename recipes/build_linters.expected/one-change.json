@@ -8155,6 +8155,48 @@
   },
   {
     "cmd": [
+      "rdb",
+      "rpc",
+      "luci.resultdb.v1.Recorder",
+      "BatchCreateArtifacts",
+      "-include-update-token"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "upload findings as an invocation artifact",
+    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"findings-8945511751514863184\", \"contentType\": \"vnd.google.protobuf+gzip\", \"contents\": \"H4sIAAAAAAACA+OK5uJ2TixKz3fOySwoqBTy4jLhUkjOKMrPzSzN1S1KLctMLddLz89Pz0ktzi8tSk7VS87PFeJJS8xO1S0oys9KTS6RYFRgFOIpSCzJ0E/LzEnVKyqWYuFglGBSYOIK42Jzz8/JzCuhhrnp+TBzAZ8cxXC1AAAA\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@json.output@{}@@@",
+      "@@@STEP_LOG_END@json.output@@@",
+      "@@@STEP_LOG_LINE@json.input@{@@@",
+      "@@@STEP_LOG_LINE@json.input@  \"requests\": [@@@",
+      "@@@STEP_LOG_LINE@json.input@    {@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"findings-8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"contentType\": \"vnd.google.protobuf+gzip\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"H4sIAAAAAAACA+OK5uJ2TixKz3fOySwoqBTy4jLhUkjOKMrPzSzN1S1KLctMLddLz89Pz0ktzi8tSk7VS87PFeJJS8xO1S0oys9KTS6RYFRgFOIpSCzJ0E/LzEnVKyqWYuFglGBSYOIK42Jzz8/JzCuhhrnp+TBzAZ8cxXC1AAAA\"@@@",
+      "@@@STEP_LOG_LINE@json.input@      },@@@",
+      "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:8945511751514863184\"@@@",
+      "@@@STEP_LOG_LINE@json.input@    }@@@",
+      "@@@STEP_LOG_LINE@json.input@  ]@@@",
+      "@@@STEP_LOG_LINE@json.input@}@@@",
+      "@@@STEP_LOG_END@json.input@@@"
+    ]
+  },
+  {
+    "cmd": [
       "vpython3",
       "-u",
       "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
