@@ -16144,6 +16144,76 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "file_hash",
+      "/path/to/signing/archive/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.Compute file hash",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/reporter/snoopy_broker",
+      "-report-gcs",
+      "-digest",
+      "deadbeef",
+      "-gcs-uri",
+      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0//chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env": {
+      "CHROMEOS_OFFICIAL": "1"
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:release"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "sign artifacts.upload signed artifacts to chromeos-throw-away-bucket bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_gcs",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@"
+    ]
+  },
+  {
     "cmd": [
       "python3",
       "-u",

@@ -271,7 +271,9 @@ def DoRunSteps(api, config, properties):
     release_sign_types = api.cros_release.sign_types
     channels = api.cros_release.channels
     signed_build_list = api.signing.sign_artifacts(
-        sign_types=release_sign_types, channels=channels)
+        sign_types=release_sign_types, channels=channels,
+        attestation_eligible=api.cros_infra_config.config.artifacts
+        .attestation_eligible)
     api.build_reporting.publish_signed_build_metadata(signed_build_list)
 
   gs_image_dir = None

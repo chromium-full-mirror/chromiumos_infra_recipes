@@ -8,6 +8,7 @@
 from PB.recipe_modules.chromeos.signing.signing import (SigningProperties)
 
 DEPS = [
+    'recipe_engine/bcid_reporter',
     'depot_tools/gitiles',
     'depot_tools/gsutil',
     'recipe_engine/file',

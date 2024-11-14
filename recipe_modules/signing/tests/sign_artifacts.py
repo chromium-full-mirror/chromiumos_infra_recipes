@@ -266,6 +266,10 @@ def GenTests(api: RecipeTestApi):
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_DEV'
       ),
       api.post_check(
+          post_process.DoesNotRun,
+          'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance'
+      ),
+      api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.gsutil cp',
           [

@@ -79,6 +79,8 @@ class SigningApi(recipe_api.RecipeApi):
     self._paygen_keyset = None
     self._use_dev_keys = properties.use_dev_keys
 
+    self._signed_prov_generation_fatal = properties.bcid_enforcement.signed_provenance_generation_fatal or False
+
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
     if self._test_data.enabled:
@@ -107,6 +109,10 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def get_use_dev_keys(self) -> bool:
     return self._use_dev_keys
+
+  @property
+  def signed_provenance_generation_fatal(self) -> bool:
+    return self._signed_prov_generation_fatal
 
   def get_paygen_keyset(self) -> str:
     """Return the keyset for use in paygen.
@@ -498,10 +504,13 @@ class SigningApi(recipe_api.RecipeApi):
 
 
   def sign_artifacts(
-      self, sign_types: List['common_pb2.ImageType'],
-      channels: List['common_pb2.Channel'], include_paygen: bool = True,
+      self,
+      sign_types: List['common_pb2.ImageType'],
+      channels: List['common_pb2.Channel'],
+      include_paygen: bool = True,
       local_artifact_dir: Optional[Path] = None,
-      upload_unsigned: Optional[bool] = True
+      upload_unsigned: Optional[bool] = True,
+      attestation_eligible: bool = False,
   ) -> List[BuildReport.SignedBuildMetadata]:
     """Implementation for local signing flow."""
     if not self.local_signing:
@@ -572,6 +581,8 @@ class SigningApi(recipe_api.RecipeApi):
 
       docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
 
+      # TODO (b/378784466): Verify BCID attestation for unsigned artifacts
+      # before signing.
       with self.m.step.nest('call BAPI') as presentation:
         request = SignImageRequest(
             signing_configs=config, archive_dir=str(archive_dir),
@@ -588,7 +599,8 @@ class SigningApi(recipe_api.RecipeApi):
           if archive.signing_status != PASSED:
             presentation.status = self.m.step.FAILURE
 
-      self.upload_signed_artifacts(response)
+      self.upload_signed_artifacts(response, attestation_eligible)
+
       docker_prune()
 
       return self.m.signing_utils.signing_response_to_metadata(response)
@@ -724,7 +736,8 @@ class SigningApi(recipe_api.RecipeApi):
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
       return gs_dirs
 
-  def upload_signed_artifacts(self, response: SignImageResponse) -> None:
+  def upload_signed_artifacts(self, response: SignImageResponse,
+                              attestation_eligible: bool) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""
     with self.m.step.nest(
         f'upload signed artifacts to {self.gs_upload_bucket} bucket'
@@ -775,8 +788,32 @@ class SigningApi(recipe_api.RecipeApi):
               gs_dir[len('gs://'):])
 
           for artifact in artifacts:
-            _gs_upload(self, os.path.join(response.output_archive_dir,
-                                          artifact), gs_dir)
+            local_artifact_path = os.path.join(response.output_archive_dir,
+                                               artifact)
+            gs_artifact_path = '{uri}/{item}'.format(uri=gs_dir, item=artifact)
+
+            # TODO (b/378784466): Currently, this does not give us any security or
+            # trust guarantees about the origin of the things we're signing. In the
+            # future, provenance for unsigned artifacts should be verified before
+            # signing occurs.
+            if attestation_eligible:
+              # TODO (b/292149463): Enforce provenance generation always.
+              with self.m.step.nest('generate signed provenance') as step:
+                try:
+                  artifact_hash = self.m.file.file_hash(local_artifact_path,
+                                                        test_data='deadbeef')
+                  self.m.bcid_reporter.report_gcs(artifact_hash,
+                                                  gs_artifact_path)
+                except StepFailure as step_failure:
+                  step.status = self.m.step.FAILURE
+                  step.step_summary_text = 'Failed to generate signed provenance.'
+
+                  # For now, only raise exceptions for signed provenance generation if build properties
+                  # have signed provenance generation set to be fatal.
+                  if self.signed_provenance_generation_fatal:
+                    raise step_failure
+
+            _gs_upload(self, local_artifact_path, gs_dir)
 
       self.m.easy.set_properties_step(
           **{'signed_upload_paths': signed_upload_paths})
