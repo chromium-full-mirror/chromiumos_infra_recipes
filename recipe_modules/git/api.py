@@ -486,17 +486,18 @@ class GitApi(recipe_api.RecipeApi):
     finally:
       self.checkout(head)
 
-  def ls_remote(self, refs, repo_url=None):
+  def ls_remote(self, refs, repo_url=None, opts=None):
     """Return ls-remote output for a repository.
 
     Args:
       refs (list[str]): The refs to list.
       repo_url (str): The url of the remote, or None to use CWD.
+      opts (list[str]): Other options to ls-remote.
 
     Returns:
       (list[Reference]): A list of Refs.
     """
-    cmd = ['ls-remote', repo_url or '.'] + refs
+    cmd = ['ls-remote'] + (opts or []) + [repo_url or '.'] + refs
     test_stdout = '\n'.join(
         '%s\t%s' % (self.test_api.test_commit_id, x) for x in refs)
     stdout = self._step(cmd, stdout=self.m.raw_io.output_text(),

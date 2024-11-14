@@ -7,7 +7,10 @@
 import base64
 from typing import List, Optional
 
+from google.protobuf import timestamp_pb2
+
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.chrome_uprev_orchestrator import InputProperties
@@ -22,8 +25,10 @@ DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/json',
     'recipe_engine/properties',
+    'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',
+    'git',
 ]
 
 CHROMIUM_SRC_GIT = 'https://chromium.googlesource.com/chromium/src.git/'
@@ -226,6 +231,16 @@ def TriggerChromeBuilds(
     return builds
 
 
+def FetchCommitTags(api: RecipeApi,
+                    buildset: common_pb2.GitilesCommit) -> Optional[str]:
+  tags = api.git.ls_remote(
+      [], repo_url=f'https://{buildset.host}/{buildset.project}', opts=['-t'])
+  for t in tags:
+    if t.hash == buildset.id:
+      return t.ref.removeprefix('refs/tags/')
+  return None  # pragma: nocover
+
+
 def RunSteps(api: RecipeApi,
              properties: InputProperties) -> result_pb2.RawResult:
   # * On a trunk
@@ -240,6 +255,13 @@ def RunSteps(api: RecipeApi,
   # The last number of 4 segments of the chrome version. This is called "build
   # number" or "patch number" (varies with document). This code uses
   # |patch_number|.
+  with api.step.nest('extracting Chrome version') as step:
+    try:
+      chrome_version = FetchCommitTags(
+          api, api.buildbucket.build.input.gitiles_commit)
+      step.step_summary_text = f'Chrome version: {chrome_version}'
+    except:  # pragma: nocover # pylint: disable=bare-except
+      step.status = api.step.FAILURE
   try:
     patch_number = int(properties.chrome_version.split('.')[3])
   except (IndexError, ValueError):  # pragma: nocover
@@ -296,53 +318,74 @@ def TriggerUprevBuilds(api: RecipeApi, properties: InputProperties,
 
 def GenTests(api: RecipeTestApi):
 
-  def GetTrigger(chrome_version: str) -> dict:
-    return [{
-        'gitiles': {
-            'ref': 'refs/tags/%s' % chrome_version,
-            'repo': 'https://chromium.googlesource.com/chromium/src',
-            'revision': '8302b1a80de0995f146605740417cdf78e381157',
-        }
-    }]
+  def trigger(chrome_version: str):
+    host = 'chromium.googlesource.com'
+    project = 'chromium/src'
+    commit = '8302b1a80de0995f146605740417cdf78e381157'
+
+    build = build_pb2.Build(
+        id=1231231231,
+        number=1,
+        tags=None,
+        builder=builder_common_pb2.BuilderID(
+            project='chromeos',
+            bucket='infra',
+            builder='chrome-uprev-orchestrator',
+        ),
+        created_by='user:user@google.com',
+        create_time=timestamp_pb2.Timestamp(seconds=1331312211),
+        input=build_pb2.Build.Input(
+            gitiles_commit=common_pb2.GitilesCommit(
+                host=host,
+                project=project,
+                id=commit,
+            ),
+        ),
+    )
+
+    return api.buildbucket.build(build) + api.properties(
+        chrome_version=chrome_version, triggers=[{
+            'gitiles': {
+                'ref': 'refs/tags/%s' % chrome_version,
+                'repo': f'https://{host}/{project}',
+                'revision': commit,
+            }
+        }]) + api.step_data(
+            'extracting Chrome version.git ls-remote',
+            api.raw_io.stream_output_text(
+                f'{commit}\trefs/tags/{chrome_version}', stream='stdout'))
 
   yield api.test(
       'version_at_root_on_release_branches',
-      api.properties(chrome_version='97.0.1290.0',
-                     triggers=GetTrigger('97.0.1290.0')),
+      trigger(chrome_version='97.0.1290.0'),
       api.post_process(post_process.MustRun,
                        'Scheduled PUpr build: chrome-pupr-generator'),
       api.post_process(
           post_process.MustRun,
           'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
       api.post_process(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'version_on_release_branches',
-      api.properties(chrome_version='97.0.1290.1',
-                     triggers=GetTrigger('97.0.1290.1')),
+      trigger(chrome_version='97.0.1290.1'),
       api.post_process(post_process.MustRun,
                        'Scheduled PUpr build: chrome-pupr-generator'),
       api.post_process(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'version_on_non_release_branch',
-      api.properties(chrome_version='98.0.1234.1',
-                     triggers=GetTrigger('98.0.1234.1')),
+      trigger(chrome_version='98.0.1234.1'),
       api.post_process(
           post_process.MustRun,
           'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
       api.post_process(post_process.StatusSuccess),
-      api.post_process(post_process.DropExpectation),
   )
 
   yield api.test(
       'version_on_trunk',
-      api.properties(chrome_version='98.0.1234.0',
-                     triggers=GetTrigger('98.0.1234.0')),
+      trigger(chrome_version='98.0.1234.0'),
       api.post_process(
           post_process.MustRun,
           'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
@@ -352,5 +395,4 @@ def GenTests(api: RecipeTestApi):
           'triggers_properties', ['refs/tags/98.0.1234.0']),
       api.post_process(post_process.MustRun,
                        'Scheduled PUpr build: collect-preuprev-test-results'),
-      api.post_process(post_process.DropExpectation),
   )
