@@ -6,11 +6,9 @@ syntax = "proto3";
 package recipes.chromeos.chrome_uprev_orchestrator;
 
 message InputProperties {
-  // The version of Chrome that is being triggered, such as 98.0.1234.0.
-  string chrome_version = 1;
+  reserved 1;
 
-  // Information to forward to the PUpr builds that are about to be triggered.
-  repeated GitilesTrigger triggers = 2;
+  reserved 2;
 }
 
 message GitilesTrigger { Trigger gitiles = 1; }

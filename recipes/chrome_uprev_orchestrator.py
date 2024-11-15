@@ -145,22 +145,21 @@ def IsVersionOnReleaseBranches(api: RecipeApi, chrome_version: str) -> bool:
   return not IsVersionAvailable(api, version_with_incrementing_branch_num)
 
 
-def TriggerPUprBuild(api: RecipeApi, properties: InputProperties,
-                     builder: str) -> None:
+def TriggerPUprBuild(api: RecipeApi, builder: str,
+                     buildset: common_pb2.GitilesCommit,
+                     chrome_version: str) -> None:
   """Triggers a PUpr build.
 
   Args:
     builder (str): Name of the builder to trigger, e.g. chrome-pupr-generator.
-    properties (InputProperties): properties of the current orchestrator.
+    buildset (GitilesCommit): Buildset of the build.
+    chrome_version (str): Version of the Chrome browser.
   """
-  if not properties.triggers:  # pragma: nocover
-    raise ValueError('triggers are empty')
-  properties_trigger = properties.triggers[0].gitiles
   triggers_properties = [{
       'gitiles': {
-          'repo': properties_trigger.repo,
-          'ref': properties_trigger.ref,
-          'revision': properties_trigger.revision,
+          'repo': f'https://{buildset.host}/{buildset.project}',
+          'ref': f'refs/tags/{chrome_version}',
+          'revision': buildset.id,
       }
   }]
   TriggerCrosBuild(
@@ -168,7 +167,7 @@ def TriggerPUprBuild(api: RecipeApi, properties: InputProperties,
       bucket='pupr',
       builder=builder,
       properties={
-          'chrome_version': properties.chrome_version,
+          'chrome_version': chrome_version,
           # Emulate a GitilesTrigger for the expected inputs of CrOS's pupr.
           'triggers': triggers_properties,
       },
@@ -241,8 +240,7 @@ def FetchCommitTags(api: RecipeApi,
   return None  # pragma: nocover
 
 
-def RunSteps(api: RecipeApi,
-             properties: InputProperties) -> result_pb2.RawResult:
+def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
   # * On a trunk
   #   -> triggers the atomic uprev (to the main branch)
   # * On a release branches:
@@ -256,31 +254,29 @@ def RunSteps(api: RecipeApi,
   # number" or "patch number" (varies with document). This code uses
   # |patch_number|.
   with api.step.nest('extracting Chrome version') as step:
-    try:
-      chrome_version = FetchCommitTags(
-          api, api.buildbucket.build.input.gitiles_commit)
-      step.step_summary_text = f'Chrome version: {chrome_version}'
-    except:  # pragma: nocover # pylint: disable=bare-except
-      step.status = api.step.FAILURE
+    chrome_version = FetchCommitTags(api,
+                                     api.buildbucket.build.input.gitiles_commit)
+    step.step_summary_text = f'Chrome version: {chrome_version}'
   try:
-    patch_number = int(properties.chrome_version.split('.')[3])
-  except (IndexError, ValueError):  # pragma: nocover
+    patch_number = int(chrome_version.split('.')[3])
+  except (IndexError, ValueError, AttributeError):  # pragma: nocover
     return result_pb2.RawResult(
         status=common_pb2.INFRA_FAILURE,
-        summary_markdown=f'Invalid chrome version {properties.chrome_version}')
+        summary_markdown=f'Invalid chrome version {chrome_version}')
 
-  if IsVersionOnReleaseBranches(api, properties.chrome_version):
+  if IsVersionOnReleaseBranches(api, chrome_version):
     # On release branch, we do Chrome (non-atomic) uprev to the branch on CrOS
     # repo.
-    TriggerPUprBuild(api, properties, 'chrome-pupr-generator')
+    TriggerPUprBuild(api, 'chrome-pupr-generator',
+                     api.buildbucket.build.input.gitiles_commit, chrome_version)
 
     # If |patch_number| is zero, it's the root of branches and it's ok to
     # uprev.
     if patch_number == 0:
       # Even on a release branch, if it's at the root of the release branch, we
       # do Chrome (non-atomic) uprev to the ToT on CrOS repo.
-      TriggerUprevBuilds(api, properties,
-                         api.buildbucket.build.input.gitiles_commit)
+      TriggerUprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
+                         chrome_version)
       summary_markdown = 'On trunk (at the root of release branch)'
     else:
       summary_markdown = 'On release branches'
@@ -290,8 +286,8 @@ def RunSteps(api: RecipeApi,
 
   # On a non-release branch, we do Chrome (non-atomic) uprev to the ToT on CrOS
   # repo.
-  TriggerUprevBuilds(api, properties,
-                     api.buildbucket.build.input.gitiles_commit)
+  TriggerUprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
+                     chrome_version)
 
   if patch_number == 0:
     summary_markdown = 'On trunk (at the root of non-release branch)'
@@ -302,13 +298,14 @@ def RunSteps(api: RecipeApi,
                               summary_markdown=summary_markdown)
 
 
-def TriggerUprevBuilds(api: RecipeApi, properties: InputProperties,
-                       buildset: common_pb2.GitilesCommit) -> None:
+def TriggerUprevBuilds(api: RecipeApi, buildset: common_pb2.GitilesCommit,
+                       chrome_version: str) -> None:
   # Wait for 3 minutes to ensure critical pre-uprev builders are started.
   api.time.sleep(180)
   # Launch non-critical pre-uprev builders for new orchestrator flow.
   preuprevs = TriggerChromeBuilds(api, CHROME_SIDE_BUILDERS, buildset)
-  TriggerPUprBuild(api, properties, 'lacros-ash-atomic-pupr-generator')
+  TriggerPUprBuild(api, 'lacros-ash-atomic-pupr-generator', buildset,
+                   chrome_version)
   TriggerCrosBuild(api, {}, 'infra', 'collect-preuprev-test-results')
   # Wait for new pre-uprev builders to complete.
   api.buildbucket.collect_builds(
@@ -343,17 +340,10 @@ def GenTests(api: RecipeTestApi):
         ),
     )
 
-    return api.buildbucket.build(build) + api.properties(
-        chrome_version=chrome_version, triggers=[{
-            'gitiles': {
-                'ref': 'refs/tags/%s' % chrome_version,
-                'repo': f'https://{host}/{project}',
-                'revision': commit,
-            }
-        }]) + api.step_data(
-            'extracting Chrome version.git ls-remote',
-            api.raw_io.stream_output_text(
-                f'{commit}\trefs/tags/{chrome_version}', stream='stdout'))
+    return api.buildbucket.build(build) + api.step_data(
+        'extracting Chrome version.git ls-remote',
+        api.raw_io.stream_output_text(f'{commit}\trefs/tags/{chrome_version}',
+                                      stream='stdout'))
 
   yield api.test(
       'version_at_root_on_release_branches',
