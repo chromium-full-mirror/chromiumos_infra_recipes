@@ -476,7 +476,16 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-brya-chrome-preuprev",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing betty",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-betty-chrome-preuprev']@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev as brya",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@[bbid/284564751](https://ci.chromium.org/ui/b/284564751)@@@"
@@ -484,7 +493,7 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-jacuzzi-chrome-preuprev",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-jacuzzi-chrome-preuprev as jacuzzi",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@[bbid/281483114](https://ci.chromium.org/ui/b/281483114)@@@"
@@ -492,7 +501,7 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found linux-chromeos-chrome-preuprev",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use linux-chromeos-chrome-preuprev as linux",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@[bbid/992625145](https://ci.chromium.org/ui/b/992625145)@@@"
@@ -500,19 +509,10 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Found chromeos-volteer-chrome-preuprev",
+    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-volteer-chrome-preuprev as volteer",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_SUMMARY_TEXT@[bbid/425179835](https://ci.chromium.org/ui/b/425179835)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Missing betty",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@Want one of ['chromeos-betty-chrome-preuprev']@@@",
-      "@@@STEP_FAILURE@@@"
     ]
   },
   {

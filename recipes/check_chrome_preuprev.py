@@ -104,21 +104,33 @@ WANTED_BUILDERS = {
 def PreUprevBuilders(
     api: RecipeApi,
     builds: List[build_pb2.Build]) -> Optional[List[build_pb2.Build]]:
-  with api.step.nest('filtering for useful builders'):  # pragma: nocover
+  with api.step.nest('filtering for useful builders'):
     fulfilled_builders = {}
 
     for k, conf in WANTED_BUILDERS.items():
       options = conf.oneof
       for b in builds:
         if b.builder.builder in options:
-          fulfilled_builders[k] = b
-          with api.step.nest(f'Found {b.builder.builder}') as step:
-            step.step_summary_text = f'[bbid/{b.id}](https://ci.chromium.org/ui/b/{b.id})'
-          break
+          if k not in fulfilled_builders:
+            fulfilled_builders[k] = b
+          # Prefer a successful build.
+          elif b.status == common_pb2.SUCCESS:
+            fulfilled_builders[k] = b
+            break
+          # Prefer a running build than unsuccessfully ended builds.
+          elif fulfilled_builders[k].status in [
+              common_pb2.FAILURE, common_pb2.INFRA_FAILURE, common_pb2.CANCELED
+          ] and b.status in [common_pb2.STARTED, common_pb2.SCHEDULED]:
+            fulfilled_builders[k] = b
 
     missing = False
     for k, conf in WANTED_BUILDERS.items():
-      if k not in fulfilled_builders:
+      if k in fulfilled_builders:
+        b = fulfilled_builders[k]
+        with api.step.nest(f'Use {b.builder.builder} as {k}') as step:
+          step.step_summary_text = (
+              f'[bbid/{b.id}](https://ci.chromium.org/ui/b/{b.id})')
+      else:
         missing = True
         with api.step.nest(f'Missing {k}') as step:
           step.status = api.step.FAILURE
@@ -270,13 +282,15 @@ def GenTests(api: RecipeTestApi):
 
   def simulate_search_pre_uprev_builders(api, step, **kwargs):
     return api.buildbucket.simulated_search_results(
-        [build(k, v) for k, v in kwargs.items()], step_name=step)
+        [build(k, v) for k, v in kwargs.items() if v is not None],
+        step_name=step)
 
   def pre_uprev_started(
       api,
       step,
       chromeos_betty_chrome_preuprev=common_pb2.STARTED,
       chromeos_brya_chrome_preuprev=common_pb2.STARTED,
+      chromeos_brya_chrome_preuprev_skylab=None,
       chromeos_jacuzzi_chrome_preuprev=common_pb2.STARTED,
       chromeos_volteer_chrome_preuprev=common_pb2.STARTED,
       linux_chromeos_chrome_preuprev=common_pb2.STARTED,
@@ -379,6 +393,39 @@ def GenTests(api: RecipeTestApi):
           '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
       )),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'prefer-sucessful-build',
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search',
+          chromeos_brya_chrome_preuprev_skylab=common_pb2.SUCCESS),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      api.post_check(
+          post_process.MustRun,
+          'Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev-skylab as brya'
+      ),
+      api.post_process(post_process.DropExpectation),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'prefer-running-build',
+      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search',
+          chromeos_brya_chrome_preuprev=common_pb2.FAILURE,
+          chromeos_brya_chrome_preuprev_skylab=common_pb2.STARTED),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      api.post_check(
+          post_process.MustRun,
+          'Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev-skylab as brya'
+      ),
+      api.post_process(post_process.DropExpectation),
       cq=True,
       status='SUCCESS',
   )
