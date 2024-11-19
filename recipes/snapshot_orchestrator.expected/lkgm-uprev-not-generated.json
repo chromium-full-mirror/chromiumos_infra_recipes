@@ -11397,7 +11397,7 @@
     "name": "generate a LKGM uprev CL.Check the previous LKGM CL generation",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@Previous generation was -380196395 sec ago in go/bbid/0.@@@"
+      "@@@STEP_TEXT@The previous generation was in go/bbid/0. Its manifest is 18000 second older than the current manifest. 18000 second is not longer than the threshold.@@@"
     ]
   },
   {
@@ -11430,7 +11430,6 @@
       "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"endTime\": \"2024-05-31T23:00:00Z\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"lkgm\": {@@@",
@@ -11438,7 +11437,8 @@
       "@@@STEP_LOG_LINE@json.output@                  \"uprev_dryrun\": false@@@",
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            }@@@",
+      "@@@STEP_LOG_LINE@json.output@            },@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"startTime\": \"1969-12-31T19:00:00Z\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",

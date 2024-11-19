@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "Check the previous LKGM CL generation",
     "~followup_annotations": [
-      "@@@STEP_TEXT@The previous generation was in go/bbid/0. Its manifest is 21600 second older than the current manifest. 21600 second is longer than the threshold.@@@"
+      "@@@STEP_TEXT@The previous generation was in go/bbid/0. Its manifest is -1717196400 second older than the current manifest. -1717196400 second is not longer than the threshold.@@@"
     ]
   },
   {
@@ -18,18 +18,6 @@
       "cr-buildbucket.appspot.com"
     ],
     "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
     "name": "Check the previous LKGM CL generation.buildbucket.search",
     "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"endTime,id,output.properties\"}, \"pageSize\": 100, \"predicate\": {\"builder\": {\"bucket\": \"postsubmit\", \"builder\": \"snapshot-orchestrator\", \"project\": \"chromeos\"}}}}]}",
     "~followup_annotations": [
@@ -40,11 +28,6 @@
       "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"snapshot-orchestrator\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chromeos\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
       "@@@STEP_LOG_LINE@json.output@            \"output\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"lkgm\": {@@@",
@@ -53,7 +36,7 @@
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"startTime\": \"2024-05-31T22:00:00Z\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"startTime\": \"2024-05-31T23:00:00Z\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -81,7 +64,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/8945511751514863184@@@"
+      "@@@STEP_LINK@0@https://cr-buildbucket.appspot.com/build/0@@@"
     ]
   },
   {

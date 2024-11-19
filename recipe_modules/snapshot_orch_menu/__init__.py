@@ -14,6 +14,7 @@ DEPS = [
     'recipe_engine/cv',
     'recipe_engine/futures',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/raw_io',
     'recipe_engine/step',
     'recipe_engine/time',

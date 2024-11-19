@@ -537,12 +537,21 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
                                   f'{LIMIT_BUILD_SEARCH} builds.')
         return True
 
-      elapsed = int(self.m.time.time() - last.end_time.seconds)
+      # Checks the elapsed time bteween the generation time of the manifest
+      # that previously generated LKGM uprev CL and the one of the current
+      # manifest.
+      elapsed = (
+          self.m.buildbucket.build.start_time.seconds - last.start_time.seconds)
       presentation.step_text = (
-          f'Previous generation was {elapsed} sec ago in go/bbid/{last.id}.')
+          f'The previous generation was in go/bbid/{last.id}. '
+          f'Its manifest is {elapsed} second older than the current manifest. ')
       if elapsed > SNAPSHOT_LGKM_UPREV_INTERVAL_IN_SEC:
+        presentation.step_text += \
+            f'{elapsed} second is longer than the threshold.'
         return True
 
+      presentation.step_text += \
+          f'{elapsed} second is not longer than the threshold.'
       return False
 
   def _retrieve_last_build_generating_lkgm_cl(self):
