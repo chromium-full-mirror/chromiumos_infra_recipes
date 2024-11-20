@@ -23,11 +23,9 @@ DEPS = [
 
 
 PROPERTIES = DutLeaserProperties
-
 _DUT_STATE_NEEDS_REPAIR = 'needs_repair'
-
 _DUT_LEASER_TEST_ID = 'dut-leaser'
-
+_REPAIR_REQUEST_PROVISION = "REPAIR_REQUEST_PROVISION"
 
 def RunSteps(api, properties):
   lease_end_seconds = api.time.time() + 60 * properties.lease_length_minutes
@@ -35,14 +33,16 @@ def RunSteps(api, properties):
   with api.step.nest('lease DUT for %s hr %s min' %
                      (properties.lease_length_minutes // 60,
                       properties.lease_length_minutes % 60)):
-    with api.step.nest('update DUT state to %s' % _DUT_STATE_NEEDS_REPAIR):
+    with api.step.nest('update DUT state to %s and requesting %s' %
+                       (_DUT_STATE_NEEDS_REPAIR, _REPAIR_REQUEST_PROVISION)):
       # Load the local state to set the results directory to save to.
       load_response = api.phosphorus.load_skylab_local_state(
           _DUT_LEASER_TEST_ID)
       api.phosphorus.save_and_seal_skylab_local_state(
           dut_state=_DUT_STATE_NEEDS_REPAIR,
           dut_name=load_response.dut_topology[0].hostname,
-          peer_duts=[dut.hostname for dut in load_response.dut_topology[1:]])
+          peer_duts=[dut.hostname for dut in load_response.dut_topology[1:]],
+          repair_requests=[_REPAIR_REQUEST_PROVISION])
 
     with api.step.nest('sleep for remainder of lease'):
       remaining_seconds = int(lease_end_seconds - api.time.time())
@@ -76,7 +76,7 @@ def GenTests(api):
                                   SWARMING_TASK_ID='dummy-task-id',
                                   SKYLAB_DUT_ID='dummy-dut-id')),
       api.step_data(
-          'lease DUT for 2 hr 3 min.update DUT state to needs_repair.call `phosphorus`.load',
+          'lease DUT for 2 hr 3 min.update DUT state to needs_repair and requesting REPAIR_REQUEST_PROVISION.call `phosphorus`.load',
           stdout=api.raw_io.output(
               json_format.MessageToJson(
                   load.LoadResponse(
