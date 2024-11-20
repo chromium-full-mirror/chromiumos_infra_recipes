@@ -790,7 +790,8 @@ class SigningApi(recipe_api.RecipeApi):
           for artifact in artifacts:
             local_artifact_path = os.path.join(response.output_archive_dir,
                                                artifact)
-            gs_artifact_path = '{uri}/{item}'.format(uri=gs_dir, item=artifact)
+
+            gs_artifact_path = os.path.join(gs_dir, artifact)
 
             # TODO (b/378784466): Currently, this does not give us any security or
             # trust guarantees about the origin of the things we're signing. In the

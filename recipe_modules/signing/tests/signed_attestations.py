@@ -110,7 +110,7 @@ def GenTests(api: RecipeTestApi):
           'sign artifacts.upload signed artifacts to chromeos-releases bucket.upload signed artifacts for CHANNEL_CANARY.generate signed provenance.snoop: report_gcs',
           [
               '-report-gcs', '-digest', 'deadbeef', '-gcs-uri',
-              'gs://chromeos-releases/canary-channel/kukui/1234.56.0//bar.bin'
+              'gs://chromeos-releases/canary-channel/kukui/1234.56.0/bar.bin'
           ]), api.post_process(post_process.DropExpectation),
       build_target='kukui', builder='kukui-release-main', status='SUCCESS')
 

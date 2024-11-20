@@ -16190,7 +16190,7 @@
       "-digest",
       "deadbeef",
       "-gcs-uri",
-      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0//chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys"
+      "gs://chromeos-throw-away-bucket/canary-channel/kukui/1234.56.0/chromeos_00000.0.0_kukui_recovery_canary-channel_devkeys"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
