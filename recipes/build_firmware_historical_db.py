@@ -49,7 +49,8 @@ DEPS = [
 PROPERTIES = BuildFirmwareHistoricalDbProperties
 PRECONDITION_FAILURE = 412
 HISTORICAL_DB = 'historical.bin'
-TOKEN_BUCKET = 'gs://chromeos-localmirror/distfiles/cros_ec/tokens'
+DISTFILES = 'gs://chromeos-localmirror/distfiles'
+TOKEN_BUCKET = f'{DISTFILES}/cros_ec/tokens'
 TOKEN_VERSION_BUCKET = f'{TOKEN_BUCKET}/version'
 
 def RunSteps(api, properties):
@@ -108,7 +109,7 @@ def CopyVersionedDatabase(api: RecipeApi, source: str):
   with api.step.nest('Generate versioned database name'):
     file_hash = api.file.file_hash(source, test_data='deadbeef')
     versionedFileName = f'historical.{file_hash}.bin'
-    api.gcloud.storage_cp(
+    retval = api.gcloud.storage_cp(
         source,
         f'{TOKEN_VERSION_BUCKET}/{versionedFileName}',
         flags=[
@@ -116,7 +117,17 @@ def CopyVersionedDatabase(api: RecipeApi, source: str):
             '--predefined-acl=publicRead',
         ],
         ok_ret=(0, 1, PRECONDITION_FAILURE),
-    )
+    ).retcode
+
+    # Update distfiles location when a new versioned database is copied.
+    if retval == 0:
+      api.gcloud.storage_cp(
+          f'{TOKEN_VERSION_BUCKET}/{versionedFileName}',
+          f'{DISTFILES}/{HISTORICAL_DB}',
+          flags=[
+              '--predefined-acl=publicRead',
+          ],
+      )
 
 
 def UpdateHistoricalTokenDatabase(
