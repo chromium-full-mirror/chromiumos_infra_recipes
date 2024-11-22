@@ -225,6 +225,10 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
       presentation.step_text = 'Empty build: Exiting'
       return RawResult(status=Status.SUCCESS)
 
+    # CoP_hide_full_logs is a custom option that does not exist in Cloud Build API.
+    # Extract it here before launching the build.
+    cop_hide_full_logs = build_config.pop('CoP_hide_full_logs', False)
+
   with api.step.nest('launch build') as presentation:
     build_id, log_url = _launch_build(api, properties.project_name,
                                       build_config)
@@ -240,7 +244,6 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
     if api.cros_infra_config.is_staging:
       presentation.step_text = 'Do not vote or comment with the staging builder.'
       return RawResult(status=Status.SUCCESS)
-    cop_hide_full_logs = build_config.pop('CoP_hide_full_logs', False)
     body = _prepare_set_review_req(results, cop_hide_full_logs)
     vote = body['labels']['Verified']
     if _set_gerrit_review(api, patch_set, body=body, name='comment and vote'):

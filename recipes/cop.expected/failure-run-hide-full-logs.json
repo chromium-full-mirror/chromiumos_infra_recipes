@@ -332,7 +332,7 @@
       "vpython3",
       "RECIPE[chromeos::cop].resources/launch_build.py",
       "-input-json",
-      "{\"build_config\": {\"CoP_hide_full_logs\": true, \"steps\": [1, 2, 3]}, \"project\": \"name\"}",
+      "{\"build_config\": {\"steps\": [1, 2, 3]}, \"project\": \"name\"}",
       "-output-json",
       "/path/to/tmp/json"
     ],
