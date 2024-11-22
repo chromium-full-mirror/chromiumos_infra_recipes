@@ -33,7 +33,7 @@ def RunSteps(api: RecipeApi):
     checkout = api.path.mkdtemp()
     with api.context(cwd=checkout):
       api.git.clone(
-          f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels',
+          f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels/6.6',
           depth=1)
 
       recovery_local_path = api.path.join(
@@ -41,7 +41,7 @@ def RunSteps(api: RecipeApi):
 
       # copy the file in.
       api.file.copy('copy prebuild recovery image into temp dir',
-                    api.path.join(checkout, '6.6', 'recovery', 'vmlinuz.image'),
+                    api.path.join(checkout, 'recovery', 'vmlinuz.image'),
                     recovery_local_path)
 
     # TODO(b/371248376): Sign recovery and upload to GS and android repo.
@@ -51,7 +51,7 @@ def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'success',
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/brya-kernels'
+          'https://googleplex-android.googlesource.com/device/google/desktop/brya-kernels/6.6'
       ]),
       api.post_check(post_process.MustRun,
                      'copy prebuild recovery image into temp dir'),
