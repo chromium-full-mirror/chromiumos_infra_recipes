@@ -748,8 +748,8 @@
       "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-284564751-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test FAILURE\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -795,7 +795,10 @@
     ]
   },
   {
-    "name": "$result",
-    "summaryMarkdown": "On trunk (at the root of non-release branch)\n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n"
+    "failure": {
+      "failure": {},
+      "humanReason": "On trunk (at the root of non-release branch)\n\n- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n- chromeos-brya-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/284564751)\n"
+    },
+    "name": "$result"
   }
 ]

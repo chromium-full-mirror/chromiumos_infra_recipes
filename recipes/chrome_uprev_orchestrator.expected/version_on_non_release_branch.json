@@ -60,10 +60,6 @@
   },
   {
     "cmd": [],
-    "name": "sleep 180"
-  },
-  {
-    "cmd": [],
     "name": "trigger browser side builders"
   },
   {
@@ -799,6 +795,6 @@
   },
   {
     "name": "$result",
-    "summaryMarkdown": "On non-release branches"
+    "summaryMarkdown": "On non-release branches\n\n- : [SUCCESS](https://ci.chromium.org/ui/b/8922054662172514000)\n- : [SUCCESS](https://ci.chromium.org/ui/b/8922054662172514001)\n- : [SUCCESS](https://ci.chromium.org/ui/b/8922054662172514002)\n- : [SUCCESS](https://ci.chromium.org/ui/b/8922054662172514003)\n- : [SUCCESS](https://ci.chromium.org/ui/b/8922054662172514004)\n"
   }
 ]

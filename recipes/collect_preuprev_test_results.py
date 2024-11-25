@@ -89,9 +89,9 @@ BUILD_FIELDS_TO_RETRIEVE = [
 RETRY_PREUPREV_MAX_COUNT = 1
 
 
-def GetPreUprevTestBuilders(api: RecipeApi, release_task_id: int):
+def GetPreUprevTestBuilders(api: RecipeApi, task_id: int):
   results = api.buildbucket.search(
-      builds_service_pb2.BuildPredicate(child_of=release_task_id),
+      builds_service_pb2.BuildPredicate(child_of=task_id),
       fields=BUILD_FIELDS_TO_RETRIEVE)
 
   r = []
@@ -101,9 +101,9 @@ def GetPreUprevTestBuilders(api: RecipeApi, release_task_id: int):
   return r
 
 
-def GetPuprGeneratorBuilder(api: RecipeApi, pupr_cordinator_task_id: int):
+def GetPuprGeneratorBuilder(api: RecipeApi, task_id: int):
   builds = api.buildbucket.search(
-      builds_service_pb2.BuildPredicate(child_of=pupr_cordinator_task_id),
+      builds_service_pb2.BuildPredicate(child_of=task_id),
       fields=BUILD_FIELDS_TO_RETRIEVE)
 
   for build in builds:
@@ -182,7 +182,7 @@ def FilterBuildsStatus(builders: List[build_pb2.Build],
 
 def DoRunSteps(api: RecipeApi, current_build_id: int,
                uprev_cl_number_overridden_for_testing: Optional[int]):
-  with api.step.nest('Find pupr-coordinator builder') as presentation:
+  with api.step.nest('Find chrome-uprev-orchestrator builder') as presentation:
     current_task = api.buildbucket.get(current_build_id,
                                        fields=['ancestor_ids'])
     if len(current_task.ancestor_ids) < 2:
@@ -190,14 +190,11 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
           status=common_pb2.FAILURE,
           summary_markdown='Failed to retrieve ancestor build IDs.')
 
-    pupr_cordinator_task_id = current_task.ancestor_ids[-1]
-    release_task_id = current_task.ancestor_ids[-2]
+    orchestrator_task_id = current_task.ancestor_ids[-1]
 
     summary_text = (
-        f'- pupr-coordinator: [bbid/{pupr_cordinator_task_id}]' +
-        f'(https://ci.chromium.org/ui/b/{pupr_cordinator_task_id})\n' +
-        f'- chrome-release: [bbid/{release_task_id}]' +
-        f'(https://ci.chromium.org/ui/b/{release_task_id})\n')
+        f'- chrome-uprev-orchestrator: [bbid/{orchestrator_task_id}]' +
+        f'(https://ci.chromium.org/ui/b/{orchestrator_task_id})\n')
 
     presentation.step_summary_text = summary_text
 
@@ -206,7 +203,7 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
     PRE_UPREV_SCHEDULE_DEALAY = 10 * 60  # 10 min
     api.time.sleep(secs=PRE_UPREV_SCHEDULE_DEALAY, with_step=True)
 
-    pre_uprev_builders = GetPreUprevTestBuilders(api, release_task_id)
+    pre_uprev_builders = GetPreUprevTestBuilders(api, orchestrator_task_id)
 
     presentation.step_summary_text = ''.join(
         map(
@@ -221,8 +218,7 @@ def DoRunSteps(api: RecipeApi, current_build_id: int,
 
     with api.time.timeout(seconds=PUPR_GENERATOR_TIMEOUT):
       while True:
-        pupr_generator_task = GetPuprGeneratorBuilder(api,
-                                                      pupr_cordinator_task_id)
+        pupr_generator_task = GetPuprGeneratorBuilder(api, orchestrator_task_id)
 
         # Exit the loop if the pupr generator has finished.
         if pupr_generator_task is not None and (pupr_generator_task.status
@@ -595,7 +591,7 @@ def GenTests(api: RecipeTestApi):
         ))
     build += api.buildbucket.simulated_get(
         current_build,
-        step_name='Find pupr-coordinator builder.buildbucket.get')
+        step_name='Find chrome-uprev-orchestrator builder.buildbucket.get')
 
     PUPR_GENERATOR_STEP_NAME = 'Wait for completion of pupr-generator builder'
     if pupr_generater_build_resps:

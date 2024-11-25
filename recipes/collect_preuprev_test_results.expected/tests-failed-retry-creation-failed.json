@@ -955,9 +955,9 @@
   },
   {
     "cmd": [],
-    "name": "Find pupr-coordinator builder",
+    "name": "Find chrome-uprev-orchestrator builder",
     "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@- pupr-coordinator: [bbid/300](https://ci.chromium.org/ui/b/300)\n- chrome-release: [bbid/102](https://ci.chromium.org/ui/b/102)\n@@@"
+      "@@@STEP_SUMMARY_TEXT@- chrome-uprev-orchestrator: [bbid/300](https://ci.chromium.org/ui/b/300)\n@@@"
     ]
   },
   {
@@ -980,7 +980,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Find pupr-coordinator builder.buildbucket.get",
+    "name": "Find chrome-uprev-orchestrator builder.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"ancestorIds,id\", \"id\": \"301\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
@@ -1048,7 +1048,7 @@
       }
     },
     "name": "Find pre-uprev tests.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"102\"}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"childOf\": \"300\"}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1103,7 +1103,7 @@
       "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"childOf\": \"102\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"childOf\": \"300\"@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",

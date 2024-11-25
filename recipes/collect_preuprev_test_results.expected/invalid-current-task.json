@@ -955,7 +955,7 @@
   },
   {
     "cmd": [],
-    "name": "Find pupr-coordinator builder"
+    "name": "Find chrome-uprev-orchestrator builder"
   },
   {
     "cmd": [
@@ -977,7 +977,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Find pupr-coordinator builder.buildbucket.get",
+    "name": "Find chrome-uprev-orchestrator builder.buildbucket.get",
     "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"ancestorIds,id\", \"id\": \"301\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",

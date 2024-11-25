@@ -5,7 +5,8 @@
 """Recipe to orchestrate necessary builders and pupr for Chrome uprev."""
 
 import base64
-from typing import List, Optional
+import hashlib
+from typing import List, Optional, Tuple
 
 from google.protobuf import timestamp_pb2
 
@@ -59,6 +60,16 @@ PRE_UPREV_TEST_TIMEOUT = 6 * 60 * 60  # 6 hour
 
 def ToBuilderIds(builders: List[build_pb2.Build]) -> List[int]:
   return list(map(lambda b: int(b.id), builders))
+
+
+def ToBuildersLinkMd(builders: List[build_pb2.Build]) -> str:
+  text = ''
+  for builder in builders:
+    status = common_pb2.Status.Name(builder.status)
+    text += (f'- {builder.builder.builder}: ' +
+             f'[{status}](https://ci.chromium.org/ui/b/{builder.id})\n')
+  return text
+
 
 def IsVersionAvailable(api: RecipeApi, chrome_version: str) -> bool:
   """Returns True if the given version exists.
@@ -147,7 +158,7 @@ def IsVersionOnReleaseBranches(api: RecipeApi, chrome_version: str) -> bool:
 
 def TriggerPUprBuild(api: RecipeApi, builder: str,
                      buildset: common_pb2.GitilesCommit,
-                     chrome_version: str) -> None:
+                     chrome_version: str) -> List[build_pb2.Build]:
   """Triggers a PUpr build.
 
   Args:
@@ -172,6 +183,7 @@ def TriggerPUprBuild(api: RecipeApi, builder: str,
           'triggers': triggers_properties,
       },
   )
+  return []
 
 
 def TriggerCrosBuild(api: RecipeApi, properties: dict, bucket: str,
@@ -264,56 +276,111 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
         status=common_pb2.INFRA_FAILURE,
         summary_markdown=f'Invalid chrome version {chrome_version}')
 
+  builds = []
   if IsVersionOnReleaseBranches(api, chrome_version):
     # On release branch, we do Chrome (non-atomic) uprev to the branch on CrOS
     # repo.
-    TriggerPUprBuild(api, 'chrome-pupr-generator',
-                     api.buildbucket.build.input.gitiles_commit, chrome_version)
+    builds.extend(
+        TriggerPUprBuild(api, 'chrome-pupr-generator',
+                         api.buildbucket.build.input.gitiles_commit,
+                         chrome_version))
 
     # If |patch_number| is zero, it's the root of branches and it's ok to
     # uprev.
     if patch_number == 0:
       # Even on a release branch, if it's at the root of the release branch, we
       # do Chrome (non-atomic) uprev to the ToT on CrOS repo.
-      TriggerUprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
-                         chrome_version)
+      builds.extend(
+          UprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
+                      chrome_version))
       summary_markdown = 'On trunk (at the root of release branch)'
     else:
       summary_markdown = 'On release branches'
 
-    return result_pb2.RawResult(status=common_pb2.SUCCESS,
-                                summary_markdown=summary_markdown)
+    return Result(api, builds, summary_markdown)
 
   # On a non-release branch, we do Chrome (non-atomic) uprev to the ToT on CrOS
   # repo.
-  TriggerUprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
-                     chrome_version)
+  builds.extend(
+      UprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
+                  chrome_version))
 
   if patch_number == 0:
     summary_markdown = 'On trunk (at the root of non-release branch)'
   else:
     summary_markdown = 'On non-release branches'
 
-  return result_pb2.RawResult(status=common_pb2.SUCCESS,
-                              summary_markdown=summary_markdown)
+  return Result(api, builds, summary_markdown)
 
 
-def TriggerUprevBuilds(api: RecipeApi, buildset: common_pb2.GitilesCommit,
-                       chrome_version: str) -> None:
-  # Wait for 3 minutes to ensure critical pre-uprev builders are started.
-  api.time.sleep(180)
-  # Launch non-critical pre-uprev builders for new orchestrator flow.
+def UprevBuilds(api: RecipeApi, buildset: common_pb2.GitilesCommit,
+                chrome_version: str) -> List[build_pb2.Build]:
   preuprevs = TriggerChromeBuilds(api, CHROME_SIDE_BUILDERS, buildset)
   TriggerPUprBuild(api, 'lacros-ash-atomic-pupr-generator', buildset,
                    chrome_version)
   TriggerCrosBuild(api, {}, 'infra', 'collect-preuprev-test-results')
-  # Wait for new pre-uprev builders to complete.
-  api.buildbucket.collect_builds(
-      ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
-      timeout=PRE_UPREV_TEST_TIMEOUT)
+  preuprevs = list(
+      api.buildbucket.collect_builds(
+          ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
+          timeout=PRE_UPREV_TEST_TIMEOUT).values())
+  return preuprevs
+
+
+def FilterBuildsStatus(
+    builders: List[build_pb2.Build], status: common_pb2.Status
+) -> Tuple[List[build_pb2.Build], List[build_pb2.Build]]:
+  true_builders, false_builders = [], []
+  for builder in builders:
+    if builder.status == status:
+      true_builders.append(builder)
+    else:
+      false_builders.append(builder)
+  return true_builders, false_builders
+
+
+def Result(api: RecipeApi, builds: List[build_pb2.Build],
+           summary_markdown_prefix: str) -> result_pb2.RawResult:
+  _, failed_builds = FilterBuildsStatus(builds, common_pb2.SUCCESS)
+  summary_builds = ('\n\n' + ToBuildersLinkMd(builds)) if builds else ''
+  if failed_builds:
+    return result_pb2.RawResult(
+        status=common_pb2.FAILURE,
+        summary_markdown=f'{summary_markdown_prefix}{summary_builds}')
+  return result_pb2.RawResult(
+      status=common_pb2.SUCCESS,
+      summary_markdown=f'{summary_markdown_prefix}{summary_builds}')
 
 
 def GenTests(api: RecipeTestApi):
+
+  _name_id_mapping = {}
+
+  def _name(name):
+    return name.replace('_', '-')
+
+  def _name_to_id(name):
+    name = _name(name)
+    if name in _name_id_mapping:
+      return _name_id_mapping[name]
+    newid = int(hashlib.sha1(name.encode('utf-8')).hexdigest(), 16) % (10**9)
+    if newid not in _name_id_mapping.values():
+      _name_id_mapping[name] = newid
+      return newid
+    raise Exception('hash collision')  # pragma: nocover
+
+  def build(name, status):
+    return build_pb2.Build(
+        id=_name_to_id(name),
+        builder=builder_common_pb2.BuilderID(project='chrome', bucket='ci',
+                                             builder=_name(name)),
+        status=status,
+        summary_markdown=f'Test {common_pb2.Status.Name(status)}',
+        infra=build_pb2.BuildInfra(
+            resultdb=build_pb2.BuildInfra.ResultDB(
+                invocation='invocations/build-{}-rdb'.format(_name_to_id(
+                    name))),
+        ),
+    )
 
   def trigger(chrome_version: str):
     host = 'chromium.googlesource.com'
@@ -344,6 +411,10 @@ def GenTests(api: RecipeTestApi):
         'extracting Chrome version.git ls-remote',
         api.raw_io.stream_output_text(f'{commit}\trefs/tags/{chrome_version}',
                                       stream='stdout'))
+
+  def preuprevs(api, step, **kwargs):
+    return api.buildbucket.simulated_collect_output(
+        [build(k, v) for k, v in kwargs.items()], step_name=step)
 
   yield api.test(
       'version_at_root_on_release_branches',
@@ -376,6 +447,8 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'version_on_trunk',
       trigger(chrome_version='98.0.1234.0'),
+      preuprevs(api, '', chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
+                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
       api.post_process(
           post_process.MustRun,
           'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
@@ -385,4 +458,21 @@ def GenTests(api: RecipeTestApi):
           'triggers_properties', ['refs/tags/98.0.1234.0']),
       api.post_process(post_process.MustRun,
                        'Scheduled PUpr build: collect-preuprev-test-results'),
+  )
+
+  yield api.test(
+      'version_on_trunk_failed_preuprevs',
+      trigger(chrome_version='98.0.1234.0'),
+      preuprevs(api, '', chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
+                chromeos_brya_chrome_preuprev=common_pb2.FAILURE),
+      api.post_process(
+          post_process.MustRun,
+          'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
+      api.post_process(
+          post_process.LogContains,
+          'Scheduled PUpr build: lacros-ash-atomic-pupr-generator',
+          'triggers_properties', ['refs/tags/98.0.1234.0']),
+      api.post_process(post_process.MustRun,
+                       'Scheduled PUpr build: collect-preuprev-test-results'),
+      status='FAILURE',
   )
