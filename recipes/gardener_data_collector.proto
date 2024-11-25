@@ -1,0 +1,33 @@
+syntax = "proto3";
+
+package recipes.chromeos.gardener_data_collector;
+
+message GardenerDataResult {
+  message Commit {
+    // The change number.
+    int64 number = 1;
+
+    // Timestamp of when the change was created.
+    string created = 2;
+
+    string branch = 3;
+
+    // The subject of the change (header line of the commit message).
+    string subject = 4;
+
+    string status = 5;
+
+    // The numeric Change-Id of the change that this change reverts.
+    int64 revert_of = 6;
+
+    // The number of time the change has been CQ+1 or CQ+2.
+    int64 cq_tries = 7;
+
+    // The version string before and after the uprev commit.
+    string old_version = 8;
+    string new_version = 9;
+  }
+
+  repeated Commit chrome_uprev_commits = 1;
+  repeated Commit lkgm_commits = 2;
+}
