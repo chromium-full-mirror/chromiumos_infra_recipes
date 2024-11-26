@@ -386,7 +386,9 @@ class SigningApi(recipe_api.RecipeApi):
       self, sign_types: List['common_pb2.ImageType']) -> List[str]:
     """Get a list of common files to be downloaded, depending on sign types."""
     # Files to always download for shellballs.
-    if common_pb2.IMAGE_TYPE_SHELLBALL in sign_types:
+    if any(x in sign_types for x in [
+        common_pb2.IMAGE_TYPE_SHELLBALL, common_pb2.IMAGE_TYPE_RECOVERY_KERNEL
+    ]):
       return []
     # Files to always download for other sign types.
     build_target = self.m.build_menu.build_target.name

@@ -37,6 +37,7 @@ ARTIFACTS_BY_IMAGE_TYPE = {
     common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',
     common_pb2.IMAGE_TYPE_SHELLBALL: 'chromeos-firmwareupdate',
     common_pb2.IMAGE_TYPE_TEST: 'chromiumos_test_image.tar.xz',
+    common_pb2.IMAGE_TYPE_RECOVERY_KERNEL: 'vmlinuz.image',
 }
 
 # TODO(crbug.com/1034529): Migrate these legacy artifacts to new endpoints in

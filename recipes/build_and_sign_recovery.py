@@ -4,7 +4,19 @@
 
 """Build and sign recovery kernel images."""
 
+import re
+
+from google.protobuf.json_format import MessageToDict
+from google.protobuf.json_format import MessageToJson
+
+from PB.chromiumos import build_report as build_report_pb2
+from PB.chromiumos import common as common_pb2
+from PB.chromiumos import signing as signing_pb2
+from PB.chromite.api.image import SignImageResponse
+from PB.recipe_modules.chromeos.signing.signing import SigningProperties
+
 from recipe_engine import post_process
+from recipe_engine.config_types import Path
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 
@@ -13,17 +25,37 @@ DEPS = [
     'recipe_engine/context',
     'recipe_engine/file',
     'recipe_engine/path',
+    'recipe_engine/properties',
     'recipe_engine/step',
     'build_menu',
     'cros_build_api',
+    'cros_release',
     'cros_source',
     'git',
+    'signing',
 ]
+
+TEST_SIGNING_CONFIG = '''build_target_signing_configs {
+      build_target: "kukui"
+      keyset: "kukui-premp"
+      signing_configs {
+        image_type: IMAGE_TYPE_RECOVERY_KERNEL
+      }
+    }'''
+
+
+def get_recovery_path(api: RecipeApi, response: SignImageResponse) -> Path:
+  local_artifact_dir = response.output_archive_dir
+  [only_artifact] = response.signed_artifacts.archive_artifacts
+  [only_signed] = only_artifact.signed_artifacts
+
+  return api.path.join(local_artifact_dir, only_signed.signed_artifact_name)
 
 
 def RunSteps(api: RecipeApi):
   with api.cros_source.checkout_overlays_context():
     api.cros_source.configure_builder(api.buildbucket.gitiles_commit)
+    api.cros_source.ensure_synced_cache()
 
     # Signing uses config for the base target. Remove prefix if present.
     target = api.build_menu.build_target.name.split('android-')[-1]
@@ -36,25 +68,81 @@ def RunSteps(api: RecipeApi):
           f'https://googleplex-android.googlesource.com/device/google/desktop/{target}-kernels/6.6',
           depth=1)
 
-      recovery_local_path = api.path.join(
-          api.path.mkdtemp(prefix='recovery'), 'vmlinuz.image')
+      recovery_dir = api.path.mkdtemp(prefix='recovery')
+      recovery_local_path = api.path.join(recovery_dir, 'vmlinuz.image')
 
       # copy the file in.
       api.file.copy('copy prebuild recovery image into temp dir',
                     api.path.join(checkout, 'recovery', 'vmlinuz.image'),
                     recovery_local_path)
 
-    # TODO(b/371248376): Sign recovery and upload to GS and android repo.
+    # Sign recovery kernel image and upload to GS.
+    if api._test_data.enabled:  # pylint: disable=protected-access
+      api.signing.test_api.signing_config_test_data = TEST_SIGNING_CONFIG
+    api.cros_release.validate_sign_types()
+    with api.step.nest('sign recovery kernel image') as pres:
+      signed_image_response = api.signing.sign_artifacts(
+          sign_types=[common_pb2.IMAGE_TYPE_RECOVERY_KERNEL],
+          channels=api.cros_release.channels, include_paygen=False,
+          local_artifact_dir=recovery_dir, upload_unsigned=False)
+      shellball_path = get_recovery_path(api, signed_image_response)
+      pres.logs['signed builds'] = shellball_path
+
+    # TODO(b/371248376): upload to android repo.
+
+
+# Sample SignImageResponse for testing.
+sample_response = SignImageResponse(
+    output_archive_dir='/archive_dir/',
+    signed_artifacts=signing_pb2.BuildTargetSignedArtifacts(archive_artifacts=[
+        signing_pb2.ArchiveArtifacts(
+            build_target='android-kukui',
+            channel=common_pb2.CHANNEL_CANARY,
+            image_type=common_pb2.IMAGE_TYPE_RECOVERY_KERNEL,
+            signed_artifacts=[
+                signing_pb2.SignedArtifact(
+                    signed_artifact_name='chromeos_16110.0.0_android-kukui-channel_DevPreMPKeys',
+                ),
+            ],
+            signing_status=build_report_pb2.BuildReport.SignedBuildMetadata
+            .SIGNING_STATUS_PASSED,
+        )
+    ]))
 
 
 def GenTests(api: RecipeTestApi):
   yield api.build_menu.test(
       'success',
+      api.properties(
+          **{
+              '$chromeos/cros_release': {
+                  'channels': [common_pb2.CHANNEL_CANARY],
+              },
+              '$chromeos/signing':
+                  MessageToDict(
+                      SigningProperties(local_signing=True,
+                                        gs_upload_bucket='signed-firmware'))
+          }),
+      api.cros_build_api.set_api_return(
+          'sign recovery kernel image.sign artifacts.call BAPI',
+          'ImageService/SignImage', MessageToJson(sample_response)),
       api.post_process(post_process.StepCommandContains, 'git clone', [
-          'https://googleplex-android.googlesource.com/device/google/desktop/brya-kernels/6.6'
+          'https://googleplex-android.googlesource.com/device/google/desktop/kukui-kernels/6.6'
       ]),
       api.post_check(post_process.MustRun,
                      'copy prebuild recovery image into temp dir'),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.call BAPI.call chromite.api.ImageService/SignImage.write input file',
+          [re.compile('.*"imageType": 21.*')]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign recovery kernel image.sign artifacts.upload signed artifacts to '
+          'signed-firmware bucket.upload signed artifacts for CHANNEL_CANARY.'
+          'gsutil cp', [
+              'gs://signed-firmware/canary-channel/kukui/1234.56.0/',
+          ]),
       api.post_process(post_process.DropExpectation),
-      build_target='android-brya',
+      build_target='kukui',
+      builder='recovery-android-kukui-main',
   )

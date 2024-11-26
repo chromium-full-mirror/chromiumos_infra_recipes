@@ -4571,6 +4571,21 @@
           "ref": "refs/heads/main"
         }
       }
+    },
+    {
+      "id": {
+        "bucket": "firmware",
+        "name": "recovery-android-kukui-main",
+        "type": "RELEASE"
+      },
+      "orchestrator": {
+        "child_specs": [],
+        "gitilesCommit": {
+          "host": "chrome-internal.googlesource.com",
+          "project": "chromeos/manifest-internal",
+          "ref": "refs/heads/main"
+        }
+      }
     }
   ]
 }
