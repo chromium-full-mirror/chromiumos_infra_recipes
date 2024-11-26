@@ -11,6 +11,7 @@
 # pylint: disable=redefined-builtin
 # pylint: disable=undefined-variable
 # pylint: disable=unused-import
+# pylint: disable=missing-module-docstring
 
 import argparse
 import glob
@@ -217,9 +218,12 @@ def _prepare_uploads_for_test(test_dir, path, result_pattern, data):
         logging.debug(error)
 
     test_result_file_gz = '%s.gz' % test_result_file
-    with open(test_result_file,
-              'rb') as f_in, (gzip.open(test_result_file_gz, 'wb')) as f_out:
-      shutil.copyfileobj(f_in, f_out)
+
+    # Check if gzip file has been already created by another process
+    if not os.path.exists(test_result_file_gz):
+      with open(test_result_file,
+                'rb') as f_in, (gzip.open(test_result_file_gz, 'wb')) as f_out:
+        shutil.copyfileobj(f_in, f_out)
     instructions.append({
         'name': 'results:' + test_result_gs_suffix,
         'source': test_result_file_gz,
