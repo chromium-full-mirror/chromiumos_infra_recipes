@@ -86,6 +86,10 @@
     "name": "Try fetching the version with incrementing the branch number"
   },
   {
+    "cmd": [],
+    "name": "trigger puprs"
+  },
+  {
     "cmd": [
       "bb",
       "batch",
@@ -104,9 +108,10 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "buildbucket.schedule",
+    "name": "trigger puprs.buildbucket.schedule",
     "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"pupr\", \"builder\": \"chrome-pupr-generator\", \"project\": \"chromeos\"}, \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"project\": \"chromium/src\"}, \"properties\": {\"chrome_version\": \"97.0.1290.1\", \"triggers\": [{\"gitiles\": {\"ref\": \"refs/tags/97.0.1290.1\", \"repo\": \"https://chromium.googlesource.com/chromium/src\", \"revision\": \"8302b1a80de0995f146605740417cdf78e381157\"}}]}, \"requestId\": \"1231231231-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"1231231231\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
@@ -170,15 +175,6 @@
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LINK@8922054662172514000@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Scheduled PUpr build: chrome-pupr-generator",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@ci.chromium.org/b/8922054662172514000@@@",
-      "@@@STEP_LOG_LINE@triggers_properties@{'chrome_version': '97.0.1290.1', 'triggers': [{'gitiles': {'repo': 'https://chromium.googlesource.com/chromium/src', 'ref': 'refs/tags/97.0.1290.1', 'revision': '8302b1a80de0995f146605740417cdf78e381157'}}]}@@@",
-      "@@@STEP_LOG_END@triggers_properties@@@"
     ]
   },
   {
