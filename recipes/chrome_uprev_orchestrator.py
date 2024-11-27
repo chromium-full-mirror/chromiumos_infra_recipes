@@ -293,24 +293,27 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
       builds.extend(
           UprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
                       chrome_version))
+      builds = SmartRetry(api, api.buildbucket.build.input.gitiles_commit,
+                          builds)
       summary_markdown = 'On trunk (at the root of release branch)'
     else:
       summary_markdown = 'On release branches'
 
-    return Result(api, builds, summary_markdown)
+    return Result(builds, summary_markdown)
 
   # On a non-release branch, we do Chrome (non-atomic) uprev to the ToT on CrOS
   # repo.
   builds.extend(
       UprevBuilds(api, api.buildbucket.build.input.gitiles_commit,
                   chrome_version))
+  builds = SmartRetry(api, api.buildbucket.build.input.gitiles_commit, builds)
 
   if patch_number == 0:
     summary_markdown = 'On trunk (at the root of non-release branch)'
   else:
     summary_markdown = 'On non-release branches'
 
-  return Result(api, builds, summary_markdown)
+  return Result(builds, summary_markdown)
 
 
 def UprevBuilds(api: RecipeApi, buildset: common_pb2.GitilesCommit,
@@ -338,7 +341,7 @@ def FilterBuildsStatus(
   return true_builders, false_builders
 
 
-def Result(api: RecipeApi, builds: List[build_pb2.Build],
+def Result(builds: List[build_pb2.Build],
            summary_markdown_prefix: str) -> result_pb2.RawResult:
   _, failed_builds = FilterBuildsStatus(builds, common_pb2.SUCCESS)
   summary_builds = ('\n\n' + ToBuildersLinkMd(builds)) if builds else ''
@@ -349,6 +352,50 @@ def Result(api: RecipeApi, builds: List[build_pb2.Build],
   return result_pb2.RawResult(
       status=common_pb2.SUCCESS,
       summary_markdown=f'{summary_markdown_prefix}{summary_builds}')
+
+
+def SmartRetry(api: RecipeApi, buildset: common_pb2.GitilesCommit,
+               builds: List[build_pb2.Build]) -> List[build_pb2.Build]:
+  """Retry some failed builds.
+
+  SmartRetry retries a failed build once if it qualifies the retry condition
+  (currently must be CANCELED or INFRA_FAILURE).
+
+  Args:
+    api (RecipeApi): Recipe API
+    buildset (GitilesCommit): Buildset of the build, used for scheduling retried builders.
+    builds (List[build_pb2.Build]): List of completed buildbucket builds.
+
+  Returns:
+    List of completed buildbucket builds after retries. Sucessful builds and
+    unretried failed builds are also included in the return value.
+  """
+  successful_builds, failed_builds = FilterBuildsStatus(builds,
+                                                        common_pb2.SUCCESS)
+  if failed_builds:
+    unretried_builds = []
+    retried_builds = []
+    builds_to_retry = []
+    builds_not_to_retry = []
+    with api.step.nest('Smart retry') as step:
+      for build in failed_builds:
+        if build.status in [common_pb2.INFRA_FAILURE, common_pb2.CANCELED]:
+          # Other retriable conditions can be added here.
+          builds_to_retry.append(build.builder.builder)
+        else:
+          builds_not_to_retry.append(build.builder.builder)
+          unretried_builds.append(build)
+      step.step_summary_text = (f'Will retry {builds_to_retry}\n'
+                                f'Not retrying {builds_not_to_retry}\n')
+      if builds_to_retry:
+        retried_builds = TriggerChromeBuilds(api, builds_to_retry, buildset)
+        retried_builds = list(
+            api.buildbucket.collect_builds(
+                ToBuilderIds(retried_builds), fields=BUILD_FIELDS_TO_RETRIEVE,
+                timeout=PRE_UPREV_TEST_TIMEOUT).values())
+
+    return successful_builds + unretried_builds + retried_builds
+  return successful_builds
 
 
 def GenTests(api: RecipeTestApi):
@@ -465,6 +512,25 @@ def GenTests(api: RecipeTestApi):
       trigger(chrome_version='98.0.1234.0'),
       preuprevs(api, '', chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
                 chromeos_brya_chrome_preuprev=common_pb2.FAILURE),
+      api.post_process(
+          post_process.MustRun,
+          'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
+      api.post_process(
+          post_process.LogContains,
+          'Scheduled PUpr build: lacros-ash-atomic-pupr-generator',
+          'triggers_properties', ['refs/tags/98.0.1234.0']),
+      api.post_process(post_process.MustRun,
+                       'Scheduled PUpr build: collect-preuprev-test-results'),
+      status='FAILURE',
+  )
+
+  yield api.test(
+      'version_on_trunk_failed_preuprevs_retried',
+      trigger(chrome_version='98.0.1234.0'),
+      preuprevs(api, '', chromeos_betty_chrome_preuprev=common_pb2.FAILURE,
+                chromeos_brya_chrome_preuprev=common_pb2.INFRA_FAILURE),
+      preuprevs(api, 'Smart retry.buildbucket.collect',
+                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
       api.post_process(
           post_process.MustRun,
           'Scheduled PUpr build: lacros-ash-atomic-pupr-generator'),
