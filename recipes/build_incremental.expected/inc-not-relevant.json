@@ -2838,6 +2838,7 @@
       }
     },
     "name": "call chromite.api.RelevancyService/GetRelevantBuildTargets.call build API script",
+    "timeout": 300,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]

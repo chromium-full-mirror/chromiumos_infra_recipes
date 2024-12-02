@@ -27,6 +27,10 @@ from recipe_engine import recipe_api
 
 EXTERNAL_REVIEW_HOST = 'chromium-review.googlesource.com'
 
+# Timeout for calls to the relevancy service.
+# Timeout of 5 minutes should impact less than 1% of runs (b/381930071).
+RELEVANCY_SERVICE_TIMEOUT_SECONDS = 5 * 60
+
 
 class BuildPlanApi(recipe_api.RecipeApi):
   """A module to plan the builds to be launched."""
@@ -98,7 +102,8 @@ class BuildPlanApi(recipe_api.RecipeApi):
         path = req.affected_paths.add()
         path.path = p
 
-      resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(req)
+      resp = self.m.cros_build_api.RelevancyService.GetRelevantBuildTargets(
+          req, timeout=RELEVANCY_SERVICE_TIMEOUT_SECONDS)
       relevant_build_targets = [bt.build_target for bt in resp.build_targets]
 
       # Bazel builders need to be forced relevant for changes to the
