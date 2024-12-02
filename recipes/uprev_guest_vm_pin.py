@@ -284,11 +284,6 @@ def RunSteps(api: RecipeApi, properties: UprevGuestVmPinProperties):
           labels = {
               Label.BOT_COMMIT: 1,
           }
-          # Do not automatically submit on release branches as the change would not be tested.
-          if branch == 'main':
-            labels[Label.COMMIT_QUEUE] = 2
-          else:
-            labels[Label.COMMIT_QUEUE] = 1
 
           api.gerrit.set_change_labels(change, labels)
           api.gerrit.submit_change(change)
