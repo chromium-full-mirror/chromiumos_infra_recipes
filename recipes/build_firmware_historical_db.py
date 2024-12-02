@@ -191,6 +191,8 @@ def UpdateHistoricalTokenDatabase(
   """
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
+    vpython_spec = cros_src_path.joinpath(
+        'src/platform/ec/zephyr/pigweed-vpython3')
     pw_tokenizer = cros_src_path.joinpath(
         'src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py')
 
@@ -223,6 +225,8 @@ def UpdateHistoricalTokenDatabase(
 
           pw_cmd = [
               'vpython3',
+              '-vpython-spec',
+              vpython_spec,
               pw_tokenizer,
               'add',
               '--database',
@@ -234,6 +238,8 @@ def UpdateHistoricalTokenDatabase(
 
           pw_report = [
               'vpython3',
+              '-vpython-spec',
+              vpython_spec,
               pw_tokenizer,
               'report',
               temp_historical_db,

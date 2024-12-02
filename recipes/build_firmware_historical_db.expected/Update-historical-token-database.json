@@ -4357,6 +4357,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "add",
       "--database",
@@ -4384,6 +4386,8 @@
   {
     "cmd": [
       "vpython3",
+      "-vpython-spec",
+      "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "report",
       "[CLEANUP]/tmp_tmp_2/token/historical.bin"
