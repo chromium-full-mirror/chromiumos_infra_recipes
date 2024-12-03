@@ -274,14 +274,13 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
     else:
       summary_markdown = 'On non-release branches'
 
-  builds = DoUprev(api, buildset, chrome_version, puprs, run_preuprevs)
+  builds = DoUprev(api, buildset, puprs, run_preuprevs)
 
   return Result(builds, summary_markdown)
 
 
 def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
-            chrome_version: str, puprs: List[str],
-            run_preuprevs: bool) -> List[build_pb2.Build]:
+            puprs: List[str], run_preuprevs: bool) -> List[build_pb2.Build]:
   preuprevs = []
   if run_preuprevs:
     preuprevs = TriggerChromeBuilds(api, CHROME_SIDE_BUILDERS, buildset)
@@ -293,13 +292,11 @@ def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
           bucket='staging' if pupr.startswith('staging-') else 'pupr',
           builder=f'{pupr}-pupr-generator',
           properties={
-              'chrome_version':
-                  chrome_version,
               # Emulate a GitilesTrigger for the expected inputs of CrOS's pupr.
               'triggers': [{
                   'gitiles': {
                       'repo': f'https://{buildset.host}/{buildset.project}',
-                      'ref': f'refs/tags/{chrome_version}',
+                      'ref': buildset.ref,
                       'revision': buildset.id,
                   }
               }],
