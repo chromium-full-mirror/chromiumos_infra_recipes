@@ -42,6 +42,7 @@ DEPS = [
     'recipe_engine/raw_io',
     'recipe_engine/resultdb',
     'recipe_engine/step',
+    'recipe_engine/time',
     'build_menu',
     'build_reporting',
     'cros_artifacts',
@@ -116,6 +117,7 @@ def CreateContainers(api, config):
 
 
 def RunSteps(api, properties):
+  start_time = api.time.utcnow()
   commit = api.src_state.gitiles_commit
   if properties.gitiles_commit:
     commit = properties.gitiles_commit
@@ -272,6 +274,13 @@ def RunSteps(api, properties):
                     step.logs['debug'] += f'Pub/sub {file} for {board}\n'
                     api.build_reporting.reset_build_report(board)
                     build_report = api.build_reporting.merged_build_report
+                    step_info = build_report.steps.info[
+                        api.build_reporting.step_as_str(
+                            BuildReport.StepDetails.STEP_OVERALL)]
+                    step_info.order = 1
+                    step_info.status = BuildReport.StepDetails.STATUS_SUCCESS
+                    step_info.runtime.begin.FromDatetime(start_time)
+                    step_info.runtime.end.FromDatetime(api.time.utcnow())
                     build_report.status.value = BuildReport.BuildStatus.SUCCESS
                     build_config = build_report.config
                     build_config.branch.name = branch
