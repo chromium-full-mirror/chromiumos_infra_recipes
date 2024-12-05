@@ -785,6 +785,7 @@
     "cmd": [],
     "name": "bump version",
     "~followup_annotations": [
+      "@@@STEP_TEXT@Updated to R99-1234.56.0-101@@@",
       "@@@STEP_FAILURE@@@"
     ]
   },

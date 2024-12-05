@@ -141,7 +141,8 @@ def GenTests(api):
                   summary_markdown='Full version: R99-1234.56.0')),
       ),
       api.post_check(post_process.StepTextEquals,
-                     'set up orchestrator.bump version', ''),
+                     'set up orchestrator.bump version',
+                     'Updated to R99-1234.56.0-101'),
       # Uprev logic should not run on ToT.
       api.post_check(
           post_process.DoesNotRun,
@@ -460,7 +461,8 @@ def GenTests(api):
               expected_recipe_result=RawResult(status=common_pb2.FAILURE,
                                                summary_markdown=summary))),
       api.post_check(post_process.StepTextEquals,
-                     'set up orchestrator.bump version', ''),
+                     'set up orchestrator.bump version',
+                     'Updated to R99-1234.56.0-101'),
       api.post_check(
           post_process.MustRun,
           'set up orchestrator.create buildspec.upload buildspecs/99/1234.56.0.xml to gs://buildspecbucket/buildspecs/99/1234.56.0.xml'
@@ -515,7 +517,8 @@ def GenTests(api):
                   summary_markdown='Full version: R99-1234.56.0')),
       ),
       api.post_check(post_process.StepTextEquals,
-                     'set up orchestrator.bump version', ''),
+                     'set up orchestrator.bump version',
+                     'Updated to R99-1234.56.0-101'),
       api.post_check(
           post_process.StepSuccess,
           'set up orchestrator.uprev and push packages.uprev packages'),

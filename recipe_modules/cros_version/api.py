@@ -164,6 +164,7 @@ class CrosVersionApi(RecipeApi):
         self.m.easy.set_properties_step(
             chromeos_version=str(new_version),
             full_version=new_version.legacy_version)
+        pres.step_text = f'Updated to {new_version}'
 
         # Stage, commit, and push changes.
         commit_lines = [

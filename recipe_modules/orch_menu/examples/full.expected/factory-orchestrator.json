@@ -3873,7 +3873,8 @@
     "cmd": [],
     "name": "set up orchestrator.bump version",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@Updated to R99-1234.56.0-101@@@"
     ]
   },
   {
