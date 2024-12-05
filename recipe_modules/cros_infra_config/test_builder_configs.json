@@ -3817,7 +3817,7 @@
                   "FIRMWARE_TOKEN_DATABASE"
                 ],
                 "gsLocations": [
-                  "firmware-image-archive/{builder_name}/{legacy_version}"
+                  "firmware-image-archive/firmware-R126-15885.B/{platform_version}"
                 ]
               }
             ]
@@ -3848,7 +3848,7 @@
                   "FIRMWARE_TOKEN_DATABASE"
                 ],
                 "gsLocations": [
-                  "firmware-image-archive/{builder_name}/{legacy_version}"
+                  "firmware-image-archive/firmware-ec-R126-15886.2.B/{platform_version}"
                 ]
               }
             ]

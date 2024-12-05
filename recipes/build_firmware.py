@@ -645,14 +645,14 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0/brox/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
           post_process.LogContains,
           'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-R126-15885.B-branch/R99-1234.56.0/rex/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-R126-15885.B/1234.56.0/rex/firmware_from_source.tar.bz2'
           ]),
       builder='firmware-R126-15885.B-branch',
       input_properties={
@@ -699,14 +699,14 @@ def GenTests(api):
           'sending pub/sub notifications.publish artifacts to pubsub (4).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0/brox/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B/1234.56.0/brox/firmware_from_source.tar.bz2'
           ]),
       api.post_check(
           post_process.LogContains,
           'sending pub/sub notifications.publish artifacts to pubsub (5).build status pubsub update',
           'message', [
               'artifacts',
-              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B-branch/R99-1234.56.0/rex/firmware_from_source.tar.bz2'
+              'gs://firmware-image-archive/firmware-ec-R126-15886.2.B/1234.56.0/rex/firmware_from_source.tar.bz2'
           ]),
       builder='firmware-ec-R126-15886.2.B-branch',
       input_properties={

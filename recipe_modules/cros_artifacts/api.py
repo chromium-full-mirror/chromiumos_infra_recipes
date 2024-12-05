@@ -569,6 +569,7 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
     ret = {
         'version': str(version),
         'legacy_version': version.legacy_version,
+        'platform_version': version.platform_version,
         'build_id': self.m.cros_infra_config.build_id,
         'target': target.name,
         'builder_name': builder_name.replace('_', '-'),
