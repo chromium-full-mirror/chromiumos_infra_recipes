@@ -10,6 +10,9 @@ message GardenerDataResult {
     // Timestamp of when the change was created.
     string created = 2;
 
+    // Timestamp of when the change was merged.
+    string submitted = 10;
+
     string branch = 3;
 
     // The subject of the change (header line of the commit message).

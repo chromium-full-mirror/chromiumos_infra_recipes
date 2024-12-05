@@ -56,13 +56,13 @@ CHROMEOS_VERSION_FROM_LKGM_COMMIT_MESSAGE = re.compile(
 def parse_change_info(change_info: ChangeInfo) -> GardenerDataResult.Commit:
   return GardenerDataResult.Commit(
       number=change_info['_number'], created=change_info['created'],
-      branch=change_info['branch'], subject=change_info['subject'],
-      status=change_info['status'], cq_tries=len([
+      submitted=change_info.get('submitted'), branch=change_info['branch'],
+      subject=change_info['subject'], status=change_info['status'],
+      cq_tries=len([
           1 for message in change_info['messages']
           if 'tag' in message and CQ_RUN_TAG_RE.match(message['tag']) and
           RUNNING_RE.search(message['message'])
-      ]), revert_of=change_info['revert_of']
-      if 'revert_of' in change_info else None)
+      ]), revert_of=change_info.get('revert_of'))
 
 
 def parse_chrome_uprev_change_info(
@@ -230,6 +230,8 @@ def GenTests(api: recipe_api.RecipeApi):
           'MERGED',
       'created':
           '2023-02-11 14:56:09.000000000',
+      'submitted':
+          '2023-02-12 03:45:17.000000000',
       '_number':
           4242579,
       'revert_of':
@@ -353,6 +355,7 @@ def GenTests(api: recipe_api.RecipeApi):
       'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
       'status': 'MERGED',
       'created': '2024-11-27 00:20:00.000000000',
+      'submitted': '2024-11-27 03:27:44.000000000',
       '_number': 6052367,
       'messages': [{
           'id':
@@ -428,6 +431,7 @@ def GenTests(api: recipe_api.RecipeApi):
       'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
       'status': 'MERGED',
       'created': '2024-11-27 00:20:00.000000000',
+      'submitted': '2024-11-27 03:27:44.000000000',
       '_number': 6052367,
       'messages': [{
           'id':
@@ -535,6 +539,8 @@ def GenTests(api: recipe_api.RecipeApi):
               'MERGED',
           'subject':
               'Revert \"chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0.\"',
+          'submitted':
+              '2023-02-12 03:45:17.000000000',
       }]),
       api.post_process(post_process.PropertyEquals, 'lkgm_commits', [{
           'branch': 'main',
@@ -545,6 +551,7 @@ def GenTests(api: recipe_api.RecipeApi):
           'old_version': '106432',
           'status': 'MERGED',
           'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
+          'submitted': '2024-11-27 03:27:44.000000000',
       }]),
       status='SUCCESS',
   )
@@ -577,6 +584,7 @@ def GenTests(api: recipe_api.RecipeApi):
           'number': '6052367',
           'status': 'MERGED',
           'subject': 'Automated Commit: LKGM 16110.0.0-1065034 for chromeos.',
+          'submitted': '2024-11-27 03:27:44.000000000',
       }]),
       status='SUCCESS',
   )
