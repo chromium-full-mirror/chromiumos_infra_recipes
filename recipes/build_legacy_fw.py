@@ -441,6 +441,7 @@ class FirmwareBuilder():
               'firmware/brya0/coreboot.rom',
               'build/poppy/firmware/image.bin',
               'build/reef/firmware/ec.bin',
+              'build/reef/firmware/ec.config',
               'build/reef/firmware/npcx_monitor.bin',
               'build/reef/firmware/component_manifest.json',
           ])
@@ -490,20 +491,14 @@ class FirmwareBuilder():
             str(tarball_full_path), '-C', file.parent, file.name
         ]
 
-        # EC firmware also requires component_manifest.json to be present
+        # EC firmware also requires a few other files to be present
         # in the tarball along with ec.bin.
-        # The file resides in the same directory as ec.bin.
-        if file.parent / 'component_manifest.json' in files_list:
-          create_tarball_cmd.append('component_manifest.json')
-
-        # npcx_monitor.bin will be in the same directory as ec.bin
-        # In case npcx_monitor.bin is present, we need to add it to the
-        # EC tarball.
-        # Code will reach here only if the file name is image-*.bin or ec.bin
-        # Hence explicit checking of EC directory is not required.
-        npcx_monitor = file.parent / 'npcx_monitor.bin'
-        if npcx_monitor in files_list:
-          create_tarball_cmd.extend(['npcx_monitor.bin'])
+        # The files reside in the same directory as ec.bin.
+        for aux_file in [
+            'component_manifest.json', 'ec.config', 'npcx_monitor.bin'
+        ]:
+          if file.parent / aux_file in files_list:
+            create_tarball_cmd.append(aux_file)
 
         self.m.step('create device tarball', cmd=create_tarball_cmd)
 

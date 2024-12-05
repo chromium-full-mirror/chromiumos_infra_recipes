@@ -4320,6 +4320,7 @@
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/poppy/firmware/image.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/component_manifest.json@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/ec.bin@@@",
+      "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/ec.config@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware/npcx_monitor.bin@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/firmware/brya0/coreboot.rom@@@",
       "@@@STEP_LOG_LINE@listdir@[CACHE]/cros_chroot/out/build/target/firmware/image-brya.bin@@@",
@@ -4406,6 +4407,7 @@
       "[CACHE]/cros_chroot/out/build/target/firmware/build/reef/firmware",
       "ec.bin",
       "component_manifest.json",
+      "ec.config",
       "npcx_monitor.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
