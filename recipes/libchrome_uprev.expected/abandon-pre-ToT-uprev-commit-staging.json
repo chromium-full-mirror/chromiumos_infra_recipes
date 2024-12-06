@@ -3824,12 +3824,6 @@
   },
   {
     "cmd": [
-      "RECIPE_REPO[depot_tools]/cros_sdk",
-      "--chroot",
-      "[CACHE]/cros_chroot/chroot",
-      "--out-dir",
-      "[CACHE]/cros_chroot/out",
-      "--",
       "vpython3",
       "../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py",
       "--head",

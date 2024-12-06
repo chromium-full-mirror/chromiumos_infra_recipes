@@ -17,7 +17,6 @@ from PB.chromiumos.common import BuildTarget, PackageInfo
 
 DEPS = [
     'build_menu',
-    'cros_sdk',
     'cros_source',
     'src_state',
     'gerrit',
@@ -113,14 +112,13 @@ def RunSteps(api: RecipeApi):
             for change, _ in outdated_changes:
               api.gerrit.abandon_change(change, message)
 
-        step_data = api.cros_sdk.run(
-            'generate uprev commit', [
-                'vpython3',
-                '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
-                '--head',
-                '--track_active',
-                '--recipe',
-            ], stdout=api.raw_io.output_text(add_output_log=True))
+        step_data = api.step('generate uprev commit', [
+            'vpython3',
+            '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
+            '--head',
+            '--track_active',
+            '--recipe',
+        ], stdout=api.raw_io.output_text(add_output_log=True))
         ret = step_data.stdout.strip().splitlines()
 
         # only the last line is the push options; earlier lines are logs
