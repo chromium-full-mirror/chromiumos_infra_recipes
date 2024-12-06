@@ -78,7 +78,9 @@ def _get_signing_docker_pin(api: RecipeApi,
         image_with_tag = f'signing:{tag}'
         api.step('docker build',
                  ['./setup.py', '-d', f'-t {image_with_tag} -t signing:latest'])
+
         # Upload the docker image to the container registry.
+        # TODO: b/375522150 - Remove container from chromeos-bot registry.
         api.step('docker tag', [
             'docker', 'tag', f'{image_with_tag}',
             f'us-docker.pkg.dev/chromeos-bot/signing/{image_with_tag}'
@@ -87,10 +89,29 @@ def _get_signing_docker_pin(api: RecipeApi,
             'docker', 'tag', 'signing:latest',
             'us-docker.pkg.dev/chromeos-bot/signing/signing:latest'
         ])
+
+        # Upload the docker image to the container registry.
+        api.step('docker tag', [
+            'docker', 'tag', f'{image_with_tag}',
+            f'us-docker.pkg.dev/chromeos-release-bot/signing/{image_with_tag}'
+        ])
+        api.step('docker tag', [
+            'docker', 'tag', 'signing:latest',
+            'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
+        ])
+
         if properties.push:
+          # TODO: b/375522150 - Stop pushing container to chromeos-bot registry.
           api.step('docker push', [
               'docker', 'push',
               'us-docker.pkg.dev/chromeos-bot/signing/signing', '--all-tags'
+          ])
+          # Push the container to chromeos-release-bot, where it will eventually
+          # be pulled from, once transition is complete.
+          api.step('docker push', [
+              'docker', 'push',
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
+              '--all-tags'
           ])
         else:
           with api.step.nest(
@@ -305,13 +326,34 @@ def GenTests(api: RecipeTestApi) -> Generator:
           'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker build'
       ),
       api.post_check(
-          post_process.MustRun,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag'
-      ),
+          post_process.StepCommandContains,
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag (2)',
+          [
+              'docker', 'tag', 'signing:latest',
+              'us-docker.pkg.dev/chromeos-bot/signing/signing:latest'
+          ]),
       api.post_check(
-          post_process.MustRun,
-          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push'
-      ),
+          post_process.StepCommandContains,
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker tag (4)',
+          [
+              'docker', 'tag', 'signing:latest',
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest'
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push',
+          [
+              'docker', 'push',
+              'us-docker.pkg.dev/chromeos-bot/signing/signing', '--all-tags'
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'get new pin value for SIGNING_DOCKER_IMAGE.create docker image.docker push (2)',
+          [
+              'docker', 'push',
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing',
+              '--all-tags'
+          ]),
       # File / gerrit logic tested in chromite unit tests.
       api.post_process(post_process.DropExpectation),
   )
