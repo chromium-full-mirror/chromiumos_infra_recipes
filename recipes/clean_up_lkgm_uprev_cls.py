@@ -13,8 +13,9 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
-    'recipe_engine/step',
     'recipe_engine/properties',
+    'recipe_engine/step',
+    'recipe_engine/scheduler',
     'cros_lkgm',
     'cros_infra_config',
     'cros_source',
@@ -34,6 +35,17 @@ def RunSteps(api: RecipeApi):
     api.cros_source.ensure_synced_cache(is_staging=is_staging,
                                         projects=['chromiumos/chromite'])
     api.cros_lkgm.cleanup_cls()
+
+  if not is_staging:
+    # Trigger via luci-scheduler rather than schedule to buildbucket directly.
+    # This prevents having multiple gardener-data-collector running together.
+    api.scheduler.emit_trigger(
+        api.scheduler.BuildbucketTrigger(
+            # Do not pass buildset as part of trigger.
+            inherit_tags=False),
+        project='chromeos',
+        jobs=['gardener-data-collector'],
+        step_name='trigger gardener-data-collector')
 
 
 def GenTests(api: RecipeTestApi):
