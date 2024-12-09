@@ -375,6 +375,7 @@ class SkylabApi(recipe_api.RecipeApi):
                 tast_first_class_tests.append(
                     self.m.skylab_results.request_tag(uht.hw_test))
                 request.test_plan.total_shards = uht.hw_test.total_shards
+                request.test_plan.max_in_shard = uht.hw_test.max_in_shard
               configure_step.step_summary_text = '(Executing via CFT)'
 
               # Only pass the names of previously failed tests if the run is
