@@ -114,7 +114,7 @@ def RunSteps(api: RecipeApi):
 
         step_data = api.step('generate uprev commit', [
             'vpython3',
-            '../platform/libchrome/libchrome_tools/developer-tools/uprev/automated_uprev.py',
+            './libchrome_tools/developer-tools/uprev/automated_uprev.py',
             '--head',
             '--track_active',
             '--recipe',
