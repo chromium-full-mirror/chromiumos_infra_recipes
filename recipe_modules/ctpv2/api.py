@@ -140,7 +140,8 @@ class Ctpv2Command(recipe_api.RecipeApi):
       ctpv2_outside_of_pool_allowlist = (
           self._has_ctpv2_allowed_prefix(params) and
           not self._is_allowed_pool(params))
-      if (in_main_pool and ctp2_exp_enabled) or ctpv2_outside_of_pool_allowlist:
+      if (not self._is_allowed_pool(params) and in_main_pool and
+          ctp2_exp_enabled) or ctpv2_outside_of_pool_allowlist:
         _set_run_ctpv2_with_qs_param(params)
 
   def _is_main_pool_request(self, params):  # pragma: no cover
