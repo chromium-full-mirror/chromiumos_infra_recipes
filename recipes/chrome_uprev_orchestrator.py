@@ -307,9 +307,6 @@ def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
               },
           ))
 
-  if run_preuprevs:
-    TriggerCrosBuild(api, {}, 'infra', 'collect-preuprev-test-results')
-
   # Wait for pupr to complete and notify gardener-data-collector to update
   # dashboard data.
   api.buildbucket.collect_builds(
@@ -513,10 +510,6 @@ def GenTests(api: RecipeTestApi):
               '"ref": "refs/heads/main"',
               '"revision": "8302b1a80de0995f146605740417cdf78e381157"',
           ]),
-      api.post_process(post_process.LogContains, 'buildbucket.schedule',
-                       'request', [
-                           '"builder": "collect-preuprev-test-results"',
-                       ]),
   )
 
   yield api.test(
@@ -529,10 +522,6 @@ def GenTests(api: RecipeTestApi):
                            '"builder": "lacros-ash-atomic-pupr-generator"',
                            '"ref": "refs/tags/98.0.1234.0"',
                        ]),
-      api.post_process(post_process.LogContains, 'buildbucket.schedule',
-                       'request', [
-                           '"builder": "collect-preuprev-test-results"',
-                       ]),
   )
 
   yield api.test(
@@ -544,10 +533,6 @@ def GenTests(api: RecipeTestApi):
                        'trigger puprs.buildbucket.schedule', 'request', [
                            '"builder": "lacros-ash-atomic-pupr-generator"',
                            '"ref": "refs/tags/98.0.1234.0"',
-                       ]),
-      api.post_process(post_process.LogContains, 'buildbucket.schedule',
-                       'request', [
-                           '"builder": "collect-preuprev-test-results"',
                        ]),
       status='FAILURE',
   )
@@ -563,10 +548,6 @@ def GenTests(api: RecipeTestApi):
                        'trigger puprs.buildbucket.schedule', 'request', [
                            '"builder": "lacros-ash-atomic-pupr-generator"',
                            '"ref": "refs/tags/98.0.1234.0"',
-                       ]),
-      api.post_process(post_process.LogContains, 'buildbucket.schedule',
-                       'request', [
-                           '"builder": "collect-preuprev-test-results"',
                        ]),
       status='FAILURE',
   )
