@@ -9149,7 +9149,7 @@
       }
     },
     "name": "upload findings as an invocation artifact",
-    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"findings-8945511751514863184\", \"contentType\": \"vnd.google.protobuf+gzip\", \"contents\": \"H4sIAAAAAAACA+OK5uJ2TixKz3fOySwoqBTy4jLhUkjOKMrPzSzN1S1KLctMLddLz89Pz0ktzi8tSk7VS87PFeJJS8xO1S0oys9KTS6RYFRgFOIpSCzJ0E/LzEnVKyqWYuFglGBSYOIK42Jzz8/JzCuhhrnp+XBzo7g4nXMS89JDMlMqhbzJNJoXYXRyQQHMbAARXd1sEQEAAA==\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
+    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"findings-8945511751514863184\", \"contentType\": \"vnd.google.protobuf+gzip\", \"contents\": \"H4sIAAAAAAACA63NMQ6CMBQA0ECM0S8unQhTL0BdvAGDia5eoCmf8rXlN23RcHtHF12M7wIPCHadjpY7RyEs4gxHkGaM7Gn2bcQH4VNZZusw8RwNKsNeVIO+Yxsi39DkupCFqILO42EghyqmZrUp6rKpMqYsPaakLcoSelif2NGU/7FY/rKMsO2cnuyV+kVcfoz278iE8Hl6Aax+Whc7AQAA\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@",
@@ -9159,7 +9159,7 @@
       "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"findings-8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"contentType\": \"vnd.google.protobuf+gzip\",@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"H4sIAAAAAAACA+OK5uJ2TixKz3fOySwoqBTy4jLhUkjOKMrPzSzN1S1KLctMLddLz89Pz0ktzi8tSk7VS87PFeJJS8xO1S0oys9KTS6RYFRgFOIpSCzJ0E/LzEnVKyqWYuFglGBSYOIK42Jzz8/JzCuhhrnp+XBzo7g4nXMS89JDMlMqhbzJNJoXYXRyQQHMbAARXd1sEQEAAA==\"@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"contents\": \"H4sIAAAAAAACA63NMQ6CMBQA0ECM0S8unQhTL0BdvAGDia5eoCmf8rXlN23RcHtHF12M7wIPCHadjpY7RyEs4gxHkGaM7Gn2bcQH4VNZZusw8RwNKsNeVIO+Yxsi39DkupCFqILO42EghyqmZrUp6rKpMqYsPaakLcoSelif2NGU/7FY/rKMsO2cnuyV+kVcfoz278iE8Hl6Aax+Whc7AQAA\"@@@",
       "@@@STEP_LOG_LINE@json.input@      },@@@",
       "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:8945511751514863184\"@@@",
       "@@@STEP_LOG_LINE@json.input@    }@@@",
