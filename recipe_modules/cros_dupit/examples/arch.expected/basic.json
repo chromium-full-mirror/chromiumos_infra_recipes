@@ -167,8 +167,6 @@
       "cp",
       "-r",
       "-n",
-      "-a",
-      "public-read",
       "[CLEANUP]/distfiles_tmp_1/*",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
@@ -214,8 +212,6 @@
       "----",
       "cp",
       "-r",
-      "-a",
-      "public-read",
       "[CLEANUP]/regexfiles_tmp_1/*",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],
@@ -239,8 +235,6 @@
       "cp",
       "-r",
       "-n",
-      "-a",
-      "public-read",
       "[CLEANUP]/regexfiles_tmp_1/*",
       "gs://stark-trek/the-ultimate-computer/distfiles-archive/2012/05/14/125321500000/"
     ],

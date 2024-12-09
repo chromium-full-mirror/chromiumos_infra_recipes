@@ -144,8 +144,6 @@
       "----",
       "cp",
       "-n",
-      "-a",
-      "public-read",
       "gs://stark-trek/the-ultimate-computer/distfiles/12/2.tar",
       "gs://stark-trek/the-ultimate-computer/distfiles/"
     ],

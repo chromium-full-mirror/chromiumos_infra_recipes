@@ -173,8 +173,6 @@
       "cp",
       "-r",
       "-n",
-      "-a",
-      "public-read",
       "[CLEANUP]/distfiles_tmp_1/*",
       "gs://chromeos-mirror-test/gentoo/distfiles/"
     ],

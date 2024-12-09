@@ -245,15 +245,8 @@ class DupItApi(recipe_api.RecipeApi):
       if srcuris:
         # If we found files that only exist in subdirs, copy them to the topdir.
         # e.g. gsutil cp gs://.../distfiles/ad/1.tar.gz gs://.../distfiles/
-        self.m.gsutil(
-            cmd=[
-                'cp',
-                '-n',
-                # All distfiles are public-read.
-                '-a',
-                'public-read'
-            ] + srcuris + [self.gs_distfiles_uri],
-            name='syncing subfiles to topdir')
+        self.m.gsutil(cmd=['cp', '-n', *srcuris, self.gs_distfiles_uri],
+                      name='syncing subfiles to topdir')
 
   def _populate_list_of_additional_regex_matches(self, distfiles):
     """Populate relative list of all files matching the additional regex.
@@ -474,11 +467,8 @@ class DupItApi(recipe_api.RecipeApi):
         'cp',
         # Recursively copy the files.
         '-r',
-        # No cloberring.
+        # No clobbering.
         '-n',
-        # All distfiles are public-read.
-        '-a',
-        'public-read',
         self.m.path.join(distfiles, '*'),
         self.m.path.join(gs_uri_dated, ''),
     ]
@@ -536,9 +526,6 @@ class DupItApi(recipe_api.RecipeApi):
         'cp',
         # Recursively copy the files.
         '-r',
-        # All distfiles are public-read.
-        '-a',
-        'public-read',
         self.m.path.join(tmp_regexfiles_path, '*'),
         self.m.path.join(self.gs_distfiles_uri, ''),
     ]
@@ -573,11 +560,8 @@ class DupItApi(recipe_api.RecipeApi):
             'cp',
             # Recursively copy the files.
             '-r',
-            # No cloberring.
+            # No clobbering.
             '-n',
-            # All distfiles are public-read.
-            '-a',
-            'public-read',
             self.m.path.join(self.tmp_distfiles_path, '*'),
             self.m.path.join(self.gs_distfiles_uri, ''),
         ]
