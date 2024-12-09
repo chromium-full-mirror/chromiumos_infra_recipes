@@ -8176,7 +8176,7 @@
       }
     },
     "name": "upload findings as an invocation artifact",
-    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"findings-8945511751514863184\", \"contentType\": \"vnd.google.protobuf+gzip\", \"contents\": \"H4sIAAAAAAACA63NQQ7CIBAAwNCYxqycODU98YHixR/0YNJfENzSVXDJQjX+3g94dD4wQHCavUSeE5XyMQtcwIZNONOeJ8EX4dtF5piw8i4BXeBs9OofOBXhO4Y2KKuMLr5t55USOqnj4aiGbtQNa7MZa/URbQc36K+c6Nn+sUT+vXwBjhYDX9EAAAA=\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
+    "stdin": "{\"requests\": [{\"artifact\": {\"artifactId\": \"findings-8945511751514863184\", \"contentType\": \"application/vnd.google.protobuf+gzip\", \"contents\": \"H4sIAAAAAAACA63NQQ7CIBAAwNCYxqycODU98YHixR/0YNJfENzSVXDJQjX+3g94dD4wQHCavUSeE5XyMQtcwIZNONOeJ8EX4dtF5piw8i4BXeBs9OofOBXhO4Y2KKuMLr5t55USOqnj4aiGbtQNa7MZa/URbQc36K+c6Nn+sUT+vXwBjhYDX9EAAAA=\"}, \"parent\": \"invocations/build:8945511751514863184\"}]}",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@",
@@ -8185,7 +8185,7 @@
       "@@@STEP_LOG_LINE@json.input@    {@@@",
       "@@@STEP_LOG_LINE@json.input@      \"artifact\": {@@@",
       "@@@STEP_LOG_LINE@json.input@        \"artifactId\": \"findings-8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@json.input@        \"contentType\": \"vnd.google.protobuf+gzip\",@@@",
+      "@@@STEP_LOG_LINE@json.input@        \"contentType\": \"application/vnd.google.protobuf+gzip\",@@@",
       "@@@STEP_LOG_LINE@json.input@        \"contents\": \"H4sIAAAAAAACA63NQQ7CIBAAwNCYxqycODU98YHixR/0YNJfENzSVXDJQjX+3g94dD4wQHCavUSeE5XyMQtcwIZNONOeJ8EX4dtF5piw8i4BXeBs9OofOBXhO4Y2KKuMLr5t55USOqnj4aiGbtQNa7MZa/URbQc36K+c6Nn+sUT+vXwBjhYDX9EAAAA=\"@@@",
       "@@@STEP_LOG_LINE@json.input@      },@@@",
       "@@@STEP_LOG_LINE@json.input@      \"parent\": \"invocations/build:8945511751514863184\"@@@",
