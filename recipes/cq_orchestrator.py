@@ -22,6 +22,7 @@ DEPS = [
     'recipe_engine/buildbucket',
     'build_menu',
     'cros_tags',
+    'cros_test_plan_v2',
     'easy',
     'orch_menu',
 ]
@@ -47,6 +48,11 @@ def RunSteps(api: RecipeApi) -> result_pb2.RawResult:
 
     testable_builds = api.orch_menu.plan_and_wait_for_images(
         extra_child_props=extra_child_props)
+
+    testable_builds = [
+        b for b in testable_builds if api.orch_menu.cq_relevant(b) and
+        not api.cros_test_plan_v2.is_infra_build_variant(b.builder.builder)
+    ]
 
     # Run any HW tests.
     api.orch_menu.plan_and_run_tests(

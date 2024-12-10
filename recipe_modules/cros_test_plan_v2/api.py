@@ -541,6 +541,16 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
 
       return hw_test_plans
 
+  def is_infra_build_variant(self, builder_name: str) -> bool:
+    """Returns whether the builder is an infra build variant.
+
+    Infra build variants are:
+      * bazel builders (TODO: b/330338112)
+      * sdknext builders
+    """
+    return self.is_bazel_builder(builder_name) or self.is_sdknext_builder(
+        builder_name)
+
   def get_testable_builders(self, starlark_packages: List[StarlarkPackage],
                             builds: List[Build]) -> List[str]:
     """Runs the test_plan Go infra binary to get a list of testable builders.
@@ -593,13 +603,8 @@ class CrosTestPlanV2Api(recipe_api.RecipeApi):
               test_return))
 
       testable_builders = sorted(self.m.step.active_result.stdout.split())
-
-      # Bazel builders should not be considered testable right now.
-      # TODO(b/330338112): Add test planning support for Bazel builders.
-      # Tests should not be run on sdknext builders.
       testable_builders = [
-          b for b in testable_builders
-          if not (self.is_bazel_builder(b) or self.is_sdknext_builder(b))
+          b for b in testable_builders if not self.is_infra_build_variant(b)
       ]
 
       pres.logs['testable_builders'] = testable_builders
