@@ -369,7 +369,6 @@ def _regenerate_suite_scheduler_configs(api, _properties, _project_infos,
 
   config_internal_dir = api.context.cwd / 'src/config-internal'
   susch_dir = config_internal_dir / 'test/suite_scheduler'
-  generated_dir = susch_dir / 'generated'
   message = f'''Updating Suite Scheduler's generated rules.
 
 Cr-Build-Url: {api.buildbucket.build_url()}
@@ -381,7 +380,8 @@ Cr-Automation-Id: config_postsubmit/regenerate_suite_scheduler'''
     api.step('run regenerate_configs.sh', ['./regenerate_configs.sh'])
 
     with api.step.nest('diffing to find changes'):
-      changed_files = api.git.get_working_dir_diff_files(pathspec=generated_dir)
+      changed_files = api.git.get_working_dir_diff_files(
+          pathspec=config_internal_dir)
       if not changed_files:
         presentation.step_summary_text = 'no changes'
         return []
@@ -398,7 +398,7 @@ def _regenerate_test_plan(api, _properties, _project_infos, dry_run):
   Args:
     project_infos: ignored, but accepted. See notes on _ACTIONS.
   """
-  del dry_run
+  del dry_run  # Unused.
 
   config_internal = api.context.cwd / 'src/config-internal'
   config_internal_test = config_internal / 'test'
