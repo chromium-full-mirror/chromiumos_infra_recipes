@@ -5453,7 +5453,6 @@
       "storage",
       "cp",
       "--if-generation-match=0",
-      "--predefined-acl=publicRead",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/bar/file",
       "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/file"
     ],
@@ -5489,7 +5488,6 @@
       "storage",
       "cp",
       "--if-generation-match=0",
-      "--predefined-acl=publicRead",
       "[CLEANUP]/chromiumos_workspace/chroot/tmp/firmware-bucket_tmp_1/board2/foo/ec-private/fingerprint/bar",
       "gs://firmware-image-archive/firmware-board-9999.B/15236.0.0/bar"
     ],

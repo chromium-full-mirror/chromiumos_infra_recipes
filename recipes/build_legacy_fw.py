@@ -679,7 +679,6 @@ class FirmwareBuilder():
             f'{bucket}/{branch}/{self._bcs_version.platform_version}/{file_name}',
             flags=[
                 '--if-generation-match=0',
-                '--predefined-acl=publicRead',
             ],
             ok_ret=(0, 1, _GCS_PRECONDITION_FAILURE),
         )
