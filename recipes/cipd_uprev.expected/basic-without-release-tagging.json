@@ -27,6 +27,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "package chromiumos/infra/phosphorus/linux-amd64.get instance ID of package \"chromiumos/infra/phosphorus/linux-amd64\" currently tagged with ref \"foo-phosphorus-ref\".cipd describe chromiumos/infra/phosphorus/linux-amd64",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -87,6 +88,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "package chromiumos/infra/phosphorus/linux-amd64.apply the \"foo-phosphorus-ref\" ref of the \"chromiumos/infra/phosphorus/linux-amd64\" package to \"foo-phosphorus-version\".cipd set-ref chromiumos/infra/phosphorus/linux-amd64",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -134,6 +136,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.get instance ID of package \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" currently tagged with ref \"foo-recipe-ref\".cipd describe infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
@@ -194,6 +197,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "package infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes.apply the \"foo-recipe-ref\" ref of the \"infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes\" package to \"foo-recipe-version\".cipd set-ref infra/recipe_bundles/chromium.googlesource.com/chromiumos/infra/recipes",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",

@@ -2666,6 +2666,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -2812,6 +2813,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"
@@ -2957,6 +2959,7 @@
       "/path/to/tmp/json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
     "luci_context": {
       "realm": {
         "name": "chromeos:cq"

@@ -13,6 +13,7 @@
       "-json-output",
       "/path/to/tmp/json"
     ],
+    "infra_step": true,
     "name": "get ctp release version tag.cipd describe chromiumos/infra/cros_test_platform/${platform}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
