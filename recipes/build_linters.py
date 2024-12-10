@@ -389,7 +389,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with clippy'),
       api.post_check(post_process.DoesNotRun, 'linting packages with golint'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      revision=None, cq=False)
+      api.post_process(post_process.DropExpectation), revision=None, cq=False)
 
   # No changes to relevant projects
   yield api.build_menu.test(
@@ -403,6 +403,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
+      api.post_process(post_process.DropExpectation),
       **BuildTestArgs(input_properties={'relevant_projects': []}))
 
   # No changes with Relevant extensions
@@ -431,7 +432,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                       }
                   }
               }
-          })), **BuildTestArgs())
+          })), api.post_process(post_process.DropExpectation),
+      **BuildTestArgs())
 
 
   # No affected packages relevant to target platform
@@ -461,7 +463,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        data=project_info),
       api.build_menu.set_build_api_return('get affected packages for golint',
                                           'DependencyService/List', data='{}'),
-      **BuildTestArgs())
+      api.post_process(post_process.DropExpectation), **BuildTestArgs())
 
 
   # Normal build with relevant changes
@@ -486,7 +488,8 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.repo.project_infos_step_data('get affected packages for golint',
-                                       data=project_info), **BuildTestArgs())
+                                       data=project_info),
+      api.post_process(post_process.DropExpectation), **BuildTestArgs())
 
 
   # Multiple change lists with relevant changes
@@ -523,6 +526,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    [changes[1]], relevant_edits,
                                                    iteration=2),
+      api.post_process(post_process.DropExpectation),
       **BuildTestArgs(gerrit_changes=changes))
 
   # No source paths for project api.cros_source.find_project_paths
@@ -560,6 +564,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                   }
               }
           })),
+      api.post_process(post_process.DropExpectation),
       **BuildTestArgs(),
       status='FAILURE',
   )
@@ -584,6 +589,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        data=project_info),
       api.build_menu.set_build_api_return('get affected packages for clippy',
                                           'DependencyService/List', retcode=1),
+      api.post_process(post_process.DropExpectation),
       **BuildTestArgs(),
       status='FAILURE',
   )
@@ -612,6 +618,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.build_menu.set_build_api_return('linting packages with clippy',
                                           'ToolchainService/EmergeWithLinting',
                                           retcode=1),
+      api.post_process(post_process.DropExpectation),
       **BuildTestArgs(),
       status='FAILURE',
   )
@@ -637,4 +644,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                                        data=project_info),
       api.build_menu.set_build_api_return(
           'upload artifacts.call artifacts service', 'ArtifactsService/Get',
-          retcode=1), **BuildTestArgs(), status='INFRA_FAILURE')
+          retcode=1), api.post_process(post_process.DropExpectation),
+      **BuildTestArgs(), status='INFRA_FAILURE')
