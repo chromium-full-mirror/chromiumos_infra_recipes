@@ -10,6 +10,14 @@ message BcidEnforcement {
   // Defines whether failures to generate signed provenance should be fatal.
   // Defaults to false.
   bool signed_provenance_generation_fatal = 1;
+  // Defines whether a failure to verify the provenance for unsigned artifacts
+  // should be fatal. Setting this to true will ensure that unsigned artifacts
+  // which cannot have their provenance verified will not be signed.
+  // Defaults to false.
+  bool unsigned_provenance_verification_fatal = 2;
+
+  // The name of the BCID Policy to provide to provide to Software Verifier.
+  string bcid_policy = 3;
 }
 
 message SigningProperties {

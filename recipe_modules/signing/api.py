@@ -12,7 +12,7 @@ import json
 import os
 import re
 from json import JSONDecodeError
-from typing import Any, Dict, List, NewType, Optional, Tuple
+from typing import Any, Dict, List, NewType, Optional, Tuple, Set
 
 from google.protobuf.text_format import Parse
 
@@ -61,6 +61,9 @@ LOCAL_ARTIFACT_TYPES = [
 
 PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 
+# Provenance files are named according to the artifact they're for, with the
+# intoto suffix.
+BCID_ATTESTATION_NAME = '{artifact_name}.intoto.jsonl'
 
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
@@ -79,7 +82,9 @@ class SigningApi(recipe_api.RecipeApi):
     self._paygen_keyset = None
     self._use_dev_keys = properties.use_dev_keys
 
+    self._bcid_policy = properties.bcid_enforcement.bcid_policy or 'chromeosimage://image'
     self._signed_prov_generation_fatal = properties.bcid_enforcement.signed_provenance_generation_fatal or False
+    self._unsigned_provenance_verification_fatal = properties.bcid_enforcement.unsigned_provenance_verification_fatal or False
 
   def initialize(self) -> None:
     """Initialize method for setup that needs the modules instantiated."""
@@ -113,6 +118,14 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def signed_provenance_generation_fatal(self) -> bool:
     return self._signed_prov_generation_fatal
+
+  @property
+  def unsigned_provenance_verification_fatal(self) -> bool:
+    return self._unsigned_provenance_verification_fatal
+
+  @property
+  def get_bcid_policy(self) -> str:
+    return self._bcid_policy
 
   def get_paygen_keyset(self) -> str:
     """Return the keyset for use in paygen.
@@ -364,7 +377,7 @@ class SigningApi(recipe_api.RecipeApi):
   @exponential_retry(retries=GSUTIL_MAX_RETRY_COUNT,
                      delay=datetime.timedelta(seconds=1))
   def gs_download_if_present(self, gs_dir: str, local_dir: str,
-                             artifact_names: List[str]) -> List[str]:
+                             artifact_names: Set[str]) -> List[str]:
     """Download from Google Storage if present.
 
     Returns a list of skipped artifacts.
@@ -380,6 +393,23 @@ class SigningApi(recipe_api.RecipeApi):
         # If the artifact is not found, we don't want to fail the step.
         self.m.step.active_result.presentation.status = self.m.step.SUCCESS
         skipped_artifacts.append(artifact_name)
+
+      try:
+        # Also download the attestations for the files, if they exist.
+        attestation_name = BCID_ATTESTATION_NAME.format(
+            artifact_name=artifact_name)
+        self.m.gsutil.download(
+            gs_dir, attestation_name,
+            self.m.path.join(local_dir, attestation_name),
+            name='download {} from {}'.format(attestation_name, gs_dir),
+            timeout=GSUTIL_TIMEOUT_SECONDS)
+      except StepFailure:
+        # If the attestation is not found, we don't want to fail the step.
+        # We do not expect attestation files to exist for every artifact, but
+        # they must exist for artifacts we're about to try and sign. These
+        # attestations will be verified before signing.
+        self.m.step.active_result.presentation.status = self.m.step.SUCCESS
+
     return skipped_artifacts
 
   def get_common_downloads(
@@ -504,6 +534,72 @@ class SigningApi(recipe_api.RecipeApi):
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
       return gs_dirs
 
+  def verify_bcid_attestations_for_unsigned_artifacts(
+      self, build_target_config, signing_dir: Path,
+      attestation_eligible: bool) -> set:
+    """
+    Looks in the signing_dir for artifacts we're about to sign, and attempts to
+    find their matching attestation files, which should have been downloaded
+    earlier. If no attestation exists, or the call to BCID verifier fails, and
+    BCID verification is fatal, these steps will fail the build. Otherwise,
+    everything will continue as normal.
+
+    Args:
+      signing_configs:
+        The configs we're going to use when signing. The artifacts configured as
+        inputs to signing are the ones we care about verifying provenance for.
+      signing_dir: Path to the local directory to check for files.
+
+    Returns: A list of artifacts that failed verification.
+    """
+    failed_verifications = set()
+    if not attestation_eligible:
+      return failed_verifications
+
+    with self.m.step.nest('verify provenance for unsigned artifacts'):
+
+      # Use the signing configs to extract the archive path for the artifacts we're
+      # going to use as input to signing steps. These are the files we expect to
+      # see in the signing_dir with verifiable BCID attestations.
+      for signing_config in build_target_config.signing_configs:
+        channel = common_pb2.Channel.Name(signing_config.channel)
+        artifact_name = signing_config.archive_path
+
+        with self.m.step.nest(
+            f'verifying provenance for {channel} {artifact_name}'
+        ) as verify_step:
+          artifact_path = self.m.path.join(signing_dir, artifact_name)
+          attestation_name = BCID_ATTESTATION_NAME.format(
+              artifact_name=artifact_name)
+          attestation_path = self.m.path.join(signing_dir, attestation_name)
+
+          if not self.m.path.exists(attestation_path):
+            failed_verifications.add(artifact_name)
+
+            verify_step.step_summary_text = 'unable to verify. attestation file did not exist in {} for {}'.format(
+                signing_dir, artifact_name)
+            if self.unsigned_provenance_verification_fatal:
+              verify_step.status = self.m.step.FAILURE
+
+            # No attestation, cannot continue with verification
+            continue
+
+          try:
+            self.m.bcid_verifier.verify_provenance(self.get_bcid_policy,
+                                                   artifact_path,
+                                                   attestation_path)
+          except StepFailure as step_failure:
+            failed_verifications.add(artifact_name)
+
+            # For now, only raise exceptions for provenance verification if build properties
+            # have provenance verification for unsigned artifacts set to be fatal.
+            verify_step.status = self.m.step.FAILURE
+            verify_step.step_summary_text = 'attestation verification failed'
+
+            if self.unsigned_provenance_verification_fatal:
+              raise step_failure
+
+    return failed_verifications
 
   def sign_artifacts(
       self,
@@ -570,6 +666,9 @@ class SigningApi(recipe_api.RecipeApi):
       ])
       docker_pull()
 
+      failed_unsigned_verifications = self.verify_bcid_attestations_for_unsigned_artifacts(
+          build_target_config, archive_dir, attestation_eligible)
+
       gs_dirs = set()
       if include_paygen:
         gs_dirs.update(
@@ -583,8 +682,6 @@ class SigningApi(recipe_api.RecipeApi):
 
       docker_tmp_dir = self.m.path.mkdtemp(prefix='signing_tmp_')
 
-      # TODO (b/378784466): Verify BCID attestation for unsigned artifacts
-      # before signing.
       with self.m.step.nest('call BAPI') as presentation:
         request = SignImageRequest(
             signing_configs=config, archive_dir=str(archive_dir),
@@ -601,7 +698,8 @@ class SigningApi(recipe_api.RecipeApi):
           if archive.signing_status != PASSED:
             presentation.status = self.m.step.FAILURE
 
-      self.upload_signed_artifacts(response, attestation_eligible)
+      self.upload_signed_artifacts(response, attestation_eligible,
+                                   failed_unsigned_verifications)
 
       docker_prune()
 
@@ -738,9 +836,13 @@ class SigningApi(recipe_api.RecipeApi):
             ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
       return gs_dirs
 
-  def upload_signed_artifacts(self, response: SignImageResponse,
-                              attestation_eligible: bool) -> None:
+  def upload_signed_artifacts(
+      self, response: SignImageResponse, attestation_eligible: bool,
+      failed_unsigned_artifact_verification: Optional[set] = None) -> None:
     """Uploads all files in output_dir to GS using gsutil cp."""
+    if not failed_unsigned_artifact_verification:
+      failed_unsigned_artifact_verification = set()
+
     with self.m.step.nest(
         f'upload signed artifacts to {self.gs_upload_bucket} bucket'
     ) as presentation:
@@ -749,6 +851,7 @@ class SigningApi(recipe_api.RecipeApi):
 
       # Group artifacts by channel so that we can organize steps better.
       for archive_artifacts in response.signed_artifacts.archive_artifacts:
+
         channel = archive_artifacts.channel
         if not channel:
           presentation.step_text = 'skipping artifacts with no channel'
@@ -775,6 +878,11 @@ class SigningApi(recipe_api.RecipeApi):
         self.m.gsutil(['cp', '-n', local_path, gs_dir], multithreaded=True,
                       timeout=GSUTIL_TIMEOUT_SECONDS)
 
+      # Keep track of instances where we failed to generate artifact
+      # provenance for signed artifacts. This will be set as a build property
+      # to enable repoorting.
+      failed_prov_generation = set()
+
       # Upload the artifacts for each channel.
       signed_upload_paths = {}
       for channel, artifacts in to_upload_by_channel.items():
@@ -795,10 +903,6 @@ class SigningApi(recipe_api.RecipeApi):
 
             gs_artifact_path = os.path.join(gs_dir, artifact)
 
-            # TODO (b/378784466): Currently, this does not give us any security or
-            # trust guarantees about the origin of the things we're signing. In the
-            # future, provenance for unsigned artifacts should be verified before
-            # signing occurs.
             if attestation_eligible:
               # TODO (b/292149463): Enforce provenance generation always.
               with self.m.step.nest('generate signed provenance') as step:
@@ -808,6 +912,7 @@ class SigningApi(recipe_api.RecipeApi):
                   self.m.bcid_reporter.report_gcs(artifact_hash,
                                                   gs_artifact_path)
                 except StepFailure as step_failure:
+                  failed_prov_generation.add(artifact)
                   step.status = self.m.step.FAILURE
                   step.step_summary_text = 'Failed to generate signed provenance.'
 
@@ -820,6 +925,16 @@ class SigningApi(recipe_api.RecipeApi):
 
       self.m.easy.set_properties_step(
           **{'signed_upload_paths': signed_upload_paths})
+
+      self.m.easy.set_properties_step(
+          **{
+              'bcid': {
+                  'failed_unsigned_prov_verification':
+                      list(failed_unsigned_artifact_verification),
+                  'failed_signed_prov_generation':
+                      list(failed_prov_generation)
+              }
+          })
 
       if ex:
         raise ex
