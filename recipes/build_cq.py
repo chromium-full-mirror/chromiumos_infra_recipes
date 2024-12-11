@@ -62,6 +62,14 @@ class ArtifactUploadState:
     # Set to True if all artifact uploading should be skipped.
     self.skip_upload = False
 
+  def add(self, uploaded_artifacts: Optional['build_menu.UploadedArtifacts']):
+    """Add uploaded artifacts."""
+    if not self.uploaded_artifacts:
+      self.uploaded_artifacts = uploaded_artifacts
+    elif uploaded_artifacts:
+      self.uploaded_artifacts = self.uploaded_artifacts.union(
+          uploaded_artifacts)
+
 
 def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.log_parent_step()
@@ -134,16 +142,24 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     test_containers_runner.run_function_async(
         lambda cfg, _: api.build_menu.create_containers(cfg), config)
 
-    api.build_menu.build_images(config)
+    img_runner = api.future_utils.create_parallel_runner()
+    img_runner.run_function_async(
+        lambda cfg, _: api.build_menu.build_images(cfg), config)
+
+    uploaded_artifacts, _ = api.build_menu.upload_symbols(config)
+    upload_state.add(uploaded_artifacts)
+
+    img_runner.wait_for_and_throw()
 
     # This Recipe support async unit testing by doing an initial upload of
-    # artifacts after buing images and before running unit tests. This allows
+    # artifacts after building images and before running unit tests. This allows
     # the orchestrator use the image artifacts without waiting for unit
     # testing to complete. A final upload will be done at the end of the
     # build, for any additional artifacts produced by unit testing, or if an
     # exception was thrown.
-    uploaded_artifacts, _ = api.build_menu.upload_artifacts(config)
-    upload_state.uploaded_artifacts = uploaded_artifacts
+    uploaded_artifacts, _ = api.build_menu.upload_artifacts(
+        config, previously_uploaded_artifacts=upload_state.uploaded_artifacts)
+    upload_state.add(uploaded_artifacts)
 
     # Pause and throw if test containers failed to upload. Note that this
     # is done before the image_artifacts_uploaded property is set, as
@@ -266,6 +282,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun, 'build images'),
       api.post_check(post_process.DoesNotRun, 'run ebuild tests'),
       api.post_check(post_process.DoesNotRun, 'upload artifacts'),
+      api.post_check(post_process.DoesNotRun, 'upload symbols'),
       api.post_check(post_process.DoesNotRun, 'final upload artifacts'),
       api.post_check(post_process.DoesNotRun,
                      'upload artifacts.publish artifacts'), cq=True,

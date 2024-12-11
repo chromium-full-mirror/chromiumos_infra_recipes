@@ -15,6 +15,9 @@ message TestProperties {
 
   // Manifest branch the builder is tracking.
   string manifest_branch = 2;
+
+  // Whether to include symbols for upload_symbols.
+  bool include_symbols = 3;
 }
 
 message SetupChrootProperties {

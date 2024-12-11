@@ -855,11 +855,62 @@ class BuildMenuApi(recipe_api.RecipeApi):
               presentation, pkgs,
               self.get_cl_affected_sysroot_packages(include_rev_deps=True))
 
-  def upload_artifacts(
+  def upload_symbols(
       self, config=None, private_bundle_func=None, sysroot=None,
-      report_to_spike=False, name='upload artifacts',
+      report_to_spike=False, name='upload symbols',
       previously_uploaded_artifacts=None,
       ignore_breakpad_symbol_generation_errors=False, use_file_paths=False
+  ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
+    """Upload the debug and breakpad symbols, if in the artifacts."""
+    config = config or self.config_or_default
+    info = config.artifacts.artifacts_info
+
+    symbol_types = {
+        common_pb2.ArtifactsByService.Sysroot.DEBUG_SYMBOLS,
+        common_pb2.ArtifactsByService.Sysroot.BREAKPAD_DEBUG_SYMBOLS,
+    }
+    # Copy everything but the output artifacts.
+    symbols_info = common_pb2.ArtifactsByService()
+    symbols_info.sysroot.CopyFrom(info.sysroot)
+    symbols_info.sysroot.output_artifacts.clear()
+
+    # Copy any relevant output artifacts.
+    for output_artifact in info.sysroot.output_artifacts:
+      found_types = set(output_artifact.artifact_types) & symbol_types
+      if found_types:
+        new_artifact = symbols_info.sysroot.output_artifacts.add()
+        new_artifact.CopyFrom(output_artifact)
+        # Remove anything that isn't debug/breakpad symbols.
+        remove_types = set(output_artifact.artifact_types) - symbol_types
+        for rem in remove_types:
+          new_artifact.artifact_types.remove(rem)
+
+    if not symbols_info.sysroot.output_artifacts:
+      return None, None
+
+    return self.upload_artifacts(
+        config=config,
+        private_bundle_func=private_bundle_func,
+        sysroot=sysroot,
+        report_to_spike=report_to_spike,
+        name=name,
+        previously_uploaded_artifacts=previously_uploaded_artifacts,
+        ignore_breakpad_symbol_generation_errors=ignore_breakpad_symbol_generation_errors,
+        use_file_paths=use_file_paths,
+        artifacts_info=symbols_info,
+    )
+
+  def upload_artifacts(
+      self,
+      config=None,
+      private_bundle_func=None,
+      sysroot=None,
+      report_to_spike=False,
+      name='upload artifacts',
+      previously_uploaded_artifacts=None,
+      ignore_breakpad_symbol_generation_errors=False,
+      use_file_paths=False,
+      artifacts_info=None,
   ) -> Tuple[Optional[UploadedArtifacts], Optional[config_types.Path]]:
     """Upload artifacts from the build.
 
@@ -882,6 +933,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         generation.
       use_file_paths (bool): Use the directory path of the artifact in the
           publish url.  Defaults to False.
+      artifacts_info (ArtifactsByService): Artifacts to fetch.
 
     Returns:
       (Option[UploadedArtifacts]) information about uploaded artifacts, if any
@@ -894,6 +946,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     unit_test_configured = self.m.cros_infra_config.should_run(
         config.unit_tests.ebuilds_run_spec)
     run_upload_coverage = self.packages_installed and unit_test_configured
+    artifacts_info = artifacts_info or config.artifacts.artifacts_info
 
     if self.m.cros_artifacts.has_output_artifacts(
         config.artifacts.artifacts_info):
@@ -901,7 +954,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
           config.id.name,
           config.id.type,
           config.artifacts.artifacts_gs_bucket,
-          artifacts_info=config.artifacts.artifacts_info,
+          artifacts_info=artifacts_info,
           chroot=self.chroot,
           sysroot=sysroot,
           private_bundle_func=private_bundle_func,
