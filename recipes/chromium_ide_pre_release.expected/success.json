@@ -69,12 +69,111 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "setup java environment"
+  },
+  {
+    "cmd": [],
+    "name": "setup java environment.install openjdk",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "[CLEANUP]/java_tmp_1/openjdk.tar.gz"
+    ],
+    "name": "setup java environment.install openjdk.GET https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xvf",
+      "[CLEANUP]/java_tmp_1/openjdk.tar.gz"
+    ],
+    "cwd": "[CLEANUP]/java_tmp_1",
+    "name": "setup java environment.install openjdk.unpack",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ls",
+      "-d",
+      "[CLEANUP]/java_tmp_1/jdk-*"
+    ],
+    "name": "setup java environment.install openjdk.locate jdk home",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "setup java environment.install maven",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::url]/resources/pycurl.py",
+      "--url",
+      "https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz",
+      "--status-json",
+      "/path/to/tmp/json",
+      "--outfile",
+      "[CLEANUP]/java_tmp_1/maven.tar.gz"
+    ],
+    "name": "setup java environment.install maven.GET https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "tar",
+      "xvf",
+      "[CLEANUP]/java_tmp_1/maven.tar.gz"
+    ],
+    "cwd": "[CLEANUP]/java_tmp_1",
+    "name": "setup java environment.install maven.unpack",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "ls",
+      "-d",
+      "[CLEANUP]/maven_tmp_1/apache-maven-*/bin"
+    ],
+    "name": "setup java environment.install maven.locate maven path",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [
       "node",
       "-v"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "verify node installation"
   },
@@ -84,9 +183,32 @@
       "version"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "verify npm installation"
+  },
+  {
+    "cmd": [
+      "javac",
+      "--version"
+    ],
+    "env": {
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
+    },
+    "name": "verify openjdk installation"
+  },
+  {
+    "cmd": [
+      "mvn",
+      "--version"
+    ],
+    "env": {
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
+    },
+    "name": "verify maven installation"
   },
   {
     "cmd": [],
@@ -127,7 +249,8 @@
       "text"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.read builder configs.fetch HEAD:generated/builder_configs.binaryproto",
@@ -155,7 +278,8 @@
       "/path/to/tmp/"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.read infrainfra golang version",
@@ -185,7 +309,8 @@
       "[CLEANUP]/cipd.json"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.find cipd instance for support for infra/infra commit deadbeef.cipd search",
@@ -205,7 +330,8 @@
       "/path/to/tmp/"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.find cipd instance for support for infra/infra commit deadbeef.read [CLEANUP]/cipd.json",
@@ -236,7 +362,8 @@
       "/path/to/tmp/json"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.ensure support.ensure_installed",
@@ -260,7 +387,8 @@
       "[START_DIR]/cipd/support/gitiles-fetch-ref"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "configure builder.cros_infra_config.gitiles-fetch-ref",
@@ -329,7 +457,8 @@
       "chromeos-bot"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "name": "set gcloud project"
@@ -371,7 +500,8 @@
       "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.setup source cache disk.retrieve image version from storage.gsutil cat",
@@ -398,7 +528,8 @@
       "name="
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: ",
@@ -433,7 +564,8 @@
       "name=initial-chromeos-source-snapshot"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot",
@@ -468,7 +600,8 @@
       "name=initial-chromeos-source-snapshot-fallback"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether image exists: initial-chromeos-source-snapshot-fallback",
@@ -511,7 +644,8 @@
       "json(name)"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.setup source cache disk.create disk from snapshot image.check whether disk exists: chromeos-ci-infra-us-central1-b-x16-0-nvcj-internal-cros",
@@ -537,7 +671,8 @@
       "/snapshot_mounts/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -556,7 +691,8 @@
       "/snapshot_mounts/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -576,7 +712,8 @@
       "/dev/sds"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "name": "source cache.determine UUID",
@@ -592,7 +729,8 @@
       "/etc/fstab"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -614,7 +752,8 @@
       "[CACHE]/infra_versions/overlay_branch.txt"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.write overlayfs branch file",
@@ -636,7 +775,8 @@
       "--zone=us-central1-b"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>",
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>",
       "VIRTUAL_ENV": "1"
     },
     "infra_step": true,
@@ -657,7 +797,8 @@
       "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.write version file",
@@ -686,7 +827,8 @@
       "/path/to/tmp/"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "source cache.determine whether to reset overlayfs directories.read overlayfs branch",
@@ -721,7 +863,8 @@
       "[CACHE]/chromeos/upperdir/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay chromeos.create upperdir",
@@ -742,7 +885,8 @@
       "[CACHE]/chromeos/workdir/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay chromeos.create workdir",
@@ -763,7 +907,8 @@
       "[CACHE]/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay chromeos.create mount path",
@@ -784,7 +929,8 @@
       "[CACHE]/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay chromeos.mount",
@@ -805,7 +951,8 @@
       "[CACHE]/cros_chroot/chroot"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "ensure chroot directory"
@@ -820,7 +967,8 @@
     ],
     "cwd": "[CLEANUP]",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "git config"
@@ -835,7 +983,8 @@
     ],
     "cwd": "[CLEANUP]",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "git config (2)"
@@ -864,7 +1013,8 @@
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json",
@@ -899,7 +1049,8 @@
       "[CACHE]/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.ensure root path",
@@ -922,7 +1073,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -953,7 +1105,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -977,7 +1130,8 @@
     ],
     "cwd": "[CACHE]/chromeos/.repo/repo",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo binary update.git checkout",
@@ -992,7 +1146,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1015,7 +1170,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1044,7 +1200,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.clear repo locks",
@@ -1071,7 +1228,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1108,7 +1266,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1141,7 +1300,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1179,7 +1339,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1225,7 +1386,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo stats.event-log",
@@ -1274,7 +1436,8 @@
     ],
     "cwd": "[CACHE]/chromeos",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.ensure synced checkout.repo info.repo info",
@@ -1294,7 +1457,8 @@
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.Write proto to [CACHE]/chromeos/.recipes_state.json (2)",
@@ -1316,7 +1480,8 @@
     ],
     "cwd": "[CACHE]/chromeos/manifest-internal",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync cached directory.sync chromeos/manifest-internal branches",
@@ -1341,7 +1506,8 @@
       "[CLEANUP]/overlayfs/workspace/upperdir/workspace"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay workspace.create upperdir",
@@ -1362,7 +1528,8 @@
       "[CLEANUP]/overlayfs/workspace/workdir/workspace"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay workspace.create workdir",
@@ -1383,7 +1550,8 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay workspace.create mount path",
@@ -1404,7 +1572,8 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "mount overlay workspace.mount",
@@ -1425,7 +1594,8 @@
       "[CACHE]/bazel-cache"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "ensure bazel cache dir"
@@ -1443,7 +1613,8 @@
       "[CLEANUP]/chromiumos_workspace/.cache/bazel"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "ensure bazel cache mountpoint"
@@ -1458,7 +1629,8 @@
       "[CLEANUP]/chromiumos_workspace/.cache/bazel"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "bind mount bazel cache dir"
@@ -1483,7 +1655,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync to gitiles commit.fetch main-HEAD-SHA:snapshot.xml",
@@ -1505,7 +1678,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync to gitiles commit.write manifest",
@@ -1530,7 +1704,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1561,7 +1736,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1585,7 +1761,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/.repo/repo",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo binary update.git checkout",
@@ -1600,7 +1777,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1623,7 +1801,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1657,7 +1836,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1703,7 +1883,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo stats.event-log",
@@ -1752,7 +1933,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "sync to gitiles commit.repo info.repo info",
@@ -1777,7 +1959,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1814,7 +1997,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "read chromeos version.read chromeos_version.sh",
@@ -1838,7 +2022,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git fetch",
@@ -1854,7 +2039,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.git rev-parse",
@@ -1871,7 +2057,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "read chromeos version.read snapshot.read git footers",
@@ -1897,7 +2084,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1927,7 +2115,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "ensure up-to-date IDE repo.git fetch",
@@ -1943,7 +2132,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "ensure up-to-date IDE repo.git checkout",
@@ -1959,7 +2149,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "git rev-parse",
@@ -1977,7 +2168,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -1997,7 +2189,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "npm ci"
   },
@@ -2011,7 +2204,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "release update"
   },
@@ -2023,7 +2217,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "verify with npm run cq-test"
   },
@@ -2041,7 +2236,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "Get oncaller of oncallator:ide_onduty"
   },
@@ -2067,7 +2263,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2095,7 +2292,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2130,7 +2328,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2156,7 +2355,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2198,7 +2398,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "set labels on CL 123.ensure auth token.Retrieve service_account auth token",
     "~followup_annotations": [
@@ -2218,7 +2419,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "set labels on CL 123.ensure auth token.Write auth token to temp file",
@@ -2242,7 +2444,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "set labels on CL 123.curl https://chromium-review.googlesource.com/changes/123/revisions/current/review",
     "~followup_annotations": [
@@ -2267,7 +2470,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2294,7 +2498,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2319,7 +2524,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/chromiumos/infra/ide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "DEPOT_TOOLS_UPDATE": [
@@ -2356,7 +2562,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "verify update post submit.checkout to bump commit.git fetch",
@@ -2372,7 +2579,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "verify update post submit.checkout to bump commit.git checkout",
@@ -2388,7 +2596,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "verify update post submit.checkout to bump commit.git rev-parse",
@@ -2407,7 +2616,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "verify update post submit.checkout to bump commit.git log",
@@ -2425,7 +2635,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "verify update post submit.checkout to bump commit.git checkout (2)",
@@ -2441,7 +2652,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "verify update post submit.npm run cq-test",
     "~followup_annotations": [
@@ -2457,7 +2669,8 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/ide/chromiumide",
     "env": {
       "FETCH_IDE_RELEASE_CREDENTIALS_FROM_GCLOUD": "1",
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "name": "publish prerelease"
   },
@@ -2500,7 +2713,8 @@
       "[CLEANUP]/build_api_messages_tmp_1/input_proto.json"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.write input file",
@@ -2520,7 +2734,8 @@
       "/path/to/tmp/"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.read chromite version",
@@ -2536,7 +2751,8 @@
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up SDK chroot.ensure no rogue SDK.call chromite.api.SdkService/Delete.git checkout",
@@ -2557,7 +2773,8 @@
       "chromite.api.SdkService/Delete"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "PATH": [
@@ -2581,7 +2798,8 @@
       "/path/to/tmp/"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "env_suffixes": {
       "PATH": [
@@ -2620,7 +2838,8 @@
       "[CACHE]/chromeos"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay chromeos",
@@ -2636,7 +2855,8 @@
       "[CACHE]/chromeos/workdir"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir",
@@ -2650,7 +2870,8 @@
       "[CLEANUP]/chromiumos_workspace"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up overlayfs mounts.unmount overlay workspace",
@@ -2666,7 +2887,8 @@
       "[CACHE]/workspace/workdir"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "clean up overlayfs mounts.cleanup overlayfs workdir (2)",
@@ -2689,7 +2911,8 @@
       "cr-buildbucket.appspot.com"
     ],
     "env": {
-      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:<PATH>"
+      "JAVA_HOME": "",
+      "PATH": "[CLEANUP]/nvm_tmp_1/versions/node/bin:/bin::<PATH>"
     },
     "infra_step": true,
     "name": "set build cost.buildbucket.search",

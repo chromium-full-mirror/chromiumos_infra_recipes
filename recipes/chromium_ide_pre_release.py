@@ -30,9 +30,11 @@ DEPS = [
 
 PROPERTIES = ChromiumIDEPreReleaseProperties
 
+OPENJDK_ARCHIVE_URL = 'https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz'
+MAVEN_ARCHIVE_URL = 'https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz'
+
 
 def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
-  nodebinpath = ''
   with api.step.nest('setup nodejs environment'):
     nvmroot = api.path.mkdtemp('nvm')
     with api.step.nest('install nvm'):
@@ -43,12 +45,41 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
       version = api.step('locating node version',
                          ['ls', nvmroot / 'versions/node'],
                          stdout=api.raw_io.output_text()).stdout.strip()
-    nodebinpath = nvmroot.joinpath('versions/node') / version / 'bin'
+    node_path = nvmroot.joinpath('versions/node') / version / 'bin'
+
+  with api.step.nest('setup java environment'):
+    with api.step.nest('install openjdk'):
+      java_dir = api.path.mkdtemp('java')
+      jdk_archive = java_dir / 'openjdk.tar.gz'
+      api.url.get_file(OPENJDK_ARCHIVE_URL, jdk_archive)
+      with api.context(cwd=java_dir):
+        api.step('unpack', ['tar', 'xvf', jdk_archive])
+      jdk_home = api.step('locate jdk home', ['ls', '-d', java_dir / 'jdk-*'],
+                          stdout=api.raw_io.output_text()).stdout.strip()
+      jdk_path = jdk_home + '/bin'
+
+    with api.step.nest('install maven'):
+      maven_dir = api.path.mkdtemp('maven')
+      maven_archive = java_dir / 'maven.tar.gz'
+      api.url.get_file(MAVEN_ARCHIVE_URL, maven_archive)
+      with api.context(cwd=java_dir):
+        api.step('unpack', ['tar', 'xvf', maven_archive])
+      maven_path = api.step('locate maven path',
+                            ['ls', '-d', maven_dir / 'apache-maven-*/bin'],
+                            stdout=api.raw_io.output_text()).stdout.strip()
 
   with api.context(
-      env={'PATH': api.path.pathsep.join([str(nodebinpath), '%(PATH)s'])}):
+      env={
+          'PATH':
+              api.path.pathsep.join(
+                  [str(node_path), jdk_path, maven_path, '%(PATH)s']),
+          'JAVA_HOME':
+              jdk_home
+      }):
     api.step('verify node installation', ['node', '-v'])
     api.step('verify npm installation', ['npm', 'version'])
+    api.step('verify openjdk installation', ['javac', '--version'])
+    api.step('verify maven installation', ['mvn', '--version'])
 
     commit = api.src_state.gitiles_commit
     if not commit.project:
