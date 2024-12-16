@@ -189,7 +189,7 @@ def RunSteps(api: RecipeApi, properties: CopProperties) -> None:
                             host='chromium-review.googlesource.com', patchset=1)
       presentation.properties['change_type'] = 'fixed_change'
     else:
-      presentation.properties['change_type'] = 'tricium'
+      presentation.properties['change_type'] = 'triggered'
       change = gerrit_changes[0]
 
     patch_set = api.gerrit.fetch_patch_set_from_change(change,
@@ -395,7 +395,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send vote and comments to Gerrit.gerrit comment and vote',api.json.output(None)),
                  api.post_check(post_process.StepSuccess, 'send vote and comments to Gerrit'),
-                 api.post_check(post_process.PropertyEquals, 'change_type', 'tricium')) + \
+                 api.post_check(post_process.PropertyEquals, 'change_type', 'triggered')) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote', test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
@@ -406,7 +406,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send vote and comments to Gerrit.gerrit comment and vote',retcode=1),
                  api.step_data('send vote and comments to Gerrit.gerrit comment only',api.json.output({})),
-                 api.post_check(post_process.PropertyEquals,'change_type','tricium')) + \
+                 api.post_check(post_process.PropertyEquals,'change_type','triggered')) + \
                  api.properties(CopProperties(project_name='name'))
   yield api.test('success-run-cannot-vote-or-comment',test_builder(gerrit_changes=change),
                  api.gerrit.set_gerrit_fetch_changes_response(
@@ -417,7 +417,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.step_data('send vote and comments to Gerrit.gerrit comment and vote',retcode=1),
                  api.step_data('send vote and comments to Gerrit.gerrit comment only',retcode=1),
-                 api.post_check(post_process.PropertyEquals,'change_type','tricium'),
+                 api.post_check(post_process.PropertyEquals,'change_type','triggered'),
                  api.post_process(
                      post_process.SummaryMarkdown,
                      'Cannot comment or vote V 1. Please check Gerrit permission',
@@ -461,7 +461,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send vote and comments to Gerrit'),
-                 api.post_check(post_process.PropertyEquals,'change_type','tricium')) + \
+                 api.post_check(post_process.PropertyEquals,'change_type','triggered')) + \
                  api.properties(CopProperties(project_name='name'))
 
   yield api.test('failure-run-hide-full-logs', test_builder(gerrit_changes=change),
@@ -472,5 +472,5 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
                  api.step_data('launch build.launch_build.py',api.json.output(cloud_build)),
                  api.step_data('fetch results.fetch_results.py',api.json.output(results)),
                  api.post_check(post_process.StepSuccess, 'send vote and comments to Gerrit'),
-                 api.post_check(post_process.PropertyEquals,'change_type','tricium')) + \
+                 api.post_check(post_process.PropertyEquals,'change_type','triggered')) + \
                  api.properties(CopProperties(project_name='name'))

@@ -14,7 +14,7 @@
     "cmd": [],
     "name": "get change",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@change_type@\"tricium\"@@@"
+      "@@@SET_BUILD_PROPERTY@change_type@\"triggered\"@@@"
     ]
   },
   {
