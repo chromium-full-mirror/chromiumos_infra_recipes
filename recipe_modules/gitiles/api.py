@@ -69,7 +69,8 @@ class GitilesApi(recipe_api.RecipeApi):
     return '%s/+/%s/%s' % (self.repo_url(commit), ref, file_path or '')
 
   def get_file(self, host, project, path, ref=None, public=True,
-               credential_cookie_location=None, test_output_data=None):
+               credential_cookie_location=None, step_name=None,
+               test_output_data=None):
     """Return the contents of a file hosted on Gitiles.
 
     Curl will return a zero exit status on many occasions if the server
@@ -86,11 +87,12 @@ class GitilesApi(recipe_api.RecipeApi):
           authorization cookie and use it in the curl. Default: True.
       credential_cookie_location: (str): The credential cookie location.
           Default: '~/.git-credential-cache/cookie'.
+      step_name: (str): Name of the step.
       test_output_data (str): Test output for curl.
 
     Returns:
-      (str) The contents of the file as a string or raise StepFailure on
-          unexpected curl return.
+      (str) The contents of the file as a string, None on 404, or raise
+          StepFailure on unexpected curl return.
     """
     test_output_data = test_output_data or self._test_data.get('get_file')
     credential_cookie_location = (
@@ -101,10 +103,29 @@ class GitilesApi(recipe_api.RecipeApi):
     file_url_part = '/'.join((project, '+', ref, path))
     url = parse.urlunparse(
         ('https', host, file_url_part, '', 'format=TEXT', ''))
-    with self.m.step.nest('fetch gitiles file') as pres:
-      data = self.m.easy.stdout_step('curl %s' % url,
-                                     ['curl'] + cred_cache_cmd + [url],
-                                     ok_ret={0}, test_stdout=test_output_data)
+    with self.m.step.nest(step_name or 'fetch gitiles file') as pres:
+      data = self.m.step(
+          'curl %s' % url,
+          ['curl', '--fail-with-body', '--write-out', 'HTTP_CODE=%{http_code}']
+          + cred_cache_cmd + [url],
+          stdout=self.m.raw_io.output(),
+          # curl returns retcode of 22 when requested resource is not fetched..
+          # This return code is only returned with -f specified. Without -f it
+          # returns retcode of 0 and output the body of the page itself.
+          ok_ret={0, 22},
+          step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+              b'HTTP_CODE=404' if test_output_data is None else
+              (test_output_data.encode() if isinstance(test_output_data, str)
+               else test_output_data) + b'HTTP_CODE=200', retcode=22
+              if test_output_data is None else 0))
+      curl_ret = data.retcode
+      http_code = int(
+          data.stdout[data.stdout.rindex(b'HTTP_CODE='):].lstrip(b'HTTP_CODE='))
+      data = data.stdout[:data.stdout.rindex(b'HTTP_CODE=')]
+      if curl_ret and http_code == 404:
+        return None
+      if curl_ret == 22:  # pragma: nocover
+        raise StepFailure(f'curl failed with HTTP {http_code}:\n{data}')
       try:
         decoded_data = base64.b64decode(data)
       except binascii.Error as e:

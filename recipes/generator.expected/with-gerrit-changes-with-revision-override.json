@@ -1978,6 +1978,9 @@
   {
     "cmd": [
       "curl",
+      "--fail-with-body",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
       "https://chromium.googlesource.com/chrome/src/+/refs/heads/main/foo/bar.txt?format=TEXT"
     ],
     "luci_context": {
