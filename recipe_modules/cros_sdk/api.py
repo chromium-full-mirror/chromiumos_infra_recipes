@@ -78,8 +78,6 @@ class CrosSdkApi(RecipeApi):
       self._cache_path = chroot_parent_path / 'cros_chroot'
       self._chroot_path = self._cache_path / 'chroot'
       self._out_path = self._cache_path / 'out'
-      self._sdk_cache_state = None
-      self._sdk_cache_state_file = self._cache_path / 'sdk_cache_state.json'
       self._chrome_root = None
       self._reclient_dir = None
       self._reproxy_cfg_file = None
