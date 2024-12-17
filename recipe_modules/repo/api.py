@@ -5,7 +5,7 @@
 
 """API for working with the 'repo' VCS tool.
 
-See: https://chromium.googlesource.com/external/repo/
+See: https://gerrit.googlesource.com/git-repo
 """
 
 from collections import defaultdict
