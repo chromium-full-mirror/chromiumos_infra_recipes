@@ -35,7 +35,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'check if repo version is at least 2.29.repo version',
           stdout=api.raw_io.output_text('''repo version v2.29-cr1
-        (from https://chromium.googlesource.com/external/repo)
+        (from https://gerrit.googlesource.com/git-repo)
         (tracking refs/heads/main)
         (Tue, 23 Aug 2022 11:20:59 -0400)
  repo launcher version 2.29
@@ -57,7 +57,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.step_data(
           'check if repo version is at least 2.30.repo version',
           stdout=api.raw_io.output_text('''repo version v2.29-cr1
-        (from https://chromium.googlesource.com/external/repo)
+        (from https://gerrit.googlesource.com/git-repo)
         (tracking refs/heads/main)
         (Tue, 23 Aug 2022 11:20:59 -0400)
  repo launcher version 2.29
