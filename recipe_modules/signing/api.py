@@ -82,7 +82,7 @@ class SigningApi(recipe_api.RecipeApi):
     self._paygen_keyset = None
     self._use_dev_keys = properties.use_dev_keys
 
-    self._bcid_policy = properties.bcid_enforcement.bcid_policy or 'chromeosimage://image'
+    self._bcid_policy = properties.bcid_enforcement.bcid_policy or 'chromeosimage://'
     self._signed_prov_generation_fatal = properties.bcid_enforcement.signed_provenance_generation_fatal or False
     self._unsigned_provenance_verification_fatal = properties.bcid_enforcement.unsigned_provenance_verification_fatal or False
 
