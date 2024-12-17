@@ -35,7 +35,7 @@ class ChromiteApi(recipe_api.RecipeApi):
   manifest_host = 'chromium.googlesource.com'
   manifest_project = 'chromiumos/manifest'
   manifest_url = 'https://{}/{}.git'.format(manifest_host, manifest_project)
-  repo_url = 'https://chromium.googlesource.com/external/repo.git'
+  repo_url = 'https://gerrit.googlesource.com/git-repo'
 
   # The number of Gitiles attempts to make before giving up.
   _GITILES_ATTEMPTS = 10
