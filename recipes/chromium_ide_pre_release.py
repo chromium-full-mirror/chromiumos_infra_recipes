@@ -54,19 +54,23 @@ def RunSteps(api: RecipeApi, properties: ChromiumIDEPreReleaseProperties):
       api.url.get_file(OPENJDK_ARCHIVE_URL, jdk_archive)
       with api.context(cwd=java_dir):
         api.step('unpack', ['tar', 'xvf', jdk_archive])
-      jdk_home = api.step('locate jdk home', ['ls', '-d', java_dir / 'jdk-*'],
-                          stdout=api.raw_io.output_text()).stdout.strip()
+      jdk_home = api.step(
+          'locate jdk home',
+          ['sh', '-c', 'ls -d %s' % (java_dir / 'jdk-*')],
+          stdout=api.raw_io.output_text()).stdout.strip().rstrip('/')
       jdk_path = jdk_home + '/bin'
 
     with api.step.nest('install maven'):
       maven_dir = api.path.mkdtemp('maven')
-      maven_archive = java_dir / 'maven.tar.gz'
+      maven_archive = maven_dir / 'maven.tar.gz'
       api.url.get_file(MAVEN_ARCHIVE_URL, maven_archive)
-      with api.context(cwd=java_dir):
+      with api.context(cwd=maven_dir):
         api.step('unpack', ['tar', 'xvf', maven_archive])
-      maven_path = api.step('locate maven path',
-                            ['ls', '-d', maven_dir / 'apache-maven-*/bin'],
-                            stdout=api.raw_io.output_text()).stdout.strip()
+      maven_path = api.step(
+          'locate maven path',
+          ['sh', '-c',
+           'ls -d %s' % (maven_dir / 'apache-maven-*/bin')],
+          stdout=api.raw_io.output_text()).stdout.strip().rstrip('/')
 
   with api.context(
       env={

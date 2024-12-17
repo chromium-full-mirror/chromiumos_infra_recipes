@@ -110,9 +110,9 @@
   },
   {
     "cmd": [
-      "ls",
-      "-d",
-      "[CLEANUP]/java_tmp_1/jdk-*"
+      "sh",
+      "-c",
+      "ls -d [CLEANUP]/java_tmp_1/jdk-*"
     ],
     "name": "setup java environment.install openjdk.locate jdk home",
     "~followup_annotations": [
@@ -136,7 +136,7 @@
       "--status-json",
       "/path/to/tmp/json",
       "--outfile",
-      "[CLEANUP]/java_tmp_1/maven.tar.gz"
+      "[CLEANUP]/maven_tmp_1/maven.tar.gz"
     ],
     "name": "setup java environment.install maven.GET https://archive.apache.org/dist/maven/maven-3/3.6.3/binaries/apache-maven-3.6.3-bin.tar.gz",
     "~followup_annotations": [
@@ -147,9 +147,9 @@
     "cmd": [
       "tar",
       "xvf",
-      "[CLEANUP]/java_tmp_1/maven.tar.gz"
+      "[CLEANUP]/maven_tmp_1/maven.tar.gz"
     ],
-    "cwd": "[CLEANUP]/java_tmp_1",
+    "cwd": "[CLEANUP]/maven_tmp_1",
     "name": "setup java environment.install maven.unpack",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
@@ -157,9 +157,9 @@
   },
   {
     "cmd": [
-      "ls",
-      "-d",
-      "[CLEANUP]/maven_tmp_1/apache-maven-*/bin"
+      "sh",
+      "-c",
+      "ls -d [CLEANUP]/maven_tmp_1/apache-maven-*/bin"
     ],
     "name": "setup java environment.install maven.locate maven path",
     "~followup_annotations": [
