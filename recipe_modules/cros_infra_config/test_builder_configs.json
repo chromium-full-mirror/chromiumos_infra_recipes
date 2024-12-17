@@ -3316,7 +3316,7 @@
         "applyGerritChanges": true
       },
       "general": {
-        "critical": false,
+        "critical": true,
         "manifest": "PRIVATE"
       },
       "id": {
