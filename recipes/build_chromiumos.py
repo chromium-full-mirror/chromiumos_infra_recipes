@@ -104,19 +104,22 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # likely that upload artifacts failed as a result of those previous issues).
     raise failing_build_exception or sf
 
+  # the upload succeeded, raise that exception.
+  if failing_build_exception:
+    raise failing_build_exception  # pylint: disable=raising-bad-type
+
   with api.step.nest('publish toolchain metadata'):
     toolchain_info = api.cros_sdk.get_toolchain_info(
         api.build_menu.build_target.name)
     api.build_reporting.publish_toolchain_info(toolchain_info)
 
+  # Finally, if there was an exception caught above in building the image, but
+  # Write LATEST-* files to the same directory as the artifacts on GS, if the
+  # build and upload succeeded. The LATEST files are used as a mark of a
+  # successful build.
   if properties.latest_files_gs_bucket and properties.latest_files_gs_path:
     api.build_menu.publish_latest_files(properties.latest_files_gs_bucket,
                                         properties.latest_files_gs_path)
-
-  # Finally, if there was an exception caught above in building the image, but
-  # the upload succeeded, raise that exception.
-  if failing_build_exception:
-    raise failing_build_exception  # pylint: disable=raising-bad-type
 
 
 def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
