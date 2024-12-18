@@ -8,9 +8,13 @@
 import base64
 import binascii
 from urllib import parse
+from typing import Dict, Optional
 
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+
+_DEFAULT_CREDENTIAL_COOKIE_LOCATION = '.git-credential-cache/cookie'
+
 
 class GitilesApi(recipe_api.RecipeApi):
   """A module for Gitiles helpers."""
@@ -68,6 +72,44 @@ class GitilesApi(recipe_api.RecipeApi):
     ref = commit.id or commit.ref
     return '%s/+/%s/%s' % (self.repo_url(commit), ref, file_path or '')
 
+  def get_commit_metadata(self, host: str, project: str, revision_or_ref: str,
+                          public: bool = True,
+                          credential_cookie_location: Optional[str] = None,
+                          step_name: Optional[str] = None,
+                          test_data: Optional[Dict] = None) -> Dict:
+    """Returns commit metadata.
+
+    Args:
+      host: Gerrit host, e.g. chrome-internal.googlesource.com.
+      project: Gerrit project, e.g. chromiumos/chromite.
+      revision_or_ref: The revision or ref you are fetching, e.g. refs/heads/main.
+      public: If False, will look in .git-credential-cache for an authorization
+          cookie and use it in the curl. Default: True.
+      credential_cookie_location: The credential cookie location.
+          Default: '~/.git-credential-cache/cookie'.
+      step_name: Name of the step.
+      test_data: JSON response from gitiles.
+
+    Returns:
+      The JSON response from gitiles.
+    """
+    test_data = test_data or {}
+    credential_cookie_location = (
+        credential_cookie_location or self.m.path.join(
+            self.m.path.home_dir, _DEFAULT_CREDENTIAL_COOKIE_LOCATION))
+    cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
+    file_url_part = '/'.join((project, '+', revision_or_ref))
+    url = parse.urlunparse(
+        ('https', host, file_url_part, '', 'format=JSON', ''))
+    with self.m.step.nest(step_name or 'fetch commit metadata') as pres:
+      data = self.m.step(
+          'curl %s' % url, ['curl'] + cred_cache_cmd + [url], ok_ret={0},
+          stdout=self.m.raw_io.output(),
+          step_test_data=lambda: self.m.raw_io.test_api.stream_output(
+              b")]}'\n" + self.m.json.dumps(test_data).encode())).stdout
+      pres.logs['response'] = data
+      return self.m.json.loads(data.removeprefix(b")]}'\n"))
+
   def get_file(self, host, project, path, ref=None, public=True,
                credential_cookie_location=None, step_name=None,
                test_output_data=None):
@@ -96,8 +138,8 @@ class GitilesApi(recipe_api.RecipeApi):
     """
     test_output_data = test_output_data or self._test_data.get('get_file')
     credential_cookie_location = (
-        credential_cookie_location or
-        self.m.path.join(self.m.path.home_dir, '.git-credential-cache/cookie'))
+        credential_cookie_location or self.m.path.join(
+            self.m.path.home_dir, _DEFAULT_CREDENTIAL_COOKIE_LOCATION))
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))

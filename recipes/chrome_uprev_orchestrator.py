@@ -6,6 +6,7 @@
 
 import base64
 import hashlib
+import re
 from typing import List, Optional, Tuple
 
 from google.protobuf import timestamp_pb2
@@ -243,6 +244,22 @@ def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
   summary_markdown = 'No uprevs'
 
   if chrome_version is None:
+    message = api.gitiles.get_commit_metadata(
+        CHROMIUM_SRC_HOST, CHROMIUM_SRC_PROJECT, buildset.id, test_data={
+            'message': ('Roll Chrome Android ARM32 PGO Profile\n\n'
+                        'Change-Id: I7e2a0277a1cff4551f4ee17edab0b56d0a20486e\n'
+                        'Cr-Commit-Position: refs/heads/main@{#1397757}\n'),
+        })['message']
+    position = int(
+        re.search(
+            r'Cr-Commit-Position: refs/heads/main@{#(\d+)}',
+            message,
+            flags=re.M,
+        ).group(1))
+    api.buildbucket.set_output_gitiles_commit(
+        common_pb2.GitilesCommit(host=buildset.host, project=buildset.project,
+                                 id=buildset.id, ref=buildset.ref,
+                                 position=position))
     puprs.append('staging-chrome-main')
     summary_markdown = 'Testing on main'
     run_preuprevs = True

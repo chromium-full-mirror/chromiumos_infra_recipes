@@ -39,6 +39,12 @@ def RunSteps(api):
                            test_output_data=base64.b64encode(b'{"abc":123}')),
       b'{"abc":123}')
 
+  api.assertions.assertEqual(
+      api.gitiles.get_commit_metadata('testgerrit', 'my/project',
+                                      'refs/heads/main',
+                                      test_data={'commit': 'deadbeef'}),
+      {'commit': 'deadbeef'})
+
   api.assertions.assertIsNone(
       api.gitiles.get_file('testgerrit', 'my/project',
                            'chromite/api/somefile.txt',

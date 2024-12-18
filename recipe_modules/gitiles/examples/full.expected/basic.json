@@ -158,6 +158,25 @@
   },
   {
     "cmd": [],
+    "name": "fetch commit metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@response@)]}'@@@",
+      "@@@STEP_LOG_LINE@response@{\"commit\": \"deadbeef\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://testgerrit/my/project/+/refs/heads/main?format=JSON"
+    ],
+    "name": "fetch commit metadata.curl https://testgerrit/my/project/+/refs/heads/main?format=JSON",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "fetch gitiles file (2)"
   },
   {

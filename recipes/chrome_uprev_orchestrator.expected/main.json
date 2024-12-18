@@ -8,6 +8,43 @@
   },
   {
     "cmd": [],
+    "name": "fetch commit metadata",
+    "~followup_annotations": [
+      "@@@STEP_LOG_LINE@response@)]}'@@@",
+      "@@@STEP_LOG_LINE@response@{\"message\": \"Roll Chrome Android ARM32 PGO Profile\\n\\nChange-Id: I7e2a0277a1cff4551f4ee17edab0b56d0a20486e\\nCr-Commit-Position: refs/heads/main@{#1397757}\\n\"}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "curl",
+      "https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "fetch commit metadata.curl https://chromium.googlesource.com/chromium/src/+/8302b1a80de0995f146605740417cdf78e381157?format=JSON",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "set_output_gitiles_commit",
+    "~followup_annotations": [
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chromium.googlesource.com\", \"id\": \"8302b1a80de0995f146605740417cdf78e381157\", \"position\": 1397757, \"project\": \"chromium/src\", \"ref\": \"refs/heads/main\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "trigger browser side builders"
   },
   {
