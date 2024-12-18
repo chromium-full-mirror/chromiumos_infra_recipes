@@ -11524,6 +11524,7 @@
       "1234.56.0-111111",
       "--buildbucket-id",
       "8945511751514863184",
+      "--debug",
       "--internal-manifest-position",
       "101",
       "--external-manifest-position",

@@ -1313,6 +1313,7 @@
       "1234.56.0-9999999",
       "--buildbucket-id",
       "8945511751514863184",
+      "--debug",
       "--internal-manifest-position",
       "123456",
       "--external-manifest-position",

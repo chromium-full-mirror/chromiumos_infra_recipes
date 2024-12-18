@@ -1283,6 +1283,7 @@
       "1234.56.0",
       "--buildbucket-id",
       "8945511751514863184",
+      "--debug",
       "--dryrun",
       "--internal-manifest-position",
       "123456",

@@ -188,6 +188,8 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         version_str,
         '--buildbucket-id',
         self.m.buildbucket.build.id,
+        # Showing debug messages to investigate b/383617613.
+        '--debug',
     ]
     if branch:
       cmd.extend(['--branch', 'refs/branch-heads/{}'.format(branch)])
