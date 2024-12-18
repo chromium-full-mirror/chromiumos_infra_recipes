@@ -46,8 +46,8 @@ class CrosDebugApi(recipe_api.RecipeApi):
     """
     with self.m.step.nest('debug builder steps') as presentation:
       # Step 1. Safety checks.
-      if (not self.m.cros_infra_config.is_staging or self.m.buildbucket.build.id
-          != 0) and not override_led_launch_only_staging:
+      if not (self.m.cros_infra_config.is_staging and self.m.led.launched_by_led
+             ) and not override_led_launch_only_staging:
         # Emit that we're skipping this debug step.
         presentation.step_text = 'Skipping debug steps as this is not a led launch or it is running outside of staging. Please either remove `cros_debug` from this recipe, or pass in the override flag if you really must run this this way.'
         presentation.status = self.m.step.INFRA_FAILURE

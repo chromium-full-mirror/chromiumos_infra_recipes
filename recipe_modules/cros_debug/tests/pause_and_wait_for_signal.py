@@ -7,6 +7,7 @@
 
 from PB.recipe_modules.chromeos.cros_debug.tests.pause_and_wait_for_signal import \
   PauseAndWaitForSignalProperties
+from PB.recipe_modules.recipe_engine.led.properties import InputProperties
 
 from recipe_engine import post_process
 
@@ -35,10 +36,12 @@ def RunSteps(api, properties):
 
 def GenTests(api):
 
+  led_props = {'$recipe_engine/led': InputProperties(led_run_id='led/build')}
+
   yield api.test(
       'file-exists',
       api.buildbucket.generic_build(build_id=0, bucket='staging'),
-      api.properties(exists=True),
+      api.properties(exists=True, **led_props),
       api.post_process(post_process.MustRun,
                        'debug builder steps.set up file to watch'),
       api.post_process(post_process.StepTextContains,
@@ -59,7 +62,7 @@ def GenTests(api):
       'file-does-not-exist',
       api.properties(location='/tmp/foo/bar'),
       api.buildbucket.generic_build(build_id=0, bucket='staging'),
-      api.properties(exists=False),
+      api.properties(**led_props),
       api.post_process(post_process.MustRun,
                        'debug builder steps.set up file to watch'),
       api.post_process(post_process.StepTextContains,
@@ -76,6 +79,7 @@ def GenTests(api):
   yield api.test(
       'skips-in-prod',
       api.buildbucket.generic_build(build_id=0, bucket='prod'),
+      api.properties(**led_props),
       api.post_process(
           post_process.StepTextEquals, 'debug builder steps',
           'Skipping debug steps as this is not a led launch or it is running outside of staging. Please either remove `cros_debug` from this recipe, or pass in the override flag if you really must run this this way.'
@@ -130,7 +134,7 @@ def GenTests(api):
   yield api.test(
       'override-flag-overrides-non-prod',
       api.buildbucket.generic_build(build_id=0, bucket='prod'),
-      api.properties(exists=True, override=True),
+      api.properties(exists=True, override=True, **led_props),
       api.post_process(post_process.MustRun,
                        'debug builder steps.set up file to watch'),
       api.post_process(post_process.StepTextContains,

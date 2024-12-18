@@ -5,6 +5,8 @@
 
 """Success workflow tests for the signing recipe module."""
 
+from PB.recipe_modules.recipe_engine.led.properties import InputProperties
+
 from recipe_engine import post_process
 
 DEPS = [
@@ -31,6 +33,8 @@ def GenTests(api):
   yield api.test(
       'timeout-capped',
       api.buildbucket.generic_build(build_id=0, bucket='staging'),
+      api.properties(
+          **{'$recipe_engine/led': InputProperties(led_run_id='led/build')}),
       api.post_process(
           post_process.StepTextEquals, 'debug builder steps',
           'Timeout specified is outside valid range, capping at 4 hours.'),
