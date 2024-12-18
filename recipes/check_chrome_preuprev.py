@@ -32,6 +32,7 @@ DEPS = [
     'recipe_engine/time',
     'recipe_engine/step',
     'recipe_engine/raw_io',
+    'easy',
     'gerrit',
     'test_util',
     'git_footers',
@@ -232,6 +233,10 @@ def RunSteps(api: RecipeApi):
               if builder.status == common_pb2.FAILURE else api.step.EXCEPTION)
           task_step.step_summary_text = builder.summary_markdown
 
+    api.easy.set_properties_step(
+        'set failed test builder ids as output properties',
+        failed_builds=[builder.id for builder in failed_builds])
+
     if len(failed_builds) > 0:
       return RawResult(
           status=common_pb2.FAILURE,
@@ -393,6 +398,7 @@ def GenTests(api: RecipeTestApi):
           '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
       )),
+      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
       cq=True,
       status='SUCCESS',
   )
@@ -506,6 +512,7 @@ def GenTests(api: RecipeTestApi):
            'and wait for next pre-uprev. You can override by chump the CL but it is strongly discouraged.'
           ),
       ),
+      api.post_check(post_process.PropertyEquals, 'failed_builds', [102114593]),
       cq=True,
       status='FAILURE',
   )

@@ -814,6 +814,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "Check pre-uprev results.set failed test builder ids as output properties",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@failed_builds@[102114593]@@@"
+    ]
+  },
+  {
     "failure": {
       "failure": {},
       "humanReason": "Pre-uprev testing not passed, details:\n\n- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n> Test FAILURE\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n> Test SUCCESS\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n> Test SUCCESS\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n> Test SUCCESS\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n> Test SUCCESS\n\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev. You can override by chump the CL but it is strongly discouraged."
