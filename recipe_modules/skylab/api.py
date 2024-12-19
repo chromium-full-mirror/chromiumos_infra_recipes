@@ -546,8 +546,13 @@ class SkylabApi(recipe_api.RecipeApi):
             self.m.skylab_results.get_tagged_execute_responses_from_build(
                 build))
       for t in tasks:
-        result = responses.get(
-            self.m.skylab_results.request_tag(t.test), _DEFAULT_FAILED_RESPONSE)
+        request_tag = self.m.skylab_results.request_tag(t.test)
+        result = responses.get(request_tag)
+        # NOTE(b/384904859#comment7): there are times where the result here
+        # will be represented by a lower-case key. See post-commit discussion
+        # on crrev.com/c/6092750 for more context/information.
+        if result is None:
+          result = responses.get(request_tag.lower(), _DEFAULT_FAILED_RESPONSE)
         results.append(self.m.skylab_results.translate_result(result, t))
 
       presentation.logs['return value'] = [str(r) for r in results]

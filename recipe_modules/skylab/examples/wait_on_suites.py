@@ -43,7 +43,8 @@ def RunSteps(api):
 
   separate_ctp_unit = api.cros_test_plan.test_api.some_other_hw_test_unit
   separate_ctp_test = separate_ctp_unit.hw_test_cfg.hw_test[0]
-  separate_ctp_test.common.display_name = 'wait_on_separate_ctp'
+  # N.B., this is upper-case to verify the flexible-case matching behavior.
+  separate_ctp_test.common.display_name = 'WAIT_ON_SEPARATE_CTP'
   separate_ctp_task = api.skylab_results.test_api.skylab_task(
       bid=5679,
       url='https://ci.chromium.org/p/chromeos/builders/testplatform/cros_test_platform/b5678',
