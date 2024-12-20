@@ -22,6 +22,7 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 PROPERTIES = InputProperties
 
 DEPS = [
+    'depot_tools/gitiles',
     'recipe_engine/buildbucket',
     'recipe_engine/json',
     'recipe_engine/properties',
@@ -30,11 +31,9 @@ DEPS = [
     'recipe_engine/step',
     'recipe_engine/time',
     'git',
-    'gitiles',
 ]
 
-CHROMIUM_SRC_HOST = 'chromium.googlesource.com'
-CHROMIUM_SRC_PROJECT = 'chromium/src'
+CHROMIUM_SRC_GIT = 'https://chromium.googlesource.com/chromium/src.git/'
 CHROMIUM_VERSION_FILE = 'chrome/VERSION'
 
 CHROME_SIDE_BUILDERS = [
@@ -95,15 +94,19 @@ def IsVersionAvailable(api: RecipeApi, chrome_version: str) -> bool:
 
   mock_version = '\n'.join(['MAJOR=98', 'MINOR=0', 'BUILD=1234', 'PATCH=0'])
   mock_result = None if branch_number > 1290 else base64.b64encode(
-      mock_version.encode())
+      mock_version.encode()).decode()
 
-  version_file = api.gitiles.get_file(
-      CHROMIUM_SRC_HOST,
-      CHROMIUM_SRC_PROJECT,
+  version_file = api.m.gitiles.download_file(
+      CHROMIUM_SRC_GIT,
       CHROMIUM_VERSION_FILE,
-      ref='refs/tags/' + chrome_version,
+      branch='refs/tags/' + chrome_version,
       step_name='Try fetching the version with incrementing the branch number',
-      test_output_data=mock_result,
+      step_test_data=lambda: api.m.json.test_api.output({
+          'value': mock_result,
+      }),
+      # In case of unavaiable version, the server returns 404 and the return
+      # value is None.
+      accept_statuses=[200, 404],
   )
 
   return version_file is not None
@@ -125,16 +128,17 @@ def IsVersionOnReleaseBranches(api: RecipeApi, chrome_version: str) -> bool:
     True if the version is from release branches, otherwise, False.
   """
   mock_version = '\n'.join(['MAJOR=98', 'MINOR=0', 'BUILD=1234', 'PATCH=0'])
-  mock_result = base64.b64encode(mock_version.encode())
-
-  tot_version = api.gitiles.get_file(
-      CHROMIUM_SRC_HOST,
-      CHROMIUM_SRC_PROJECT,
+  tot_version = api.m.gitiles.download_file(
+      CHROMIUM_SRC_GIT,
       CHROMIUM_VERSION_FILE,
-      ref='refs/heads/main',
+      branch='refs/heads/main',
       step_name='Fetch ToT version',
-      test_output_data=mock_result,
-  ).decode()
+      step_test_data=lambda: api.m.json.test_api.output({
+          'value': base64.b64encode(mock_version.encode()).decode(),
+      }),
+  )
+
+  api.m.step.active_result.presentation.step_text = tot_version
 
   assert tot_version.startswith('MAJOR=')
   tot_milestone = int(tot_version.split('\n')[0].split('=')[1])

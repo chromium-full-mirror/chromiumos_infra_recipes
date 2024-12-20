@@ -36,9 +36,6 @@
   {
     "cmd": [
       "curl",
-      "--fail-with-body",
-      "--write-out",
-      "HTTP_CODE=%{http_code}",
       "https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
     ],
     "name": "fetch depot_tools pin from manifest.fetch gitiles file.curl https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT",

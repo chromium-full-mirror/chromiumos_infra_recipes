@@ -6,8 +6,6 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-import base64
-
 from PB.go.chromium.org.luci.buildbucket.proto.common import GitilesCommit
 
 from recipe_engine.recipe_api import StepFailure
@@ -35,14 +33,7 @@ def RunSteps(api):
   api.assertions.assertEqual(
       api.gitiles.get_file('testgerrit', 'my/project',
                            'chromite/api/somefile.txt',
-                           ref='refs/heads/coolref',
-                           test_output_data=base64.b64encode(b'{"abc":123}')),
-      b'{"abc":123}')
-
-  api.assertions.assertIsNone(
-      api.gitiles.get_file('testgerrit', 'my/project',
-                           'chromite/api/somefile.txt',
-                           ref='refs/heads/coolref', test_output_data=None))
+                           ref='refs/heads/coolref'), b'{"abc":123}')
 
   api.assertions.assertRaises(StepFailure, api.gitiles.get_file,
                               host='testgerrit', project='my/project',
@@ -51,4 +42,4 @@ def RunSteps(api):
                               test_output_data='not base64 yo')
 
 def GenTests(api):
-  yield api.test('basic')
+  yield api.test('basic', api.gitiles.get_file(b'{"abc":123}'))

@@ -146,9 +146,6 @@
   {
     "cmd": [
       "curl",
-      "--fail-with-body",
-      "--write-out",
-      "HTTP_CODE=%{http_code}",
       "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
     ],
     "name": "fetch gitiles file.curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
@@ -158,24 +155,7 @@
   },
   {
     "cmd": [],
-    "name": "fetch gitiles file (2)"
-  },
-  {
-    "cmd": [
-      "curl",
-      "--fail-with-body",
-      "--write-out",
-      "HTTP_CODE=%{http_code}",
-      "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
-    ],
-    "name": "fetch gitiles file (2).curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "fetch gitiles file (3)",
+    "name": "fetch gitiles file (2)",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@raw data@not base64 yo@@@",
       "@@@STEP_LOG_END@raw data@@@",
@@ -185,12 +165,9 @@
   {
     "cmd": [
       "curl",
-      "--fail-with-body",
-      "--write-out",
-      "HTTP_CODE=%{http_code}",
       "https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT"
     ],
-    "name": "fetch gitiles file (3).curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
+    "name": "fetch gitiles file (2).curl https://testgerrit/my/project/+/refs/heads/coolref/chromite/api/somefile.txt?format=TEXT",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
