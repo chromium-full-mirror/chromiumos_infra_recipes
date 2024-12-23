@@ -7,46 +7,23 @@
     ]
   },
   {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chromium.googlesource.com/chromium/src.git/+/refs/heads/main/chrome/VERSION",
-      "--format",
-      "text"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:infra"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
+    "cmd": [],
     "name": "Fetch ToT version",
     "~followup_annotations": [
-      "@@@STEP_TEXT@MAJOR=98<br/>MINOR=0<br/>BUILD=1234<br/>PATCH=0@@@"
+      "@@@STEP_LOG_LINE@data@MAJOR=98@@@",
+      "@@@STEP_LOG_LINE@data@MINOR=0@@@",
+      "@@@STEP_LOG_LINE@data@BUILD=1234@@@",
+      "@@@STEP_LOG_LINE@data@PATCH=0@@@",
+      "@@@STEP_LOG_END@data@@@"
     ]
   },
   {
     "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gitiles]/resources/gerrit_client.py",
-      "--json-file",
-      "/path/to/tmp/json",
-      "--url",
-      "https://chromium.googlesource.com/chromium/src.git/+/refs/tags/97.0.1291.0/chrome/VERSION",
-      "--format",
-      "text",
-      "--accept-statuses",
-      "200,404"
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT"
     ],
     "luci_context": {
       "realm": {
@@ -59,7 +36,38 @@
         "hostname": "rdbhost"
       }
     },
+    "name": "Fetch ToT version.curl https://chromium.googlesource.com/chromium/src/+/refs/heads/main/chrome/VERSION?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "Try fetching the version with incrementing the branch number"
+  },
+  {
+    "cmd": [
+      "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
+      "https://chromium.googlesource.com/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT"
+    ],
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:infra"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Try fetching the version with incrementing the branch number.curl https://chromium.googlesource.com/chromium/src/+/refs/tags/97.0.1291.0/chrome/VERSION?format=TEXT",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@"
+    ]
   },
   {
     "cmd": [],

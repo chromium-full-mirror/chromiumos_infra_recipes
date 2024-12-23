@@ -573,6 +573,9 @@
   {
     "cmd": [
       "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
       "https://chromium.googlesource.com/chromiumos/manifest/+/HEAD/full.xml?format=TEXT"
     ],
     "luci_context": {

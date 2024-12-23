@@ -2260,6 +2260,9 @@
   {
     "cmd": [
       "curl",
+      "-f",
+      "--write-out",
+      "HTTP_CODE=%{http_code}",
       "-b",
       "[HOME]/.git-credential-cache/cookie",
       "https://chrome-internal.googlesource.com/chromeos/platform/release-keys/+/HEAD/generated/keyset.json?format=TEXT"
