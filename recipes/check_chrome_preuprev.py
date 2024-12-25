@@ -14,6 +14,8 @@ import json
 import re
 import hashlib
 
+from google.protobuf import timestamp_pb2, json_format, struct_pb2
+
 from PB.recipe_engine.result import RawResult
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
@@ -38,10 +40,10 @@ DEPS = [
     'git_footers',
 ]
 
-FETCH_DESCRIPTION_INTERVAL_SEC = 60
-FETCH_DESCRIPTION_TIMEOUT_SEC = 600  # 10 minutes
+FETCH_BEST_CHROME_REVISION_INTERVAL = 600
+FETCH_BEST_CHROME_REVISION_TIMES = 30
 WAIT_PREUPREV_TIMEOUT_SEC = 3600 * 6  # 6 hour
-UPREV_CL_TOPIC = 'chromeos-base/lacros-ash-atomic'
+UPREV_CL_TOPICS = ['chromeos-base/lacros-ash-atomic', 'staging/chrome-main']
 INVOCATION_PREFIX = 'invocations/'
 
 NO_CL_FOUND_SUMMARY = 'No CL found.'
@@ -59,6 +61,16 @@ REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
     'Failed to find required pre-uprev builders\n'
     # Possible action items
     'Please retry later or wait for next uprev\n.')
+CHROME_CI_NOT_GOOD = (
+    # Error notice
+    'Chrome best revision is currently at {}, want >={}\n'
+    'All ChromeOS preuprev has passed but on other platforms '
+    'Chrome best revision is behind current version.\n'
+    # Possible action items
+    'This usually catches up in less than 2 hours, check '
+    'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
+    ' and try again. You can also just wait for next uprev.')
+
 
 NO_CL_FOUND = RawResult(status=common_pb2.INFRA_FAILURE,
                         summary_markdown=NO_CL_FOUND_SUMMARY)
@@ -169,14 +181,47 @@ def ToBuildersLinkMd(builders: List[build_pb2.Build],
   return text
 
 
+def BestChromeRevision(api: RecipeApi) -> Optional[int]:
+  now = int(api.time.time())
+  end_time = timestamp_pb2.Timestamp(seconds=now)
+  start_time = timestamp_pb2.Timestamp(seconds=now - 3600 * 8)
+  builds = api.buildbucket.search(
+      builds_service_pb2.BuildPredicate(
+          builder={
+              'project': 'chrome',
+              'bucket': 'official.infra',
+              'builder': 'chrome-best-revision-continuous',
+          },
+          create_time=common_pb2.TimeRange(
+              start_time=start_time,
+              end_time=end_time,
+          ),
+      ), fields=BUILD_FIELDS_TO_RETRIEVE)
+  best_revision = None
+  for build in builds:
+    output = json_format.MessageToDict(build.output, struct_pb2.Struct)
+    revision = output.get('properties', {}).get('best_revision_info',
+                                                {}).get('commit_pos')
+    best_revision = max(best_revision,
+                        int(revision)) if best_revision else int(revision)
+  return best_revision
+
+
 def RunSteps(api: RecipeApi):
   cl = api.buildbucket.build.input.gerrit_changes
   if not cl:
     return NO_CL_FOUND
   cl = cl[0]
-  patch_sets = api.gerrit.fetch_patch_sets([cl])
-  if patch_sets[0].topic != UPREV_CL_TOPIC:
+  patch_sets = api.gerrit.fetch_patch_sets([cl], include_files=True)
+  if patch_sets[0].topic not in UPREV_CL_TOPICS:
     return NOT_AN_UPREV_CL
+
+  target_chrome_revision = None
+  with api.step.nest('Extract target Chrome revision') as step:
+    for f in patch_sets[0].file_infos:
+      m = re.match(r'.*/chromeos-chrome-.*_pre([0-9]+).*\.ebuild$', f)
+      if m:
+        target_chrome_revision = int(m.group(1))
   with api.step.nest('Search Chrome builders matching buildset') as step:
     pupr_version = api.git_footers.from_gerrit_change(cl,
                                                       UPREV_VERSION_LABEL)[0]
@@ -242,10 +287,28 @@ def RunSteps(api: RecipeApi):
           status=common_pb2.FAILURE,
           summary_markdown=FAILED_PRE_UPREVS_SUMMARY.format(
               ToBuildersLinkMd(builders, include_details=True)))
-    return RawResult(
-        status=common_pb2.SUCCESS,
-        summary_markdown=PRE_UPREV_PASS_SUMMARY.format(
-            ToBuildersLinkMd(builders)))
+
+  if target_chrome_revision:
+    with api.step.nest('Wait chrome-best-revision-continuous') as step:
+      best_revision = None
+      for i in range(FETCH_BEST_CHROME_REVISION_TIMES):
+        got_best_revision = BestChromeRevision(api)
+        if got_best_revision:
+          best_revision = got_best_revision
+        if best_revision and best_revision >= target_chrome_revision:
+          break
+        if i < FETCH_BEST_CHROME_REVISION_TIMES - 1:
+          api.time.sleep(FETCH_BEST_CHROME_REVISION_INTERVAL)
+
+      if best_revision is None or best_revision < target_chrome_revision:
+        return RawResult(
+            status=common_pb2.FAILURE,
+            summary_markdown=CHROME_CI_NOT_GOOD.format(best_revision,
+                                                       target_chrome_revision))
+
+  return RawResult(
+      status=common_pb2.SUCCESS, summary_markdown=PRE_UPREV_PASS_SUMMARY.format(
+          ToBuildersLinkMd(builders)))
 
 
 
@@ -323,7 +386,35 @@ def GenTests(api: RecipeTestApi):
     v = {k: v for k, v in locals().items() if not callable(v)}
     return simulate_collect_pre_uprev_builders(**v)
 
-  def try_build_with_cl(message, topic=UPREV_CL_TOPIC):
+  def chrome_best_revision(api, positions):
+
+    def _build(idx, position):
+      output = build_pb2.Build.Output()
+      output.properties['best_revision_info'] = {
+          'commit_pos': position,
+      }
+      return build_pb2.Build(
+          id=13219283712312 + idx,
+          builder=builder_common_pb2.BuilderID(
+              project='chrome', bucket='official.infra',
+              builder='chrome-best-revision-continuous'),
+          status=common_pb2.SUCCESS,
+          output=output,
+      )
+
+    build = api.buildbucket.simulated_search_results([
+        _build(0, positions[0]),
+    ], step_name='Wait chrome-best-revision-continuous.buildbucket.search')
+
+    for idx in range(1, len(positions)):
+      build += api.buildbucket.simulated_search_results([
+          _build(idx, positions[idx]),
+      ], step_name=f'Wait chrome-best-revision-continuous.buildbucket.search ({idx+1})'
+                                                       )
+
+    return build
+
+  def try_build_with_cl(chrome_version, topic=UPREV_CL_TOPICS[0]):
     build = api.buildbucket.try_build(
         builder='chrome-uprev-cq', gerrit_changes=[
             common_pb2.GerritChange(
@@ -348,6 +439,17 @@ def GenTests(api: RecipeTestApi):
         'topic': topic if topic else '',
         'change_id': str(CHANGE_NUMBER),
         'status': 'NEW',
+        'revision_info': {
+            '_number': PATCHSET,
+            'commit': {
+                'message':
+                    f'chromeos-chrome: Automatic uprev to {chrome_version}.\n',
+            },
+            'files': {
+                f'chromeos-base/chromeos-chrome/chromeos-chrome-{chrome_version}_rc-r1.ebuild':
+                    {},
+            },
+        },
     }
     build += api.gerrit.set_gerrit_fetch_changes_response(
         '', [
@@ -355,27 +457,9 @@ def GenTests(api: RecipeTestApi):
                                     change=CHANGE_NUMBER, patchset=PATCHSET)
         ], {CHANGE_NUMBER: change})
 
-    if not message or not topic:
+    if not topic:
       return build
 
-    change = {
-        '_number': CHANGE_NUMBER,
-        'topic': topic,
-        'change_id': str(CHANGE_NUMBER),
-        'status': 'NEW',
-        'revision_info': {
-            '_number': PATCHSET,
-            'commit': {
-                'message': message,
-            }
-        }
-    }
-    build += api.gerrit.set_gerrit_fetch_changes_response(
-        f'Search Chrome builders matching buildset.get CL {CHANGE_NUMBER} description',
-        [
-            common_pb2.GerritChange(host=GERRIT_HOST, project=PROJECT,
-                                    change=CHANGE_NUMBER, patchset=PATCHSET)
-        ], {CHANGE_NUMBER: change})
     build += api.step_data(
         'Search Chrome builders matching buildset.read git footers',
         stdout=api.raw_io.output(
@@ -386,7 +470,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'success',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search'),
       pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
@@ -399,13 +483,58 @@ def GenTests(api: RecipeTestApi):
           '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
       )),
       api.post_check(post_process.PropertyEquals, 'failed_builds', []),
+      api.post_check(post_process.DoesNotRun,
+                     'Wait chrome-best-revision-continuous'),
       cq=True,
       status='SUCCESS',
   )
 
   yield api.test(
+      'main-branch-uprev-prerelease',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search'),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      chrome_best_revision(api, [1100000, 1122332]),
+      api.post_check(post_process.SummaryMarkdown, (
+          'Pre-uprev testing passed. \n\nDetails: \n\n'
+          '- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n'
+          '- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n'
+          '- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n'
+          '- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n'
+          '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n\n'
+      )),
+      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      cq=True,
+      status='SUCCESS',
+  )
+
+  yield api.test(
+      'main-branch-uprev-prerelease-chrome-not-good',
+      try_build_with_cl('130.0.6699.0_pre1122332'),
+      pre_uprev_started(
+          api, 'Search Chrome builders matching buildset.buildbucket.search'),
+      pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
+      chrome_best_revision(api, [1100000] * FETCH_BEST_CHROME_REVISION_TIMES),
+      api.post_check(post_process.SummaryMarkdown, (
+          'Chrome best revision is currently at 1100000, want >=1122332\n'
+          'All ChromeOS preuprev has passed but on other platforms '
+          'Chrome best revision is behind current version.\n'
+          'This usually catches up in less than 2 hours, check '
+          'https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous'
+          ' and try again. You can also just wait for next uprev.')),
+      api.post_check(post_process.PropertyEquals, 'failed_builds', []),
+      api.post_check(post_process.MustRun,
+                     'Wait chrome-best-revision-continuous'),
+      cq=True,
+      status='FAILURE',
+  )
+
+  yield api.test(
       'prefer-sucessful-build',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search',
           chromeos_brya_chrome_preuprev_skylab=common_pb2.SUCCESS),
@@ -414,6 +543,8 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev-skylab as brya'
       ),
+      api.post_check(post_process.DoesNotRun,
+                     'Wait chrome-best-revision-continuous'),
       api.post_process(post_process.DropExpectation),
       cq=True,
       status='SUCCESS',
@@ -421,7 +552,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'prefer-running-build',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search',
           chromeos_brya_chrome_preuprev=common_pb2.FAILURE,
@@ -431,6 +562,8 @@ def GenTests(api: RecipeTestApi):
           post_process.MustRun,
           'Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev-skylab as brya'
       ),
+      api.post_check(post_process.DoesNotRun,
+                     'Wait chrome-best-revision-continuous'),
       api.post_process(post_process.DropExpectation),
       cq=True,
       status='SUCCESS',
@@ -469,7 +602,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'missing-pre-uprevs',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       api.post_check(post_process.SummaryMarkdown,
                      REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY),
       cq=True,
@@ -478,7 +611,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'missing-pre-uprevs-partial',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search',
           chromeos_betty_chrome_preuprev=None),
@@ -490,7 +623,7 @@ def GenTests(api: RecipeTestApi):
 
   yield api.test(
       'pre-uprev-failed',
-      try_build_with_cl('chromeos-chrome: Automatic uprev to 130.0.6699.0.\n'),
+      try_build_with_cl('130.0.6699.0'),
       pre_uprev_started(
           api, 'Search Chrome builders matching buildset.buildbucket.search'),
       pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect',
@@ -513,6 +646,8 @@ def GenTests(api: RecipeTestApi):
           ),
       ),
       api.post_check(post_process.PropertyEquals, 'failed_builds', [102114593]),
+      api.post_check(post_process.DoesNotRun,
+                     'Wait chrome-best-revision-continuous'),
       cq=True,
       status='FAILURE',
   )
