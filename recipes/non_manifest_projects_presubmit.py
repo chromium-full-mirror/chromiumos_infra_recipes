@@ -3,7 +3,14 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe for running presubmit on CLs for projects not in the manifest."""
+"""
+Recipe for running presubmit checks on CLs for projects not in the manifest.
+
+This recipe addresses the need to run presubmit checks on projects that
+are not included in the main manifest. It categorizes changes from Gerrit,
+clones the relevant repositories, applies the changes, and then executes
+the presubmit checks defined in each project's PRESUBMIT.py file.
+"""
 
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipes.chromeos.presubmit_tests import PresubmitTestsProperties
@@ -102,8 +109,8 @@ def _clone_repo(api, host, project):
 
   Args:
     api: The recipe modules API.
-    host: The Gerrit host the project belongs to.
-    project: The name of the Gerrit project.
+    host: The Gerrit host for the project.
+    project: The name of the Gerrit project to clone.
 
   Returns:
     The path to the newly cloned Git checkout.
