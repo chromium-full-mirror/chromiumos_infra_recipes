@@ -2,7 +2,11 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""API wrapping the cros branch tool."""
+"""The `cros_branch` module provides API for using the `branch_util` tool.
+
+This tool is utilized for managing branches within a ChromeOS environment,
+offering functionalities such as creating, renaming, and deleting branches.
+"""
 
 DEPS = [
     'recipe_engine/raw_io',
