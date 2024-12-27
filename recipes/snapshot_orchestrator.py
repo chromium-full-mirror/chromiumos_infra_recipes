@@ -3,7 +3,13 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe that schedules snapshot/postsubmit child builders and watches for failures."""
+"""Recipe that schedules snapshot/postsubmit child builders and generates LKGM CL.
+
+This recipe orchestrates the execution of child builders for snapshot and postsubmit
+builds, runs any necessary hardware tests, and optionally generates a LKGM (Last
+Known Good Manifest) uprev CL if the conditions are met. The recipe is designed
+to work with both internal and external manifest repositories.
+"""
 
 from google.protobuf.json_format import MessageToDict
 
