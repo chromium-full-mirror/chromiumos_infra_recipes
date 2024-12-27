@@ -3,8 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""
+Example that show usage of set_upreved_ebuilds of the cros_build_api module.
+
+This recipe can be used to simulate a scenario of setting upreved ebuilds from
+the recipes framework side.
+"""
 
 from google.protobuf import json_format
 
