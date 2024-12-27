@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Setup for the remoteexec module."""
+"""The `remoteexec` module provides the ability to interact with remote execution services."""
 
 from PB.recipe_modules.chromeos.remoteexec.remoteexec import RemoteexecProperties
 
