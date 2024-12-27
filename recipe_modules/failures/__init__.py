@@ -3,7 +3,12 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Deps and properties for the failures module."""
+"""Module for tracking, filtering, and aggregating failures.
+
+Provides a way to catch and filter exceptions, track failures, and aggregate
+failures from child builds. Also provides the ability to distinguish between
+build failures and infrastructure failures.
+"""
 
 DEPS = [
     'recipe_engine/buildbucket',
