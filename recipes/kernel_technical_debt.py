@@ -3,7 +3,17 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Recipe to enforce go/kernel-upstream-tracking-process"""
+"""Recipe to enforce go/kernel-upstream-tracking-process.
+
+This recipe module is designed to ensure adherence to the kernel upstream
+tracking process by validating changes made to the ChromiumOS kernel.
+It checks for the presence of valid tags in the commit message subject,
+identifies technical debt by analyzing subject tags and affected files,
+and verifies the inclusion of appropriate tracking bug references
+in the commit message. It operates on a single Gerrit change at a time,
+as provided by the Tricium service.
+"""
+
 
 import re
 from typing import Dict
