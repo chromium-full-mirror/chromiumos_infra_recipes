@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Example of using update_build_info to update build information."""
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2, common as common_pb2
 
