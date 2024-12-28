@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Example of presenting a run."""
 
 from recipe_engine import post_process
 from PB.go.chromium.org.luci.buildbucket.proto import common as bb_common_pb2
