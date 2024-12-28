@@ -162,7 +162,7 @@ class PuprApi(recipe_api.RecipeApi):
 
   @staticmethod
   def num_full_cq_failures(cl) -> int:
-    """Return the number of times the CL (PathcSet) has failed full CQ."""
+    """Return the number of times the CL (PatchSet) has failed full CQ."""
     return sum(1 for m in cl.messages
                if ('tag' in m and FULL_RUN_TAG_RE.match(m['tag']) and
                    FAILED_RE.match(m['message'])))
