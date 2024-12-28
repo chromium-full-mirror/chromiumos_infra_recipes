@@ -178,7 +178,7 @@ def UpdateHistoricalTokenDatabase(
     location: common_pb2.FwLocation,
     uploaded_artifacts: UploadedArtifacts,
 ):
-  """Updates Historical Token Database in GCS
+  """Updates Historical Token Database in GCS.
 
   Updates the historical database in GCS using preconditions
   to avoid any race conditions between other builders.
@@ -186,8 +186,7 @@ def UpdateHistoricalTokenDatabase(
   Args:
     api: RecipesAPI object for dependencies.
     location: The firmware location.
-    builder_name: Name of builder.
-    uploaded_artifacts: Artifacts uploaded.
+    uploaded_artifacts: Artifacts that were uploaded.
   """
   if location == common_pb2.PLATFORM_ZEPHYR:
     cros_src_path = api.cros_source.workspace_path
