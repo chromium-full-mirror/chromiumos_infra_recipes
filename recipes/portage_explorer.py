@@ -46,7 +46,7 @@ def RunSteps(api: RecipeApi):
     raise sf
 
 
-def RunSpiders(api: RecipeApi):
+def RunSpiders(api: RecipeApi) -> None:
   """Call the RunSpiders endpoint and upload to GS.
 
   Call the RunSpiders endpoint from the PortageExplorerService. Store the
