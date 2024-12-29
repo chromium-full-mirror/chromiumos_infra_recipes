@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Test calling the CTPv2 binary."""
 
 from PB.recipe_modules.chromeos.ctpv2.ctpv2 import Ctpv2ModuleProperties
 from PB.recipes.chromeos.test_platform.cros_test_platform import (
