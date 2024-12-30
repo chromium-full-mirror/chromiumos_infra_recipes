@@ -3,8 +3,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-# pylint: disable=missing-module-docstring
-# TODO(b/303696694): Add a simple docstring here.
+"""Test that the CQ relevance check is correct for various inputs."""
 
 from PB.chromite.api import depgraph
 from PB.chromite.api.sysroot import Sysroot
@@ -30,6 +29,10 @@ PROPERTIES = PointlessTest
 
 
 def RunSteps(api, properties):
+  """Determine if the CLs for a CQ run affect the build, and verify that
+  the result matches the `expected` property.
+  """
+
   force_relevant = (
       properties.force_relevant if properties.force_relevant else False)
   if properties.manifest_branch:
