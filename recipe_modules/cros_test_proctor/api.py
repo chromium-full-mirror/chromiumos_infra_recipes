@@ -169,7 +169,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       require_stable_devices: bool = False, use_test_plan_v2: bool = False,
       build_target_critical_allowlist: typing.Optional[typing.List[str]] = None
   ) -> typing.List[Failure]:
-    """Runs the test platform for a given bunch of builds.
+    """Run the test platform for a given set of builds.
 
     This is the entry point into the CrOS infra test platform via recipes.
 
@@ -194,7 +194,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       build_target_critical_allowlist: If set (including empty list), only the
         build targets specified can have tests run as critical. If None,
         criticality will not be modified for any build targets.
-    Returns
+    Returns:
       Failures encountered running tests
     """
     with self.m.step.nest('run tests') as pres:
