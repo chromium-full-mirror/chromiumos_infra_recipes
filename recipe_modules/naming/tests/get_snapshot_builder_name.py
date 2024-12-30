@@ -2,7 +2,7 @@
 # Use of this source code is governed by a BSD-style license that can be
 # found in the LICENSE file.
 
-"""Tests for the get_snapshot_builder_name function."""
+"""Tests for naming.get_snapshot_builder_name."""
 
 from recipe_engine import post_process
 
