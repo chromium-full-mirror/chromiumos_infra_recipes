@@ -6,6 +6,7 @@ syntax = "proto3";
 
 package recipe_modules.chromeos.auto_runner_util;
 
+// NEXT ID: 9
 message AutoRunnerUtilProperties {
   // The maximum number of changes to query per gerrit request.
   int64 max_limit_per_query = 1;
@@ -18,6 +19,8 @@ message AutoRunnerUtilProperties {
   // Daily Quota per cl. i.e Max number of times Auto Runner can CQ+1 a CL per
   // day.
   int64 daily_quota_per_cl = 5;
+  // 2 hour short-term quota for the CQ auto runner.
+  int64 two_hour_quota = 8;
 
   // Time window (in minutes) for CLs to be considered based on their last
   // update. Only CLs updated within this window will considered eligible.

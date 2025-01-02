@@ -5,7 +5,7 @@
 
 """Tests for quota limits."""
 
-from recipe_engine.post_process import DropExpectation
+from recipe_engine import post_process
 
 from PB.recipe_modules.chromeos.auto_runner_util.auto_runner_util import AutoRunnerUtilProperties, HostProjects
 from RECIPE_MODULES.chromeos.auto_runner_util.api import EnhancedChangeInfo
@@ -25,6 +25,7 @@ def RunSteps(api):
 
 
 def GenTests(api):
+
   yield api.test(
       'basic_with_exceeding_daily_limit_so_return_only_subset_of_eligibles',
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
@@ -85,11 +86,79 @@ def GenTests(api):
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.gerrit.set_query_changes_response(
-          step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj(
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
-      api.post_process(DropExpectation))
+      api.post_process(post_process.DropExpectation),)
+
+  yield api.test(
+      'basic_with_exceeding_two_limit_so_return_only_subset_of_eligibles',
+      api.time.seed(1717191693),
+      api.properties(
+          **{
+              '$chromeos/auto_runner_util':
+                  AutoRunnerUtilProperties(
+                      max_limit_per_query=2, host_projects=[
+                          HostProjects(host='mychromium',
+                                       project_prefix=['mychromiumos']),
+                      ], daily_quota=100, two_hour_quota=6)
+          },
+          expected_changes={
+              #5590139 has two cq counts by auto runner, so its lower priority
+              #hence it does not make the quota cut.
+              EnhancedChangeInfo({
+                  '_number': 5590140,
+                  'project': 'mychromiumos'
+              }, 'mychromium-review.googlesource.com', None),
+              EnhancedChangeInfo({
+                  '_number': 5590141,
+                  'project': 'mychromiumos'
+              }, 'mychromium-review.googlesource.com', None),
+          }),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590140,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590139,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_get_change_mergeable(
+          '',
+          gerrit_host='mychromium-review.googlesource.com',
+          change_num=5590141,
+          revision=2,
+          value=True,
+      ),
+      api.gerrit.set_gerrit_related_changes(
+          {
+              'related': [{
+                  '_change_number': 5590294,
+                  '_revision_number': 1,
+                  'host': 'https://mychromium-review.googlesource.com',
+                  'project': 'mychromiumos'
+              }]
+          }, step_name='Querying relation chains'),
+      api.gerrit.set_query_changes_response(
+          step_name='Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
+          host_url='https://mychromium-review.googlesource.com', iteration=1),
+      api.gerrit.set_query_changes_response(
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
+          host_url='https://mychromium-review.googlesource.com', iteration=1),
+      api.post_process(post_process.DropExpectation),
+  )
+
   yield api.test(
       'basic_with_exceeding_daily_limit_cutting_by_last_updated',
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
@@ -139,16 +208,17 @@ def GenTests(api):
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
       api.gerrit.set_query_changes_response(
-          step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj(
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
-      api.post_process(DropExpectation))
+      api.post_process(post_process.DropExpectation),)
+
   yield api.test(
       'basic_with_exceeding_daily_quota_per_cl',
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
       api.gerrit.set_query_changes_response(
-          step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj(
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
@@ -161,12 +231,13 @@ def GenTests(api):
                                        project_prefix=['mychromiumos']),
                       ], daily_quota_per_cl=1)
           }, expected_changes=set()),
-      api.post_process(DropExpectation))
+      api.post_process(post_process.DropExpectation),)
+
   yield api.test(
       'basic_with_exceeding_daily_quota_at_the_beginning',
       api.time.seed(1717214400),  #Sun Jun 01 2024 04:00:00 GMT+0000
       api.gerrit.set_query_changes_response(
-          step_name='Calculating quota usage thus far.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
           changes=api.auto_runner_util.get_test_output_as_jsonobj(
               'test_output.json'),
           host_url='https://mychromium-review.googlesource.com', iteration=1),
@@ -177,6 +248,53 @@ def GenTests(api):
                       max_limit_per_query=2, host_projects=[
                           HostProjects(host='mychromium',
                                        project_prefix=['mychromiumos']),
-                      ], daily_quota=1)
+                      ], daily_quota=1, two_hour_quota=100)
           }, expected_changes=set()),
-      api.post_process(DropExpectation))
+      api.post_check(post_process.MustRun,
+                     'Daily Quota Exhausted for AutoRunner'),
+      api.post_process(post_process.DropExpectation),
+      )
+
+  yield api.test(
+      'basic_with_exceeding_two_quota_at_the_beginning',
+      api.time.seed(1717191693),
+      api.gerrit.set_query_changes_response(
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
+          host_url='https://mychromium-review.googlesource.com', iteration=1),
+      api.properties(
+          **{
+              '$chromeos/auto_runner_util':
+                  AutoRunnerUtilProperties(
+                      max_limit_per_query=2, host_projects=[
+                          HostProjects(host='mychromium',
+                                       project_prefix=['mychromiumos']),
+                      ], daily_quota=100, two_hour_quota=1)
+          }, expected_changes=set()),
+      api.post_check(post_process.MustRun,
+                     'Two-hour Quota Exhausted for AutoRunner'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'basic_with_exceeding_both_quotas_at_the_beginning',
+      api.time.seed(1717191693),
+      api.gerrit.set_query_changes_response(
+          step_name='Calculating remaining quota.Looking for CLs in host mychromium.Looking for CLs in project mychromiumos',
+          changes=api.auto_runner_util.get_test_output_as_jsonobj(
+              'test_output.json'),
+          host_url='https://mychromium-review.googlesource.com', iteration=1),
+      api.properties(
+          **{
+              '$chromeos/auto_runner_util':
+                  AutoRunnerUtilProperties(
+                      max_limit_per_query=2, host_projects=[
+                          HostProjects(host='mychromium',
+                                       project_prefix=['mychromiumos']),
+                      ], daily_quota=1, two_hour_quota=1)
+          }, expected_changes=set()),
+      api.post_check(post_process.MustRun,
+                     'Both Daily and Two-hour Quota Exhausted for AutoRunner'),
+      api.post_process(post_process.DropExpectation),
+  )

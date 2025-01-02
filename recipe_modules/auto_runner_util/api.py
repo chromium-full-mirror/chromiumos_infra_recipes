@@ -5,6 +5,7 @@
 
 """ Helper functions for auto runner recipe."""
 import re
+import dataclasses
 from datetime import datetime, timedelta
 from typing import List, Tuple, Set
 from recipe_engine import recipe_api
@@ -60,6 +61,7 @@ DEFAULT_HOST_PROJECTS_PREFIXES = [
 
 # The default signal.
 DEFAULT_CL_SIGNAL = CLSignalEnum.REVIEWER_ADDED
+DEFAULT_TWO_HOUR_QUOTA = 5
 DEFAULT_DAILY_QUOTA = 50
 DEFAULT_DAILY_QUOTA_PER_CL = 5
 DEFAULT_CL_UPDATED_AGE_MINS = 60
@@ -67,6 +69,20 @@ DEFAULT_CL_UPDATED_AGE_MINS = 60
 AUTO_RUNNER_SERVICE_ACCOUNT_EMAIL = 'chromeos-auto-runner@chromeos-bot.iam.gserviceaccount.com'
 
 DEFAULT_ENABLE_AUTO_DRY_RUN = False
+
+
+@dataclasses.dataclass
+class RemainingQuota:
+  """The remaining auto run CQ quota"""
+  # Remaining daily quota.
+  daily: int = 0
+  # Remaining two hour quota.
+  two_hour: int = 0
+
+  @property
+  def currently_available(self):
+    """The amount of quota currently available to use."""
+    return min(self.daily, self.two_hour)
 
 
 class EnhancedChangeInfo():
@@ -112,8 +128,8 @@ class EnhancedChangeInfo():
     if self.has_reviewers() != other.has_reviewers():
       return self.has_reviewers()
 
-    if (self_count := self.cq_count_from_auto_runner_in_last_day) != (
-        other_count := other.cq_count_from_auto_runner_in_last_day):
+    if (self_count := self.cq_count_from_auto_runner(24)) != (
+        other_count := other.cq_count_from_auto_runner(24)):
       return self_count < other_count
 
     return self._format_datetime(
@@ -189,13 +205,8 @@ class EnhancedChangeInfo():
       ]
     return self._related_changes
 
-  @property
-  def cq_count_from_auto_runner_in_last_day(self) -> int:
-    """Counts Commit-Queue+1 messages from auto runner within the last 24 hours.
-
-    Returns:
-        int: The count of matching Commit-Queue+1 messages.
-    """
+  def cq_count_from_auto_runner(self, lookback_hours: int) -> int:
+    """Returns a count of auto runner CQ+1 votes in the last lookback_hours."""
 
     def is_recent_cq_message(msg):
       author = msg.get('author', {})
@@ -204,7 +215,7 @@ class EnhancedChangeInfo():
               self._format_datetime(msg.get('date')) >= cutoff_time)
 
     now = self._api.time.utcnow()
-    cutoff_time = now - timedelta(hours=24)
+    cutoff_time = now - timedelta(hours=lookback_hours)
 
     return sum(1 for msg in self._change_info.get('messages', [])
                if is_recent_cq_message(msg))
@@ -272,6 +283,7 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     self._max_limit_per_query = properties.max_limit_per_query or DEFAULT_MAX_LIMIT_PER_QUERY
     self._host_project_prefixs = properties.host_projects or DEFAULT_HOST_PROJECTS_PREFIXES
     self._cl_signal = properties.cls_signal or DEFAULT_CL_SIGNAL
+    self._two_hour_quota = properties.two_hour_quota or DEFAULT_TWO_HOUR_QUOTA
     self._daily_quota = properties.daily_quota or DEFAULT_DAILY_QUOTA
     self._daily_quota_per_cl = properties.daily_quota_per_cl or DEFAULT_DAILY_QUOTA_PER_CL
     self._cl_updated_age_mins = properties.cl_updated_age_mins or DEFAULT_CL_UPDATED_AGE_MINS
@@ -329,18 +341,23 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
       for change in change_infos:
         preso.links['CL %d' % change.change] = change.change_url
 
-  def get_quota_stats(self) -> int:
-    """Calculates the current auto runner quota usage in last 24 hrs.
-
-    Returns: The total number of times auto runner CQed CLs in the last 24 hours.
-    """
-    with self.m.step.nest('Calculating quota usage thus far'):
+  def _get_remaining_quota(self) -> RemainingQuota:
+    """Returns the number of auto runs left below the 24 and 2 hour quotas."""
+    with self.m.step.nest('Calculating remaining quota') as pres:
       all_changes = self.get_change_infos_from_gerrit(
           self._host_project_prefixs, QUERY_PARAMS_FOR_QUOTA_CHECK,
           O_PARAMS_FOR_QUOTA_CHECK, None)
 
-      return sum(change.cq_count_from_auto_runner_in_last_day
-                 for change in all_changes)
+      remaining_quota_24hr = self._daily_quota - sum(
+          change.cq_count_from_auto_runner(24) for change in all_changes)
+      remaining_quota_2hr = self._two_hour_quota - sum(
+          change.cq_count_from_auto_runner(2) for change in all_changes)
+
+      remaining_quota = RemainingQuota(daily=remaining_quota_24hr,
+                                       two_hour=remaining_quota_2hr)
+      pres.step_text = f'remaining daily quota: {remaining_quota.daily}, remaining two-hour quota: {remaining_quota.two_hour}'
+
+      return remaining_quota
 
   def _filter_changes(self, remaining_changes: Set[EnhancedChangeInfo],
                       step_description: str,
@@ -394,9 +411,17 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     Returns:
         A set of EnhancedChangeInfos representing the eligible changes.
     """
-    total_quota_usage = self.get_quota_stats()
-    if total_quota_usage >= self._daily_quota:
-      with self.m.step.nest('24 hr Quota exhausted for AutoRunner'):
+    remaining_quota = self._get_remaining_quota()
+    if remaining_quota.currently_available <= 0:
+      exhausted_quota_msg = 'Quota Exhausted for AutoRunner'
+      if remaining_quota.daily <= 0 and remaining_quota.two_hour <= 0:
+        exhausted_quota_msg = f'Both Daily and Two-hour {exhausted_quota_msg}'
+      elif remaining_quota.two_hour <= 0:
+        exhausted_quota_msg = f'Two-hour {exhausted_quota_msg}'
+      elif remaining_quota.daily <= 0:
+        exhausted_quota_msg = f'Daily {exhausted_quota_msg}'
+
+      with self.m.step.nest(exhausted_quota_msg):
         return set()
 
     query_params_with_age = QUERY_PARAMS + (
@@ -413,8 +438,8 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
     # Filter changes that have hit or exceeded their daily quota
     remaining_changes = self._filter_changes(
         remaining_changes,
-        'Filtering CLs that have exhausted their daily quota', lambda c: c.
-        cq_count_from_auto_runner_in_last_day >= self._daily_quota_per_cl)
+        'Filtering CLs that have exhausted their daily quota',
+        lambda c: c.cq_count_from_auto_runner(24) >= self._daily_quota_per_cl)
 
     # Filter changes that have already been CQed in their current revision
     remaining_changes = self._filter_changes(
@@ -446,10 +471,9 @@ class AutoRunnerUtilApi(recipe_api.RecipeApi):
 
     # Sort the remaining changes and limit them to the available quota
     self.add_a_step_with_cl_links('Remaining eligible CLs', remaining_changes)
-    remaining_quota = self._daily_quota - total_quota_usage
     if remaining_changes:
       remaining_changes = sorted(remaining_changes)
-    return set(list(remaining_changes)[:remaining_quota])
+    return set(list(remaining_changes)[:remaining_quota.currently_available])
 
   def auto_dry_run_cls(self, changes: Set[EnhancedChangeInfo]) -> int:
     """Sets the Commit-Queue label to +1 (DRY RUN) for eligible changes.
