@@ -51,20 +51,20 @@ def RunSteps(api):
 
   api.buildbucket.build.critical = common_pb2.NO
   results_dir = api.path.mkdtemp(prefix='temp')
-  api.tast_exec.run_direct_vm(
-      vm_context, results_dir,
+  api.tast_exec.run_direct(
+      'my-dut-name',
       api.tast_exec.TastInputs(['!informational'], test_artifacts,
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               )))
-  api.tast_exec.run_direct_vm(
-      vm_context, results_dir,
+                               )), results_dir)
+  api.tast_exec.run_direct(
+      'my-dut-name',
       api.tast_exec.TastInputs(['example.Pass'], test_artifacts,
                                BuildPayload(
                                    artifacts_gs_bucket='artifacts-bucket',
                                    artifacts_gs_path='artifacts-path',
-                               ), run_args=['-var=myVar=myVal']))
+                               ), run_args=['-var=myVar=myVal']), results_dir)
 
   # Just run the VM context in isolation to test VM kill.
   with api.step.nest('run VM context'):
@@ -96,14 +96,14 @@ def GenTests(api):
 
   yield api.test(
       'ssh does not connect',
-      api.step_data('connect via ssh', retcode=1),
-      api.step_data('connect via ssh (2)', retcode=1),
-      api.step_data('connect via ssh (3)', retcode=1),
-      api.step_data('connect via ssh (4)', retcode=1),
-      api.step_data('connect via ssh (5)', retcode=1),
-      api.step_data('connect via ssh (6)', retcode=1),
-      api.step_data('connect via ssh (7)', retcode=1),
-      api.step_data('connect via ssh (8)', retcode=1),
+      api.step_data('run VM context.connect via ssh', retcode=1),
+      api.step_data('run VM context.connect via ssh (2)', retcode=1),
+      api.step_data('run VM context.connect via ssh (3)', retcode=1),
+      api.step_data('run VM context.connect via ssh (4)', retcode=1),
+      api.step_data('run VM context.connect via ssh (5)', retcode=1),
+      api.step_data('run VM context.connect via ssh (6)', retcode=1),
+      api.step_data('run VM context.connect via ssh (7)', retcode=1),
+      api.step_data('run VM context.connect via ssh (8)', retcode=1),
       api.post_process(post_process.DropExpectation),
       status='FAILURE',
   )

@@ -255,162 +255,6 @@
   {
     "cmd": [
       "[CLEANUP]/temp_tmp_1/tast/tast",
-      "help",
-      "run"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "tast help run"
-  },
-  {
-    "cmd": [
-      "qemu-img",
-      "create",
-      "-f",
-      "qcow2",
-      "-F",
-      "qcow2",
-      "-b",
-      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
-      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create qcow image overlay"
-  },
-  {
-    "cmd": [
-      "nproc"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "count online CPUs"
-  },
-  {
-    "cmd": [
-      "/usr/bin/qemu-system-x86_64",
-      "-m",
-      "8G",
-      "-smp",
-      "8",
-      "-vga",
-      "virtio",
-      "-daemonize",
-      "-usbdevice",
-      "tablet",
-      "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_1",
-      "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_1",
-      "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_1",
-      "-mon",
-      "chardev=control_pipe",
-      "-cpu",
-      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
-      "-device",
-      "virtio-net,netdev=eth0",
-      "-device",
-      "virtio-scsi-pci,id=scsi",
-      "-device",
-      "virtio-rng",
-      "-device",
-      "scsi-hd,drive=hd",
-      "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_1/qcow2.img,cache=unsafe,format=qcow2",
-      "-netdev",
-      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
-      "-enable-kvm",
-      "-display",
-      "none",
-      "-device",
-      "scsi-hd,drive=hd2",
-      "-drive",
-      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "launch image as vm"
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "true"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "connect via ssh",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/temp_tmp_1/tast/tast",
       "list",
       "-build=false",
       "-downloadprivatebundles=false",
@@ -419,7 +263,7 @@
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
-      "localhost:9222",
+      "my-dut-name",
       "!informational"
     ],
     "luci_context": {
@@ -458,8 +302,7 @@
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
-      "-systemservicestimeout=600",
-      "localhost:9222",
+      "my-dut-name",
       "!informational"
     ],
     "luci_context": {
@@ -479,453 +322,6 @@
   },
   {
     "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "true"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "connect via ssh (2)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "rsync",
-      "--links",
-      "--recursive",
-      "/var/log",
-      "/var/spool/crash",
-      "/tmp/vm-artifacts"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "rsync artifacts to a temporary location on the VM",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "tar",
-      "cf",
-      "/tmp/artifacts.tar",
-      "/tmp/vm-artifacts/*"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "gather artifacts on VM",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "/tmp/vm-artifacts"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "remove temporary artifacts"
-  },
-  {
-    "cmd": [
-      "scp",
-      "-P",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/temp_tmp_3/artifacts.tar"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "download artifacts from VM",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "pgrep",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_1"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "check if VM running"
-  },
-  {
-    "cmd": [
-      "pkill",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_1"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "kill vm"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "remove overlay image"
-  },
-  {
-    "cmd": [],
-    "name": "qemu logs",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
-      "@@@STEP_LOG_END@kvm.monitor@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
-      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor_tmp_1",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "qemu logs.reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_1",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "qemu logs.reading file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "qemu-img",
-      "create",
-      "-f",
-      "qcow2",
-      "-F",
-      "qcow2",
-      "-b",
-      "[CLEANUP]/temp_tmp_2/image/qcow2.img",
-      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "create qcow image overlay (2)"
-  },
-  {
-    "cmd": [
-      "nproc"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "count online CPUs (2)"
-  },
-  {
-    "cmd": [
-      "/usr/bin/qemu-system-x86_64",
-      "-m",
-      "8G",
-      "-smp",
-      "8",
-      "-vga",
-      "virtio",
-      "-daemonize",
-      "-usbdevice",
-      "tablet",
-      "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_2",
-      "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_2",
-      "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_2",
-      "-mon",
-      "chardev=control_pipe",
-      "-cpu",
-      "SandyBridge,-invpcid,-tsc-deadline,check,vmx=on",
-      "-device",
-      "virtio-net,netdev=eth0",
-      "-device",
-      "virtio-scsi-pci,id=scsi",
-      "-device",
-      "virtio-rng",
-      "-device",
-      "scsi-hd,drive=hd",
-      "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_2/qcow2.img,cache=unsafe,format=qcow2",
-      "-netdev",
-      "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
-      "-enable-kvm",
-      "-display",
-      "none",
-      "-device",
-      "scsi-hd,drive=hd2",
-      "-drive",
-      "if=none,id=hd2,file=[CLEANUP]/temp_tmp_2/second_disk.bin,format=qcow2"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "launch image as vm (2)"
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "true"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "connect via ssh (3)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
       "[CLEANUP]/temp_tmp_1/tast/tast",
       "list",
       "-build=false",
@@ -935,7 +331,7 @@
       "-remotedatadir=[CLEANUP]/temp_tmp_1/tast/data",
       "-remoterunner=[CLEANUP]/temp_tmp_1/tast/remote_test_runner",
       "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
-      "localhost:9222",
+      "my-dut-name",
       "example.Pass"
     ],
     "luci_context": {
@@ -975,8 +371,7 @@
       "-keydir=[CLEANUP]/sshkeys_dir_tmp_1",
       "-maybemissingvars=.+\\..+",
       "-var=myVar=myVal",
-      "-systemservicestimeout=600",
-      "localhost:9222",
+      "my-dut-name",
       "example.Pass"
     ],
     "luci_context": {
@@ -995,317 +390,6 @@
     "timeout": 5400
   },
   {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "true"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "connect via ssh (4)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "rsync",
-      "--links",
-      "--recursive",
-      "/var/log",
-      "/var/spool/crash",
-      "/tmp/vm-artifacts"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "rsync artifacts to a temporary location on the VM (2)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "ssh",
-      "-p",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost",
-      "--",
-      "tar",
-      "cf",
-      "/tmp/artifacts.tar",
-      "/tmp/vm-artifacts/*"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "gather artifacts on VM (2)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "/tmp/vm-artifacts"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "remove temporary artifacts (2)"
-  },
-  {
-    "cmd": [
-      "scp",
-      "-P",
-      "9222",
-      "-oConnectionAttempts=4",
-      "-oUserKnownHostsFile=/dev/null",
-      "-oProtocol=2",
-      "-oConnectTimeout=30",
-      "-oServerAliveCountMax=8",
-      "-oStrictHostKeyChecking=no",
-      "-oServerAliveInterval=15",
-      "-oNumberOfPasswordPrompts=0",
-      "-oIdentitiesOnly=yes",
-      "-i",
-      "[CLEANUP]/sshkeys_dir_tmp_1/partner_testing_rsa",
-      "root@localhost:/tmp/artifacts.tar",
-      "[CLEANUP]/temp_tmp_3/artifacts.tar"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "download artifacts from VM (2)",
-    "timeout": 300
-  },
-  {
-    "cmd": [
-      "pgrep",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_2"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "check if VM running (2)"
-  },
-  {
-    "cmd": [
-      "pkill",
-      "-F",
-      "[CLEANUP]/kvm-pid_tmp_2"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "kill vm (2)"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "remove",
-      "[CLEANUP]/image-overlay_tmp_2/qcow2.img"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "remove overlay image (2)"
-  },
-  {
-    "cmd": [],
-    "name": "qemu logs (2)",
-    "~followup_annotations": [
-      "@@@STEP_LOG_LINE@kvm.monitor@@@@",
-      "@@@STEP_LOG_END@kvm.monitor@@@",
-      "@@@STEP_LOG_LINE@kvm.monitor.serial@@@@",
-      "@@@STEP_LOG_END@kvm.monitor.serial@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor_tmp_2",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "qemu logs (2).reading file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_2",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "project:ci"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "qemu logs (2).reading file (2)",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_2@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "run VM context"
   },
@@ -1319,7 +403,7 @@
       "qcow2",
       "-b",
       "[CLEANUP]/temp_tmp_2/image/qcow2.img",
-      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
     ],
     "luci_context": {
       "realm": {
@@ -1372,11 +456,11 @@
       "-usbdevice",
       "tablet",
       "-pidfile",
-      "[CLEANUP]/kvm-pid_tmp_3",
+      "[CLEANUP]/kvm-pid_tmp_1",
       "-chardev",
-      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_3",
+      "pipe,id=control_pipe,path=[CLEANUP]/kvm-monitor_tmp_1",
       "-serial",
-      "file:[CLEANUP]/kvm-monitor-serial_tmp_3",
+      "file:[CLEANUP]/kvm-monitor-serial_tmp_1",
       "-mon",
       "chardev=control_pipe",
       "-cpu",
@@ -1390,7 +474,7 @@
       "-device",
       "scsi-hd,drive=hd",
       "-drive",
-      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_3/qcow2.img,cache=unsafe,format=qcow2",
+      "if=none,id=hd,file=[CLEANUP]/image-overlay_tmp_1/qcow2.img,cache=unsafe,format=qcow2",
       "-netdev",
       "user,id=eth0,net=10.0.2.0/27,hostfwd=tcp:127.0.0.1:9222-:22",
       "-enable-kvm",
@@ -1461,7 +545,7 @@
     "cmd": [
       "pgrep",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_3"
+      "[CLEANUP]/kvm-pid_tmp_1"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1485,7 +569,7 @@
     "cmd": [
       "pkill",
       "-F",
-      "[CLEANUP]/kvm-pid_tmp_3"
+      "[CLEANUP]/kvm-pid_tmp_1"
     ],
     "luci_context": {
       "realm": {
@@ -1512,7 +596,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "remove",
-      "[CLEANUP]/image-overlay_tmp_3/qcow2.img"
+      "[CLEANUP]/image-overlay_tmp_1/qcow2.img"
     ],
     "infra_step": true,
     "luci_context": {
@@ -1551,7 +635,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor_tmp_3",
+      "[CLEANUP]/kvm-monitor_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1570,7 +654,7 @@
     "name": "run VM context.qemu logs.reading file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor_tmp_3@@@"
+      "@@@STEP_LOG_END@kvm-monitor_tmp_1@@@"
     ]
   },
   {
@@ -1581,7 +665,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/kvm-monitor-serial_tmp_3",
+      "[CLEANUP]/kvm-monitor-serial_tmp_1",
       "/path/to/tmp/"
     ],
     "infra_step": true,
@@ -1600,7 +684,7 @@
     "name": "run VM context.qemu logs.reading file (2)",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_3@@@"
+      "@@@STEP_LOG_END@kvm-monitor-serial_tmp_1@@@"
     ]
   },
   {

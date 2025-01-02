@@ -71,14 +71,6 @@ class TastExecApi(RecipeApi):
       self.port = port
       self.pid_file = pid_file
 
-    def address(self):
-      """Get a "host:port" connection string.
-
-      Returns:
-        str: Connection string.
-      """
-      return '{}:{}'.format(self.host, self.port)
-
   def __init__(self, properties, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self._exec_timeout = properties.exec_timeout or 90 * 60
@@ -214,36 +206,6 @@ class TastExecApi(RecipeApi):
 
     return tast_inputs
 
-  def run_direct_vm(self, vm_context, test_results_dir, tast_inputs):
-    """Run tast tests in a VM without retries or results processing.
-
-    Args:
-      vm_context (contextlib.contextmanager): The VM context manager, created
-        by create_qemu_vm_context/create_gce_vm_context.
-      test_results_dir (Path): Path to store tast results.
-      tast_inputs (TastInputs): Common inputs for running tast tests.
-      new_invocation (bool): Whether the test results should be uploaded in a
-          new invocation.
-
-    Returns:
-      list[str]: The list of tests that met the specified expression(s).
-    """
-    tast_inputs = self._amend_tast_inputs(tast_inputs)
-
-    # Entering vm_context instantiates the VM we are to test against. The VM
-    # is cleaned up automatically when exiting the context.
-    with vm_context() as vm:
-      tests = self.run_direct(vm.address(), tast_inputs, test_results_dir)
-
-      # b/219966100: Occasionally the `tast run` step will leave the VM in an
-      # unresponsive state. Make sure we can establish an SSH connection before
-      # attempting to archive artifacts.
-      self._test_ssh_conn(vm.host, vm.port)
-      # Add logs and other artifacts from DUT into the test results directory.
-      self._archive_vm_artifacts(vm.host, vm.port, test_results_dir)
-
-    return tests
-
   def run_direct(self, dut_name, tast_inputs, test_results_dir):
     """Run tast tests without retries or results processing.
 
@@ -279,32 +241,11 @@ class TastExecApi(RecipeApi):
       args += ['-i', p]
     return args
 
-  def _get_scp_cmd(self, host, port, remote_path, local_path):
-    return ['scp', '-P', port] + self._get_ssh_conn_args() + \
-        ['root@{}:{}'.format(host, remote_path), local_path]
 
   def _get_ssh_cmd(self, host, port, cmd):
     return ['ssh', '-p', port] + self._get_ssh_conn_args() + \
         ['root@{}'.format(host), '--'] + cmd
 
-  def _archive_vm_artifacts(self, host, port, output_dir):
-    # b/204628226: Work-around tar's (non) handling of open file descriptors by
-    # rsyncing artifacts to a temporary location before tarring.
-    cmd = self._get_ssh_cmd(host, port,
-                            ['rsync', '--links', '--recursive'] + \
-                            VM_ARTIFACT_LIST + [VM_ARTIFACT_TEMPDIR])
-    self.m.step('rsync artifacts to a temporary location on the VM', cmd,
-                infra_step=True, timeout=5 * 60)
-    cmd = self._get_ssh_cmd(
-        host, port,
-        ['tar', 'cf', VM_ARTIFACT_TARBALL, '{}/*'.format(VM_ARTIFACT_TEMPDIR)])
-    self.m.step('gather artifacts on VM', cmd, infra_step=True, timeout=5 * 60)
-    # Remove the tempdir.
-    self.m.file.remove('remove temporary artifacts', VM_ARTIFACT_TEMPDIR)
-    cmd = self._get_scp_cmd(host, port, VM_ARTIFACT_TARBALL,
-                            str(output_dir / ARTIFACT_TARBALL_NAME))
-    self.m.step('download artifacts from VM', cmd, infra_step=True,
-                timeout=5 * 60)
 
   def _list_tests(self, dut_name, tast_inputs):
     tast_dir = tast_inputs.test_artifacts_dir
