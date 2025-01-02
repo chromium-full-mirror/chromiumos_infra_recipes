@@ -6,9 +6,7 @@
 # pylint: disable=missing-module-docstring
 # TODO(b/303696694): Add a simple docstring here.
 
-from recipe_engine import post_process
 from PB.testplans.generate_test_plan import BuildPayload
-from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 
 DEPS = [
     'recipe_engine/assertions',
@@ -28,28 +26,8 @@ def RunSteps(api):
           artifacts_gs_bucket='bucket',
           artifacts_gs_path='path',
       ), test_artifacts)
-  vm_dir = api.path.mkdtemp(prefix='temp')
-
-  # Use a dict rather than a bool so that it can be modified within the
-  # nested scope.
-  image_modified = {}
-
-  def modify_image(image_path):
-    image_modified[image_path] = True
-
-  qcow_image = api.tast_exec.download_vm(
-      BuildPayload(
-          artifacts_gs_bucket='bucket',
-          artifacts_gs_path='path',
-      ), vm_dir, modify_image=modify_image)
-
-  api.assertions.assertTrue(image_modified)
-
-  vm_context = api.tast_exec.create_qemu_vm_context(
-      qcow_image, second_image_path=vm_dir / 'second_disk.bin')
 
 
-  api.buildbucket.build.critical = common_pb2.NO
   results_dir = api.path.mkdtemp(prefix='temp')
   api.tast_exec.run_direct(
       'my-dut-name',
@@ -66,12 +44,6 @@ def RunSteps(api):
                                    artifacts_gs_path='artifacts-path',
                                ), run_args=['-var=myVar=myVal']), results_dir)
 
-  # Just run the VM context in isolation to test VM kill.
-  with api.step.nest('run VM context'):
-    with vm_context():
-      pass
-
-
 def GenTests(api):
   yield api.test('basic', api.buildbucket.ci_build(),
                  api.tast_exec.simulate_test_list_ret('some.test'))
@@ -83,34 +55,4 @@ def GenTests(api):
       api.properties(**{'$chromeos/tast_exec': {
           'public_builder': True
       }}),
-  )
-
-  # Test killing the VM: if the VM has not exited when the VM context
-  # ends it should be killed, otherwise not.
-  yield api.test(
-      'normal VM exit',
-      api.step_data('run VM context.check if VM running', retcode=0),
-      api.post_check(post_process.MustRun, 'run VM context.kill vm'),
-      api.post_process(post_process.DropExpectation),
-  )
-
-  yield api.test(
-      'ssh does not connect',
-      api.step_data('run VM context.connect via ssh', retcode=1),
-      api.step_data('run VM context.connect via ssh (2)', retcode=1),
-      api.step_data('run VM context.connect via ssh (3)', retcode=1),
-      api.step_data('run VM context.connect via ssh (4)', retcode=1),
-      api.step_data('run VM context.connect via ssh (5)', retcode=1),
-      api.step_data('run VM context.connect via ssh (6)', retcode=1),
-      api.step_data('run VM context.connect via ssh (7)', retcode=1),
-      api.step_data('run VM context.connect via ssh (8)', retcode=1),
-      api.post_process(post_process.DropExpectation),
-      status='FAILURE',
-  )
-
-  yield api.test(
-      'run VM context',
-      api.step_data('run VM context.check if VM running', retcode=1),
-      api.post_check(post_process.DoesNotRun, 'run VM context.kill vm'),
-      api.post_process(post_process.DropExpectation),
   )
