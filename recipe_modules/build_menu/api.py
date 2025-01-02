@@ -434,20 +434,32 @@ class BuildMenuApi(recipe_api.RecipeApi):
           None, config.artifacts, force_relevance=self._force_relevant_build)
 
     if not self.artifact_build or relevance != Relevance.POINTLESS:
+      uprev_init_runner = self.m.future_utils.create_parallel_runner()
       if uprev_packages:
-        self.m.cros_source.uprev_packages()
+        uprev_init_runner.run_function_async(
+            lambda _req, _: self.m.cros_source.uprev_packages(), None)
       # Kick off a chrome source checkout on main asynchronously. Check the
       # docs of the chrome module for more information.
       if ('chromeos.build_menu.chrome_sync'
           in self.m.cros_infra_config.experiments):
         self.m.chrome.sync_chrome_async(config, self.build_target)
 
-      self.m.cros_sdk.create_chroot(
-          version=config.general.sdk_cache_version, bootstrap=bootstrap,
-          sdk_version=sdk_version,
-          timeout_sec=None if config.build.sdk_update.compile_source or
-          no_chroot_timeout else 'DEFAULT', no_delete_out_dir=no_delete_out_dir)
-      self._chroot_created = True
+      def _create_sdk():
+        self.m.cros_sdk.create_chroot(
+            version=config.general.sdk_cache_version,
+            bootstrap=bootstrap,
+            sdk_version=sdk_version,
+            timeout_sec=None if config.build.sdk_update.compile_source or
+            no_chroot_timeout else 'DEFAULT',
+            no_delete_out_dir=no_delete_out_dir,
+        )
+        self._chroot_created = True
+
+      uprev_init_runner.run_function_async(lambda _req, _: _create_sdk(), None)
+
+      # Wait for uprev packages and init SDK. Uprevs must be completed to ensure
+      # update_chroot uses the latest versions.
+      uprev_init_runner.wait_for_and_throw()
 
       if self._should_update_chroot() and not force_no_chroot_upgrade:
         self.m.cros_sdk.update_chroot(

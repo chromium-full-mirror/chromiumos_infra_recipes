@@ -30,6 +30,7 @@ DEPS = [
     'cros_version',
     'easy',
     'failures',
+    'future_utils',
     'git_footers',
     'gobin',
     'image_builder_failures',
