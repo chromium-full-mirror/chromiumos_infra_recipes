@@ -9,7 +9,7 @@
 import base64
 import datetime
 import functools
-from typing import List, Iterable, Optional, Set, Tuple
+from typing import Any, Dict, List, Iterable, Optional, Set, Tuple
 import zlib
 
 from google.protobuf import json_format
@@ -187,27 +187,31 @@ class CrosHistoryApi(recipe_api.RecipeApi):
 
       return latest_passed_builds
 
+  def get_previous_test_summary(self) -> Optional[List[Dict[str, Any]]]:
+    """Returns the test_summary from the previous CQ run if this is a retry."""
+    current_build = self.m.buildbucket.build
+    past_builds = self.get_matching_builds(current_build,
+                                           statuses=TERMINAL_STATUSES)
+    past_builds.sort(key=lambda build: build.create_time.seconds, reverse=True)
+
+    # Read the test_summary from the most recent CQ run which set it.
+    for build in past_builds:
+      build_output = json_format.MessageToDict(build.output.properties)
+
+      if TEST_SUMMARY_KEY in build_output:
+        return build_output.get(TEST_SUMMARY_KEY)
+
+    return None
+
   def get_test_failure_builders(self) -> Set[str]:
     """Get builders with the given patches that failed tests in the last run.
 
     Returns:
       Names of builders with HW or VM testing failures, if any.
     """
-    current_build = self.m.buildbucket.build
-    past_builds = self.get_matching_builds(current_build,
-                                           statuses=TERMINAL_STATUSES)
-    if not past_builds:
-      return set()
-    past_builds.sort(key=lambda build: build.create_time.seconds, reverse=True)
-
-    # Read the test_summary from the most recent CQ run which set it.
-    test_summary = []
-    for build in past_builds:
-      build_output = json_format.MessageToDict(build.output.properties)
-
-      if TEST_SUMMARY_KEY in build_output:
-        test_summary = build_output.get(TEST_SUMMARY_KEY)
-        break
+    test_summary = self.get_previous_test_summary()
+    if not test_summary:
+      return {}
 
     critical_failed_test_names = [
         test.get('name')
