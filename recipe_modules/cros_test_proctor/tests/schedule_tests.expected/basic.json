@@ -617,10 +617,6 @@
   },
   {
     "cmd": [],
-    "name": "set properties"
-  },
-  {
-    "cmd": [],
     "name": "set test_tasks",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@test_tasks@{\"skylab_builder_ids\": [\"8922054662172514000\"]}@@@"

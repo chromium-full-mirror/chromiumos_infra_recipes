@@ -406,7 +406,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         task_per_build_target=self._skylab_task_per_build_target,
         build_target_critical_allowlist=build_target_critical_allowlist,
     )
-    self.m.easy.set_properties_step()
     _persist_task_ids_in_properties(test_tasks)
     return test_tasks
 
