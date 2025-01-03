@@ -324,6 +324,9 @@ class SkylabApi(recipe_api.RecipeApi):
 
       self._enable_test_retries(req)
 
+      req.params.freeform_attributes.swarming_dimensions.MergeFrom(
+          uht.hw_test.freeform_attributes.swarming_dimensions)
+
       return req
 
     ####

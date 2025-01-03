@@ -67,6 +67,9 @@ def RunSteps(api, properties: ScheduleSuitesProperties):
       license_pb2.LICENSE_TYPE_WINDOWS_10_PRO,
       license_pb2.LICENSE_TYPE_MS_OFFICE_STANDARD,
   ])
+  hw_test_with_license.freeform_attributes.swarming_dimensions.append(
+      'testkey:testval')
+
   unit_hw_test_with_license = UnitHwTest(unit=hw_test_unit_with_license,
                                          hw_test=hw_test_with_license)
 
