@@ -389,71 +389,10 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       A list of the SkylabTasks scheduled.
     """
 
-    def _persist_task_ids_in_properties(test_tasks: typing.List[SkylabTask]):
-      skylab_ids = sorted({str(skylab_task.id) for skylab_task in test_tasks})
-      self.m.easy.set_properties_step(
-          test_tasks={'skylab_builder_ids': skylab_ids})
-
-    test_tasks = self._schedule_skylab_tests(
-        test_plan,
-        passed_tests,
-        previously_failed_now_exonerable_hw_suites,
-        timeout,
-        is_retry,
-        run_async=run_async,
-        container_metadata=container_metadata,
-        require_stable_devices=require_stable_devices,
-        task_per_build_target=self._skylab_task_per_build_target,
-        build_target_critical_allowlist=build_target_critical_allowlist,
-    )
-    _persist_task_ids_in_properties(test_tasks)
-    return test_tasks
-
-  def _get_test_failures(
-      self, test_results: typing.List[SkylabResult]) -> typing.List[Failure]:
-    """Logs all test failures to the UI and raises on failed tests."""
-    failures = self.m.test_failures.get_hw_test_results(test_results).failures
-    return failures
-
-  def _schedule_skylab_tests(
-      self, test_plan: GenerateTestPlanResponse, passed_tests: typing.List[str],
-      previously_failed_now_exonerable_hw_suites: typing.List[str],
-      timeout: duration_pb2.Duration, is_retry: bool = False,
-      run_async: bool = False,
-      container_metadata: typing.Optional[ContainerMetadata] = None,
-      require_stable_devices: bool = False, task_per_build_target: bool = False,
-      build_target_critical_allowlist: typing.Optional[
-          typing.List[str]] = None):
-    """Schedule skylab tests from the test_plan.
-
-    Args:
-      test_plan: A plan for all tests to be scheduled.
-      passed_tests: A list of names for the tests that have passed before.
-      previously_failed_now_exonerable_hw_suites: Previously failed tests that
-          are now eligible for exoneration.
-      timeout: Timeout in duration_pb2.Duration.
-      is_retry: Whether this is a CQ retry.
-      run_async: Should the tests be ran async and not cancel on the termination
-          of the parent (this caller).
-      container_metadata: Information on container images used for test
-          execution.
-      require_stable_devices: Whether to only run on devices with
-          label-device-stable: True
-      task_per_build_target: Should we schedule a unique invocation of
-          cros_test_platform per build target.
-      build_target_critical_allowlist: If set (including empty list), only the
-        build targets specified can have tests run as critical. If None,
-        criticality will not be modified for any build targets.
-
-    Returns:
-      list[SkylabTask] of the tests scheduled.
-    """
-
     def _is_skippable(test):
-      return (
-          test.common.display_name in passed_tests or
-          test.common.display_name in previously_failed_now_exonerable_hw_suites
-      )
+      return (test.common.display_name in passed_tests or
+              test.common.display_name
+              in previously_failed_now_exonerable_hw_suites)
 
     skylab_tasks = []
     # Record the names of all the tests that are scheduled. This will be set as
@@ -483,7 +422,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       _ALL_BUILD_TARGETS = 'all build targets'
       if tests_to_run:
         # If we aren't scheduling per build_target, flatten into one invocation.
-        if not task_per_build_target:
+        if not self._skylab_task_per_build_target:
           tests_to_run = {_ALL_BUILD_TARGETS: sum(tests_to_run.values(), [])}
         for test_build_target, bt_tests_to_run in sorted(tests_to_run.items()):
           skylab_tasks.extend(
@@ -505,7 +444,19 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       if self._test_data.enabled:
         scheduled_test_names.sort()
         self.m.easy.set_properties_step(scheduled_hw_tests=scheduled_test_names)
+
+    self.m.easy.set_properties_step(
+        test_tasks={
+            'skylab_builder_ids':
+                sorted({str(skylab_task.id) for skylab_task in skylab_tasks})
+        })
     return skylab_tasks
+
+  def _get_test_failures(
+      self, test_results: typing.List[SkylabResult]) -> typing.List[Failure]:
+    """Logs all test failures to the UI and raises on failed tests."""
+    failures = self.m.test_failures.get_hw_test_results(test_results).failures
+    return failures
 
   def _generate_test_summary(
       self, test_plan: GenerateTestPlanResponse,
