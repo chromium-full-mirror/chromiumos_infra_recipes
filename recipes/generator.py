@@ -501,6 +501,15 @@ class GeneratorRun:
                                               policy_info.reference.hash)
         self.m.cros_source.checkout_branch(
             self.m.src_state.internal_manifest.url, policy_info.branch)
+      elif self._is_sdk_uprevver:
+        # b/372434018: The source tree here should be identical to the SDK
+        # builder's, unless policy overrides that. The SDK builder's uprevs
+        # use source tree state for dependency invalidation through packages
+        # like virtual/rust.
+        #
+        # The SDK builder uses the same mechanism as the CQ for passing source
+        # state around.
+        self.m.cros_source.sync_checkout(self.m.src_state.gitiles_commit)
       else:
         pres.step_text = 'using default branch'
 
