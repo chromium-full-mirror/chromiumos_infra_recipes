@@ -44,7 +44,7 @@ def GenTests(api: recipe_test_api.RecipeTestApi):
       api.post_check(post_process.StepException, 'convert path'),
       api.post_check(
           post_process.SummaryMarkdownRE,
-          r"Cannot convert INSIDE path\. See this function's "
+          r"Cannot convert INSIDE path\. See this function\\?'s "
           r'docstring for suggestions\. .*'),
       api.expect_exception('ValueError'),
       api.post_process(post_process.DropExpectation),
