@@ -7,6 +7,7 @@
 from typing import Generator
 from typing import Optional
 
+from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine.result import RawResult
 from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
@@ -24,7 +25,8 @@ def RunSteps(api: RecipeApi) -> Optional[RawResult]:
   api.easy.set_properties_step('Log eligible CLs in output property',
                                eligible_cls=eligible_cls_info)
   api.auto_runner_util.auto_dry_run_cls(eligible_cls)
-
+  summary_markdown = f'Automatically Started CQ Dry-Runs on {len(eligible_cls)} CLs'
+  return RawResult(status=common_pb2.SUCCESS, summary_markdown=summary_markdown)
 
 def GenTests(api: RecipeApi) -> Generator[TestData, None, None]:
   yield api.test('basic', api.post_process(post_process.DropExpectation))
