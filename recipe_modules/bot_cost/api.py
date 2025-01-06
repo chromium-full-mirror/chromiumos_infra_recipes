@@ -17,56 +17,50 @@ from recipe_engine.recipe_api import RecipeApi
 
 # Cost is in USD per hour, last updated in 02/2024.
 # Calculated from https://cloud.google.com/compute/vm-instance-pricing,
-# using the us-west4 zone.
+# using any available zone.
 # Use "Price", not "Spot Price".
 BOT_COST = {
     # Will set cost to zero if we don't have a lookup.
     'unknown': 0.0,
-    # TODO(b/323350989): Update or remove.
-    'small': 0.01425,
-    # TODO(b/323350989): Update or remove.
-    'smedium': 0.001675,
-    # TODO(b/323350989): Update or remove.
-    'medium': 0.08042,
-    # TODO(b/323350989): Update or remove.
+    # Calculated using e2-small.
+    'small': 0.021913,
+    # Calculated using e2-medium.
+    'medium': 0.043825,
+    # Used for test data.
     'large': 0.337,
-    # TODO(b/323350989): Update or remove.
-    'xlarge': 0.337,
-    # TODO(b/323350989): Update or remove.
-    'xxlarge': 0.599,
     # Calculated using 32 cores, 64gb RAM and
     # the custom e2 costs.
-    'custom-32-65536': 1.21,
-    'e2-custom-32-65536': 1.21,
-    'f1-micro': .0086,
-    'g1-small': .0289,
-    'e2-medium': 0.037731,
-    'e2-small': 0.018866,
-    'e2-standard-2': 0.075462,
-    'e2-standard-4': 0.150924,
-    'e2-standard-8': 0.301848,
-    'e2-standard-16': 0.603696,
-    'e2-standard-32': 1.207392,
-    'n1-standard-1': 0.0535,
-    'n1-standard-2': 0.107,
-    'n1-standard-4': 0.214,
-    'n1-standard-8': 0.428,
-    'n1-standard-16': 0.856,
-    'n1-standard-32': 1.712,
-    'n2-highcpu-64': 2.583936,
-    'n2d-highcpu-64': 2.248128,
-    'n2d-highmem-64': 4.107776,
-    'n2d-standard-2': 0.09516,
-    'n2d-standard-4': 0.19032,
-    'n2d-standard-8': 0.38064,
-    'n2d-standard-16': 0.76128,
-    'n2d-standard-32': 1.52256,
-    'n2d-standard-48': 2.28384,
-    'n2d-standard-64': 3.04512,
-    'n2d-standard-80': 3.8064,
-    'n2d-standard-96': 4.56768,
-    'n2d-standard-128': 6.09024,
-    'n2d-standard-224': 10.65792,
+    'custom-32-65536': 1.215564544,
+    'e2-custom-32-65536': 1.215564544,
+    'f1-micro': 0.009,
+    'g1-small': 0.03,
+    'e2-medium': 0.043825,
+    'e2-small': 0.021913,
+    'e2-standard-2': 0.087651,
+    'e2-standard-4': 0.175302,
+    'e2-standard-8': 0.350604,
+    'e2-standard-16': 0.701207,
+    'e2-standard-32': 1.402415,
+    'n1-standard-1': 0.055,
+    'n1-standard-2': 0.11,
+    'n1-standard-4': 0.22,
+    'n1-standard-8': 0.44,
+    'n1-standard-16': 0.88,
+    'n1-standard-32': 1.76,
+    'n2-highcpu-64': 3.150953,
+    'n2d-highcpu-64': 2.61081,
+    'n2d-highmem-64': 4.770747,
+    'n2d-standard-2': 0.110516,
+    'n2d-standard-4': 0.221031,
+    'n2d-standard-8': 0.442062,
+    'n2d-standard-16': 0.884124,
+    'n2d-standard-32': 1.768249,
+    'n2d-standard-48': 2.652373,
+    'n2d-standard-64': 3.536497,
+    'n2d-standard-80': 4.420622,
+    'n2d-standard-96': 5.304746,
+    'n2d-standard-128': 7.072995,
+    'n2d-standard-224': 12.377741,
 }
 
 
