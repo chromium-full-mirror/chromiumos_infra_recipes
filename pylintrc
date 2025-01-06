@@ -24,15 +24,6 @@ init-hook='import sys; sys.path.extend([".recipe_deps/_pb", ".recipe_deps/recipe
 # List of plugins (as comma separated values of python modules names) to load,
 # usually to register additional checkers.
 load-plugins=
-    pylint_quotes
-
-
-# Configure quote preferences.
-# Note that these differ from other ChromeOS projects that use `black` (or
-# `cros format`) for Python formatting.
-string-quote=single-avoid-escape
-triple-quote=single
-docstring-quote=double
 
 
 [MESSAGES CONTROL]
