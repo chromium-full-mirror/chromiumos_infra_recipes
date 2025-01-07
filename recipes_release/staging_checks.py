@@ -152,7 +152,6 @@ def r120_pushimage_exemption(build: Dict[str, Any]) -> bool:
 
 
 INFRA_BUNDLE_STAGING_CHECKS_RE = (
-    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-amd64-generic-always-relevant-snapshot',
                    [image_builder_exemption], num_builds=2),
@@ -180,6 +179,7 @@ INFRA_BUNDLE_STAGING_CHECKS_RE = (
 )
 
 RELEASE_BUNDLE_STAGING_CHECKS_RE = (
+    StagingReCheck('chromeos', 'staging', r'LegacyNoopSuccess', num_builds=3),
     StagingReCheck('chromeos', 'staging',
                    r'staging-release-R(?P<milestone>\d+)-\d+\.B-orchestrator',
                    num_builds=3),
