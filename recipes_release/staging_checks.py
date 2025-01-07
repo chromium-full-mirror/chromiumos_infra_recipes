@@ -78,7 +78,8 @@ def build_firmware_exemption(build: Dict[str, Any]) -> bool:
 
 def autoreleaser_no_releasable_changes_exemption(build: Dict[str, Any]) -> bool:
   """Exemption function for autoreleaser builds with no releasable changes."""
-  return build.get('summaryMarkdown').startswith('No releasable changes found')
+  summary = build.get('summaryMarkdown', '')
+  return summary.startswith('No releasable changes found')
 
 
 def sdk_update_exemption(build: Dict[str, Any]) -> bool:
