@@ -230,6 +230,7 @@ class OrchMenuApi(recipe_api.RecipeApi):
           self._external_gitiles_commit = self.m.src_state.external_manifest.as_gitiles_commit_proto
           self._external_gitiles_commit.id = self.m.cros_source.get_external_snapshot_commit(
               self.m.src_state.internal_manifest.path, self.gitiles_commit.id)
+          self._external_gitiles_commit.ref = self.gitiles_commit.ref
 
       # If we are waiting on inflight orchestrators, do that now.
       self._wait_for_inflight_orchestrator()
