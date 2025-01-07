@@ -2399,7 +2399,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate uprev commit",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2830,7 +2830,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "invalid push options (\"r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,\"): should start with %"
+      "humanReason": "invalid push options (\"cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,\"): should start with %"
     },
     "name": "$result"
   }

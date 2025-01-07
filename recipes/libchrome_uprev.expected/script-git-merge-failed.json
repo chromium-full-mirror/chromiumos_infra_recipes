@@ -2399,22 +2399,37 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate uprev commit",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Verified-1,@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "validate push options",
+    "name": "validate push options"
+  },
+  {
+    "cmd": [],
+    "name": "verify uprev commit",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@SET_BUILD_PROPERTY@final_push_options@\"%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Verified-1,\"@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "set sdk_state",
+    "name": "push uprev commit"
+  },
+  {
+    "cmd": [
+      "git",
+      "push",
+      "cros",
+      "HEAD:refs/for/main%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Verified-1,m=Generated_by%3A_https%3A%2F%2Fcr%2Dbuildbucket%2Eappspot%2Ecom%2Fbuild%2F0"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
+    "infra_step": true,
+    "name": "push uprev commit.git push",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"
+      "@@@STEP_NEST_LEVEL@1@@@"
     ]
   },
   {
@@ -2552,129 +2567,6 @@
   {
     "cmd": [],
     "name": "clean up SDK chroot.removing sysroot.call chromite.api.SdkService/Clean.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
-      "/path/to/tmp/"
-    ],
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.read chromite version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_5/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.SdkService/Delete"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_5/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "clean up SDK chroot.Invalidating SDK due to dirty state.call chromite.api.SdkService/Delete.call response",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@build api stdout@@@@",
@@ -2828,10 +2720,6 @@
     ]
   },
   {
-    "failure": {
-      "failure": {},
-      "humanReason": "invalid label-type push option (\"Code-Review+1\"): only Auto-Submit, Verified, Commit-Queue, Bot-Commit labels with value are allowed"
-    },
     "name": "$result"
   }
 ]

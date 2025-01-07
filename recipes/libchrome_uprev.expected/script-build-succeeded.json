@@ -2399,7 +2399,7 @@
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "name": "generate uprev commit",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@raw_io.output_text@%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,@@@",
+      "@@@STEP_LOG_LINE@raw_io.output_text@%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
     ]
   },
@@ -2411,7 +2411,7 @@
     "cmd": [],
     "name": "verify uprev commit",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@final_push_options@\"%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,\"@@@"
+      "@@@SET_BUILD_PROPERTY@final_push_options@\"%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,\"@@@"
     ]
   },
   {
@@ -4360,7 +4360,7 @@
       "git",
       "push",
       "cros",
-      "HEAD:refs/for/main%r=fqj@google.com,r=hidehiko@google.com,topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,m=Generated_by%3A_https%3A%2F%2Fcr%2Dbuildbucket%2Eappspot%2Ecom%2Fbuild%2F0"
+      "HEAD:refs/for/main%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,m=Generated_by%3A_https%3A%2F%2Fcr%2Dbuildbucket%2Eappspot%2Ecom%2Fbuild%2F0"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/platform/libchrome",
     "infra_step": true,

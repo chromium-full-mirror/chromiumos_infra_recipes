@@ -149,16 +149,22 @@ def RunSteps(api: RecipeApi):
 
         with api.step.nest('verify uprev commit') as presentation:
           push_options += '' if push_options.endswith(',') else ','
-          try:
-            api.build_menu.setup_sysroot_and_determine_relevance()
-            api.build_menu.bootstrap_sysroot()
-            api.build_menu.install_packages(config, [
-                PackageInfo(category='chromeos-base', package_name='libchrome')
-            ])
-            push_options += 'l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'
-          except StepFailure:
-            api.build_menu.upload_artifacts(config)
-            push_options += 'l=Verified-1,'
+          # Install libchrome as test only if the automated uprev script
+          # succeeded i.e. no git merge failure.
+          # Otherwise keep the existing options unchanged (Verified-1).
+          if 'Verified-1' not in push_options:
+            try:
+              api.build_menu.setup_sysroot_and_determine_relevance()
+              api.build_menu.bootstrap_sysroot()
+              api.build_menu.install_packages(config, [
+                  PackageInfo(category='chromeos-base',
+                              package_name='libchrome')
+              ])
+              # Add auto commit votes to trigger CQ.
+              push_options += 'l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'
+            except StepFailure:
+              api.build_menu.upload_artifacts(config)
+              push_options += 'l=Verified-1,'
           presentation.properties['final_push_options'] = push_options
 
         with api.step.nest('push uprev commit'):
@@ -299,7 +305,7 @@ def GenTests(api: RecipeTestApi):
           'https://chromium-review.googlesource.com'),
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              'r=fqj@google.com,r=hidehiko@google.com,'
+              'cc=chromeos-libchrome@google.com,'
               'topic=libchrome-automated-uprev,l=Auto-Submit+1,l=Verified+1,')),
       api.post_check(post_process.StepFailure, 'validate push options'),
       status='FAILURE',
@@ -325,7 +331,7 @@ def GenTests(api: RecipeTestApi):
           'https://chromium-review.googlesource.com'),
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,'
+              '%cc=chromeos-libchrome@google.com,'
               'topic=libchrome-automated-uprev,'
               'l=Auto-Submit+1,l=Verified+1,l=Code-Review+1,')),
       api.post_check(post_process.StepFailure, 'validate push options'),
@@ -338,30 +344,46 @@ def GenTests(api: RecipeTestApi):
           'identify outdated uprev commits', [],
           'https://chromium-review.googlesource.com'),
       api.step_data(
-          'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,'
-              'topic=libchrome-automated-uprev,')),
+          'generate uprev commit',
+          stdout=api.raw_io.output_text('%cc=chromeos-libchrome@google.com,'
+                                        'topic=libchrome-automated-uprev,')),
       api.post_check(
           post_process.PropertyEquals, 'final_push_options',
-          '%r=fqj@google.com,r=hidehiko@google.com,'
-          'topic=libchrome-automated-uprev,l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'
-      ),
+          '%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,'
+          'l=Verified+1,l=Commit-Queue+2,l=Bot-Commit+1,'),
   )
 
   yield api.test(
-      'script-build-failed',
+      'script-git-merge-failed',
       api.gerrit.set_query_changes_response(
           'identify outdated uprev commits', [],
           'https://chromium-review.googlesource.com'),
       api.step_data(
           'generate uprev commit', stdout=api.raw_io.output_text(
-              '%r=fqj@google.com,r=hidehiko@google.com,'
-              'topic=libchrome-automated-uprev,')),
+              '%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,'
+              'l=Verified-1,')),
+      api.post_check(post_process.DoesNotRun,
+                     'verify uprev commit.install packages'),
+      api.post_check(
+          post_process.PropertyEquals, 'final_push_options',
+          '%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,'
+          'l=Verified-1,'),
+  )
+
+  yield api.test(
+      'recipe-build-failed',
+      api.gerrit.set_query_changes_response(
+          'identify outdated uprev commits', [],
+          'https://chromium-review.googlesource.com'),
+      api.step_data(
+          'generate uprev commit',
+          stdout=api.raw_io.output_text('%cc=chromeos-libchrome@google.com,'
+                                        'topic=libchrome-automated-uprev,')),
       api.build_menu.set_build_api_return(
           'verify uprev commit.install packages',
           'SysrootService/InstallPackages', retcode=1),
       api.post_check(
           post_process.PropertyEquals, 'final_push_options',
-          '%r=fqj@google.com,r=hidehiko@google.com,'
-          'topic=libchrome-automated-uprev,l=Verified-1,'),
+          '%cc=chromeos-libchrome@google.com,topic=libchrome-automated-uprev,'
+          'l=Verified-1,'),
   )
