@@ -29,7 +29,7 @@ def RunSteps(api, properties):
   test_plan = api.cros_test_plan.test_api.generate_test_plan_response
   _ = api.cros_test_proctor.schedule_tests(
       test_plan, list(set(properties.passed_tests)),
-      properties.previously_failed_now_exonerable_hw_suites,
+      properties.previously_failed_now_exonerable_hw_suites, {},
       api.cros_test_proctor.timeout, is_retry=properties.is_retry)
 
 

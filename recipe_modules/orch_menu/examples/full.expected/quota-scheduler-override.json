@@ -9957,23 +9957,16 @@
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.schedule hardware tests",
+    "name": "run tests.schedule tests.get previous test results",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "run tests.schedule tests.schedule hardware tests.get previous test results",
+    "name": "run tests.schedule tests.get previous test results.find matching builds",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "run tests.schedule tests.schedule hardware tests.get previous test results.find matching builds",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_END@matching builds@@@"
     ]
   },
@@ -10005,10 +9998,17 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "run tests.schedule tests.schedule hardware tests.get previous test results.find matching builds.buildbucket.search",
+    "name": "run tests.schedule tests.get previous test results.find matching builds.buildbucket.search",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
+      "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "run tests.schedule tests.schedule hardware tests",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
     ]
   },
   {

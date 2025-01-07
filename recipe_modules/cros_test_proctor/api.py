@@ -217,12 +217,14 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         # We will not run tests that have already passed for this patch set.
         previously_passed_tests = set()
         previously_failed_now_exonerable_hw_results = []
+        previous_test_results = {}
         is_retry = False
         if enable_history and gerrit_changes:
           is_retry = (self.m.cv.active and self.m.cros_history.is_retry)
           previously_passed_tests = self.m.cros_history.get_passed_tests()
           previously_failed_now_exonerable_hw_results = self.m.exonerate.get_prev_failed_now_exonerable_test_results(
               test_plan, self._dry_run_exonerate_retried_suites)
+          previous_test_results = self._previous_test_results(need_tests_builds)
         exonerable_hw_suites_names = {
             str(skylab_res.task.test.common.display_name)
             for skylab_res in previously_failed_now_exonerable_hw_results
@@ -232,6 +234,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
             test_plan,
             previously_passed_tests,
             exonerable_hw_suites_names,
+            previous_test_results,
             self.timeout,
             is_retry=is_retry,
             run_async=run_async,
@@ -360,6 +363,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
   def schedule_tests(
       self, test_plan: GenerateTestPlanResponse, passed_tests: typing.List[str],
       previously_failed_now_exonerable_hw_suites: typing.List[str],
+      previous_test_results: typing.Dict[str, ExecuteResponse],
       timeout: duration_pb2.Duration, is_retry: bool = False,
       run_async: bool = False,
       container_metadata: typing.Optional[ContainerMetadata] = None,
@@ -373,6 +377,7 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       passed_tests: A list of names for the tests that have passed before.
       previously_failed_now_exonerable_hw_suites: Previously failed tests that
           are now eligible for exoneration.
+      previous_test_results: The test results from the latest test invocation.
       timeout: Timeout in duration_pb2.Duration.
       is_retry: Whether this is a CQ retry.
       run_async: Whether to stop and collect, if set we return no failures
@@ -403,7 +408,6 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
       # A map from {build_target_name: [test_name]}.
       tests_to_run = defaultdict(list)
       hw_build_targets = set()
-      previous_test_results = self._previous_test_results()
       for unit in test_plan.hw_test_units:
         for test in unit.hw_test_cfg.hw_test:
           # Do not run non-critical tests on retries.
@@ -527,24 +531,50 @@ class CrosTestProctorApi(recipe_api.RecipeApi):
         return build.input.gitiles_commit.id
     return ''
 
-  def _previous_test_results(self) -> typing.Dict[str, ExecuteResponse]:
+  def _previous_test_results(
+      self, testable_builds: Build) -> typing.Dict[str, ExecuteResponse]:
     """Gets the test results from the latest test invocation.
 
     Returns:
       The ExecuteResponses.tagged_response from the latest invocation.
     """
-    previous_test_results = {}
+    reusable_previous_test_results = {}
     if not self.m.cv.active:
-      return previous_test_results
+      return reusable_previous_test_results
 
     with self.m.step.nest('get previous test results') as presentation:
       test_task_ids = self.m.cros_history.get_previous_test_task_ids()
       # CQ only launches one cros_test_platform builder.
-      if len(test_task_ids) == 1:
-        build = self.m.buildbucket.get(test_task_ids[0])
-        previous_test_results = self.m.skylab_results.get_tagged_execute_responses_from_build(
-            build)
-        for name, results in previous_test_results.items():
-          presentation.logs[name] = json_format.MessageToJson(results)
+      if len(test_task_ids) != 1:
+        return reusable_previous_test_results
 
-    return previous_test_results
+      previous_ctp_build = self.m.buildbucket.get(test_task_ids[0])
+      previous_test_results = self.m.skylab_results.get_tagged_execute_responses_from_build(
+          previous_ctp_build)
+
+      previous_test_summary = self.m.cros_history.get_previous_test_summary()
+      if not previous_test_summary:
+        presentation.step_text: 'Unable to determine if previous test results are still valid'
+        return reusable_previous_test_results
+
+      # Results should only be recycled if they were testing the same image that
+      # is currently being tested.
+      reusable_result_names = []
+      for test in previous_test_summary:
+        previous_revision = test.get('revision', '')
+        current_builder_revision = self._get_revision_for_builder(
+            test.get('builder_name', ''), testable_builds)
+        if previous_revision == current_builder_revision:
+          reusable_result_names.append(test.get('name', ''))
+
+      unreusable_result_names = []
+      for name, results in previous_test_results.items():
+        if name in reusable_result_names:
+          reusable_previous_test_results[name] = results
+          presentation.logs[name] = json_format.MessageToJson(results)
+        else:
+          unreusable_result_names.append(name)
+
+      if unreusable_result_names:
+        presentation.logs['unreusable_results'] = unreusable_result_names
+    return reusable_previous_test_results
