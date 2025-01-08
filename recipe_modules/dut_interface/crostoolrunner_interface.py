@@ -986,9 +986,20 @@ class CrosToolRunnerInterface(dut_interface.DUTInterface):  # pragma: no cover
                        'upload result to resultdb. Got %s')
 
     rdb_config = json.loads(rdb_settings.decode())
-    rdb_config['base_tags'] = [
-        tuple(tag.split(':', 1)) for tag in rdb_config.get('base_tags', [])
-    ]
+
+    # Converts base_tags from a list of strings ['key:value'] into a list of
+    # string tuples [(key, value)] as is expected by resultdb.wrap().
+    base_tags = []
+    for tag in rdb_config.get('base_tags', []):
+      if isinstance(tag, str):
+        base_tags.append(tuple(tag.split(':', 1)))
+      elif isinstance(tag, list):
+        # Inserts the tuple item directly.
+        base_tags.append(tuple(tag))
+      else:
+        # Skips the item if its format is not valid.
+        continue
+    rdb_config['base_tags'] = base_tags
 
     with self._api.step.nest(
         'extracted resultdb config from test_args for chromium test') as step:
