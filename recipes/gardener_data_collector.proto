@@ -31,11 +31,28 @@ message GardenerDataResult {
     string new_version = 9;
   }
 
+  message ChromeRevision {
+    int64 commit_position = 1;
+    string commit_hash = 2;
+  }
+
+  message FailingTest {
+    string test_id = 1;
+    string test_name = 2;
+    string builder = 3;
+    ChromeRevision good = 4;
+    ChromeRevision bad = 5;
+    int64 first_failure_build_id = 6;
+    bool exonerated = 7;
+  }
+
   repeated Commit chrome_uprev_commits = 1;
   repeated Commit lkgm_commits = 2;
+  repeated FailingTest failing_ci_tests = 3;
 }
 
 message GardenerDataCollectorProperties {
   bool disable_chrome_uprev_commits = 1;
   bool disable_lkgm_uprev_commits = 2;
+  bool disable_failing_ci_tests = 3;
 }

@@ -205,6 +205,7 @@
     "name": "set output properties",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@chrome_uprev_commits@[{\"branch\": \"main\", \"cq_tries\": \"1\", \"created\": \"2024-11-27 04:13:33.000000000\", \"new_version\": \"133.0.6862.0\", \"number\": \"6047779\", \"old_version\": \"133.0.6861.0\", \"status\": \"NEW\", \"subject\": \"chromeos-chrome: Automatic uprev to 133.0.6862.0.\"}, {\"branch\": \"main\", \"created\": \"2023-02-11 14:56:09.000000000\", \"new_version\": \"112.0.5584.0\", \"number\": \"4242579\", \"old_version\": \"112.0.5589.0\", \"revert_of\": \"4242666\", \"status\": \"MERGED\", \"subject\": \"Revert \\\"chromeos-chrome, chromeos-lacros-parallel: Automatic uprev to 112.0.5589.0.\\\"\", \"submitted\": \"2023-02-12 03:45:17.000000000\"}]@@@",
+      "@@@SET_BUILD_PROPERTY@failing_ci_tests@[]@@@",
       "@@@SET_BUILD_PROPERTY@lkgm_commits@[]@@@"
     ]
   },
