@@ -34,3 +34,8 @@ message GardenerDataResult {
   repeated Commit chrome_uprev_commits = 1;
   repeated Commit lkgm_commits = 2;
 }
+
+message GardenerDataCollectorProperties {
+  bool disable_chrome_uprev_commits = 1;
+  bool disable_lkgm_uprev_commits = 2;
+}
