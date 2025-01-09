@@ -45,6 +45,10 @@ GSUTIL_TIMEOUT_SECONDS = 30 * 60
 GSUTIL_MAX_RETRY_COUNT = 2
 
 STAGING_KEYSET = 'DevPreMPKeys'
+STAGING_KEYSET_TYPE_OVERRIDE = {
+    common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: 'devkeys-acc',
+    common_pb2.IMAGE_TYPE_ACCESSORY_USBPD: 'devkeys-acc',
+}
 IMAGE_TYPE_TO_SUFFIX = {
     common_pb2.IMAGE_TYPE_ACCESSORY_RWSIG: '.tar.bz2',
     common_pb2.IMAGE_TYPE_BASE: '.tar.xz',
@@ -306,7 +310,10 @@ class SigningApi(recipe_api.RecipeApi):
           if self.m.cros_infra_config.is_staging or self.get_use_dev_keys:
             config.keyset = STAGING_KEYSET
             for signing_config in config.signing_configs:
-              if signing_config.keyset:
+              if signing_config.image_type in STAGING_KEYSET_TYPE_OVERRIDE:
+                signing_config.keyset = STAGING_KEYSET_TYPE_OVERRIDE[
+                    signing_config.image_type]
+              elif signing_config.keyset:
                 signing_config.keyset = STAGING_KEYSET
             pres.logs['override keyset'] = (
                 f'Now using: {STAGING_KEYSET} because this is staging or '

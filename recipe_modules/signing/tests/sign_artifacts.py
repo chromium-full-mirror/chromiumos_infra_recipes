@@ -12,7 +12,8 @@ from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=un
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
 from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
                                   IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
-                                  IMAGE_TYPE_FIRMWARE)
+                                  IMAGE_TYPE_FIRMWARE,
+                                  IMAGE_TYPE_ACCESSORY_RWSIG)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -41,6 +42,7 @@ def RunSteps(api: RecipeApi):
   # Fetch config.
   config = api.signing.get_config()
   expected_keyset = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar'
+  expected_keyset_accessory = 'devkeys-acc' if api.cros_infra_config.is_staging else None
   expected_keyset_factory = 'DevPreMPKeys' if api.cros_infra_config.is_staging else 'kukui-foo-bar-factory'
   expected_config = BuildTargetSigningConfig(
       build_target='kukui',
@@ -68,11 +70,20 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
           ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+              keyset=expected_keyset_accessory,
+              ensure_no_password=True,
+              firmware_update=True,
+          ),
       ],
   )
   api.assertions.assertEqual(config, expected_config)
 
-  sign_types = [IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY]
+  sign_types = [
+      IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY,
+      IMAGE_TYPE_ACCESSORY_RWSIG
+  ]
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
   processed_config, archive_dir = api.signing.setup_signing(
@@ -111,6 +122,15 @@ def RunSteps(api: RecipeApi):
               recovery_zip=True,
           ),
           SigningConfig(
+              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+              channel=CHANNEL_CANARY,
+              keyset=expected_keyset_accessory,
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='firmware_from_source.tar.bz2',
+              recovery_zip=True,
+          ),
+          SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_DEV,
               keyset=expected_keyset,
@@ -133,6 +153,15 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='recovery_image.tar.xz',
+              recovery_zip=True,
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_ACCESSORY_RWSIG,
+              channel=CHANNEL_DEV,
+              keyset=expected_keyset_accessory,
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='firmware_from_source.tar.bz2',
               recovery_zip=True,
           ),
       ],
