@@ -10,7 +10,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@container metadata@{}@@@",
       "@@@STEP_LOG_END@container metadata@@@",
-      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
+      "@@@STEP_LINK@suite link 0@https://cr-buildbucket.appspot.com/build/8922054662172514000@@@",
       "@@@SET_BUILD_PROPERTY@count_direct_test_retry_tests@0@@@",
       "@@@SET_BUILD_PROPERTY@tast_first_class_tests@[]@@@"
     ]
@@ -252,7 +252,7 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@container metadata@{}@@@",
       "@@@STEP_LOG_END@container metadata@@@",
-      "@@@STEP_LINK@suite link@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
+      "@@@STEP_LINK@suite link 0@https://cr-buildbucket.appspot.com/build/8922054662172514001@@@",
       "@@@SET_BUILD_PROPERTY@count_direct_test_retry_tests@0@@@",
       "@@@SET_BUILD_PROPERTY@tast_first_class_tests@[]@@@"
     ]

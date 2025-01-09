@@ -410,27 +410,52 @@ class SkylabApi(recipe_api.RecipeApi):
       # found. Exit early instead of scheduling a pointless CTP build.
       if not reqs:
         return []
+      # Split requests into batches, each with a maximum size of 100
+      request_batches = self.batch_requests(reqs, 100)
 
       bb_tags = self.m.cros_tags.make_schedule_tags(
           self.m.cros_infra_config.gitiles_commit, inherit_buildsets=True)
-      build = self.schedule_ctp_requests(tagged_requests=reqs,
-                                         can_outlive_parent=async_suite_run,
-                                         bb_tags=bb_tags,
-                                         inherit_buildsets=False)
+      build_urls = []
+      for _, batch in enumerate(request_batches):
+
+        build = self.schedule_ctp_requests(tagged_requests=batch,
+                                           can_outlive_parent=async_suite_run,
+                                           bb_tags=bb_tags,
+                                           inherit_buildsets=False)
+        build_urls.append(self.m.buildbucket.build_url(build_id=build.id))
       presentation.properties[
           _TAST_FIRST_CLASS_TESTS_OUTPUT_PROP] = tast_first_class_tests
       presentation.properties[
           'count_direct_test_retry_tests'] = count_direct_test_retry_tests
-
-      build_url = self.m.buildbucket.build_url(build_id=build.id)
-      presentation.links['suite link'] = build_url
+      for i, build_url in enumerate(build_urls):
+        presentation.links['suite link {}'.format(i)] = build_url
 
       tasks = []
       for uht in unit_hw_tests:
-        tasks.append(
-            SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
-                       unit=uht.unit))
+        for build_url in build_urls:
+          tasks.append(
+              SkylabTask(id=build.id, url=build_url, test=uht.hw_test,
+                         unit=uht.unit))
       return tasks
+
+  def batch_requests(self, requests_dict, batch_size):
+    batches = []
+    batch = {}
+    counter = 0
+
+    for key, value in requests_dict.items():
+      batch[key] = value
+      counter += 1
+
+      if counter == batch_size:  #pragma: no cover
+        batches.append(batch)
+        batch = {}
+        counter = 0
+
+    if batch:
+      batches.append(batch)
+
+    return batches
 
   def _set_pool(self, scheduling, pool_name):
     if pool_name in ('MANAGED_POOL_QUOTA', 'quota'):  #pragma: no cover
