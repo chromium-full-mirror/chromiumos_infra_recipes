@@ -554,7 +554,7 @@ class BuildSDKRun:
         # identical to the one the SDK builder built. Further, syncing to the
         # SDK builder's tree makes racing invocations of the SDK builder fail
         # more consistently with merge conflicts.
-        gitiles_commit=self.m.src_state.gerrit_changes,
+        gitiles_commit=self.m.src_state.gitiles_commit,
         properties=pupr_properties,
         can_outlive_parent=True,
     )
@@ -733,6 +733,7 @@ def GenTests(
           '"binhostGsBucket": "gs://chromeos-prebuilt"',
           '"sdkGsBucket": "gs://chromiumos-sdk"',
           '"ref": "refs/heads/main',
+          '"gitilesCommit": {',
       ]),
       api.post_check(post_process.LogDoesNotContain, 'schedule uprev',
                      'request', ['"branch_policies":']),
