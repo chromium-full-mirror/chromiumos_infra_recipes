@@ -61,14 +61,6 @@ DEPS = [
 
 PROPERTIES = BuildFirmwareProperties
 
-# Artifacts that don't need to be signed.
-# `host_emulation` (and `he`) will never need to be signed.
-# `nuvotitan_cw310_a1 fpga` will never need to be signed.
-# `opentitan` (and `nt`) will need to be signed in the future, but signing
-# isn't set up for that target yet.
-SKIP_SIGNING_RE = re.compile(
-    r'^(host_emulation|he|opentitan|nt|nuvotitan_cw310_a1)-')
-
 
 def UploadTestResults(api, location, builder_name):
   if location == common_pb2.PLATFORM_ZEPHYR:
@@ -205,22 +197,45 @@ def RunSteps(api, properties):
       ])
       if _invoke_signing_for_current_build(build.builder.builder,
                                            uploaded_artifacts, properties):
+        pres.logs['debug'] = ''
         requests = []
         sign_image_props = MessageToDict(properties.sign_image_properties,
                                          preserving_proto_field_name=True)
         bucket = 'staging' if api.build_menu.is_staging else 'release'
         builder = 'staging-sign-image' if api.build_menu.is_staging else 'sign-image'
-        for artifact_name in [
-            a for a in uploaded_artifacts.files_by_artifact['FIRMWARE_TARBALL']
-            if not SKIP_SIGNING_RE.match(a)
-        ]:
-          archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
-                                       uploaded_artifacts.gs_path,
-                                       artifact_name)
-          sign_image_props['archive'] = archive
-          requests.append(
-              api.buildbucket.schedule_request(bucket=bucket, builder=builder,
-                                               properties=sign_image_props))
+        # Preload all of the tarball_info data into memory
+        tarball_info_by_name = {}
+        for metadata_path in uploaded_artifacts.files_by_artifact.get(
+            'FIRMWARE_TARBALL_INFO', []):
+          # The real artifact_dir will be something like /b/s/w/ir/x/w/rc/artifactsp9n8vgbe
+          metadata_path = api.path.abspath(
+              api.path.join(artifact_dir, metadata_path))
+          if api.path.exists(metadata_path):
+            pres.logs['debug'] += f'Reading proto from {metadata_path}\n'
+            metadata = api.file.read_proto(
+                'read fw metadata',
+                metadata_path,
+                FirmwareArtifactInfo,
+                'JSONPB',
+            )
+            for obj in metadata.objects:
+              pres.logs[
+                  'debug'] += f'metadata_by_name[{obj.file_name}]={obj.tarball_info}\n'
+              tarball_info_by_name[obj.file_name] = obj.tarball_info
+          else:
+            pres.logs['debug'] += f'{metadata_path} does not exist\n'
+        for artifact_name in uploaded_artifacts.files_by_artifact[
+            'FIRMWARE_TARBALL']:
+          tarball_info = tarball_info_by_name.get(artifact_name)
+          pres.logs['debug'] += f'{artifact_name} tarball_info={tarball_info}\n'
+          if tarball_info and tarball_info.request_signed_test_binary:
+            archive = 'gs://%s/%s/%s' % (uploaded_artifacts.gs_bucket,
+                                         uploaded_artifacts.gs_path,
+                                         artifact_name)
+            sign_image_props['archive'] = archive
+            requests.append(
+                api.buildbucket.schedule_request(bucket=bucket, builder=builder,
+                                                 properties=sign_image_props))
 
         api.buildbucket.schedule(requests)
 
@@ -505,6 +520,15 @@ def GenTests(api):
           tarball_info=FirmwareArtifactInfo.TarballInfo(type='EC',
                                                         board=['rex'])),
   ])
+  TI50_METADATA = FirmwareArtifactInfo(objects=[
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='dt-ti50.tar.bz2', tarball_info=FirmwareArtifactInfo
+          .TarballInfo(type='GSC', board=['betty'], publish_to_goldeneye=True,
+                       request_signed_test_binary=True)),
+      FirmwareArtifactInfo.ObjectInfo(
+          file_name='he-ti50.tar.bz2',
+          tarball_info=FirmwareArtifactInfo.TarballInfo(type='GSC')),
+  ])
 
   TI50_ARTIFACTS = '''{
   "artifacts": {
@@ -526,33 +550,16 @@ def GenTests(api):
           {
             "location": 2,
             "path": "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
+          },
+          {
+            "location": 2,
+            "path": "[CLEANUP]/artifacts_tmp_1/he-ti50.tar.bz2"
           }
         ]
       }
     ]
   }
 }'''
-
-  def get_signing_image_props_for_test(is_staging=False):
-    """
-    Get SignImageProperties for test.
-
-    Args:
-      is_staging (bool): Whether properties need for staging.
-
-    Returns:
-      (dict): SignImageProperties object as dict for testing.
-    """
-    return {
-        'image_type': 13,
-        'channel': 0,
-        'keyset': 'test-keyset',
-        'signer_type': 2 if is_staging else 1,
-        'allow_non_release_signer_bucket': True,
-        'gsc_instructions': {
-            'target': 1,
-        },
-    }
 
   def test(name, *args, **kwargs):
     status = kwargs.pop('status', 'SUCCESS')
@@ -746,16 +753,33 @@ def GenTests(api):
           TI50_ARTIFACTS),
       api.path.files_exist(api.path.cleanup_dir /
                            'artifacts_tmp_1/firmware_metadata.jsonpb'),
-      api.step_data(
-          'sending pub/sub notifications.read fw metadata',
-          api.file.read_proto(
-              FirmwareArtifactInfo(objects=[
-                  FirmwareArtifactInfo.ObjectInfo(
-                      file_name='dt-ti50.tar.bz2',
-                      tarball_info=FirmwareArtifactInfo.TarballInfo(
-                          board=['betty'], publish_to_goldeneye=True,
-                          type='GSC')),
-              ]))), builder='firmware-ti50-postsubmit',
+      api.step_data('schedule signing build.read fw metadata',
+                    api.file.read_proto(TI50_METADATA)),
+      api.step_data('sending pub/sub notifications.read fw metadata',
+                    api.file.read_proto(TI50_METADATA)),
+      builder='firmware-ti50-postsubmit', input_properties={
+          'firmware_location':
+              common_pb2.PLATFORM_TI50,
+          'chromiumos_sdk_pin_file':
+              sdk_pin_path,
+          'set_suite_scheduling':
+              True,
+          'signing_allowed_builder_names': [
+              'staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit',
+              'firmware-ti50-guc-14778.B-postsubmit',
+              'firmware-ti50-prepvt-15974.B-branch',
+              'firmware-ti50-mp-15980.B-branch'
+          ],
+      })
+
+  yield test(
+      'firmware-ti50-postsubmit-no-file',
+      api.cros_build_api.set_api_return(
+          'upload artifacts.call artifacts service', 'ArtifactsService/Get',
+          '{}'),
+      api.cros_build_api.set_api_return(
+          'upload artifacts', 'FirmwareService/BundleFirmwareArtifacts',
+          TI50_ARTIFACTS), builder='firmware-ti50-postsubmit',
       input_properties={
           'firmware_location':
               common_pb2.PLATFORM_TI50,
@@ -813,26 +837,6 @@ def GenTests(api):
                      'Upload EC Firmware test results.run'), input_properties=({
                          'firmware_location': common_pb2.PLATFORM_ZEPHYR
                      }))
-
-  yield test(
-      'signing-invocation',
-      api.post_check(post_process.MustRun, 'schedule signing build'),
-      builder='fw-ec-postsubmit', input_properties={
-          'firmware_location': 1,
-          'signing_allowed_builder_names': ['fw-ec-postsubmit'],
-          'sign_image_properties': get_signing_image_props_for_test(),
-      })
-
-  yield test(
-      'staging-signing-invocation',
-      api.post_check(post_process.MustRun, 'schedule signing build'),
-      builder='fw-ec-postsubmit', bucket='staging', input_properties={
-          'firmware_location':
-              1,
-          'signing_allowed_builder_names': ['fw-ec-postsubmit'],
-          'sign_image_properties':
-              get_signing_image_props_for_test(is_staging=True),
-      })
 
   yield test('output-binary-sizes',
              api.post_check(post_process.MustRun, 'output binary sizes'),
