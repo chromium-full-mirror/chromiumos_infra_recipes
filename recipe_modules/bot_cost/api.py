@@ -28,6 +28,7 @@ BOT_COST = {
     'medium': 0.043825,
     # Used for test data.
     'large': 0.337,
+    'c3d-standard-60-lssd': 3.404925,
     # Calculated using 32 cores, 64gb RAM and
     # the custom e2 costs.
     'custom-32-65536': 1.215564544,
