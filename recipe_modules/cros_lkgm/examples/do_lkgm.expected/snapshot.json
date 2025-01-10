@@ -1258,59 +1258,10 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "retrieving platform version",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1234.56.0-9999999@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "retrieving platform version.retrieving snapshot identifier",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@9999999@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
-      "--key",
-      "Cr-Snapshot-Identifier"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/chrome_chromeos_lkgm",
       "--lkgm",
-      "1234.56.0-9999999",
+      "1234.56.0",
       "--buildbucket-id",
       "8945511751514863184",
       "--debug",
@@ -1337,7 +1288,7 @@
     "cmd": [],
     "name": "set lkgm",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@lkgm@{\"uprev_cl_generated\": true, \"uprev_dryrun\": false, \"version\": \"1234.56.0-9999999\"}@@@"
+      "@@@SET_BUILD_PROPERTY@lkgm@{\"uprev_cl_generated\": true, \"uprev_dryrun\": false, \"version\": \"1234.56.0\"}@@@"
     ]
   },
   {

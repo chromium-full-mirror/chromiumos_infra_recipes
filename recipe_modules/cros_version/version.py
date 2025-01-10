@@ -20,12 +20,13 @@ def int_or_zero(n):
   return 0 if n is None else int(n)
 
 
-CHROMEOS_VERSION_STRING_RES = [
-    (re.compile(r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)'
-                r'\.(?P<branch>\d+)(.(?P<patch>\d)+)?$'), lambda cls, grps: cls(
-                    int_or_none(grps['chrome_branch']), int(grps['build']),
-                    int(grps['branch']), int(grps['patch']), None))
-]
+CHROMEOS_VERSION_STRING_RES = [(
+    re.compile(r'^(R(?P<chrome_branch>\d+)-)?(?P<build>\d+)'
+               r'\.(?P<branch>\d+)(.(?P<patch>\d)+)?(\-(?P<snapshot>\d+))?$'),
+    lambda cls, grps: cls(
+        int_or_none(grps['chrome_branch']), int(grps['build']),
+        int(grps['branch']), int(grps['patch']), int_or_none(grps['snapshot'])))
+                              ]
 
 CHROMEOS_BRANCH_VERSION_STRING_RES = [
     (re.compile(r'^[^.]+(R(?P<chrome_branch>\d+))?-(?P<build>\d+)'
@@ -101,7 +102,7 @@ class Version():
   def __eq__(self, other):
     """Determine if versions are equal, ignoring chrome branch or snapshot."""
     return (self.build == other.build and self.branch == other.branch and
-            self.patch == other.patch)
+            self.patch == other.patch and self.snapshot == other.snapshot)
 
   def __lt__(self, other):
     """Find lesser of two versions, ignoring chrome branch or snapshot."""
@@ -115,6 +116,19 @@ class Version():
       return False
     if self.patch < other.patch:
       return True
+    if self.patch > other.patch:
+      return False
+
+    if self.snapshot is not None or other.snapshot is not None:
+      # Released manifest (without snapshot suffix) is older than the snapshot
+      # manifests.
+      self_snapshot = int_or_zero(self.snapshot)
+      other_snapshot = int_or_zero(other.snapshot)
+      if self_snapshot < other_snapshot:
+        return True
+      if self_snapshot > other_snapshot:
+        return False
+
     return False
 
   def is_after(self, version):

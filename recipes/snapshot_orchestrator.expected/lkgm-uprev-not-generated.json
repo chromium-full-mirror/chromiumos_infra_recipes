@@ -11388,6 +11388,52 @@
   },
   {
     "cmd": [],
+    "name": "retrieving platform version"
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@111111@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate a LKGM uprev CL",
     "~followup_annotations": [
       "@@@STEP_TEXT@Skipped generating a LKGM CL.@@@"
@@ -11398,7 +11444,7 @@
     "name": "generate a LKGM uprev CL.Check the previous LKGM CL generation",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@The previous generation was in go/bbid/0. Its manifest is 18000 second older than the current manifest. 18000 second is not longer than the threshold.@@@"
+      "@@@STEP_TEXT@The previously generate LKGM CL is newer than the current(12345.0.0-12345 vs 1234.56.0-111111)Maybe this build took longer time than usual.@@@"
     ]
   },
   {
@@ -11435,7 +11481,8 @@
       "@@@STEP_LOG_LINE@json.output@              \"properties\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                \"lkgm\": {@@@",
       "@@@STEP_LOG_LINE@json.output@                  \"uprev_cl_generated\": true,@@@",
-      "@@@STEP_LOG_LINE@json.output@                  \"uprev_dryrun\": false@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"uprev_dryrun\": false,@@@",
+      "@@@STEP_LOG_LINE@json.output@                  \"version\": \"12345.0.0-12345\"@@@",
       "@@@STEP_LOG_LINE@json.output@                }@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",

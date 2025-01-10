@@ -24,6 +24,8 @@ from PB.recipe_engine import result as result_pb2
 from recipe_engine.engine_types import StepPresentation
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
+
+from RECIPE_MODULES.chromeos.cros_version.version import Version
 from RECIPE_MODULES.chromeos.orch_menu.api import BuildsStatus
 
 CHILD_BUILD_SEARCH_FIELDS = frozenset({
@@ -521,10 +523,12 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
 
     return self._builds_status
 
-  def should_generate_lkgm_cl(self):
+  def should_generate_lkgm_cl(self, lkgm_version: str):
     """
     Determine whether should generate a LKGM CL by checking the previous runs.
 
+    Args:
+      lkgm_version (str): ChromeOS version to uprev the LKGM to.
     Returns:
       True if we should generate a LKGM uprev CL.
     """
@@ -536,6 +540,23 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
         presentation.step_text = ('No previous generation found in the recent '
                                   f'{LIMIT_BUILD_SEARCH} builds.')
         return True
+
+      props = json_format.MessageToDict(last.output.properties)
+      lkgm = props.get('lkgm', None)
+      # "lkgm" should not be None, since the previous code ensures that the
+      # build generated a lkgm CL.
+      assert lkgm, 'the implementation expects the "lkgm" field exists.'
+      previous_lkgm_version = lkgm.get('version', None)
+      assert lkgm, 'the implementation expects the "version" field exists.'
+      assert previous_lkgm_version
+
+      if Version.from_string(previous_lkgm_version) >= Version.from_string(
+          lkgm_version):
+        presentation.step_text = (
+            'The previously generate LKGM CL is newer than the current'
+            f'({previous_lkgm_version} vs {str(lkgm_version)})'
+            'Maybe this build took longer time than usual.')
+        return False
 
       # Checks the elapsed time bteween the generation time of the manifest
       # that previously generated LKGM uprev CL and the one of the current

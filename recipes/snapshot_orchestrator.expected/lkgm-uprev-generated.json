@@ -11388,6 +11388,52 @@
   },
   {
     "cmd": [],
+    "name": "retrieving platform version"
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@111111@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "RECIPE_REPO[depot_tools]/git_footers.py",
+      "snapshot-HEAD-SHA",
+      "--key",
+      "Cr-Snapshot-Identifier"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "retrieving platform version.retrieving snapshot identifier.read snapshot identifier.read git footers",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "generate a LKGM uprev CL"
   },
   {
@@ -11466,56 +11512,6 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_TEXT@release builds: 100.00% (3 of 3) builds succeeded, threshold: 0%@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate a LKGM uprev CL.retrieving platform version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@1234.56.0-111111@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate a LKGM uprev CL.retrieving platform version.retrieving snapshot identifier",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@111111@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "generate a LKGM uprev CL.retrieving platform version.retrieving snapshot identifier.read snapshot identifier",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
-      "--key",
-      "Cr-Snapshot-Identifier"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "generate a LKGM uprev CL.retrieving platform version.retrieving snapshot identifier.read snapshot identifier.read git footers",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
     ]
   },
   {

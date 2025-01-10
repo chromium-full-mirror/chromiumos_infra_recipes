@@ -15,6 +15,8 @@ from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_modules.chromeos.cros_source.cros_source import CrosSourceProperties
 from PB.recipe_modules.chromeos.cros_source.cros_source import ManifestLocation
 
+from RECIPE_MODULES.chromeos.cros_version.version import Version
+
 from recipe_engine import recipe_api
 from recipe_engine.recipe_api import StepFailure
 
@@ -128,7 +130,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         self._builder_threshold_percentage)
 
   def do_lkgm(self, release_build_results: List[build_pb2.Build],
-              use_branch: bool = False, use_snapshot: bool = False,
+              lkgm_version: str, use_branch: bool = False,
               internal_manifest_position: int = 0,
               external_manifest_position: int = 0):
     """Performs the LGKM process if the build is an LKGM candidate.
@@ -138,10 +140,9 @@ class CrosLkgmApi(recipe_api.RecipeApi):
     Args:
       release_build_results (list(build_pb2.Build)): list of release build
         results as returned by api.orch_menu.plan_and_run_children.
+      lkgm_version (str): ChromeOS version to uprev the LKGM to.
       use_branch (bool): if set, upload the LKGM CL to the Chrome branch
         (e.g. refs/branch-heads/5204) instead of ToT.
-      use_snapshot (bool): If set, generate a LKGM CL with snapshot identifier.
-        Can't use this with use_branch at the same time.
       internal_manifest_position (int): If a positive number is set, pass the
         number of internal manifest position to the script.
       external_manifest_position (int): If a positive number is set, pass the
@@ -157,7 +158,10 @@ class CrosLkgmApi(recipe_api.RecipeApi):
 
     branch = None
     if use_branch:
-      assert not use_snapshot, 'Should not use both branch and snapshot flags'
+      assert Version.from_string(
+          lkgm_version
+      ).snapshot is None, 'LKGM uprev should not be from snapshot on branch.'
+
       milestone = self.m.cros_version.version.milestone
       branch = self.m.cros_schedule.get_chrome_branch(milestone)
       if branch is None:
@@ -169,23 +173,12 @@ class CrosLkgmApi(recipe_api.RecipeApi):
                           step_text=step_text)
         return
 
-    with self.m.step.nest('retrieving platform version') as presentation:
-      version_str = self.m.cros_version.version.platform_version
-      if use_snapshot:
-        with self.m.step.nest(
-            'retrieving snapshot identifier') as presentation2:
-          snapshot_identifier = self.m.cros_snapshot.snapshot_identifier()
-          if snapshot_identifier:
-            presentation2.step_text = snapshot_identifier
-            version_str += f'-{snapshot_identifier}'
-      presentation.step_text = version_str
-
     script_path = self.m.cros_source.workspace_path.joinpath(
         'infra/chromite-HEAD/bin/chrome_chromeos_lkgm')
     cmd = [
         script_path,
         '--lkgm',
-        version_str,
+        lkgm_version,
         '--buildbucket-id',
         self.m.buildbucket.build.id,
         # Showing debug messages to investigate b/383617613.
@@ -210,7 +203,7 @@ class CrosLkgmApi(recipe_api.RecipeApi):
         lkgm={
             'uprev_cl_generated': True,
             'uprev_dryrun': not self._full_run,
-            'version': version_str,
+            'version': lkgm_version,
         })
 
   def cleanup_cls(self):

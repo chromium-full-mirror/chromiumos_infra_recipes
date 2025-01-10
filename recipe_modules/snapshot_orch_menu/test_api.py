@@ -356,7 +356,8 @@ class SnapshotOrchMenuTestApi(recipe_test_api.RecipeTestApi):
     GREEN_SNAPSHOT_OUTPUT_PROPERTIES = Build.Output()
     GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['lkgm'] = {
         'uprev_cl_generated': True,
-        'uprev_dryrun': False
+        'uprev_dryrun': False,
+        'version': '12345.0.0-12345',
     }
 
     if current_build_start_time is None:

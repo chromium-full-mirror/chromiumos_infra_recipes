@@ -17,29 +17,41 @@ def RunSteps(api):
   v = version(99, 1234, 56, 1, 2)
 
   api.assertions.assertEqual(str(v), 'R99-1234.56.1-2')
+  api.assertions.assertEqual(v, version.from_string('R99-1234.56.1-2'))
   api.assertions.assertEqual(v.buildspec_filename, '99/1234.56.1.xml')
 
   v1 = version(99, 1234, 56, 1, 2)
   v1_2 = version(99, 1234, 56, 1, 2)
   v2 = version(98, 1235, 56, 1, 2)
   v3 = version(98, 1235, 57, 1, 2)
-  v4 = version(98, 1235, 57, 2, 2)
+  v4 = version(98, 1235, 57, 2, None)
+  v5 = version(98, 1235, 57, 2, 1)
+  v6 = version(98, 1235, 57, 2, 2)
 
   # Test the version comparisons.
   api.assertions.assertTrue(v1 < v2)
   api.assertions.assertTrue(v2 < v3)
   api.assertions.assertTrue(v3 < v4)
-  api.assertions.assertTrue(v3 > v2)
+  api.assertions.assertTrue(v4 < v5)
+  api.assertions.assertTrue(v5 < v6)
+
   api.assertions.assertTrue(v2 > v1)
+  api.assertions.assertTrue(v3 > v2)
   api.assertions.assertTrue(v4 > v3)
+  api.assertions.assertTrue(v5 > v4)
+  api.assertions.assertTrue(v6 > v5)
 
   api.assertions.assertTrue(v1 == v1_2)
+  api.assertions.assertTrue(v4 != v5)
+  api.assertions.assertTrue(v4 != v6)
 
   # Test the parsing of arbitrary strings.
   v = version.from_string('134.1.2')
   api.assertions.assertEqual(v, version(None, 134, 1, 2, None))
   v = version.from_string('R1000-134.1.2')
   api.assertions.assertEqual(v, version(1000, 134, 1, 2, None))
+  v = version.from_string('R1000-12345.1.2-98765')
+  api.assertions.assertEqual(v, version(1000, 12345, 1, 2, 98765))
   # Close but not a real version.
   v = version.from_string('1213.123.41.21')
   api.assertions.assertIsNone(v)

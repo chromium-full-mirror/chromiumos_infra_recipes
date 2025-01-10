@@ -29,7 +29,8 @@ PROPERTIES = ShouldGenerateLkgmClProperties
 
 def RunSteps(api, properties):
   # Set intial build status values.
-  result = api.snapshot_orch_menu.should_generate_lkgm_cl()
+  result = api.snapshot_orch_menu.should_generate_lkgm_cl(
+      properties.current_lkgm_version)
 
   api.assertions.assertEqual(result, properties.expected_result)
 
@@ -40,6 +41,7 @@ def GenTests(api):
   GREEN_SNAPSHOT_OUTPUT_PROPERTIES.properties['lkgm'] = {
       'uprev_cl_generated': True,
       'uprev_dryrun': False,
+      'version': '12345.0.0-12345'
   }
 
   BUILDER_METADATA = {
@@ -50,9 +52,11 @@ def GenTests(api):
 
   yield api.test(
       'basic',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=True,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=True,
+              current_lkgm_version='12345.0.0-12346',
+          )),
       api.buildbucket.ci_build(
           start_time=datetime.utcfromtimestamp(
               SIMULATED_CURRENT_BUILD_START_TIME), **BUILDER_METADATA),
@@ -71,9 +75,34 @@ def GenTests(api):
 
   yield api.test(
       'not-old-enough',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=False,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=False,
+              current_lkgm_version='12345.0.0-12346',
+          )),
+      api.buildbucket.ci_build(
+          start_time=datetime.utcfromtimestamp(
+              SIMULATED_CURRENT_BUILD_START_TIME), **BUILDER_METADATA),
+      api.buildbucket.simulated_search_results(
+          [
+              build_pb2.Build(
+                  builder=builder_common_pb2.BuilderID(**BUILDER_METADATA),
+                  # Started 5 hours before the current build.
+                  start_time=timestamp_pb2.Timestamp(
+                      seconds=SIMULATED_CURRENT_BUILD_START_TIME - 5 * 60 * 60),
+                  output=GREEN_SNAPSHOT_OUTPUT_PROPERTIES,
+              ),
+          ],
+          'Check the previous LKGM CL generation.buildbucket.search'),
+  )
+
+  yield api.test(
+      'same-lkgm-version',
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=False,
+              current_lkgm_version='12345.0.0-12345',
+          )),
       api.buildbucket.ci_build(
           start_time=datetime.utcfromtimestamp(
               SIMULATED_CURRENT_BUILD_START_TIME), **BUILDER_METADATA),
@@ -92,9 +121,11 @@ def GenTests(api):
 
   yield api.test(
       'no-previous-builds',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=False,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=False,
+              current_lkgm_version='12345.0.0-12346',
+          )),
       api.buildbucket.ci_build(
           start_time=datetime.utcfromtimestamp(
               SIMULATED_CURRENT_BUILD_START_TIME), **BUILDER_METADATA),
@@ -113,25 +144,31 @@ def GenTests(api):
 
   yield api.test(
       'set_should_generate_lkgm_cl_as_false_with_custom_current_time',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=False,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=False,
+              current_lkgm_version='12345.0.0-12346',
+          )),
       api.snapshot_orch_menu.set_should_generate_lkgm_cl(
           False, current_build_start_time=SIMULATED_CURRENT_BUILD_START_TIME),
   )
 
   yield api.test(
       'set_should_generate_lkgm_cl_as_false',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=False,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=False,
+              current_lkgm_version='12345.0.0-12346',
+          )),
       api.snapshot_orch_menu.set_should_generate_lkgm_cl(False),
   )
 
   yield api.test(
       'set_should_generate_lkgm_cl_as_true',
-      api.properties(ShouldGenerateLkgmClProperties(
-          expected_result=True,
-      )),
+      api.properties(
+          ShouldGenerateLkgmClProperties(
+              expected_result=True,
+              current_lkgm_version='12345.0.0-12346',
+          )),
       api.snapshot_orch_menu.set_should_generate_lkgm_cl(True),
   )

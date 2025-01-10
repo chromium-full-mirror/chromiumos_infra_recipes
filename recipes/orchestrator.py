@@ -32,6 +32,7 @@ DEPS = [
     'cros_source',
     'cros_tags',
     'cros_try',
+    'cros_version',
     'easy',
     'orch_menu',
     'signing',
@@ -135,8 +136,10 @@ def DoRunSteps(api: RecipeApi):
       gs_path = 'LATEST-staging' if api.build_menu.is_staging else 'main-release'
       api.cros_artifacts.publish_latest_files('chromeos-image-archive', gs_path)
 
-    api.cros_lkgm.do_lkgm(api.orch_menu.builds_status.completed_builds,
-                          use_branch=not api.cros_source.is_tot)
+    api.cros_lkgm.do_lkgm(
+        api.orch_menu.builds_status.completed_builds,
+        lkgm_version=api.cros_version.version.platform_version,
+        use_branch=not api.cros_source.is_tot)
 
   # Launch any specified follow on orchestrator.
   api.orch_menu.run_follow_on_orchestrator()

@@ -39,8 +39,8 @@ def RunSteps(api, properties):
     api.cros_lkgm.collect_public_build()
 
   api.cros_lkgm.do_lkgm(
-      properties.release_builds, use_branch=properties.use_branch,
-      use_snapshot=properties.use_snapshot,
+      properties.release_builds, lkgm_version='1234.56.0',
+      use_branch=properties.use_branch,
       internal_manifest_position=properties.internal_manifest_position,
       external_manifest_position=properties.external_manifest_position)
 
@@ -94,7 +94,6 @@ def GenTests(api):
             DoLkgmProperties(release_builds=release_builds,
                              use_branch=use_branch,
                              skip_public_build=skip_public_build),
-            use_snapshot=kwargs.pop('use_snapshot', False),
             internal_manifest_position=123456,
             external_manifest_position=7654321,
         ),
@@ -298,7 +297,7 @@ def GenTests(api):
           9999999, 'create buildspec.read chromeos version.read snapshot'),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'LKGM candidate'), release_builds=create_builds(2, 1),
-      skip_public_build=True, full_run=True, use_snapshot=True)
+      skip_public_build=True, full_run=True)
 
   yield lgkm_test(
       'snapshot-not-candidate',
@@ -308,8 +307,7 @@ def GenTests(api):
           9999999, 'create buildspec.read chromeos version.read snapshot'),
       api.post_check(post_process.StepTextEquals, 'assess LKGM readiness',
                      'not an LKGM candidate'),
-      release_builds=create_builds(1, 2), skip_public_build=True, full_run=True,
-      use_snapshot=True)
+      release_builds=create_builds(1, 2), skip_public_build=True, full_run=True)
 
   # Test the case of failure on `chrome_chromeos_lkgm` script call.
   yield lgkm_test(

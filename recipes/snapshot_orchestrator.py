@@ -97,10 +97,18 @@ def DoRunSteps(api: RecipeApi):
 
   # Generate LKGM uprev CL if the condition meets.
   if snapshot_identifier:
+    with api.step.nest('retrieving platform version') as presentation:
+      version_str = api.cros_version.version.platform_version
+      with api.step.nest('retrieving snapshot identifier') as presentation2:
+        snapshot_identifier = api.cros_snapshot.snapshot_identifier()
+        if snapshot_identifier:
+          presentation2.step_text = snapshot_identifier
+          version_str += f'-{snapshot_identifier}'
+
     with api.step.nest('generate a LKGM uprev CL') as presentation:
-      if api.snapshot_orch_menu.should_generate_lkgm_cl():
+      if api.snapshot_orch_menu.should_generate_lkgm_cl(version_str):
         api.cros_lkgm.do_lkgm(
-            builds_status.completed_builds, use_snapshot=True,
+            builds_status.completed_builds, lkgm_version=version_str,
             internal_manifest_position=internal_manifest_position,
             external_manifest_position=external_manifest_position)
       else:

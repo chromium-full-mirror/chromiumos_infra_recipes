@@ -13770,13 +13770,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "retrieving platform version",
-    "~followup_annotations": [
-      "@@@STEP_TEXT@1234.56.0@@@"
-    ]
-  },
-  {
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/chrome_chromeos_lkgm",
       "--lkgm",

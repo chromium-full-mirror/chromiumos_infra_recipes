@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "Check the previous LKGM CL generation",
     "~followup_annotations": [
-      "@@@STEP_TEXT@The previous generation was in go/bbid/0. Its manifest is 18000 second older than the current manifest. 18000 second is not longer than the threshold.@@@"
+      "@@@STEP_TEXT@The previously generate LKGM CL is newer than the current(12345.0.0-12345 vs 12345.0.0-12345)Maybe this build took longer time than usual.@@@"
     ]
   },
   {
