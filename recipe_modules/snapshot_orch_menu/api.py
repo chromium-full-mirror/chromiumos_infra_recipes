@@ -561,7 +561,7 @@ class SnapshotOrchMenuApi(recipe_api.RecipeApi):
     snapshot-orchstrator.
     """
 
-    FIELDS = ['output.properties', 'end_time']
+    FIELDS = ['output.properties', 'start_time']
 
     is_staging = self.m.cros_infra_config.is_staging
     builder_and_bucket = ('staging-snapshot-orchestrator',
