@@ -786,35 +786,40 @@
     "cmd": [],
     "name": "Check pre-uprev results.chromeos-betty-chrome-preuprev",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- chromeos-betty-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/102114593)\n> Test SUCCESS\n@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Check pre-uprev results.chromeos-brya-chrome-preuprev",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n> Test SUCCESS\n@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Check pre-uprev results.chromeos-jacuzzi-chrome-preuprev",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n> Test SUCCESS\n@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Check pre-uprev results.chromeos-volteer-chrome-preuprev",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n> Test SUCCESS\n@@@"
     ]
   },
   {
     "cmd": [],
     "name": "Check pre-uprev results.linux-chromeos-chrome-preuprev",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_SUMMARY_TEXT@- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n> Test SUCCESS\n@@@"
     ]
   },
   {
@@ -827,7 +832,11 @@
   },
   {
     "cmd": [],
-    "name": "Wait chrome-best-revision-continuous"
+    "name": "Wait chrome-best-revision-continuous",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@Best revision at 1100000 but want 1122332@@@",
+      "@@@STEP_FAILURE@@@"
+    ]
   },
   {
     "cmd": [

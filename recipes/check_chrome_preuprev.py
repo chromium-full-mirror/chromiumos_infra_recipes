@@ -9,7 +9,7 @@ This recipe lives on its own because it is agnostic of ChromeOS build targets.
 """
 
 from collections import namedtuple
-from typing import List, Optional
+from typing import List, Optional, Tuple
 import json
 import re
 import hashlib
@@ -30,6 +30,7 @@ from RECIPE_MODULES.chromeos.pupr_local_uprev.api import UPREV_VERSION_LABEL
 DEPS = [
     'recipe_engine/buildbucket',
     'recipe_engine/context',
+    'recipe_engine/futures',
     'recipe_engine/resultdb',
     'recipe_engine/time',
     'recipe_engine/step',
@@ -207,6 +208,55 @@ def BestChromeRevision(api: RecipeApi) -> Optional[int]:
   return best_revision
 
 
+def CheckPreUprevs(
+    api: RecipeApi, build_ids: List[int]
+) -> Tuple[List[build_pb2.Build], List[build_pb2.Build]]:
+  with api.step.nest('Check pre-uprev results'):
+    builds = api.buildbucket.collect_builds(build_ids,
+                                            fields=BUILD_FIELDS_TO_RETRIEVE,
+                                            timeout=WAIT_PREUPREV_TIMEOUT_SEC)
+    builders = list(builds.values())
+
+    successful_builds, failed_builds = [], []
+    for builder in builders:
+      with api.step.nest(f'{builder.builder.builder}',
+                         status='last') as task_step:
+        if builder.status == common_pb2.SUCCESS:
+          successful_builds.append(builder)
+          task_step.status = api.step.SUCCESS
+        else:
+          failed_builds.append(builder)
+          task_step.status = (
+              api.step.FAILURE
+              if builder.status == common_pb2.FAILURE else api.step.EXCEPTION)
+        task_step.step_summary_text = ToBuildersLinkMd([builder],
+                                                       include_details=True)
+
+    api.easy.set_properties_step(
+        'set failed test builder ids as output properties',
+        failed_builds=[int(builder.id) for builder in failed_builds])
+
+    return builders, failed_builds
+
+
+def WaitChromeBestRevision(api: RecipeApi,
+                           target_chrome_revision: int) -> Optional[int]:
+  with api.step.nest('Wait chrome-best-revision-continuous') as step:
+    got_best_revision = None
+    for i in range(FETCH_BEST_CHROME_REVISION_TIMES):
+      got_best_revision = BestChromeRevision(api)
+      if got_best_revision and got_best_revision >= target_chrome_revision:
+        step.step_summary_text = f'Best revision reached {got_best_revision}'
+        return got_best_revision
+      if i < FETCH_BEST_CHROME_REVISION_TIMES - 1:
+        api.time.sleep(FETCH_BEST_CHROME_REVISION_INTERVAL)
+
+    step.step_summary_text = (f'Best revision at {got_best_revision} '
+                              f'but want {target_chrome_revision}')
+    step.status = api.step.FAILURE
+    return got_best_revision
+
+
 def RunSteps(api: RecipeApi):
   cl = api.buildbucket.build.input.gerrit_changes
   if not cl:
@@ -258,57 +308,32 @@ def RunSteps(api: RecipeApi):
         [inv[len(INVOCATION_PREFIX):] for inv in invocations],
         'include invocations from pre-uprev builders')
 
-  with api.step.nest('Check pre-uprev results') as step:
-    builds = api.buildbucket.collect_builds(
-        ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
-        timeout=WAIT_PREUPREV_TIMEOUT_SEC)
-    builders = list(builds.values())
+  check_chrome_preuprev_thread = api.futures.spawn_immediate(
+      CheckPreUprevs, api, ToBuilderIds(preuprevs))
+  wait_chrome_best_revision_thread = api.futures.spawn_immediate(
+      WaitChromeBestRevision, api,
+      target_chrome_revision) if target_chrome_revision else None
 
-    successful_builds, failed_builds = [], []
-    for builder in builders:
-      with api.step.nest(f'{builder.builder.builder}',
-                         status='last') as task_step:
-        if builder.status == common_pb2.SUCCESS:
-          successful_builds.append(builder)
-          task_step.status = api.step.SUCCESS
-        else:
-          failed_builds.append(builder)
-          task_step.status = (
-              api.step.FAILURE
-              if builder.status == common_pb2.FAILURE else api.step.EXCEPTION)
-          task_step.step_summary_text = builder.summary_markdown
+  builds, failed_builds = check_chrome_preuprev_thread.result()
+  best_revision = wait_chrome_best_revision_thread.result(
+  ) if wait_chrome_best_revision_thread else None
 
-    api.easy.set_properties_step(
-        'set failed test builder ids as output properties',
-        failed_builds=[int(builder.id) for builder in failed_builds])
-
-    if len(failed_builds) > 0:
-      return RawResult(
-          status=common_pb2.FAILURE,
-          summary_markdown=FAILED_PRE_UPREVS_SUMMARY.format(
-              ToBuildersLinkMd(builders, include_details=True)))
+  if len(failed_builds) > 0:
+    return RawResult(
+        status=common_pb2.FAILURE,
+        summary_markdown=FAILED_PRE_UPREVS_SUMMARY.format(
+            ToBuildersLinkMd(builds, include_details=True)))
 
   if target_chrome_revision:
-    with api.step.nest('Wait chrome-best-revision-continuous') as step:
-      best_revision = None
-      for i in range(FETCH_BEST_CHROME_REVISION_TIMES):
-        got_best_revision = BestChromeRevision(api)
-        if got_best_revision:
-          best_revision = got_best_revision
-        if best_revision and best_revision >= target_chrome_revision:
-          break
-        if i < FETCH_BEST_CHROME_REVISION_TIMES - 1:
-          api.time.sleep(FETCH_BEST_CHROME_REVISION_INTERVAL)
-
-      if best_revision is None or best_revision < target_chrome_revision:
-        return RawResult(
-            status=common_pb2.FAILURE,
-            summary_markdown=CHROME_CI_NOT_GOOD.format(best_revision,
-                                                       target_chrome_revision))
+    if best_revision is None or best_revision < target_chrome_revision:
+      return RawResult(
+          status=common_pb2.FAILURE,
+          summary_markdown=CHROME_CI_NOT_GOOD.format(best_revision,
+                                                     target_chrome_revision))
 
   return RawResult(
-      status=common_pb2.SUCCESS, summary_markdown=PRE_UPREV_PASS_SUMMARY.format(
-          ToBuildersLinkMd(builders)))
+      status=common_pb2.SUCCESS,
+      summary_markdown=PRE_UPREV_PASS_SUMMARY.format(ToBuildersLinkMd(builds)))
 
 
 
