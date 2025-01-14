@@ -280,7 +280,7 @@ def RunSteps(api: RecipeApi):
 
     api.easy.set_properties_step(
         'set failed test builder ids as output properties',
-        failed_builds=[builder.id for builder in failed_builds])
+        failed_builds=[int(builder.id) for builder in failed_builds])
 
     if len(failed_builds) > 0:
       return RawResult(
