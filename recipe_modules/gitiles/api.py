@@ -112,7 +112,7 @@ class GitilesApi(recipe_api.RecipeApi):
 
   def get_file(self, host, project, path, ref=None, public=True,
                credential_cookie_location=None, step_name=None,
-               test_output_data=None):
+               test_output_data=None, retries=0):
     """Return the contents of a file hosted on Gitiles.
 
     Curl will return a zero exit status on many occasions if the server
@@ -131,6 +131,7 @@ class GitilesApi(recipe_api.RecipeApi):
           Default: '~/.git-credential-cache/cookie'.
       step_name: (str): Name of the step.
       test_output_data (str): Test output for curl.
+      retries: (int): number of retires on transient errors.
 
     Returns:
       (str) The contents of the file as a string, None on 404, or raise
@@ -141,6 +142,7 @@ class GitilesApi(recipe_api.RecipeApi):
         credential_cookie_location or self.m.path.join(
             self.m.path.home_dir, _DEFAULT_CREDENTIAL_COOKIE_LOCATION))
     cred_cache_cmd = [] if public else ['-b', credential_cookie_location]
+    curl_retry_cmd = ['--retry', str(retries)] if retries else []
     ref = ref or 'HEAD'
     file_url_part = '/'.join((project, '+', ref, path))
     url = parse.urlunparse(
@@ -150,7 +152,7 @@ class GitilesApi(recipe_api.RecipeApi):
           'curl %s' % url,
           # TODO(b/385314410): Use --fail-with-body once all bots have newer curl.
           ['curl', '-f', '--write-out', 'HTTP_CODE=%{http_code}'] +
-          cred_cache_cmd + [url],
+          cred_cache_cmd + curl_retry_cmd + [url],
           stdout=self.m.raw_io.output(),
           # curl returns retcode of 22 when requested resource is not fetched..
           # This return code is only returned with -f specified. Without -f it

@@ -136,9 +136,9 @@ def parse_lkgm_change_info(
   for revision, revision_info in change_info['revisions'].items():
     new_version = api.gitiles.get_file(
         GITILES_HOST, 'chromium/src', 'chromeos/CHROMEOS_LKGM', ref=revision,
-        test_output_data=base64.b64encode(b'16110.0.0-1065034'))
+        retries=10, test_output_data=base64.b64encode(b'16110.0.0-1065034'))
     old_version = api.gitiles.get_file(
-        GITILES_HOST, 'chromium/src', 'chromeos/CHROMEOS_LKGM',
+        GITILES_HOST, 'chromium/src', 'chromeos/CHROMEOS_LKGM', retries=10,
         ref=revision_info['commit']['parents'][0]['commit'],
         test_output_data=base64.b64encode(b'16109.0.0-1065024'))
     if new_version and old_version and new_version != old_version:

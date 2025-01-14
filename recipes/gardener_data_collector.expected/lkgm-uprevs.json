@@ -123,6 +123,8 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
       "https://chromium.googlesource.com/chromium/src/+/3256278a456c50c062fd5b8b082b8107e9c77a1f/chromeos/CHROMEOS_LKGM?format=TEXT"
     ],
     "name": "find last 7-day LKGM CLs.fetch gitiles file.curl https://chromium.googlesource.com/chromium/src/+/3256278a456c50c062fd5b8b082b8107e9c77a1f/chromeos/CHROMEOS_LKGM?format=TEXT",
@@ -145,6 +147,8 @@
       "-f",
       "--write-out",
       "HTTP_CODE=%{http_code}",
+      "--retry",
+      "10",
       "https://chromium.googlesource.com/chromium/src/+/821901f8a13683d50420293f2e14cce7b9ccd49b/chromeos/CHROMEOS_LKGM?format=TEXT"
     ],
     "name": "find last 7-day LKGM CLs.fetch gitiles file (2).curl https://chromium.googlesource.com/chromium/src/+/821901f8a13683d50420293f2e14cce7b9ccd49b/chromeos/CHROMEOS_LKGM?format=TEXT",
