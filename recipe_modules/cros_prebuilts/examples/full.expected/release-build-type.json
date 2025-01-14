@@ -360,7 +360,7 @@
   },
   {
     "failure": {
-      "humanReason": "Uncaught Exception: ValueError('Enum BinhostKey has no value defined for name 'RELEASE_BINHOST'')"
+      "humanReason": "Uncaught Exception: ValueError(\"Enum BinhostKey has no value defined for name 'RELEASE_BINHOST'\")"
     },
     "name": "$result"
   }
