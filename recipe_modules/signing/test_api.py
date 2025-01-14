@@ -42,6 +42,11 @@ SIGNING_CONFIG_TEST_DATA = '''build_target_signing_configs {
     ensure_no_password: true
     firmware_update: true
   }
+  signing_configs {
+    image_type: IMAGE_TYPE_FLEXOR_KERNEL
+    ensure_no_password: true
+    firmware_update: true
+  }
 }'''
 
 

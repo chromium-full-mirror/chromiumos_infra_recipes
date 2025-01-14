@@ -10,10 +10,10 @@ from google.protobuf.json_format import MessageToDict, MessageToJson
 from PB.chromite.api.image import SignImageResponse
 from PB.chromiumos import build_report as build_report_pb2  # pylint: disable=unused-import
 from PB.chromiumos import signing as signing_pb2  # pylint: disable=unused-import
-from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV, IMAGE_TYPE_BASE,
-                                  IMAGE_TYPE_FACTORY, IMAGE_TYPE_RECOVERY,
-                                  IMAGE_TYPE_FIRMWARE,
-                                  IMAGE_TYPE_ACCESSORY_RWSIG)
+from PB.chromiumos.common import (CHANNEL_CANARY, CHANNEL_DEV,
+                                  IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_BASE,
+                                  IMAGE_TYPE_FACTORY, IMAGE_TYPE_FIRMWARE,
+                                  IMAGE_TYPE_FLEXOR_KERNEL, IMAGE_TYPE_RECOVERY)
 from PB.chromiumos.signing import BuildTargetSigningConfig, SigningConfig
 from PB.recipe_modules.chromeos.signing.signing import SigningProperties
 from recipe_engine import post_process
@@ -76,13 +76,18 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
           ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+              ensure_no_password=True,
+              firmware_update=True,
+          ),
       ],
   )
   api.assertions.assertEqual(config, expected_config)
 
   sign_types = [
       IMAGE_TYPE_BASE, IMAGE_TYPE_FIRMWARE, IMAGE_TYPE_RECOVERY,
-      IMAGE_TYPE_ACCESSORY_RWSIG
+      IMAGE_TYPE_ACCESSORY_RWSIG, IMAGE_TYPE_FLEXOR_KERNEL
   ]
   channels = [CHANNEL_CANARY, CHANNEL_DEV]
 
@@ -131,6 +136,14 @@ def RunSteps(api: RecipeApi):
               recovery_zip=True,
           ),
           SigningConfig(
+              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+              channel=CHANNEL_CANARY,
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='flexor_vmlinuz.tar.zst',
+              recovery_zip=True,
+          ),
+          SigningConfig(
               image_type=IMAGE_TYPE_BASE,
               channel=CHANNEL_DEV,
               keyset=expected_keyset,
@@ -162,6 +175,14 @@ def RunSteps(api: RecipeApi):
               ensure_no_password=True,
               firmware_update=True,
               archive_path='firmware_from_source.tar.bz2',
+              recovery_zip=True,
+          ),
+          SigningConfig(
+              image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+              channel=CHANNEL_DEV,
+              ensure_no_password=True,
+              firmware_update=True,
+              archive_path='flexor_vmlinuz.tar.zst',
               recovery_zip=True,
           ),
       ],

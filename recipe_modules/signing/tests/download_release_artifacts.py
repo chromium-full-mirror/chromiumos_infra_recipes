@@ -5,7 +5,7 @@
 
 """Tests for download_release_artifacts."""
 
-from PB.chromiumos.common import IMAGE_TYPE_RECOVERY, IMAGE_TYPE_SHELLBALL
+from PB.chromiumos.common import IMAGE_TYPE_FLEXOR_KERNEL, IMAGE_TYPE_RECOVERY, IMAGE_TYPE_SHELLBALL
 
 from PB.chromiumos.signing import SigningConfig
 from PB.recipe_modules.chromeos.cros_artifacts.cros_artifacts import \
@@ -106,6 +106,31 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.DoesNotRun, 'download release artifacts.gsutil download '
           'recovery_image.tar.xz from chromeos-image-archive/'
+          'amd64-generic-release/R99-1234.56.0-101'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  flexor_signing_configs = [
+      SigningConfig(
+          image_type=IMAGE_TYPE_FLEXOR_KERNEL,
+          keyset='amd64-generic-foo-bar',
+          ensure_no_password=True,
+          firmware_update=True,
+      )
+  ]
+  yield api.build_menu.test(
+      'flexor',
+      api.properties(
+          **{
+              '$chromeos/cros_artifacts':
+                  CrosArtifactsProperties(
+                      gs_upload_path='{target}-release/{version}'),
+          }),
+      api.properties(
+          SigningTestProperties(signing_configs=flexor_signing_configs)),
+      api.post_check(
+          post_process.MustRun, 'download release artifacts.gsutil download '
+          'flexor_vmlinuz.tar.zst from chromeos-image-archive/'
           'amd64-generic-release/R99-1234.56.0-101'),
       api.post_process(post_process.DropExpectation),
   )

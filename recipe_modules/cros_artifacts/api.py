@@ -32,6 +32,7 @@ ARTIFACTS_BY_IMAGE_TYPE = {
     common_pb2.IMAGE_TYPE_BASE: 'chromiumos_base_image.tar.xz',
     common_pb2.IMAGE_TYPE_FACTORY: 'factory_image.zip',
     common_pb2.IMAGE_TYPE_FIRMWARE: 'firmware_from_source.tar.bz2',
+    common_pb2.IMAGE_TYPE_FLEXOR_KERNEL: 'flexor_vmlinuz.tar.zst',
     common_pb2.IMAGE_TYPE_GSC_FIRMWARE: 'firmware_from_source.tar.bz2',
     common_pb2.IMAGE_TYPE_HPS_FIRMWARE: 'firmware_from_source.tar.bz2',
     common_pb2.IMAGE_TYPE_RECOVERY: 'recovery_image.tar.xz',

@@ -430,7 +430,7 @@ class SigningApi(recipe_api.RecipeApi):
     # Files to always download for other sign types.
     build_target = self.m.build_menu.build_target.name
     version = self.m.cros_version.version.platform_version
-    return [
+    to_download = [
         'image.zip',
         'chromiumos_test_image.tar.xz',
         'debug.tgz',
@@ -444,6 +444,11 @@ class SigningApi(recipe_api.RecipeApi):
         'factory_image.zip',
         'firmware_from_source.tar.bz2',
     ]
+    if any(x in sign_types for x in [
+        common_pb2.IMAGE_TYPE_FLEXOR_KERNEL,
+    ]):
+      to_download.append('flexor_vmlinuz.tar.zst')
+    return to_download
 
   def download_release_artifacts(
       self, relevant_signing_configs: List[SigningConfig]
