@@ -594,7 +594,9 @@ class CrosBuildApiTestApi(recipe_test_api.RecipeTestApi):
         'category': 'category',
         'version': 'version'
     })
-    responses['GetChromeVersion'] = jsonify(version='version',)
+    responses['GetChromeVersion'] = jsonify(
+        version='version',
+        commit_hash='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
     responses['GetTargetVersions'] = jsonify(
         android_version='1',
         android_branch_version='git_rvc-arc',

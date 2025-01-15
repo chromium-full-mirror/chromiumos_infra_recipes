@@ -9,7 +9,7 @@ import datetime
 import re
 
 from pathlib import Path
-from typing import Optional, List
+from typing import Optional, List, Tuple
 
 from recipe_engine import recipe_api
 from recipe_engine.engine_types import StepPresentation
@@ -117,11 +117,12 @@ class ChromeApi(recipe_api.RecipeApi):
     self._chrome_root = None
 
   def _get_local_version(self, chroot: Chroot,
-                         build_target: BuildTarget) -> str:
-    """Returns chrome version from local chroot (e.g. "84.0.4109.1")."""
+                         build_target: BuildTarget) -> Tuple[str, str]:
+    """Returns chrome version and commit hash from local chroot."""
     request = GetChromeVersionRequest(chroot=chroot, build_target=build_target)
-    return self.m.cros_build_api.PackageService.GetChromeVersion(
-        request, infra_step=True).version
+    response = self.m.cros_build_api.PackageService.GetChromeVersion(
+        request, infra_step=True)
+    return response.version, response.commit_hash
 
   def cache_sync(self, cache_path: Path, sync: bool = True,
                  step_name: str = 'sync chrome') -> None:
@@ -246,6 +247,7 @@ class ChromeApi(recipe_api.RecipeApi):
       omit_version: Omit the version from the sync command. Defaults to False.
     """
     with self.m.step.nest('sync chrome') as pres:
+      commit_hash = ''
       if override_version:
         version = override_version
       elif omit_version:
@@ -254,7 +256,7 @@ class ChromeApi(recipe_api.RecipeApi):
         if self._version or self._deps_cas:
           version = self._version
         else:
-          version = self._get_local_version(chroot, build_target)
+          version, commit_hash = self._get_local_version(chroot, build_target)
 
       self.m.file.ensure_directory('ensure chrome root', chrome_root)
 
@@ -275,7 +277,9 @@ class ChromeApi(recipe_api.RecipeApi):
           soln.deps_file = str(chrome_root) + '/DEPS'
           self.m.file.read_text('read DEPS', soln.deps_file, test_data='DEPS')
 
-        if version:
+        if commit_hash:
+          soln.revision = commit_hash
+        elif version:
           soln.revision = version
 
         config_cmd = [
@@ -296,7 +300,9 @@ class ChromeApi(recipe_api.RecipeApi):
             '--delete_unversioned_trees',
         ]
 
-        if version:
+        if commit_hash:
+          sync_cmd.extend(['--revision', 'src@%s' % commit_hash])
+        elif version:
           sync_cmd.extend(['--revision', 'src@%s' % version])
 
         # TODO(b/332670189): Remove support when we stop building branches
@@ -464,10 +470,11 @@ class ChromeApi(recipe_api.RecipeApi):
     """
     if self.diffed_files_requires_rebuild(patch_sets=patch_sets):
       with self.m.step.nest('try uprev chrome'):
-        version = self._get_local_version(chroot, build_target)
+        version, commit_hash = self._get_local_version(chroot, build_target)
         version_ref = UprevVersionedPackageRequest.GitRef(
-            repository='/chromium/src', ref='refs/tags/%s' % version,
-            revision='deadbeefdeadbeefdeadbeefdeadbeefdeadbeef')
+            repository='/chromium/src', ref='refs/heads/main'
+            if '_pre' in version else f'refs/tags/{version}',
+            revision=commit_hash if commit_hash else '')
         request = UprevVersionedPackageRequest(
             chroot=chroot,
             package_info=CHROME_PACKAGE,
