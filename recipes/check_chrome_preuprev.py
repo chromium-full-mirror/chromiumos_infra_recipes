@@ -50,13 +50,13 @@ INVOCATION_PREFIX = 'invocations/'
 NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
 PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed. \n\nDetails: \n\n{}\n'
+DO_NOT_CHUMP_THIS_CL = "ABSOLUTELY DO NOT CHUMP THIS CL\n\n"
 FAILED_PRE_UPREVS_SUMMARY = (
     # Error notice
     'Pre-uprev testing not passed, details:\n\n{}\n\n'
     # Possible action items
     'Please check the test failures, fix the failures (land a fix or revert '
-    'culprit on Chromium) and wait for next pre-uprev. You can override by '
-    'chump the CL but it is strongly discouraged.')
+    'culprit on Chromium) and wait for next pre-uprev.')
 REQUIRED_PRE_UPREV_BUILDERS_MISSING_SUMMARY = (
     # Error notice
     'Failed to find required pre-uprev builders\n'
@@ -308,6 +308,8 @@ def RunSteps(api: RecipeApi):
         [inv[len(INVOCATION_PREFIX):] for inv in invocations],
         'include invocations from pre-uprev builders')
 
+  errors = []
+  error_do_no_chump = False
   check_chrome_preuprev_thread = api.futures.spawn_immediate(
       CheckPreUprevs, api, ToBuilderIds(preuprevs))
   wait_chrome_best_revision_thread = api.futures.spawn_immediate(
@@ -319,17 +321,22 @@ def RunSteps(api: RecipeApi):
   ) if wait_chrome_best_revision_thread else None
 
   if len(failed_builds) > 0:
-    return RawResult(
-        status=common_pb2.FAILURE,
-        summary_markdown=FAILED_PRE_UPREVS_SUMMARY.format(
+    errors.append(
+        FAILED_PRE_UPREVS_SUMMARY.format(
             ToBuildersLinkMd(builds, include_details=True)))
 
   if target_chrome_revision:
     if best_revision is None or best_revision < target_chrome_revision:
-      return RawResult(
-          status=common_pb2.FAILURE,
-          summary_markdown=CHROME_CI_NOT_GOOD.format(best_revision,
-                                                     target_chrome_revision))
+      error_do_no_chump = True
+      errors.append(
+          CHROME_CI_NOT_GOOD.format(best_revision, target_chrome_revision))
+
+  if errors:
+    return RawResult(
+        status=common_pb2.FAILURE,
+        summary_markdown=((DO_NOT_CHUMP_THIS_CL if error_do_no_chump else '') +
+                          '%d errors checking Chrome uprev criteria:\n\n\n\n' %
+                          (len(errors)) + '\n\n\n\n'.join(errors)))
 
   return RawResult(
       status=common_pb2.SUCCESS,
@@ -544,6 +551,8 @@ def GenTests(api: RecipeTestApi):
       pre_uprev_completed(api, 'Check pre-uprev results.buildbucket.collect'),
       chrome_best_revision(api, [1100000] * FETCH_BEST_CHROME_REVISION_TIMES),
       api.post_check(post_process.SummaryMarkdown, (
+          'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
+          '1 errors checking Chrome uprev criteria:\n\n\n\n'
           'Chrome best revision is currently at 1100000, want >=1122332\n'
           'All ChromeOS preuprev has passed but on other platforms '
           'Chrome best revision is behind current version.\n'
@@ -655,7 +664,8 @@ def GenTests(api: RecipeTestApi):
                           chromeos_betty_chrome_preuprev=common_pb2.FAILURE),
       api.post_check(
           post_process.SummaryMarkdown,
-          ('Pre-uprev testing not passed, details:\n\n'
+          ('1 errors checking Chrome uprev criteria:\n\n\n\n'
+           'Pre-uprev testing not passed, details:\n\n'
            '- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n'
            '> Test FAILURE\n'
            '- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n'
@@ -667,8 +677,7 @@ def GenTests(api: RecipeTestApi):
            '- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n'
            '> Test SUCCESS\n\n\n'
            'Please check the test failures, fix the failures (land a fix or revert culprit on Chromium) '
-           'and wait for next pre-uprev. You can override by chump the CL but it is strongly discouraged.'
-          ),
+           'and wait for next pre-uprev.'),
       ),
       api.post_check(post_process.PropertyEquals, 'failed_builds', [102114593]),
       api.post_check(post_process.DoesNotRun,

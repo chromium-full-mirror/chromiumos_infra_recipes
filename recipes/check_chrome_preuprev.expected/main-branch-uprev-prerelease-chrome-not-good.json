@@ -3354,7 +3354,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Chrome best revision is currently at 1100000, want >=1122332\nAll ChromeOS preuprev has passed but on other platforms Chrome best revision is behind current version.\nThis usually catches up in less than 2 hours, check https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous and try again. You can also just wait for next uprev."
+      "humanReason": "ABSOLUTELY DO NOT CHUMP THIS CL\n\n1 errors checking Chrome uprev criteria:\n\n\n\nChrome best revision is currently at 1100000, want >=1122332\nAll ChromeOS preuprev has passed but on other platforms Chrome best revision is behind current version.\nThis usually catches up in less than 2 hours, check https://ci.chromium.org/ui/p/chrome/builders/official.infra/chrome-best-revision-continuous and try again. You can also just wait for next uprev."
     },
     "name": "$result"
   }
