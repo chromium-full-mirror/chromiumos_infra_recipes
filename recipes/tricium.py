@@ -110,7 +110,6 @@ def _FullCheckout(api: RecipeApi):
               ('--enable=avoid-nullary-conditions,check-unassigned-uppercase,'
                'require-variable-braces,quote-safe-variables'),
           ]),
-      api.tricium.analyzers.SPELLCHECKER,
   ]
 
   with api.workspace_util.setup_workspace(), \
