@@ -179,6 +179,17 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
                 step_text=payload_name)
             if get_failure_reason(resp):
               return resp
+            # TODO: b/383845609 - Call bcid_verifier.verify_provenance.
+            # If reporting inputs, delete archives which have been extracted.
+            with api.step.nest('clean up payload inputs'):
+              for unsigned_payload in resp.unsigned_payloads:
+                if unsigned_payload.payload_inputs:
+                  for payload_input in unsigned_payload.payload_inputs:
+                    if payload_input.is_archive:
+                      api.file.remove(
+                          f'removing input archive {payload_input.path.path}',
+                          payload_input.path.path)
+
             finalize_req.payloads.extend(resp.unsigned_payloads)
             return api.cros_build_api.PayloadService.FinalizePayload(
                 finalize_req, name='finalizing single payload{}'.format(suffix),
@@ -1015,5 +1026,73 @@ def GenTests(api: RecipeTestApi):
       '120-update-chroot',
       'release-R120-15662.B',
       api.post_check(post_process.MustRun, 'initialization.update sdk'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'paygen-inputs',
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request':
+                      GenerationRequest(
+                          full_update=True,
+                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+                          bucket='b',
+                          verify=True,
+                          dryrun=True,
+                          use_local_signing=True,
+                          docker_image='us-docker.pkg.dev/chromeos-bot/signing/foo',
+                      ),
+              }], use_split_paygen=True),
+      ),
+      *generate_split_payload_response(
+          api, payloads=[{
+              'version':
+                  1,
+              'payload_file_path': {
+                  'path': '/tmp/aohiwdadoi/delta.bin',
+                  'location': 1,
+              },
+              'partition_names': ['foo-root', 'foo-kernel'],
+              'tgt_partitions': [{
+                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
+                  'location': 1,
+              }, {
+                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+                  'location': 1,
+              }],
+              'payload_inputs': [{
+                  'gs_path': 'gs://path-to-input',
+                  'path': {
+                      'path': '/tmp/local/path/to/input'
+                  },
+                  'is_archive': False
+              }, {
+                  'gs_path': 'gs://path-to-input-archive',
+                  'path': {
+                      'path': '/tmp/local/path/to/input/archive'
+                  },
+                  'is_archive': True
+              }]
+          }], versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin',
+              'file_path': {
+                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+                  'location': 2
+              }
+          }]),
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.clean up payload inputs.removing input archive /tmp/local/path/to/input'
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.clean up payload inputs.removing input archive /tmp/local/path/to/input/archive'
+      ),
+      api.post_check(
+          post_process.StepCommandContains, 'doing paygen.docker pull',
+          ['docker', 'pull', 'us-docker.pkg.dev/chromeos-bot/signing/foo']),
       api.post_process(post_process.DropExpectation),
   )
