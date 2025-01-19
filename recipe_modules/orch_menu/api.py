@@ -768,10 +768,13 @@ class OrchMenuApi(recipe_api.RecipeApi):
 
             # Request new builds and add to total existing.
             futures.append(
-                self.m.futures.spawn(self.m.buildbucket.schedule,
-                                     [new_build_request],
-                                     url_title_fn=self.m.naming.get_build_title,
-                                     step_name=builder_name))
+                self.m.futures.spawn(
+                    self.m.buildbucket.schedule,
+                    [new_build_request],
+                    url_title_fn=self.m.naming.get_build_title,
+                    step_name=builder_name,
+                    include_sub_invs=not (builder_name == 'chrome-uprev-cq'),
+                ))
             if self._properties.stagger_children_seconds:
               self.m.time.sleep(self._properties.stagger_children_seconds)
 
