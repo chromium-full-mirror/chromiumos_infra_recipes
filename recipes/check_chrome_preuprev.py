@@ -51,6 +51,13 @@ NO_CL_FOUND_SUMMARY = 'No CL found.'
 NOT_AN_UPREV_CL_SUMMARY = 'Not Chrome uprev CL.'
 PRE_UPREV_PASS_SUMMARY = 'Pre-uprev testing passed. \n\nDetails: \n\n{}\n'
 DO_NOT_CHUMP_THIS_CL = "ABSOLUTELY DO NOT CHUMP THIS CL\n\n"
+OVERALL_FAILURE_MESSAGE = (
+    "To disable a failed tests at this builder, disable at "
+    "[chromium/src/chromeos/tast_control.gni]"
+    "(https://source.chromium.org/chromium/chromium/src/+/main:"
+    "chromeos/tast_control.gni) instead.\n\n"
+    "Questions to this builder goes to g/chromeos-velocity or "
+    "g/chromeos-chrome-build, instead of CI oncall.\n\n")
 FAILED_PRE_UPREVS_SUMMARY = (
     # Error notice
     'Pre-uprev testing not passed, details:\n\n{}\n\n'
@@ -335,6 +342,7 @@ def RunSteps(api: RecipeApi):
     return RawResult(
         status=common_pb2.FAILURE,
         summary_markdown=((DO_NOT_CHUMP_THIS_CL if error_do_no_chump else '') +
+                          OVERALL_FAILURE_MESSAGE +
                           '%d errors checking Chrome uprev criteria:\n\n\n\n' %
                           (len(errors)) + '\n\n\n\n'.join(errors)))
 
@@ -552,6 +560,12 @@ def GenTests(api: RecipeTestApi):
       chrome_best_revision(api, [1100000] * FETCH_BEST_CHROME_REVISION_TIMES),
       api.post_check(post_process.SummaryMarkdown, (
           'ABSOLUTELY DO NOT CHUMP THIS CL\n\n'
+          "To disable a failed tests at this builder, disable at "
+          "[chromium/src/chromeos/tast_control.gni]"
+          "(https://source.chromium.org/chromium/chromium/src/+/main:"
+          "chromeos/tast_control.gni) instead.\n\n"
+          "Questions to this builder goes to g/chromeos-velocity or "
+          "g/chromeos-chrome-build, instead of CI oncall.\n\n"
           '1 errors checking Chrome uprev criteria:\n\n\n\n'
           'Chrome best revision is currently at 1100000, want >=1122332\n'
           'All ChromeOS preuprev has passed but on other platforms '
@@ -664,7 +678,13 @@ def GenTests(api: RecipeTestApi):
                           chromeos_betty_chrome_preuprev=common_pb2.FAILURE),
       api.post_check(
           post_process.SummaryMarkdown,
-          ('1 errors checking Chrome uprev criteria:\n\n\n\n'
+          ("To disable a failed tests at this builder, disable at "
+           "[chromium/src/chromeos/tast_control.gni]"
+           "(https://source.chromium.org/chromium/chromium/src/+/main:"
+           "chromeos/tast_control.gni) instead.\n\n"
+           "Questions to this builder goes to g/chromeos-velocity or "
+           "g/chromeos-chrome-build, instead of CI oncall.\n\n"
+           '1 errors checking Chrome uprev criteria:\n\n\n\n'
            'Pre-uprev testing not passed, details:\n\n'
            '- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n'
            '> Test FAILURE\n'
