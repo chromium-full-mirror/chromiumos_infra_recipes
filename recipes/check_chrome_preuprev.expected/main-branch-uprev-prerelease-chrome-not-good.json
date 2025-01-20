@@ -368,7 +368,7 @@
       }
     },
     "name": "Search Chrome builders matching buildset.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -462,7 +462,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -647,7 +647,7 @@
       }
     },
     "name": "Check pre-uprev results.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"102114593\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"284564751\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"281483114\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"992625145\"}}, {\"getBuild\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\", \"id\": \"425179835\"}}]}",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"102114593\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"284564751\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"281483114\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"992625145\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"425179835\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -744,31 +744,31 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"102114593\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"284564751\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"281483114\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"992625145\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    },@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
       "@@@STEP_LOG_LINE@request@        \"id\": \"425179835\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
@@ -859,7 +859,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:21Z\", \"startTime\": \"2012-05-14T04:53:21Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:21Z\", \"startTime\": \"2012-05-14T04:53:21Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -894,7 +894,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -943,7 +943,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (2)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:23Z\", \"startTime\": \"2012-05-14T04:53:23Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -978,7 +978,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1027,7 +1027,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (3)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:24Z\", \"startTime\": \"2012-05-14T04:53:24Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:24Z\", \"startTime\": \"2012-05-14T04:53:24Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1062,7 +1062,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1111,7 +1111,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (4)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:26Z\", \"startTime\": \"2012-05-14T04:53:26Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:26Z\", \"startTime\": \"2012-05-14T04:53:26Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1146,7 +1146,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1195,7 +1195,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (5)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:27Z\", \"startTime\": \"2012-05-14T04:53:27Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:27Z\", \"startTime\": \"2012-05-14T04:53:27Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1230,7 +1230,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1279,7 +1279,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (6)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:29Z\", \"startTime\": \"2012-05-14T04:53:29Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:29Z\", \"startTime\": \"2012-05-14T04:53:29Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1314,7 +1314,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1363,7 +1363,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (7)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:30Z\", \"startTime\": \"2012-05-14T04:53:30Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:30Z\", \"startTime\": \"2012-05-14T04:53:30Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1398,7 +1398,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1447,7 +1447,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (8)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:32Z\", \"startTime\": \"2012-05-14T04:53:32Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:32Z\", \"startTime\": \"2012-05-14T04:53:32Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1482,7 +1482,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1531,7 +1531,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (9)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:33Z\", \"startTime\": \"2012-05-14T04:53:33Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:33Z\", \"startTime\": \"2012-05-14T04:53:33Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1566,7 +1566,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1615,7 +1615,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (10)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:35Z\", \"startTime\": \"2012-05-14T04:53:35Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:35Z\", \"startTime\": \"2012-05-14T04:53:35Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1650,7 +1650,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1699,7 +1699,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (11)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:36Z\", \"startTime\": \"2012-05-14T04:53:36Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:36Z\", \"startTime\": \"2012-05-14T04:53:36Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1734,7 +1734,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1783,7 +1783,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (12)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:38Z\", \"startTime\": \"2012-05-14T04:53:38Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:38Z\", \"startTime\": \"2012-05-14T04:53:38Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1818,7 +1818,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1867,7 +1867,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (13)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:39Z\", \"startTime\": \"2012-05-14T04:53:39Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:39Z\", \"startTime\": \"2012-05-14T04:53:39Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1902,7 +1902,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -1951,7 +1951,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (14)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:41Z\", \"startTime\": \"2012-05-14T04:53:41Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:41Z\", \"startTime\": \"2012-05-14T04:53:41Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -1986,7 +1986,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2035,7 +2035,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (15)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:42Z\", \"startTime\": \"2012-05-14T04:53:42Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:42Z\", \"startTime\": \"2012-05-14T04:53:42Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2070,7 +2070,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2119,7 +2119,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (16)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:44Z\", \"startTime\": \"2012-05-14T04:53:44Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:44Z\", \"startTime\": \"2012-05-14T04:53:44Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2154,7 +2154,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2203,7 +2203,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (17)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:45Z\", \"startTime\": \"2012-05-14T04:53:45Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:45Z\", \"startTime\": \"2012-05-14T04:53:45Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2238,7 +2238,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2287,7 +2287,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (18)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:47Z\", \"startTime\": \"2012-05-14T04:53:47Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:47Z\", \"startTime\": \"2012-05-14T04:53:47Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2322,7 +2322,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2371,7 +2371,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (19)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:48Z\", \"startTime\": \"2012-05-14T04:53:48Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:48Z\", \"startTime\": \"2012-05-14T04:53:48Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2406,7 +2406,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2455,7 +2455,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (20)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:50Z\", \"startTime\": \"2012-05-14T04:53:50Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:50Z\", \"startTime\": \"2012-05-14T04:53:50Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2490,7 +2490,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2539,7 +2539,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (21)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:51Z\", \"startTime\": \"2012-05-14T04:53:51Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:51Z\", \"startTime\": \"2012-05-14T04:53:51Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2574,7 +2574,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2623,7 +2623,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (22)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:53Z\", \"startTime\": \"2012-05-14T04:53:53Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:53Z\", \"startTime\": \"2012-05-14T04:53:53Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2658,7 +2658,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2707,7 +2707,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (23)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:54Z\", \"startTime\": \"2012-05-14T04:53:54Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:54Z\", \"startTime\": \"2012-05-14T04:53:54Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2742,7 +2742,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2791,7 +2791,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (24)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:56Z\", \"startTime\": \"2012-05-14T04:53:56Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:56Z\", \"startTime\": \"2012-05-14T04:53:56Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2826,7 +2826,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2875,7 +2875,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (25)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:57Z\", \"startTime\": \"2012-05-14T04:53:57Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:57Z\", \"startTime\": \"2012-05-14T04:53:57Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2910,7 +2910,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -2959,7 +2959,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (26)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:59Z\", \"startTime\": \"2012-05-14T04:53:59Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:53:59Z\", \"startTime\": \"2012-05-14T04:53:59Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -2994,7 +2994,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -3043,7 +3043,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (27)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:00Z\", \"startTime\": \"2012-05-14T04:54:00Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:00Z\", \"startTime\": \"2012-05-14T04:54:00Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3078,7 +3078,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -3127,7 +3127,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (28)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:02Z\", \"startTime\": \"2012-05-14T04:54:02Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:02Z\", \"startTime\": \"2012-05-14T04:54:02Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3162,7 +3162,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -3211,7 +3211,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (29)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:03Z\", \"startTime\": \"2012-05-14T04:54:03Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:03Z\", \"startTime\": \"2012-05-14T04:54:03Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3246,7 +3246,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
@@ -3295,7 +3295,7 @@
       }
     },
     "name": "Wait chrome-best-revision-continuous.buildbucket.search (30)",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:05Z\", \"startTime\": \"2012-05-14T04:54:05Z\"}}}}]}",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,output.properties,status\"}, \"predicate\": {\"builder\": {\"bucket\": \"official.infra\", \"builder\": \"chrome-best-revision-continuous\", \"project\": \"chrome\"}, \"createTime\": {\"endTime\": \"2012-05-14T12:54:05Z\", \"startTime\": \"2012-05-14T04:54:05Z\"}}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3330,7 +3330,7 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,cancellationMarkdown,id,infra.resultdb,input,output,status,steps,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,output.properties,status\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",

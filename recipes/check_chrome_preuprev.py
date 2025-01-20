@@ -90,18 +90,20 @@ NOT_AN_UPREV_CL = RawResult(status=common_pb2.SUCCESS,
 PRE_UPREV_STATUS_BBID_EXTRACTOR = re.compile(
     r'[A-Za-z]* https://ci.chromium.org/ui/b/(\d+)')
 
-BUILD_FIELDS_TO_RETRIEVE = [
+PREUPREV_BUILD_FIELDS_TO_RETRIEVE = [
     'builder',
-    'cancellation_markdown',
     'id',
-    'input',
-    'output',
     'status',
-    'steps',
     'summary_markdown',
-    'infra.resultdb',
+    'infra.resultdb.invocation',
 ]
 
+CHROME_BEST_REVISION_FIELDS_TO_RETRIEVE = [
+    'builder',
+    'id',
+    'output.properties',
+    'status',
+]
 
 WantedBuildConfig = namedtuple('WantedBuildConfig', ['oneof'])
 
@@ -204,7 +206,7 @@ def BestChromeRevision(api: RecipeApi) -> Optional[int]:
               start_time=start_time,
               end_time=end_time,
           ),
-      ), fields=BUILD_FIELDS_TO_RETRIEVE)
+      ), fields=CHROME_BEST_REVISION_FIELDS_TO_RETRIEVE)
   best_revision = None
   for build in builds:
     output = json_format.MessageToDict(build.output, struct_pb2.Struct)
@@ -219,9 +221,9 @@ def CheckPreUprevs(
     api: RecipeApi, build_ids: List[int]
 ) -> Tuple[List[build_pb2.Build], List[build_pb2.Build]]:
   with api.step.nest('Check pre-uprev results'):
-    builds = api.buildbucket.collect_builds(build_ids,
-                                            fields=BUILD_FIELDS_TO_RETRIEVE,
-                                            timeout=WAIT_PREUPREV_TIMEOUT_SEC)
+    builds = api.buildbucket.collect_builds(
+        build_ids, fields=PREUPREV_BUILD_FIELDS_TO_RETRIEVE,
+        timeout=WAIT_PREUPREV_TIMEOUT_SEC)
     builders = list(builds.values())
 
     successful_builds, failed_builds = [], []
@@ -293,7 +295,7 @@ def RunSteps(api: RecipeApi):
             }, tags=api.buildbucket.tags(
                 buildset=f'commit/gitiles/chromium.googlesource.com/chromium/src/+/{chrome_commit}'
             )),
-        fields=BUILD_FIELDS_TO_RETRIEVE,
+        fields=PREUPREV_BUILD_FIELDS_TO_RETRIEVE,
     )
     preuprevs = PreUprevBuilders(api, builds)
     if preuprevs is None:
