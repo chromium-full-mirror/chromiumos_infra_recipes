@@ -13,6 +13,7 @@ from google.protobuf import timestamp_pb2
 
 from PB.go.chromium.org.luci.buildbucket.proto import build as build_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import builder_common as builder_common_pb2
+from PB.go.chromium.org.luci.buildbucket.proto import builds_service as builds_service_pb2
 from PB.go.chromium.org.luci.buildbucket.proto import common as common_pb2
 from PB.recipe_engine import result as result_pb2
 from PB.recipes.chromeos.chrome_uprev_orchestrator import InputProperties
@@ -24,6 +25,7 @@ PROPERTIES = InputProperties
 
 DEPS = [
     'recipe_engine/buildbucket',
+    'recipe_engine/futures',
     'recipe_engine/json',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
@@ -180,37 +182,18 @@ def TriggerCrosBuild(api: RecipeApi, properties: dict, bucket: str,
   )
   return api.m.buildbucket.schedule([request])[0]
 
-def TriggerChromeBuild(
-    api: RecipeApi, builder: str,
-    buildset: common_pb2.GitilesCommit) -> Optional[build_pb2.Build]:
-  with api.step.nest(f'scheduling {builder}') as presentation:
-    request = api.buildbucket.schedule_request(
-        project='chrome',
-        bucket='ci',
-        builder=builder,
-        gitiles_commit=buildset,
-        fields=BUILD_FIELDS_TO_RETRIEVE,
-    )
-    try:
-      return api.buildbucket.schedule([request])[0]
-    except api.step.InfraFailure:  # pragma: nocover
-      presentation.status = api.step.EXCEPTION
-      return None
 
-
-def TriggerChromeBuilds(
-    api: RecipeApi, builders: List[str],
-    buildset: common_pb2.GitilesCommit) -> List[build_pb2.Build]:
-  with api.step.nest('trigger browser side builders') as presentation:
-    builds = []
-    for builder in builders:
-      build = TriggerChromeBuild(api, builder, buildset)
-      if build:
-        builds.append(build)
-      else:  # pragma: nocover
-        presentation.status = api.step.EXCEPTION
-        presentation.step_summary_text = 'Some builds failed to create.'
-    return builds
+def RunChromeBuild(api: RecipeApi, builder: str,
+                   buildset: common_pb2.GitilesCommit,
+                   timeout: int) -> Optional[build_pb2.Build]:
+  request = api.buildbucket.schedule_request(
+      project='chrome',
+      bucket='ci',
+      builder=builder,
+      gitiles_commit=buildset,
+      fields=BUILD_FIELDS_TO_RETRIEVE,
+  )
+  return api.buildbucket.run([request], timeout=timeout)[0]
 
 
 def RunSteps(api: RecipeApi, _: InputProperties) -> result_pb2.RawResult:
@@ -298,7 +281,10 @@ def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
             puprs: List[str], run_preuprevs: bool) -> List[build_pb2.Build]:
   preuprevs = []
   if run_preuprevs:
-    preuprevs = TriggerChromeBuilds(api, CHROME_SIDE_BUILDERS, buildset)
+    preuprevs = [
+        api.futures.spawn(RunPreUprev, api, b, buildset)
+        for b in CHROME_SIDE_BUILDERS
+    ]
 
   pupr_builds = []
   with api.step.nest('trigger puprs'):
@@ -335,13 +321,20 @@ def DoUprev(api: RecipeApi, buildset: common_pb2.GitilesCommit,
       jobs=['gardener-data-collector'],
       step_name='trigger gardener-data-collector')
 
-  preuprevs = list(
-      api.buildbucket.collect_builds(
-          ToBuilderIds(preuprevs), fields=BUILD_FIELDS_TO_RETRIEVE,
-          timeout=PRE_UPREV_TEST_TIMEOUT,
-          step_name='collect preuprevs').values())
-  preuprevs = SmartRetry(api, buildset, preuprevs)
-  return preuprevs
+  return [x.result() for x in preuprevs]
+
+
+def RunPreUprev(api: RecipeApi, builder: str,
+                buildset: common_pb2.GitilesCommit) -> build_pb2.Build:
+  with api.step.nest(f'Run preuprev {builder}') as step:
+    build = RunChromeBuild(api, builder, buildset, PRE_UPREV_TEST_TIMEOUT)
+    if build.status in [common_pb2.INFRA_FAILURE, common_pb2.CANCELED]:
+      # Sleep 10 minutes before retry any infra-related issues.
+      api.time.sleep(600)
+      build = RunChromeBuild(api, builder, buildset, PRE_UPREV_TEST_TIMEOUT)
+    if build.status != common_pb2.SUCCESS:
+      step.status = api.step.FAILURE
+    return build
 
 
 def FilterBuildsStatus(
@@ -367,50 +360,6 @@ def Result(builds: List[build_pb2.Build],
   return result_pb2.RawResult(
       status=common_pb2.SUCCESS,
       summary_markdown=f'{summary_markdown_prefix}{summary_builds}')
-
-
-def SmartRetry(api: RecipeApi, buildset: common_pb2.GitilesCommit,
-               builds: List[build_pb2.Build]) -> List[build_pb2.Build]:
-  """Retry some failed builds.
-
-  SmartRetry retries a failed build once if it qualifies the retry condition
-  (currently must be CANCELED or INFRA_FAILURE).
-
-  Args:
-    api (RecipeApi): Recipe API
-    buildset (GitilesCommit): Buildset of the build, used for scheduling retried builders.
-    builds (List[build_pb2.Build]): List of completed buildbucket builds.
-
-  Returns:
-    List of completed buildbucket builds after retries. Sucessful builds and
-    unretried failed builds are also included in the return value.
-  """
-  successful_builds, failed_builds = FilterBuildsStatus(builds,
-                                                        common_pb2.SUCCESS)
-  if failed_builds:
-    unretried_builds = []
-    retried_builds = []
-    builds_to_retry = []
-    builds_not_to_retry = []
-    with api.step.nest('Smart retry') as step:
-      for build in failed_builds:
-        if build.status in [common_pb2.INFRA_FAILURE, common_pb2.CANCELED]:
-          # Other retriable conditions can be added here.
-          builds_to_retry.append(build.builder.builder)
-        else:
-          builds_not_to_retry.append(build.builder.builder)
-          unretried_builds.append(build)
-      step.step_summary_text = (f'Will retry {builds_to_retry}\n'
-                                f'Not retrying {builds_not_to_retry}\n')
-      if builds_to_retry:
-        retried_builds = TriggerChromeBuilds(api, builds_to_retry, buildset)
-        retried_builds = list(
-            api.buildbucket.collect_builds(
-                ToBuilderIds(retried_builds), fields=BUILD_FIELDS_TO_RETRIEVE,
-                timeout=PRE_UPREV_TEST_TIMEOUT).values())
-
-    return successful_builds + unretried_builds + retried_builds
-  return successful_builds
 
 
 def GenTests(api: RecipeTestApi):
@@ -473,13 +422,39 @@ def GenTests(api: RecipeTestApi):
 
     return api.buildbucket.build(build)
 
-  def preuprevs(api, step='collect preuprevs', **kwargs):
-    return api.buildbucket.simulated_collect_output(
-        [build(k, v) for k, v in kwargs.items()], step_name=step)
+  def preuprevs(api: RecipeTestApi, **kwargs):
+    ret = []
+    build_results = {k: common_pb2.SUCCESS for k in CHROME_SIDE_BUILDERS}
+    for k, v in kwargs.items():
+      name = _name(k)
+      build_results[name] = v
+
+    for k, v in build_results.items():
+      if not isinstance(v, list):
+        v = [v]
+      for idx, vv in enumerate(v):
+        idx = f' ({idx+1})' if idx > 0 else ''
+        ret.append(
+            api.buildbucket.simulated_schedule_output(
+                builds_service_pb2.BatchResponse(responses=[{
+                    'schedule_build': build(k, common_pb2.SCHEDULED)
+                }]),
+                step_name=f'Run preuprev {k}.buildbucket.run{idx}.schedule'))
+        ret.append(
+            api.buildbucket.simulated_collect_output(
+                [build(k, vv)],
+                step_name=f'Run preuprev {k}.buildbucket.run{idx}.collect'))
+
+    r = ret[0]
+    for i in ret[1:]:
+      r += i
+    return r
 
   yield api.test(
       'version_at_root_on_release_branches',
       trigger(chrome_version='97.0.1290.0'),
+      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
+                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
       api.post_process(post_process.LogContains,
                        'trigger puprs.buildbucket.schedule', 'request', [
                            '"builder": "chrome-pupr-generator"',
@@ -504,6 +479,8 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'version_on_non_release_branch',
       trigger(chrome_version='98.0.1234.1'),
+      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.SUCCESS,
+                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
       api.post_process(post_process.LogContains,
                        'trigger puprs.buildbucket.schedule', 'request', [
                            '"builder": "lacros-ash-atomic-pupr-generator"',
@@ -553,10 +530,11 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'version_on_trunk_failed_preuprevs_retried',
       trigger(chrome_version='98.0.1234.0'),
-      preuprevs(api, chromeos_betty_chrome_preuprev=common_pb2.FAILURE,
-                chromeos_brya_chrome_preuprev=common_pb2.INFRA_FAILURE),
-      preuprevs(api, 'Smart retry.buildbucket.collect',
-                chromeos_brya_chrome_preuprev=common_pb2.SUCCESS),
+      preuprevs(
+          api, chromeos_betty_chrome_preuprev=common_pb2.FAILURE,
+          chromeos_brya_chrome_preuprev=[
+              common_pb2.INFRA_FAILURE, common_pb2.SUCCESS
+          ]),
       api.post_process(post_process.LogContains,
                        'trigger puprs.buildbucket.schedule', 'request', [
                            '"builder": "lacros-ash-atomic-pupr-generator"',
