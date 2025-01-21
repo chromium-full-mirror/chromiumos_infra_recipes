@@ -218,15 +218,18 @@
   },
   {
     "cmd": [],
-    "name": "Extract target Chrome revision"
+    "name": "extract target Chrome revision"
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset"
+    "name": "decode pupr version",
+    "~followup_annotations": [
+      "@@@STEP_SUMMARY_TEXT@[{\"ref\": \"refs/tags/132.0.6790.0\", \"repository\": \"/chromium/src\", \"revision\": \"40230e6cf598d11deb34d4a5e4656a72152d395e\"}]@@@"
+    ]
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.get CL 123456 description",
+    "name": "decode pupr version.get CL 123456 description",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@description text@a quick description@@@",
@@ -253,7 +256,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Search Chrome builders matching buildset.get CL 123456 description.gerrit-fetch-changes",
+    "name": "decode pupr version.get CL 123456 description.gerrit-fetch-changes",
     "stdin": "{\"changes\": [{\"change_number\": 123456, \"host\": \"chromium.googlesource.com\", \"patch_set\": 7}], \"include_commit_info\": true, \"include_detailed_labels\": false, \"include_files\": false, \"include_messages\": false, \"include_submittable\": false}",
     "timeout": 2160,
     "~followup_annotations": [
@@ -333,7 +336,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Search Chrome builders matching buildset.read git footers",
+    "name": "decode pupr version.read git footers",
     "stdin": "a quick description\n\nChange-Id: deadbeef\n",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -341,11 +344,7 @@
   },
   {
     "cmd": [],
-    "name": "Search Chrome builders matching buildset.decoding pupr version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@[{\"ref\": \"refs/tags/132.0.6790.0\", \"repository\": \"/chromium/src\", \"revision\": \"40230e6cf598d11deb34d4a5e4656a72152d395e\"}]@@@"
-    ]
+    "name": "Find chrome-uprev-orchestrator"
   },
   {
     "cmd": [
@@ -367,8 +366,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Search Chrome builders matching buildset.buildbucket.search",
-    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"ci\", \"project\": \"chrome\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
+    "name": "Find chrome-uprev-orchestrator.buildbucket.search",
+    "stdin": "{\"requests\": [{\"searchBuilds\": {\"mask\": {\"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\"}, \"predicate\": {\"builder\": {\"bucket\": \"infra\", \"builder\": \"chrome-uprev-orchestrator\", \"project\": \"chromeos\"}, \"tags\": [{\"key\": \"buildset\", \"value\": \"commit/gitiles/chromium.googlesource.com/chromium/src/+/40230e6cf598d11deb34d4a5e4656a72152d395e\"}]}}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -377,79 +376,13 @@
       "@@@STEP_LOG_LINE@json.output@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builds\": [@@@",
       "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-betty-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"102114593\",@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"id\": \"1231231919\",@@@",
       "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-102114593-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@              }@@@",
       "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test STARTED\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-brya-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"284564751\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-284564751-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test STARTED\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-jacuzzi-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"281483114\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-281483114-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test STARTED\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"chromeos-volteer-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"425179835\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-425179835-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test STARTED\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          },@@@",
-      "@@@STEP_LOG_LINE@json.output@          {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"builder\": \"linux-chromeos-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"id\": \"992625145\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@              \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@                \"invocation\": \"invocations/build-992625145-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@              }@@@",
-      "@@@STEP_LOG_LINE@json.output@            },@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"status\": \"STARTED\",@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"summaryMarkdown\": \"Test STARTED\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"status\": \"SCHEDULED\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        ]@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
@@ -462,12 +395,13 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"searchBuilds\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"mask\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"predicate\": {@@@",
       "@@@STEP_LOG_LINE@request@          \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@            \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@request@            \"project\": \"chrome\"@@@",
+      "@@@STEP_LOG_LINE@request@            \"bucket\": \"infra\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"builder\": \"chrome-uprev-orchestrator\",@@@",
+      "@@@STEP_LOG_LINE@request@            \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@          },@@@",
       "@@@STEP_LOG_LINE@request@          \"tags\": [@@@",
       "@@@STEP_LOG_LINE@request@            {@@@",
@@ -481,65 +415,7 @@
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@102114593@https://cr-buildbucket.appspot.com/build/102114593@@@",
-      "@@@STEP_LINK@284564751@https://cr-buildbucket.appspot.com/build/284564751@@@",
-      "@@@STEP_LINK@281483114@https://cr-buildbucket.appspot.com/build/281483114@@@",
-      "@@@STEP_LINK@425179835@https://cr-buildbucket.appspot.com/build/425179835@@@",
-      "@@@STEP_LINK@992625145@https://cr-buildbucket.appspot.com/build/992625145@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-betty-chrome-preuprev as betty",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@[bbid/102114593](https://ci.chromium.org/ui/b/102114593)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-brya-chrome-preuprev as brya",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@[bbid/284564751](https://ci.chromium.org/ui/b/284564751)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-jacuzzi-chrome-preuprev as jacuzzi",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@[bbid/281483114](https://ci.chromium.org/ui/b/281483114)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use linux-chromeos-chrome-preuprev as linux",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@[bbid/992625145](https://ci.chromium.org/ui/b/992625145)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Search Chrome builders matching buildset.filtering for useful builders.Use chromeos-volteer-chrome-preuprev as volteer",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_SUMMARY_TEXT@[bbid/425179835](https://ci.chromium.org/ui/b/425179835)@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "including pre-uprev builder results",
-    "~followup_annotations": [
-      "@@@STEP_SUMMARY_TEXT@invocations/build-102114593-rdb\ninvocations/build-284564751-rdb\ninvocations/build-281483114-rdb\ninvocations/build-992625145-rdb\ninvocations/build-425179835-rdb@@@"
+      "@@@STEP_LINK@1231231919@https://cr-buildbucket.appspot.com/build/1231231919@@@"
     ]
   },
   {
@@ -563,19 +439,15 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "including pre-uprev builder results.include invocations from pre-uprev builders",
-    "stdin": "{\"addInvocations\": [\"invocations/build-102114593-rdb\", \"invocations/build-284564751-rdb\", \"invocations/build-281483114-rdb\", \"invocations/build-992625145-rdb\", \"invocations/build-425179835-rdb\"], \"includingInvocation\": \"invocations/inv-9999\"}",
+    "name": "Find chrome-uprev-orchestrator.resultdb.update_included_invocations",
+    "stdin": "{\"addInvocations\": [\"invocations/build-1231231919-rdb\"], \"includingInvocation\": \"invocations/inv-9999\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{}@@@",
       "@@@STEP_LOG_END@json.output@@@",
       "@@@STEP_LOG_LINE@json.input@{@@@",
       "@@@STEP_LOG_LINE@json.input@  \"addInvocations\": [@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-102114593-rdb\",@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-284564751-rdb\",@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-281483114-rdb\",@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-992625145-rdb\",@@@",
-      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-425179835-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.input@    \"invocations/build-1231231919-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.input@  ],@@@",
       "@@@STEP_LOG_LINE@json.input@  \"includingInvocation\": \"invocations/inv-9999\"@@@",
       "@@@STEP_LOG_LINE@json.input@}@@@",
@@ -584,14 +456,14 @@
   },
   {
     "cmd": [],
-    "name": "Check pre-uprev results",
+    "name": "Wait chrome-uprev-orchestrator",
     "~followup_annotations": [
-      "@@@STEP_FAILURE@@@"
+      "@@@STEP_SUMMARY_TEXT@[Orchestrator](go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.@@@"
     ]
   },
   {
     "cmd": [],
-    "name": "Check pre-uprev results.buildbucket.collect",
+    "name": "Wait chrome-uprev-orchestrator.buildbucket.collect",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
@@ -604,11 +476,7 @@
       "cr-buildbucket.appspot.com",
       "-interval",
       "60s",
-      "102114593",
-      "284564751",
-      "281483114",
-      "992625145",
-      "425179835"
+      "1231231919"
     ],
     "infra_step": true,
     "luci_context": {
@@ -623,8 +491,8 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Check pre-uprev results.buildbucket.collect.wait",
-    "timeout": 21600,
+    "name": "Wait chrome-uprev-orchestrator.buildbucket.collect.wait",
+    "timeout": 36000,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@"
     ]
@@ -649,95 +517,22 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Check pre-uprev results.buildbucket.collect.get",
-    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"102114593\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"284564751\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"281483114\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"992625145\"}}, {\"getBuild\": {\"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"425179835\"}}]}",
+    "name": "Wait chrome-uprev-orchestrator.buildbucket.collect.get",
+    "stdin": "{\"requests\": [{\"getBuild\": {\"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\", \"id\": \"1231231919\"}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"responses\": [@@@",
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-betty-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"102114593\",@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"id\": \"1231231919\",@@@",
       "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
       "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-102114593-rdb\"@@@",
+      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-1231231919-rdb\"@@@",
       "@@@STEP_LOG_LINE@json.output@          }@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"status\": \"FAILURE\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test FAILURE\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-brya-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"284564751\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-284564751-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-jacuzzi-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"281483114\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-281483114-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"chromeos-volteer-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"425179835\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-425179835-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    },@@@",
-      "@@@STEP_LOG_LINE@json.output@    {@@@",
-      "@@@STEP_LOG_LINE@json.output@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"ci\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"linux-chromeos-chrome-preuprev\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"project\": \"chrome\"@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"id\": \"992625145\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"infra\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"resultdb\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@            \"invocation\": \"invocations/build-992625145-rdb\"@@@",
-      "@@@STEP_LOG_LINE@json.output@          }@@@",
-      "@@@STEP_LOG_LINE@json.output@        },@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"status\": \"SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Test SUCCESS\"@@@",
+      "@@@STEP_LOG_LINE@json.output@        \"summaryMarkdown\": \"Some pre-uprev builder failed.\"@@@",
       "@@@STEP_LOG_LINE@json.output@      }@@@",
       "@@@STEP_LOG_LINE@json.output@    }@@@",
       "@@@STEP_LOG_LINE@json.output@  ]@@@",
@@ -747,89 +542,20 @@
       "@@@STEP_LOG_LINE@request@  \"requests\": [@@@",
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"102114593\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"284564751\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"281483114\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"992625145\"@@@",
-      "@@@STEP_LOG_LINE@request@      }@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    {@@@",
-      "@@@STEP_LOG_LINE@request@      \"getBuild\": {@@@",
-      "@@@STEP_LOG_LINE@request@        \"fields\": \"builder,id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
-      "@@@STEP_LOG_LINE@request@        \"id\": \"425179835\"@@@",
+      "@@@STEP_LOG_LINE@request@        \"fields\": \"id,infra.resultdb.invocation,status,summaryMarkdown\",@@@",
+      "@@@STEP_LOG_LINE@request@        \"id\": \"1231231919\"@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
       "@@@STEP_LOG_LINE@request@  ]@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LINK@102114593@https://cr-buildbucket.appspot.com/build/102114593@@@",
-      "@@@STEP_LINK@284564751@https://cr-buildbucket.appspot.com/build/284564751@@@",
-      "@@@STEP_LINK@281483114@https://cr-buildbucket.appspot.com/build/281483114@@@",
-      "@@@STEP_LINK@425179835@https://cr-buildbucket.appspot.com/build/425179835@@@",
-      "@@@STEP_LINK@992625145@https://cr-buildbucket.appspot.com/build/992625145@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Check pre-uprev results.chromeos-betty-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n> Test FAILURE\n@@@",
-      "@@@STEP_FAILURE@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Check pre-uprev results.chromeos-brya-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n> Test SUCCESS\n@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Check pre-uprev results.chromeos-jacuzzi-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n> Test SUCCESS\n@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Check pre-uprev results.chromeos-volteer-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n> Test SUCCESS\n@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Check pre-uprev results.linux-chromeos-chrome-preuprev",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_SUMMARY_TEXT@- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n> Test SUCCESS\n@@@"
+      "@@@STEP_LINK@1231231919@https://cr-buildbucket.appspot.com/build/1231231919@@@"
     ]
   },
   {
     "failure": {
       "failure": {},
-      "humanReason": "To disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control.gni](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control.gni) instead.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n1 errors checking Chrome uprev criteria:\n\n\n\nPre-uprev testing not passed, details:\n\n- chromeos-betty-chrome-preuprev: [FAILURE](https://ci.chromium.org/ui/b/102114593)\n> Test FAILURE\n- chromeos-brya-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/284564751)\n> Test SUCCESS\n- chromeos-jacuzzi-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/281483114)\n> Test SUCCESS\n- chromeos-volteer-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/425179835)\n> Test SUCCESS\n- linux-chromeos-chrome-preuprev: [SUCCESS](https://ci.chromium.org/ui/b/992625145)\n> Test SUCCESS\n\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev."
+      "humanReason": "To disable a failed tests at this builder, disable at [chromium/src/chromeos/tast_control.gni](https://source.chromium.org/chromium/chromium/src/+/main:chromeos/tast_control.gni) instead.\n\nQuestions to this builder goes to g/chromeos-velocity or g/chromeos-chrome-build, instead of CI oncall.\n\n1 errors checking Chrome uprev criteria:\n\n\n\nPre-uprev testing not passed, details:\n\n[Orchestrator](go/bbid/1231231919/overview)\n\nSome pre-uprev builder failed.\n\nPlease check the test failures, fix the failures (land a fix or revert culprit on Chromium) and wait for next pre-uprev."
     },
     "name": "$result"
   }
