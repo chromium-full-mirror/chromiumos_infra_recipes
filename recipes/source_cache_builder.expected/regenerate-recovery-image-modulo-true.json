@@ -287,6 +287,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdz",

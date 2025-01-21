@@ -512,8 +512,8 @@ class GcloudApi(recipe_api.RecipeApi):
         self._attached_disks[name] = '/dev/{}'.format(self._dev_ref)
 
       self.m.step('mount disk %s' % name, [
-          'sudo', 'mount', '-o', 'discard,defaults', self._attached_disks[name],
-          recipe_mount_path
+          'sudo', 'mount', '-t', 'ext4', '-o', 'discard,defaults',
+          self._attached_disks[name], recipe_mount_path
       ], infra_step=True)
       if chown:
         # Since the disk was created and formatted with root, we need to make

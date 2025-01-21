@@ -242,6 +242,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdz",
@@ -731,6 +733,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdy",
@@ -1066,6 +1070,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdy",
@@ -1312,6 +1318,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdx",
@@ -1773,6 +1781,8 @@
     "cmd": [
       "sudo",
       "mount",
+      "-t",
+      "ext4",
       "-o",
       "discard,defaults",
       "/dev/sdz",
