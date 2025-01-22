@@ -741,7 +741,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
         verify_image_size_delta=build_images.verify_image_size_delta,
         bazel=bazel, is_official=is_official, timeout_sec=timeout_sec)
 
-  def unit_test_images(self, config=None):
+  def unit_tests(self, config=None):
     """Run ebuild tests.
 
     Args:
@@ -774,7 +774,7 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     self.build_images(config, include_version, is_official=is_official,
                       timeout_sec=build_images_timeout_sec)
-    return self.unit_test_images(config)
+    return self.unit_tests(config)
 
   def run_unittests(self, config=None):
     """run ebuild tests as specified by config.

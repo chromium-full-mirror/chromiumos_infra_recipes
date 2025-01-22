@@ -178,7 +178,7 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
     # Run unit tests, and calculate and publish image and package sizes.
     tests_and_size_runner = api.future_utils.create_parallel_runner()
     tests_and_size_runner.run_function_async(
-        lambda cfg, _: api.build_menu.unit_test_images(cfg), config)
+        lambda cfg, _: api.build_menu.unit_tests(cfg), config)
     tests_and_size_runner.run_function_async(
         lambda cfg, _: api.build_menu.publish_image_size_data(cfg), config)
 

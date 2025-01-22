@@ -322,7 +322,7 @@ def DoRunSteps(api, config, properties):
     with api.build_reporting.step_reporting(StepDetails.STEP_UNIT_TESTS):
       results = None
       try:
-        results = api.build_menu.unit_test_images(config=config)
+        results = api.build_menu.unit_tests(config=config)
       except:
         # Add EBUILD_TESTS status to the retry_summary. b/265306388 for context.
         api.checkpoint.update_summary(RetryStep.EBUILD_TESTS, STATUS_FAILED)
