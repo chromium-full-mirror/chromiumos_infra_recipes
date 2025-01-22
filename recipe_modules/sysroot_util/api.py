@@ -42,10 +42,15 @@ class SysrootUtilApi(recipe_api.RecipeApi):
 
   def initialize(self):
     self._sysroot = None
+    self._build_image_response = None
 
   @property
   def sysroot(self):
     return self._sysroot
+
+  @property
+  def build_image_response(self):
+    return self._build_image_response
 
   def _image_type_to_fname(self, image_type):
     """Strip the IMAGE_TYPE_ prefix and provide a string image path."""
@@ -401,7 +406,8 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                    test_test_data: Optional[str] = None,
                    name: Optional[str] = None, skip_image_tests: bool = False,
                    verify_image_size_delta: bool = False, bazel: bool = False,
-                   is_official: bool = False) -> Iterable[Image]:
+                   is_official: bool = False,
+                   serial_tests: bool = True) -> Iterable[Image]:
     """Build and validate images.
 
     Args:
@@ -422,6 +428,9 @@ class SysrootUtilApi(recipe_api.RecipeApi):
       verify_image_size_delta: Whether to verify the image size delta.
       bazel: Whether to use Bazel to build the images.
       is_official: Whether to produce official builds.
+      serial_tests: When True, run the image tests after image building is
+        complete. When False, skip running the image tests to allow them to be
+        manually run (i.e. as a parallel step with other tasks).
 
     Returns:
       The images built during the stage.
@@ -476,6 +485,7 @@ class SysrootUtilApi(recipe_api.RecipeApi):
             request, timeout=timeout_sec,
             response_lambda=self.m.cros_build_api.failed_pkg_names,
             test_output_data=build_test_data)
+        self._build_image_response = response
         self.m.image_builder_failures.set_compile_failed_packages(
             pres, [(p, '') for p in response.failed_packages])
 
@@ -520,37 +530,47 @@ class SysrootUtilApi(recipe_api.RecipeApi):
                   presentation.step_text = \
                     'Estimated {} rootfs size {}.'.format(hr_delta, direction)
 
-        to_test = [
-            image for image in response.images
-            if image.type == common_pb2.IMAGE_TYPE_BASE
-        ]
-        if common_pb2.IMAGE_TYPE_BASE not in image_types or not to_test:
-          # For now, as in legacy CQ, we only test base images. Images created
-          # as a sideeffect (not explicitly requested in image_types) are not
-          # tested.
-          return response.images
+        if serial_tests:
+          self.test_images(image_types, test_test_data, skip_image_tests)
 
-        with self.m.step.nest('test images') as presentation:
-          if skip_image_tests:
-            presentation.step_text = \
-              'Skipping image tests as per board configuration.To check ' \
-              'configuration, view generated/builder_configs.cfg or ' \
-              'builderconfig/unit_tests_config.star in infra/config.'
-            return response.images
+    return response.images
 
-          failed_images = []
-          for image in to_test:
-            result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
-            if not self.m.cros_build_api.ImageService.Test(
-                TestImageRequest(
-                    image=image, build_target=self.sysroot.build_target,
-                    result=TestImageRequest.Result(directory=str(result_dir)),
-                    chroot=self.m.cros_sdk.chroot),
-                test_output_data=test_test_data).success:
-              failed_images.append(image)
-            self.m.image_builder_failures.raise_failed_image_tests(
-                failed_images)
-        return response.images
+  def test_images(
+      self,
+      image_types: List['common_pb2.ImageType'],
+      test_test_data: Optional[str] = None,
+      skip_image_tests: bool = False,
+  ):
+    if self.build_image_response:
+      to_test = [
+          image for image in self.build_image_response.images
+          if image.type == common_pb2.IMAGE_TYPE_BASE
+      ]
+      if common_pb2.IMAGE_TYPE_BASE not in image_types or not to_test:
+        # For now, as in legacy CQ, we only test base images. Images created
+        # as a sideeffect (not explicitly requested in image_types) are not
+        # tested.
+        return
+
+      with self.m.step.nest('test images') as presentation:
+        if skip_image_tests:
+          presentation.step_text = \
+            'Skipping image tests as per board configuration.To check ' \
+            'configuration, view generated/builder_configs.cfg or ' \
+            'builderconfig/unit_tests_config.star in infra/config.'
+          return
+
+        failed_images = []
+        for image in to_test:
+          result_dir = self.m.path.mkdtemp(prefix='image-test-result-')
+          if not self.m.cros_build_api.ImageService.Test(
+              TestImageRequest(
+                  image=image, build_target=self.sysroot.build_target,
+                  result=TestImageRequest.Result(directory=str(result_dir)),
+                  chroot=self.m.cros_sdk.chroot),
+              test_output_data=test_test_data).success:
+            failed_images.append(image)
+          self.m.image_builder_failures.raise_failed_image_tests(failed_images)
 
   def _get_last_snapshot_rootfs_size(self):
     builder_name = '{}-snapshot'.format(self.sysroot.build_target.name)

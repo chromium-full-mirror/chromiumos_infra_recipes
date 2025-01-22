@@ -9463,6 +9463,311 @@
   },
   {
     "cmd": [],
+    "name": "test images"
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"type\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"staging-amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"staging-amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_3\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"image\": {\n    \"path\": \"[START_DIR]/build/images/base.bin\",\n    \"type\": 1,\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  },\n  \"buildTarget\": {\n    \"name\": \"staging-amd64-generic\"\n  },\n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_3\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.read chromite version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ImageService/Test"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:21.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:23Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"image\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"type\": \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"staging-amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"staging-amd64-generic\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"result\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_3\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@published event@          {@@@",
+      "@@@STEP_LOG_LINE@published event@            \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@published event@          }@@@",
+      "@@@STEP_LOG_LINE@published event@        ]@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"test images|call chromite.api.ImageService/Test|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI/YDE/QQQgMq17gEiBgj/gMT9BLIBywEKPgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljEhcKFXN0YWdpbmctYW1kNjQtZ2VuZXJpYxokCiJbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1yZXN1bHQtX3RtcF8zIkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dLoBAggB0ALQ7IDZrvG1knzaAkV0ZXN0IGltYWdlc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgwI/YDE/QQQgMq17gEiBgj/gMT9BLIBywEKPgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljEhcKFXN0YWdpbmctYW1kNjQtZ2VuZXJpYxokCiJbQ0xFQU5VUF0vaW1hZ2UtdGVzdC1yZXN1bHQtX3RtcF8zIkoKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GhMKEQoPY2hyb21lX2ludGVybmFsMhdbQ0FDSEVdL2Nyb3NfY2hyb290L291dLoBAggB0ALQ7IDZrvG1knzaAkV0ZXN0IGltYWdlc3xjYWxsIGNocm9taXRlLmFwaS5JbWFnZVNlcnZpY2UvVGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.image test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all images passed@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "get package dependencies"
   },
   {
@@ -9566,7 +9871,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"sysroot\": {\n    \"path\": \"/build/staging-amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"srcPaths\": [\n    {\n      \"path\": \"src/project-a/my/fake/file\"\n    }\n  ]\n}",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9647,9 +9952,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_19/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.DependencyService/List"
@@ -9685,7 +9990,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_19/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9843,7 +10148,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"staging-amd64-generic\"\n  },\n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/staging-amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9868,9 +10173,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_20/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleImageZip"
@@ -9907,7 +10212,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_20/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9951,8 +10256,8 @@
       "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
       "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:24.500Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:26Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:27.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:29Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"bundleRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"staging-amd64-generic\"@@@",
@@ -10000,7 +10305,7 @@
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwIgIHE/QQQgMq17gEiBgiCgcT9BCraAQoXChVzdGFnaW5nLWFtZDY0LWdlbmVyaWMSGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IjcKHC9idWlsZC9zdGFnaW5nLWFtZDY0LWdlbmVyaWMSFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwIg4HE/QQQgMq17gEiBgiFgcT9BCraAQoXChVzdGFnaW5nLWFtZDY0LWdlbmVyaWMSGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IjcKHC9idWlsZC9zdGFnaW5nLWFtZDY0LWdlbmVyaWMSFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -10032,7 +10337,7 @@
       }
     },
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwIgIHE/QQQgMq17gEiBgiCgcT9BCraAQoXChVzdGFnaW5nLWFtZDY0LWdlbmVyaWMSGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IjcKHC9idWlsZC9zdGFnaW5nLWFtZDY0LWdlbmVyaWMSFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwIg4HE/QQQgMq17gEiBgiFgcT9BCraAQoXChVzdGFnaW5nLWFtZDY0LWdlbmVyaWMSGVtDTEVBTlVQXS9hcnRpZmFjdHNfdG1wXzEaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IjcKHC9idWlsZC9zdGFnaW5nLWFtZDY0LWdlbmVyaWMSFwoVc3RhZ2luZy1hbWQ2NC1nZW5lcmljKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -10132,7 +10437,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/staging-amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -10157,9 +10462,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_21/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/Get"
@@ -10196,7 +10501,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_21/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10362,7 +10667,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"staging-amd64-generic\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"version\": \"staging-staging-amd64-generic-cq.R99-1234.56.0-101-8945511751514863184\",\n  \"repository\": {\n    \"hostname\": \"us-docker.pkg.dev\",\n    \"project\": \"cros-registry/test-services-publicbuilds\"\n  },\n  \"tags\": [\n    \"staging-staging-amd64-generic-cq.R99-1234.56.0-101-8945511751514863184\",\n    \"8945511751514863184\",\n    \"PUBLIC-8945511751514863184\"\n  ],\n  \"labels\": {\n    \"build-url\": \"https://ci.chromium.org/b/8945511751514863184\"\n  },\n  \"builderType\": 1\n}",
-      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -10443,9 +10748,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_22/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.TestService/BuildTestServiceContainers"
@@ -10482,7 +10787,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_22/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10647,7 +10952,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/staging-amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -10728,9 +11033,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_23/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/FetchMetadata"
@@ -10766,7 +11071,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_23/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -10959,7 +11264,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/staging-amd64-generic\",\n    \"buildTarget\": {\n      \"name\": \"staging-amd64-generic\"\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -11040,9 +11345,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_24/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/FetchTestHarnessMetadata"
@@ -11078,7 +11383,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_24/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -11346,7 +11651,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-amd64-generic\"\n    ],\n    \"bot-config\": \"staging-amd64-generic-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-amd64-generic-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:39\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
+      "{\n    \"board-metadata\": {},\n    \"boards\": [\n        \"staging-amd64-generic\"\n    ],\n    \"bot-config\": \"staging-amd64-generic-cq\",\n    \"branch\": \"main\",\n    \"build-number\": 0,\n    \"build_id\": 0,\n    \"buildbucket_id\": 8945511751514863184,\n    \"builder-name\": \"staging-amd64-generic-cq\",\n    \"builder_type\": \"cq\",\n    \"child-configs\": [],\n    \"master_build_id\": 0,\n    \"metadata-version\": \"2\",\n    \"results\": [\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"00:00:00\",\n            \"log\": \"\",\n            \"name\": \"DebugSymbols\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        },\n        {\n            \"board\": \"\",\n            \"description\": \"\",\n            \"duration\": \"-1 day, 22:03:20\",\n            \"log\": \"\",\n            \"name\": \"UnitTest\",\n            \"status\": \"pass\",\n            \"summary\": \"stage was successful\"\n        }\n    ],\n    \"status\": {\n        \"current-time\": null,\n        \"status\": \"pass\",\n        \"summary\": \"\"\n    },\n    \"time\": {\n        \"duration\": \"15474 days, 12:54:42\",\n        \"finish\": null,\n        \"start\": \"some start time\"\n    },\n    \"unibuild\": false,\n    \"version\": {\n        \"chrome\": \"chrome_version\",\n        \"full\": \"full_version\",\n        \"milestone\": \"milestone_version\",\n        \"platform\": \"platform_version\"\n    }\n}",
       "[CLEANUP]/metadata_tmp_2/metadata.json"
     ],
     "infra_step": true,
@@ -11406,7 +11711,7 @@
       "@@@STEP_LOG_LINE@metadata.json@        \"summary\": \"\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
       "@@@STEP_LOG_LINE@metadata.json@    \"time\": {@@@",
-      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:39\",@@@",
+      "@@@STEP_LOG_LINE@metadata.json@        \"duration\": \"15474 days, 12:54:42\",@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"finish\": null,@@@",
       "@@@STEP_LOG_LINE@metadata.json@        \"start\": \"some start time\"@@@",
       "@@@STEP_LOG_LINE@metadata.json@    },@@@",
@@ -11521,7 +11826,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_26/input_proto.json"
     ],
     "infra_step": true,
     "luci_context": {
@@ -11600,9 +11905,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_25/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.SdkService/Clean"
@@ -11637,7 +11942,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_25/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_26/output_proto.json",
       "/path/to/tmp/"
     ],
     "env_suffixes": {
@@ -11844,7 +12149,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0078@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0081@@@"
     ]
   },
   {

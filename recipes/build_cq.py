@@ -144,7 +144,8 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
 
     img_runner = api.future_utils.create_parallel_runner()
     img_runner.run_function_async(
-        lambda cfg, _: api.build_menu.build_images(cfg), config)
+        lambda cfg, _: api.build_menu.build_images(cfg, parallel_test=True),
+        config)
 
     uploaded_artifacts, _ = api.build_menu.upload_symbols(config)
     upload_state.add(uploaded_artifacts)
@@ -175,14 +176,19 @@ def DoRunSteps(api: RecipeApi, config: BuilderConfig,
         image_artifacts_uploaded_time=json_format.MessageToDict(
             image_artifacts_uploaded_time))
 
-    # Run unit tests, and calculate and publish image and package sizes.
-    tests_and_size_runner = api.future_utils.create_parallel_runner()
-    tests_and_size_runner.run_function_async(
+    # Parallel steps run post image upload.
+    post_upload_runner = api.future_utils.create_parallel_runner()
+    # Ebuild unit tests.
+    post_upload_runner.run_function_async(
         lambda cfg, _: api.build_menu.unit_tests(cfg), config)
-    tests_and_size_runner.run_function_async(
+    # Calculate and publish image and package size data.
+    post_upload_runner.run_function_async(
         lambda cfg, _: api.build_menu.publish_image_size_data(cfg), config)
+    # Image tests.
+    post_upload_runner.run_function_async(
+        lambda cfg, _: api.build_menu.test_images(cfg), config)
+    post_upload_runner.wait_for_and_throw()
 
-    tests_and_size_runner.wait_for_and_throw()
   return None
 
 

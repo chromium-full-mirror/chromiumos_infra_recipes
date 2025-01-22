@@ -8177,314 +8177,6 @@
     ]
   },
   {
-    "cmd": [],
-    "name": "build images.test images",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build images.test images.call chromite.api.ImageService/Test",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"type\": 1,@@@",
-      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
-      "@@@STEP_LOG_LINE@request@  },@@@",
-      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
-      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
-      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@request@        {@@@",
-      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@request@        }@@@",
-      "@@@STEP_LOG_LINE@request@      ]@@@",
-      "@@@STEP_LOG_LINE@request@    },@@@",
-      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
-      "@@@STEP_LOG_LINE@request@}@@@",
-      "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{@@@",
-      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
-      "@@@STEP_LOG_LINE@response@}@@@",
-      "@@@STEP_LOG_END@response@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "{\n  \"image\": {\n    \"path\": \"[START_DIR]/build/images/base.bin\",\n    \"type\": 1,\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }\n  },\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  },\n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.write input file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.read chromite version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "git",
-      "checkout"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.git checkout",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_END@raw_io.output_text@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
-      "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
-      "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
-      "--log-level",
-      "debug",
-      "chromite.api.ImageService/Test"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.call build API script",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.read output file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build images.test images.call chromite.api.ImageService/Test.call response",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@build api stdout@@@@",
-      "@@@STEP_LOG_END@build api stdout@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build images.test images.call chromite.api.ImageService/Test.publish event",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
-      "@@@STEP_LOG_END@payload_truncation@@@",
-      "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:06.500Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:08Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"testImageRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"image\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"type\": \"IMAGE_TYPE_BASE\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"name\": \"coral\"@@@",
-      "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"result\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
-      "@@@STEP_LOG_LINE@published event@    },@@@",
-      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
-      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
-      "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
-      "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
-      "@@@STEP_LOG_LINE@published event@          {@@@",
-      "@@@STEP_LOG_LINE@published event@            \"flag\": \"chrome_internal\"@@@",
-      "@@@STEP_LOG_LINE@published event@          }@@@",
-      "@@@STEP_LOG_LINE@published event@        ]@@@",
-      "@@@STEP_LOG_LINE@published event@      },@@@",
-      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
-      "@@@STEP_LOG_LINE@published event@  },@@@",
-      "@@@STEP_LOG_LINE@published event@  \"testImageResult\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
-      "@@@STEP_LOG_LINE@published event@  },@@@",
-      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build images|test images|call chromite.api.ImageService/Test|call build API script\"@@@",
-      "@@@STEP_LOG_LINE@published event@}@@@",
-      "@@@STEP_LOG_END@published event@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI7oDE/QQQgMq17gEiBgjwgMT9BLIBqwEKLgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBwoFY29yYWwSBwoFY29yYWwaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSJKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
-      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
-      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/publish-message"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "env_suffixes": {
-      "PATH": [
-        "[CLEANUP]/chromiumos_workspace/chromite/bin"
-      ]
-    },
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:cq"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "build images.test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI7oDE/QQQgMq17gEiBgjwgMT9BLIBqwEKLgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBwoFY29yYWwSBwoFY29yYWwaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSJKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJSYnVpbGQgaW1hZ2VzfHRlc3QgaW1hZ2VzfGNhbGwgY2hyb21pdGUuYXBpLkltYWdlU2VydmljZS9UZXN0fGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@5@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "build images.test images.image test results",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@all images passed@@@"
-    ]
-  },
-  {
     "cmd": [
       "vpython3",
       "-u",
@@ -8606,7 +8298,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  },\n  \"outputDir\": \"[CLEANUP]/artifacts_tmp_1\",\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/coral\",\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -8631,9 +8323,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/BundleImageZip"
@@ -8670,7 +8362,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_14/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -8714,8 +8406,8 @@
       "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
       "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:09.500Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:11Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:06.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:08Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"bundleRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"coral\"@@@",
@@ -8763,7 +8455,7 @@
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgwI8YDE/QQQgMq17gEiBgjzgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgwI7oDE/QQQgMq17gEiBgjwgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -8795,7 +8487,7 @@
       }
     },
     "name": "upload artifacts.bundle IMAGE_ZIP for upload.call chromite.api.ArtifactsService/BundleImageZip.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgwI8YDE/QQQgMq17gEiBgjzgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgwI7oDE/QQQgMq17gEiBgjwgMT9BCqqAQoHCgVjb3JhbBIZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRpKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXQiFwoML2J1aWxkL2NvcmFsEgcKBWNvcmFsKh8KHQoZW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMRACMi0KKwopW0NMRUFOVVBdL2FydGlmYWN0c190bXBfMS9hcnRpZmFjdC50YXIuZ3rQAtDsgNmu8bWSfNoCdHVwbG9hZCBhcnRpZmFjdHN8YnVuZGxlIElNQUdFX1pJUCBmb3IgdXBsb2FkfGNhbGwgY2hyb21pdGUuYXBpLkFydGlmYWN0c1NlcnZpY2UvQnVuZGxlSW1hZ2VaaXB8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@5@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -8895,7 +8587,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"path\": \"/build/coral\",\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }\n  },\n  \"artifactInfo\": {\n    \"legacy\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            1\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -8920,9 +8612,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ArtifactsService/Get"
@@ -8959,7 +8651,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_15/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9058,7 +8750,7 @@
     "cmd": [],
     "name": "set image_artifacts_uploaded_time",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@image_artifacts_uploaded_time@\"2012-05-14T12:54:15.500Z\"@@@"
+      "@@@SET_BUILD_PROPERTY@image_artifacts_uploaded_time@\"2012-05-14T12:54:12.500Z\"@@@"
     ]
   },
   {
@@ -9115,7 +8807,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"flags\": {},\n  \"packageBlocklist\": [\n    {\n      \"packageName\": \"chromite\",\n      \"category\": \"chromeos-base\"\n    }\n  ],\n  \"resultsPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_6\",\n      \"location\": 2\n    }\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9196,9 +8888,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.TestService/BuildTargetUnitTest"
@@ -9235,7 +8927,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_16/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9279,8 +8971,8 @@
       "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
       "@@@STEP_LOG_END@payload_truncation@@@",
       "@@@STEP_LOG_LINE@published event@{@@@",
-      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:17Z\",@@@",
-      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:18.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:14Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:15.500Z\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildTargetUnitTestRequest\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"name\": \"coral\"@@@",
@@ -9322,7 +9014,7 @@
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI+YDE/QQiDAj6gMT9BBCAyrXuAYICjQEKBwoFY29yYWwaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IgA6GQoIY2hyb21pdGUSDWNocm9tZW9zLWJhc2VCGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF82EAKKAgDQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI9oDE/QQiDAj3gMT9BBCAyrXuAYICjQEKBwoFY29yYWwaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IgA6GQoIY2hyb21pdGUSDWNocm9tZW9zLWJhc2VCGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF82EAKKAgDQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -9354,7 +9046,7 @@
       }
     },
     "name": "run ebuild tests.call chromite.api.TestService/BuildTargetUnitTest.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI+YDE/QQiDAj6gMT9BBCAyrXuAYICjQEKBwoFY29yYWwaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IgA6GQoIY2hyb21pdGUSDWNocm9tZW9zLWJhc2VCGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF82EAKKAgDQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI9oDE/QQiDAj3gMT9BBCAyrXuAYICjQEKBwoFY29yYWwaSgoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QaEwoRCg9jaHJvbWVfaW50ZXJuYWwyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IgA6GQoIY2hyb21pdGUSDWNocm9tZW9zLWJhc2VCGQoXChNbQ0xFQU5VUF0vdG1wX3RtcF82EAKKAgDQAtDsgNmu8bWSfNoCWHJ1biBlYnVpbGQgdGVzdHN8Y2FsbCBjaHJvbWl0ZS5hcGkuVGVzdFNlcnZpY2UvQnVpbGRUYXJnZXRVbml0VGVzdHxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -9493,7 +9185,7 @@
       "/path/to/tmp/json",
       "copy",
       "{\n  \"builtImages\": [\n    {\n      \"path\": \"[START_DIR]/build/images/base.bin\",\n      \"type\": 1,\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }\n    },\n    {\n      \"path\": \"[START_DIR]/build/images/test.bin\",\n      \"type\": 3,\n      \"buildTarget\": {\n        \"name\": \"coral\"\n      }\n    }\n  ],\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
-      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -9574,9 +9266,9 @@
     "cmd": [
       "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
       "--input-json",
-      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/input_proto.json",
       "--output-json",
-      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "--log-level",
       "debug",
       "chromite.api.ObservabilityService/GetImageSizeData"
@@ -9612,7 +9304,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "[CLEANUP]/build_api_messages_tmp_17/output_proto.json",
       "/path/to/tmp/"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -9684,6 +9376,311 @@
     "name": "set caught_exceptions",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@caught_exceptions@{\"ignored exception\": \"ValueError(\\\"invalid literal for int() with base 10: 'milestone_version'\\\")\"}@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images"
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_LOG_LINE@request@{@@@",
+      "@@@STEP_LOG_LINE@request@  \"image\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"type\": 1,@@@",
+      "@@@STEP_LOG_LINE@request@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@    }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"result\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@request@    \"env\": {@@@",
+      "@@@STEP_LOG_LINE@request@      \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@request@        {@@@",
+      "@@@STEP_LOG_LINE@request@          \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@request@        }@@@",
+      "@@@STEP_LOG_LINE@request@      ]@@@",
+      "@@@STEP_LOG_LINE@request@    },@@@",
+      "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@}@@@",
+      "@@@STEP_LOG_END@request@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"success\": true@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
+      "@@@STEP_LOG_END@response@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "{\n  \"image\": {\n    \"path\": \"[START_DIR]/build/images/base.bin\",\n    \"type\": 1,\n    \"buildTarget\": {\n      \"name\": \"coral\"\n    }\n  },\n  \"buildTarget\": {\n    \"name\": \"coral\"\n  },\n  \"result\": {\n    \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"\n  },\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {\n      \"useFlags\": [\n        {\n          \"flag\": \"chrome_internal\"\n        }\n      ]\n    },\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.write input file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "RECIPE_REPO[chromeos]/infra/config/chromite-HEAD.version",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.read chromite version",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@chromite-HEAD.version@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "git",
+      "checkout"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD",
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.git checkout",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_END@raw_io.output_text@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[CLEANUP]/chromiumos_workspace/infra/chromite-HEAD/bin/build_api",
+      "--input-json",
+      "[CLEANUP]/build_api_messages_tmp_18/input_proto.json",
+      "--output-json",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "--log-level",
+      "debug",
+      "chromite.api.ImageService/Test"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.call build API script",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "vpython3",
+      "-u",
+      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
+      "--json-output",
+      "/path/to/tmp/json",
+      "copy",
+      "[CLEANUP]/build_api_messages_tmp_18/output_proto.json",
+      "/path/to/tmp/"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.read output file",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.call response",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@build api stdout@@@@",
+      "@@@STEP_LOG_END@build api stdout@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.publish event",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@",
+      "@@@STEP_LOG_LINE@payload_truncation@Payload not filtered@@@",
+      "@@@STEP_LOG_END@payload_truncation@@@",
+      "@@@STEP_LOG_LINE@published event@{@@@",
+      "@@@STEP_LOG_LINE@published event@  \"requestTime\": \"2012-05-14T12:54:20Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"responseTime\": \"2012-05-14T12:54:21.500Z\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageRequest\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"image\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[START_DIR]/build/images/base.bin\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"type\": \"IMAGE_TYPE_BASE\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@published event@      }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"buildTarget\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"name\": \"coral\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"result\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"directory\": \"[CLEANUP]/image-test-result-_tmp_1\"@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
+      "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
+      "@@@STEP_LOG_LINE@published event@      \"env\": {@@@",
+      "@@@STEP_LOG_LINE@published event@        \"useFlags\": [@@@",
+      "@@@STEP_LOG_LINE@published event@          {@@@",
+      "@@@STEP_LOG_LINE@published event@            \"flag\": \"chrome_internal\"@@@",
+      "@@@STEP_LOG_LINE@published event@          }@@@",
+      "@@@STEP_LOG_LINE@published event@        ]@@@",
+      "@@@STEP_LOG_LINE@published event@      },@@@",
+      "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
+      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"testImageResult\": {@@@",
+      "@@@STEP_LOG_LINE@published event@    \"success\": true@@@",
+      "@@@STEP_LOG_LINE@published event@  },@@@",
+      "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
+      "@@@STEP_LOG_LINE@published event@  \"stepName\": \"test images|call chromite.api.ImageService/Test|call build API script\"@@@",
+      "@@@STEP_LOG_LINE@published event@}@@@",
+      "@@@STEP_LOG_END@published event@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI/IDE/QQiDAj9gMT9BBCAyrXuAbIBqwEKLgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBwoFY29yYWwSBwoFY29yYWwaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSJKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJFdGVzdCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL1Rlc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0',@@@",
+      "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
+      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
+      "@@@STEP_LOG_LINE@request@ 'topic_id': 'analysis-service-events'}@@@",
+      "@@@STEP_LOG_END@request@@@"
+    ]
+  },
+  {
+    "cmd": [
+      "[START_DIR]/cipd/support/publish-message"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "env_suffixes": {
+      "PATH": [
+        "[CLEANUP]/chromiumos_workspace/chromite/bin"
+      ]
+    },
+    "infra_step": true,
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:cq"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "test images.call chromite.api.ImageService/Test.publish event.publish message.publish-message",
+    "stdin": "{\"data\": \"GgYI/IDE/QQiDAj9gMT9BBCAyrXuAbIBqwEKLgohW1NUQVJUX0RJUl0vYnVpbGQvaW1hZ2VzL2Jhc2UuYmluEAEaBwoFY29yYWwSBwoFY29yYWwaJAoiW0NMRUFOVVBdL2ltYWdlLXRlc3QtcmVzdWx0LV90bXBfMSJKChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdBoTChEKD2Nocm9tZV9pbnRlcm5hbDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXS6AQIIAdAC0OyA2a7xtZJ82gJFdGVzdCBpbWFnZXN8Y2FsbCBjaHJvbWl0ZS5hcGkuSW1hZ2VTZXJ2aWNlL1Rlc3R8Y2FsbCBidWlsZCBBUEkgc2NyaXB0\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@4@@@",
+      "@@@STEP_LOG_LINE@json.output@{@@@",
+      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
+      "@@@STEP_LOG_LINE@json.output@}@@@",
+      "@@@STEP_LOG_END@json.output@@@"
+    ]
+  },
+  {
+    "cmd": [],
+    "name": "test images.image test results",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@STEP_TEXT@all images passed@@@"
     ]
   },
   {

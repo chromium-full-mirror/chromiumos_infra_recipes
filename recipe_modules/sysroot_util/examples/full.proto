@@ -38,4 +38,7 @@ message FullTestProperties {
 
   // Whether to build an official image.
   bool is_official = 10;
+
+  // Whether to manually run image tests "in parallel".
+  bool parallel_tests = 11;
 }

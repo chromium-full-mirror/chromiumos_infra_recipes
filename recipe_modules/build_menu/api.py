@@ -708,8 +708,8 @@ class BuildMenuApi(recipe_api.RecipeApi):
     return self.packages_installed
 
   def build_images(self, config=None, include_version=False,
-                   is_official: bool = False,
-                   timeout_sec: Optional[int] = None):
+                   is_official: bool = False, timeout_sec: Optional[int] = None,
+                   parallel_test: bool = False) -> Optional["ParallelRunner"]:
     """Build the image.
 
     This behavior is adjusted by the run_spec values in config.
@@ -720,6 +720,9 @@ class BuildMenuApi(recipe_api.RecipeApi):
         to sysroot_util.build.
       is_official: Whether to produce official builds.
       timeout_sec (int): Step timeout (in seconds), None uses default timeout.
+      parallel_test: Automatically run tests serially when False, or skip tests
+        to allow tests to be manually run in parallel when True (not to be
+        confused with skip_image_tests).
     """
     config = config or self.config_or_default
     build_images = config.build.build_images
@@ -739,7 +742,26 @@ class BuildMenuApi(recipe_api.RecipeApi):
         build_images.base_is_recovery, version=version,
         skip_image_tests=unit_tests.skip_image_tests,
         verify_image_size_delta=build_images.verify_image_size_delta,
-        bazel=bazel, is_official=is_official, timeout_sec=timeout_sec)
+        bazel=bazel, is_official=is_official, timeout_sec=timeout_sec,
+        serial_tests=not parallel_test)
+
+  def test_images(self, config: Optional[BuilderConfig] = None):
+    """Run image tests.
+
+    Only necessary if running the tests in parallel, otherwise they are
+    automatically executed after build_image.
+
+    Args:
+      config: The Builder Config for the build, or None.
+    """
+    config = config or self.config_or_default
+    build_images = config.build.build_images
+    unit_tests = config.unit_tests
+
+    return self.m.sysroot_util.test_images(
+        image_types=build_images.image_types,
+        skip_image_tests=unit_tests.skip_image_tests,
+    )
 
   def unit_tests(self, config=None):
     """Run ebuild tests.

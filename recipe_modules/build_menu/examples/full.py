@@ -66,6 +66,7 @@ def DoRunSteps(api, config, properties):
       api.build_menu.install_packages()
       api.build_menu.build_and_test_images(config)
       api.build_menu.build_and_test_images(include_version=True)
+      api.build_menu.test_images()
       api.build_menu.get_cl_affected_sysroot_packages()
       # TODO(b/277222525): Separate uploads into a separate test case.
       if properties.upload_prebuilts:

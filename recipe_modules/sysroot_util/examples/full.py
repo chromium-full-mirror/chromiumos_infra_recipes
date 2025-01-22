@@ -66,8 +66,13 @@ def RunSteps(api, properties):
       disk_layout='big_disk', base_is_recovery=properties.base_is_recovery,
       test_test_data=image_test_json, skip_image_tests=properties.skip_tests,
       verify_image_size_delta=properties.verify_image_size_delta,
-      is_official=properties.is_official)
+      is_official=properties.is_official,
+      serial_tests=not properties.parallel_tests)
 
+  if properties.parallel_tests:
+    # Manually run the image tests "in parallel with other tasks".
+    api.sysroot_util.test_images(image_types, test_test_data=image_test_json,
+                                 skip_image_tests=properties.skip_tests)
 
 def GenTests(api):
 
@@ -419,6 +424,18 @@ def GenTests(api):
       api.post_process(
           post_process.MustRun,
           'build images.Running `make_netboot.sh` for legacy factory branch'),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'build-image-parallel-tests',
+      test_build(),
+      api.properties(FullTestProperties(parallel_tests=True)),
+      api.post_process(
+          post_process.DoesNotRun,
+          'build images.test images.call chromite.api.ImageService/Test'),
+      api.post_process(post_process.MustRun,
+                       'test images.call chromite.api.ImageService/Test'),
       api.post_process(post_process.DropExpectation),
   )
 
