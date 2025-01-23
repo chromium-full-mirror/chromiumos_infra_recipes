@@ -111,14 +111,16 @@ def RunSteps(api: RecipeApi):
   with api.step.nest('missing tag') as presentation:
     subject = patch_set.subject
     if not subject.startswith(UPSTREAM_TAGS + OTHER_TAGS):
-      api.tricium.add_comment('Tag Checker', TAG_MISSING_MSG, '/COMMIT_MSG')
+      api.tricium.add_comment('chromeos_kernel_tag_checker', TAG_MISSING_MSG,
+                              '/COMMIT_MSG')
       api.tricium.write_comments()
       return
 
   with api.step.nest('invalid tag') as presentation:
     if subject.startswith(UPSTREAM_TAGS) and _chromeos_change(
         patch_set.file_infos):
-      api.tricium.add_comment('Tag Checker', BAD_TAG_MSG, '/COMMIT_MSG')
+      api.tricium.add_comment('chromeos_kernel_tag_checker', BAD_TAG_MSG,
+                              '/COMMIT_MSG')
       api.tricium.write_comments()
       return
 
@@ -135,7 +137,7 @@ def RunSteps(api: RecipeApi):
     buganizer = r'b:[0-9]{7,}'
     tag_line = r'\nUPSTREAM-TASK=%s([, ]+%s)*[ \t]*\n' % (buganizer, buganizer)
     if not re.search(tag_line, message):
-      api.tricium.add_comment('Technical debt', TECH_DEBT_MSG_TAG,
+      api.tricium.add_comment('chromeos_technical_debt', TECH_DEBT_MSG_TAG,
                               '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
       api.tricium.write_comments()
@@ -163,7 +165,7 @@ def RunSteps(api: RecipeApi):
 
     if set(bugs) & set(upstream_tasks):
       presentation.status = api.step.FAILURE
-      api.tricium.add_comment('Technical debt', TECH_DEBT_DUP_BUG_MSG,
+      api.tricium.add_comment('chromeos_technical_debt', TECH_DEBT_DUP_BUG_MSG,
                               '/COMMIT_MSG')
       presentation.step_text = 'Tag missing, add comment. CL not ready for proper review.'
       api.tricium.write_comments()
