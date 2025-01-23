@@ -4304,7 +4304,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4334,8 +4334,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4364,7 +4364,7 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "add",
       "--database",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/../artifactsd33fvz7t/tokens.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4392,7 +4392,7 @@
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "report",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4419,8 +4419,8 @@
       "cp",
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4455,7 +4455,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "file_hash",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4484,7 +4484,7 @@
       "cp",
       "--if-generation-match=0",
       "--predefined-acl=publicRead",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4512,7 +4512,7 @@
       "cp",
       "--predefined-acl=publicRead",
       "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
-      "gs://chromeos-localmirror/distfiles/historical.bin"
+      "gs://chromeos-localmirror/distfiles/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4533,18 +4533,38 @@
     ]
   },
   {
+    "cmd": [
+      "gcloud",
+      "storage",
+      "cp",
+      "--predefined-acl=publicRead",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/version/historical.deadbeef.bin",
+      "gs://chromeos-localmirror/distfiles/chromeos-ec-token-2012.05.14.125342.bin"
+    ],
+    "cwd": "[CLEANUP]/chromiumos_workspace",
+    "luci_context": {
+      "realm": {
+        "name": "chromeos:postsubmit"
+      },
+      "resultdb": {
+        "current_invocation": {
+          "name": "invocations/build:8945511751514863184",
+          "update_token": "token"
+        },
+        "hostname": "rdbhost"
+      }
+    },
+    "name": "Update Historical Token Database.Generate versioned database name.gcloud storage cp (3)",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@2@@@"
+    ]
+  },
+  {
     "cmd": [],
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
       "@@@STEP_LINK@CL@https://chromium-review.googlesource.com/c/[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/+/1@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.write version pin file",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@"
     ]
   },
   {
@@ -4555,7 +4575,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "deadbeef",
+      "2012.05.14.125342",
       "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token/VERSION-PIN"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4572,9 +4592,11 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.write version pin file.version file",
+    "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.write version pin file",
     "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@"
+      "@@@STEP_NEST_LEVEL@3@@@",
+      "@@@STEP_LOG_LINE@VERSION-PIN@2012.05.14.125342@@@",
+      "@@@STEP_LOG_END@VERSION-PIN@@@"
     ]
   },
   {
@@ -4714,7 +4736,7 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "VERSION-PIN: updating version pin chromeos-ec-token to deadbeef\n\nCL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184",
+      "VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342\n\nCL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184",
       "[CLEANUP]/commit_msg_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/src/third_party/chromiumos-overlay/chromeos-base/chromeos-ec-token",
@@ -4734,7 +4756,7 @@
     "name": "Update Historical Token Database.Generate versioned database name.update VERSION-PIN.commit version pin file.write commit message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@commit_msg_tmp_1@VERSION-PIN: updating version pin chromeos-ec-token to deadbeef@@@",
+      "@@@STEP_LOG_LINE@commit_msg_tmp_1@VERSION-PIN: updating version pin chromeos-ec-token to 2012.05.14.125342@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@@@@",
       "@@@STEP_LOG_LINE@commit_msg_tmp_1@CL generated by job https://cr-buildbucket.appspot.com/build/8945511751514863184@@@",
       "@@@STEP_LOG_END@commit_msg_tmp_1@@@"
@@ -5469,7 +5491,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0022@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0024@@@"
     ]
   },
   {

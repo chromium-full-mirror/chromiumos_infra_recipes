@@ -4307,7 +4307,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4337,8 +4337,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4367,7 +4367,7 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "add",
       "--database",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/../artifactsd33fvz7t/tokens.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4395,7 +4395,7 @@
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "report",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4422,8 +4422,8 @@
       "cp",
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4452,7 +4452,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4482,8 +4482,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4512,7 +4512,7 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "add",
       "--database",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/../artifactsd33fvz7t/tokens.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4540,7 +4540,7 @@
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "report",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4567,8 +4567,8 @@
       "cp",
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4597,7 +4597,7 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "stat",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4627,8 +4627,8 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
@@ -4657,7 +4657,7 @@
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "add",
       "--database",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
       "[CLEANUP]/tmp_tmp_2/token/../artifactsd33fvz7t/tokens.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
@@ -4685,7 +4685,7 @@
       "[CLEANUP]/chromiumos_workspace/src/platform/ec/zephyr/pigweed-vpython3",
       "[CLEANUP]/chromiumos_workspace/src/third_party/pigweed/pw_tokenizer/py/pw_tokenizer/database.py",
       "report",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -4712,8 +4712,8 @@
       "cp",
       "--if-generation-match=1702318339485920",
       "--predefined-acl=publicRead",
-      "[CLEANUP]/tmp_tmp_2/token/historical.bin",
-      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "[CLEANUP]/tmp_tmp_2/token/chromeos-ec-token-historical.bin",
+      "gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "luci_context": {
@@ -5424,7 +5424,7 @@
   {
     "failure": {
       "failure": {},
-      "humanReason": "Failed to update gs://chromeos-localmirror/distfiles/cros_ec/tokens/historical.bin"
+      "humanReason": "Failed to update gs://chromeos-localmirror/distfiles/cros_ec/tokens/chromeos-ec-token-historical.bin"
     },
     "name": "$result"
   }
