@@ -65,6 +65,12 @@ def GenTests(api: RecipeTestApi):
           post_process.DoesNotRun,
           'download release artifacts.gsutil download recovery_image.tar.xz from chromeos-image-archive/amd64-generic-release/R99-1234.56.0-101 (2)'
       ),
+      # Must download dirs.
+      api.post_check(
+          post_process.StepCommandContains,
+          'download release artifacts.gsutil download '
+          'dlc from chromeos-image-archive/'
+          'amd64-generic-release/R99-1234.56.0-101', ['-r']),
       api.post_process(post_process.DropExpectation),
   )
 

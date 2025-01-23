@@ -95,6 +95,7 @@ def RunSteps(api: RecipeApi):
       sign_types, channels)
   api.path.mock_add_file(
       f"{str(archive_dir).replace('1','2')}/chromiumos_test_image.tar.xz")
+  api.path.mock_add_file(f"{str(archive_dir).replace('1','2')}/dlc/dlc.img")
   api.assertions.assertEqual(api.signing.get_paygen_keyset(), expected_keyset)
   expected_processed_config = BuildTargetSigningConfig(
       build_target='kukui',
@@ -271,17 +272,23 @@ def GenTests(api: RecipeTestApi):
           post_process.StepCommandContains,
           'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (2)',
           [
-              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-base-R99-1234.56.0-kukui.tar.xz',
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/dlc',
           ]),
       api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (3)',
           [
-              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-firmware-R99-1234.56.0-kukui.tar.bz2',
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-base-R99-1234.56.0-kukui.tar.xz',
           ]),
       api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (4)',
+          [
+              'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-firmware-R99-1234.56.0-kukui.tar.bz2',
+          ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (5)',
           [
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-recovery-R99-1234.56.0-kukui.tar.xz',
           ]),
@@ -379,6 +386,10 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains,
           'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (2)',
+          ['gs://chromeos-releases/dev-channel/kukui/1234.56.0/dlc']),
+      api.post_check(
+          post_process.StepCommandContains,
+          'sign artifacts.upload unsigned artifacts to chromeos-releases bucket.upload unsigned artifacts for CHANNEL_DEV.gsutil cp (3)',
           [
               'gs://chromeos-releases/dev-channel/kukui/1234.56.0/ChromeOS-base-R99-1234.56.0-kukui.tar.xz'
           ]),

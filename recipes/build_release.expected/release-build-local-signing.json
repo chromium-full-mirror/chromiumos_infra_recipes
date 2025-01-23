@@ -15278,8 +15278,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromeos-hwqual-kukui-1234.56.0.tar.bz2",
-      "[CLEANUP]/signing-dir_tmp_1/chromeos-hwqual-kukui-1234.56.0.tar.bz2"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15348,8 +15349,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_base_image.tar.xz",
-      "[CLEANUP]/signing-dir_tmp_1/chromiumos_base_image.tar.xz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15418,8 +15420,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/chromiumos_test_image.tar.xz",
-      "[CLEANUP]/signing-dir_tmp_1/chromiumos_test_image.tar.xz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15488,8 +15491,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/debug.tgz",
-      "[CLEANUP]/signing-dir_tmp_1/debug.tgz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15558,8 +15562,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/dlc",
-      "[CLEANUP]/signing-dir_tmp_1/dlc"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15628,8 +15633,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/factory_image.zip",
-      "[CLEANUP]/signing-dir_tmp_1/factory_image.zip"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15698,8 +15704,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/firmware_from_source.tar.bz2",
-      "[CLEANUP]/signing-dir_tmp_1/firmware_from_source.tar.bz2"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15768,8 +15775,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/full_dev_part_KERN.bin.gz",
-      "[CLEANUP]/signing-dir_tmp_1/full_dev_part_KERN.bin.gz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15838,8 +15846,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/full_dev_part_MINIOS.bin.gz",
-      "[CLEANUP]/signing-dir_tmp_1/full_dev_part_MINIOS.bin.gz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15908,8 +15917,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/full_dev_part_ROOT.bin.gz",
-      "[CLEANUP]/signing-dir_tmp_1/full_dev_part_ROOT.bin.gz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -15978,8 +15988,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/image.zip",
-      "[CLEANUP]/signing-dir_tmp_1/image.zip"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -16048,8 +16059,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/recovery_image.tar.xz",
-      "[CLEANUP]/signing-dir_tmp_1/recovery_image.tar.xz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {
@@ -16118,8 +16130,9 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cp",
+      "-r",
       "gs://chromeos-releases-test/kukui-release/R99-1234.56.0-101/stateful.tgz",
-      "[CLEANUP]/signing-dir_tmp_1/stateful.tgz"
+      "[CLEANUP]/signing-dir_tmp_1"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "env": {

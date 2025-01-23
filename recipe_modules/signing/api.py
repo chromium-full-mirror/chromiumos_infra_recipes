@@ -392,8 +392,9 @@ class SigningApi(recipe_api.RecipeApi):
     skipped_artifacts = []
     for artifact_name in sorted(artifact_names):
       try:
+        # -r for recursive.
         self.m.gsutil.download(
-            gs_dir, artifact_name, self.m.path.join(local_dir, artifact_name),
+            gs_dir, artifact_name, local_dir, ['-r'],
             name='download {} from {}'.format(artifact_name, gs_dir),
             timeout=GSUTIL_TIMEOUT_SECONDS)
       except StepFailure:
@@ -823,12 +824,14 @@ class SigningApi(recipe_api.RecipeApi):
             elif suffix is not None:
               dst = f'{dst}.{suffix}'
             src_path = os.path.join(str(archive_dir), src)
-            if self.m.path.isfile(src_path):
+            if self.m.path.isfile(src_path) or self.m.path.isdir(src_path):
               uploaded.add(src)
               # -n so we don't clobber existing destination artifacts.
+              # -r for recursive.
               self.m.gsutil([
                   'cp',
                   '-n',
+                  '-r',
                   src_path,
                   os.path.join(gs_dir, dst),
               ], multithreaded=True, timeout=GSUTIL_TIMEOUT_SECONDS)
