@@ -521,7 +521,15 @@ class BuildMenuApi(recipe_api.RecipeApi):
     """
     self.setup_sysroot(with_sysroot=with_sysroot,
                        sysroot_archive=sysroot_archive)
-    return self.determine_relevance()
+
+    target_versions_runner = self.m.future_utils.create_parallel_runner()
+    if with_sysroot:
+      target_versions_runner.run_function_async(
+          lambda _req, _: self.set_target_versions(), None)
+
+    relevance = self.determine_relevance()
+    target_versions_runner.wait_for_and_throw()
+    return relevance
 
   def setup_sysroot(self, with_sysroot=True, sysroot_archive=None):
     """Sets up the sysroot for the build.
@@ -547,6 +555,11 @@ class BuildMenuApi(recipe_api.RecipeApi):
                                                      self.build_target,
                                                      sysroot_archive)
 
+  def set_target_versions(self, with_sysroot: bool = True):
+    """Set the target versions properties and upload to gs."""
+    if with_sysroot:
+      config = self.config_or_default
+      artifacts = config.artifacts
       # Set the target_versions output property, and upload metadata.
       # This requires a sysroot for at least the package versions.
       self._target_versions = self.m.cros_build_api.PackageService.GetTargetVersions(

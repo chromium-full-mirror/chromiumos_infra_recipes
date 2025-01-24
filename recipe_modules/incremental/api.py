@@ -109,6 +109,7 @@ class IncrementalApi(RecipeApi):
     )
 
     api.build_menu.setup_sysroot()
+    api.build_menu.set_target_versions()
     api.build_menu.bootstrap_sysroot(config)
     api.build_menu.install_packages(config)
 
