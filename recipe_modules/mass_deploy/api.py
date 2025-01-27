@@ -12,10 +12,17 @@ from recipe_engine.recipe_api import StepFailure
 class MassDeployApi(recipe_api.RecipeApi):
 
   @staticmethod
-  def _select_stable_recovery_image(signing_metadata):
-    """Returns just the metadata for the signed stable recovery image, or None."""
+  def _select_signed_recovery_image(signing_metadata):
+    """Returns just the metadata for the signed recovery image, or None.
+
+    Only LTS mass deploy images are distributed to end users, but build mass
+    deploy images for stable (and LTC) as well, so we can catch breakages in
+    mass deploy image generation closer to when they occur.
+    """
+    massdeploy_channels = ('ltc', 'lts', 'stable')
     for metadata in signing_metadata.values():
-      if (metadata['channel'] == 'stable' and metadata['type'] == 'recovery'):
+      if (metadata['channel'] in massdeploy_channels and
+          metadata['type'] == 'recovery'):
         return metadata
 
     return None
@@ -37,19 +44,19 @@ class MassDeployApi(recipe_api.RecipeApi):
 
     This assumes signed builds have already been generated.
     """
-    # We only build mass deploy images for stable.
     with self.m.step.nest('generate mass deploy builds'):
-      with self.m.step.nest('only run on stable builds') as presentation:
-        stable_build_metadata = self._select_stable_recovery_image(
+      with self.m.step.nest(
+          'only run on LTC, LTS or stable builds') as presentation:
+        signed_build_metadata = self._select_signed_recovery_image(
             signing_metadata)
-        if stable_build_metadata is None:
-          presentation.step_text = 'no stable build, stopping'
+        if signed_build_metadata is None:
+          presentation.step_text = 'no LTC, LTS or stable build, stopping'
           return
 
       with self.m.step.nest('determine builder settings'):
-        release_milestone = stable_build_metadata['version']['milestone']
-        release_directory = stable_build_metadata['release_directory']
-        input_zip = self._select_zip(stable_build_metadata)
+        release_milestone = signed_build_metadata['version']['milestone']
+        release_directory = signed_build_metadata['release_directory']
+        input_zip = self._select_zip(signed_build_metadata)
         properties = {
             'input_image': f'{release_directory}/{input_zip}',
             'milestone': release_milestone

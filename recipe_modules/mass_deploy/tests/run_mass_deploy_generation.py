@@ -115,6 +115,24 @@ _METADATA_FLEXOR = {
         }
 }
 
+_METADATA_LTS = {
+    'gs://chromeos-releases/lts-channel/reven/15437.42.0/ChromeOS-recovery-R116-15487.0.0-reven.instructions':
+        {
+            'channel': 'lts',
+            'type': 'recovery',
+            'outputs': {
+                'chromeos_15487.0.0.0_reven_recovery_lts-channel_mp-v2.bin': {},
+                'chromeos_15487.0.0_reven_recovery_lts-channel_mp-v2.bin.zip': {
+                }
+            },
+            'release_directory': 'lts-channel/reven/15437.42.0',
+            'version': {
+                'full': 'R116-15487.0.0',
+                'milestone': '116',
+                'platform': '15487.0.0'
+            }
+        }
+}
 
 def RunSteps(api):
   api.mass_deploy.run_mass_deploy_generation(api.properties['signing_metadata'])
@@ -133,6 +151,8 @@ def GenTests(api):
       result.update(deepcopy(_METADATA_BETA))
     if 'stable' in channels:
       result.update(deepcopy(_METADATA_STABLE))
+    if 'lts' in channels:
+      result.update(deepcopy(_METADATA_LTS))
 
     if outputs_override:
       outputs = {key: {} for key in outputs_override}
@@ -146,9 +166,10 @@ def GenTests(api):
 
   yield api.test(
       'normal-release',
-      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.properties(signing_metadata=_gen_metadata(['beta', 'stable', 'lts'])),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.determine builder settings'),
       api.post_check(post_process.MustRun,
@@ -159,10 +180,11 @@ def GenTests(api):
       api.post_process(post_process.DropExpectation))
 
   yield api.test(
-      'no-stable',
+      'no-lts',
       api.properties(signing_metadata=_gen_metadata(['canary', 'dev'])),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.DoesNotRun,
                      'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation))
@@ -170,10 +192,11 @@ def GenTests(api):
   yield api.test(
       'no-zip',
       api.properties(
-          signing_metadata=_gen_metadata(['beta', 'stable'],
+          signing_metadata=_gen_metadata(['beta', 'lts'],
                                          outputs_override=['some.bin'])),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.StepFailure,
                      'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation), status='FAILURE')
@@ -181,18 +204,19 @@ def GenTests(api):
   yield api.test(
       'two-zips',
       api.properties(
-          signing_metadata=_gen_metadata(['beta', 'stable'], outputs_override=[
+          signing_metadata=_gen_metadata(['beta', 'lts'], outputs_override=[
               'some.bin.zip', 'another.zip'
           ])),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.StepFailure,
                      'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation), status='FAILURE')
 
   yield api.test(
       'staging',
-      api.properties(signing_metadata=_gen_metadata(['beta', 'stable'])),
+      api.properties(signing_metadata=_gen_metadata(['beta', 'lts'])),
       api.buildbucket.generic_build(bucket='staging'),
       api.post_check(post_process.StepSummaryEquals,
                      'generate mass deploy builds.schedule mass deploy build',
@@ -203,8 +227,9 @@ def GenTests(api):
       'flexor-present-along-with-flex-release-build',
       api.properties(
           signing_metadata=_gen_metadata(['stable'], include_flexor=True)),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.MustRun,
                      'generate mass deploy builds.determine builder settings'),
       api.post_check(post_process.MustRun,
@@ -217,8 +242,9 @@ def GenTests(api):
   yield api.test(
       'do-nothing-if-only-flexor-is-present',
       api.properties(signing_metadata=_gen_metadata([], include_flexor=True)),
-      api.post_check(post_process.MustRun,
-                     'generate mass deploy builds.only run on stable builds'),
+      api.post_check(
+          post_process.MustRun,
+          'generate mass deploy builds.only run on LTC, LTS or stable builds'),
       api.post_check(post_process.DoesNotRun,
                      'generate mass deploy builds.determine builder settings'),
       api.post_process(post_process.DropExpectation))

@@ -15387,7 +15387,7 @@
   },
   {
     "cmd": [],
-    "name": "generate mass deploy builds.only run on stable builds",
+    "name": "generate mass deploy builds.only run on LTC, LTS or stable builds",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
     ]
