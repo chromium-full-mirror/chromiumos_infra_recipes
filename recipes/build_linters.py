@@ -20,6 +20,7 @@ from PB.chromiumos.builder_config import BuilderConfig
 from PB.chromiumos.common import PackageInfo
 from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.go.chromium.org.luci.buildbucket.proto.common import SUCCESS
+from PB.go.chromium.org.luci.common.proto.findings import findings as findings_pb
 from PB.recipe_engine.result import RawResult
 from PB.recipes.chromeos.build_linters import BuildLintersProperties
 from recipe_engine import post_process
@@ -29,9 +30,9 @@ from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
 
 DEPS = [
+    'recipe_engine/findings',
     'recipe_engine/path',
     'recipe_engine/step',
-    'recipe_engine/tricium',
     'build_menu',
     'chrome',
     'chromite',
@@ -212,30 +213,39 @@ def _GetLints(api: RecipeApi, linter: str,
         test_output_data=test_data).findings
 
 
-def _WriteComments(api: RecipeApi, findings: List[LinterFinding]) -> int:
-  """Write comments with Tricium for linter findings."""
-  with api.step.nest('write comments for linter findings') as presentation:
-    comment_count = 0
-    ignored_count = 0
-    category_names = {
-        LinterFinding.Linters.LINTER_UNSPECIFIED: 'BuildLinters',
-        LinterFinding.Linters.CLANG_TIDY: 'ClangTidy',
-        LinterFinding.Linters.CARGO_CLIPPY: 'CargoClippy',
-        LinterFinding.Linters.GO_LINT: 'Staticcheck',
-    }
-    for finding in findings:
-      for location in finding.locations:
-        if location.filepath.startswith('/'):
-          ignored_count += 1
-          continue
-        comment_count += 1
-        api.tricium.add_comment(category_names[finding.linter], finding.message,
-                                location.filepath,
-                                start_line=location.line_start,
-                                end_line=location.line_start + 1)
-    presentation.step_text = 'Wrote %d ' % comment_count
-  api.tricium.write_comments()
-  return comment_count
+def _UploadFindings(api: RecipeApi, findings: List[LinterFinding]) -> int:
+  """Upload linter findings"""
+  category_names = {
+      LinterFinding.Linters.LINTER_UNSPECIFIED: 'chromeos_build_linters',
+      LinterFinding.Linters.CLANG_TIDY: 'chromeos_clang_tidy',
+      LinterFinding.Linters.CARGO_CLIPPY: 'chromeos_cargo_clippy',
+      LinterFinding.Linters.GO_LINT: 'chromeos_static_check',
+  }
+  to_upload = [
+      findings_pb.Finding(
+          category=category_names[finding.linter],
+          location=findings_pb.Location(
+              gerrit_change_ref=findings_pb.Location.GerritChangeReference(
+                  host=api.src_state.gerrit_changes[0].host,
+                  project=api.src_state.gerrit_changes[0].project,
+                  change=api.src_state.gerrit_changes[0].change,
+                  patchset=api.src_state.gerrit_changes[0].patchset,
+              ),
+              file_path=location.filepath,
+              range=findings_pb.Location.Range(
+                  start_line=location.line_start,
+                  end_line=location.line_start + 1,
+              ),
+          ),
+          message=finding.message,
+          severity_level=findings_pb.Finding.SEVERITY_LEVEL_WARNING,
+      )
+      for finding in findings
+      for location in finding.locations
+      if not location.filepath.startswith('/')
+  ]
+  api.findings.upload_findings(to_upload, 'upload linter findings')
+  return len(to_upload)
 
 
 def RunSteps(api: RecipeApi,
@@ -288,11 +298,11 @@ def DoRunSteps(  # pylint: disable=inconsistent-return-statements
       linter_output = _GetLints(api, linter, affected_packages)
       all_linter_output.extend(linter_output)
     if packages_detected:
-      comment_count = _WriteComments(api, all_linter_output)
-      if comment_count:
+      findings_count = _UploadFindings(api, all_linter_output)
+      if findings_count:
         result = RawResult(
             status=SUCCESS,
-            summary_markdown='Wrote %d findings.' % comment_count)
+            summary_markdown='Uploaded %d findings.' % findings_count)
     else:
       result = RawResult(status=SUCCESS,
                          summary_markdown='No packages affected by changes.')
@@ -454,8 +464,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'linting packages with staticcheck'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun,
-                     'write comments for linter findings'),
+      api.post_check(post_process.DoesNotRun, 'upload linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
@@ -486,8 +495,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess,
                      'linting packages with staticcheck'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.StepSuccess,
-                     'write comments for linter findings'),
+      api.post_check(post_process.StepSuccess, 'upload linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
@@ -514,8 +522,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess,
                      'linting packages with staticcheck'),
       api.post_check(post_process.StepSuccess, 'linting packages with tidy'),
-      api.post_check(post_process.StepSuccess,
-                     'write comments for linter findings'),
+      api.post_check(post_process.StepSuccess, 'upload linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
@@ -551,8 +558,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'linting packages with staticcheck'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun,
-                     'write comments for linter findings'),
+      api.post_check(post_process.DoesNotRun, 'upload linter findings'),
       api.repo.project_infos_step_data('get affected packages for clippy',
                                        data=project_info),
       api.gerrit.set_gerrit_fetch_changes_response(
@@ -589,8 +595,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'linting packages with staticcheck'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun,
-                     'write comments for linter findings'),
+      api.post_check(post_process.DoesNotRun, 'upload linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
@@ -618,8 +623,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.DoesNotRun,
                      'linting packages with staticcheck'),
       api.post_check(post_process.DoesNotRun, 'linting packages with tidy'),
-      api.post_check(post_process.DoesNotRun,
-                     'write comments for linter findings'),
+      api.post_check(post_process.DoesNotRun, 'upload linter findings'),
       api.post_check(post_process.MustRun, 'upload artifacts'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
@@ -645,8 +649,7 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
       api.post_check(post_process.StepSuccess, 'linting packages with clippy'),
       api.post_check(post_process.StepSuccess,
                      'linting packages with staticcheck'),
-      api.post_check(post_process.StepSuccess,
-                     'write comments for linter findings'),
+      api.post_check(post_process.StepSuccess, 'upload linter findings'),
       api.gerrit.set_gerrit_fetch_changes_response('get relevant patches',
                                                    changes[:1], relevant_edits),
       api.repo.project_infos_step_data('get affected packages for clippy',
