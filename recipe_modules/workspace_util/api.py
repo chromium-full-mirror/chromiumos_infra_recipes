@@ -187,6 +187,29 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       Whether there are toolchain patches applied.
     """
 
+    def _find_external_manifest_path(path: str) -> Optional[str]:
+      """Translates `path` to an external manifest path if possible.
+
+        Moreover, if `path` points into manifest-internal, returns the same
+        path in the external manifest. If `path` doesn't point at an
+        internal-manifest file, returns None.
+
+        This is necessary to account for builder logic that mirrors
+        manifest-internal CLs into the external manifest on some builders.
+        b/392180117#comment8.
+        """
+      internal_relpath_raw = self.m.src_state.internal_manifest.relpath
+      # For want of `path.startswith`, ensure that this ends with precisely
+      # one pathsep, so `str.startswith` works as expected.
+      pathsep = self.m.path.sep
+      internal_relpath = internal_relpath_raw.rstrip(pathsep) + pathsep
+      if not path.startswith(internal_relpath):
+        return None
+
+      manifest_file = path[len(internal_relpath):]
+      external_relpath = self.m.src_state.external_manifest.relpath
+      return self.m.path.join(external_relpath, manifest_file)
+
     with self.m.step.nest(name or
                           'detect toolchain change') as step_presentation:
       if self.toolchain_cls_applied is not None:
@@ -205,6 +228,14 @@ class WorkspaceUtilApi(recipe_api.RecipeApi):
       relevant_paths = (x.path for x in toolchain_paths_response.paths)
 
       affected_paths = self.m.cros_relevance.get_affected_paths(self.patch_sets)
+      # The Chromite endpoint will return paths _that exist inside of the
+      # current source tree_. On builders that sync the external manifest but
+      # need to apply a manifest-internal CL, pretend that all
+      # manifest-internal files also apply to the external manifests.
+      externalized_paths = [
+          _find_external_manifest_path(x) for x in affected_paths
+      ]
+      affected_paths.extend(x for x in externalized_paths if x)
 
       check_request = PointlessBuildCheckRequest(
           ignore_known_non_portage_directories=True,

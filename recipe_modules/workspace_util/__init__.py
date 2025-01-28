@@ -10,6 +10,7 @@ from PB.recipe_modules.chromeos.workspace_util.workspace_util import WorkspaceUt
 DEPS = [
     'cros_build_api',
     'recipe_engine/context',
+    'recipe_engine/path',
     'recipe_engine/step',
     'cros_infra_config',
     'cros_relevance',

@@ -9,8 +9,10 @@
 from typing import Any
 from typing import Generator
 
+from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.recipe_modules.chromeos.workspace_util.examples.test import TestInputProperties
 from PB.testplans.pointless_build import PointlessBuildCheckResponse
+from recipe_engine import post_process
 from recipe_engine.recipe_api import RecipeApi
 from recipe_engine.recipe_test_api import RecipeTestApi
 from recipe_engine.recipe_test_api import TestData
@@ -23,6 +25,8 @@ DEPS = [
     'recipe_engine/properties',
     'recipe_engine/swarming',
     'cros_source',
+    'gerrit',
+    'repo',
     'src_state',
     'test_util',
     'workspace_util',
@@ -116,3 +120,54 @@ def GenTests(api: RecipeTestApi) -> Generator[TestData, None, None]:
 
   yield test('release', git_repo=api.src_state.external_manifest.url,
              git_ref='refs/heads/release-R86.13421.B')
+
+  gerrit_change = [
+      GerritChange(
+          host='chromium-review.googlesource.com',
+          project='chromeos/manifest-internal',
+          change=123456,
+          patchset=7,
+      ),
+  ]
+  gerrit_patch_info = {
+      123456: {
+          'patch_set': 7,
+          'files': {
+              '_toolchain.xml': {},
+          },
+      },
+  }
+
+  yield test(
+      'has-toolchain-changes-in-manifest',
+      api.gerrit.set_gerrit_fetch_changes_response('configure builder',
+                                                   gerrit_change,
+                                                   gerrit_patch_info),
+      api.gerrit.set_gerrit_fetch_changes_response('checkout gerrit change',
+                                                   gerrit_change,
+                                                   gerrit_patch_info),
+      api.gerrit.set_gerrit_fetch_changes_response('cherry-pick gerrit changes',
+                                                   gerrit_change,
+                                                   gerrit_patch_info),
+      api.repo.project_infos_step_data(
+          'detect toolchain change.get affected paths',
+          data=[
+              {
+                  'project': 'chromeos/manifest-internal',
+                  'path': 'manifest-internal',
+              },
+          ],
+      ),
+      # The Gerrit change only contains a change to
+      # manifest-internal/_toolchain.xml, but the relevance input should
+      # contain that path for both the internal and external manifests
+      # (as the diff there will be mirrored by a builder using the
+      # external manifest).
+      api.post_process(post_process.LogContains, 'detect toolchain change',
+                       'relevance_input', (
+                           '"manifest/_toolchain.xml"',
+                           '"manifest-internal/_toolchain.xml"',
+                       )),
+      cq=True,
+      toolchain_cls_applied=True,
+  )
