@@ -136,12 +136,10 @@ class Ctpv2Command(recipe_api.RecipeApi):
     for request in requests.values():  # pragma: no cover
       params = self.get_val_from_obj_or_dict(request, 'params')
       ctp2_exp_enabled = 'chromeos.cros_infra_config.ctpv2_main_pool' in self.m.cros_infra_config.experiments
-      in_main_pool = params is not None and self._is_main_pool_request(params)
       ctpv2_outside_of_pool_allowlist = (
           self._has_ctpv2_allowed_prefix(params) and
           not self._is_allowed_pool(params))
-      if (not self._is_allowed_pool(params) and in_main_pool and
-          ctp2_exp_enabled) or ctpv2_outside_of_pool_allowlist:
+      if ctp2_exp_enabled and ctpv2_outside_of_pool_allowlist:
         _set_run_ctpv2_with_qs_param(params)
 
   def _is_main_pool_request(self, params):  # pragma: no cover
@@ -181,6 +179,9 @@ class Ctpv2Command(recipe_api.RecipeApi):
     return run_via_cft and run_ctpv2_with_qs
 
   def _is_allowed_pool(self, params):
+    in_main_pool = params is not None and self._is_main_pool_request(params)
+    if in_main_pool:  # pragma: no cover
+      return True
     decorations = self.get_val_from_obj_or_dict(params, 'decorations')
     if not decorations:  # pragma: no cover
       return False
