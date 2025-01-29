@@ -7,7 +7,7 @@
     "cmd": [],
     "name": "checking attestation eligibility",
     "~followup_annotations": [
-      "@@@STEP_TEXT@firmware-ti50-postsubmit is attestation eligible@@@"
+      "@@@STEP_TEXT@fw-ec-postsubmit NOT attestation eligible@@@"
     ]
   },
   {
@@ -32,7 +32,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -49,76 +49,6 @@
     ]
   },
   {
-    "cmd": [
-      "cipd",
-      "ensure",
-      "-root",
-      "[START_DIR]/reporter",
-      "-ensure-file",
-      "infra/tools/security/provenance_broker/${platform} git_revision:9022d7a188fb08ac5fce88b3bcaff5c9b1dbeee2",
-      "-max-threads",
-      "0",
-      "-json-output",
-      "/path/to/tmp/json"
-    ],
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checking attestation eligibility.ensure_installed",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"result\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"\": [@@@",
-      "@@@STEP_LOG_LINE@json.output@      {@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"instance_id\": \"resolved-instance_id-of-git_revision:902\",@@@",
-      "@@@STEP_LOG_LINE@json.output@        \"package\": \"infra/tools/security/provenance_broker/resolved-platform\"@@@",
-      "@@@STEP_LOG_LINE@json.output@      }@@@",
-      "@@@STEP_LOG_LINE@json.output@    ]@@@",
-      "@@@STEP_LOG_LINE@json.output@  }@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-stage",
-      "-stage",
-      "start",
-      "-recipe",
-      "build_firmware",
-      "-pid",
-      "12345"
-    ],
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "checking attestation eligibility.snoop: report_stage",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
     "cmd": [],
     "name": "configure builder"
   },
@@ -129,15 +59,16 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@builder_config_json@{@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"id\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"firmware-ti50-postsubmit\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"POSTSUBMIT\",@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"postsubmit\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"name\": \"fw-ec-postsubmit\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"type\": \"CQ\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"bucket\": \"cq\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"general\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"firmwareLocation\": \"PLATFORM_TI50\"@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"firmwareLocation\": \"PLATFORM_EC\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  },@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  \"artifacts\": {@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"prebuilts\": \"NONE\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"prebuilts\": \"PRIVATE\",@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    \"prebuiltsGsBucket\": \"chromeos-prebuilt\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"artifactsGsBucket\": \"chromeos-image-archive\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@    \"artifactsInfo\": {@@@",
       "@@@STEP_LOG_LINE@builder_config_json@      \"firmware\": {@@@",
@@ -146,15 +77,11 @@
       "@@@STEP_LOG_LINE@builder_config_json@            \"artifactTypes\": [@@@",
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TARBALL\",@@@",
       "@@@STEP_LOG_LINE@builder_config_json@              \"FIRMWARE_TARBALL_INFO\"@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@            ],@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@            \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@              \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"@@@",
       "@@@STEP_LOG_LINE@builder_config_json@            ]@@@",
       "@@@STEP_LOG_LINE@builder_config_json@          }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@        ]@@@",
       "@@@STEP_LOG_LINE@builder_config_json@      }@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    },@@@",
-      "@@@STEP_LOG_LINE@builder_config_json@    \"attestationEligible\": true@@@",
+      "@@@STEP_LOG_LINE@builder_config_json@    }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@  }@@@",
       "@@@STEP_LOG_LINE@builder_config_json@}@@@",
       "@@@STEP_LOG_END@builder_config_json@@@"
@@ -232,7 +159,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -271,7 +198,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -300,7 +227,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -340,7 +267,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -373,7 +300,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -384,12 +311,12 @@
       }
     },
     "name": "configure builder.gitiles-fetch-ref",
-    "stdin": "{\"branch\": {\"branch\": \"snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
+    "stdin": "{\"branch\": {\"branch\": \"staging-snapshot\", \"host\": \"chrome-internal.googlesource.com\", \"project\": \"chromeos/manifest-internal\"}}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
       "@@@STEP_LOG_LINE@json.output@  \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"snapshot-HEAD-SHA\"@@@",
+      "@@@STEP_LOG_LINE@json.output@    \"revision\": \"staging-snapshot-HEAD-SHA\"@@@",
       "@@@STEP_LOG_LINE@json.output@  }@@@",
       "@@@STEP_LOG_LINE@json.output@}@@@",
       "@@@STEP_LOG_END@json.output@@@"
@@ -407,7 +334,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/snapshot\\\"\\n}\"@@@"
+      "@@@SET_BUILD_PROPERTY@commit@\"{\\n  \\\"host\\\": \\\"chrome-internal.googlesource.com\\\",\\n  \\\"project\\\": \\\"chromeos/manifest-internal\\\",\\n  \\\"id\\\": \\\"staging-snapshot-HEAD-SHA\\\",\\n  \\\"ref\\\": \\\"refs/heads/staging-snapshot\\\"\\n}\"@@@"
     ]
   },
   {
@@ -415,7 +342,7 @@
     "name": "configure builder.update src_state.gitiles_commit.set_output_gitiles_commit",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}@@@"
+      "@@@SET_BUILD_PROPERTY@$recipe_engine/buildbucket/output_gitiles_commit@{\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}@@@"
     ]
   },
   {
@@ -431,7 +358,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -477,12 +404,12 @@
       "RECIPE_REPO[depot_tools]/gsutil.py",
       "----",
       "cat",
-      "gs://chromeos-bot-cache/chromeos-main-cache-snapshot-version.txt"
+      "gs://chromeos-bot-cache/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -518,7 +445,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -562,7 +489,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -606,7 +533,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -658,7 +585,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -696,7 +623,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -728,7 +655,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -758,7 +685,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -786,7 +713,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -816,7 +743,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -850,7 +777,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -874,12 +801,12 @@
       "/path/to/tmp/json",
       "copy",
       "initial-chromeos-source-snapshot",
-      "[CACHE]/infra_versions/chromeos-main-cache-snapshot-version.txt"
+      "[CACHE]/infra_versions/staging-chromeos-main-cache-snapshot-version.txt"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -892,8 +819,8 @@
     "name": "source cache.write version file",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
-      "@@@STEP_LOG_END@chromeos-main-cache-snapshot-version.txt@@@"
+      "@@@STEP_LOG_LINE@staging-chromeos-main-cache-snapshot-version.txt@initial-chromeos-source-snapshot@@@",
+      "@@@STEP_LOG_END@staging-chromeos-main-cache-snapshot-version.txt@@@"
     ]
   },
   {
@@ -917,7 +844,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -961,7 +888,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -991,7 +918,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1021,7 +948,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1051,7 +978,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1081,7 +1008,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1107,7 +1034,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1158,7 +1085,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1182,7 +1109,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1203,7 +1130,7 @@
     "name": "sync cached directory.set initial_repo_state",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
+      "@@@SET_BUILD_PROPERTY@initial_repo_state@{\"manifestBranch\": \"staging-snapshot\", \"manifestUrl\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\", \"state\": \"STATE_DIRTY\"}@@@"
     ]
   },
   {
@@ -1214,13 +1141,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_DIRTY\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1234,7 +1161,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_DIRTY\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1246,7 +1173,7 @@
     "name": "sync cached directory.ensure synced checkout",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_TEXT@cache tracking \"snapshot\" branch@@@"
+      "@@@STEP_TEXT@cache tracking \"staging-snapshot\" branch@@@"
     ]
   },
   {
@@ -1264,7 +1191,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1286,10 +1213,10 @@
       "--manifest-url",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--manifest-branch",
-      "snapshot",
+      "staging-snapshot",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--verbose"
     ],
     "cwd": "[CACHE]/chromeos",
@@ -1304,7 +1231,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1344,7 +1271,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1369,7 +1296,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1401,7 +1328,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1433,7 +1360,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1463,7 +1390,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1507,7 +1434,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1553,7 +1480,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1595,7 +1522,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1642,7 +1569,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1689,7 +1616,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1747,7 +1674,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1770,13 +1697,13 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"manifest_branch\": \"snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
+      "{\n  \"manifest_branch\": \"staging-snapshot\",\n  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",\n  \"state\": \"STATE_CLEAN\"\n}",
       "[CACHE]/chromeos/.recipes_state.json"
     ],
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1790,7 +1717,7 @@
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@{@@@",
-      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"snapshot\",@@@",
+      "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_branch\": \"staging-snapshot\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"manifest_url\": \"https://chrome-internal.googlesource.com/chromeos/manifest-internal\",@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@  \"state\": \"STATE_CLEAN\"@@@",
       "@@@STEP_LOG_LINE@.recipes_state.json@}@@@",
@@ -1807,7 +1734,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1841,7 +1768,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1871,7 +1798,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1901,7 +1828,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1931,7 +1858,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1961,7 +1888,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -1988,7 +1915,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2012,7 +1939,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2036,7 +1963,7 @@
       "--json-file",
       "/path/to/tmp/json",
       "--url",
-      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/snapshot-HEAD-SHA/snapshot.xml",
+      "https://chrome-internal.googlesource.com/chromeos/manifest-internal/+/staging-snapshot-HEAD-SHA/snapshot.xml",
       "--format",
       "text",
       "--accept-statuses",
@@ -2046,7 +1973,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2056,7 +1983,7 @@
         "hostname": "rdbhost"
       }
     },
-    "name": "sync to gitiles commit.fetch snapshot-HEAD-SHA:snapshot.xml",
+    "name": "sync to gitiles commit.fetch staging-snapshot-HEAD-SHA:snapshot.xml",
     "timeout": 180,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@"
@@ -2077,7 +2004,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2100,7 +2027,7 @@
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
       "--groups",
       "all",
-      "--repo-rev=stable",
+      "--repo-rev=main",
       "--manifest-name",
       "../tmp_manifest",
       "--manifest-depth",
@@ -2119,7 +2046,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2159,7 +2086,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2184,7 +2111,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2216,7 +2143,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2248,7 +2175,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2291,7 +2218,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2338,7 +2265,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2396,7 +2323,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2438,7 +2365,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2476,7 +2403,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2503,13 +2430,13 @@
       "git",
       "fetch",
       "https://chrome-internal.googlesource.com/chromeos/manifest-internal",
-      "snapshot-HEAD-SHA:"
+      "staging-snapshot-HEAD-SHA:"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2534,7 +2461,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2553,14 +2480,14 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2586,14 +2513,14 @@
     "cmd": [
       "vpython3",
       "RECIPE_REPO[depot_tools]/git_footers.py",
-      "snapshot-HEAD-SHA",
+      "staging-snapshot-HEAD-SHA",
       "--position-num"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace/manifest-internal",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2617,14 +2544,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"gitiles_commit\": {\n    \"commit_hash\": \"snapshot-HEAD-SHA\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"refs/heads/snapshot\"\n  }\n}",
+      "{\n  \"gitiles_commit\": {\n    \"commit_hash\": \"staging-snapshot-HEAD-SHA\",\n    \"host\": \"chrome-internal.googlesource.com\",\n    \"position\": \"999\",\n    \"project\": \"chromeos/manifest-internal\",\n    \"ref\": \"refs/heads/staging-snapshot\"\n  }\n}",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2639,11 +2566,11 @@
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@{@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@  \"gitiles_commit\": {@@@",
-      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"snapshot-HEAD-SHA\",@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"commit_hash\": \"staging-snapshot-HEAD-SHA\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"host\": \"chrome-internal.googlesource.com\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"position\": \"999\",@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@    \"project\": \"chromeos/manifest-internal\",@@@",
-      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"refs/heads/snapshot\"@@@",
+      "@@@STEP_LOG_LINE@sources.jsonpb@    \"ref\": \"refs/heads/staging-snapshot\"@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@  }@@@",
       "@@@STEP_LOG_LINE@sources.jsonpb@}@@@",
       "@@@STEP_LOG_END@sources.jsonpb@@@"
@@ -2659,13 +2586,13 @@
       "----",
       "cp",
       "[CLEANUP]/tmp_tmp_1/sources.jsonpb",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
+      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2679,42 +2606,7 @@
     "timeout": 900,
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "read chromiumos-sdk pin"
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/chromiumos_workspace/src/platform/ti50/sdk-version",
-      "/path/to/tmp/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "read chromiumos-sdk pin.read [CLEANUP]/chromiumos_workspace/src/platform/ti50/sdk-version",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_END@sdk-version@@@"
+      "@@@STEP_LINK@gsutil.upload@https://storage.cloud.google.com/chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/metadata/sources.jsonpb@@@"
     ]
   },
   {
@@ -2759,7 +2651,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2789,7 +2681,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2814,7 +2706,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2849,7 +2741,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2885,7 +2777,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -2965,7 +2857,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3005,7 +2897,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3060,7 +2952,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3090,7 +2982,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3115,7 +3007,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3151,7 +3043,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3187,7 +3079,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3269,7 +3161,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3312,7 +3204,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3342,7 +3234,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3397,7 +3289,8 @@
       "@@@STEP_LOG_LINE@request@      \"path\": \"[CLEANUP]/tmp_tmp_2\",@@@",
       "@@@STEP_LOG_LINE@request@      \"location\": 2@@@",
       "@@@STEP_LOG_LINE@request@    }@@@",
-      "@@@STEP_LOG_LINE@request@  }@@@",
+      "@@@STEP_LOG_LINE@request@  },@@@",
+      "@@@STEP_LOG_LINE@request@  \"useSnapshotBinhosts\": true@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
       "@@@STEP_LOG_LINE@response@{@@@",
@@ -3416,14 +3309,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {},\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_2\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"flags\": {},\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"env\": {},\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/tmp_tmp_2\",\n      \"location\": 2\n    }\n  },\n  \"useSnapshotBinhosts\": true\n}",
       "[CLEANUP]/build_api_messages_tmp_3/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3453,7 +3346,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3478,7 +3371,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3513,7 +3406,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3549,7 +3442,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3595,7 +3488,8 @@
       "@@@STEP_LOG_LINE@published event@        \"path\": \"[CLEANUP]/tmp_tmp_2\",@@@",
       "@@@STEP_LOG_LINE@published event@        \"location\": \"OUTSIDE\"@@@",
       "@@@STEP_LOG_LINE@published event@      }@@@",
-      "@@@STEP_LOG_LINE@published event@    }@@@",
+      "@@@STEP_LOG_LINE@published event@    },@@@",
+      "@@@STEP_LOG_LINE@published event@    \"useSnapshotBinhosts\": true@@@",
       "@@@STEP_LOG_LINE@published event@  },@@@",
       "@@@STEP_LOG_LINE@published event@  \"updateResponse\": {@@@",
       "@@@STEP_LOG_LINE@published event@    \"version\": {@@@",
@@ -3613,7 +3507,7 @@
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBVgoAGjcKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GgAyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfMhAC2gEECgIIe9AC0OyA2a7xtZJ82gJEdXBkYXRlIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBWAoAGjcKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GgAyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfMhACKAHaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -3634,7 +3528,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3645,7 +3539,7 @@
       }
     },
     "name": "update sdk.call chromite.api.SdkService/Update.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBVgoAGjcKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GgAyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfMhAC2gEECgIIe9AC0OyA2a7xtZJ82gJEdXBkYXRlIHNka3xjYWxsIGNocm9taXRlLmFwaS5TZGtTZXJ2aWNlL1VwZGF0ZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHQ=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIzIDE/QQiDAjNgMT9BBCAyrXuAdIBWAoAGjcKGltDQUNIRV0vY3Jvc19jaHJvb3QvY2hyb290GgAyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0IhkKFwoTW0NMRUFOVVBdL3RtcF90bXBfMhACKAHaAQQKAgh70ALQ7IDZrvG1knzaAkR1cGRhdGUgc2RrfGNhbGwgY2hyb21pdGUuYXBpLlNka1NlcnZpY2UvVXBkYXRlfGNhbGwgYnVpbGQgQVBJIHNjcmlwdA==\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@4@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3655,33 +3549,11 @@
     ]
   },
   {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-stage",
-      "-stage",
-      "compile"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "snoop: report_stage"
-  },
-  {
     "cmd": [],
     "name": "build firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 3,@@@",
+      "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 1,@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -3728,14 +3600,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"firmwareLocation\": 3,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"firmwareLocation\": 1,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_4/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3765,7 +3637,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3790,7 +3662,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3825,7 +3697,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3860,7 +3732,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3897,7 +3769,7 @@
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"build firmware|call build API script\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"buildAllFirmwareRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"firmwareLocation\": \"PLATFORM_TI50\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"firmwareLocation\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -3941,7 +3813,7 @@
     "name": "build firmware.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugM5CAMSNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0wgNWClQKKwoEdGk1MBIJZGF1bnRsZXNzGhgKEHRvdGFsLWltYWdlLXNpemUQjK8aIAEKJQoGZWxkcmlkEgd2b2x0ZWVyGhIKCFJXX0ZMQVNIENIJGIAbIAE=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugM5CAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0wgNWClQKKwoEdGk1MBIJZGF1bnRsZXNzGhgKEHRvdGFsLWltYWdlLXNpemUQjK8aIAEKJQoGZWxkcmlkEgd2b2x0ZWVyGhIKCFJXX0ZMQVNIENIJGIAbIAE=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -3962,7 +3834,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -3973,7 +3845,7 @@
       }
     },
     "name": "build firmware.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugM5CAMSNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0wgNWClQKKwoEdGk1MBIJZGF1bnRsZXNzGhgKEHRvdGFsLWltYWdlLXNpemUQjK8aIAEKJQoGZWxkcmlkEgd2b2x0ZWVyGhIKCFJXX0ZMQVNIENIJGIAbIAE=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYIz4DE/QQiDAjQgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIkYnVpbGQgZmlybXdhcmV8Y2FsbCBidWlsZCBBUEkgc2NyaXB0ugM5CAESNQoaW0NBQ0hFXS9jcm9zX2Nocm9vdC9jaHJvb3QyF1tDQUNIRV0vY3Jvc19jaHJvb3Qvb3V0wgNWClQKKwoEdGk1MBIJZGF1bnRsZXNzGhgKEHRvdGFsLWltYWdlLXNpemUQjK8aIAEKJQoGZWxkcmlkEgd2b2x0ZWVyGhIKCFJXX0ZMQVNIENIJGIAbIAE=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -3993,7 +3865,7 @@
     "cmd": [],
     "name": "output got_revision",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@got_revision@\"snapshot-HEAD-SHA\"@@@"
+      "@@@SET_BUILD_PROPERTY@got_revision@\"staging-snapshot-HEAD-SHA\"@@@"
     ]
   },
   {
@@ -4001,7 +3873,7 @@
     "name": "test firmware",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@request@{@@@",
-      "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 3,@@@",
+      "@@@STEP_LOG_LINE@request@  \"firmwareLocation\": 1,@@@",
       "@@@STEP_LOG_LINE@request@  \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@request@    \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@request@    \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -4020,14 +3892,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"firmwareLocation\": 3,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
+      "{\n  \"firmwareLocation\": 1,\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_5/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4057,7 +3929,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4082,7 +3954,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4117,7 +3989,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4152,7 +4024,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4189,7 +4061,7 @@
       "@@@STEP_LOG_LINE@published event@  \"buildId\": \"8945511751514863184\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"stepName\": \"test firmware|call build API script\",@@@",
       "@@@STEP_LOG_LINE@published event@  \"testAllFirmwareRequest\": {@@@",
-      "@@@STEP_LOG_LINE@published event@    \"firmwareLocation\": \"PLATFORM_TI50\",@@@",
+      "@@@STEP_LOG_LINE@published event@    \"firmwareLocation\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@published event@    \"chroot\": {@@@",
       "@@@STEP_LOG_LINE@published event@      \"path\": \"[CACHE]/cros_chroot/chroot\",@@@",
       "@@@STEP_LOG_LINE@published event@      \"outPath\": \"[CACHE]/cros_chroot/out\"@@@",
@@ -4205,7 +4077,7 @@
     "name": "test firmware.publish event.publish message",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'GgYI0oDE/QQiDAjTgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKAzkIAxI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXTSAwA=',@@@",
+      "@@@STEP_LOG_LINE@request@{'data': 'GgYI0oDE/QQiDAjTgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKAzkIARI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXTSAwA=',@@@",
       "@@@STEP_LOG_LINE@request@ 'endpoint': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'ordering_key': '',@@@",
       "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-bot',@@@",
@@ -4226,7 +4098,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4237,7 +4109,7 @@
       }
     },
     "name": "test firmware.publish event.publish message.publish-message",
-    "stdin": "{\"data\": \"GgYI0oDE/QQiDAjTgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKAzkIAxI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXTSAwA=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
+    "stdin": "{\"data\": \"GgYI0oDE/QQiDAjTgMT9BBCAyrXuAdAC0OyA2a7xtZJ82gIjdGVzdCBmaXJtd2FyZXxjYWxsIGJ1aWxkIEFQSSBzY3JpcHTKAzkIARI1ChpbQ0FDSEVdL2Nyb3NfY2hyb290L2Nocm9vdDIXW0NBQ0hFXS9jcm9zX2Nocm9vdC9vdXTSAwA=\", \"endpoint\": \"\", \"ordering_key\": \"\", \"project_id\": \"chromeos-bot\", \"topic_id\": \"analysis-service-events\"}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@3@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4261,7 +4133,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4285,7 +4157,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4304,11 +4176,7 @@
     "cmd": [],
     "name": "upload artifacts",
     "~followup_annotations": [
-      "@@@STEP_LOG_LINE@report_to_spike@IMAGE_ARCHIVES not in files_by_artifact@@@",
-      "@@@STEP_LOG_END@report_to_spike@@@",
-      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/@@@"
+      "@@@STEP_LINK@gs upload dir@https://console.cloud.google.com/storage/browser/chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184@@@"
     ]
   },
   {
@@ -4333,9 +4201,6 @@
       "@@@STEP_LOG_LINE@request@        \"artifactTypes\": [@@@",
       "@@@STEP_LOG_LINE@request@          30,@@@",
       "@@@STEP_LOG_LINE@request@          31@@@",
-      "@@@STEP_LOG_LINE@request@        ],@@@",
-      "@@@STEP_LOG_LINE@request@        \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"@@@",
       "@@@STEP_LOG_LINE@request@        ]@@@",
       "@@@STEP_LOG_LINE@request@      }@@@",
       "@@@STEP_LOG_LINE@request@    ]@@@",
@@ -4349,22 +4214,32 @@
       "@@@STEP_LOG_LINE@response@  \"artifacts\": {@@@",
       "@@@STEP_LOG_LINE@response@    \"artifacts\": [@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactType\": 31,@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": 3,@@@",
+      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/from_source.tar.bz2\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      },@@@",
       "@@@STEP_LOG_LINE@response@      {@@@",
-      "@@@STEP_LOG_LINE@response@        \"artifactType\": 30,@@@",
-      "@@@STEP_LOG_LINE@response@        \"location\": 3,@@@",
+      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TARBALL_INFO\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
       "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
       "@@@STEP_LOG_LINE@response@          {@@@",
       "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
-      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/fw_metadata.json\"@@@",
+      "@@@STEP_LOG_LINE@response@          }@@@",
+      "@@@STEP_LOG_LINE@response@        ]@@@",
+      "@@@STEP_LOG_LINE@response@      },@@@",
+      "@@@STEP_LOG_LINE@response@      {@@@",
+      "@@@STEP_LOG_LINE@response@        \"artifact_type\": \"FIRMWARE_TOKEN_DATABASE\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"location\": \"PLATFORM_EC\",@@@",
+      "@@@STEP_LOG_LINE@response@        \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@          {@@@",
+      "@@@STEP_LOG_LINE@response@            \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@            \"path\": \"[CLEANUP]/artifacts_tmp_1/tokens.bin\"@@@",
       "@@@STEP_LOG_LINE@response@          }@@@",
       "@@@STEP_LOG_LINE@response@        ]@@@",
       "@@@STEP_LOG_LINE@response@      }@@@",
@@ -4382,14 +4257,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31\n        ],\n        \"gsLocations\": [\n          \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"\n        ]\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  },\n  \"artifacts\": {\n    \"outputArtifacts\": [\n      {\n        \"artifactTypes\": [\n          30,\n          31\n        ]\n      }\n    ]\n  },\n  \"bcsVersionInfo\": {\n    \"versionString\": \"R99-1234.56.0-101\"\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_6/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4424,7 +4299,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4459,7 +4334,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4510,9 +4385,6 @@
       "@@@STEP_LOG_LINE@request@          \"artifactTypes\": [@@@",
       "@@@STEP_LOG_LINE@request@            30,@@@",
       "@@@STEP_LOG_LINE@request@            31@@@",
-      "@@@STEP_LOG_LINE@request@          ],@@@",
-      "@@@STEP_LOG_LINE@request@          \"gsLocations\": [@@@",
-      "@@@STEP_LOG_LINE@request@            \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"@@@",
       "@@@STEP_LOG_LINE@request@          ]@@@",
       "@@@STEP_LOG_LINE@request@        }@@@",
       "@@@STEP_LOG_LINE@request@      ]@@@",
@@ -4526,7 +4398,36 @@
       "@@@STEP_LOG_LINE@request@  }@@@",
       "@@@STEP_LOG_LINE@request@}@@@",
       "@@@STEP_LOG_END@request@@@",
-      "@@@STEP_LOG_LINE@response@{}@@@",
+      "@@@STEP_LOG_LINE@response@{@@@",
+      "@@@STEP_LOG_LINE@response@  \"artifacts\": {@@@",
+      "@@@STEP_LOG_LINE@response@    \"legacy\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifact_type\": \"EBUILD_LOGS\",@@@",
+      "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/log.tar.gz\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    },@@@",
+      "@@@STEP_LOG_LINE@response@    \"toolchain\": {@@@",
+      "@@@STEP_LOG_LINE@response@      \"artifacts\": [@@@",
+      "@@@STEP_LOG_LINE@response@        {@@@",
+      "@@@STEP_LOG_LINE@response@          \"artifact_type\": \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\",@@@",
+      "@@@STEP_LOG_LINE@response@          \"paths\": [@@@",
+      "@@@STEP_LOG_LINE@response@            {@@@",
+      "@@@STEP_LOG_LINE@response@              \"location\": 2,@@@",
+      "@@@STEP_LOG_LINE@response@              \"path\": \"[CLEANUP]/artifacts_tmp_1/afdo\"@@@",
+      "@@@STEP_LOG_LINE@response@            }@@@",
+      "@@@STEP_LOG_LINE@response@          ]@@@",
+      "@@@STEP_LOG_LINE@response@        }@@@",
+      "@@@STEP_LOG_LINE@response@      ]@@@",
+      "@@@STEP_LOG_LINE@response@    }@@@",
+      "@@@STEP_LOG_LINE@response@  }@@@",
+      "@@@STEP_LOG_LINE@response@}@@@",
       "@@@STEP_LOG_END@response@@@"
     ]
   },
@@ -4538,14 +4439,14 @@
       "--json-output",
       "/path/to/tmp/json",
       "copy",
-      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"buildTarget\": {}\n  },\n  \"artifactInfo\": {\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31\n          ],\n          \"gsLocations\": [\n            \"chromeos-image-archive/{builder_name}-firmware/{legacy_version}/{target}\"\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
+      "{\n  \"chroot\": {\n    \"path\": \"[CACHE]/cros_chroot/chroot\",\n    \"outPath\": \"[CACHE]/cros_chroot/out\"\n  },\n  \"sysroot\": {\n    \"buildTarget\": {}\n  },\n  \"artifactInfo\": {\n    \"firmware\": {\n      \"outputArtifacts\": [\n        {\n          \"artifactTypes\": [\n            30,\n            31\n          ]\n        }\n      ]\n    }\n  },\n  \"resultPath\": {\n    \"path\": {\n      \"path\": \"[CLEANUP]/artifacts_tmp_1\",\n      \"location\": 2\n    }\n  }\n}",
       "[CLEANUP]/build_api_messages_tmp_7/input_proto.json"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4580,7 +4481,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4615,7 +4516,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4644,52 +4545,7 @@
     "name": "upload artifacts.set artifact_link property",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\"@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.Find DLCs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "listdir",
-      "[CLEANUP]/artifacts_tmp_1/dlc",
-      "--recursive"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.Find DLCs.list local DLCs",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_END@listdir@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.generate provenance",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
+      "@@@SET_BUILD_PROPERTY@artifact_link@\"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\"@@@"
     ]
   },
   {
@@ -4706,13 +4562,13 @@
       "rsync",
       "-r",
       "[CLEANUP]/artifacts_tmp_1",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184"
+      "gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184"
     ],
     "cwd": "[CLEANUP]/chromiumos_workspace",
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4733,121 +4589,14 @@
     "name": "upload artifacts.output artifact GS paths",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"FIRMWARE_TARBALL\": [\"dt-ti50.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"firmware_metadata.jsonpb\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
+      "@@@SET_BUILD_PROPERTY@artifacts@{\"files_by_artifact\": {\"EBUILD_LOGS\": [\"log.tar.gz\"], \"FIRMWARE_TARBALL\": [\"from_source.tar.bz2\"], \"FIRMWARE_TARBALL_INFO\": [\"fw_metadata.json\"], \"FIRMWARE_TOKEN_DATABASE\": [\"tokens.bin\"], \"UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE\": [\"afdo\"]}, \"gs_bucket\": \"chromeos-image-archive\", \"gs_path\": \"fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184\", \"published\": null}@@@"
     ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.publish artifacts",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/@@@",
-      "@@@STEP_LINK@gs publish dir: FIRMWARE_TARBALL_INFO@https://console.cloud.google.com/storage/browser/chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/dt-ti50.tar.bz2",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "-m",
-      "----",
-      "cp",
-      "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/firmware_metadata.jsonpb",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "upload artifacts.publish artifacts.gsutil cp (2)",
-    "timeout": 900,
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "upload artifacts.publish artifact GS paths",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@SET_BUILD_PROPERTY@published@{\"FIRMWARE_TARBALL\": [{\"files\": [\"dt-ti50.tar.bz2\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/\"}], \"FIRMWARE_TARBALL_INFO\": [{\"files\": [\"firmware_metadata.jsonpb\"], \"gs_location\": \"chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/\"}]}@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/reporter/snoopy_broker",
-      "-report-stage",
-      "-stage",
-      "upload-complete"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "snoop: report_stage (2)"
   },
   {
     "cmd": [],
     "name": "schedule signing build",
     "~followup_annotations": [
-      "@@@STEP_TEXT@builder_name=firmware-ti50-postsubmit<br/>signing_allowed_builder_names=['staging-firmware-ti50-postsubmit', 'firmware-ti50-postsubmit', 'firmware-ti50-guc-14778.B-postsubmit', 'firmware-ti50-prepvt-15974.B-branch', 'firmware-ti50-mp-15980.B-branch']<br/>sign_image_properties=<br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@"
+      "@@@STEP_TEXT@builder_name=fw-ec-postsubmit<br/>signing_allowed_builder_names=['fw-ec-postsubmit']<br/>sign_image_properties=image_type: IMAGE_TYPE_GSC_FIRMWARE<br/>keyset: \"test-keyset\"<br/>signer_type: SIGNER_STAGING<br/>gsc_instructions {<br/>  target: PREPVT<br/>}<br/>allow_non_release_signer_bucket: true<br/><br/>uploaded_artifacts=UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@"
     ]
   },
   {
@@ -4861,7 +4610,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -4872,7 +4621,7 @@
       }
     },
     "name": "schedule signing build.buildbucket.schedule",
-    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"release\", \"builder\": \"sign-image\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"archive\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/dt-ti50.tar.bz2\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
+    "stdin": "{\"requests\": [{\"scheduleBuild\": {\"builder\": {\"bucket\": \"staging\", \"builder\": \"staging-sign-image\", \"project\": \"chromeos\"}, \"critical\": \"NO\", \"experimental\": \"NO\", \"experiments\": {\"luci.buildbucket.parent_tracking\": false}, \"fields\": \"builder,createTime,createdBy,critical,endTime,id,infra,input,number,output,startTime,status,updateTime\", \"gitilesCommit\": {\"host\": \"chromium.googlesource.com\", \"id\": \"2d72510e447ab60a9728aeea2362d8be2cbd7789\", \"project\": \"project-a\", \"ref\": \"refs/heads/main\"}, \"priority\": 30, \"properties\": {\"allow_non_release_signer_bucket\": true, \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/from_source.tar.bz2\", \"gsc_instructions\": {\"target\": \"PREPVT\"}, \"image_type\": \"IMAGE_TYPE_GSC_FIRMWARE\", \"keyset\": \"test-keyset\", \"signer_type\": \"SIGNER_STAGING\"}, \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\", \"tags\": [{\"key\": \"parent_buildbucket_id\", \"value\": \"8945511751514863184\"}, {\"key\": \"user_agent\", \"value\": \"recipe\"}]}}]}",
     "~followup_annotations": [
       "@@@STEP_NEST_LEVEL@1@@@",
       "@@@STEP_LOG_LINE@json.output@{@@@",
@@ -4880,8 +4629,8 @@
       "@@@STEP_LOG_LINE@json.output@    {@@@",
       "@@@STEP_LOG_LINE@json.output@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@json.output@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"release\",@@@",
-      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"sign-image\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"bucket\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@json.output@          \"builder\": \"staging-sign-image\",@@@",
       "@@@STEP_LOG_LINE@json.output@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@json.output@        },@@@",
       "@@@STEP_LOG_LINE@json.output@        \"id\": \"8922054662172514000\"@@@",
@@ -4895,8 +4644,8 @@
       "@@@STEP_LOG_LINE@request@    {@@@",
       "@@@STEP_LOG_LINE@request@      \"scheduleBuild\": {@@@",
       "@@@STEP_LOG_LINE@request@        \"builder\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"bucket\": \"release\",@@@",
-      "@@@STEP_LOG_LINE@request@          \"builder\": \"sign-image\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"bucket\": \"staging\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"builder\": \"staging-sign-image\",@@@",
       "@@@STEP_LOG_LINE@request@          \"project\": \"chromeos\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"critical\": \"NO\",@@@",
@@ -4913,7 +4662,14 @@
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"priority\": 30,@@@",
       "@@@STEP_LOG_LINE@request@        \"properties\": {@@@",
-      "@@@STEP_LOG_LINE@request@          \"archive\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/dt-ti50.tar.bz2\"@@@",
+      "@@@STEP_LOG_LINE@request@          \"allow_non_release_signer_bucket\": true,@@@",
+      "@@@STEP_LOG_LINE@request@          \"archive\": \"gs://chromeos-image-archive/fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184/from_source.tar.bz2\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"gsc_instructions\": {@@@",
+      "@@@STEP_LOG_LINE@request@            \"target\": \"PREPVT\"@@@",
+      "@@@STEP_LOG_LINE@request@          },@@@",
+      "@@@STEP_LOG_LINE@request@          \"image_type\": \"IMAGE_TYPE_GSC_FIRMWARE\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"keyset\": \"test-keyset\",@@@",
+      "@@@STEP_LOG_LINE@request@          \"signer_type\": \"SIGNER_STAGING\"@@@",
       "@@@STEP_LOG_LINE@request@        },@@@",
       "@@@STEP_LOG_LINE@request@        \"requestId\": \"8945511751514863184-00000000-0000-0000-0000-000000001337\",@@@",
       "@@@STEP_LOG_LINE@request@        \"tags\": [@@@",
@@ -4939,234 +4695,10 @@
     "name": "sending pub/sub notifications",
     "~followup_annotations": [
       "@@@STEP_LOG_LINE@debug@Checking uploaded_artifacts for FIRMWARE_TARBALL_INFO@@@",
-      "@@@STEP_LOG_LINE@debug@Reading proto from [CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb@@@",
-      "@@@STEP_LOG_LINE@debug@metadata_by_name[dt-ti50.tar.bz2]=type: GSC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
-      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}]@@@",
-      "@@@STEP_LOG_LINE@debug@dt-ti50.tar.bz2 was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=type: GSC@@@",
-      "@@@STEP_LOG_LINE@debug@board: \"betty\"@@@",
-      "@@@STEP_LOG_LINE@debug@publish_to_goldeneye: true@@@",
-      "@@@STEP_LOG_LINE@debug@@@@",
-      "@@@STEP_LOG_LINE@debug@Pub/sub dt-ti50.tar.bz2 for betty@@@",
-      "@@@STEP_LOG_LINE@debug@published: FIRMWARE_TARBALL_INFO:[{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]@@@",
-      "@@@STEP_LOG_LINE@debug@firmware_metadata.jsonpb was published to chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/ metadata=None@@@",
+      "@@@STEP_LOG_LINE@debug@[CLEANUP]/artifacts_tmp_1/fw_metadata.json does not exist@@@",
       "@@@STEP_LOG_END@debug@@@",
-      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['firmware_metadata.jsonpb']}, published={'FIRMWARE_TARBALL': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['dt-ti50.tar.bz2']}], 'FIRMWARE_TARBALL_INFO': [{'gs_location': 'chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/', 'files': ['firmware_metadata.jsonpb']}]})@@@",
+      "@@@STEP_LOG_LINE@uploaded_artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='fw-ec-postsubmit/R99-1234.56.0-101-8945511751514863184', files_by_artifact={'EBUILD_LOGS': ['log.tar.gz'], 'FIRMWARE_TARBALL': ['from_source.tar.bz2'], 'FIRMWARE_TARBALL_INFO': ['fw_metadata.json'], 'FIRMWARE_TOKEN_DATABASE': ['tokens.bin'], 'UNVERIFIED_CHROME_BENCHMARK_AFDO_FILE': ['afdo']}, published={})@@@",
       "@@@STEP_LOG_END@uploaded_artifacts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "copy",
-      "[CLEANUP]/artifacts_tmp_1/firmware_metadata.jsonpb",
-      "/path/to/tmp/json"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.read fw metadata",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@{@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  \"objects\": [@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"file_name\": \"dt-ti50.tar.bz2\",@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      \"tarball_info\": {@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"board\": [@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@          \"betty\"@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        ],@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"publish_to_goldeneye\": true,@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@        \"type\": \"GSC\"@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@      }@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@    }@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@  ]@@@",
-      "@@@STEP_LOG_LINE@firmware_metadata.jsonpb@}@@@",
-      "@@@STEP_LOG_END@firmware_metadata.jsonpb@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sending pub/sub notifications.publish artifacts to pubsub",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@",
-      "@@@STEP_LOG_LINE@uploaded artifacts@UploadedArtifacts(gs_bucket='chromeos-image-archive', gs_path='firmware-ti50-postsubmit-firmware/R99-1234.56.0/', files_by_artifact={'FIRMWARE_TARBALL': ['dt-ti50.tar.bz2']}, published=None)@@@",
-      "@@@STEP_LOG_END@uploaded artifacts@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "file_hash",
-      "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub.Compute file hash",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_TEXT@Hash calculated: deadbeef@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "vpython3",
-      "-u",
-      "RECIPE_MODULE[recipe_engine::file]/resources/fileutil.py",
-      "--json-output",
-      "/path/to/tmp/json",
-      "filesizes",
-      "[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub.compute file size for dt-ti50.tar.bz2",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@filesizes@[CLEANUP]/artifacts_tmp_1/dt-ti50.tar.bz2: \t111@@@",
-      "@@@STEP_LOG_END@filesizes@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@2@@@",
-      "@@@STEP_LOG_LINE@message@{@@@",
-      "@@@STEP_LOG_LINE@message@  \"buildbucketId\": \"8945511751514863184\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"type\": \"BUILD_TYPE_FIRMWARE\",@@@",
-      "@@@STEP_LOG_LINE@message@  \"status\": {@@@",
-      "@@@STEP_LOG_LINE@message@    \"value\": \"SUCCESS\"@@@",
-      "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"config\": {@@@",
-      "@@@STEP_LOG_LINE@message@    \"branch\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"snapshot\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"target\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"name\": \"betty\"@@@",
-      "@@@STEP_LOG_LINE@message@    },@@@",
-      "@@@STEP_LOG_LINE@message@    \"versions\": [@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_MILESTONE\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\": \"99\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      {@@@",
-      "@@@STEP_LOG_LINE@message@        \"kind\": \"VERSION_KIND_PLATFORM\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"value\": \"1234.56.0\"@@@",
-      "@@@STEP_LOG_LINE@message@      }@@@",
-      "@@@STEP_LOG_LINE@message@    ]@@@",
-      "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"steps\": {@@@",
-      "@@@STEP_LOG_LINE@message@    \"info\": {@@@",
-      "@@@STEP_LOG_LINE@message@      \"STEP_OVERALL\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"order\": 1,@@@",
-      "@@@STEP_LOG_LINE@message@        \"status\": \"STATUS_SUCCESS\",@@@",
-      "@@@STEP_LOG_LINE@message@        \"runtime\": {@@@",
-      "@@@STEP_LOG_LINE@message@          \"begin\": \"2012-05-14T12:53:23Z\",@@@",
-      "@@@STEP_LOG_LINE@message@          \"end\": \"2012-05-14T12:53:47Z\"@@@",
-      "@@@STEP_LOG_LINE@message@        }@@@",
-      "@@@STEP_LOG_LINE@message@      }@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  },@@@",
-      "@@@STEP_LOG_LINE@message@  \"artifacts\": [@@@",
-      "@@@STEP_LOG_LINE@message@    {@@@",
-      "@@@STEP_LOG_LINE@message@      \"type\": \"FIRMWARE_IMAGE_ARCHIVE\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"uri\": {@@@",
-      "@@@STEP_LOG_LINE@message@        \"gcs\": \"gs://chromeos-image-archive/firmware-ti50-postsubmit-firmware/R99-1234.56.0/dt-ti50.tar.bz2\"@@@",
-      "@@@STEP_LOG_LINE@message@      },@@@",
-      "@@@STEP_LOG_LINE@message@      \"sha256\": \"deadbeef\",@@@",
-      "@@@STEP_LOG_LINE@message@      \"size\": \"111\"@@@",
-      "@@@STEP_LOG_LINE@message@    }@@@",
-      "@@@STEP_LOG_LINE@message@  ],@@@",
-      "@@@STEP_LOG_LINE@message@  \"count\": \"1\"@@@",
-      "@@@STEP_LOG_LINE@message@}@@@",
-      "@@@STEP_LOG_END@message@@@"
-    ]
-  },
-  {
-    "cmd": [],
-    "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@3@@@",
-      "@@@STEP_LOG_LINE@request@{'data': 'CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqKBImCgxTVEVQX09WRVJBTEwSFggBEGQaEAoGCMOAxP0EEgYI24DE/QQ6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==',@@@",
-      "@@@STEP_LOG_LINE@request@ 'endpoint': 'us-central1-pubsub.googleapis.com:443',@@@",
-      "@@@STEP_LOG_LINE@request@ 'ordering_key': '8945511751514863184',@@@",
-      "@@@STEP_LOG_LINE@request@ 'project_id': 'chromeos-build-reporting',@@@",
-      "@@@STEP_LOG_LINE@request@ 'topic_id': 'chromeos-builds-all'}@@@",
-      "@@@STEP_LOG_END@request@@@"
-    ]
-  },
-  {
-    "cmd": [
-      "[START_DIR]/cipd/support/publish-message"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "sending pub/sub notifications.publish artifacts to pubsub.build status pubsub update.publish message.publish-message",
-    "stdin": "{\"data\": \"CNDsgNmu8bWSfBACGgIIZCIsCgoKCHNuYXBzaG90GgcKBWJldHR5MgYIBRICOTkyDQgEEgkxMjM0LjU2LjAqKBImCgxTVEVQX09WRVJBTEwSFggBEGQaEAoGCMOAxP0EEgYI24DE/QQ6bQgDEl0KW2dzOi8vY2hyb21lb3MtaW1hZ2UtYXJjaGl2ZS9maXJtd2FyZS10aTUwLXBvc3RzdWJtaXQtZmlybXdhcmUvUjk5LTEyMzQuNTYuMC9kdC10aTUwLnRhci5iejIaCGRlYWRiZWVmKG9AAQ==\", \"endpoint\": \"us-central1-pubsub.googleapis.com:443\", \"ordering_key\": \"8945511751514863184\", \"project_id\": \"chromeos-build-reporting\", \"topic_id\": \"chromeos-builds-all\"}",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@4@@@",
-      "@@@STEP_LOG_LINE@json.output@{@@@",
-      "@@@STEP_LOG_LINE@json.output@  \"message_id\": \"12345\"@@@",
-      "@@@STEP_LOG_LINE@json.output@}@@@",
-      "@@@STEP_LOG_END@json.output@@@"
     ]
   },
   {
@@ -5178,44 +4710,9 @@
   },
   {
     "cmd": [],
-    "name": "Create Ti50 Tast artifacts"
-  },
-  {
-    "cmd": [
-      "python3",
-      "-u",
-      "RECIPE_MODULE[depot_tools::gsutil]/resources/gsutil_smart_retry.py",
-      "--",
-      "RECIPE_REPO[depot_tools]/gsutil.py",
-      "----",
-      "ls",
-      "-r",
-      "gs://chromeos-image-archive/firmware-ti50-postsubmit/R99-1234.56.0-101-8945511751514863184/**/*.tar.bz2"
-    ],
-    "cwd": "[CLEANUP]/chromiumos_workspace",
-    "infra_step": true,
-    "luci_context": {
-      "realm": {
-        "name": "chromeos:postsubmit"
-      },
-      "resultdb": {
-        "current_invocation": {
-          "name": "invocations/build:8945511751514863184",
-          "update_token": "token"
-        },
-        "hostname": "rdbhost"
-      }
-    },
-    "name": "Create Ti50 Tast artifacts.gsutil list",
-    "~followup_annotations": [
-      "@@@STEP_NEST_LEVEL@1@@@"
-    ]
-  },
-  {
-    "cmd": [],
     "name": "set suite_scheduling",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@suite_scheduling@\"True\"@@@"
+      "@@@SET_BUILD_PROPERTY@suite_scheduling@\"False\"@@@"
     ]
   },
   {
@@ -5232,7 +4729,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5286,7 +4783,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5338,7 +4835,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5367,7 +4864,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5392,7 +4889,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5426,7 +4923,7 @@
     },
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5460,7 +4957,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5504,7 +5001,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5530,7 +5027,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5549,7 +5046,7 @@
     "cmd": [],
     "name": "set source_sync_target",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/snapshot\"}}@@@"
+      "@@@SET_BUILD_PROPERTY@source_sync_target@{\"call\": \"sync_snapshot\", \"commit\": {\"host\": \"chrome-internal.googlesource.com\", \"id\": \"staging-snapshot-HEAD-SHA\", \"project\": \"chromeos/manifest-internal\", \"ref\": \"refs/heads/staging-snapshot\"}}@@@"
     ]
   },
   {
@@ -5564,7 +5061,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5589,7 +5086,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5612,7 +5109,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5637,7 +5134,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
@@ -5656,7 +5153,7 @@
     "cmd": [],
     "name": "set build cost",
     "~followup_annotations": [
-      "@@@SET_BUILD_PROPERTY@build_cost@0.0028@@@"
+      "@@@SET_BUILD_PROPERTY@build_cost@0.0027@@@"
     ]
   },
   {
@@ -5669,7 +5166,7 @@
     "infra_step": true,
     "luci_context": {
       "realm": {
-        "name": "chromeos:postsubmit"
+        "name": "chromeos:staging"
       },
       "resultdb": {
         "current_invocation": {
