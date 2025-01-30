@@ -99,7 +99,7 @@ class SigningApi(recipe_api.RecipeApi):
           'read signing image version',
           self.repo_resource('infra', 'config',
                              'signing-docker-image.version')).strip()
-    self._signing_image = f'us-docker.pkg.dev/chromeos-bot/signing/{self._signing_image}'
+    self._signing_image = f'us-docker.pkg.dev/chromeos-release-bot/signing/{self._signing_image}'
 
   # Methods to support the new local signing flow.
 

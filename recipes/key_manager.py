@@ -133,13 +133,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains, 'create PreMP keys.docker pull', [
               'docker', 'pull',
-              'us-docker.pkg.dev/chromeos-bot/signing/signing:latest:'
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:'
           ]),
       api.post_check(
           post_process.LogContains,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
           'request',
-          ['us-docker.pkg.dev/chromeos-bot/signing/signing:latest:']),
+          ['us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:']),
       api.post_check(
           post_process.MustRun,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys'),
@@ -173,13 +173,13 @@ def GenTests(api: RecipeTestApi):
       api.post_check(
           post_process.StepCommandContains, 'create PreMP keys.docker pull', [
               'docker', 'pull',
-              'us-docker.pkg.dev/chromeos-bot/signing/signing:latest:'
+              'us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:'
           ]),
       api.post_check(
           post_process.LogContains,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
           'request',
-          ['us-docker.pkg.dev/chromeos-bot/signing/signing:latest:']),
+          ['us-docker.pkg.dev/chromeos-release-bot/signing/signing:latest:']),
       api.post_check(
           post_process.LogContains,
           'create PreMP keys.call chromite.api.SigningService/CreatePreMPKeys',
