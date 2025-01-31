@@ -386,9 +386,9 @@ class PuprGerritInterfaceApi(recipe_api.RecipeApi):
         if labels:
           self.m.gerrit.set_change_labels_remote(change, labels)
 
-      if send_to_cq_policy == SUBMIT:
-        with self.m.step.nest('submit CL'):
-          self.m.gerrit.submit_change(change)
+        if send_to_cq_policy == SUBMIT:
+          with self.m.step.nest('submit CL'):
+            self.m.gerrit.submit_change(change)
 
       def gerrit_url(c: GerritChange) -> str:
         if c.host == 'chromium-review.googlesource.com':
