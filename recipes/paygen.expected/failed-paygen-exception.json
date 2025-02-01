@@ -2045,6 +2045,14 @@
   },
   {
     "cmd": [],
+    "name": "doing paygen.set bcid",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_unsigned_prov_verification\": []}@@@"
+    ]
+  },
+  {
+    "cmd": [],
     "name": "set sdk_state",
     "~followup_annotations": [
       "@@@SET_BUILD_PROPERTY@sdk_state@\"DIRTY\"@@@"

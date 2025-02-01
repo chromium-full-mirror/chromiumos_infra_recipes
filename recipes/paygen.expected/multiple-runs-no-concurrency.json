@@ -2183,6 +2183,14 @@
     ]
   },
   {
+    "cmd": [],
+    "name": "doing paygen.set bcid",
+    "~followup_annotations": [
+      "@@@STEP_NEST_LEVEL@1@@@",
+      "@@@SET_BUILD_PROPERTY@bcid@{\"failed_unsigned_prov_verification\": []}@@@"
+    ]
+  },
+  {
     "cmd": [
       "[START_DIR]/reporter/snoopy_broker",
       "-report-stage",

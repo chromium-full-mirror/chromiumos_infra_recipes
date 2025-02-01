@@ -24,7 +24,7 @@ from PB.go.chromium.org.luci.buildbucket.proto.common import GerritChange
 from PB.chromite.api.payload import (GenerationResponse, GenerationRequest,
                                      GenerateUnsignedPayloadRequest,
                                      GenerateUnsignedPayloadResponse,
-                                     FinalizePayloadRequest)
+                                     FinalizePayloadRequest, UnsignedPayload)
 from PB.recipes.chromeos.paygen import PaygenProperties
 from recipe_engine import post_process
 from recipe_engine.post_process_inputs import Step
@@ -42,6 +42,7 @@ DEPS = [
     'recipe_engine/path',
     'recipe_engine/properties',
     'recipe_engine/raw_io',
+    'recipe_engine/bcid_verifier',
     'recipe_engine/step',
     'recipe_engine/time',
     'bot_cost',
@@ -54,6 +55,7 @@ DEPS = [
     'easy',
     'failures',
     'future_utils',
+    'gcloud',
     'git',
     'gitiles',
     'naming',
@@ -96,6 +98,8 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
   with api.step.nest('doing paygen') as presentation:
     with api.failures.ignore_exceptions():
       api.bcid_reporter.report_stage('compile')
+
+    failed_unsigned_artifact_verification = set()
 
     # Get max number of concurrent requests - None is number of cores.
     max_concurrent_requests = properties.max_concurrent_requests or api.bot_scaling.get_num_cores(
@@ -179,16 +183,9 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
                 step_text=payload_name)
             if get_failure_reason(resp):
               return resp
-            # TODO: b/383845609 - Call bcid_verifier.verify_provenance.
-            # If reporting inputs, delete archives which have been extracted.
-            with api.step.nest('clean up payload inputs'):
-              for unsigned_payload in resp.unsigned_payloads:
-                if unsigned_payload.payload_inputs:
-                  for payload_input in unsigned_payload.payload_inputs:
-                    if payload_input.is_archive:
-                      api.file.remove(
-                          f'removing input archive {payload_input.path.path}',
-                          payload_input.path.path)
+            # Verify bcid provenance.
+            failed_unsigned_artifact_verification.update(
+                download_and_verify_paygen_inputs(api, resp.unsigned_payloads))
 
             finalize_req.payloads.extend(resp.unsigned_payloads)
             return api.cros_build_api.PayloadService.FinalizePayload(
@@ -266,6 +263,13 @@ def DoRunSteps(api: RecipeApi, properties: PaygenProperties):
         payloads=[MessageToDict(payload) for payload in payloads])
     api.easy.set_properties_step(paygen_retries=total_retries)
     api.easy.set_properties_step(failure_reasons=failure_reasons)
+    api.easy.set_properties_step(
+        **{
+            'bcid': {
+                'failed_unsigned_prov_verification':
+                    list(failed_unsigned_artifact_verification)
+            }
+        })
 
     if errors:
       failure_msg_lines = ['paygen failed with errors:']
@@ -432,6 +436,55 @@ def report_paygen_success_to_snoopy(api: RecipeApi,
         raise api.step.StepFailure(
             f'Artifact file_path must have Path.Location.OUTSIDE, file_path: {artifact.file_path}'
         )
+
+
+def download_and_verify_paygen_inputs(api: RecipeApi,
+                                      unsigned_payloads: List[UnsignedPayload]):
+  """Download attestations for inputs to paygen and call BCID verifier.
+
+  Args:
+    api: api object to use.
+    unsigned_payloads: list of unsigned payloads, including their inputs.
+
+  Returns:
+    Set of artifacts which failed download or verification.
+  """
+  failed_unsigned_artifact_verification = set()
+  for unsigned_payload in unsigned_payloads:
+    artifacts_to_verify = []
+    # Download attestations for input artifacts.
+    for payload_input in unsigned_payload.payload_inputs:
+      artifact_path = payload_input.path.path
+      artifact_name = api.path.basename(artifact_path)
+      attestation_path_remote = api.signing.get_bcid_attestation_pattern.format(
+          artifact=payload_input.gs_path)
+      attestation_path_local = api.signing.get_bcid_attestation_pattern.format(
+          artifact=artifact_path)
+      with api.step.nest(f'download attestation for {artifact_name}') as pres:
+        try:
+          api.gcloud.download_file(attestation_path_remote,
+                                   attestation_path_local)
+          artifacts_to_verify.append(artifact_path)
+        except StepFailure:
+          # TODO(b/383845609): Pipe through fatality property from the release builder.
+          pres.status = api.step.FAILURE
+          pres.step_summary_text = 'attestation download failed'
+
+          failed_unsigned_artifact_verification.add(artifact_name)
+          # No attestation, cannot continue with verification
+          continue
+
+      failed_unsigned_artifact_verification.update(
+          api.signing.verify_bcid_attestations_for_unsigned_artifacts(
+              artifacts_to_verify, True))
+    with api.step.nest('clean up payload input archives'):
+      for payload_input in unsigned_payload.payload_inputs:
+        # If reporting inputs, delete archives which have been extracted.
+        if payload_input.is_archive:
+          api.file.remove(f'removing input archive {payload_input.path.path}',
+                          payload_input.path.path)
+
+  return failed_unsigned_artifact_verification
 
 
 # TODO(crbug.com/1157719): Improve testing mock data. There is a disconnect
@@ -1036,6 +1089,9 @@ def GenTests(api: RecipeTestApi):
   yield api.test(
       'paygen-inputs',
       api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.path.files_exist(
+          api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
+          api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
       api.properties(
           PaygenProperties(
               requests=[{
@@ -1070,13 +1126,13 @@ def GenTests(api: RecipeTestApi):
               'payload_inputs': [{
                   'gs_path': 'gs://path-to-input',
                   'path': {
-                      'path': '/tmp/local/path/to/input'
+                      'path': '[CLEANUP]/local/path/to/input'
                   },
                   'is_archive': False
               }, {
                   'gs_path': 'gs://path-to-input-archive',
                   'path': {
-                      'path': '/tmp/local/path/to/input/archive'
+                      'path': '[CLEANUP]/local/path/to/input/archive'
                   },
                   'is_archive': True
               }]
@@ -1089,16 +1145,113 @@ def GenTests(api: RecipeTestApi):
           }]),
       api.post_check(
           post_process.DoesNotRun,
-          'doing paygen.running paygen operations in parallel.clean up payload inputs.removing input archive /tmp/local/path/to/input'
+          'doing paygen.running paygen operations in parallel.clean up payload input archives.removing input archive [CLEANUP]/local/path/to/input'
       ),
       api.post_check(
           post_process.MustRun,
-          'doing paygen.running paygen operations in parallel.clean up payload inputs.removing input archive /tmp/local/path/to/input/archive'
+          'doing paygen.running paygen operations in parallel.clean up payload input archives.removing input archive [CLEANUP]/local/path/to/input/archive'
       ),
       api.post_check(post_process.StepCommandContains,
                      'doing paygen.docker pull', [
                          'docker', 'pull',
                          'us-docker.pkg.dev/chromeos-release-bot/signing/foo'
                      ]),
+      api.post_check(
+          post_process.StepCommandContains,
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file',
+          [
+              "gcloud",
+              "storage",
+              "cp",
+              "gs://path-to-input.intoto.jsonl",
+              "[CLEANUP]/local/path/to/input.intoto.jsonl",
+          ],
+      ),
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for input.bcid_verifier: verify provenance'
+      ),
+      api.post_process(post_process.DropExpectation),
+  )
+
+  yield api.test(
+      'paygen-inputs-attestation-download-fails',
+      api.buildbucket.generic_build(builder='staging-paygen', bucket='staging'),
+      api.path.files_exist(
+          api.path.cleanup_dir / 'local/path/to/input.intoto.jsonl',
+          api.path.cleanup_dir / 'local/path/to/input/archive.intoto.jsonl'),
+      api.properties(
+          PaygenProperties(
+              requests=[{
+                  'generation_request':
+                      GenerationRequest(
+                          full_update=True,
+                          tgt_dlc_image=api.paygen_orchestration.DLC_TGT,
+                          bucket='b',
+                          verify=True,
+                          dryrun=True,
+                          use_local_signing=True,
+                          docker_image='us-docker.pkg.dev/chromeos-release-bot/signing/foo',
+                      ),
+              }], use_split_paygen=True),
+      ),
+      *generate_split_payload_response(
+          api, payloads=[{
+              'version':
+                  1,
+              'payload_file_path': {
+                  'path': '/tmp/aohiwdadoi/delta.bin',
+                  'location': 1,
+              },
+              'partition_names': ['foo-root', 'foo-kernel'],
+              'tgt_partitions': [{
+                  'path': '/tmp/aohiwdadoi/tgt_root.bin',
+                  'location': 1,
+              }, {
+                  'path': '/tmp/aohiwdadoi/tgt_kernel.bin',
+                  'location': 1,
+              }],
+              'payload_inputs': [{
+                  'gs_path': 'gs://path-to-input',
+                  'path': {
+                      'path': '[CLEANUP]/local/path/to/input'
+                  },
+                  'is_archive': False
+              }, {
+                  'gs_path': 'gs://path-to-input-archive',
+                  'path': {
+                      'path': '[CLEANUP]/local/path/to/input/archive'
+                  },
+                  'is_archive': True
+              }]
+          }], versioned_artifacts=[{
+              'local_path': '/tmp/aohiwdadoi/delta.bin',
+              'file_path': {
+                  'path': '/path/to/cros_chroot/out/tmp/delta.bin',
+                  'location': 2
+              }
+          }]),
+      # All retries for downloading "input" attesation must fail.
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file (2)',
+          retcode=1),
+      api.step_data(
+          'doing paygen.running paygen operations in parallel.download attestation for input.download GS file (3)',
+          retcode=1),
+      api.post_check(
+          post_process.DoesNotRun,
+          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for input'
+      ),
+      # "archive" attestation is downloaded and provenance is verified.
+      api.post_check(
+          post_process.MustRun,
+          'doing paygen.running paygen operations in parallel.verify provenance for unsigned artifacts.verifying provenance for archive'
+      ),
+      # Output property captures failure, but build succeeds.
+      api.post_check(post_process.PropertyEquals, 'bcid',
+                     {"failed_unsigned_prov_verification": ["input"]}),
       api.post_process(post_process.DropExpectation),
   )

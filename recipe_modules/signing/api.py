@@ -65,10 +65,6 @@ LOCAL_ARTIFACT_TYPES = [
 
 PASSED = build_report_pb2.BuildReport.SignedBuildMetadata.SIGNING_STATUS_PASSED
 
-# Provenance files are named according to the artifact they're for, with the
-# intoto suffix.
-BCID_ATTESTATION_NAME = '{artifact_name}.intoto.jsonl'
-
 class SigningApi(recipe_api.RecipeApi):
   """A module to encapsulate signing operations."""
 
@@ -130,6 +126,12 @@ class SigningApi(recipe_api.RecipeApi):
   @property
   def get_bcid_policy(self) -> str:
     return self._bcid_policy
+
+  @property
+  def get_bcid_attestation_pattern(self) -> str:
+    # Provenance files are named according to the artifact they're for, with the
+    # intoto suffix.
+    return '{artifact}.intoto.jsonl'
 
   def get_paygen_keyset(self) -> str:
     """Return the keyset for use in paygen.
@@ -407,8 +409,8 @@ class SigningApi(recipe_api.RecipeApi):
 
       try:
         # Also download the attestations for the files, if they exist.
-        attestation_name = BCID_ATTESTATION_NAME.format(
-            artifact_name=artifact_name)
+        attestation_name = self.get_bcid_attestation_pattern.format(
+            artifact=artifact_name)
         self.m.gsutil.download(
             gs_dir, attestation_name,
             self.m.path.join(local_dir, attestation_name),
@@ -551,20 +553,15 @@ class SigningApi(recipe_api.RecipeApi):
       return gs_dirs
 
   def verify_bcid_attestations_for_unsigned_artifacts(
-      self, build_target_config, signing_dir: Path,
-      attestation_eligible: bool) -> set:
+      self, artifacts: List[Path], attestation_eligible: bool = False) -> set:
     """
-    Looks in the signing_dir for artifacts we're about to sign, and attempts to
+    Takes a list of artifacts we plan to use for signing or paygen,and attempts to
     find their matching attestation files, which should have been downloaded
     earlier. If no attestation exists, or the call to BCID verifier fails, and
     BCID verification is fatal, these steps will fail the build. Otherwise,
     everything will continue as normal.
 
-    Args:
-      signing_configs:
-        The configs we're going to use when signing. The artifacts configured as
-        inputs to signing are the ones we care about verifying provenance for.
-      signing_dir: Path to the local directory to check for files.
+      artifacts: List of Paths to local artifacts for attesations.
 
     Returns: A list of artifacts that failed verification.
     """
@@ -573,27 +570,21 @@ class SigningApi(recipe_api.RecipeApi):
       return failed_verifications
 
     with self.m.step.nest('verify provenance for unsigned artifacts'):
-
-      # Use the signing configs to extract the archive path for the artifacts we're
-      # going to use as input to signing steps. These are the files we expect to
-      # see in the signing_dir with verifiable BCID attestations.
-      for signing_config in build_target_config.signing_configs:
-        channel = common_pb2.Channel.Name(signing_config.channel)
-        artifact_name = signing_config.archive_path
+      for artifact_path in artifacts:
+        artifact_name = self.m.path.basename(artifact_path)
+        artifact_dir = self.m.path.dirname(artifact_path)
 
         with self.m.step.nest(
-            f'verifying provenance for {channel} {artifact_name}'
-        ) as verify_step:
-          artifact_path = self.m.path.join(signing_dir, artifact_name)
-          attestation_name = BCID_ATTESTATION_NAME.format(
-              artifact_name=artifact_name)
-          attestation_path = self.m.path.join(signing_dir, attestation_name)
+            f'verifying provenance for {artifact_name}') as verify_step:
+          attestation_name = self.get_bcid_attestation_pattern.format(
+              artifact=artifact_name)
+          attestation_path = self.m.path.join(artifact_dir, attestation_name)
 
           if not self.m.path.exists(attestation_path):
             failed_verifications.add(artifact_name)
 
-            verify_step.step_summary_text = 'unable to verify. attestation file did not exist in {} for {}'.format(
-                signing_dir, artifact_name)
+            verify_step.step_summary_text = 'unable to verify. attestation file did not exist in {} for {}. looked at path: {}'.format(
+                artifact_dir, artifact_name, attestation_path)
             if self.unsigned_provenance_verification_fatal:
               verify_step.status = self.m.step.FAILURE
 
@@ -685,8 +676,16 @@ class SigningApi(recipe_api.RecipeApi):
       ])
       docker_pull()
 
+      # Use the signing configs to extract the archive path for the artifacts we're
+      # going to use as input to signing steps. These are the files we expect to
+      # see in the signing_dir with verifiable BCID attestations.
+      artifacts = []
+      for signing_config in build_target_config.signing_configs:
+        artifacts.append(
+            self.m.path.join(archive_dir, signing_config.archive_path))
+
       failed_unsigned_verifications = self.verify_bcid_attestations_for_unsigned_artifacts(
-          build_target_config, archive_dir, attestation_eligible)
+          artifacts, attestation_eligible)
 
       gs_dirs = set()
       if include_paygen:
