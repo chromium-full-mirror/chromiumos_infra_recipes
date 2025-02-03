@@ -85,8 +85,6 @@
       "foo-version_bumper-version",
       "-tag",
       "ci_release_version:ci_1970-01-01T00:02:04.500000",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -117,8 +115,6 @@
       "foo-version_bumper-version",
       "-ref",
       "foo-version_bumper-ref",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],

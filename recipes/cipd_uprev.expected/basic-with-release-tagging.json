@@ -85,8 +85,6 @@
       "foo-phosphorus-version",
       "-tag",
       "ctp_release_version:ctp_1970-01-01T00:02:04.500000",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -117,8 +115,6 @@
       "foo-phosphorus-version",
       "-ref",
       "foo-phosphorus-ref",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -228,8 +224,6 @@
       "foo-recipe-version",
       "-tag",
       "ctp_release_version:ctp_1970-01-01T00:02:04.500000",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -260,8 +254,6 @@
       "foo-recipe-version",
       "-ref",
       "foo-recipe-ref",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],

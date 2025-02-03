@@ -85,8 +85,6 @@
       "foo-phosphorus-version",
       "-ref",
       "foo-phosphorus-ref",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
@@ -196,8 +194,6 @@
       "foo-recipe-version",
       "-ref",
       "foo-recipe-ref",
-      "-metadata",
-      "build_id:0",
       "-json-output",
       "/path/to/tmp/json"
     ],
