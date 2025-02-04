@@ -14,6 +14,7 @@ nednguyen@chromium.org #{LAST_RESORT_SUGGESTION}
 # Service accounts
 recipe-mega-autoroller@chops-service-accounts.iam.gserviceaccount.com #{LAST_RESORT_SUGGESTION}
 chromeos-ci-prod@chromeos-bot.iam.gserviceaccount.com #{LAST_RESORT_SUGGESTION}
+chromeos-ci-release@chromeos-release-bot.iam.gserviceaccount.com #{LAST_RESORT_SUGGESTION}
 
 # Changes to subdirectories or modules cause machine-generated updates to
 # README.recipes.md, so exclude it from OWNERS enforcement.
