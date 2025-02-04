@@ -930,20 +930,37 @@ class CrosArtifactsApi(recipe_api.RecipeApi):
         }
 
         # Also generate provenance for all DLCs placed locally by BAPI.
-        # TODO(b/277931195): Remove ignore exceptions when stable.
-        with self.m.failures.ignore_exceptions():
-          self.m.dlc_utils.artifacts_local_path = str(outpath)
-          dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
-              outpath, use_local_path=True)
-          for dlc in dlc_local_paths:
-            paths_to_hash[dlc] = self.m.path.relpath(dlc, outpath)
+        # TODO: b/391732530 - Add a config option which enables us to make a
+        # failure to generate DLC provenance fatal to a build.
+        self.m.dlc_utils.artifacts_local_path = str(outpath)
+        dlc_local_paths = self.m.dlc_utils.get_dlcs_in_path(
+            outpath, use_local_path=True)
+        for dlc in dlc_local_paths:
+          paths_to_hash[dlc] = self.m.path.relpath(dlc, outpath)
 
-          with self.m.step.nest('generate provenance'):
-            for abspath, basepath in paths_to_hash.items():
-              file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
-              self.m.bcid_reporter.report_gcs(
-                  file_hash, '{uri}/{item}'.format(uri=upload_uri,
-                                                   item=basepath))
+        with self.m.step.nest('generate provenance') as prov_gen:
+          for abspath, basepath in paths_to_hash.items():
+            file_hash = self.m.file.file_hash(abspath, test_data='deadbeef')
+
+            # Retry reports up to three times before considering it failed.
+            # This helps to deal with Snoopy flakes like `Deadline Exceeded`
+            # which may otherwise cause us to fail a build.
+            for bcid_retries in range(3):
+              try:
+                self.m.bcid_reporter.report_gcs(
+                    file_hash, '{uri}/{item}'.format(uri=upload_uri,
+                                                     item=basepath))
+                break
+              except recipe_api.StepFailure:
+                if bcid_retries < 2:
+                  continue
+
+                # TODO: b/391732530 - Raise the exception if the config
+                # specifies that failures should be fatal. We should also figure
+                # out how to update the bcid output properties to add failed DLC
+                # provenance from here.
+                prov_gen.status = self.m.step.FAILURE
+                prov_gen.step_summary_text = 'Unable to generate all DLC provenance'
 
       for retries in range(3):
         try:
